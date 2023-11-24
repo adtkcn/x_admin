@@ -20,10 +20,10 @@ export const useSettingStore = defineStore({
         // 设置布局设置
         setSetting(data: Record<string, any>) {
             const { key, value } = data
-            if (this.hasOwnProperty(key)) {
-                //@ts-ignore
-                this[key] = value
-            }
+            // if (this.hasOwnProperty(this, key)) {
+            //@ts-ignore
+            this[key] = value
+            // }
             const settings: any = Object.assign({}, this.$state)
             delete settings.showDrawer
             cache.set(SETTING_KEY, settings)
