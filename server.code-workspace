@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "server"
+		},
+		{
+			"path": "admin"
+		},
+		{
+			"path": "docs"
+		}
+	],
+	"settings": {}
+}

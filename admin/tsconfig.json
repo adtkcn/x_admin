@@ -1,0 +1,19 @@
+{
+    "include": [
+        "global.d.ts",
+        "src/**/*",
+        "src/**/*.vue",
+        "components.d.ts",
+        "auto-imports.d.ts",
+        "typings/**/*.d.ts"
+    ],
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "node",
+        "isolatedModules": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    }
+}
