@@ -9,7 +9,9 @@ const modules = import.meta.glob('/src/views/**/*.vue')
 
 //
 export function getModulesKey() {
-    return Object.keys(modules).map((item) => item.replace('/src/views/', '').replace('.vue', ''))
+    return Object.keys(modules)
+        .filter((item) => !item.endsWith('edit.vue') && item.indexOf('/component/') == -1)
+        .map((item) => item.replace('/src/views/', '').replace('.vue', ''))
 }
 
 // 过滤路由所需要的数据

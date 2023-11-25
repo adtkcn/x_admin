@@ -97,7 +97,7 @@
                     <div class="flex-1">
                         <el-input v-model="formData.perms" placeholder="请输入权限字符" clearable />
                         <div class="form-tips">
-                            将作为server端API验权使用，如`system:admin:list`，请谨慎修改
+                            将作为server端API验权使用，请求路径`api/system/admin/list`权限为`system:admin:list`，请谨慎修改
                         </div>
                     </div>
                 </el-form-item>
