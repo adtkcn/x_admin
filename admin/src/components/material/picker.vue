@@ -35,6 +35,7 @@
                             </div>
                         </template>
                     </draggable>
+                    <!-- 没有图片时得上传按钮 -->
                     <div
                         class="material-upload"
                         @click="showPopup(-1)"
@@ -64,6 +65,7 @@
                 <div class="material-wrap">
                     <material
                         ref="materialRef"
+                        mode="page"
                         :type="type"
                         :file-size="fileSize"
                         :limit="meterialLimit"
@@ -72,6 +74,7 @@
                 </div>
             </el-scrollbar>
         </popup>
+
         <preview v-model="showPreview" :url="previewUrl" :type="type" />
     </div>
 </template>
