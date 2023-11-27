@@ -1,4 +1,4 @@
-package gen
+package gen_model
 
 //GenTable 代码生成业务实体
 type GenTable struct {

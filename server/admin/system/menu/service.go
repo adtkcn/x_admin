@@ -4,7 +4,7 @@ import (
 	"x_admin/admin/system/role"
 	"x_admin/config"
 	"x_admin/core/response"
-	"x_admin/model/system"
+	"x_admin/model/system_model"
 	"x_admin/util"
 
 	"github.com/fatih/structs"
@@ -49,7 +49,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 	if adminId != config.AdminConfig.SuperAdminId {
 		chain = chain.Where("id in ?", menuIds)
 	}
-	var menus []system.SystemAuthMenu
+	var menus []system_model.SystemAuthMenu
 	err := chain.Order("menu_sort desc, id").Find(&menus).Error
 	if e = response.CheckErr(err, "SelectMenuByRoleId Find err"); e != nil {
 		return
@@ -63,7 +63,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 
 // List 菜单列表
 func (menuSrv systemAuthMenuService) List() (res []interface{}, e error) {
-	var menus []system.SystemAuthMenu
+	var menus []system_model.SystemAuthMenu
 	err := menuSrv.db.Order("menu_sort desc, id").Find(&menus).Error
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
@@ -76,7 +76,7 @@ func (menuSrv systemAuthMenuService) List() (res []interface{}, e error) {
 
 // Detail 菜单详情
 func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e error) {
-	var menu system.SystemAuthMenu
+	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
@@ -89,7 +89,7 @@ func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e 
 }
 
 func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) {
-	var menu system.SystemAuthMenu
+	var menu system_model.SystemAuthMenu
 	response.Copy(&menu, addReq)
 	err := menuSrv.db.Create(&menu).Error
 	if e = response.CheckErr(err, "Add Create err"); e != nil {
@@ -100,7 +100,7 @@ func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) 
 }
 
 func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e error) {
-	var menu system.SystemAuthMenu
+	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", editReq.ID).Limit(1).Find(&menu).Error
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
@@ -119,7 +119,7 @@ func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e erro
 
 // Del 删除菜单
 func (menuSrv systemAuthMenuService) Del(id uint) (e error) {
-	var menu system.SystemAuthMenu
+	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
@@ -127,7 +127,7 @@ func (menuSrv systemAuthMenuService) Del(id uint) (e error) {
 	if e = response.CheckErr(err, "Delete First err"); e != nil {
 		return
 	}
-	r := menuSrv.db.Where("pid = ?", id).Limit(1).Find(&system.SystemAuthMenu{})
+	r := menuSrv.db.Where("pid = ?", id).Limit(1).Find(&system_model.SystemAuthMenu{})
 	err = r.Error
 	if e = response.CheckErr(err, "Delete Find by pid err"); e != nil {
 		return

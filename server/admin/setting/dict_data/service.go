@@ -4,7 +4,7 @@ import (
 	"time"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model/setting"
+	"x_admin/model/setting_model"
 
 	"gorm.io/gorm"
 )
@@ -30,7 +30,7 @@ type settingDictDataService struct {
 
 // All 字典数据所有
 func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []SettingDictDataResp, e error) {
-	var dictType setting.DictType
+	var dictType setting_model.DictType
 	err := ddSrv.db.Where("dict_type = ? AND is_delete = ?", allReq.DictType, 0).Limit(1).First(&dictType).Error
 	if e = response.CheckErrDBNotRecord(err, "该字典类型不存在！"); e != nil {
 		return
@@ -48,7 +48,7 @@ func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []Se
 	if allReq.Status >= 0 {
 		ddModel = ddModel.Where("status = ?", allReq.Status)
 	}
-	var dictDatas []setting.DictData
+	var dictDatas []setting_model.DictData
 	err = ddModel.Order("id desc").Find(&dictDatas).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
@@ -62,7 +62,7 @@ func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []Se
 func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDictDataListReq) (res response.PageResp, e error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
-	var dictType setting.DictType
+	var dictType setting_model.DictType
 	err := ddSrv.db.Where("dict_type = ? AND is_delete = ?", listReq.DictType, 0).Limit(1).First(&dictType).Error
 	if e = response.CheckErrDBNotRecord(err, "该字典类型不存在！"); e != nil {
 		return
@@ -70,7 +70,7 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 	if e = response.CheckErr(err, "List First err"); e != nil {
 		return
 	}
-	ddModel := ddSrv.db.Model(&setting.DictData{}).Where("type_id = ? AND is_delete = ?", dictType.ID, 0)
+	ddModel := ddSrv.db.Model(&setting_model.DictData{}).Where("type_id = ? AND is_delete = ?", dictType.ID, 0)
 	if listReq.Name != "" {
 		ddModel = ddModel.Where("name like ?", "%"+listReq.Name+"%")
 	}
@@ -85,7 +85,7 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 	if e = response.CheckErr(err, "List Count err"); e != nil {
 		return
 	}
-	var dds []setting.DictData
+	var dds []setting_model.DictData
 	err = ddModel.Limit(limit).Offset(offset).Order("id desc").Find(&dds).Error
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
@@ -102,7 +102,7 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 
 // Detail 字典数据详情
 func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e error) {
-	var dd setting.DictData
+	var dd setting_model.DictData
 	err := ddSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dd).Error
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {
 		return
@@ -116,10 +116,10 @@ func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e 
 
 // Add 字典数据新增
 func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) {
-	if r := ddSrv.db.Where("name = ? AND is_delete = ?", addReq.Name, 0).Limit(1).First(&setting.DictData{}); r.RowsAffected > 0 {
+	if r := ddSrv.db.Where("name = ? AND is_delete = ?", addReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.Make("字典数据已存在！")
 	}
-	var dd setting.DictData
+	var dd setting_model.DictData
 	response.Copy(&dd, addReq)
 	err := ddSrv.db.Create(&dd).Error
 	e = response.CheckErr(err, "Add Create err")
@@ -128,17 +128,17 @@ func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) 
 
 // Edit 字典数据编辑
 func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e error) {
-	err := ddSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&setting.DictData{}).Error
+	err := ddSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&setting_model.DictData{}).Error
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "Edit First err"); e != nil {
 		return
 	}
-	if r := ddSrv.db.Where("id != ? AND name = ? AND is_delete = ?", editReq.ID, editReq.Name, 0).Limit(1).First(&setting.DictData{}); r.RowsAffected > 0 {
+	if r := ddSrv.db.Where("id != ? AND name = ? AND is_delete = ?", editReq.ID, editReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.Make("字典数据已存在！")
 	}
-	var dd setting.DictData
+	var dd setting_model.DictData
 	response.Copy(&dd, editReq)
 	err = ddSrv.db.Save(&dd).Error
 	e = response.CheckErr(err, "Edit Save err")
@@ -147,7 +147,7 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 
 // Del 字典数据删除
 func (ddSrv settingDictDataService) Del(delReq SettingDictDataDelReq) (e error) {
-	err := ddSrv.db.Model(&setting.DictData{}).Where("id IN ?", delReq.Ids).Updates(
-		setting.DictData{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
+	err := ddSrv.db.Model(&setting_model.DictData{}).Where("id IN ?", delReq.Ids).Updates(
+		setting_model.DictData{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
 	return response.CheckErr(err, "Del Update err")
 }

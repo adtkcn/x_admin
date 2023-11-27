@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 	"x_admin/config"
-	"x_admin/model/gen"
+	"x_admin/model/gen_model"
 	"x_admin/util"
 
 	"gorm.io/gorm"
@@ -59,8 +59,8 @@ func (gu genUtil) GetDbTableColumnsQueryByName(db *gorm.DB, tableName string) *g
 }
 
 // InitTable 初始化表
-func (gu genUtil) InitTable(table gen.GenTable) gen.GenTable {
-	return gen.GenTable{
+func (gu genUtil) InitTable(table gen_model.GenTable) gen_model.GenTable {
+	return gen_model.GenTable{
 		TableName:    table.TableName,
 		TableComment: table.TableComment,
 		AuthorName:   "",
@@ -73,10 +73,10 @@ func (gu genUtil) InitTable(table gen.GenTable) gen.GenTable {
 }
 
 // InitColumn 初始化字段列
-func (gu genUtil) InitColumn(tableId uint, column gen.GenTableColumn) gen.GenTableColumn {
+func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_model.GenTableColumn {
 	columnType := gu.GetDbType(column.ColumnType)
 	columnLen := gu.GetColumnLength(column.ColumnType)
-	col := gen.GenTableColumn{
+	col := gen_model.GenTableColumn{
 		TableID:       tableId,
 		ColumnName:    column.ColumnName,
 		ColumnComment: column.ColumnComment,
@@ -203,7 +203,7 @@ func (gu genUtil) GetColumnLength(columnType string) int {
 }
 
 // GetTablePriCol 获取主键列名称
-func (gu genUtil) GetTablePriCol(columns []gen.GenTableColumn) (res gen.GenTableColumn) {
+func (gu genUtil) GetTablePriCol(columns []gen_model.GenTableColumn) (res gen_model.GenTableColumn) {
 	for _, col := range columns {
 		if col.IsPk == 1 {
 			res = col

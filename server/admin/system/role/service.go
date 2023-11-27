@@ -6,7 +6,7 @@ import (
 	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model/system"
+	"x_admin/model/system_model"
 	"x_admin/util"
 
 	"github.com/fatih/structs"
@@ -35,7 +35,7 @@ type systemAuthRoleService struct {
 
 // All 角色所有
 func (roleSrv systemAuthRoleService) All() (res []SystemAuthRoleSimpleResp, e error) {
-	var roles []system.SystemAuthRole
+	var roles []system_model.SystemAuthRole
 	err := roleSrv.db.Order("sort desc, id desc").Find(&roles).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
@@ -48,13 +48,13 @@ func (roleSrv systemAuthRoleService) All() (res []SystemAuthRoleSimpleResp, e er
 func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.PageResp, e error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
-	roleModel := roleSrv.db.Model(&system.SystemAuthRole{})
+	roleModel := roleSrv.db.Model(&system_model.SystemAuthRole{})
 	var count int64
 	err := roleModel.Count(&count).Error
 	if e = response.CheckErr(err, "List Count err"); e != nil {
 		return
 	}
-	var roles []system.SystemAuthRole
+	var roles []system_model.SystemAuthRole
 	err = roleModel.Limit(limit).Offset(offset).Order("sort desc, id desc").Find(&roles).Error
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
@@ -75,7 +75,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 
 // Detail 角色详情
 func (roleSrv systemAuthRoleService) Detail(id uint) (res SystemAuthRoleResp, e error) {
-	var role system.SystemAuthRole
+	var role system_model.SystemAuthRole
 	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&role).Error
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
@@ -91,14 +91,14 @@ func (roleSrv systemAuthRoleService) Detail(id uint) (res SystemAuthRoleResp, e 
 
 // getMemberCnt 根据角色ID获取成员数量
 func (roleSrv systemAuthRoleService) getMemberCnt(roleId uint) (count int64) {
-	roleSrv.db.Model(&system.SystemAuthAdmin{}).Where(
+	roleSrv.db.Model(&system_model.SystemAuthAdmin{}).Where(
 		"role = ? AND is_delete = ?", roleId, 0).Count(&count)
 	return
 }
 
 // Add 新增角色
 func (roleSrv systemAuthRoleService) Add(addReq SystemAuthRoleAddReq) (e error) {
-	var role system.SystemAuthRole
+	var role system_model.SystemAuthRole
 	if r := roleSrv.db.Where("name = ?", strings.Trim(addReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
 		return response.AssertArgumentError.Make("角色名称已存在!")
 	}
@@ -120,14 +120,14 @@ func (roleSrv systemAuthRoleService) Add(addReq SystemAuthRoleAddReq) (e error) 
 
 // Edit 编辑角色
 func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e error) {
-	err := roleSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&system.SystemAuthRole{}).Error
+	err := roleSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&system_model.SystemAuthRole{}).Error
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "Edit First err"); e != nil {
 		return
 	}
-	var role system.SystemAuthRole
+	var role system_model.SystemAuthRole
 	if r := roleSrv.db.Where("id != ? AND name = ?", editReq.ID, strings.Trim(editReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
 		return response.AssertArgumentError.Make("角色名称已存在!")
 	}
@@ -158,19 +158,19 @@ func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e erro
 
 // Del 删除角色
 func (roleSrv systemAuthRoleService) Del(id uint) (e error) {
-	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&system.SystemAuthRole{}).Error
+	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&system_model.SystemAuthRole{}).Error
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "Del First err"); e != nil {
 		return
 	}
-	if r := roleSrv.db.Where("role = ? AND is_delete = ?", id, 0).Limit(1).Find(&system.SystemAuthAdmin{}); r.RowsAffected > 0 {
+	if r := roleSrv.db.Where("role = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.Make("角色已被管理员使用,请先移除!")
 	}
 	// 事务
 	err = roleSrv.db.Transaction(func(tx *gorm.DB) error {
-		txErr := tx.Delete(&system.SystemAuthRole{}, "id = ?", id).Error
+		txErr := tx.Delete(&system_model.SystemAuthRole{}, "id = ?", id).Error
 		var te error
 		if te = response.CheckErr(txErr, "Del Delete in tx err"); te != nil {
 			return te

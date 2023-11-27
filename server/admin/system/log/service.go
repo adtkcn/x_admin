@@ -5,7 +5,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model/system"
+	"x_admin/model/system_model"
 
 	"gorm.io/gorm"
 )
@@ -31,8 +31,8 @@ func (logSrv systemLogsServer) Operate(page request.PageReq, logReq SystemLogOpe
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	logTbName := core.DBTableName(&system.SystemLogOperate{})
-	adminTbName := core.DBTableName(&system.SystemAuthAdmin{})
+	logTbName := core.DBTableName(&system_model.SystemLogOperate{})
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 	logModel := logSrv.db.Table(logTbName + " AS log").Joins(
 		fmt.Sprintf("LEFT JOIN %s AS admin ON log.admin_id = admin.id", adminTbName)).Select(
 		"log.*, admin.username, admin.nickname")
@@ -87,7 +87,7 @@ func (logSrv systemLogsServer) Login(page request.PageReq, logReq SystemLogLogin
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	logModel := logSrv.db.Model(&system.SystemLogLogin{})
+	logModel := logSrv.db.Model(&system_model.SystemLogLogin{})
 	// 条件
 	if logReq.Username != "" {
 		logModel = logModel.Where("username like ?", "%"+logReq.Username+"%")

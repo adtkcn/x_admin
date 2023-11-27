@@ -10,7 +10,7 @@ import (
 	"text/template"
 	"x_admin/config"
 	"x_admin/core/response"
-	"x_admin/model/gen"
+	"x_admin/model/gen_model"
 	"x_admin/util"
 )
 
@@ -58,7 +58,7 @@ type TplVars struct {
 	PrimaryKey      string
 	PrimaryField    string
 	AllFields       []string
-	SubPriCol       gen.GenTableColumn
+	SubPriCol       gen_model.GenTableColumn
 	SubPriField     string
 	SubTableFields  []string
 	ListFields      []string
@@ -66,9 +66,9 @@ type TplVars struct {
 	DictFields      []string
 	IsSearch        bool
 	ModelOprMap     map[string]string
-	Table           gen.GenTable
-	Columns         []gen.GenTableColumn
-	SubColumns      []gen.GenTableColumn
+	Table           gen_model.GenTable
+	Columns         []gen_model.GenTableColumn
+	SubColumns      []gen_model.GenTableColumn
 	//ModelTypeMap    map[string]string
 }
 
@@ -79,8 +79,8 @@ type templateUtil struct {
 }
 
 // PrepareVars 获取模板变量信息
-func (tu templateUtil) PrepareVars(table gen.GenTable, columns []gen.GenTableColumn,
-	oriSubPriCol gen.GenTableColumn, oriSubCols []gen.GenTableColumn) TplVars {
+func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model.GenTableColumn,
+	oriSubPriCol gen_model.GenTableColumn, oriSubCols []gen_model.GenTableColumn) TplVars {
 	subPriField := "id"
 	isSearch := false
 	primaryKey := "id"
@@ -91,7 +91,7 @@ func (tu templateUtil) PrepareVars(table gen.GenTable, columns []gen.GenTableCol
 	var listFields []string
 	var detailFields []string
 	var dictFields []string
-	var subColumns []gen.GenTableColumn
+	var subColumns []gen_model.GenTableColumn
 	var oriSubColNames []string
 	for _, column := range oriSubCols {
 		oriSubColNames = append(oriSubColNames, column.ColumnName)
@@ -191,7 +191,7 @@ func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 }
 
 // GetGenPath 获取生成路径
-func (tu templateUtil) GetGenPath(table gen.GenTable) string {
+func (tu templateUtil) GetGenPath(table gen_model.GenTable) string {
 	if table.GenPath == "/" {
 		//return path.Join(config.Config.RootPath, config.GenConfig.GenRootPath)
 		return config.GenConfig.GenRootPath

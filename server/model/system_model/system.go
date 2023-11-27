@@ -1,4 +1,4 @@
-package system
+package system_model
 
 //SystemConfig 系统配置实体
 type SystemConfig struct {

@@ -1,4 +1,4 @@
-package setting
+package setting_model
 
 //DictType 字典类型实体
 type DictType struct {

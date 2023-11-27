@@ -8,7 +8,7 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
-	"x_admin/model/system"
+	"x_admin/model/system_model"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -93,7 +93,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				urlPath := c.Request.URL.Path
 				ip := c.ClientIP()
 				method := c.HandlerName()
-				err := core.GetDB().Create(&system.SystemLogOperate{
+				err := core.GetDB().Create(&system_model.SystemLogOperate{
 					AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
 					Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
 					StartTime: startTime / 1000, EndTime: endTime / 1000, TaskTime: taskTime,
@@ -119,7 +119,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		urlPath := c.Request.URL.Path
 		ip := c.ClientIP()
 		method := c.HandlerName()
-		err := core.GetDB().Create(&system.SystemLogOperate{
+		err := core.GetDB().Create(&system_model.SystemLogOperate{
 			AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
 			Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
 			StartTime: startTime / 1000, EndTime: endTime / 1000, TaskTime: taskTime,

@@ -9,7 +9,7 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
-	"x_admin/model/system"
+	"x_admin/model/system_model"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -110,7 +110,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (r
 
 	// 更新登录信息
 	err = loginSrv.db.Model(&sysAdmin).Updates(
-		system.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: time.Now().Unix()}).Error
+		system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: time.Now().Unix()}).Error
 	if err != nil {
 		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.SystemError.Msg()); e != nil {
 			return
@@ -140,7 +140,7 @@ func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId uint, 
 	if errStr == "" {
 		status = 1
 	}
-	err := loginSrv.db.Create(&system.SystemLogLogin{
+	err := loginSrv.db.Create(&system_model.SystemLogLogin{
 		AdminId: adminId, Username: username, Ip: c.ClientIP(), Os: ua.Os.Family,
 		Browser: ua.UserAgent.Family, Status: status}).Error
 	e = response.CheckErr(err, "RecordLoginLog Create err")

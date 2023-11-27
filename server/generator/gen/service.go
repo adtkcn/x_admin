@@ -6,10 +6,10 @@ import (
 	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	"x_admin/model/gen_model"
 
 	"strings"
 	"x_admin/generator/tpl_utils"
-	"x_admin/model/gen"
 	"x_admin/util"
 
 	"gorm.io/gorm"
@@ -69,7 +69,7 @@ func (genSrv generateService) List(page request.PageReq, listReq ListTableReq) (
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
-	genModel := genSrv.db.Model(&gen.GenTable{})
+	genModel := genSrv.db.Model(&gen_model.GenTable{})
 	if listReq.TableName != "" {
 		genModel = genModel.Where("table_name like ?", "%"+listReq.TableName+"%")
 	}
@@ -104,7 +104,7 @@ func (genSrv generateService) List(page request.PageReq, listReq ListTableReq) (
 
 // Detail 生成详情
 func (genSrv generateService) Detail(id uint) (res GenTableDetailResp, e error) {
-	var genTb gen.GenTable
+	var genTb gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTb).Error
 	if e = response.CheckErrDBNotRecord(err, "查询的数据不存在!"); e != nil {
 		return
@@ -112,7 +112,7 @@ func (genSrv generateService) Detail(id uint) (res GenTableDetailResp, e error) 
 	if e = response.CheckErr(err, "Detail Find err"); e != nil {
 		return
 	}
-	var columns []gen.GenTableColumn
+	var columns []gen_model.GenTableColumn
 	err = genSrv.db.Where("table_id = ?", id).Order("sort").Find(&columns).Error
 	if e = response.CheckErr(err, "Detail Find err"); e != nil {
 		return
@@ -137,7 +137,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 	if e = response.CheckErr(err, "ImportTable Find tables err"); e != nil {
 		return
 	}
-	var tables []gen.GenTable
+	var tables []gen_model.GenTable
 	response.Copy(&tables, dbTbs)
 	if len(tables) == 0 {
 		e = response.AssertArgumentError.Make("表不存在!")
@@ -152,7 +152,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 				return te
 			}
 			// 生成列信息
-			var columns []gen.GenTableColumn
+			var columns []gen_model.GenTableColumn
 			txErr = tpl_utils.GenUtil.GetDbTableColumnsQueryByName(genSrv.db, tables[i].TableName).Find(&columns).Error
 			if te := response.CheckErr(txErr, "ImportTable Find columns err"); te != nil {
 				return te
@@ -174,7 +174,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 // SyncTable 同步表结构
 func (genSrv generateService) SyncTable(id uint) (e error) {
 	//旧数据
-	var genTable gen.GenTable
+	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
 	if e = response.CheckErrDBNotRecord(err, "生成数据不存在！"); e != nil {
 		return
@@ -182,7 +182,7 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 	if e = response.CheckErr(err, "SyncTable First err"); e != nil {
 		return
 	}
-	var genTableCols []gen.GenTableColumn
+	var genTableCols []gen_model.GenTableColumn
 	err = genSrv.db.Where("table_id = ?", id).Order("sort").Find(&genTableCols).Error
 	if e = response.CheckErr(err, "SyncTable Find err"); e != nil {
 		return
@@ -191,12 +191,12 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 		e = response.AssertArgumentError.Make("旧数据异常！")
 		return
 	}
-	prevColMap := make(map[string]gen.GenTableColumn)
+	prevColMap := make(map[string]gen_model.GenTableColumn)
 	for i := 0; i < len(genTableCols); i++ {
 		prevColMap[genTableCols[i].ColumnName] = genTableCols[i]
 	}
 	//新数据
-	var columns []gen.GenTableColumn
+	var columns []gen_model.GenTableColumn
 	err = tpl_utils.GenUtil.GetDbTableColumnsQueryByName(genSrv.db, genTable.TableName).Find(&columns).Error
 	if e = response.CheckErr(err, "SyncTable Find new err"); e != nil {
 		return
@@ -244,7 +244,7 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 				delColIds = append(delColIds, prevCol.ID)
 			}
 		}
-		txErr := tx.Delete(&gen.GenTableColumn{}, "id in ?", delColIds).Error
+		txErr := tx.Delete(&gen_model.GenTableColumn{}, "id in ?", delColIds).Error
 		if te := response.CheckErr(txErr, "SyncTable Delete err"); te != nil {
 			return te
 		}
@@ -266,7 +266,7 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 			return
 		}
 	}
-	var genTable gen.GenTable
+	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&genTable).Error
 	if e = response.CheckErrDBNotRecord(err, "数据已丢失！"); e != nil {
 		return
@@ -282,7 +282,7 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 			return te
 		}
 		for i := 0; i < len(editReq.Columns); i++ {
-			var col gen.GenTableColumn
+			var col gen_model.GenTableColumn
 			response.Copy(&col, editReq.Columns[i])
 			txErr = tx.Save(&col).Error
 			if te := response.CheckErr(txErr, "EditTable Save GenTableColumn err"); te != nil {
@@ -298,11 +298,11 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 // DelTable 删除表结构
 func (genSrv generateService) DelTable(ids []uint) (e error) {
 	err := genSrv.db.Transaction(func(tx *gorm.DB) error {
-		txErr := tx.Delete(&gen.GenTable{}, "id in ?", ids).Error
+		txErr := tx.Delete(&gen_model.GenTable{}, "id in ?", ids).Error
 		if te := response.CheckErr(txErr, "DelTable Delete GenTable err"); te != nil {
 			return te
 		}
-		txErr = tx.Delete(&gen.GenTableColumn{}, "table_id in ?", ids).Error
+		txErr = tx.Delete(&gen_model.GenTableColumn{}, "table_id in ?", ids).Error
 		if te := response.CheckErr(txErr, "DelTable Delete GenTableColumn err"); te != nil {
 			return te
 		}
@@ -313,11 +313,11 @@ func (genSrv generateService) DelTable(ids []uint) (e error) {
 }
 
 // getSubTableInfo 根据主表获取子表主键和列信息
-func (genSrv generateService) getSubTableInfo(genTable gen.GenTable) (pkCol gen.GenTableColumn, cols []gen.GenTableColumn, e error) {
+func (genSrv generateService) getSubTableInfo(genTable gen_model.GenTable) (pkCol gen_model.GenTableColumn, cols []gen_model.GenTableColumn, e error) {
 	if genTable.SubTableName == "" || genTable.SubTableFk == "" {
 		return
 	}
-	var table gen.GenTable
+	var table gen_model.GenTable
 	err := genSrv.db.Where("table_name = ?", genTable.SubTableName).Limit(1).First(&table).Error
 	if e = response.CheckErrDBNotRecord(err, "子表记录丢失！"); e != nil {
 		return
@@ -334,8 +334,8 @@ func (genSrv generateService) getSubTableInfo(genTable gen.GenTable) (pkCol gen.
 }
 
 // renderCodeByTable 根据主表和模板文件渲染模板代码
-func (genSrv generateService) renderCodeByTable(genTable gen.GenTable) (res map[string]string, e error) {
-	var columns []gen.GenTableColumn
+func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (res map[string]string, e error) {
+	var columns []gen_model.GenTableColumn
 	err := genSrv.db.Where("table_id = ?", genTable.ID).Order("sort").Find(&columns).Error
 	if e = response.CheckErr(err, "renderCodeByTable Find err"); e != nil {
 		return
@@ -362,7 +362,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen.GenTable) (res map[
 
 // PreviewCode 预览代码
 func (genSrv generateService) PreviewCode(id uint) (res map[string]string, e error) {
-	var genTable gen.GenTable
+	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
 	if e = response.CheckErrDBNotRecord(err, "记录丢失！"); e != nil {
 		return
@@ -384,7 +384,7 @@ func (genSrv generateService) PreviewCode(id uint) (res map[string]string, e err
 
 // GenCode 生成代码 (自定义路径)
 func (genSrv generateService) GenCode(tableName string) (e error) {
-	var genTable gen.GenTable
+	var genTable gen_model.GenTable
 	err := genSrv.db.Where("table_name = ?", tableName).Order("id desc").Limit(1).First(&genTable).Error
 	if e = response.CheckErrDBNotRecord(err, "记录丢失！"); e != nil {
 		return
@@ -409,7 +409,7 @@ func (genSrv generateService) GenCode(tableName string) (e error) {
 
 // genZipCode 生成代码 (压缩包下载)
 func (genSrv generateService) genZipCode(zipWriter *zip.Writer, tableName string) (e error) {
-	var genTable gen.GenTable
+	var genTable gen_model.GenTable
 	err := genSrv.db.Where("table_name = ?", tableName).Order("id desc").Limit(1).First(&genTable).Error
 	if e = response.CheckErrDBNotRecord(err, "记录丢失！"); e != nil {
 		return

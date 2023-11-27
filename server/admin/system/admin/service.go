@@ -11,7 +11,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model/system"
+	"x_admin/model/system_model"
 	"x_admin/util"
 
 	"github.com/fatih/structs"
@@ -20,7 +20,7 @@ import (
 )
 
 type ISystemAuthAdminService interface {
-	FindByUsername(username string) (admin system.SystemAuthAdmin, err error)
+	FindByUsername(username string) (admin system_model.SystemAuthAdmin, err error)
 	Self(adminId uint) (res SystemAuthAdminSelfResp, e error)
 	List(page request.PageReq, listReq SystemAuthAdminListReq) (res response.PageResp, e error)
 	Detail(id uint) (res SystemAuthAdminResp, e error)
@@ -45,7 +45,7 @@ type systemAuthAdminService struct {
 }
 
 // FindByUsername 根据账号查找管理员
-func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin system.SystemAuthAdmin, err error) {
+func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin system_model.SystemAuthAdmin, err error) {
 	err = adminSrv.db.Where("username = ?", username).Limit(1).First(&admin).Error
 	return
 }
@@ -53,7 +53,7 @@ func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin sy
 // Self 当前管理员
 func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSelfResp, e error) {
 	// 管理员信息
-	var sysAdmin system.SystemAuthAdmin
+	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&sysAdmin).Error
 	if e = response.CheckErr(err, "Self First err"); e != nil {
 		return
@@ -67,7 +67,7 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 			return
 		}
 		if len(menuIds) > 0 {
-			var menus []system.SystemAuthMenu
+			var menus []system_model.SystemAuthMenu
 			err := adminSrv.db.Where(
 				"id in ? AND is_disable = ? AND menu_type in ?", menuIds, 0, []string{"C", "A"}).Order(
 				"menu_sort, id").Find(&menus).Error
@@ -99,9 +99,9 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq System
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	adminTbName := core.DBTableName(&system.SystemAuthAdmin{})
-	roleTbName := core.DBTableName(&system.SystemAuthRole{})
-	deptTbName := core.DBTableName(&system.SystemAuthDept{})
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
+	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
+	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
 	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.role = %s.id", roleTbName, roleTbName)).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
@@ -144,7 +144,7 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq System
 
 // Detail 管理员详细
 func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp, e error) {
-	var sysAdmin system.SystemAuthAdmin
+	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&sysAdmin).Error
 	if e = response.CheckErrDBNotRecord(err, "账号已不存在！"); e != nil {
 		return
@@ -162,7 +162,7 @@ func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp,
 
 // Add 管理员新增
 func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e error) {
-	var sysAdmin system.SystemAuthAdmin
+	var sysAdmin system_model.SystemAuthAdmin
 	// 检查username
 	r := adminSrv.db.Where("username = ? AND is_delete = ?", addReq.Username, 0).Limit(1).Find(&sysAdmin)
 	err := r.Error
@@ -209,7 +209,7 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 // Edit 管理员编辑
 func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAdminEditReq) (e error) {
 	// 检查id
-	err := adminSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&system.SystemAuthAdmin{}).Error
+	err := adminSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&system_model.SystemAuthAdmin{}).Error
 	if e = response.CheckErrDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
@@ -217,7 +217,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 		return
 	}
 	// 检查username
-	var admin system.SystemAuthAdmin
+	var admin system_model.SystemAuthAdmin
 	r := adminSrv.db.Where("username = ? AND is_delete = ? AND id != ?", editReq.Username, 0, editReq.ID).Find(&admin)
 	err = r.Error
 	if e = response.CheckErr(err, "Edit Find by username err"); e != nil {
@@ -292,7 +292,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 // Update 管理员更新
 func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq SystemAuthAdminUpdateReq, adminId uint) (e error) {
 	// 检查id
-	var admin system.SystemAuthAdmin
+	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&admin).Error
 	if e = response.CheckErrDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
@@ -350,7 +350,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq SystemAu
 
 // Del 管理员删除
 func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
-	var admin system.SystemAuthAdmin
+	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&admin).Error
 	if e = response.CheckErrDBNotRecord(err, "账号已不存在!"); e != nil {
 		return
@@ -364,14 +364,14 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 	if id == config.AdminConfig.GetAdminId(c) {
 		return response.AssertArgumentError.Make("不能删除自己!")
 	}
-	err = adminSrv.db.Model(&admin).Updates(system.SystemAuthAdmin{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
+	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
 	e = response.CheckErr(err, "Del Updates err")
 	return
 }
 
 // Disable 管理员状态切换
 func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id uint) (e error) {
-	var admin system.SystemAuthAdmin
+	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).Find(&admin).Error
 	if e = response.CheckErr(err, "Disable Find err"); e != nil {
 		return
@@ -386,14 +386,14 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id uint) (e error
 	if admin.IsDisable == 0 {
 		isDisable = 1
 	}
-	err = adminSrv.db.Model(&admin).Updates(system.SystemAuthAdmin{IsDisable: isDisable, UpdateTime: time.Now().Unix()}).Error
+	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDisable: isDisable, UpdateTime: time.Now().Unix()}).Error
 	e = response.CheckErr(err, "Disable Updates err")
 	return
 }
 
 // CacheAdminUserByUid 缓存管理员
 func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id uint) (err error) {
-	var admin system.SystemAuthAdmin
+	var admin system_model.SystemAuthAdmin
 	err = adminSrv.db.Where("id = ?", id).Limit(1).First(&admin).Error
 	if err != nil {
 		return

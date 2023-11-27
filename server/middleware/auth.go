@@ -8,7 +8,8 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
-	sysModel "x_admin/model/system"
+	"x_admin/model/system_model"
+
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -78,7 +79,7 @@ func TokenAuth() gin.HandlerFunc {
 		}
 
 		// 校验用户被删除
-		var mapping sysModel.SystemAuthAdmin
+		var mapping system_model.SystemAuthAdmin
 		err := util.ToolsUtil.JsonToObj(util.RedisUtil.HGet(config.AdminConfig.BackstageManageKey, uidStr), &mapping)
 		if err != nil {
 			core.Logger.Errorf("TokenAuth Unmarshal err: err=[%+v]", err)

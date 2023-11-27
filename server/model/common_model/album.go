@@ -1,4 +1,4 @@
-package common
+package common_model
 
 //Album 相册实体
 type Album struct {

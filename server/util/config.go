@@ -2,7 +2,7 @@ package util
 
 import (
 	"errors"
-	"x_admin/model/system"
+	"x_admin/model/system_model"
 
 	"gorm.io/gorm"
 )
@@ -18,7 +18,8 @@ func (cu configUtil) Get(db *gorm.DB, cnfType string, names ...string) (data map
 	if len(names) > 0 {
 		chain.Where("name = ?", names[0])
 	}
-	var configs []system.SystemConfig
+
+	var configs []system_model.SystemConfig
 	err = chain.Find(&configs).Error
 	if err != nil {
 		return nil, err
@@ -58,7 +59,7 @@ func (cu configUtil) GetMap(db *gorm.DB, cnfType string, name string) (data map[
 
 // Set 设置配置的值
 func (cu configUtil) Set(db *gorm.DB, cnfType string, name string, val string) (err error) {
-	var config system.SystemConfig
+	var config system_model.SystemConfig
 	err = db.Where("type = ? AND name = ?", cnfType, name).First(&config).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		if err = db.Create(&config).Error; err != nil {

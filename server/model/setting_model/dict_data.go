@@ -1,4 +1,4 @@
-package setting
+package setting_model
 
 //DictData 字典数据实体
 type DictData struct {
