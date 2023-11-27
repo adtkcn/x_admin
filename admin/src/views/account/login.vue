@@ -10,12 +10,8 @@
                 >
                     <div class="text-center text-3xl font-medium mb-8">{{ config.webName }}</div>
                     <el-form ref="formRef" :model="formData" size="large" :rules="rules">
-                        <el-form-item prop="account">
-                            <el-input
-                                v-model.trim="formData.account"
-                                placeholder="请输入账号"
-                                @keyup.enter="handleEnter"
-                            >
+                        <el-form-item prop="username">
+                            <el-input v-model.trim="formData.username" placeholder="请输入账号">
                                 <template #prepend>
                                     <icon name="el-icon-User" />
                                 </template>
@@ -38,9 +34,34 @@
                     <div class="mb-5">
                         <el-checkbox v-model="remAccount" label="记住账号"></el-checkbox>
                     </div>
-                    <el-button type="primary" size="large" :loading="isLock" @click="lockLogin">
+                    <el-button
+                        type="primary"
+                        size="large"
+                        :loading="isLock"
+                        @click="onShowCaptcha('blockPuzzle')"
+                    >
                         登录
                     </el-button>
+
+                    <!-- <button @click="onShowCaptcha('blockPuzzle')">滑块</button>
+                    <button @click="onShowCaptcha('clickWord')">点击文字</button> -->
+                    <Verify
+                        mode="pop"
+                        :captchaType="captchaType"
+                        :imgSize="{ width: '400px', height: '200px' }"
+                        ref="verify"
+                        @success="handleSuccess"
+                        @error="
+                            (e) => {
+                                console.log(e)
+                            }
+                        "
+                        @ready="
+                            (e) => {
+                                console.log(e)
+                            }
+                        "
+                    ></Verify>
                 </div>
             </div>
         </div>
@@ -58,6 +79,23 @@ import cache from '@/utils/cache'
 import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
+
+import Verify from '@/components/verifition/Verify.vue'
+
+const verify = ref(null)
+const captchaType = ref('')
+const onShowCaptcha = (type) => {
+    captchaType.value = type
+    verify.value.show()
+}
+let verifition = null
+const handleSuccess = (res) => {
+    console.log(res)
+    console.log('sucess')
+    verifition = res
+    lockLogin(res)
+}
+
 const passwordRef = shallowRef<InputInstance>()
 const formRef = shallowRef<FormInstance>()
 const appStore = useAppStore()
@@ -67,11 +105,11 @@ const router = useRouter()
 const remAccount = ref(false)
 const config = computed(() => appStore.config)
 const formData = reactive({
-    account: '',
+    username: '',
     password: ''
 })
 const rules = {
-    account: [
+    username: [
         {
             required: true,
             message: '请输入账号',
@@ -86,22 +124,18 @@ const rules = {
         }
     ]
 }
-// 回车按键监听
-const handleEnter = () => {
-    if (!formData.password) {
-        return passwordRef.value?.focus()
-    }
-    handleLogin()
-}
+
 // 登录处理
-const handleLogin = async () => {
+const handleLogin = async (captchaInfo) => {
+    console.log('captchaInfo', captchaInfo, { ...formData, ...captchaInfo })
+
     await formRef.value?.validate()
     // 记住账号，缓存
     cache.set(ACCOUNT_KEY, {
         remember: remAccount.value,
-        account: remAccount.value ? formData.account : ''
+        username: remAccount.value ? formData.username : ''
     })
-    await userStore.login(formData)
+    await userStore.login({ ...formData, ...verifition })
     const {
         query: { redirect }
     } = route
@@ -114,7 +148,7 @@ onMounted(() => {
     const value = cache.get(ACCOUNT_KEY)
     if (value?.remember) {
         remAccount.value = value.remember
-        formData.account = value.account
+        formData.username = value.username
     }
 })
 </script>

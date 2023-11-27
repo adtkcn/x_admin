@@ -1,6 +1,7 @@
 package login
 
 import (
+	"x_admin/admin/captcha"
 	"x_admin/admin/system/admin"
 	"x_admin/admin/system/role"
 	"x_admin/core"
@@ -31,6 +32,16 @@ type loginHandler struct {
 
 // login 登录系统
 func (lh loginHandler) login(c *gin.Context) {
+	var params captcha.ClientParams
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &params)) {
+		return
+	}
+	err := captcha.Verify(params)
+	if err != nil {
+		response.FailWithMsg(c, response.Failed, err.Error())
+		return
+	}
+
 	var loginReq SystemLoginReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &loginReq)) {
 		return

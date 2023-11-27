@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"x_admin/admin/captcha"
 	"x_admin/admin/common/album"
 	"x_admin/admin/common/index"
 	"x_admin/admin/common/upload"
@@ -44,4 +45,6 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	system.RoleRoute(rg)
 	log.LogRoute(rg)
 	ArticleCollectRoute(rg)
+
+	captcha.CaptchaRoute(rg)
 }
