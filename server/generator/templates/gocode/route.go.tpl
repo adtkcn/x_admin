@@ -7,7 +7,24 @@ import (
 	"x_admin/admin/{{{ .ModuleName }}}"
 )
 
-// 请在 admin/entry.go 目录引入这个函数
+/**
+集成
+1. 导入
+- 请先提交git避免文件覆盖!!!
+- 下载并解压压缩包后，直接复制server、admin文件夹到项目根目录即可
+
+2. 注册路由
+请在 admin/entry.go 文件引入{{{ title (toCamelCase .ModuleName) }}}Route注册路由
+
+3. 后台手动添加菜单和按钮
+{{{ .ModuleName }}}:add
+{{{.ModuleName }}}:edit
+{{{.ModuleName }}}:del
+{{{.ModuleName }}}:list
+{{{.ModuleName }}}:detail
+*/
+
+
 // {{{ title (toCamelCase .ModuleName) }}}Route(rg)
 func {{{ title (toCamelCase .ModuleName) }}}Route(rg *gin.RouterGroup) {
 	db := core.GetDB()
