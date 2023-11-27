@@ -41,8 +41,8 @@ const useUserStore = defineStore({
                     .then((data) => {
                         this.token = data.token
                         cache.set(TOKEN_KEY, data.token)
-                        // resolve(data)
-                        reject(data)
+                        resolve(data)
+                        // reject(data)
                     })
                     .catch((error) => {
                         reject(error)
