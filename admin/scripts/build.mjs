@@ -9,14 +9,14 @@ const distPath = path.resolve(cwd, 'dist')
 const releasePath = path.resolve(cwd, releaseRelativePath)
 
 const goProjectPath = path.resolve(cwd, '../server')
-
-async function build() {
+async function build_go() {
     await execaCommand('goreleaser release --snapshot --clean', {
         stdio: 'inherit',
         encoding: 'utf-8',
         cwd: goProjectPath
     })
-
+}
+async function build_frontend() {
     await execaCommand('vite build', { stdio: 'inherit', encoding: 'utf-8', cwd })
     if (existsSync(releasePath)) {
         await remove(releasePath)
@@ -29,7 +29,9 @@ async function build() {
     }
     console.log(`文件已复制 ==> ${releaseRelativePath}`)
 }
-
+async function build() {
+    await Promise.allSettled([build_go(), build_frontend()])
+}
 function copyFile(sourceDir, targetDir) {
     return new Promise((resolve, reject) => {
         copy(sourceDir, targetDir, (err) => {
