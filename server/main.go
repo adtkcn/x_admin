@@ -30,7 +30,7 @@ func initRouter() *gin.Engine {
 	}
 	// 特殊异常处理
 	router.NoMethod(response.NoMethod)
-	router.NoRoute(response.NoRoute)
+	// router.NoRoute(response.NoRoute)
 	// 注册路由
 	group := router.Group("/api")
 

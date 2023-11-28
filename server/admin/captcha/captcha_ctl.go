@@ -1,12 +1,15 @@
 package captcha
 
 import (
+	"fmt"
 	"image/color"
+	"x_admin/config"
 
 	config2 "github.com/TestsLing/aj-captcha-go/config"
 	constant "github.com/TestsLing/aj-captcha-go/const"
 	"github.com/TestsLing/aj-captcha-go/service"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v9"
 )
 
 type CaptchaGetParams struct {
@@ -42,7 +45,7 @@ var clickWordConfig = &config2.ClickWordConfig{
 var blockPuzzleConfig = &config2.BlockPuzzleConfig{Offset: 10}
 
 // 行为校验配置模块（具体参数可从业务系统配置文件自定义）
-var captcha_config = config2.BuildConfig(constant.MemCacheKey, constant.DefaultResourceRoot, watermarkConfig,
+var captcha_config = config2.BuildConfig(constant.RedisCacheKey, constant.DefaultResourceRoot, watermarkConfig,
 	clickWordConfig, blockPuzzleConfig, 2*60)
 
 // 服务工厂，主要用户注册 获取 缓存和验证服务
@@ -50,13 +53,12 @@ var factory = service.NewCaptchaServiceFactory(captcha_config)
 
 func init() {
 	// 这里默认是注册了 内存缓存，但是不足以应对生产环境，希望自行注册缓存驱动 实现缓存接口即可替换（CacheType就是注册进去的 key）
-	factory.RegisterCache(constant.MemCacheKey, service.NewMemCacheService(200000)) // 这里20指的是缓存阈值
+	// factory.RegisterCache(constant.MemCacheKey, service.NewMemCacheService(200000)) // 这里20指的是缓存阈值
 
-	//注册使用默认redis数据库
-	// factory.RegisterCache(constant.RedisCacheKey, service.NewDftRedisCacheService())
 	// //注册自定义配置redis数据库
-	// opt, err := redis.ParseURL(config.Config.RedisUrl)
-	// factory.RegisterCache(constant.RedisCacheKey, service.NewConfigRedisCacheService([]string{opt.Addr}, "", "", false, 0))
+	opt, _ := redis.ParseURL(config.Config.RedisUrl)
+	fmt.Printf("%#v", opt)
+	factory.RegisterCache(constant.RedisCacheKey, service.NewConfigRedisCacheService([]string{opt.Addr}, opt.Username, opt.Password, false, 0))
 
 	// 注册了两种验证码服务 可以自行实现更多的验证
 	factory.RegisterService(constant.ClickWordCaptcha, service.NewClickWordCaptchaService(factory))

@@ -9,7 +9,8 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
-import { visualizer } from 'rollup-plugin-visualizer'
+import viteCompression from 'vite-plugin-compression'
+// import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -51,13 +52,19 @@ export default ({ mode }) => {
                 iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
                 symbolId: 'local-icon-[dir]-[name]'
             }),
-            visualizer({
-                gzipSize: true,
-                brotliSize: true,
-                emitFile: false,
-                filename: 'test.html', //分析图生成的文件名
-                open: true //如果存在本地服务端口，将在打包后自动展示
+            viteCompression({
+                algorithm: 'gzip'
+            }),
+            viteCompression({
+                algorithm: 'brotliCompress'
             })
+            // visualizer({
+            //     gzipSize: true,
+            //     brotliSize: true,
+            //     emitFile: false,
+            //     filename: 'test.html', //分析图生成的文件名
+            //     open: true //如果存在本地服务端口，将在打包后自动展示
+            // })
         ],
         resolve: {
             alias: {
