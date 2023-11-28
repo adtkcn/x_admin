@@ -22,7 +22,7 @@ func LoginRoute(rg *gin.RouterGroup) {
 	handle := loginHandler{Service: service}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
-	rg.POST("/login", handle.login, middleware.RecordLog("后台登录"))
+	rg.POST("/login", handle.login)
 	rg.POST("/logout", handle.logout)
 }
 

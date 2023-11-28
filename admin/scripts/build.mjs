@@ -8,7 +8,15 @@ const releaseRelativePath = '../frontend'
 const distPath = path.resolve(cwd, 'dist')
 const releasePath = path.resolve(cwd, releaseRelativePath)
 
+const goProjectPath = path.resolve(cwd, '../server')
+
 async function build() {
+    await execaCommand('goreleaser release --snapshot --clean', {
+        stdio: 'inherit',
+        encoding: 'utf-8',
+        cwd: goProjectPath
+    })
+
     await execaCommand('vite build', { stdio: 'inherit', encoding: 'utf-8', cwd })
     if (existsSync(releasePath)) {
         await remove(releasePath)
