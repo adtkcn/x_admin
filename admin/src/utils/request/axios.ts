@@ -5,7 +5,7 @@ import axios, {
     type AxiosRequestConfig,
     type AxiosResponse
 } from 'axios'
-import { isFunction, merge, cloneDeep } from 'lodash'
+import { isFunction, merge, cloneDeep } from 'lodash-es'
 import axiosCancel from './cancel'
 import type { RequestData, RequestOptions } from './type'
 

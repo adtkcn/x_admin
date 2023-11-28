@@ -9,6 +9,8 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
+import { visualizer } from 'rollup-plugin-visualizer'
+
 // https://vitejs.dev/config/
 export default ({ mode }) => {
     const env = loadEnv(mode, process.cwd())
@@ -48,6 +50,13 @@ export default ({ mode }) => {
                 // 配置路劲在你的src里的svg存放文件
                 iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
                 symbolId: 'local-icon-[dir]-[name]'
+            }),
+            visualizer({
+                gzipSize: true,
+                brotliSize: true,
+                emitFile: false,
+                filename: 'test.html', //分析图生成的文件名
+                open: true //如果存在本地服务端口，将在打包后自动展示
             })
         ],
         resolve: {
