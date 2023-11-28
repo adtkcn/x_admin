@@ -3,6 +3,7 @@ module x_admin
 go 1.21
 
 require (
+	github.com/TestsLing/aj-captcha-go v0.0.0-20221117062708-1abcf4c62792
 	github.com/fatih/structs v1.1.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.1
@@ -18,7 +19,6 @@ require (
 )
 
 require (
-	github.com/TestsLing/aj-captcha-go v0.0.0-20221117062708-1abcf4c62792 // indirect
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
