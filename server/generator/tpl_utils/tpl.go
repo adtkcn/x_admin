@@ -3,6 +3,7 @@ package tpl_utils
 import (
 	"archive/zip"
 	"bytes"
+	"embed"
 	"io"
 	"os"
 	"path"
@@ -176,14 +177,25 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 	return tplPaths
 }
 
+//go:embed templates/gocode
+//go:embed templates/vue
+var fs embed.FS
+
 // Render 渲染模板
 func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e error) {
-	tpl, err := tu.tpl.ParseFiles(path.Join(config.Config.RootPath, tu.basePath, tplPath))
+
+	// tpl, err := tu.tpl.ParseFiles(path.Join(config.Config.RootPath, tu.basePath, tplPath))
+	// if e = response.CheckErr(err, "TemplateUtil.Render ReadFile err"); e != nil {
+	// 	return "", e
+	// }
+
+	tpl, err := tu.tpl.ParseFS(fs, "templates"+"/"+tplPath)
 	if e = response.CheckErr(err, "TemplateUtil.Render ParseFiles err"); e != nil {
 		return "", e
 	}
 	buf := &bytes.Buffer{}
-	err = tpl.ExecuteTemplate(buf, path.Base(tplPath), tplVars)
+	basePath := path.Base(tplPath)
+	err = tpl.ExecuteTemplate(buf, basePath, tplVars)
 	if e = response.CheckErr(err, "TemplateUtil.Render Execute err"); e != nil {
 		return "", e
 	}
