@@ -14,7 +14,7 @@ import (
 )
 
 var TemplateUtil = templateUtil{
-	basePath: "generator/templates",
+
 	tpl: template.New("").Delims("{{{", "}}}").Funcs(
 		template.FuncMap{
 			"sub":         sub,
@@ -73,8 +73,7 @@ type TplVars struct {
 
 // genUtil 模板工具
 type templateUtil struct {
-	basePath string
-	tpl      *template.Template
+	tpl *template.Template
 }
 
 // PrepareVars 获取模板变量信息
@@ -179,15 +178,17 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 //go:embed templates/vue
 var fs embed.FS
 
-// Render 渲染模板
+/**
+* Render 渲染模板
+* @Description:
+* @param tplPath 模板路径
+* @param tplVars 模板变量
+* @return string 渲染后内容
+* @return error
+ */
 func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e error) {
 
-	// tpl, err := tu.tpl.ParseFiles(path.Join(config.Config.RootPath, tu.basePath, tplPath))
-	// if e = response.CheckErr(err, "TemplateUtil.Render ReadFile err"); e != nil {
-	// 	return "", e
-	// }
-
-	tpl, err := tu.tpl.ParseFS(fs, "templates"+"/"+tplPath)
+	tpl, err := tu.tpl.ParseFS(fs, "templates/"+tplPath)
 	if e = response.CheckErr(err, "TemplateUtil.Render ParseFiles err"); e != nil {
 		return "", e
 	}

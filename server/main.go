@@ -1,6 +1,8 @@
 package main
 
 import (
+	"embed"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -14,6 +16,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//go:embed static
+var staticFs embed.FS
+
 // initRouter 初始化router
 func initRouter() *gin.Engine {
 	// 初始化gin
@@ -21,7 +26,15 @@ func initRouter() *gin.Engine {
 	router := gin.New()
 	// 设置静态路径
 	router.Static(config.Config.PublicPrefix, config.Config.UploadDirectory)
-	router.Static(config.Config.StaticPath, config.Config.StaticDirectory)
+
+	staticHttpFs := http.FS(staticFs)
+	router.GET("/api/static/*filepath", func(c *gin.Context) {
+		filepath := c.Param("filepath")
+		fmt.Println(filepath)
+
+		c.FileFromFS("static"+filepath, staticHttpFs)
+	})
+
 	// 设置中间件
 	router.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 	// 演示模式

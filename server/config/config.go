@@ -13,31 +13,30 @@ var Config = loadConfig(".")
 
 // envConfig 环境配置
 type envConfig struct {
-	RootPath                 string   // 项目根目录
-	GinMode                  string   `mapstructure:"GIN_MODE"`        // gin运行模式
-	PublicUrl                string   `mapstructure:"PUBLIC_URL"`      // 对外发布的Url
-	OssDomain                string   `mapstructure:"OSS_DOMAIN"`      // OSS域名
-	ServerPort               int      `mapstructure:"SERVER_PORT"`     // 服务运行端口
-	DisallowModify           bool     `mapstructure:"DISALLOW_MODIFY"` // 禁止修改操作 (演示功能,限制POST请求)
-	PublicPrefix             string   // 资源访问前缀
-	UploadDirectory          string   `mapstructure:"UPLOAD_DIRECTORY"` // 上传文件路径
-	RedisUrl                 string   `mapstructure:"REDIS_URL"`        // Redis源配置
-	RedisPoolSize            int      // Redis连接池大小
-	DatabaseUrl              string   `mapstructure:"DATABASE_URL"` // 数据源配置
-	DbTablePrefix            string   // Mysql表前缀
-	DbDefaultStringSize      uint     // 数据库string类型字段的默认长度
-	DbMaxIdleConns           int      // 数据库空闲连接池最大值
-	DbMaxOpenConns           int      // 数据库连接池最大值
-	DbConnMaxLifetimeSeconds int16    // 连接可复用的最大时间(秒：默认28800秒)，请根据这个sql查处的时间设置： show variables like 'wait_timeout'
-	Version                  string   // 版本
-	Secret                   string   // 系统加密字符
-	StaticPath               string   // 静态资源URL路径
-	StaticDirectory          string   // 静态资源本地路径
-	RedisPrefix              string   // Redis键前缀
-	UploadImageSize          int64    // 上传图片限制
-	UploadVideoSize          int64    // 上传视频限制
-	UploadImageExt           []string // 上传图片扩展
-	UploadVideoExt           []string // 上传视频扩展
+	RootPath                 string // 项目根目录
+	GinMode                  string `mapstructure:"GIN_MODE"`        // gin运行模式
+	PublicUrl                string `mapstructure:"PUBLIC_URL"`      // 对外发布的Url
+	OssDomain                string `mapstructure:"OSS_DOMAIN"`      // OSS域名
+	ServerPort               int    `mapstructure:"SERVER_PORT"`     // 服务运行端口
+	DisallowModify           bool   `mapstructure:"DISALLOW_MODIFY"` // 禁止修改操作 (演示功能,限制POST请求)
+	PublicPrefix             string // 资源访问前缀
+	UploadDirectory          string `mapstructure:"UPLOAD_DIRECTORY"` // 上传文件路径
+	RedisUrl                 string `mapstructure:"REDIS_URL"`        // Redis源配置
+	RedisPoolSize            int    // Redis连接池大小
+	DatabaseUrl              string `mapstructure:"DATABASE_URL"` // 数据源配置
+	DbTablePrefix            string // Mysql表前缀
+	DbDefaultStringSize      uint   // 数据库string类型字段的默认长度
+	DbMaxIdleConns           int    // 数据库空闲连接池最大值
+	DbMaxOpenConns           int    // 数据库连接池最大值
+	DbConnMaxLifetimeSeconds int16  // 连接可复用的最大时间(秒：默认28800秒)，请根据这个sql查处的时间设置： show variables like 'wait_timeout'
+	Version                  string // 版本
+	Secret                   string // 系统加密字符
+
+	RedisPrefix     string   // Redis键前缀
+	UploadImageSize int64    // 上传图片限制
+	UploadVideoSize int64    // 上传视频限制
+	UploadImageExt  []string // 上传图片扩展
+	UploadVideoExt  []string // 上传视频扩展
 }
 
 // loadConfig 加载配置
@@ -91,10 +90,7 @@ func loadConfig(envPath string) envConfig {
 		Version: "v1.1.0",
 		// 系统加密字符
 		Secret: "UVTIyzCy",
-		// 静态资源URL路径
-		StaticPath: "/api/static",
-		// 静态资源本地路径
-		StaticDirectory: "static",
+
 		// Redis键前缀
 		RedisPrefix: "Like:",
 		// 上传图片限制
