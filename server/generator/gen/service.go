@@ -375,10 +375,11 @@ func (genSrv generateService) PreviewCode(id uint) (res map[string]string, e err
 	if e = response.CheckErr(err, "PreviewCode renderCodeByTable err"); e != nil {
 		return
 	}
-	res = make(map[string]string)
-	for tplPath, tplCode := range tplCodeMap {
-		res[strings.ReplaceAll(tplPath, ".tpl", "")] = tplCode
-	}
+	// res = make(map[string]string)
+	// for tplPath, tplCode := range tplCodeMap {
+	// 	res[strings.ReplaceAll(tplPath, ".tpl", "")] = tplCode
+	// }
+	res = tpl_utils.TemplateUtil.GetFilePaths(tplCodeMap, genTable.TableName)
 	return
 }
 
