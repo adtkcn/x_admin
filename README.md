@@ -18,9 +18,9 @@
 账号：admin 密码：123456
     
 ## 开发部署文档
-1. [go-打包.md](./docs/1.go-打包.md) 
-2. [go-运行.md](./docs/2.go-运行.md)
-3. [go-nginx配置.md](./docs/3.go-nginx配置.md)
+0. [使用](./docs/0.使用.md)
+1. [打包部署](./docs/1.go-打包部署) 
+2. [nginx配置.md](./docs/2.nginx配置.md)
 
 
 ## 简介
