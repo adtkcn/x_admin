@@ -45,10 +45,10 @@ type SystemAuthAdminEditReq struct {
 
 //SystemAuthAdminUpdateReq 管理员更新参数
 type SystemAuthAdminUpdateReq struct {
-	Nickname     string `form:"nickname" binding:"required,min=2,max=30"`     // 昵称
-	Avatar       string `form:"avatar"`                                       // 头像
-	Password     string `form:"password" binding:"required"`                  // 密码
-	CurrPassword string `form:"currPassword" binding:"required,min=6,max=32"` // 密码
+	Nickname     string `form:"nickname" binding:"required,min=2,max=30"` // 昵称
+	Avatar       string `form:"avatar"`                                   // 头像
+	Password     string `form:"password" binding:""`                      // 密码
+	CurrPassword string `form:"currPassword" binding:""`                  // 密码
 }
 
 //SystemAuthAdminDelReq 管理员删除参数

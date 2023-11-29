@@ -308,7 +308,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq SystemAu
 		avatar = updateReq.Avatar
 	}
 	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(avatar)
-	delete(adminMap, "aaa")
+	// delete(adminMap, "aaa")
 	if updateReq.Password != "" {
 		currPass := util.ToolsUtil.MakeMd5(updateReq.CurrPassword + admin.Salt)
 		if currPass != admin.Password {
