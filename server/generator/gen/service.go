@@ -383,31 +383,6 @@ func (genSrv generateService) PreviewCode(id uint) (res map[string]string, e err
 	return
 }
 
-// GenCode 生成代码 (自定义路径)
-func (genSrv generateService) GenCode(tableName string) (e error) {
-	var genTable gen_model.GenTable
-	err := genSrv.db.Where("table_name = ?", tableName).Order("id desc").Limit(1).First(&genTable).Error
-	if e = response.CheckErrDBNotRecord(err, "记录丢失！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "GenCode First err"); e != nil {
-		return
-	}
-	//获取模板内容
-	tplCodeMap, err := genSrv.renderCodeByTable(genTable)
-	if e = response.CheckErr(err, "GenCode renderCodeByTable err"); e != nil {
-		return
-	}
-	//获取生成根路径
-	basePath := tpl_utils.TemplateUtil.GetGenPath(genTable)
-	//生成代码文件
-	err = tpl_utils.TemplateUtil.GenCodeFiles(tplCodeMap, genTable.TableName, basePath)
-	if e = response.CheckErr(err, "GenCode GenCodeFiles err"); e != nil {
-		return
-	}
-	return
-}
-
 // genZipCode 生成代码 (压缩包下载)
 func (genSrv generateService) genZipCode(zipWriter *zip.Writer, tableName string) (e error) {
 	var genTable gen_model.GenTable

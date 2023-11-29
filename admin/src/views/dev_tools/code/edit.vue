@@ -217,25 +217,7 @@
                                 />
                             </div>
                         </el-form-item>
-                        <el-form-item label="生成方式" prop="gen.genType">
-                            <el-radio-group v-model="formData.gen.genType">
-                                <el-radio :label="GenType.ZIP">压缩包下载</el-radio>
-                                <el-radio :label="GenType.CUSTOM_PATH">自定义路径</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item
-                            v-if="formData.gen.genType == GenType.CUSTOM_PATH"
-                            label="自定义路径"
-                            prop="gen.genPath"
-                        >
-                            <div class="w-80">
-                                <el-input
-                                    v-model="formData.gen.genPath"
-                                    placeholder="请输入自定义路径"
-                                    clearable
-                                />
-                            </div>
-                        </el-form-item>
+
                         <template v-if="formData.gen.genTpl == GenTpl.TREE">
                             <el-form-item label="树主键字段" prop="gen.treePrimary">
                                 <el-select
@@ -295,11 +277,6 @@ enum GenTpl {
     TREE = 'tree'
 }
 
-enum GenType {
-    ZIP,
-    CUSTOM_PATH
-}
-
 const route = useRoute()
 const router = useRouter()
 const { removeTab } = useMultipleTabs()
@@ -316,9 +293,8 @@ const formData = reactive({
     column: [] as any[],
     gen: {
         functionName: '',
-        genPath: '',
+
         genTpl: '',
-        genType: 0,
         moduleName: '',
         subTableFk: '',
         subTableName: '',

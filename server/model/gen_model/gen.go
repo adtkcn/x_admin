@@ -15,11 +15,10 @@ type GenTable struct {
 	TreeParent   string `gorm:"not null;default:'';comment:'树父级字段'"`
 	TreeName     string `gorm:"not null;default:'';comment:'树显示字段'"`
 	GenTpl       string `gorm:"not null;default:'crud';comment:'生成模板方式: [crud=单表, tree=树表]'"`
-	GenType      int    `gorm:"not null;default:0;comment:'生成代码方式: [0=zip压缩包, 1=自定义路径]'"`
-	GenPath      string `gorm:"not null;default:'/';comment:'生成代码路径: [不填默认项目路径]'"`
-	Remarks      string `gorm:"not null;default:'';comment:'备注信息'"`
-	CreateTime   int64  `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime   int64  `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+
+	Remarks    string `gorm:"not null;default:'';comment:'备注信息'"`
+	CreateTime int64  `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime int64  `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 }
 
 //GenTableColumn 代码生成表列实体

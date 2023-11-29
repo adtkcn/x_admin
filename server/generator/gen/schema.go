@@ -62,23 +62,22 @@ type EditColumn struct {
 
 // EditTableReq 编辑表结构参数
 type EditTableReq struct {
-	ID           uint         `form:"id" binding:"required,gt=0"`                    // 主键
-	TableName    string       `form:"tableName" binding:"required,min=1,max=200"`    // 表名称
-	EntityName   string       `form:"entityName" binding:"required,min=1,max=200"`   // 实体名称
-	TableComment string       `form:"tableComment" binding:"required,min=1,max=200"` // 表描述
-	AuthorName   string       `form:"authorName" binding:"max=100"`                  // 作者名称
-	Remarks      string       `form:"remarks" binding:"max=60"`                      // 备注信息
-	GenTpl       string       `form:"genTpl" binding:"oneof=crud tree"`              // 生成模板方式: [crud=单表, tree=树表]
-	ModuleName   string       `form:"moduleName" binding:"required,min=1,max=60"`    // 生成模块名
-	FunctionName string       `form:"functionName" binding:"required,min=1,max=60"`  // 生成功能名
-	GenType      int          `form:"genType" binding:"oneof=0 1"`                   // 生成代码方式: [0=zip压缩包, 1=自定义路径]
-	GenPath      string       `form:"genPath,default=/" binding:"required,max=60"`   // 生成路径
-	TreePrimary  string       `form:"treePrimary"`                                   // 树表主键
-	TreeParent   string       `form:"treeParent"`                                    // 树表父键
-	TreeName     string       `form:"treeName"`                                      // 树表名称
-	SubTableName string       `form:"subTableName"`                                  // 子表名称
-	SubTableFk   string       `form:"subTableFk"`                                    // 子表外键
-	Columns      []EditColumn `form:"columns" binding:"required"`                    // 字段列表
+	ID           uint   `form:"id" binding:"required,gt=0"`                    // 主键
+	TableName    string `form:"tableName" binding:"required,min=1,max=200"`    // 表名称
+	EntityName   string `form:"entityName" binding:"required,min=1,max=200"`   // 实体名称
+	TableComment string `form:"tableComment" binding:"required,min=1,max=200"` // 表描述
+	AuthorName   string `form:"authorName" binding:"max=100"`                  // 作者名称
+	Remarks      string `form:"remarks" binding:"max=60"`                      // 备注信息
+	GenTpl       string `form:"genTpl" binding:"oneof=crud tree"`              // 生成模板方式: [crud=单表, tree=树表]
+	ModuleName   string `form:"moduleName" binding:"required,min=1,max=60"`    // 生成模块名
+	FunctionName string `form:"functionName" binding:"required,min=1,max=60"`  // 生成功能名
+
+	TreePrimary  string       `form:"treePrimary"`                // 树表主键
+	TreeParent   string       `form:"treeParent"`                 // 树表父键
+	TreeName     string       `form:"treeName"`                   // 树表名称
+	SubTableName string       `form:"subTableName"`               // 子表名称
+	SubTableFk   string       `form:"subTableFk"`                 // 子表外键
+	Columns      []EditColumn `form:"columns" binding:"required"` // 字段列表
 }
 
 // DelTableReq 删除表结构参数
@@ -111,8 +110,8 @@ type DbTableResp struct {
 
 // GenTableResp 生成表返回信息
 type GenTableResp struct {
-	ID           uint        `json:"id" structs:"id"`                     // 主键
-	GenType      int         `json:"genType" structs:"genType"`           // 生成类型
+	ID uint `json:"id" structs:"id"` // 主键
+
 	TableName    string      `json:"tableName" structs:"tableName"`       // 表名称
 	TableComment string      `json:"tableComment" structs:"tableComment"` // 表描述
 	CreateTime   core.TsTime `json:"createTime" structs:"createTime"`     // 创建时间
@@ -133,9 +132,8 @@ type GenTableBaseResp struct {
 
 // GenTableGenResp 生成表生成返回信息
 type GenTableGenResp struct {
-	GenTpl       string `json:"genTpl" structs:"genTpl"`             // 生成模板方式: [crud=单表, tree=树表]
-	GenType      int    `json:"genType" structs:"genType"`           // 生成代码方式: [0=zip压缩包, 1=自定义路径]
-	GenPath      string `json:"genPath" structs:"genPath"`           // 生成代码路径: [不填默认项目路径]
+	GenTpl string `json:"genTpl" structs:"genTpl"` // 生成模板方式: [crud=单表, tree=树表]
+
 	ModuleName   string `json:"moduleName" structs:"moduleName"`     // 生成模块名
 	FunctionName string `json:"functionName" structs:"functionName"` // 生成功能名
 	TreePrimary  string `json:"treePrimary" structs:"treePrimary"`   // 树主键字段

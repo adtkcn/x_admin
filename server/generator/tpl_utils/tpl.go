@@ -5,11 +5,9 @@ import (
 	"bytes"
 	"embed"
 	"io"
-	"os"
 	"path"
 	"strings"
 	"text/template"
-	"x_admin/config"
 	"x_admin/core/response"
 	"x_admin/model/gen_model"
 	"x_admin/util"
@@ -194,21 +192,12 @@ func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 		return "", e
 	}
 	buf := &bytes.Buffer{}
-	basePath := path.Base(tplPath)
-	err = tpl.ExecuteTemplate(buf, basePath, tplVars)
+	fileName := path.Base(tplPath)
+	err = tpl.ExecuteTemplate(buf, fileName, tplVars)
 	if e = response.CheckErr(err, "TemplateUtil.Render Execute err"); e != nil {
 		return "", e
 	}
 	return buf.String(), nil
-}
-
-// GetGenPath 获取生成路径
-func (tu templateUtil) GetGenPath(table gen_model.GenTable) string {
-	if table.GenPath == "/" {
-		//return path.Join(config.Config.RootPath, config.GenConfig.GenRootPath)
-		return config.GenConfig.GenRootPath
-	}
-	return table.GenPath
 }
 
 // GetFilePaths 获取生成文件相对路径
@@ -233,26 +222,6 @@ func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, TableName stri
 		filePath[file] = tplCode
 	}
 	return filePath
-}
-
-// GenCodeFiles 生成代码文件
-func (tu templateUtil) GenCodeFiles(tplCodeMap map[string]string, TableName string, basePath string) error {
-	filePaths := tu.GetFilePaths(tplCodeMap, TableName)
-	for file, tplCode := range filePaths {
-		filePath := path.Join(basePath, file)
-		dir := path.Dir(filePath)
-		if !util.ToolsUtil.IsFileExist(dir) {
-			err := os.MkdirAll(dir, 0755)
-			if err != nil {
-				return response.CheckErr(err, "TemplateUtil.GenCodeFiles MkdirAll err")
-			}
-		}
-		err := os.WriteFile(filePath, []byte(tplCode), 0644)
-		if err != nil {
-			return response.CheckErr(err, "TemplateUtil.GenCodeFiles WriteFile err")
-		}
-	}
-	return nil
 }
 
 func addFileToZip(zipWriter *zip.Writer, file zFile) error {

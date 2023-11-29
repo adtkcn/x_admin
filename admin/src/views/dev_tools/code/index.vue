@@ -206,23 +206,15 @@ const handlePreview = async (id: number) => {
 }
 
 const handleGenerate = async (selectData: any[]) => {
-    const downloadTables = getTables(selectData, 0)
-    const genTables = getTables(selectData, 1)
+    const downloadTables = getTables(selectData)
     if (downloadTables) {
         const file = await downloadCode({ tables: downloadTables })
         streamFileDownload(file, 'code_' + downloadTables + '.zip')
     }
-    if (genTables) {
-        await generateCode({ tables: genTables })
-        feedback.msgSuccess('生成成功')
-    }
 }
 
-const getTables = (selectData: any[], type: 0 | 1) => {
-    return selectData
-        .filter(({ genType }) => genType == type)
-        .map(({ tableName }) => tableName)
-        .join()
+const getTables = (selectData: any[]) => {
+    return selectData.map(({ tableName }) => tableName).join()
 }
 
 const handleCommand = (command: any, row: any) => {
