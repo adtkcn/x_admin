@@ -154,7 +154,6 @@ import {
     syncColumn,
     generateDelete,
     generatePreview,
-    generateCode,
     downloadCode
 } from '@/api/tools/code'
 import { usePaging } from '@/hooks/usePaging'

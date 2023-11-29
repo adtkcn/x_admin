@@ -50,11 +50,6 @@ export function generatePreview(params: any) {
     return request.get({ url: '/gen/previewCode', params })
 }
 
-//生成代码
-export function generateCode(params: any) {
-    return request.get({ url: '/gen/genCode', params })
-}
-
 //下载代码
 export function downloadCode(params: any) {
     return request.get(

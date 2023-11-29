@@ -24,7 +24,7 @@ type IGenerateService interface {
 	EditTable(editReq EditTableReq) (e error)
 	DelTable(ids []uint) (e error)
 	PreviewCode(id uint) (res map[string]string, e error)
-	GenCode(tableName string) (e error)
+
 	DownloadCode(tableNames []string) ([]byte, error)
 }
 

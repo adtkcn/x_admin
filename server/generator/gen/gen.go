@@ -33,7 +33,6 @@ func GenRoute(rg *gin.RouterGroup) {
 	rg.POST("/editTable", handle.editTable)
 	rg.POST("/delTable", handle.delTable)
 	rg.GET("/previewCode", handle.previewCode)
-	rg.GET("/genCode", handle.genCode)
 	rg.GET("/downloadCode", handle.downloadCode)
 }
 
