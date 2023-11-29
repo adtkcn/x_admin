@@ -19,8 +19,4 @@ func ArticleCollectRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/", middleware.TokenAuth())
 	rg.GET("/article_collect/list", handle.List)
-	rg.GET("/article_collect/detail", handle.Detail)
-	rg.POST("/article_collect/add", handle.Add)
-	rg.POST("/article_collect/edit", handle.Edit)
-	rg.POST("/article_collect/del", handle.Del)
 }

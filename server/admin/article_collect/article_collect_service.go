@@ -17,17 +17,18 @@ type IArticleCollectService interface {
 }
 
 // NewArticleCollectService 初始化
-func NewArticleCollectService(db *gorm.DB) IArticleCollectService {
-	return &articleCollectService{db: db}
+func NewArticleCollectService(db *gorm.DB) ArticleCollectService {
+
+	return ArticleCollectService{db: db}
 }
 
-// articleCollectService 文章收藏服务实现类
-type articleCollectService struct {
+// ArticleCollectService 文章收藏服务实现类
+type ArticleCollectService struct {
 	db *gorm.DB
 }
 
 // List 文章收藏列表
-func (Service articleCollectService) List(page request.PageReq, listReq ArticleCollectListReq) (res response.PageResp, e error) {
+func (Service ArticleCollectService) List(page request.PageReq, listReq ArticleCollectListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -60,63 +61,4 @@ func (Service articleCollectService) List(page request.PageReq, listReq ArticleC
 		Count:    count,
 		Lists:    resps,
 	}, nil
-}
-
-// Detail 文章收藏详情
-func (Service articleCollectService) Detail(id int) (res ArticleCollectResp, e error) {
-	var obj model.ArticleCollect
-	err := Service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
-		return
-	}
-	response.Copy(&res, obj)
-	return
-}
-
-// Add 文章收藏新增
-func (Service articleCollectService) Add(addReq ArticleCollectAddReq) (e error) {
-	var obj model.ArticleCollect
-	response.Copy(&obj, addReq)
-	err := Service.db.Create(&obj).Error
-	e = response.CheckErr(err, "Add Create err")
-	return
-}
-
-// Edit 文章收藏编辑
-func (Service articleCollectService) Edit(editReq ArticleCollectEditReq) (e error) {
-	var obj model.ArticleCollect
-	err := Service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
-	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
-		return
-	}
-	// 更新
-	response.Copy(&obj, editReq)
-	err = Service.db.Model(&obj).Updates(obj).Error
-	e = response.CheckErr(err, "Edit Updates err")
-	return
-}
-
-// Del 文章收藏删除
-func (Service articleCollectService) Del(id int) (e error) {
-	var obj model.ArticleCollect
-	err := Service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
-	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "Del First err"); e != nil {
-		return
-	}
-	// 删除
-	obj.IsDelete = 1
-	err = Service.db.Save(&obj).Error
-	e = response.CheckErr(err, "Del Save err")
-	return
 }
