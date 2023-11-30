@@ -19,7 +19,9 @@ import useSettingStore from '@/stores/modules/setting'
 import useUserStore from '@/stores/modules/user'
 import SideLogo from './logo.vue'
 import SideMenu from './menu.vue'
-
+defineOptions({
+    name: 'Side'
+})
 const appStore = useAppStore()
 const isCollapsed = computed(() => {
     if (appStore.isMobile) {

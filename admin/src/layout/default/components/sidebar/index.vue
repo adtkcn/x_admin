@@ -7,9 +7,9 @@
             title="主题设置"
             :with-header="false"
         >
-            <side />
+            <Side />
         </el-drawer>
-        <side v-show="!isMobile" />
+        <Side v-show="!isMobile" />
     </aside>
 </template>
 
@@ -17,7 +17,9 @@
 import Side from './side.vue'
 import useAppStore from '@/stores/modules/app'
 import useSettingStore from '@/stores/modules/setting'
-
+defineOptions({
+    name: 'LayoutSidebar'
+})
 const appStore = useAppStore()
 const settingStore = useSettingStore()
 const isMobile = computed(() => appStore.isMobile)

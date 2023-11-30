@@ -86,11 +86,16 @@
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
-<script lang="ts" setup name="post">
+<script lang="ts" setup>
 import { postDelete, postLists } from '@/api/org/post'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+
+defineOptions({
+    name: 'post'
+})
+
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({

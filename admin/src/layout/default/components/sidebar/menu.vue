@@ -29,7 +29,9 @@
 import type { PropType } from 'vue'
 import MenuItem from './menu-item.vue'
 import type { RouteRecordRaw } from 'vue-router'
-
+defineOptions({
+    name: 'SideMenu'
+})
 const props = defineProps({
     routes: {
         type: Object as PropType<RouteRecordRaw[]>

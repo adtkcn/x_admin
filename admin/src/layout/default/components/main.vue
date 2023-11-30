@@ -16,6 +16,10 @@
 import useAppStore from '@/stores/modules/app'
 import useTabsStore from '@/stores/modules/multipleTabs'
 import useSettingStore from '@/stores/modules/setting'
+defineOptions({
+    name: 'LayoutMain'
+})
+
 const appStore = useAppStore()
 const tabsStore = useTabsStore()
 const settingStore = useSettingStore()

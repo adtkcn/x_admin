@@ -23,6 +23,9 @@
 <script setup lang="ts">
 import useAppStore from '@/stores/modules/app'
 import { ThemeEnum } from '@/enums/appEnums'
+defineOptions({
+    name: 'SideLogo'
+})
 defineProps({
     szie: { type: Number, default: 34 },
     title: { type: String },

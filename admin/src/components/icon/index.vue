@@ -1,10 +1,33 @@
+<template>
+    <span style="display: inline-block; line-height: 1">
+        <span
+            v-if="isElIcon"
+            class="svg-icon-container"
+            :style="{ height: size ? size + 'px' : 'auto', color: color }"
+        >
+            <!-- <ElIcon v-if="isElIcon" :size="size" :color="color"> -->
+            <component :is="name" style="width: 1em; height: 1em"></component>
+            <!-- </ElIcon> -->
+        </span>
+        <ISvgIcon
+            v-if="isLocalIcon"
+            class="local-icon"
+            :size="size"
+            :color="color"
+            :name="name"
+        ></ISvgIcon>
+    </span>
+</template>
 <script lang="ts">
-import { createVNode } from 'vue'
-import { ElIcon } from 'element-plus'
+// import { ElIcon } from 'element-plus'
 import { EL_ICON_PREFIX, LOCAL_ICON_PREFIX } from './index'
-import svgIcon from './svg-icon.vue'
+import ISvgIcon from './svg-icon.vue'
 export default defineComponent({
     name: 'Icon',
+    components: {
+        // ElIcon,
+        ISvgIcon
+    },
     props: {
         name: {
             type: String,
@@ -20,30 +43,34 @@ export default defineComponent({
         }
     },
     setup(props) {
-        if (props.name.indexOf(EL_ICON_PREFIX) === 0) {
-            // el-icon
-            return () =>
-                createVNode(
-                    ElIcon,
-                    {
-                        size: props.size,
-                        color: props.color
-                    },
-                    () => [createVNode(resolveComponent(props.name.replace(EL_ICON_PREFIX, '')))]
-                )
+        // const isElIcon = ref(false)
+        const isLocalIcon = computed(() => {
+            return props.name.indexOf(LOCAL_ICON_PREFIX) === 0
+        })
+
+        const isElIcon = computed(() => {
+            return props.name.indexOf(EL_ICON_PREFIX) === 0
+        })
+
+        return {
+            isElIcon,
+            isLocalIcon
         }
-        if (props.name.indexOf(LOCAL_ICON_PREFIX) === 0) {
-            // 本地icon
-            return () =>
-                h(
-                    'i',
-                    {
-                        class: ['local-icon']
-                    },
-                    createVNode(svgIcon, { ...props })
-                )
-        }
-        return () => {}
     }
 })
 </script>
+<style>
+.svg-icon-container {
+    display: inline-block;
+    line-height: 1;
+    overflow: hidden;
+    /* vertical-align: middle; */
+    /* height: auto; */
+    /* width: 1em;
+    */
+}
+.local-icon {
+    display: inline-block;
+    /* margin: 0 8px; */
+}
+</style>

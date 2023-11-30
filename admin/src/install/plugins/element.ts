@@ -6,6 +6,8 @@ import 'element-plus/es/components/dialog/style/css'
 export default (app: App<Element>) => {
     // 全局注册ElementPlus图标
     for (const [key, component] of Object.entries(ElementPlusIcons)) {
-        app.component(key, component)
+        // app.component(key, component)
+
+        app.component('el-icon-' + key, component)
     }
 }

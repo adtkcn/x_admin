@@ -2,7 +2,7 @@
     <template v-if="!route.meta?.hidden">
         <app-link v-if="!hasShowChild" :to="`${routePath}?${queryStr}`">
             <el-menu-item :index="routePath">
-                <icon
+                <Icon
                     class="menu-item-icon"
                     :size="16"
                     v-if="routeMeta?.icon"
@@ -13,9 +13,11 @@
                 </template>
             </el-menu-item>
         </app-link>
-        <el-sub-menu v-else :index="routePath" :popper-class="popperClass">
+        <el-sub-menu v-else :index="routePath" :popper-class="props.popperClass">
             <template #title>
-                <icon
+                <!-- {{ routeMeta }} -->
+
+                <Icon
                     class="menu-item-icon"
                     :size="16"
                     v-if="routeMeta?.icon"
@@ -24,11 +26,11 @@
                 <span>{{ routeMeta?.title }}</span>
             </template>
             <menu-item
-                v-for="item in route?.children"
+                v-for="item in route?.children || []"
                 :key="resolvePath(item.path)"
                 :route="item"
                 :route-path="resolvePath(item.path)"
-                :popper-class="popperClass"
+                :popper-class="props.popperClass"
             />
         </el-sub-menu>
     </template>
@@ -43,7 +45,9 @@ interface Props {
     routePath: string
     popperClass: string
 }
-
+defineOptions({
+    name: 'MenuItem'
+})
 const props = defineProps<Props>()
 
 const hasShowChild = computed(() => {
@@ -52,7 +56,7 @@ const hasShowChild = computed(() => {
 })
 
 const routeMeta = computed(() => {
-    return props.route.meta
+    return props?.route?.meta
 })
 
 const resolvePath = (path: string) => {

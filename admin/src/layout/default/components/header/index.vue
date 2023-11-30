@@ -39,6 +39,9 @@ import Setting from '../setting/index.vue'
 import MultipleTabs from './multiple-tabs.vue'
 
 import useSettingStore from '@/stores/modules/setting'
+defineOptions({
+    name: 'LayoutHeader'
+})
 const appStore = useAppStore()
 const isMobile = computed(() => appStore.isMobile)
 const settingStore = useSettingStore()
