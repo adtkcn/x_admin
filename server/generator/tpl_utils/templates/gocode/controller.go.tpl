@@ -23,7 +23,7 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {
 //	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.PageResp	"成功"
+//	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
 //	@Failure	400			{object}	string				"请求错误"
 //	@Router		/api/{{{ .ModuleName }}}/list [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
@@ -48,7 +48,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 //	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
+//	@Success	200			{object}	{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
 //	@Router		/api/{{{ .ModuleName }}}/detail [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context) {
 	var detailReq {{{ title (toCamelCase .EntityName) }}}DetailReq

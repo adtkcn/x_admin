@@ -95,8 +95,7 @@ func main() {
 		db, _ := core.GetDB().DB()
 		defer db.Close()
 	}
-	// 初始化DI
-	// initDI()
+
 	// 初始化router
 	router := initRouter()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
