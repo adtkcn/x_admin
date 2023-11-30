@@ -13,6 +13,11 @@ import (
 	"x_admin/middleware"
 	"x_admin/routers"
 
+	_ "x_admin/docs"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -63,6 +68,25 @@ func initServer(router *gin.Engine) *http.Server {
 	}
 }
 
+//	@title			x_admin文档
+//	@version		0.0.1
+//	@description	x_admin是一个完整的后台管理系统
+//	@termsOfService	http://likeadmin.adtk.cn
+
+//	@contact.name	API Support
+//	@contact.url	http://likeadmin.adtk.cn
+//	@contact.email	11675084@qq.com
+
+//	@license.name	MIT License
+//	@license.url	https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
+
+//	@host		localhost:8001
+//	@BasePath	/
+
+//	@securityDefinitions.basic	BasicAuth
+
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
 	// 刷新日志缓冲
 	defer core.Logger.Sync()
@@ -75,6 +99,7 @@ func main() {
 	// initDI()
 	// 初始化router
 	router := initRouter()
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// 初始化server
 	s := initServer(router)
 	// 运行服务

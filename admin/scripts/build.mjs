@@ -10,6 +10,16 @@ const releasePath = path.resolve(cwd, releaseRelativePath)
 
 const goProjectPath = path.resolve(cwd, '../server')
 async function build_go() {
+    await execaCommand('swag fmt', {
+        stdio: 'inherit',
+        encoding: 'utf-8',
+        cwd: goProjectPath
+    })
+    await execaCommand('swag init', {
+        stdio: 'inherit',
+        encoding: 'utf-8',
+        cwd: goProjectPath
+    })
     await execaCommand('goreleaser release --snapshot --clean', {
         stdio: 'inherit',
         encoding: 'utf-8',

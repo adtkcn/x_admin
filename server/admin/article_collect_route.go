@@ -18,5 +18,6 @@ func ArticleCollectRoute(rg *gin.RouterGroup) {
 	handle := article_collect.ArticleCollectHandler{Service: server}
 
 	rg = rg.Group("/", middleware.TokenAuth())
+
 	rg.GET("/article_collect/list", handle.List)
 }
