@@ -44,7 +44,9 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	dept.DeptRoute(rg)
 	system.RoleRoute(rg)
 	log.LogRoute(rg)
+
 	ArticleCollectRoute(rg)
+	FlowTemplateRoute(rg)
 
 	captcha.CaptchaRoute(rg)
 }

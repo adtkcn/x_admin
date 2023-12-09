@@ -1,6 +1,5 @@
 package {{{ .ModuleName }}}
-
-import "x_admin/core"
+ 
 
 //{{{ title (toCamelCase .EntityName) }}}ListReq {{{ .FunctionName }}}列表参数
 type {{{ title (toCamelCase .EntityName) }}}ListReq struct {
