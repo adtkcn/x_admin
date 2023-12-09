@@ -99,6 +99,7 @@ func main() {
 	// 初始化router
 	router := initRouter()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	fmt.Println("文档:", "http://localhost:8001/swagger/index.html")
 	// 初始化server
 	s := initServer(router)
 	// 运行服务
