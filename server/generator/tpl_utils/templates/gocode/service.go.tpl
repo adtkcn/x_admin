@@ -9,6 +9,8 @@ import (
 
 type I{{{ title (toCamelCase .EntityName) }}}Service interface {
 	List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error)
+	ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error)
+
 	Detail(id int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error)
 	Add(addReq {{{ title (toCamelCase .EntityName) }}}AddReq) (e error)
 	Edit(editReq {{{ title (toCamelCase .EntityName) }}}EditReq) (e error)
@@ -69,6 +71,17 @@ func (Service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 		Count:    count,
 		Lists:    resps,
 	}, nil
+}
+//ListAll {{{ .FunctionName }}}列表
+func (Service {{{ toCamelCase .EntityName }}}Service) ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
+	var objs model.{{{ title (toCamelCase .EntityName) }}}
+	
+	err := Service.db.Find(&objs).Error
+	if e = response.CheckErr(err, "ListAll Find err"); e != nil {
+		return
+	}
+	response.Copy(&res, objs)
+	return res, nil
 }
 
 //Detail {{{ .FunctionName }}}详情

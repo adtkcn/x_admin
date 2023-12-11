@@ -92,7 +92,7 @@ func loadConfig(envPath string) envConfig {
 		Secret: "UVTIyzCy",
 
 		// Redis键前缀
-		RedisPrefix: "Like:",
+		RedisPrefix: "x:",
 		// 上传图片限制
 		UploadImageSize: 1024 * 1024 * 10,
 		// 上传视频限制

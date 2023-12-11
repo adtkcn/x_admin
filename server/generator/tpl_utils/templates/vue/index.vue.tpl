@@ -121,7 +121,7 @@
         />
     </div>
 </template>
-<script lang="ts" setup name="{{{ .ModuleName }}}">
+<script lang="ts" setup>
 import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_lists } from '@/api/{{{ .ModuleName }}}'
 {{{- if ge (len .DictFields) 1 }}}
 import { useDictData } from '@/hooks/useDictOptions'
@@ -129,6 +129,9 @@ import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+defineOptions({
+    name:"{{{ .ModuleName }}}"
+})
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({

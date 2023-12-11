@@ -21,6 +21,7 @@ import (
 {{{.ModuleName }}}:edit
 {{{.ModuleName }}}:del
 {{{.ModuleName }}}:list
+{{{.ModuleName }}}:listAll
 {{{.ModuleName }}}:detail
 */
 
@@ -35,6 +36,7 @@ func {{{ title (toCamelCase .ModuleName) }}}Route(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/", middleware.TokenAuth())
 	rg.GET("/{{{ .ModuleName }}}/list", handle.List)
+	rg.GET("/{{{ .ModuleName }}}/listAll", handle.ListAll)
 	rg.GET("/{{{ .ModuleName }}}/detail", handle.Detail)
 	rg.POST("/{{{ .ModuleName }}}/add", handle.Add)
 	rg.POST("/{{{ .ModuleName }}}/edit", handle.Edit)

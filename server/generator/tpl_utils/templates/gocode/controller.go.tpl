@@ -39,6 +39,16 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
+//	@Summary	{{{ .FunctionName }}}列表-所有
+//	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
+//  @Produce	json
+//	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
+//	@Router		/api/{{{ .ModuleName }}}/list [get]
+func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
+	res, err := hd.Service.List(page, listReq)
+	response.CheckAndRespWithData(c, res, err)
+}
+
 //	@Summary	{{{ .FunctionName }}}详情
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //	@Produce	json

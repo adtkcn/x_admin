@@ -1,8 +1,12 @@
 import request from '@/utils/request'
 
 // {{{.FunctionName}}}列表
-export function {{{.ModuleName}}}_lists(params?: Record<string, any>) {
+export function {{{.ModuleName}}}_list(params?: Record<string, any>) {
     return request.get({ url: '/{{{.ModuleName}}}/list', params })
+}
+// {{{.FunctionName}}}列表-所有
+export function {{{.ModuleName}}}_list_all(params?: Record<string, any>) {
+    return request.get({ url: '/{{{.ModuleName}}}/listAll', params })
 }
 
 // {{{.FunctionName}}}详情
