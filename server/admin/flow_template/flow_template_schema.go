@@ -21,6 +21,7 @@ type FlowTemplateAddReq struct {
 	FlowRemark      string `form:"flowRemark"`      // 流程描述
 	FlowFormData    string `form:"flowFormData"`    // 表单配置
 	FlowProcessData string `form:"flowProcessData"` // 流程配置
+
 }
 
 //FlowTemplateEditReq 流程模板新增参数
@@ -31,6 +32,7 @@ type FlowTemplateEditReq struct {
 	FlowRemark      string `form:"flowRemark"`      // 流程描述
 	FlowFormData    string `form:"flowFormData"`    // 表单配置
 	FlowProcessData string `form:"flowProcessData"` // 流程配置
+
 }
 
 //FlowTemplateDelReq 流程模板新增参数
@@ -46,4 +48,5 @@ type FlowTemplateResp struct {
 	FlowRemark      string `json:"flowRemark" structs:"flowRemark"`           // 流程描述
 	FlowFormData    string `json:"flowFormData" structs:"flowFormData"`       // 表单配置
 	FlowProcessData string `json:"flowProcessData" structs:"flowProcessData"` // 流程配置
+
 }

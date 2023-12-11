@@ -1,10 +1,11 @@
 package admin
 
 import (
-	"github.com/gin-gonic/gin"
-	"x_admin/core" 
-	"x_admin/middleware" 
 	"x_admin/admin/flow_template"
+	"x_admin/core"
+	"x_admin/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 /**
@@ -21,9 +22,9 @@ flow_template:add
 flow_template:edit
 flow_template:del
 flow_template:list
+flow_template:listAll
 flow_template:detail
 */
-
 
 // FlowTemplateRoute(rg)
 func FlowTemplateRoute(rg *gin.RouterGroup) {
@@ -35,6 +36,7 @@ func FlowTemplateRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/", middleware.TokenAuth())
 	rg.GET("/flow_template/list", handle.List)
+	rg.GET("/flow_template/listAll", handle.ListAll)
 	rg.GET("/flow_template/detail", handle.Detail)
 	rg.POST("/flow_template/add", handle.Add)
 	rg.POST("/flow_template/edit", handle.Edit)

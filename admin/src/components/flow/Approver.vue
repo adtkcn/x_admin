@@ -11,7 +11,7 @@
         style="height: 100vh"
         class="flow-config-dialog"
     >
-        <template #header="{ close, titleId, titleClass }">
+        <template #header="{ close }">
             <header class="page__header">
                 <div class="page-actions">
                     {{ title }}
@@ -157,7 +157,6 @@ export default {
         },
         publish() {
             const getCmpData = (name) => {
-                console.log(name)
                 return this.$refs[name].getData()
             }
             // basicSetting  formDesign processDesign 返回的是Promise 因为要做校验
@@ -172,7 +171,8 @@ export default {
                         id: this?.mockData?.id,
                         basicSetting: res[0].formData,
                         flowFormData: res[1].formData,
-                        flowProcessData: res[2].formData
+                        flowProcessData: res[2].formData,
+                        flowProcessTreeData: res[2].TreeNode
 
                         // advancedSetting: getCmpData("advancedSetting"),
                     }
@@ -185,6 +185,7 @@ export default {
                     err.msg && this.$message.error(err.msg)
                 })
         },
+
         sendToServer(param) {
             this.$notify({
                 title: '数据已整合完成',

@@ -45,7 +45,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
 //	@Router		/api/{{{ .ModuleName }}}/list [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
-	res, err := hd.Service.List(page, listReq)
+	res, err := hd.Service.ListAll()
 	response.CheckAndRespWithData(c, res, err)
 }
 

@@ -47,6 +47,8 @@ func RegisterGroup(rg *gin.RouterGroup) {
 
 	ArticleCollectRoute(rg)
 	FlowTemplateRoute(rg)
+	FlowApplyRoute(rg)
+	FlowHistoryRoute(rg)
 
 	captcha.CaptchaRoute(rg)
 }

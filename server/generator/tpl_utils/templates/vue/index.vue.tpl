@@ -122,7 +122,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_lists } from '@/api/{{{ .ModuleName }}}'
+import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{ .ModuleName }}}'
 {{{- if ge (len .DictFields) 1 }}}
 import { useDictData } from '@/hooks/useDictOptions'
 {{{- end }}}
@@ -148,7 +148,7 @@ const queryParams = reactive({
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
-    fetchFun: {{{ .ModuleName }}}_lists,
+    fetchFun: {{{ .ModuleName }}}_list,
     params: queryParams
 })
 

@@ -83,14 +83,15 @@
                                         <el-option label="BigDecimal" value="BigDecimal" />
                                         <el-option label="Date" value="Date" />
                                         <el-option label="Boolean" value="Boolean" />
+                                        <el-option label="TsTime" value="core.TsTime" />
                                     </el-select>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="go属性" min-width="100">
+                            <!-- <el-table-column label="go属性" min-width="100">
                                 <template v-slot="{ row }">
                                     <el-input v-model="row.goField" />
                                 </template>
-                            </el-table-column>
+                            </el-table-column> -->
                             <el-table-column label="必填" width="80">
                                 <template v-slot="{ row }">
                                     <el-checkbox

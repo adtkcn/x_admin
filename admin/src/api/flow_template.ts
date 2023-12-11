@@ -5,6 +5,11 @@ export function flow_template_lists(params?: Record<string, any>) {
     return request.get({ url: '/flow_template/list', params })
 }
 
+// 流程模板列表-所有
+export function flow_template_lists_all(params?: Record<string, any>) {
+    return request.get({ url: '/flow_template/listAll', params })
+}
+
 // 流程模板详情
 export function flow_template_detail(params: Record<string, any>) {
     return request.get({ url: '/flow_template/detail', params })

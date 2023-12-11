@@ -165,7 +165,7 @@ export default {
              */
             return new Promise((resolve, reject) => {
                 const data = this.lf.getGraphData()
-                console.log('data', data)
+
                 const nodes = data.nodes
                 const edges = data.edges
 
@@ -178,7 +178,6 @@ export default {
                         sourceNodeIdSum[edge.sourceNodeId].push(targetNode)
 
                         for (const n of sourceNodeIdSum[edge.sourceNodeId]) {
-                            console.log('n', n)
                             if (n.type != 'bpmn:exclusiveGateway') {
                                 haveMoreChildNode = true
                                 break
@@ -202,15 +201,36 @@ export default {
                 //   });
                 // }
                 // 检查开始节点和结束节点是否存在
-                const findStartNode = nodes.find((item) => item.type == 'bpmn:startEvent')
-                const findEndNode = nodes.find((item) => item.type == 'bpmn:endEvent')
-                if (!findStartNode || !findEndNode) {
+                const findStartNode = nodes.filter((item) => item.type == 'bpmn:startEvent')
+                const findEndNode = nodes.filter((item) => item.type == 'bpmn:endEvent')
+                if (findStartNode.length != 1 || findEndNode.length != 1) {
                     return reject({
-                        msg: '流程设计-流程必须有开始节点和结束节点'
+                        msg: '流程设计-流程必须有且只有一个开始节点和结束节点'
                     })
                 }
+
+                function handel(arr, pid) {
+                    const newArr = []
+                    arr.forEach((node) => {
+                        // console.log('sourceNodeIdSum', sourceNodeIdSum, node.id)
+                        const newNode = {
+                            id: node.id,
+                            pid: pid,
+                            type: node.type,
+                            fieldAuth: node?.properties?.fieldAuth,
+                            user: node?.properties?.user || 0
+                        }
+                        if (sourceNodeIdSum[node.id]) {
+                            newNode.children = handel(sourceNodeIdSum[node.id], node.id)
+                        }
+                        newArr.push(newNode)
+                    })
+                    return newArr
+                }
+                const TreeNode = handel(findStartNode, 0)
+                console.log('TreeNode', TreeNode)
                 // 检查连线方向是否正确;
-                resolve({ formData: data })
+                resolve({ formData: data, TreeNode })
             })
         }
     }

@@ -131,7 +131,7 @@
     </div>
 </template>
 <script lang="ts" setup name="{{{ .ModuleName }}}">
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_lists } from '@/api/{{{ .ModuleName }}}'
+import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{ .ModuleName }}}'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
 {{{- if ge (len .DictFields) 1 }}}
@@ -162,7 +162,7 @@ const queryParams = reactive({
 const getLists = async () => {
     loading.value = true
     try {
-        const data = await {{{ .ModuleName }}}_lists(queryParams)
+        const data = await {{{ .ModuleName }}}_list(queryParams)
         lists.value = data
         loading.value = false
     } catch (error) {

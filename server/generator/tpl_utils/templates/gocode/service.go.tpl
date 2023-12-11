@@ -6,6 +6,7 @@ import (
 	"x_admin/model"
 	"gorm.io/gorm"
 )
+import "x_admin/core"
 
 type I{{{ title (toCamelCase .EntityName) }}}Service interface {
 	List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error)
