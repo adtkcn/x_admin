@@ -59,7 +59,9 @@ const handleCommand = (command: any) => {
 </script>
 <style lang="scss" scoped>
 .app-tabs {
-    @apply border-t border-br;
+    border-top: 1px solid var(--el-border-color);
+    // border-color: var(--el-border-color);
+
     :deep(.el-tabs) {
         height: 40px;
         .el-tabs {
@@ -71,7 +73,7 @@ const handleCommand = (command: any) => {
             }
             &__nav-next,
             &__nav-prev {
-                @apply text-xl;
+                font-size: var(--el-font-size-large);
             }
 
             &__nav-wrap::after {

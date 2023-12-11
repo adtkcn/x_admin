@@ -96,6 +96,7 @@ import type { ElTable, FormInstance } from 'element-plus'
 import EditPopup from './edit.vue'
 import { deptDelete, deptLists } from '@/api/org/department'
 import feedback from '@/utils/feedback'
+import { arrayToTree } from '@/utils/util'
 const tableRef = shallowRef<InstanceType<typeof ElTable>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const formRef = shallowRef<FormInstance>()
@@ -109,7 +110,10 @@ const queryParams = reactive({
 const showEdit = ref(false)
 const getLists = async () => {
     loading.value = true
-    lists.value = await deptLists(queryParams)
+    const list = await deptLists(queryParams)
+    // 根据id和pid处理层级关系
+
+    lists.value = arrayToTree(list)
     loading.value = false
 }
 

@@ -13,6 +13,8 @@
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.1",
         "@highlightjs/vue-plugin": "^2.1.0",
+        "@logicflow/core": "^1.2.18",
+        "@logicflow/extension": "^1.2.19",
         "@vue/shared": "^3.3.9",
         "@vueuse/core": "^10.6.1",
         "@wangeditor/editor": "^5.1.23",
@@ -27,6 +29,7 @@
         "lodash-es": "^4.17.21",
         "nprogress": "^0.2.0",
         "pinia": "^2.1.7",
+        "vform3-builds": "^3.0.10",
         "vue": "^3.3.9",
         "vue-clipboard3": "^2.0.0",
         "vue-echarts": "^6.6.1",

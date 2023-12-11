@@ -35,18 +35,18 @@ export default ({ mode }) => {
             vueJsx(),
             AutoImport({
                 imports: ['vue', 'vue-router'],
-                resolvers: [ElementPlusResolver()],
+                // resolvers: [ElementPlusResolver()],
                 eslintrc: {
                     enabled: true
                 }
             }),
             Components({
-                directoryAsNamespace: true,
-                resolvers: [ElementPlusResolver()]
+                directoryAsNamespace: true
+                // resolvers: [ElementPlusResolver()]
             }),
-            createStyleImportPlugin({
-                resolves: [ElementPlusResolve()]
-            }),
+            // createStyleImportPlugin({
+            //     resolves: [ElementPlusResolve()]
+            // }),
             createSvgIconsPlugin({
                 // 配置路劲在你的src里的svg存放文件
                 iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],

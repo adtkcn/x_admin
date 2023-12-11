@@ -16,3 +16,7 @@ body {
 #nprogress .bar {
     @apply bg-primary #{!important};
 }
+
+a {
+    text-decoration: none;
+}

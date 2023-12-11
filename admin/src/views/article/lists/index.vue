@@ -89,7 +89,11 @@
                 <el-table-column label="发布时间" prop="createTime" min-width="120" />
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
-                        <el-button v-perms="['article:edit','article:add/edit']" type="primary" link>
+                        <el-button
+                            v-perms="['article:edit', 'article:add/edit']"
+                            type="primary"
+                            link
+                        >
                             <router-link
                                 :to="{
                                     path: getRoutePath('article:add/edit'),

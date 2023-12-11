@@ -26,27 +26,30 @@
                     新增
                 </el-button>
             </div>
-            <el-table
-                class="mt-4"
-                size="large"
-                v-loading="pager.loading"
-                :data="pager.lists"
-            >
+            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="流程名称" prop="flowName" min-width="100" />
                 <el-table-column label="流程分类" prop="flowGroup" min-width="100" />
                 <el-table-column label="流程描述" prop="flowRemark" min-width="100" />
-                <el-table-column label="表单配置" prop="flowFormData" min-width="100" />
-                <el-table-column label="流程配置" prop="flowProcessData" min-width="100" />
-                <el-table-column label="操作" width="120" fixed="right">
+                <!-- <el-table-column label="表单配置" prop="flowFormData" min-width="100" />
+                <el-table-column label="流程配置" prop="flowProcessData" min-width="100" /> -->
+                <el-table-column label="操作" fixed="right">
                     <template #default="{ row }">
                         <el-button
+                            v-perms="['flow_template:edit']"
+                            type="primary"
+                            link
+                            @click="handleConfig(row)"
+                        >
+                            配置
+                        </el-button>
+                        <!-- <el-button
                             v-perms="['flow_template:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
                         >
                             编辑
-                        </el-button>
+                        </el-button> -->
                         <el-button
                             v-perms="['flow_template:del']"
                             type="danger"
@@ -62,19 +65,28 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup
-            v-if="showEdit"
-            ref="editRef"
-            @success="getLists"
-            @close="showEdit = false"
-        />
+
+        <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <Approver ref="approverRef" :save="save"></Approver>
     </div>
 </template>
-<script lang="ts" setup name="flow_template">
-import { flow_template_delete, flow_template_lists } from '@/api/flow_template'
+<script lang="ts" setup>
+import {
+    flow_template_delete,
+    flow_template_lists,
+    flow_template_edit,
+    flow_template_add,
+    flow_template_detail
+} from '@/api/flow_template'
+
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+import Approver from '@/components/flow/Approver.vue'
+
+defineOptions({
+    name: 'flow_template'
+})
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({
@@ -82,7 +94,7 @@ const queryParams = reactive({
     flowGroup: '',
     flowRemark: '',
     flowFormData: '',
-    flowProcessData: '',
+    flowProcessData: ''
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
@@ -90,19 +102,20 @@ const { pager, getLists, resetPage, resetParams } = usePaging({
     params: queryParams
 })
 
-
 const handleAdd = async () => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('add')
+    // showEdit.value = true
+    // await nextTick()
+    // editRef.value?.open('add')
+
+    approverRef.value?.open()
 }
 
-const handleEdit = async (data: any) => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('edit')
-    editRef.value?.getDetail(data)
-}
+// const handleEdit = async (data: any) => {
+//     showEdit.value = true
+//     await nextTick()
+//     editRef.value?.open('edit')
+//     editRef.value?.getDetail(data)
+// }
 
 const handleDelete = async (id: number) => {
     await feedback.confirm('确定要删除？')
@@ -110,6 +123,61 @@ const handleDelete = async (id: number) => {
     feedback.msgSuccess('删除成功')
     getLists()
 }
+function save(info) {
+    return new Promise((resolve, reject) => {
+        if (info.id) {
+            flow_template_edit({
+                id: info.id,
+                flowName: info.basicSetting.flowName,
+                flowGroup: info.basicSetting.flowGroup,
+                flowRemark: info.basicSetting.flowRemark,
+                flowFormData: JSON.stringify(info.flowFormData),
+                flowProcessData: JSON.stringify(info.flowProcessData)
+            })
+                .then(() => {
+                    feedback.msgSuccess('修改成功')
+                    getLists()
+                    resolve(true)
+                })
+                .catch((err) => {
+                    feedback.msgError(err.message)
+                    reject()
+                })
+        } else {
+            flow_template_add({
+                flowName: info.flowName,
+                flowGroup: info.flowGroup,
+                flowRemark: info.flowRemark,
+                flowFormData: JSON.stringify(info.flowFormData),
+                flowProcessData: JSON.stringify(info.flowProcessData)
+            })
+                .then(() => {
+                    feedback.msgSuccess('新增成功')
+                    getLists()
+                    resolve(true)
+                })
+                .catch((err) => {
+                    feedback.msgError(err.message)
+                    reject()
+                })
+        }
+    })
+}
+const approverRef = shallowRef<InstanceType<typeof EditPopup>>()
+const handleConfig = async (data: any) => {
+    console.log('toRaw(data)', toRaw(data))
 
+    approverRef.value?.open({
+        id: data.id,
+        basicSetting: {
+            flowName: data.flowName,
+            flowGroup: data.flowGroup,
+            flowRemark: data.flowRemark
+        },
+
+        flowFormData: JSON.parse(data.flowFormData),
+        flowProcessData: JSON.parse(data.flowProcessData)
+    } as any)
+}
 getLists()
 </script>
