@@ -184,7 +184,7 @@ const formRules = {
     status: [
         {
             required: true,
-            message: '请选择状态：0待提交，1审批中，2审批完成，3审批失败',
+            message: '请选择状态',
             trigger: ['blur']
         }
     ]

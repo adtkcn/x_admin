@@ -172,7 +172,7 @@ export default {
                         basicSetting: res[0].formData,
                         flowFormData: res[1].formData,
                         flowProcessData: res[2].formData,
-                        flowProcessTreeData: res[2].TreeNode
+                        flowProcessDataList: res[2].treeToList
 
                         // advancedSetting: getCmpData("advancedSetting"),
                     }

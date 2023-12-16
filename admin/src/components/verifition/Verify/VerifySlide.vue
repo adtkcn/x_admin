@@ -105,7 +105,6 @@ import {
     watch,
     nextTick,
     toRefs,
-    watchEffect,
     getCurrentInstance
 } from 'vue'
 //  "captchaType":"blockPuzzle",

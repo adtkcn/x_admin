@@ -228,9 +228,23 @@ export default {
                     return newArr
                 }
                 const TreeNode = handel(findStartNode, 0)
+
+                // tree转list
+                function treeToList(tree) {
+                    const arr = []
+                    tree.forEach((item) => {
+                        arr.push(item)
+                        if (item.children) {
+                            arr.push(...treeToList(item.children))
+                        }
+                    })
+                    return arr
+                }
+
                 console.log('TreeNode', TreeNode)
+                console.log('treeToList', treeToList(TreeNode))
                 // 检查连线方向是否正确;
-                resolve({ formData: data, TreeNode })
+                resolve({ formData: data, treeToList: treeToList(TreeNode) })
             })
         }
     }

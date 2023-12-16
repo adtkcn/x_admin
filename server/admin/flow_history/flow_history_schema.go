@@ -71,3 +71,18 @@ type FlowHistoryResp struct {
 	UpdateTime        core.TsTime `json:"updateTime" structs:"updateTime"`               // 更新时间
 	CreateTime        core.TsTime `json:"createTime" structs:"createTime"`               // 创建时间
 }
+
+type NextNodeReq struct {
+	ApplyId int    `form:"applyId"` // 申请id
+	NodeId  string `form:"nodeId"`  // 流程里的节点id
+}
+type FlowTree struct {
+	Id   string `json:"id"`
+	Pid  string `json:"pid"`
+	Type string `json:"type"`
+
+	User string `json:"user"`
+	// FieldAuth map[string]int `json:"fieldAuth"`
+
+	Children *FlowTree
+}

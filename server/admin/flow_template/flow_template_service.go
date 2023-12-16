@@ -1,6 +1,7 @@
 package flow_template
 
 import (
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
@@ -17,8 +18,11 @@ type IFlowTemplateService interface {
 	Del(id int) (e error)
 }
 
+var Service = NewFlowTemplateService()
+
 // NewFlowTemplateService 初始化
-func NewFlowTemplateService(db *gorm.DB) IFlowTemplateService {
+func NewFlowTemplateService() *flowTemplateService {
+	db := core.GetDB()
 	return &flowTemplateService{db: db}
 }
 

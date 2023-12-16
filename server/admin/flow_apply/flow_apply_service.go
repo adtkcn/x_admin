@@ -1,6 +1,8 @@
 package flow_apply
 
 import (
+	"x_admin/admin/flow_template"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
@@ -16,8 +18,11 @@ type IFlowApplyService interface {
 	Del(id int) (e error)
 }
 
+var Service = NewFlowApplyService()
+
 // NewFlowApplyService 初始化
-func NewFlowApplyService(db *gorm.DB) IFlowApplyService {
+func NewFlowApplyService() *flowApplyService {
+	db := core.GetDB()
 	return &flowApplyService{db: db}
 }
 
@@ -99,10 +104,20 @@ func (Service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
 // Add 申请流程新增
 func (Service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
 	var obj model.FlowApply
-
+	var flow_template_resp, err = flow_template.Service.Detail(addReq.TemplateId)
+	if e = response.CheckErrDBNotRecord(err, "模板不存在!"); e != nil {
+		return
+	}
 	response.Copy(&obj, addReq)
-	err := Service.db.Create(&obj).Error
-	e = response.CheckErr(err, "Add Create err")
+	obj.FlowName = flow_template_resp.FlowName
+	obj.FlowGroup = flow_template_resp.FlowGroup
+	obj.FlowRemark = flow_template_resp.FlowRemark
+	obj.FlowFormData = flow_template_resp.FlowFormData
+	obj.FlowProcessData = flow_template_resp.FlowProcessData
+	obj.FlowProcessDataList = flow_template_resp.FlowProcessDataList
+
+	err = Service.db.Create(&obj).Error
+	e = response.CheckErr(err, "添加失败")
 	return
 }
 

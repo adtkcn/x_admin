@@ -62,7 +62,7 @@
                 </el-table-column>
                 <el-table-column label="更新时间" prop="updateTime" min-width="100" />
                 <el-table-column label="创建时间" prop="createTime" min-width="100" />
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column label="操作" width="260" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['flow_apply:edit']"
@@ -72,6 +72,15 @@
                         >
                             编辑表单
                         </el-button>
+                        <el-button
+                            v-perms="['flow_apply:edit']"
+                            type="primary"
+                            link
+                            @click="OpenApplySubmit(row)"
+                        >
+                            提交申请
+                        </el-button>
+
                         <el-button
                             v-perms="['flow_apply:edit']"
                             type="primary"
@@ -103,6 +112,7 @@
             @close="showEdit = false"
         />
         <ViewForm ref="viewFormRef" :save="SaveViewForm"></ViewForm>
+        <ApplySubmit ref="ApplySubmitRef"></ApplySubmit>
     </div>
 </template>
 <script lang="ts" setup>
@@ -112,12 +122,14 @@ import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 
+import ApplySubmit from '@/views/flow_apply/components/apply_submit.vue'
 import ViewForm from '@/components/flow/XForm/view.vue'
 
 defineOptions({
     name: 'flow_apply'
 })
-const viewFormRef = shallowRef<InstanceType<typeof EditPopup>>()
+const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
+const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({
@@ -164,14 +176,23 @@ const OpenViewForm = async (data: any) => {
     let form_data = {}
     try {
         form_data = JSON.parse(data.formValue)
-    } catch (error) {}
+    } catch (error) {
+        // 解析失败
+    }
     let form_json = {}
     try {
         form_json = JSON.parse(data.flowFormData)
-    } catch (error) {}
+    } catch (error) {
+        // 解析失败
+    }
     console.log(data, form_data, form_json)
 
     viewFormRef.value?.open(data.id, form_json, form_data)
+}
+const OpenApplySubmit = async (data: any) => {
+    console.log('OpenApplySubmit')
+
+    ApplySubmitRef.value?.open(data)
 }
 const SaveViewForm = (id, form_data) => {
     return new Promise((resolve, reject) => {

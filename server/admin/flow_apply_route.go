@@ -1,10 +1,10 @@
 package admin
 
 import (
-	"github.com/gin-gonic/gin"
-	"x_admin/core" 
-	"x_admin/middleware" 
 	"x_admin/admin/flow_apply"
+	"x_admin/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 /**
@@ -24,14 +24,10 @@ flow_apply:list
 flow_apply:detail
 */
 
-
 // FlowApplyRoute(rg)
 func FlowApplyRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
 
-	server := flow_apply.NewFlowApplyService(db)
-
-	handle := flow_apply.FlowApplyHandler{Service: server}
+	handle := flow_apply.FlowApplyHandler{}
 
 	rg = rg.Group("/", middleware.TokenAuth())
 	rg.GET("/flow_apply/list", handle.List)
@@ -39,4 +35,5 @@ func FlowApplyRoute(rg *gin.RouterGroup) {
 	rg.POST("/flow_apply/add", handle.Add)
 	rg.POST("/flow_apply/edit", handle.Edit)
 	rg.POST("/flow_apply/del", handle.Del)
+
 }

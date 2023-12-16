@@ -1,10 +1,10 @@
 package admin
 
 import (
-	"github.com/gin-gonic/gin"
-	"x_admin/core" 
-	"x_admin/middleware" 
 	"x_admin/admin/flow_history"
+	"x_admin/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 /**
@@ -25,14 +25,10 @@ flow_history:listAll
 flow_history:detail
 */
 
-
 // FlowHistoryRoute(rg)
 func FlowHistoryRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
 
-	server := flow_history.NewFlowHistoryService(db)
-
-	handle := flow_history.FlowHistoryHandler{Service: server}
+	handle := flow_history.FlowHistoryHandler{}
 
 	rg = rg.Group("/", middleware.TokenAuth())
 	rg.GET("/flow_history/list", handle.List)
@@ -41,4 +37,6 @@ func FlowHistoryRoute(rg *gin.RouterGroup) {
 	rg.POST("/flow_history/add", handle.Add)
 	rg.POST("/flow_history/edit", handle.Edit)
 	rg.POST("/flow_history/del", handle.Del)
+
+	rg.POST("/flow_history/next_node", handle.NextNode)
 }

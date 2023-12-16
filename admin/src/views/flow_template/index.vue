@@ -132,7 +132,8 @@ function save(info) {
                 flowGroup: info.basicSetting.flowGroup,
                 flowRemark: info.basicSetting.flowRemark,
                 flowFormData: JSON.stringify(info.flowFormData),
-                flowProcessData: JSON.stringify(info.flowProcessData)
+                flowProcessData: JSON.stringify(info.flowProcessData),
+                flowProcessDataList: JSON.stringify(info.flowProcessDataList)
             })
                 .then(() => {
                     feedback.msgSuccess('修改成功')

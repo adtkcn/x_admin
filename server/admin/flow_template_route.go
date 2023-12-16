@@ -2,7 +2,6 @@ package admin
 
 import (
 	"x_admin/admin/flow_template"
-	"x_admin/core"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -28,11 +27,8 @@ flow_template:detail
 
 // FlowTemplateRoute(rg)
 func FlowTemplateRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
 
-	server := flow_template.NewFlowTemplateService(db)
-
-	handle := flow_template.FlowTemplateHandler{Service: server}
+	handle := flow_template.FlowTemplateHandler{}
 
 	rg = rg.Group("/", middleware.TokenAuth())
 	rg.GET("/flow_template/list", handle.List)

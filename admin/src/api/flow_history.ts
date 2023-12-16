@@ -28,3 +28,8 @@ export function flow_history_edit(params: Record<string, any>) {
 export function flow_history_delete(params: Record<string, any>) {
     return request.post({ url: '/flow_history/del', params })
 }
+
+// 获取下一个审批节点，中间可能有系统任务和结束节点被跳过
+export function flow_apply_next_node(params: Record<string, any>) {
+    return request.post({ url: '/flow_apply/next_node', params })
+}
