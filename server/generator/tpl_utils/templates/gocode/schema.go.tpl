@@ -28,7 +28,7 @@ type {{{ title (toCamelCase .EntityName) }}}AddReq struct {
     {{{- end }}}
 }
 
-//{{{ title (toCamelCase .EntityName) }}}EditReq {{{ .FunctionName }}}新增参数
+//{{{ title (toCamelCase .EntityName) }}}EditReq {{{ .FunctionName }}}编辑参数
 type {{{ title (toCamelCase .EntityName) }}}EditReq struct {
     {{{- range .Columns }}}
     {{{- if .IsEdit }}}

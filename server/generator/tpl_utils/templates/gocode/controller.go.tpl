@@ -8,9 +8,7 @@ import (
 )
 
  
-type {{{ title (toCamelCase .ModuleName) }}}Handler struct {
-	Service I{{{ title (toCamelCase .EntityName) }}}Service
-}
+type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 
 //	@Summary	{{{ .FunctionName }}}列表
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -35,7 +33,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := hd.Service.List(page, listReq)
+	res, err := Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -45,7 +43,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
 //	@Router		/api/{{{ .ModuleName }}}/list [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
-	res, err := hd.Service.ListAll()
+	res, err := Service.ListAll()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -65,7 +63,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context)
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := hd.Service.Detail(detailReq.{{{ title (toCamelCase .PrimaryKey) }}})
+	res, err := Service.Detail(detailReq.{{{ title (toCamelCase .PrimaryKey) }}})
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -86,7 +84,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, hd.Service.Add(addReq))
+	response.CheckAndResp(c, Service.Add(addReq))
 }
 //	@Summary	{{{ .FunctionName }}}编辑
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -104,7 +102,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, hd.Service.Edit(editReq))
+	response.CheckAndResp(c, Service.Edit(editReq))
 }
 //	@Summary	{{{ .FunctionName }}}删除
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -122,5 +120,5 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, hd.Service.Del(delReq.{{{ title (toCamelCase .PrimaryKey) }}}))
+	response.CheckAndResp(c, Service.Del(delReq.{{{ title (toCamelCase .PrimaryKey) }}}))
 }

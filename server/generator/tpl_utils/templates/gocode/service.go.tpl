@@ -1,6 +1,7 @@
 package {{{ .ModuleName }}}
 
 import (
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
@@ -17,9 +18,10 @@ type I{{{ title (toCamelCase .EntityName) }}}Service interface {
 	Edit(editReq {{{ title (toCamelCase .EntityName) }}}EditReq) (e error)
 	Del(id int) (e error)
 }
-
+var Service=New{{{ title (toCamelCase .EntityName) }}}Service()
 //New{{{ title (toCamelCase .EntityName) }}}Service 初始化
-func New{{{ title (toCamelCase .EntityName) }}}Service(db *gorm.DB) I{{{ title (toCamelCase .EntityName) }}}Service {
+func New{{{ title (toCamelCase .EntityName) }}}Service() *{{{ toCamelCase .EntityName }}}Service {
+	db := core.GetDB()
 	return &{{{ toCamelCase .EntityName }}}Service{db: db}
 }
 
@@ -29,12 +31,12 @@ type {{{ toCamelCase .EntityName }}}Service struct {
 }
 
 //List {{{ .FunctionName }}}列表
-func (Service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	dbModel := Service.db.Model(&model.{{{ title (toCamelCase .EntityName) }}}{})
+	dbModel := service.db.Model(&model.{{{ title (toCamelCase .EntityName) }}}{})
 	{{{- range .Columns }}}
 	{{{- if .IsQuery }}}
 	{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
@@ -74,10 +76,10 @@ func (Service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 	}, nil
 }
 //ListAll {{{ .FunctionName }}}列表
-func (Service {{{ toCamelCase .EntityName }}}Service) ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
 	var objs model.{{{ title (toCamelCase .EntityName) }}}
 	
-	err := Service.db.Find(&objs).Error
+	err := service.db.Find(&objs).Error
 	if e = response.CheckErr(err, "ListAll Find err"); e != nil {
 		return
 	}
@@ -86,9 +88,9 @@ func (Service {{{ toCamelCase .EntityName }}}Service) ListAll() (res []{{{ title
 }
 
 //Detail {{{ .FunctionName }}}详情
-func (Service {{{ toCamelCase .EntityName }}}Service) Detail(id int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Detail(id int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
-	err := Service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
@@ -105,18 +107,18 @@ func (Service {{{ toCamelCase .EntityName }}}Service) Detail(id int) (res {{{ ti
 }
 
 //Add {{{ .FunctionName }}}新增
-func (Service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ title (toCamelCase .EntityName) }}}AddReq) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ title (toCamelCase .EntityName) }}}AddReq) (e error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
 	response.Copy(&obj, addReq)
-	err := Service.db.Create(&obj).Error
+	err := service.db.Create(&obj).Error
 	e = response.CheckErr(err, "Add Create err")
 	return
 }
 
 //Edit {{{ .FunctionName }}}编辑
-func (Service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ title (toCamelCase .EntityName) }}}EditReq) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ title (toCamelCase .EntityName) }}}EditReq) (e error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
-	err := Service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", editReq.Id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", editReq.Id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -126,15 +128,15 @@ func (Service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ title (to
 	}
 	// 更新
 	response.Copy(&obj, editReq)
-	err = Service.db.Model(&obj).Updates(obj).Error
+	err = service.db.Model(&obj).Updates(obj).Error
 	e = response.CheckErr(err, "Edit Updates err")
 	return
 }
 
 //Del {{{ .FunctionName }}}删除
-func (Service {{{ toCamelCase .EntityName }}}Service) Del(id int) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Del(id int) (e error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
-	err := Service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -145,10 +147,10 @@ func (Service {{{ toCamelCase .EntityName }}}Service) Del(id int) (e error) {
     // 删除
     {{{- if contains .AllFields "is_delete" }}}
     obj.IsDelete = 1
-    err = Service.db.Save(&obj).Error
+    err = service.db.Save(&obj).Error
     e = response.CheckErr(err, "Del Save err")
     {{{- else }}}
-    err = Service.db.Delete(&obj).Error
+    err = service.db.Delete(&obj).Error
     e = response.CheckErr(err, "Del Delete err")
     {{{- end }}}
 	return

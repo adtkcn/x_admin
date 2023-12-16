@@ -28,11 +28,7 @@ import (
 
 // {{{ title (toCamelCase .ModuleName) }}}Route(rg)
 func {{{ title (toCamelCase .ModuleName) }}}Route(rg *gin.RouterGroup) {
-	db := core.GetDB()
-
-	server := {{{ .ModuleName }}}.New{{{ title (toCamelCase .EntityName) }}}Service(db)
-
-	handle := {{{ .ModuleName}}}.{{{ title (toCamelCase .EntityName) }}}Handler{Service: server}
+	handle := {{{ .ModuleName}}}.{{{ title (toCamelCase .EntityName) }}}Handler{}
 
 	rg = rg.Group("/", middleware.TokenAuth())
 	rg.GET("/{{{ .ModuleName }}}/list", handle.List)
