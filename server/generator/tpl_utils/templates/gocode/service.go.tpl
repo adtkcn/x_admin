@@ -77,7 +77,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 }
 //ListAll {{{ .FunctionName }}}列表
 func (service {{{ toCamelCase .EntityName }}}Service) ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
-	var objs model.{{{ title (toCamelCase .EntityName) }}}
+	var objs []model.{{{ title (toCamelCase .EntityName) }}}
 	
 	err := service.db.Find(&objs).Error
 	if e = response.CheckErr(err, "ListAll Find err"); e != nil {

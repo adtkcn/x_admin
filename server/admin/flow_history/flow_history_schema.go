@@ -73,16 +73,21 @@ type FlowHistoryResp struct {
 }
 
 type NextNodeReq struct {
-	ApplyId int    `form:"applyId"` // 申请id
-	NodeId  string `form:"nodeId"`  // 流程里的节点id
+	ApplyId       int    `form:"applyId"` // 申请id
+	CurrentNodeId string `form:"nodeId"`  // 流程里的节点id
+	FormValue     string `form:"formValue"`
 }
 type FlowTree struct {
-	Id   string `json:"id"`
-	Pid  string `json:"pid"`
-	Type string `json:"type"`
+	Id    string `json:"id"`
+	Pid   string `json:"pid"`
+	Label string `json:"label"`
+	Type  string `json:"type"`
 
-	User string `json:"user"`
-	// FieldAuth map[string]int `json:"fieldAuth"`
+	UserId int `json:"userId"`
+	DeptId int `json:"deptId"`
+	PostId int `json:"postId"`
 
-	Children *FlowTree
+	FieldAuth map[string]int `json:"fieldAuth"`
+
+	Children *[]FlowTree `json:"children"`
 }

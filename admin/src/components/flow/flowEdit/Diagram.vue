@@ -216,9 +216,12 @@ export default {
                         const newNode = {
                             id: node.id,
                             pid: pid,
+                            label: node?.text?.value,
                             type: node.type,
                             fieldAuth: node?.properties?.fieldAuth,
-                            user: node?.properties?.user || 0
+                            userId: node?.properties?.userId || 0,
+                            deptId: node?.properties?.deptId || 0,
+                            postId: node?.properties?.postId || 0
                         }
                         if (sourceNodeIdSum[node.id]) {
                             newNode.children = handel(sourceNodeIdSum[node.id], node.id)

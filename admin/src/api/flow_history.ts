@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request/index'
 
 // 流程历史列表
 export function flow_history_list(params?: Record<string, any>) {
@@ -30,6 +30,11 @@ export function flow_history_delete(params: Record<string, any>) {
 }
 
 // 获取下一个审批节点，中间可能有系统任务和结束节点被跳过
-export function flow_apply_next_node(params: Record<string, any>) {
-    return request.post({ url: '/flow_apply/next_node', params })
+export function flow_history_next_node(params: Record<string, any>) {
+    return request.post({ url: '/flow_history/next_node', params })
+}
+
+// 获取下一个审批节点，中间可能有系统任务和结束节点被跳过
+export function flow_history_get_approver(params: Record<string, any>) {
+    return request.post({ url: '/flow_history/get_approver', params })
 }

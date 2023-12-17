@@ -50,7 +50,8 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 // @Success	200	{object}	[]FlowHistoryResp	"成功"
 // @Router		/api/flow_history/list [get]
 func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
-	res, err := Service.ListAll()
+	var listReq FlowHistoryListReq
+	res, err := Service.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -163,8 +164,21 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 		return
 	}
 
-	response.CheckAndResp(c, Service.GetNextNode(nextNode))
+	// response.CheckAndResp(c, Service.GetNextNode(nextNode))
+	res, err := Service.GetNextNode(nextNode)
+	response.CheckAndRespWithData(c, res, err)
+}
 
+// 获取节点的可审批用户
+func (hd FlowHistoryHandler) GetApprover(c *gin.Context) {
+	var node FlowTree
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &node)) {
+		return
+	}
+
+	// response.CheckAndResp(c, Service.GetNextNode(node))
+	res, err := Service.GetApprover(node)
+	response.CheckAndRespWithData(c, res, err)
 }
 
 // 同意审批(当前nodeId)

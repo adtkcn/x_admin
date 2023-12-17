@@ -1,10 +1,15 @@
 package flow_history
 
 import (
+	"encoding/json"
+	"x_admin/admin/flow_apply"
+	"x_admin/admin/system/admin"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/model/system_model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -24,7 +29,7 @@ type IFlowHistoryService interface {
 var Service = NewFlowHistoryService()
 
 // NewFlowHistoryService 初始化
-func NewFlowHistoryService() IFlowHistoryService {
+func NewFlowHistoryService() *flowHistoryService {
 	db := core.GetDB()
 	return &flowHistoryService{db: db}
 }
@@ -94,10 +99,16 @@ func (Service flowHistoryService) List(page request.PageReq, listReq FlowHistory
 }
 
 // ListAll 流程历史列表
-func (Service flowHistoryService) ListAll() (res []FlowHistoryResp, e error) {
-	var objs model.FlowHistory
+func (Service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []FlowHistoryResp, e error) {
 
-	err := Service.db.Find(&objs).Error
+	// 查询
+	dbModel := Service.db.Model(&model.FlowHistory{})
+	if listReq.ApplyId > 0 {
+		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
+	}
+	// 数据
+	var objs []model.FlowHistory
+	err := dbModel.Find(&objs).Error
 	if e = response.CheckErr(err, "ListAll Find err"); e != nil {
 		return
 	}
@@ -164,9 +175,105 @@ func (Service flowHistoryService) Del(id int) (e error) {
 }
 
 /**
- * 获取下一个流程
+* 获取节点的审批用户
  */
-func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (e error) {
-	//
-	return e
+func (Service flowHistoryService) GetApprover(node FlowTree) (res []admin.SystemAuthAdminResp, e error) {
+	var userId = node.UserId
+	var deptId = node.DeptId
+	var postId = node.PostId
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
+
+	adminModel := Service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
+	if userId > 0 {
+		adminModel.Or("admin.id =?", userId)
+	}
+	if deptId > 0 {
+		adminModel.Or("admin.dept_id =?", deptId)
+	}
+	if postId > 0 {
+		adminModel.Or("admin.post_id =?", postId)
+	}
+	// 数据
+	var adminResp []admin.SystemAuthAdminResp
+	err := adminModel.Find(&adminResp).Error
+	if e = response.CheckErr(err, "获取审批用户失败"); e != nil {
+		return
+	}
+	for i := 0; i < len(adminResp); i++ {
+		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
+		if adminResp[i].ID == 1 {
+			adminResp[i].Role = "系统管理员"
+		}
+	}
+	return adminResp, nil
+}
+
+/**
+ * 获取下一批流程，直到审批或结束节点
+ */
+func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (res []FlowTree, e error) {
+	var applyDetail, err = flow_apply.Service.Detail(nextNode.ApplyId)
+	if e = response.CheckErr(err, "获取审批申请失败"); e != nil {
+		return
+	}
+	// start
+	var flowTree []FlowTree
+	json.Unmarshal([]byte(applyDetail.FlowProcessDataList), &flowTree)
+	var formValue map[string]interface{}
+	json.Unmarshal([]byte(nextNode.FormValue), &formValue)
+
+	var next []FlowTree
+
+	if nextNode.CurrentNodeId == "" {
+		for _, v := range flowTree {
+			if v.Type == "bpmn:startEvent" {
+				next = *v.Children
+				break
+			}
+		}
+	} else {
+		for _, v := range flowTree {
+			if v.Id == nextNode.CurrentNodeId {
+				next = *v.Children
+				break
+			}
+		}
+	}
+	var nextNodes []FlowTree
+	res = DeepNextNode(nextNodes, &next, formValue)
+	return res, e
+}
+
+// 返回节点数组，最后一个节点为用户或结束节点
+func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[string]interface{}) []FlowTree {
+	for _, v := range *flowTree {
+		if v.Type == "bpmn:startEvent" {
+			// 开始节点
+			child := DeepNextNode(nextNodes, v.Children, formValue)
+			nextNodes = append(nextNodes, child...)
+			break
+		} else if v.Type == "bpmn:exclusiveGateway" {
+			// 网关
+
+			// 判断formValue值，决定是不是递归这个网关
+			child := DeepNextNode(nextNodes, v.Children, formValue)
+			nextNodes = append(nextNodes, v)
+			nextNodes = append(nextNodes, child...)
+			break
+		} else if v.Type == "bpmn:serviceTask" {
+			// 系统服务
+			child := DeepNextNode(nextNodes, v.Children, formValue)
+			nextNodes = append(nextNodes, v)
+			nextNodes = append(nextNodes, child...)
+		} else if v.Type == "bpmn:userTask" {
+			//用户节点
+			nextNodes = append(nextNodes, v)
+			break
+		} else if v.Type == "bpmn:endEvent" {
+			// 结束节点
+			nextNodes = append(nextNodes, v)
+			break
+		}
+	}
+	return nextNodes
 }

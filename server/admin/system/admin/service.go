@@ -93,6 +93,35 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 	return SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
 }
 
+// 获取管理员列表-用户id加部门岗位
+func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId, postId int) (res []SystemAuthAdminResp, e error) {
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
+
+	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
+	if userId > 0 {
+		adminModel.Or("admin.id =?", userId)
+	}
+	if deptId > 0 {
+		adminModel.Or("admin.dept_id =?", deptId)
+	}
+	if postId > 0 {
+		adminModel.Or("admin.post_id =?", postId)
+	}
+	// 数据
+	var adminResp []SystemAuthAdminResp
+	err := adminModel.Find(&adminResp).Error
+	if e = response.CheckErr(err, "List Find err"); e != nil {
+		return
+	}
+	for i := 0; i < len(adminResp); i++ {
+		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
+		if adminResp[i].ID == 1 {
+			adminResp[i].Role = "系统管理员"
+		}
+	}
+	return adminResp, nil
+}
+
 // List 管理员列表
 func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq SystemAuthAdminListReq) (res response.PageResp, e error) {
 	// 分页信息

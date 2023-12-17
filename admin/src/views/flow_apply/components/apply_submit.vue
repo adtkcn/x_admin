@@ -8,12 +8,29 @@
         :destroy-on-close="true"
         top="1px"
     >
+        <div v-for="node of next_nodes" :key="node.id">
+            {{ node.label }}
+            <el-select
+                class="flex-1"
+                v-if="node.type == 'bpmn:userTask'"
+                v-model="node.applyUserId"
+                placeholder="请选择审批人"
+            >
+                <el-option
+                    v-for="(item, index) in node.approver"
+                    :key="index"
+                    :label="item.nickname"
+                    :value="item.id"
+                    clearable
+                />
+            </el-select>
+        </div>
         <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
             <el-form-item label="审批节点" prop="flowName">
                 <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
             </el-form-item>
             <el-form-item label="审批人" prop="applyUserId">
-                <el-select
+                <!-- <el-select
                     class="flex-1"
                     v-model="formData.applyUserId"
                     placeholder="请选择审批人"
@@ -26,7 +43,7 @@
                         :value="item.id"
                         clearable
                     />
-                </el-select>
+                </el-select> -->
             </el-form-item>
         </el-form>
 
@@ -39,7 +56,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { flow_apply_next_node } from '@/api/flow_history'
+import { flow_history_next_node, flow_history_get_approver } from '@/api/flow_history'
 
 const formRef = ref(null)
 
@@ -64,6 +81,7 @@ const formData = reactive({
     status: 0,
     formValue: ''
 })
+const next_nodes = ref([])
 const formRules = {
     id: [
         {
@@ -77,11 +95,21 @@ function open(row) {
     console.log('open')
     formData.value = row
     dialogVisible.value = true
-    flow_apply_next_node({
-        id: row.id,
-        historyId: ''
+    flow_history_next_node({
+        applyId: row.id,
+        nodeId: ''
     }).then((res) => {
         console.log('res', res)
+        next_nodes.value = res
+
+        res.map((item) => {
+            if (item.type == 'bpmn:userTask') {
+                flow_history_get_approver(item).then((approver) => {
+                    console.log('approver', approver)
+                    item.approver = approver
+                })
+            }
+        })
     })
 }
 function closeFn() {
