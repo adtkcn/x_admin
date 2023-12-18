@@ -14,7 +14,7 @@ type FlowApplyListReq struct {
 	FlowProcessData     string `form:"flowProcessData"`     // 流程配置
 	FlowProcessDataList string `form:"flowProcessDataList"` // 流程配置list数据
 	FormValue           string `form:"formValue"`           // 表单值
-	Status              int    `form:"status"`              // 状态：0待提交，1审批中，2审批完成，3审批失败
+	Status              int    `form:"status"`              // 状态：1待提交，2审批中，3审批完成，4审批失败
 }
 
 //FlowApplyDetailReq 申请流程详情参数
@@ -34,7 +34,7 @@ type FlowApplyAddReq struct {
 	// FlowProcessData     string `form:"flowProcessData"`     // 流程配置
 	// FlowProcessDataList string `form:"flowProcessDataList"` // 流程配置list数据
 	FormValue string `form:"formValue"` // 表单值
-	Status    int    `form:"status"`    // 状态：0待提交，1审批中，2审批完成，3审批失败
+	Status    int    `form:"status"`    // 状态：1待提交，2审批中，3审批完成，4审批失败
 }
 
 //FlowApplyEditReq 申请流程新增参数
@@ -50,7 +50,7 @@ type FlowApplyEditReq struct {
 	// FlowProcessData     string `form:"flowProcessData"`     // 流程配置
 	// FlowProcessDataList string `form:"flowProcessDataList"` // 流程配置list数据
 	FormValue string `form:"formValue"` // 表单值
-	Status    int    `form:"status"`    // 状态：0待提交，1审批中，2审批完成，3审批失败
+	Status    int    `form:"status"`    // 状态：1待提交，2审批中，3审批完成，4审批失败
 }
 
 //FlowApplyDelReq 申请流程新增参数
@@ -71,7 +71,7 @@ type FlowApplyResp struct {
 	FlowProcessData     string      `json:"flowProcessData" structs:"flowProcessData"`     // 流程配置
 	FlowProcessDataList string      `json:"flowProcessDataList"`                           // 流程配置list数据
 	FormValue           string      `json:"formValue"`                                     // 表单值
-	Status              int         `json:"status" structs:"status"`                       // 状态：0待提交，1审批中，2审批完成，3审批失败
+	Status              int         `json:"status" structs:"status"`                       // 状态：1待提交，2审批中，3审批完成，4审批失败
 	UpdateTime          core.TsTime `json:"updateTime" structs:"updateTime"`               // 更新时间
 	CreateTime          core.TsTime `json:"createTime" structs:"createTime"`               // 创建时间
 }

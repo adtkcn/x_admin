@@ -33,7 +33,9 @@ type FlowHistoryHandler struct {
 // @Router		/api/flow_history/list [get]
 func (hd FlowHistoryHandler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq FlowHistoryListReq
+	var listReq = FlowHistoryListReq{
+		PassStatus: -9999,
+	}
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
@@ -138,7 +140,14 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 // 提交申请
 //
 //	@Router	/api/flow_apply/SubmitApply [post]
-func (hd FlowHistoryHandler) SubmitApply(c *gin.Context) {
+func (hd FlowHistoryHandler) Pass(c *gin.Context) {
+	var nextNode NextNodeReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
+		return
+	}
+	err := Service.Pass(nextNode)
+	response.CheckAndResp(c, err)
+
 	// 申请流程id，
 	// var addReq FlowApplyAddReq
 	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
@@ -165,7 +174,7 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 	}
 
 	// response.CheckAndResp(c, Service.GetNextNode(nextNode))
-	res, err := Service.GetNextNode(nextNode)
+	res, _, err := Service.GetNextNode(nextNode)
 	response.CheckAndRespWithData(c, res, err)
 }
 

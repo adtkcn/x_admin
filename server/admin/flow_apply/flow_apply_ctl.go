@@ -25,7 +25,7 @@ type FlowApplyHandler struct{}
 // @Param		flowRemark			query		string			false	"流程描述"
 // @Param		flowFormData		query		string			false	"表单配置"
 // @Param		flowProcessData		query		string			false	"流程配置"
-// @Param		status				query		int				false	"状态：0待提交，1审批中，2审批完成，3审批失败"
+// @Param		status				query		int				false	"状态：1待提交，2审批中，3审批完成，4审批失败"
 // @Success	200					{object}	[]FlowApplyResp	"成功"
 // @Failure	400					{object}	string			"请求错误"
 // @Router		/api/flow_apply/list [get]
@@ -70,7 +70,7 @@ func (hd FlowApplyHandler) Detail(c *gin.Context) {
 // @Param		flowRemark			body		string				false	"流程描述"
 // @Param		flowFormData		body		string				false	"表单配置"
 // @Param		flowProcessData		body		string				false	"流程配置"
-// @Param		status				body		int					false	"状态：0待提交，1审批中，2审批完成，3审批失败"
+// @Param		status				body		int					false	"状态：1待提交，2审批中，3审批完成，4审批失败"
 // @Success	200					{object}	response.RespType	"成功"
 // @Router		/api/flow_apply/add [post]
 func (hd FlowApplyHandler) Add(c *gin.Context) {
@@ -83,6 +83,7 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 	var AdminId = config.AdminConfig.GetAdminId(c)
 	addReq.ApplyUserNickname = Nickname
 	addReq.ApplyUserId = int(AdminId)
+	addReq.Status = 1
 
 	response.CheckAndResp(c, Service.Add(addReq))
 }
@@ -100,7 +101,7 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 // @Param		flowRemark			body		string				false	"流程描述"
 // @Param		flowFormData		body		string				false	"表单配置"
 // @Param		flowProcessData		body		string				false	"流程配置"
-// @Param		status				body		int					false	"状态：0待提交，1审批中，2审批完成，3审批失败"
+// @Param		status				body		int					false	"状态：1待提交，2审批中，3审批完成，4审批失败"
 // @Success	200					{object}	response.RespType	"成功"
 // @Router		/api/flow_apply/edit [post]
 func (hd FlowApplyHandler) Edit(c *gin.Context) {

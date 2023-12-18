@@ -36,22 +36,7 @@
                 <el-form-item label="流程描述" prop="flowRemark">
                     <el-input v-model="formData.flowRemark" placeholder="请输入流程描述" />
                 </el-form-item>
-                <el-form-item label="表单配置" prop="flowFormData">
-                    <el-input
-                        v-model="formData.flowFormData"
-                        placeholder="请输入表单配置"
-                        type="textarea"
-                        :autosize="{ minRows: 4, maxRows: 6 }"
-                    />
-                </el-form-item>
-                <el-form-item label="流程配置" prop="flowProcessData">
-                    <el-input
-                        v-model="formData.flowProcessData"
-                        placeholder="请输入流程配置"
-                        type="textarea"
-                        :autosize="{ minRows: 4, maxRows: 6 }"
-                    />
-                </el-form-item>
+
                 <el-form-item label="formValue" prop="formValue">
                     <el-input
                         v-model="formData.formValue"

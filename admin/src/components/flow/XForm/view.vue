@@ -18,10 +18,10 @@
         </v-form-render>
 
         <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="getData"> 确定 </el-button>
-            </span>
+            <el-button @click="dialogVisible = false">关闭</el-button>
+            <el-button v-if="rowDetails.status == 1" type="primary" @click="getData">
+                确定
+            </el-button>
         </template>
     </el-dialog>
 </template>
@@ -36,7 +36,7 @@ const optionData = reactive({})
 const vFormRef = ref(null)
 
 const dialogVisible = ref(false)
-const rowId = ref(0)
+const rowDetails = ref({})
 
 const props = defineProps({
     save: {
@@ -44,8 +44,8 @@ const props = defineProps({
         default: () => {}
     }
 })
-function open(id, form_json, form_data) {
-    rowId.value = id
+function open(row, form_json, form_data) {
+    rowDetails.value = row
     formData.value = form_data
     formJson.value = form_json
     console.log('open')
@@ -53,7 +53,7 @@ function open(id, form_json, form_data) {
 }
 function closeFn() {
     dialogVisible.value = false
-    rowId.value = 0
+    rowDetails.value = {}
     formData.value = {}
     formJson.value = {}
 }
@@ -61,7 +61,7 @@ function getData() {
     vFormRef.value.getFormData().then((formData) => {
         console.log('formData', formData)
         props
-            .save(rowId.value, formData)
+            .save(rowDetails.value?.id, formData)
             .then(() => {
                 closeFn()
             })
@@ -78,4 +78,7 @@ defineExpose({
 // body {
 //   margin: 0; /* 如果页面出现垂直滚动条，则加入此行CSS以消除之 */
 // }
+.el-range-editor.el-input__wrapper {
+    box-sizing: border-box;
+}
 </style>

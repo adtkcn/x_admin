@@ -1,132 +1,147 @@
 <template>
     <el-dialog
         v-model="dialogVisible"
-        :show-close="false"
+        :show-close="true"
         :fullscreen="false"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :destroy-on-close="true"
+        title="审批"
         top="1px"
     >
-        <div v-for="node of next_nodes" :key="node.id">
-            {{ node.label }}
-            <el-select
-                class="flex-1"
-                v-if="node.type == 'bpmn:userTask'"
-                v-model="node.applyUserId"
-                placeholder="请选择审批人"
-            >
-                <el-option
-                    v-for="(item, index) in node.approver"
-                    :key="index"
-                    :label="item.nickname"
-                    :value="item.id"
-                    clearable
-                />
-            </el-select>
-        </div>
-        <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-            <el-form-item label="审批节点" prop="flowName">
-                <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
-            </el-form-item>
-            <el-form-item label="审批人" prop="applyUserId">
-                <!-- <el-select
+        <el-form
+            ref="formRef"
+            :model="formData"
+            label-position="top"
+            label-width="110px"
+            :rules="formRules"
+        >
+            <!-- {{ userTask }} -->
+            <el-form-item v-if="userTask" :label="`${userTask?.label}节点审批人`" prop="templateId">
+                <el-select
                     class="flex-1"
+                    v-if="approver.length"
                     v-model="formData.applyUserId"
                     placeholder="请选择审批人"
-                    @change="handleTemplateChange"
                 >
                     <el-option
-                        v-for="(item, index) in flow_template"
+                        v-for="(item, index) in approver"
                         :key="index"
-                        :label="item.flowName"
+                        :label="item.nickname"
                         :value="item.id"
                         clearable
                     />
-                </el-select> -->
+                </el-select>
+            </el-form-item>
+            <el-form-item label="审批意见" prop="passRemark">
+                <el-input
+                    v-model="formData.passRemark"
+                    :rows="2"
+                    type="textarea"
+                    placeholder="请输入审批意见"
+                />
             </el-form-item>
         </el-form>
+        <!-- <el-steps direction="horizontal" :active="next_nodes.length">
+            <el-step :title="node.label" v-for="node of next_nodes" :key="node.id" />
+        </el-steps> -->
 
         <template #footer>
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="getData"> 确定 </el-button>
+            <el-button @click="dialogVisible = false">关闭</el-button>
+            <el-button type="primary" @click="getData"> 通过 </el-button>
         </template>
     </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { flow_history_next_node, flow_history_get_approver } from '@/api/flow_history'
-
-const formRef = ref(null)
+import feedback from '@/utils/feedback'
+import {
+    flow_history_next_node,
+    flow_history_get_approver,
+    flow_history_pass
+} from '@/api/flow_history'
 
 const dialogVisible = ref(false)
 
-const props = defineProps({
-    save: {
-        type: Function,
-        default: () => {}
-    }
-})
-const formData = reactive({
-    id: '',
-    templateId: '',
-    // applyUserId: '',
-    // applyUserNickname: '',
-    flowName: '',
-    flowGroup: '',
-    flowRemark: '',
-    flowFormData: '',
-    flowProcessData: '',
-    status: 0,
-    formValue: ''
-})
+// const props = defineProps({
+//     save: {
+//         type: Function,
+//         default: () => {}
+//     }
+// })
+
+class formDataState {
+    id = ''
+    passRemark = ''
+    applyUserId = ''
+}
+const formData = reactive(new formDataState())
 const next_nodes = ref([])
+const userTask = computed(() => {
+    return next_nodes.value.find((item) => item.type == 'bpmn:userTask')
+})
+const approver = ref([])
 const formRules = {
-    id: [
+    applyUserId: [
         {
             required: true,
-            message: '请输入',
+            message: '请选择',
             trigger: ['blur']
         }
     ]
 }
 function open(row) {
     console.log('open')
-    formData.value = row
+    formData.id = row.id
     dialogVisible.value = true
+
     flow_history_next_node({
         applyId: row.id,
-        nodeId: ''
+        currentNodeId: ''
     }).then((res) => {
         console.log('res', res)
         next_nodes.value = res
 
         res.map((item) => {
             if (item.type == 'bpmn:userTask') {
-                flow_history_get_approver(item).then((approver) => {
-                    console.log('approver', approver)
-                    item.approver = approver
+                flow_history_get_approver(item).then((user) => {
+                    console.log('user', user)
+                    approver.value = user
                 })
             }
         })
     })
 }
-function closeFn() {
+function BeforeClose() {
     dialogVisible.value = false
 
-    formData.value = {}
+    // formData = {}
 }
 function getData() {
-    formRef.value.getFormData().then((formData) => {
-        console.log('formData', formData)
-        props
-            .save(formData)
-            .then(() => {
-                closeFn()
-            })
-            .catch(() => {})
+    console.log('getData', next_nodes)
+
+    if (!formData.applyUserId) {
+        feedback.msgWarning('请选择审批人')
+        return
+    }
+    flow_history_pass({
+        applyId: formData.id,
+        currentNodeId: '',
+        nextNodeAdminId: formData.applyUserId,
+        passRemark: formData.passRemark
+    }).then(() => {
+        BeforeClose()
     })
+    // formRef.value.getFormData().then((formData) => {
+    //     console.log('formData', formData)
+    //     props
+    //         .save(formData)
+    //         .then(() => {
+    //             BeforeClose()
+    //         })
+    //         .catch(() => {})
+    // })
 }
 defineExpose({
     getData,

@@ -184,18 +184,25 @@ func (Service flowHistoryService) GetApprover(node FlowTree) (res []admin.System
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
 	adminModel := Service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
-	if userId > 0 {
-		adminModel.Or("admin.id =?", userId)
-	}
+
+	dept := map[string]interface{}{}
 	if deptId > 0 {
-		adminModel.Or("admin.dept_id =?", deptId)
+		dept["admin.dept_id"] = deptId
+		// adminModel.Or("admin.dept_id =?", deptId)
 	}
 	if postId > 0 {
-		adminModel.Or("admin.post_id =?", postId)
+		dept["admin.post_id"] = postId
+		// adminModel.Or("admin.post_id =?", postId)
 	}
+
+	var where = Service.db.Where(dept)
+	if userId > 0 {
+		where.Or("admin.id =?", userId)
+	}
+
 	// 数据
 	var adminResp []admin.SystemAuthAdminResp
-	err := adminModel.Find(&adminResp).Error
+	err := adminModel.Where(where).Find(&adminResp).Error
 	if e = response.CheckErr(err, "获取审批用户失败"); e != nil {
 		return
 	}
@@ -208,10 +215,66 @@ func (Service flowHistoryService) GetApprover(node FlowTree) (res []admin.System
 	return adminResp, nil
 }
 
+func (Service flowHistoryService) Pass(nextNode NextNodeReq) (e error) {
+	nextNodes, applyDetail, err := Service.GetNextNode(nextNode)
+
+	isEnd := false
+	if err == nil {
+		for _, v := range nextNodes {
+			if v.Type == "bpmn:userTask" {
+				var addReq = FlowHistoryAddReq{}
+				addReq.ApplyId = nextNode.ApplyId
+				addReq.FormValue = nextNode.FormValue
+				addReq.NodeId = v.Id
+				addReq.ApproverId = nextNode.NextNodeAdminId
+
+				// addReq.ApproverNickname = applyDetail.ApproverNickname
+
+				addReq.TemplateId = applyDetail.TemplateId
+				addReq.ApplyUserId = applyDetail.ApplyUserId
+				addReq.ApplyUserNickname = applyDetail.ApplyUserNickname
+				addReq.PassStatus = 1
+				err = Service.Add(addReq)
+			} else if v.Type == "bpmn:endEvent" {
+				isEnd = true
+				var addReq = FlowHistoryAddReq{}
+				addReq.ApplyId = nextNode.ApplyId
+				addReq.FormValue = nextNode.FormValue
+				addReq.NodeId = v.Id
+				addReq.ApproverId = 0
+
+				// addReq.ApproverNickname = applyDetail.ApproverNickname
+
+				addReq.TemplateId = applyDetail.TemplateId
+				addReq.ApplyUserId = applyDetail.ApplyUserId
+				addReq.ApplyUserNickname = applyDetail.ApplyUserNickname
+				addReq.PassStatus = 2
+				err = Service.Add(addReq)
+			}
+		}
+	}
+	// 待提交或者有结束节点，修改申请状态
+	if applyDetail.Status == 1 || isEnd {
+		status := 2 //审批中
+		if isEnd {
+			status = 3 //审批通过
+		}
+		// 更改状态
+		err = flow_apply.Service.Edit(flow_apply.FlowApplyEditReq{
+			Id:     nextNode.ApplyId,
+			Status: status,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return err
+}
+
 /**
  * 获取下一批流程，直到审批或结束节点
  */
-func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (res []FlowTree, e error) {
+func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (res []FlowTree, apply flow_apply.FlowApplyResp, e error) {
 	var applyDetail, err = flow_apply.Service.Detail(nextNode.ApplyId)
 	if e = response.CheckErr(err, "获取审批申请失败"); e != nil {
 		return
@@ -241,7 +304,7 @@ func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (res []FlowT
 	}
 	var nextNodes []FlowTree
 	res = DeepNextNode(nextNodes, &next, formValue)
-	return res, e
+	return res, applyDetail, e
 }
 
 // 返回节点数组，最后一个节点为用户或结束节点

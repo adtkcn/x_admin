@@ -12,7 +12,7 @@ type FlowHistoryListReq struct {
 	ApproverNickname  string `form:"approverNickname"`  // 审批用户昵称
 	NodeId            string `form:"nodeId"`            // 节点
 	FormValue         string `form:"formValue"`         // 表单值
-	PassStatus        int    `form:"passStatus"`        // 通过状态：0待处理，1通过，2拒绝
+	PassStatus        int    `form:"passStatus"`        // 通过状态：1待处理，2通过，3拒绝
 	PassRemark        string `form:"passRemark"`        // 通过备注
 }
 
@@ -31,7 +31,7 @@ type FlowHistoryAddReq struct {
 	ApproverNickname  string `form:"approverNickname"`  // 审批用户昵称
 	NodeId            string `form:"nodeId"`            // 节点
 	FormValue         string `form:"formValue"`         // 表单值
-	PassStatus        int    `form:"passStatus"`        // 通过状态：0待处理，1通过，2拒绝
+	PassStatus        int    `form:"passStatus"`        // 通过状态：1待处理，2通过，3拒绝
 	PassRemark        string `form:"passRemark"`        // 通过备注
 }
 
@@ -46,7 +46,7 @@ type FlowHistoryEditReq struct {
 	ApproverNickname  string `form:"approverNickname"`  // 审批用户昵称
 	NodeId            string `form:"nodeId"`            // 节点
 	FormValue         string `form:"formValue"`         // 表单值
-	PassStatus        int    `form:"passStatus"`        // 通过状态：0待处理，1通过，2拒绝
+	PassStatus        int    `form:"passStatus"`        // 通过状态：1待处理，2通过，3拒绝
 	PassRemark        string `form:"passRemark"`        // 通过备注
 }
 
@@ -66,16 +66,17 @@ type FlowHistoryResp struct {
 	ApproverNickname  string      `json:"approverNickname" structs:"approverNickname"`   // 审批用户昵称
 	NodeId            string      `json:"nodeId" structs:"nodeId"`                       // 节点
 	FormValue         string      `json:"formValue" structs:"formValue"`                 // 表单值
-	PassStatus        int         `json:"passStatus" structs:"passStatus"`               // 通过状态：0待处理，1通过，2拒绝
+	PassStatus        int         `json:"passStatus" structs:"passStatus"`               // 通过状态：1待处理，2通过，3拒绝
 	PassRemark        string      `json:"passRemark" structs:"passRemark"`               // 通过备注
 	UpdateTime        core.TsTime `json:"updateTime" structs:"updateTime"`               // 更新时间
 	CreateTime        core.TsTime `json:"createTime" structs:"createTime"`               // 创建时间
 }
 
 type NextNodeReq struct {
-	ApplyId       int    `form:"applyId"` // 申请id
-	CurrentNodeId string `form:"nodeId"`  // 流程里的节点id
-	FormValue     string `form:"formValue"`
+	ApplyId         int    `form:"applyId"`       // 申请id
+	CurrentNodeId   string `form:"currentNodeId"` // 流程里的节点id
+	FormValue       string `form:"formValue"`
+	NextNodeAdminId int    `form:"nextNodeAdminId"` // 下一个节点的审批用户id
 }
 type FlowTree struct {
 	Id    string `json:"id"`

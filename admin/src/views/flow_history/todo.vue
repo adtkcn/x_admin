@@ -1,3 +1,4 @@
+<!-- 代办 -->
 <template>
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
@@ -40,9 +41,6 @@
                 </el-button>
             </div>
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
-                <el-table-column label="申请id" prop="applyId" min-width="100" />
-                <el-table-column label="模板id" prop="templateId" min-width="100" />
-                <el-table-column label="申请人id" prop="applyUserId" min-width="100" />
                 <el-table-column label="申请人昵称" prop="applyUserNickname" min-width="100" />
                 <el-table-column label="审批人id" prop="approverId" min-width="100" />
                 <el-table-column label="审批用户昵称" prop="approverNickname" min-width="100" />
@@ -89,6 +87,10 @@ import { flow_history_delete, flow_history_list } from '@/api/flow_history'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+import useUserStore from '@/stores/modules/user'
+
+const userStore = useUserStore()
+
 defineOptions({
     name: 'flow_history'
 })
@@ -99,11 +101,11 @@ const queryParams = reactive({
     templateId: '',
     applyUserId: '',
     applyUserNickname: '',
-    approverId: '',
+    approverId: userStore?.userInfo?.id,
     approverNickname: '',
     nodeId: '',
     formValue: '',
-    passStatus: '',
+    passStatus: 1,
     passRemark: ''
 })
 

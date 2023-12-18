@@ -38,3 +38,6 @@ export function flow_history_next_node(params: Record<string, any>) {
 export function flow_history_get_approver(params: Record<string, any>) {
     return request.post({ url: '/flow_history/get_approver', params })
 }
+export function flow_history_pass(params: Record<string, any>) {
+    return request.post({ url: '/flow_history/pass', params })
+}
