@@ -221,10 +221,15 @@ func (Service flowHistoryService) Pass(nextNode NextNodeReq) (e error) {
 	isEnd := false
 	if err == nil {
 		for _, v := range nextNodes {
-			if v.Type == "bpmn:userTask" {
+			// if v.Type == "bpmn:exclusiveGateway" {
+			// 这里网关不用处理，顶多加一条历史记录
+			// }
+			if v.Type == "bpmn:serviceTask" {
+				// 发邮件之类的，待完善
+			} else if v.Type == "bpmn:userTask" {
 				var addReq = FlowHistoryAddReq{}
-				addReq.ApplyId = nextNode.ApplyId
-				addReq.FormValue = nextNode.FormValue
+				addReq.ApplyId = applyDetail.Id
+				addReq.FormValue = applyDetail.FormValue
 				addReq.NodeId = v.Id
 				addReq.ApproverId = nextNode.NextNodeAdminId
 
@@ -238,8 +243,8 @@ func (Service flowHistoryService) Pass(nextNode NextNodeReq) (e error) {
 			} else if v.Type == "bpmn:endEvent" {
 				isEnd = true
 				var addReq = FlowHistoryAddReq{}
-				addReq.ApplyId = nextNode.ApplyId
-				addReq.FormValue = nextNode.FormValue
+				addReq.ApplyId = applyDetail.Id
+				addReq.FormValue = applyDetail.FormValue
 				addReq.NodeId = v.Id
 				addReq.ApproverId = 0
 

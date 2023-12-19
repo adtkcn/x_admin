@@ -105,27 +105,6 @@
                     />
                 </div>
             </el-card>
-            <el-card class="!border-none mb-4" shadow="never">
-                <template #header>
-                    <span>服务支持</span>
-                </template>
-                <div>
-                    <div v-for="(item, index) in workbenchData.support" :key="index">
-                        <div
-                            class="flex items-center pb-10 pt-10"
-                            :class="{
-                                'border-b border-br': index == 0
-                            }"
-                        >
-                            <img width="120" height="120" class="flex-none" :src="item.image" />
-                            <div class="ml-2">
-                                <div>{{ item.title }}</div>
-                                <div class="text-tx-regular text-xs mt-4">{{ item.desc }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </el-card>
         </div>
     </div>
 </template>
@@ -142,8 +121,7 @@ import menu_generator from './image/menu_generator.png'
 import menu_file from './image/menu_file.png'
 import menu_auth from './image/menu_auth.png'
 import menu_web from './image/menu_web.png'
-import qq_group from './image/qq_group.png'
-import customer_service from './image/customer_service.png'
+
 // 表单数据
 const workbenchData: any = reactive({
     version: {
@@ -155,18 +133,7 @@ const workbenchData: any = reactive({
             website: ''
         }
     },
-    support: [
-        {
-            image: qq_group,
-            title: '扫码进入QQ交流群',
-            desc: '疑难疑点 进入QQ群'
-        },
-        {
-            image: customer_service,
-            title: '添加企业客服微信',
-            desc: '想了解更多请添加客服'
-        }
-    ],
+
     today: {}, // 今日数据
     menu: [
         {

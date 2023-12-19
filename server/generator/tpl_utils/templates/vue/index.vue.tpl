@@ -15,7 +15,6 @@
                 <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
                     <el-select
                         v-model="queryParams.{{{ (toCamelCase .GoField) }}}"
-                        class="w-[280px]"
                         clearable
                     >
                         {{{- if eq .DictType "" }}}
@@ -33,7 +32,7 @@
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
                 <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                    <el-input class="w-[280px]" v-model="queryParams.{{{ (toCamelCase .GoField) }}}" />
+                    <el-input  v-model="queryParams.{{{ (toCamelCase .GoField) }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
@@ -81,7 +80,7 @@
                     </template>
                 </el-table-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100" />
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="130" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}

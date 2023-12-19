@@ -3,26 +3,26 @@
         <el-card class="!border-none" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <el-form-item label="申请id" prop="applyId">
-                    <el-input class="w-[280px]" v-model="queryParams.applyId" />
+                    <el-input v-model="queryParams.applyId" />
                 </el-form-item>
 
                 <el-form-item label="申请人昵称" prop="applyUserNickname">
-                    <el-input class="w-[280px]" v-model="queryParams.applyUserNickname" />
+                    <el-input v-model="queryParams.applyUserNickname" />
                 </el-form-item>
 
                 <el-form-item label="审批用户昵称" prop="approverNickname">
-                    <el-input class="w-[280px]" v-model="queryParams.approverNickname" />
+                    <el-input v-model="queryParams.approverNickname" />
                 </el-form-item>
                 <el-form-item label="节点" prop="nodeId">
-                    <el-input class="w-[280px]" v-model="queryParams.nodeId" />
+                    <el-input v-model="queryParams.nodeId" />
                 </el-form-item>
                 <el-form-item label="通过状态" prop="passStatus">
-                    <el-select v-model="queryParams.passStatus" class="w-[280px]" clearable>
+                    <el-select v-model="queryParams.passStatus" clearable>
                         <el-option label="请选择字典生成" value="" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="通过备注" prop="passRemark">
-                    <el-input class="w-[280px]" v-model="queryParams.passRemark" />
+                    <el-input v-model="queryParams.passRemark" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>

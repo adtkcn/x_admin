@@ -1,3 +1,8 @@
+<!-- 审批 -->
+
+<!-- 预览和编辑
+ -->
+<!-- 审批记录备注 -->
 <template>
     <el-dialog
         v-model="dialogVisible"
@@ -9,6 +14,16 @@
         title="审批"
         top="1px"
     >
+        <v-form-render
+            v-if="render"
+            :form-json="formJson"
+            :form-data="formRenderData"
+            :option-data="optionData"
+            ref="vFormRef"
+        >
+        </v-form-render>
+
+        <el-divider> 审批 </el-divider>
         <el-form
             ref="formRef"
             :model="formData"
@@ -16,7 +31,6 @@
             label-width="110px"
             :rules="formRules"
         >
-            <!-- {{ userTask }} -->
             <el-form-item v-if="userTask" :label="`${userTask?.label}节点审批人`" prop="templateId">
                 <el-select
                     class="flex-1"
@@ -42,35 +56,34 @@
                 />
             </el-form-item>
         </el-form>
-        <!-- <el-steps direction="horizontal" :active="next_nodes.length">
-            <el-step :title="node.label" v-for="node of next_nodes" :key="node.id" />
-        </el-steps> -->
-
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button type="primary" @click="getData"> 通过 </el-button>
+            <el-button type="primary" @click="save"> 通过 </el-button>
         </template>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import feedback from '@/utils/feedback'
+import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
 import {
     flow_history_next_node,
     flow_history_get_approver,
     flow_history_pass
 } from '@/api/flow_history'
+import { flow_apply_detail } from '@/api/flow_apply'
+import { defineExpose, defineProps, defineOptions, reactive, ref, computed } from 'vue'
+defineOptions({
+    name: 'todo-approve'
+})
+// 表单
+const formJson = ref({})
+const formRenderData = ref({})
+const optionData = reactive({})
+const vFormRef = ref(null)
 
 const dialogVisible = ref(false)
 
-// const props = defineProps({
-//     save: {
-//         type: Function,
-//         default: () => {}
-//     }
-// })
-
+// 审批
 class formDataState {
     id = ''
     passRemark = ''
@@ -91,67 +104,62 @@ const formRules = {
         }
     ]
 }
-function open(row) {
-    console.log('open')
-    Object.assign(formData, new formDataState())
-    formData.id = row.id
-    dialogVisible.value = true
+const render = ref(false)
+function reset() {
+    render.value = false
+}
+async function open(row) {
+    reset()
+    if (row) {
+        dialogVisible.value = true
 
-    flow_history_next_node({
-        applyId: row.id,
-        currentNodeId: ''
-    }).then((res) => {
-        console.log('res', res)
-        next_nodes.value = res
+        const flowFormData = await flow_apply_detail({
+            id: row.applyId
+        })
 
-        res.map((item) => {
-            if (item.type == 'bpmn:userTask') {
-                flow_history_get_approver(item).then((user) => {
-                    console.log('user', user)
-                    approverUserList.value = user
-                })
-            }
+        formRenderData.value = JSON.parse(row.formValue)
+        formJson.value = JSON.parse(flowFormData.flowFormData)
+
+        render.value = true
+        flow_history_next_node({
+            applyId: row.applyId,
+            currentNodeId: row.nodeId
+        }).then((res) => {
+            console.log('res', res)
+            next_nodes.value = res
+
+            res.map((item) => {
+                if (item.type == 'bpmn:userTask') {
+                    flow_history_get_approver(item).then((user) => {
+                        console.log('user', user)
+                        approverUserList.value = user
+                    })
+                }
+            })
+        })
+    }
+}
+function save() {
+    vFormRef.value.getFormData().then((formData) => {
+        console.log('formData', formData)
+
+        flow_history_pass({
+            applyId: formData.id,
+            passRemark: formData.passRemark,
+            applyUserId: formData.applyUserId
+        }).then((res) => {
+            console.log('res', res)
+            dialogVisible.value = false
         })
     })
 }
-function BeforeClose() {
-    dialogVisible.value = false
-
-    // formData = {}
-}
-function getData() {
-    console.log('getData', next_nodes)
-
-    if (!formData.applyUserId) {
-        feedback.msgWarning('请选择审批人')
-        return
-    }
-    flow_history_pass({
-        applyId: formData.id,
-        currentNodeId: '',
-        nextNodeAdminId: formData.applyUserId,
-        passRemark: formData.passRemark
-    }).then(() => {
-        BeforeClose()
-    })
-    // formRef.value.getFormData().then((formData) => {
-    //     console.log('formData', formData)
-    //     props
-    //         .save(formData)
-    //         .then(() => {
-    //             BeforeClose()
-    //         })
-    //         .catch(() => {})
-    // })
-}
 defineExpose({
-    getData,
     open
 })
 </script>
 
 <style lang="scss">
-// body {
-//   margin: 0; /* 如果页面出现垂直滚动条，则加入此行CSS以消除之 */
-// }
+.el-range-editor.el-input__wrapper {
+    box-sizing: border-box;
+}
 </style>
