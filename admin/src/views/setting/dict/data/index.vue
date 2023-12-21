@@ -63,7 +63,11 @@
                     >
                         <el-table-column type="selection" width="55" />
                         <el-table-column label="ID" prop="id" />
-                        <el-table-column label="数据名称" prop="name" min-width="120" />
+                        <el-table-column label="数据名称" prop="name" min-width="120">
+                            <template v-slot="{ row }">
+                                <span :style="{ color: row.color }">{{ row.name }}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column label="数据值" prop="value" min-width="120" />
                         <el-table-column label="颜色" prop="color" min-width="120" />
                         <el-table-column label="状态">

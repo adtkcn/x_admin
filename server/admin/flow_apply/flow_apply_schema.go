@@ -27,7 +27,7 @@ type FlowApplyAddReq struct {
 	TemplateId        int    `form:"templateId"`        // 模板
 	ApplyUserId       int    `form:"applyUserId"`       // 申请人id
 	ApplyUserNickname string `form:"applyUserNickname"` // 申请人昵称
-	// FlowName            string `form:"flowName"`            // 流程名称
+	FlowName          string `form:"flowName"`          // 流程名称
 	// FlowGroup           int    `form:"flowGroup"`           // 流程分类
 	// FlowRemark          string `form:"flowRemark"`          // 流程描述
 	// FlowFormData        string `form:"flowFormData"`        // 表单配置
@@ -43,7 +43,7 @@ type FlowApplyEditReq struct {
 	// TemplateId          int    `form:"templateId"`          // 模板
 	// ApplyUserId         int    `form:"applyUserId"`         // 申请人id
 	// ApplyUserNickname   string `form:"applyUserNickname"`   // 申请人昵称
-	// FlowName            string `form:"flowName"`            // 流程名称
+	FlowName string `form:"flowName"` // 流程名称
 	// FlowGroup           int    `form:"flowGroup"`           // 流程分类
 	// FlowRemark          string `form:"flowRemark"`          // 流程描述
 	// FlowFormData        string `form:"flowFormData"`        // 表单配置

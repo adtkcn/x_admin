@@ -109,7 +109,7 @@ func (Service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
 		return
 	}
 	response.Copy(&obj, addReq)
-	obj.FlowName = flow_template_resp.FlowName
+	// obj.FlowName = flow_template_resp.FlowName
 	obj.FlowGroup = flow_template_resp.FlowGroup
 	obj.FlowRemark = flow_template_resp.FlowRemark
 	obj.FlowFormData = flow_template_resp.FlowFormData

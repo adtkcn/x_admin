@@ -30,10 +30,10 @@
                 <el-form-item label="流程名称" prop="flowName">
                     <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
                 </el-form-item>
-                <el-form-item label="流程分类" prop="flowGroup">
+                <!-- <el-form-item label="流程分类" prop="flowGroup">
                     <el-input v-model="formData.flowGroup" placeholder="请输入流程分类" />
-                </el-form-item>
-                <el-form-item label="流程描述" prop="flowRemark">
+                </el-form-item> -->
+                <!-- <el-form-item label="流程描述" prop="flowRemark">
                     <el-input v-model="formData.flowRemark" placeholder="请输入流程描述" />
                 </el-form-item>
 
@@ -44,7 +44,7 @@
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
                     />
-                </el-form-item>
+                </el-form-item> -->
                 <!-- <el-form-item label="状态：0待提交，1审批中，2审批完成，3审批失败" prop="status">
                     <el-select
                         class="flex-1"
@@ -94,12 +94,12 @@ const formData = reactive({
     // applyUserId: '',
     // applyUserNickname: '',
     flowName: '',
-    flowGroup: '',
-    flowRemark: '',
-    flowFormData: '',
-    flowProcessData: '',
-    status: 0,
-    formValue: ''
+    // flowGroup: '',
+    // flowRemark: '',
+    // flowFormData: '',
+    // flowProcessData: '',
+    status: 0
+    // formValue: ''
 })
 
 const formRules = {
@@ -183,10 +183,10 @@ function handleTemplateChange(id: number) {
     flow_template.value.find((item: any) => {
         if (item.id == id) {
             formData.flowName = item.flowName
-            formData.flowGroup = item.flowGroup
-            formData.flowRemark = item.flowRemark
-            formData.flowFormData = item.flowFormData
-            formData.flowProcessData = item.flowProcessData
+            // formData.flowGroup = item.flowGroup
+            // formData.flowRemark = item.flowRemark
+            // formData.flowFormData = item.flowFormData
+            // formData.flowProcessData = item.flowProcessData
             return true
         }
     })
