@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : likeadmin
+ Source Server         : x_admin
  Source Server Type    : MySQL
- Source Server Version : 50726 (5.7.26-log)
+ Source Server Version : 50726
  Source Host           : localhost:3306
- Source Schema         : likeadmin
+ Source Schema         : x_admin
 
  Target Server Type    : MySQL
- Target Server Version : 50726 (5.7.26-log)
+ Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 21/11/2023 10:12:07
+ Date: 22/12/2023 00:53:55
 */
 
 SET NAMES utf8mb4;
@@ -37,13 +37,17 @@ CREATE TABLE `x_album`  (
   `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_cid`(`cid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '相册管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '相册管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_album
 -- ----------------------------
-INSERT INTO `x_album` VALUES (1, 0, 1, 0, 10, 'Alx_gp73pq.png', 'image/20230911/34a557325c004f498b1da01bb068f919.png', 'png', 7138309, 0, 1699499781, 1699499781, 0);
+INSERT INTO `x_album` VALUES (1, 0, 1, 0, 10, 'Alx_gp73pq.png', 'image/20230911/34a557325c004f498b1da01bb068f919.png', 'png', 7138309, 1, 1699499781, 1700821723, 1700821723);
 INSERT INTO `x_album` VALUES (2, 0, 1, 0, 20, '素材中心 和另外 1 个页面 - 个人 - Microsoft​ Edge 2023-11-20 15-37-39.mp4', 'video/20232011/e5f53b824e314ab7992ef4b6e7595b86.mp4', 'mp4', 4053956, 0, 1700465870, 1700465870, 0);
+INSERT INTO `x_album` VALUES (3, 1, 1, 0, 10, 'COMPUMAX_1p2x61.jpg', 'image/20232411/cd61498e40f545f9863e6251af587e67.jpg', 'jpg', 613802, 1, 1700821741, 1700821809, 1700821809);
+INSERT INTO `x_album` VALUES (4, 1, 1, 0, 10, '截图 2023-11-24 12.05.30-fullpage.png', 'image/20232511/2c719c9ae2e14ed39d9710426df63c3f.png', 'png', 155658, 1, 1700924913, 1701224132, 1701224132);
+INSERT INTO `x_album` VALUES (5, 1, 1, 0, 10, 'COMPUMAX_1p2x61.jpg', 'image/20232511/8510ef876e5b458d8e5c4291d9ac12e1.jpg', 'jpg', 613802, 1, 1700924945, 1701224129, 1701224129);
+INSERT INTO `x_album` VALUES (6, 0, 1, 0, 10, 'COMPUMAX_1p2x61.jpg', 'image/20232911/27699a1e991e4ba1ba13ee6d45185db6.jpg', 'jpg', 613802, 0, 1701224137, 1701224137, 0);
 
 -- ----------------------------
 -- Table structure for x_album_cate
@@ -192,6 +196,7 @@ CREATE TABLE `x_dict_data`  (
   `type_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '类型',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '键名',
   `value` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数值',
+  `color` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '颜色',
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '备注',
   `sort` smallint(5) UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
   `status` tinyint(1) NOT NULL COMMENT '状态: 0=停用, 1=正常',
@@ -200,11 +205,19 @@ CREATE TABLE `x_dict_data`  (
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_dict_data
 -- ----------------------------
+INSERT INTO `x_dict_data` VALUES (1, 2, '待提交', '1', NULL, '', 0, 1, 0, 0, 1702902757, 0);
+INSERT INTO `x_dict_data` VALUES (2, 2, '审批中', '2', NULL, '', 0, 1, 0, 0, 1702902752, 0);
+INSERT INTO `x_dict_data` VALUES (3, 2, '审批成功', '3', 'green', '', 0, 1, 0, 0, 1703171982, 0);
+INSERT INTO `x_dict_data` VALUES (4, 2, '失败', '4', 'red', '', 0, 1, 0, 0, 1703171974, 0);
+INSERT INTO `x_dict_data` VALUES (5, 3, '待处理', '1', 'yellow', '', 0, 1, 0, 0, 1703171846, 0);
+INSERT INTO `x_dict_data` VALUES (6, 3, '通过', '2', 'green', '', 0, 1, 0, 0, 1703171473, 0);
+INSERT INTO `x_dict_data` VALUES (7, 3, '拒绝', '3', 'red', '', 0, 1, 0, 0, 1703171461, 0);
+INSERT INTO `x_dict_data` VALUES (8, 2, '666', '6', '123', '', 0, 1, 1, 1703172304, 1703172368, 1703172368);
 
 -- ----------------------------
 -- Table structure for x_dict_type
@@ -221,12 +234,93 @@ CREATE TABLE `x_dict_type`  (
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_dict_type
 -- ----------------------------
-INSERT INTO `x_dict_type` VALUES (1, 'a', 'a', 'a', 1, 0, 1699343341, 1699343341, 0);
+INSERT INTO `x_dict_type` VALUES (2, '审批申请状态', 'flow_apply_status', '0待提交，1审批中，2审批完成，3审批失败', 1, 0, 1702207019, 1702207019, 0);
+INSERT INTO `x_dict_type` VALUES (3, '审批历史状态', 'flow_history_status', '', 1, 0, 1702958280, 1702958280, 0);
+
+-- ----------------------------
+-- Table structure for x_flow_apply
+-- ----------------------------
+DROP TABLE IF EXISTS `x_flow_apply`;
+CREATE TABLE `x_flow_apply`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `template_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '模板',
+  `apply_user_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '申请人id',
+  `apply_user_nickname` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '申请人昵称',
+  `flow_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '流程名称',
+  `flow_group` tinyint(2) NOT NULL DEFAULT 0 COMMENT '流程分类',
+  `flow_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '流程描述',
+  `flow_form_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '表单配置',
+  `flow_process_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '流程配置',
+  `flow_process_data_list` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '流程配置list',
+  `form_value` mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '表单值',
+  `status` tinyint(2) UNSIGNED NULL DEFAULT 1 COMMENT '状态：1待提交，2审批中，3审批完成，4审批失败',
+  `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '申请流程' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of x_flow_apply
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for x_flow_history
+-- ----------------------------
+DROP TABLE IF EXISTS `x_flow_history`;
+CREATE TABLE `x_flow_history`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '历史id',
+  `apply_id` int(10) UNSIGNED NOT NULL COMMENT '申请id',
+  `template_id` int(10) UNSIGNED NULL DEFAULT NULL COMMENT '模板id',
+  `apply_user_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '申请人id',
+  `apply_user_nickname` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '申请人昵称',
+  `approver_id` int(10) UNSIGNED NOT NULL COMMENT '审批人id',
+  `approver_nickname` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '审批用户昵称',
+  `node_id` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '节点',
+  `form_value` mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '表单值',
+  `pass_status` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '通过状态：1待处理，2通过，3拒绝',
+  `pass_remark` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '通过备注',
+  `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `apply_id`(`apply_id`) USING BTREE,
+  INDEX `approver_id`(`approver_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程历史' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of x_flow_history
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for x_flow_template
+-- ----------------------------
+DROP TABLE IF EXISTS `x_flow_template`;
+CREATE TABLE `x_flow_template`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `flow_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '流程名称',
+  `flow_group` tinyint(2) NOT NULL DEFAULT 0 COMMENT '流程分类',
+  `flow_remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '流程描述',
+  `flow_form_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '表单配置',
+  `flow_process_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '流程配置',
+  `flow_process_data_list` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '流程配置list',
+  `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程模板' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of x_flow_template
+-- ----------------------------
+INSERT INTO `x_flow_template` VALUES (1, '1', 1, '1', '{\"widgetList\":[{\"key\":40082,\"type\":\"table\",\"category\":\"container\",\"icon\":\"table\",\"rows\":[{\"cols\":[{\"type\":\"table-cell\",\"category\":\"container\",\"icon\":\"table-cell\",\"internal\":true,\"widgetList\":[],\"merged\":false,\"options\":{\"name\":\"table-cell-42449\",\"cellWidth\":\"\",\"cellHeight\":\"\",\"colspan\":1,\"rowspan\":1,\"customClass\":\"\"},\"id\":\"table-cell-42449\"}],\"id\":\"table-row-100944\",\"merged\":false}],\"options\":{\"name\":\"table100586\",\"hidden\":false,\"customClass\":[]},\"id\":\"table100586\"},{\"key\":47677,\"type\":\"time-range\",\"icon\":\"time-range-field\",\"formItemFlag\":true,\"options\":{\"name\":\"timerange73058\",\"label\":\"time-range\",\"labelAlign\":\"\",\"defaultValue\":null,\"startPlaceholder\":\"\",\"endPlaceholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"autoFullWidth\":true,\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"clearable\":true,\"editable\":false,\"format\":\"HH:mm:ss\",\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":[],\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"onCreated\":\"\",\"onMounted\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\"},\"id\":\"timerange73058\"},{\"key\":93225,\"type\":\"textarea\",\"icon\":\"textarea-field\",\"formItemFlag\":true,\"options\":{\"name\":\"textarea53158\",\"label\":\"textarea\",\"labelAlign\":\"\",\"rows\":3,\"defaultValue\":\"\",\"placeholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":[],\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"minLength\":null,\"maxLength\":null,\"showWordLimit\":false,\"onCreated\":\"\",\"onMounted\":\"\",\"onInput\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\"},\"id\":\"textarea53158\"}],\"formConfig\":{\"modelName\":\"formData\",\"refName\":\"vForm\",\"rulesName\":\"rules\",\"labelWidth\":80,\"labelPosition\":\"left\",\"size\":\"\",\"labelAlign\":\"label-left-align\",\"cssCode\":\"\",\"customClass\":[],\"functions\":\"\",\"layoutType\":\"H5\",\"jsonVersion\":3,\"onFormCreated\":\"\",\"onFormMounted\":\"\",\"onFormDataChange\":\"\"}}', '{\"nodes\":[{\"id\":\"Event_be521c6\",\"type\":\"bpmn:startEvent\",\"x\":560,\"y\":250,\"properties\":{},\"zIndex\":1010,\"text\":{\"x\":560,\"y\":290,\"value\":\"开始\"}},{\"id\":\"Activity_af6a39d\",\"type\":\"bpmn:userTask\",\"x\":820,\"y\":290,\"properties\":{},\"zIndex\":1012,\"text\":{\"x\":820,\"y\":290,\"value\":\"审批\"}},{\"id\":\"Event_07c8d97\",\"type\":\"bpmn:endEvent\",\"x\":600,\"y\":480,\"properties\":{},\"zIndex\":1009,\"text\":{\"x\":600,\"y\":520,\"value\":\"结束\"}}],\"edges\":[{\"id\":\"2c5d59e5-9391-41eb-8965-ad7d96ec606e\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Event_be521c6\",\"targetNodeId\":\"Activity_af6a39d\",\"startPoint\":{\"x\":578,\"y\":250},\"endPoint\":{\"x\":770,\"y\":290},\"properties\":{},\"zIndex\":1011,\"pointsList\":[{\"x\":578,\"y\":250},{\"x\":674,\"y\":250},{\"x\":674,\"y\":290},{\"x\":770,\"y\":290}]},{\"id\":\"b43de65b-6489-4e2d-aa2b-d298a430f912\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_af6a39d\",\"targetNodeId\":\"Event_07c8d97\",\"startPoint\":{\"x\":820,\"y\":330},\"endPoint\":{\"x\":618,\"y\":480},\"properties\":{},\"zIndex\":1013,\"pointsList\":[{\"x\":820,\"y\":330},{\"x\":820,\"y\":480},{\"x\":618,\"y\":480}]}]}', NULL, 0, 0, 0);
+INSERT INTO `x_flow_template` VALUES (2, '2', 2, '2', '{\"widgetList\":[{\"key\":93225,\"type\":\"textarea\",\"icon\":\"textarea-field\",\"formItemFlag\":true,\"options\":{\"name\":\"textarea53158\",\"label\":\"textarea\",\"labelAlign\":\"\",\"rows\":3,\"defaultValue\":\"\",\"placeholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":[],\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"minLength\":null,\"maxLength\":null,\"showWordLimit\":false,\"onCreated\":\"\",\"onMounted\":\"\",\"onInput\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\"},\"id\":\"textarea53158\"}],\"formConfig\":{\"modelName\":\"formData\",\"refName\":\"vForm\",\"rulesName\":\"rules\",\"labelWidth\":80,\"labelPosition\":\"left\",\"size\":\"\",\"labelAlign\":\"label-left-align\",\"cssCode\":\"\",\"customClass\":[],\"functions\":\"\",\"layoutType\":\"H5\",\"jsonVersion\":3,\"onFormCreated\":\"\",\"onFormMounted\":\"\",\"onFormDataChange\":\"\"}}', '{\"nodes\":[{\"id\":\"Event_5026d13\",\"type\":\"bpmn:startEvent\",\"x\":260,\"y\":250,\"properties\":{},\"zIndex\":1005,\"text\":{\"x\":260,\"y\":290,\"value\":\"开始\"}},{\"id\":\"Activity_88d7be8\",\"type\":\"bpmn:userTask\",\"x\":440,\"y\":250,\"properties\":{\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":\"\",\"postId\":\"\"},\"zIndex\":1020,\"text\":{\"x\":440,\"y\":250,\"value\":\"审批1\"}},{\"id\":\"Event_af85d64\",\"type\":\"bpmn:endEvent\",\"x\":860,\"y\":430,\"properties\":{},\"zIndex\":1030,\"text\":{\"x\":860,\"y\":470,\"value\":\"结束\"}},{\"id\":\"Activity_25503fa\",\"type\":\"bpmn:userTask\",\"x\":670,\"y\":250,\"properties\":{\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":\"\",\"postId\":\"\"},\"zIndex\":1021,\"text\":{\"x\":670,\"y\":250,\"value\":\"审批2\"}},{\"id\":\"Activity_aef6da7\",\"type\":\"bpmn:userTask\",\"x\":860,\"y\":250,\"properties\":{\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":\"\",\"postId\":\"\"},\"zIndex\":1022,\"text\":{\"x\":860,\"y\":250,\"value\":\"审批3\"}}],\"edges\":[{\"id\":\"551bb676-f75e-40b6-a6d1-bb7cb0fd9a6d\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Event_5026d13\",\"targetNodeId\":\"Activity_88d7be8\",\"startPoint\":{\"x\":278,\"y\":250},\"endPoint\":{\"x\":390,\"y\":250},\"properties\":{},\"zIndex\":1006,\"pointsList\":[{\"x\":278,\"y\":250},{\"x\":390,\"y\":250}]},{\"id\":\"8ed211b9-ac96-4247-8981-7b3ef9c66aa7\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_aef6da7\",\"targetNodeId\":\"Event_af85d64\",\"startPoint\":{\"x\":860,\"y\":290},\"endPoint\":{\"x\":860,\"y\":412},\"properties\":{},\"zIndex\":1015,\"pointsList\":[{\"x\":860,\"y\":290},{\"x\":860,\"y\":412}]},{\"id\":\"2c2a0325-93d5-412a-91cb-5db54ef17805\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_25503fa\",\"targetNodeId\":\"Activity_aef6da7\",\"startPoint\":{\"x\":720,\"y\":250},\"endPoint\":{\"x\":810,\"y\":250},\"properties\":{},\"zIndex\":1017,\"pointsList\":[{\"x\":720,\"y\":250},{\"x\":810,\"y\":250}]},{\"id\":\"451ff820-942f-4f40-b3af-cba625fcb4a3\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_88d7be8\",\"targetNodeId\":\"Activity_25503fa\",\"startPoint\":{\"x\":490,\"y\":250},\"endPoint\":{\"x\":620,\"y\":250},\"properties\":{},\"zIndex\":1019,\"pointsList\":[{\"x\":490,\"y\":250},{\"x\":620,\"y\":250}]}]}', '[{\"id\":\"Event_5026d13\",\"pid\":0,\"label\":\"开始\",\"type\":\"bpmn:startEvent\",\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_88d7be8\",\"pid\":\"Event_5026d13\",\"label\":\"审批1\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_25503fa\",\"pid\":\"Activity_88d7be8\",\"label\":\"审批2\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_aef6da7\",\"pid\":\"Activity_25503fa\",\"label\":\"审批3\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_af85d64\",\"pid\":\"Activity_aef6da7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]}]}]},{\"id\":\"Activity_88d7be8\",\"pid\":\"Event_5026d13\",\"label\":\"审批1\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_25503fa\",\"pid\":\"Activity_88d7be8\",\"label\":\"审批2\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_aef6da7\",\"pid\":\"Activity_25503fa\",\"label\":\"审批3\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_af85d64\",\"pid\":\"Activity_aef6da7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]}]},{\"id\":\"Activity_25503fa\",\"pid\":\"Activity_88d7be8\",\"label\":\"审批2\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_aef6da7\",\"pid\":\"Activity_25503fa\",\"label\":\"审批3\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_af85d64\",\"pid\":\"Activity_aef6da7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]},{\"id\":\"Activity_aef6da7\",\"pid\":\"Activity_25503fa\",\"label\":\"审批3\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"textarea53158\":1},\"userId\":1,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_af85d64\",\"pid\":\"Activity_aef6da7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]},{\"id\":\"Event_af85d64\",\"pid\":\"Activity_aef6da7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]', 0, 0, 0);
+INSERT INTO `x_flow_template` VALUES (3, '3', 2, '3', '{\"widgetList\":[{\"key\":47677,\"type\":\"time-range\",\"icon\":\"time-range-field\",\"formItemFlag\":true,\"options\":{\"name\":\"timerange73058\",\"label\":\"时间\",\"labelAlign\":\"\",\"defaultValue\":null,\"startPlaceholder\":\"\",\"endPlaceholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"autoFullWidth\":true,\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"clearable\":true,\"editable\":false,\"format\":\"HH:mm:ss\",\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":[],\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"onCreated\":\"\",\"onMounted\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\"},\"id\":\"timerange73058\"},{\"key\":93225,\"type\":\"textarea\",\"icon\":\"textarea-field\",\"formItemFlag\":true,\"options\":{\"name\":\"textarea53158\",\"label\":\"文本\",\"labelAlign\":\"\",\"rows\":3,\"defaultValue\":\"\",\"placeholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":[],\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"minLength\":null,\"maxLength\":null,\"showWordLimit\":false,\"onCreated\":\"\",\"onMounted\":\"\",\"onInput\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\"},\"id\":\"textarea53158\"}],\"formConfig\":{\"modelName\":\"formData\",\"refName\":\"vForm\",\"rulesName\":\"rules\",\"labelWidth\":80,\"labelPosition\":\"left\",\"size\":\"\",\"labelAlign\":\"label-left-align\",\"cssCode\":\"\",\"customClass\":[],\"functions\":\"\",\"layoutType\":\"H5\",\"jsonVersion\":3,\"onFormCreated\":\"\",\"onFormMounted\":\"\",\"onFormDataChange\":\"\"}}', '{\"nodes\":[{\"id\":\"Event_4b6614e\",\"type\":\"bpmn:startEvent\",\"x\":240,\"y\":200,\"properties\":{\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"user\":\"\"},\"zIndex\":1041,\"text\":{\"x\":240,\"y\":240,\"value\":\"开始\"}},{\"id\":\"Gateway_9c32347\",\"type\":\"bpmn:exclusiveGateway\",\"x\":470,\"y\":120,\"properties\":{\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"user\":\"\"},\"zIndex\":1014,\"text\":{\"x\":470,\"y\":160,\"value\":\"网关1\"}},{\"id\":\"Event_d6eb84a\",\"type\":\"bpmn:endEvent\",\"x\":1050,\"y\":200,\"properties\":{},\"zIndex\":1021,\"text\":{\"x\":1050,\"y\":240,\"value\":\"结束\"}},{\"id\":\"Gateway_bca6386\",\"type\":\"bpmn:exclusiveGateway\",\"x\":470,\"y\":280,\"properties\":{\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"user\":\"\"},\"zIndex\":1012,\"text\":{\"x\":470,\"y\":320,\"value\":\"网关2\"}},{\"id\":\"Activity_9afc160\",\"type\":\"bpmn:userTask\",\"x\":890,\"y\":120,\"properties\":{\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"user\":\"\",\"userId\":1,\"deptId\":1,\"postId\":2},\"zIndex\":1003,\"text\":{\"x\":890,\"y\":120,\"value\":\"审批\"}},{\"id\":\"Activity_3a97a80\",\"type\":\"bpmn:userTask\",\"x\":890,\"y\":280,\"properties\":{\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"user\":\"\",\"userId\":1,\"deptId\":1,\"postId\":2},\"zIndex\":1020,\"text\":{\"x\":890,\"y\":280,\"value\":\"审批\"}},{\"id\":\"Activity_bcd84a7\",\"type\":\"bpmn:serviceTask\",\"x\":680,\"y\":280,\"properties\":{\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"user\":\"\"},\"zIndex\":1004,\"text\":{\"x\":680,\"y\":280,\"value\":\"系统任务\"}},{\"id\":\"Activity_1b66e34\",\"type\":\"bpmn:serviceTask\",\"x\":680,\"y\":120,\"properties\":{\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"user\":\"\"},\"zIndex\":1002,\"text\":{\"x\":680,\"y\":120,\"value\":\"系统任务\"}}],\"edges\":[{\"id\":\"ad328b0f-d643-4405-a572-a46231d85b20\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Event_4b6614e\",\"targetNodeId\":\"Gateway_9c32347\",\"startPoint\":{\"x\":258,\"y\":200},\"endPoint\":{\"x\":445,\"y\":120},\"properties\":{},\"zIndex\":1040,\"pointsList\":[{\"x\":258,\"y\":200},{\"x\":288,\"y\":200},{\"x\":288,\"y\":120},{\"x\":445,\"y\":120}]},{\"id\":\"0921f2e8-c802-4c2d-974d-3f598d6678fc\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Event_4b6614e\",\"targetNodeId\":\"Gateway_bca6386\",\"startPoint\":{\"x\":258,\"y\":200},\"endPoint\":{\"x\":445,\"y\":280},\"properties\":{},\"zIndex\":1042,\"pointsList\":[{\"x\":258,\"y\":200},{\"x\":288,\"y\":200},{\"x\":288,\"y\":280},{\"x\":445,\"y\":280}]},{\"id\":\"079a0882-5226-4606-b3a1-ca862276a298\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_9afc160\",\"targetNodeId\":\"Event_d6eb84a\",\"startPoint\":{\"x\":940,\"y\":120},\"endPoint\":{\"x\":1032,\"y\":200},\"properties\":{},\"zIndex\":1052,\"pointsList\":[{\"x\":940,\"y\":120},{\"x\":1002,\"y\":120},{\"x\":1002,\"y\":200},{\"x\":1032,\"y\":200}]},{\"id\":\"1c2d49d2-2b61-41ce-9d22-444f53b0932f\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_3a97a80\",\"targetNodeId\":\"Event_d6eb84a\",\"startPoint\":{\"x\":940,\"y\":280},\"endPoint\":{\"x\":1032,\"y\":200},\"properties\":{},\"zIndex\":1054,\"pointsList\":[{\"x\":940,\"y\":280},{\"x\":1002,\"y\":280},{\"x\":1002,\"y\":200},{\"x\":1032,\"y\":200}]},{\"id\":\"e224d2f9-5526-4e49-8859-e7f5cc8c4f35\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Gateway_bca6386\",\"targetNodeId\":\"Activity_bcd84a7\",\"startPoint\":{\"x\":495,\"y\":280},\"endPoint\":{\"x\":630,\"y\":280},\"properties\":{},\"zIndex\":1063,\"pointsList\":[{\"x\":495,\"y\":280},{\"x\":630,\"y\":280}]},{\"id\":\"b950c08c-a7d9-4eef-92b7-67c3d29ea08f\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_bcd84a7\",\"targetNodeId\":\"Activity_3a97a80\",\"startPoint\":{\"x\":730,\"y\":280},\"endPoint\":{\"x\":840,\"y\":280},\"properties\":{},\"zIndex\":1065,\"pointsList\":[{\"x\":730,\"y\":280},{\"x\":840,\"y\":280}]},{\"id\":\"c7e981c9-1129-4e59-b741-d69436207741\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Gateway_9c32347\",\"targetNodeId\":\"Activity_1b66e34\",\"startPoint\":{\"x\":495,\"y\":120},\"endPoint\":{\"x\":630,\"y\":120},\"properties\":{},\"zIndex\":1071,\"pointsList\":[{\"x\":495,\"y\":120},{\"x\":630,\"y\":120}]},{\"id\":\"b09f0803-cf02-4ea3-9647-fd5edb0e7b55\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_1b66e34\",\"targetNodeId\":\"Activity_9afc160\",\"startPoint\":{\"x\":730,\"y\":120},\"endPoint\":{\"x\":840,\"y\":120},\"properties\":{},\"zIndex\":1073,\"pointsList\":[{\"x\":730,\"y\":120},{\"x\":840,\"y\":120}]}]}', '[{\"id\":\"Event_4b6614e\",\"pid\":0,\"label\":\"开始\",\"type\":\"bpmn:startEvent\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Gateway_9c32347\",\"pid\":\"Event_4b6614e\",\"label\":\"网关1\",\"type\":\"bpmn:exclusiveGateway\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_1b66e34\",\"pid\":\"Gateway_9c32347\",\"label\":\"系统任务\",\"type\":\"bpmn:serviceTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_9afc160\",\"pid\":\"Activity_1b66e34\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_9afc160\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]}]},{\"id\":\"Gateway_bca6386\",\"pid\":\"Event_4b6614e\",\"label\":\"网关2\",\"type\":\"bpmn:exclusiveGateway\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_bcd84a7\",\"pid\":\"Gateway_bca6386\",\"label\":\"系统任务\",\"type\":\"bpmn:serviceTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_3a97a80\",\"pid\":\"Activity_bcd84a7\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_3a97a80\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]}]}]},{\"id\":\"Gateway_9c32347\",\"pid\":\"Event_4b6614e\",\"label\":\"网关1\",\"type\":\"bpmn:exclusiveGateway\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_1b66e34\",\"pid\":\"Gateway_9c32347\",\"label\":\"系统任务\",\"type\":\"bpmn:serviceTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_9afc160\",\"pid\":\"Activity_1b66e34\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_9afc160\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]}]},{\"id\":\"Activity_1b66e34\",\"pid\":\"Gateway_9c32347\",\"label\":\"系统任务\",\"type\":\"bpmn:serviceTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_9afc160\",\"pid\":\"Activity_1b66e34\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_9afc160\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]},{\"id\":\"Activity_9afc160\",\"pid\":\"Activity_1b66e34\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_9afc160\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]},{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_9afc160\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0},{\"id\":\"Gateway_bca6386\",\"pid\":\"Event_4b6614e\",\"label\":\"网关2\",\"type\":\"bpmn:exclusiveGateway\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_bcd84a7\",\"pid\":\"Gateway_bca6386\",\"label\":\"系统任务\",\"type\":\"bpmn:serviceTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_3a97a80\",\"pid\":\"Activity_bcd84a7\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_3a97a80\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]}]},{\"id\":\"Activity_bcd84a7\",\"pid\":\"Gateway_bca6386\",\"label\":\"系统任务\",\"type\":\"bpmn:serviceTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_3a97a80\",\"pid\":\"Activity_bcd84a7\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_3a97a80\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]}]},{\"id\":\"Activity_3a97a80\",\"pid\":\"Activity_bcd84a7\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"fieldAuth\":{\"timerange73058\":1,\"textarea53158\":1},\"userId\":1,\"deptId\":1,\"postId\":2,\"children\":[{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_3a97a80\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]},{\"id\":\"Event_d6eb84a\",\"pid\":\"Activity_3a97a80\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userId\":0,\"deptId\":0,\"postId\":0}]', 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for x_gen_table
@@ -246,18 +340,19 @@ CREATE TABLE `x_gen_table`  (
   `tree_parent` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '树父级字段',
   `tree_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '树显示字段',
   `gen_tpl` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'crud' COMMENT '生成模板方式: [crud=单表, tree=树表]',
-  `gen_type` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '生成代码方式: [0=zip压缩包, 1=自定义路径]',
-  `gen_path` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '/' COMMENT '生成代码路径: [不填默认项目路径]',
   `remarks` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '备注信息',
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_gen_table
 -- ----------------------------
-INSERT INTO `x_gen_table` VALUES (10, 'x_article_collect', '文章收藏表', '', '', '', 'articleCollect', 'article_collect', '文章收藏', '', '', '', 'crud', 0, '/', '', 1700321456, 1700449469);
+INSERT INTO `x_gen_table` VALUES (11, 'x_album', '相册管理表', '', '', '', 'album', 'album', '相册管理', '', '', '', 'crud', '', 1701241021, 1701241021);
+INSERT INTO `x_gen_table` VALUES (14, 'x_flow_template', '流程模板', '', '', '', 'flowTemplate', 'flow_template', '流程模板', '', '', '', 'crud', '', 1702106174, 1702106174);
+INSERT INTO `x_gen_table` VALUES (15, 'x_flow_apply', '申请流程', '', '', '', 'flowApply', 'flow_apply', '申请流程', '', '', '', 'crud', '', 1702206515, 1702207125);
+INSERT INTO `x_gen_table` VALUES (16, 'x_flow_history', '流程历史', '', '', '', 'flowHistory', 'flow_history', '流程历史', '', '', '', 'crud', '', 1702207304, 1702207304);
 
 -- ----------------------------
 -- Table structure for x_gen_table_column
@@ -286,18 +381,64 @@ CREATE TABLE `x_gen_table_column`  (
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 91 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成字段表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 149 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成字段表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_gen_table_column
 -- ----------------------------
-INSERT INTO `x_gen_table_column` VALUES (84, 10, 'id', '主键', '10', 'int', 'int', 'id', 1, 1, 0, 0, 0, 0, 0, '=', 'input', '', 0, 0, 1700449469);
-INSERT INTO `x_gen_table_column` VALUES (85, 10, 'user_id', '用户ID', '10', 'int', 'int', 'user_id', 0, 0, 1, 1, 1, 1, 1, '=', 'select', 'a', 0, 0, 1700449469);
-INSERT INTO `x_gen_table_column` VALUES (86, 10, 'article_id', '文章ID', '10', 'int', 'int', 'article_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 0, 0, 1700449469);
-INSERT INTO `x_gen_table_column` VALUES (87, 10, 'is_delete', '是否删除', '1', 'tinyint', 'int', 'is_delete', 0, 0, 0, 0, 0, 0, 0, '=', 'input', '', 0, 0, 1700449469);
-INSERT INTO `x_gen_table_column` VALUES (88, 10, 'create_time', '创建时间', '10', 'int', 'core.TsTime', 'create_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 0, 0, 1700449469);
-INSERT INTO `x_gen_table_column` VALUES (89, 10, 'update_time', '更新时间', '10', 'int', 'core.TsTime', 'update_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 0, 0, 1700449469);
-INSERT INTO `x_gen_table_column` VALUES (90, 10, 'delete_time', '是否删除', '10', 'int', 'core.TsTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', 0, 0, 1700449469);
+INSERT INTO `x_gen_table_column` VALUES (84, 10, 'id', '主键', '10', 'int', 'int', 'id', 1, 1, 0, 0, 0, 0, 0, '=', 'input', '', 0, 0, 1701240746);
+INSERT INTO `x_gen_table_column` VALUES (85, 10, 'user_id', '用户ID', '10', 'int', 'int', 'user_id', 0, 0, 1, 1, 1, 1, 1, '=', 'select', 'a', 0, 0, 1701240746);
+INSERT INTO `x_gen_table_column` VALUES (86, 10, 'article_id', '文章ID', '10', 'int', 'int', 'article_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 0, 0, 1701240746);
+INSERT INTO `x_gen_table_column` VALUES (87, 10, 'is_delete', '是否删除', '1', 'tinyint', 'int', 'is_delete', 0, 0, 0, 0, 0, 0, 0, '=', 'input', '', 0, 0, 1701240746);
+INSERT INTO `x_gen_table_column` VALUES (88, 10, 'create_time', '创建时间', '10', 'int', 'core.TsTime', 'create_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 0, 0, 1701240746);
+INSERT INTO `x_gen_table_column` VALUES (89, 10, 'update_time', '更新时间', '10', 'int', 'core.TsTime', 'update_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 0, 0, 1701240746);
+INSERT INTO `x_gen_table_column` VALUES (90, 10, 'delete_time', '是否删除', '10', 'int', 'core.TsTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', 0, 0, 1701240746);
+INSERT INTO `x_gen_table_column` VALUES (91, 11, 'id', '主键ID', '10', 'int', 'int', 'id', 1, 1, 1, 0, 1, 0, 0, '=', 'input', '', 1, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (92, 11, 'cid', '类目ID', '10', 'int', 'int', 'cid', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 2, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (93, 11, 'aid', '管理员ID', '10', 'int', 'int', 'aid', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 3, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (94, 11, 'uid', '用户ID', '10', 'int', 'int', 'uid', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 4, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (95, 11, 'type', '文件类型: [10=图片, 20=视频]', '2', 'tinyint', 'int', 'type', 0, 0, 1, 1, 1, 1, 1, '=', 'select', '', 5, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (96, 11, 'name', '文件名称', '100', 'varchar', 'string', 'name', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', 6, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (97, 11, 'uri', '文件路径', '200', 'varchar', 'string', 'uri', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 7, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (98, 11, 'ext', '文件扩展', '10', 'varchar', 'string', 'ext', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 8, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (99, 11, 'size', '文件大小', '10', 'int', 'int', 'size', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 9, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (100, 11, 'is_delete', '是否删除: 0=否, 1=是', '1', 'int', 'int', 'is_delete', 0, 0, 0, 0, 0, 0, 0, '=', 'input', '', 10, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (101, 11, 'create_time', '创建时间', '10', 'int', 'core.TsTime', 'create_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 11, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (102, 11, 'update_time', '更新时间', '10', 'int', 'core.TsTime', 'update_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 12, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (103, 11, 'delete_time', '删除时间', '10', 'int', 'core.TsTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', 13, 1701241021, 1701241021);
+INSERT INTO `x_gen_table_column` VALUES (116, 14, 'id', '', '11', 'int', 'int', 'id', 1, 1, 1, 0, 1, 0, 0, '=', 'input', '', 1, 1702106174, 1702106174);
+INSERT INTO `x_gen_table_column` VALUES (117, 14, 'flow_name', '流程名称', '255', 'varchar', 'string', 'flow_name', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', 2, 1702106174, 1702106174);
+INSERT INTO `x_gen_table_column` VALUES (118, 14, 'flow_group', '流程分类', '2', 'tinyint', 'int', 'flow_group', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 3, 1702106174, 1702106174);
+INSERT INTO `x_gen_table_column` VALUES (119, 14, 'flow_remark', '流程描述', '255', 'varchar', 'string', 'flow_remark', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 4, 1702106174, 1702106174);
+INSERT INTO `x_gen_table_column` VALUES (120, 14, 'flow_form_data', '表单配置', '0', 'longtext', 'string', 'flow_form_data', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', 5, 1702106174, 1702106174);
+INSERT INTO `x_gen_table_column` VALUES (121, 14, 'flow_process_data', '流程配置', '0', 'longtext', 'string', 'flow_process_data', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', 6, 1702106174, 1702106174);
+INSERT INTO `x_gen_table_column` VALUES (122, 15, 'id', '', '10', 'int', 'int', 'id', 1, 0, 1, 0, 1, 0, 0, '=', 'input', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (123, 15, 'template_id', '模板', '10', 'int', 'int', 'template_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (124, 15, 'apply_user_id', '申请人id', '10', 'int', 'int', 'apply_user_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (125, 15, 'apply_user_nickname', '申请人昵称', '32', 'varchar', 'string', 'apply_user_nickname', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (126, 15, 'flow_name', '流程名称', '255', 'varchar', 'string', 'flow_name', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (127, 15, 'flow_group', '流程分类', '2', 'tinyint', 'int', 'flow_group', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (128, 15, 'flow_remark', '流程描述', '255', 'varchar', 'string', 'flow_remark', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (129, 15, 'flow_form_data', '表单配置', '0', 'longtext', 'string', 'flow_form_data', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (130, 15, 'flow_process_data', '流程配置', '0', 'longtext', 'string', 'flow_process_data', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (131, 15, 'status', '状态：0待提交，1审批中，2审批完成，3审批失败', '2', 'tinyint', 'int', 'status', 0, 0, 1, 1, 1, 1, 1, '=', 'select', 'flow_apply_status', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (132, 15, 'update_time', '更新时间', '10', 'int', 'core.TsTime', 'update_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (133, 15, 'create_time', '创建时间', '10', 'int', 'core.TsTime', 'create_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (134, 15, 'delete_time', '删除时间', '10', 'int', 'core.TsTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', 0, 0, 1702207125);
+INSERT INTO `x_gen_table_column` VALUES (135, 16, 'id', '历史id', '10', 'int', 'int', 'id', 1, 0, 1, 0, 1, 0, 0, '=', 'input', '', 1, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (136, 16, 'apply_id', '申请id', '10', 'int', 'int', 'apply_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 2, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (137, 16, 'template_id', '模板id', '10', 'int', 'int', 'template_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 3, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (138, 16, 'apply_user_id', '申请人id', '10', 'int', 'int', 'apply_user_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 4, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (139, 16, 'apply_user_nickname', '申请人昵称', '32', 'varchar', 'string', 'apply_user_nickname', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', 5, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (140, 16, 'approver_id', '审批人id', '10', 'int', 'int', 'approver_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 6, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (141, 16, 'approver_nickname', '审批用户昵称', '32', 'varchar', 'string', 'approver_nickname', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', 7, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (142, 16, 'node_id', '节点', '50', 'varchar', 'string', 'node_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 8, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (143, 16, 'form_value', '表单值', '0', 'mediumtext', 'string', 'form_value', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', 9, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (144, 16, 'pass_status', '通过状态：0待处理，1通过，2拒绝', '1', 'tinyint', 'int', 'pass_status', 0, 0, 1, 1, 1, 1, 1, '=', 'radio', '', 10, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (145, 16, 'pass_remark', '通过备注', '200', 'varchar', 'string', 'pass_remark', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', 11, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (146, 16, 'update_time', '更新时间', '10', 'int', 'core.TsTime', 'update_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 12, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (147, 16, 'create_time', '创建时间', '10', 'int', 'core.TsTime', 'create_time', 0, 0, 0, 0, 0, 1, 0, '=', 'datetime', '', 13, 1702207304, 1702207304);
+INSERT INTO `x_gen_table_column` VALUES (148, 16, 'delete_time', '删除时间', '10', 'int', 'core.TsTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', 14, 1702207304, 1702207304);
 
 -- ----------------------------
 -- Table structure for x_hot_search
@@ -345,6 +486,23 @@ INSERT INTO `x_notice_setting` VALUES (3, 103, '变更手机验证码', '用户�
 INSERT INTO `x_notice_setting` VALUES (4, 104, '找回登录密码验证码', '用户找回登录密码号码时发送', 1, 2, '{}', '{\"type\":\"sms\",\"templateId\":\"SMS_175615069\",\"content\":\"您正在找回登录密码，验证码${code}，切勿将验证码泄露于他人，本条验证码有效期5分钟。\",\"tips\":[\"可选变量 验证码:code\",\"示例：您正在找回登录密码，验证码${code}，切勿将验证码泄露于他人，本条验证码有效期5分钟。\",\"条验证码有效期5分钟。\"],\"status\":\"1\"}', '{}', '{}', 0, 1648696695, 1648696695, 0);
 
 -- ----------------------------
+-- Table structure for x_oauth2_
+-- ----------------------------
+DROP TABLE IF EXISTS `x_oauth2_`;
+CREATE TABLE `x_oauth2_`  (
+  `id` int(11) NOT NULL COMMENT 'id',
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `date` datetime NULL DEFAULT NULL,
+  `del_flag` tinyint(1) NULL DEFAULT NULL,
+  `json` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of x_oauth2_
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for x_official_reply
 -- ----------------------------
 DROP TABLE IF EXISTS `x_official_reply`;
@@ -380,7 +538,7 @@ CREATE TABLE `x_product`  (
   `pics` mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   PRIMARY KEY (`id`) USING BTREE,
   FULLTEXT INDEX `name`(`name`)
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '产品表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_product
@@ -412,12 +570,13 @@ CREATE TABLE `x_system_auth_admin`  (
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统管理成员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统管理成员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_admin
 -- ----------------------------
-INSERT INTO `x_system_auth_admin` VALUES (1, 1, 0, 'admin', 'admin', '7fac2474740becfaf1ecbdd6cc8fb076', '/api/static/backend_avatar.png', '0', '5Xar0', 0, 1, 0, 0, '127.0.0.1', 1700462131, 1642321599, 1700462131, 0);
+INSERT INTO `x_system_auth_admin` VALUES (1, 1, 3, 'admin', 'admin', '7ca7e19452aa2366068785be5c7ded35', '/image/20232911/27699a1e991e4ba1ba13ee6d45185db6.jpg', '0', 'HOEp0', 1, 1, 0, 0, '127.0.0.1', 1703164409, 1642321599, 1703164409, 0);
+INSERT INTO `x_system_auth_admin` VALUES (2, 2, 2, 'zhihuibu01', '指挥部01', 'ea7e7f97957b7cdd2b245abc31cebaa4', '/image/20232911/27699a1e991e4ba1ba13ee6d45185db6.jpg', '1', 'JUD5n', 1, 1, 0, 0, '', 0, 1702883992, 1702883992, 0);
 
 -- ----------------------------
 -- Table structure for x_system_auth_dept
@@ -436,12 +595,13 @@ CREATE TABLE `x_system_auth_dept`  (
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统部门管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统部门管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_dept
 -- ----------------------------
-INSERT INTO `x_system_auth_dept` VALUES (1, 0, '默认部门', '康明', '18327647788', 10, 0, 0, 1649841995, 1660190949, 0);
+INSERT INTO `x_system_auth_dept` VALUES (1, 0, '默认部门', '康明', '18327647788', 10, 0, 0, 1649841995, 1701362423, 0);
+INSERT INTO `x_system_auth_dept` VALUES (2, 1, '指挥部', '待选择', '17608390654', 0, 0, 0, 1702212515, 1702212515, 0);
 
 -- ----------------------------
 -- Table structure for x_system_auth_menu
@@ -465,7 +625,7 @@ CREATE TABLE `x_system_auth_menu`  (
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 778 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统菜单管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 781 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统菜单管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_menu
@@ -546,8 +706,11 @@ INSERT INTO `x_system_auth_menu` VALUES (618, 610, 'A', '数据表详情', '', 0
 INSERT INTO `x_system_auth_menu` VALUES (700, 0, 'M', '素材管理', 'el-icon-Picture', 43, '', 'material', '', '', '', 0, 1, 0, 1660203293, 1663300847);
 INSERT INTO `x_system_auth_menu` VALUES (701, 700, 'C', '素材中心', 'el-icon-PictureRounded', 0, '', 'index', 'material/index', '', '', 0, 1, 0, 1660203402, 1663301493);
 INSERT INTO `x_system_auth_menu` VALUES (775, 600, 'C', '代码生成器编辑', 'el-icon-EditPen', 0, 'gen:editTable', 'dev_tools/code/edit', 'dev_tools/code/edit', '', '', 0, 0, 0, 1699344389, 1699344389);
-INSERT INTO `x_system_auth_menu` VALUES (776, 0, 'C', '产品', 'el-icon-Aim', 0, '', 'product/index', 'product/index', '', '', 1, 1, 0, 1699719599, 1699719599);
-INSERT INTO `x_system_auth_menu` VALUES (777, 0, 'C', 'article_collect', '', 0, 'article_collect:list', 'article_collect/index', 'article_collect/index', '', '', 1, 1, 0, 1700329092, 1700329092);
+INSERT INTO `x_system_auth_menu` VALUES (776, 778, 'C', '流程模板', '', 0, '', 'flow_template/index', 'flow_template/index', '', '', 1, 1, 0, 1702105748, 1702105748);
+INSERT INTO `x_system_auth_menu` VALUES (777, 778, 'C', '我的流程', '', 0, '', 'flow_apply/index', 'flow_apply/index', '', '', 1, 1, 0, 1702280379, 1702280379);
+INSERT INTO `x_system_auth_menu` VALUES (778, 0, 'M', '审批流', 'el-icon-Coordinate', 0, '', 'flow', '', '', '', 1, 1, 0, 1702309255, 1702309255);
+INSERT INTO `x_system_auth_menu` VALUES (779, 778, 'C', '审批历史(待改)', '', 0, 'flow_history:list', 'flow_history/index', 'flow_history/index', '', '', 1, 1, 0, 1702309379, 1702309379);
+INSERT INTO `x_system_auth_menu` VALUES (780, 778, 'C', '我的代办', '', 0, 'flow_history:todo', 'flow_history/todo', 'flow_history/todo', '', '', 1, 1, 0, 1702900195, 1702900195);
 
 -- ----------------------------
 -- Table structure for x_system_auth_perm
@@ -580,12 +743,14 @@ CREATE TABLE `x_system_auth_post`  (
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统岗位管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统岗位管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_post
 -- ----------------------------
 INSERT INTO `x_system_auth_post` VALUES (1, 'a', '啊', 'aa', 0, 0, 1, 1699718138, 1699718141, 0);
+INSERT INTO `x_system_auth_post` VALUES (2, 'gw0001', '默认岗位', '', 3, 0, 0, 1700821779, 1702212419, 0);
+INSERT INTO `x_system_auth_post` VALUES (3, 'zhihuibu01', '指挥部岗位', '', 0, 0, 0, 1702884035, 1702884035, 0);
 
 -- ----------------------------
 -- Table structure for x_system_auth_role
@@ -624,8 +789,8 @@ CREATE TABLE `x_system_config`  (
 -- ----------------------------
 -- Records of x_system_config
 -- ----------------------------
-INSERT INTO `x_system_config` VALUES (1, 'storage', 'default', 'local', 1660620367, 1662620927);
-INSERT INTO `x_system_config` VALUES (2, 'storage', 'local', '{\"name\":\"本地存储\"}', 1660620367, 1662620927);
+INSERT INTO `x_system_config` VALUES (1, 'storage', 'default', '', 1660620367, 1702113968);
+INSERT INTO `x_system_config` VALUES (2, 'storage', 'local', '{\"name\":\"本地存储\"}', 1660620367, 1702113968);
 INSERT INTO `x_system_config` VALUES (3, 'storage', 'qiniu', '{\"name\":\"七牛云存储\",\"bucket\":\"\",\"secretKey\":\"\",\"accessKey\":\"\",\"domain\":\"\"}', 1660620367, 1660620367);
 INSERT INTO `x_system_config` VALUES (4, 'storage', 'aliyun', '{\"name\":\"阿里云存储\",\"bucket\":\"\",\"secretKey\":\"\",\"accessKey\":\"\",\"domain\":\"\"}', 1660620367, 1662620071);
 INSERT INTO `x_system_config` VALUES (5, 'storage', 'qcloud', '{\"name\":\"腾讯云存储\",\"bucket\":\"\",\"secretKey\":\"\",\"accessKey\":\"\",\"domain\":\"\",\"region\":\"\"}', 1660620367, 1660620367);
@@ -685,35 +850,12 @@ CREATE TABLE `x_system_log_login`  (
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '操作状态: 1=成功, 2=失败',
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统登录日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 84 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统登录日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_login
 -- ----------------------------
 INSERT INTO `x_system_log_login` VALUES (1, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699342613);
-INSERT INTO `x_system_log_login` VALUES (2, 0, 'admin', '127.0.0.1', 'Windows', 'Edge', 0, 1699343960);
-INSERT INTO `x_system_log_login` VALUES (3, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 0, 1699343975);
-INSERT INTO `x_system_log_login` VALUES (4, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699343985);
-INSERT INTO `x_system_log_login` VALUES (5, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699454100);
-INSERT INTO `x_system_log_login` VALUES (6, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699454113);
-INSERT INTO `x_system_log_login` VALUES (7, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699456315);
-INSERT INTO `x_system_log_login` VALUES (8, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699493828);
-INSERT INTO `x_system_log_login` VALUES (9, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699507466);
-INSERT INTO `x_system_log_login` VALUES (10, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699547693);
-INSERT INTO `x_system_log_login` VALUES (11, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699705884);
-INSERT INTO `x_system_log_login` VALUES (12, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699706435);
-INSERT INTO `x_system_log_login` VALUES (13, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699707397);
-INSERT INTO `x_system_log_login` VALUES (14, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699715636);
-INSERT INTO `x_system_log_login` VALUES (15, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1699803153);
-INSERT INTO `x_system_log_login` VALUES (16, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700142837);
-INSERT INTO `x_system_log_login` VALUES (17, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700150134);
-INSERT INTO `x_system_log_login` VALUES (18, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700298162);
-INSERT INTO `x_system_log_login` VALUES (19, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700381343);
-INSERT INTO `x_system_log_login` VALUES (20, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700402870);
-INSERT INTO `x_system_log_login` VALUES (21, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700449387);
-INSERT INTO `x_system_log_login` VALUES (22, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700462131);
-INSERT INTO `x_system_log_login` VALUES (23, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700493100);
-INSERT INTO `x_system_log_login` VALUES (24, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, 1700493528);
 
 -- ----------------------------
 -- Table structure for x_system_log_operate
@@ -735,22 +877,12 @@ CREATE TABLE `x_system_log_operate`  (
   `task_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '执行耗时',
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 197 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统操作日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 960 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统操作日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_operate
 -- ----------------------------
 INSERT INTO `x_system_log_operate` VALUES (1, 1, 'GET', '角色列表', '127.0.0.1', '/api/system/role/list', 'likeadmin/admin/routers/system.roleHandler.list-fm', 'pageNo=1&pageSize=15', '', 1, 1699343137, 1699343138, 4, 1699343138);
-INSERT INTO `x_system_log_operate` VALUES (187, 1, 'POST', '上传图片', '127.0.0.1', '/api/common/upload/image', 'likeadmin/admin/common/upload.uploadHandler.uploadImage-fm', '5c8950e543e8046320.mp3', 'Error #01: 300:不被支持的图片扩展: mp3\n', 2, 1700465126, 1700465126, 161, 1700465126);
-INSERT INTO `x_system_log_operate` VALUES (188, 1, 'POST', '上传图片', '127.0.0.1', '/api/common/upload/image', 'likeadmin/admin/common/upload.uploadHandler.uploadImage-fm', 'hrxz.com-30nsh0dvpby60530.mp3', 'Error #01: 300:不被支持的图片扩展: mp3\n', 2, 1700465176, 1700465176, 1, 1700465176);
-INSERT INTO `x_system_log_operate` VALUES (189, 1, 'POST', '上传图片', '127.0.0.1', '/api/common/upload/image', 'likeadmin/admin/common/upload.uploadHandler.uploadImage-fm', 'yiji.mp3', 'Error #01: 300:不被支持的图片扩展: mp3\n', 2, 1700465204, 1700465204, 10, 1700465204);
-INSERT INTO `x_system_log_operate` VALUES (190, 1, 'POST', '上传视频', '127.0.0.1', '/api/common/upload/video', 'likeadmin/admin/common/upload.uploadHandler.uploadVideo-fm', '素材中心 和另外 1 个页面 - 个人 - Microsoft​ Edge 2023-11-20 15-37-39.mp4', '', 1, 1700465870, 1700465870, 85, 1700465870);
-INSERT INTO `x_system_log_operate` VALUES (191, 1, 'GET', '角色列表', '127.0.0.1', '/api/system/role/list', 'likeadmin/admin/system/role.RoleHandler.List-fm', 'pageNo=1&pageSize=15', '', 1, 1700466101, 1700466101, 26, 1700466101);
-INSERT INTO `x_system_log_operate` VALUES (192, 1, 'GET', '角色列表', '127.0.0.1', '/api/system/role/list', 'likeadmin/admin/system/role.RoleHandler.List-fm', 'pageNo=1&pageSize=15', '', 1, 1700466116, 1700466116, 3, 1700466116);
-INSERT INTO `x_system_log_operate` VALUES (193, 1, 'GET', '角色列表', '127.0.0.1', '/api/system/role/list', 'likeadmin/admin/system/role.RoleHandler.List-fm', 'pageNo=1&pageSize=15', '', 1, 1700493553, 1700493553, 1, 1700493553);
-INSERT INTO `x_system_log_operate` VALUES (194, 1, 'GET', '角色列表', '127.0.0.1', '/api/system/role/list', 'likeadmin/admin/system/role.RoleHandler.List-fm', 'pageNo=1&pageSize=15', '', 1, 1700494088, 1700494088, 2, 1700494088);
-INSERT INTO `x_system_log_operate` VALUES (195, 1, 'GET', '角色列表', '127.0.0.1', '/api/system/role/list', 'likeadmin/admin/system/role.RoleHandler.List-fm', 'pageNo=1&pageSize=15', '', 1, 1700494182, 1700494182, 7, 1700494182);
-INSERT INTO `x_system_log_operate` VALUES (196, 1, 'GET', '角色列表', '127.0.0.1', '/api/system/role/list', 'likeadmin/admin/system/role.RoleHandler.List-fm', 'pageNo=1&pageSize=15', '', 1, 1700497573, 1700497573, 2, 1700497573);
 
 -- ----------------------------
 -- Table structure for x_system_log_sms

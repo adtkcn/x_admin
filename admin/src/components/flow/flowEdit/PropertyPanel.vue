@@ -2,12 +2,12 @@
     <el-drawer v-model="drawerVisible" size="500px" :title="node?.text?.value" @close="close">
         <div class="setting-block">
             <!-- 开始节点 -->
-            {{ node }}
+            <!-- {{ node }} -->
 
             <div v-if="node.type == 'bpmn:startEvent'">开始节点</div>
             <div v-if="node.type == 'bpmn:userTask'">
                 审批节点
-                <div>设置审批人（具体人员，部门（负责人），岗位？）</div>
+                <!-- <div>设置审批人（具体人员，部门（负责人），岗位？）</div> -->
                 <!-- {{ adminUserList }} -->
                 <el-form label-width="80px">
                     <el-form-item label="审批人">
@@ -54,6 +54,7 @@
             <div v-if="node.type == 'bpmn:exclusiveGateway'">
                 <div>网关，只能有一个网关通过</div>
                 <div>从form取值判断</div>
+                设置优先级
                 <el-table fit size="small" :data="fieldList" style="width: 100%">
                     <el-table-column prop="label" label="表单"></el-table-column>
                     <el-table-column label="权限">
@@ -137,18 +138,25 @@ export default {
              * }]
              */
             fieldList: [],
+            // 网关条件列表
+            conditionsList: [],
+
             conditionList: [
                 {
-                    value: 1,
+                    value: '=',
                     label: '等于'
                 },
                 {
-                    value: 2,
+                    value: '>=',
                     label: '大于等于'
                 },
                 {
-                    value: 3,
+                    value: '<=',
                     label: '小于等于'
+                },
+                {
+                    value: 'include',
+                    label: '包含'
                 }
             ]
         }
