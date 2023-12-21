@@ -18,7 +18,7 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 //	@Param		PageSize	query		int					true	"每页数量"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
-//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
@@ -53,7 +53,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
@@ -74,7 +74,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context)
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsInsert }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.RespType	"成功"
@@ -92,7 +92,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsEdit }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.RespType	"成功"
@@ -110,7 +110,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.RespType	"成功"

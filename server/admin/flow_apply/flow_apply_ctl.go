@@ -46,7 +46,7 @@ func (hd FlowApplyHandler) List(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		Token	header		string			true	"token"
-// @Param		id		query		int				false	""
+// @Param		id		query		int				false	"申请id"
 // @Success	200		{object}	FlowApplyResp	"成功"
 // @Router		/api/flow_apply/detail [get]
 func (hd FlowApplyHandler) Detail(c *gin.Context) {
@@ -92,7 +92,7 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		Token				header		string				true	"token"
-// @Param		id					body		int					false	""
+// @Param		id					body		int					false	"申请id"
 // @Param		templateId			body		int					false	"模板"
 // @Param		applyUserId			body		int					false	"申请人id"
 // @Param		applyUserNickname	body		string				false	"申请人昵称"
@@ -116,7 +116,7 @@ func (hd FlowApplyHandler) Edit(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		Token	header		string				true	"token"
-// @Param		id		body		int					false	""
+// @Param		id		body		int					false	"申请id"
 // @Success	200		{object}	response.RespType	"成功"
 // @Router		/api/flow_apply/del [post]
 func (hd FlowApplyHandler) Del(c *gin.Context) {

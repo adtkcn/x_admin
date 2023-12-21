@@ -49,7 +49,7 @@ func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 // @Tags		flow_template-流程模板
 // @Produce	json
 // @Param		Token	header		string				true	"token"
-// @Param		id		query		int					false	""
+// @Param		id		query		int					false	"历史id"
 // @Success	200		{object}	FlowTemplateResp	"成功"
 // @Router		/api/flow_template/detail [get]
 func (hd FlowTemplateHandler) Detail(c *gin.Context) {
@@ -84,7 +84,7 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 // @Tags		flow_template-流程模板
 // @Produce	json
 // @Param		Token			header		string				true	"token"
-// @Param		id				body		int					false	""
+// @Param		id				body		int					false	"."
 // @Param		flowName		body		string				false	"流程名称"
 // @Param		flowGroup		body		int					false	"流程分类"
 // @Param		flowRemark		body		string				false	"流程描述"
@@ -104,7 +104,7 @@ func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 // @Tags		flow_template-流程模板
 // @Produce	json
 // @Param		Token	header		string				true	"token"
-// @Param		id		body		int					false	""
+// @Param		id		body		int					false	"历史id"
 // @Success	200		{object}	response.RespType	"成功"
 // @Router		/api/flow_template/del [post]
 func (hd FlowTemplateHandler) Del(c *gin.Context) {
