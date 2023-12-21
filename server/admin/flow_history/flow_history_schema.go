@@ -72,12 +72,6 @@ type FlowHistoryResp struct {
 	CreateTime        core.TsTime `json:"createTime" structs:"createTime"`               // 创建时间
 }
 
-type NextNodeReq struct {
-	ApplyId         int    `form:"applyId"`       // 申请id
-	CurrentNodeId   string `form:"currentNodeId"` // 流程里的节点id
-	FormValue       string `form:"formValue"`
-	NextNodeAdminId int    `form:"nextNodeAdminId"` // 下一个节点的审批用户id
-}
 type FlowTree struct {
 	Id    string `json:"id"`
 	Pid   string `json:"pid"`
@@ -91,4 +85,18 @@ type FlowTree struct {
 	FieldAuth map[string]int `json:"fieldAuth"`
 
 	Children *[]FlowTree `json:"children"`
+}
+type NextNodeReq struct {
+	ApplyId int `form:"applyId"` // 申请id
+	// CurrentNodeId   string `form:"currentNodeId"` // 流程里的节点id
+	// FormValue       string `form:"formValue"`
+	// NextNodeAdminId int `form:"nextNodeAdminId"` // 下一个节点的审批用户id
+}
+type PassReq struct {
+	ApplyId int `form:"applyId"` // 申请id
+
+	// CurrentNodeId   string `form:"currentNodeId"` // 流程里的节点id
+	// FormValue       string `form:"formValue"`
+	NextNodeAdminId int    `form:"nextNodeAdminId"` // 下一个节点的审批用户id
+	PassRemark      string `form:"passRemark"`      // 通过备注
 }

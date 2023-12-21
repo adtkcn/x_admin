@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-for="(item, index) in getOptions" :key="index">
-            <span>{{ index != 0 ? '、' : '' }}{{ item.name }}</span>
+            <span :style="{ color: item.color }">{{ index != 0 ? '、' : '' }}{{ item.name }}</span>
         </template>
     </div>
 </template>

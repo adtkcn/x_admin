@@ -215,84 +215,111 @@ func (Service flowHistoryService) GetApprover(node FlowTree) (res []admin.System
 	return adminResp, nil
 }
 
-func (Service flowHistoryService) Pass(nextNode NextNodeReq) (e error) {
-	nextNodes, applyDetail, err := Service.GetNextNode(nextNode)
+func (Service flowHistoryService) Pass(pass PassReq) (e error) {
+	nextNodes, applyDetail, LastHistory, err := Service.GetNextNode(pass.ApplyId)
 
-	isEnd := false
-	if err == nil {
-		for _, v := range nextNodes {
-			// if v.Type == "bpmn:exclusiveGateway" {
-			// 这里网关不用处理，顶多加一条历史记录
-			// }
-			if v.Type == "bpmn:serviceTask" {
-				// 发邮件之类的，待完善
-			} else if v.Type == "bpmn:userTask" {
-				var addReq = FlowHistoryAddReq{}
-				addReq.ApplyId = applyDetail.Id
-				addReq.FormValue = applyDetail.FormValue
-				addReq.NodeId = v.Id
-				addReq.ApproverId = nextNode.NextNodeAdminId
-
-				// addReq.ApproverNickname = applyDetail.ApproverNickname
-
-				addReq.TemplateId = applyDetail.TemplateId
-				addReq.ApplyUserId = applyDetail.ApplyUserId
-				addReq.ApplyUserNickname = applyDetail.ApplyUserNickname
-				addReq.PassStatus = 1
-				err = Service.Add(addReq)
-			} else if v.Type == "bpmn:endEvent" {
-				isEnd = true
-				var addReq = FlowHistoryAddReq{}
-				addReq.ApplyId = applyDetail.Id
-				addReq.FormValue = applyDetail.FormValue
-				addReq.NodeId = v.Id
-				addReq.ApproverId = 0
-
-				// addReq.ApproverNickname = applyDetail.ApproverNickname
-
-				addReq.TemplateId = applyDetail.TemplateId
-				addReq.ApplyUserId = applyDetail.ApplyUserId
-				addReq.ApplyUserNickname = applyDetail.ApplyUserNickname
-				addReq.PassStatus = 2
-				err = Service.Add(addReq)
-			}
-		}
+	if err != nil {
+		return err
 	}
-	// 待提交或者有结束节点，修改申请状态
-	if applyDetail.Status == 1 || isEnd {
-		status := 2 //审批中
-		if isEnd {
-			status = 3 //审批通过
+	isEnd := false // 是否是最后一个节点
+
+	FormValue := applyDetail.FormValue
+	if LastHistory.Id != 0 {
+		FormValue = LastHistory.FormValue
+	}
+	var flows = []model.FlowHistory{}
+
+	for _, v := range nextNodes {
+		// if v.Type == "bpmn:exclusiveGateway" {
+		// 这里网关不用处理，顶多加一条历史记录
+		// }
+		var flow = model.FlowHistory{
+			ApplyId:           applyDetail.Id,
+			NodeId:            v.Id,
+			FormValue:         FormValue,
+			PassStatus:        1,
+			ApplyUserId:       applyDetail.ApplyUserId,
+			TemplateId:        applyDetail.TemplateId,
+			ApplyUserNickname: applyDetail.ApplyUserNickname,
+			ApproverId:        0,
 		}
-		// 更改状态
-		err = flow_apply.Service.Edit(flow_apply.FlowApplyEditReq{
-			Id:     nextNode.ApplyId,
-			Status: status,
-		})
-		if err != nil {
+		if v.Type == "bpmn:serviceTask" {
+			// 发邮件之类的，待完善
+		} else if v.Type == "bpmn:userTask" {
+			flow.ApproverId = pass.NextNodeAdminId
+			flow.PassStatus = 1 //1待处理
+		} else if v.Type == "bpmn:endEvent" {
+			isEnd = true
+			flow.ApproverId = 0
+			flow.PassStatus = 2 //2通过
+		}
+		flows = append(flows, flow)
+	}
+
+	err = Service.db.Transaction(func(tx *gorm.DB) error {
+		// 在事务中执行一些 db 操作（从这里开始，您应该使用 'tx' 而不是 'db'）
+		if err := tx.Create(&flows).Error; err != nil {
+			// 返回任何错误都会回滚事务
 			return err
 		}
-	}
+		// LastHistory
+		tx.Model(&LastHistory).Update("pass_status", 2)
+		if LastHistory.Id > 0 {
+			LastHistory.PassStatus = 2
+			LastHistory.PassRemark = pass.PassRemark
+			tx.Save(&LastHistory)
+		}
+
+		// 待提交或者有结束节点，修改申请状态
+		if applyDetail.Status == 1 || isEnd {
+			status := 2 //审批中
+			if isEnd {
+				status = 3 //审批通过
+			}
+			tx.Model(&model.FlowApply{}).Where(model.FlowApply{
+				Id: pass.ApplyId,
+			}).Update("status", status)
+
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
 	return err
 }
 
 /**
  * 获取下一批流程，直到审批或结束节点
  */
-func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (res []FlowTree, apply flow_apply.FlowApplyResp, e error) {
-	var applyDetail, err = flow_apply.Service.Detail(nextNode.ApplyId)
+func (Service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, apply flow_apply.FlowApplyResp, LastHistory model.FlowHistory, e error) {
+	var applyDetail, err = flow_apply.Service.Detail(ApplyId)
+
 	if e = response.CheckErr(err, "获取审批申请失败"); e != nil {
 		return
 	}
+	// 获取最后一条历史记录
+	// var LastHistory model.FlowHistory
+	result := Service.db.Where(model.FlowHistory{
+		ApplyId: ApplyId,
+	}).Limit(1).Last(&LastHistory)
+
 	// start
 	var flowTree []FlowTree
 	json.Unmarshal([]byte(applyDetail.FlowProcessDataList), &flowTree)
 	var formValue map[string]interface{}
-	json.Unmarshal([]byte(nextNode.FormValue), &formValue)
+
+	if result.RowsAffected == 1 { //有最新审批记录
+		json.Unmarshal([]byte(LastHistory.FormValue), &formValue)
+
+	} else {
+		json.Unmarshal([]byte(applyDetail.FormValue), &formValue)
+	}
 
 	var next []FlowTree
-
-	if nextNode.CurrentNodeId == "" {
+	if result.RowsAffected == 0 {
+		// if nextNode.CurrentNodeId == "" {
 		for _, v := range flowTree {
 			if v.Type == "bpmn:startEvent" {
 				next = *v.Children
@@ -301,7 +328,7 @@ func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (res []FlowT
 		}
 	} else {
 		for _, v := range flowTree {
-			if v.Id == nextNode.CurrentNodeId {
+			if v.Id == LastHistory.NodeId {
 				next = *v.Children
 				break
 			}
@@ -309,7 +336,7 @@ func (Service flowHistoryService) GetNextNode(nextNode NextNodeReq) (res []FlowT
 	}
 	var nextNodes []FlowTree
 	res = DeepNextNode(nextNodes, &next, formValue)
-	return res, applyDetail, e
+	return res, applyDetail, LastHistory, e
 }
 
 // 返回节点数组，最后一个节点为用户或结束节点

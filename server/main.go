@@ -103,7 +103,7 @@ func main() {
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
 
-	fmt.Println("文档:", "http://localhost:8001/swagger/index.html")
+	fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.Config.ServerPort)
 	// 初始化server
 	s := initServer(router)
 	// 运行服务

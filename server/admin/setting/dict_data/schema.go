@@ -8,6 +8,7 @@ type SettingDictDataResp struct {
 	TypeId     uint        `json:"typeId" structs:"typeId"`         // 类型
 	Name       string      `json:"name" structs:"name"`             // 键
 	Value      string      `json:"value" structs:"value"`           // 值
+	Color      string      `json:"color" structs:"color"`           // 颜色
 	Remark     string      `json:"remark" structs:"remark"`         // 备注
 	Sort       uint16      `json:"sort" structs:"sort"`             // 排序
 	Status     uint8       `json:"status" structs:"status"`         // 状态: [0=停用, 1=禁用]
@@ -33,7 +34,8 @@ type SettingDictDataAddReq struct {
 	TypeId uint   `form:"typeId" binding:"required,gt=0"`           // 类型
 	Name   string `form:"name" binding:"required,max=100"`          // 键
 	Value  string `form:"value" binding:"required,max=200"`         // 值
-	remark string `form:"remark" binding:"max=200"`                 // 备注
+	Color  string `form:"color"`                                    // 颜色
+	Remark string `form:"remark" binding:"max=200"`                 // 备注
 	Sort   int    `form:"sort" binding:"gte=0"`                     // 排序
 	Status int8   `form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }
@@ -44,7 +46,8 @@ type SettingDictDataEditReq struct {
 	TypeId uint   `form:"typeId" binding:"required,gte=0"`          // 类型
 	Name   string `form:"name" binding:"required,max=100"`          // 键
 	Value  string `form:"value" binding:"required,max=200"`         // 值
-	remark string `form:"remark" binding:"max=200"`                 // 备注
+	Color  string `form:"color"`                                    // 颜色
+	Remark string `form:"remark" binding:"max=200"`                 // 备注
 	Sort   int    `form:"sort" binding:"gte=0"`                     // 排序
 	Status int8   `form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }

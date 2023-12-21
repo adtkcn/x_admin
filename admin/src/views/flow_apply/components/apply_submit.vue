@@ -91,15 +91,14 @@ const formRules = {
         }
     ]
 }
-function open(row) {
+function open(applyId) {
     console.log('open')
     Object.assign(formData, new formDataState())
-    formData.id = row.id
+    formData.id = applyId
     dialogVisible.value = true
 
     flow_history_next_node({
-        applyId: row.id,
-        currentNodeId: ''
+        applyId: applyId
     }).then((res) => {
         console.log('res', res)
         next_nodes.value = res
@@ -122,14 +121,13 @@ function BeforeClose() {
 function getData() {
     console.log('getData', next_nodes)
 
-    if (!formData.applyUserId) {
+    if (userTask.value && !formData.applyUserId) {
         feedback.msgWarning('请选择审批人')
         return
     }
     flow_history_pass({
         applyId: formData.id,
-        currentNodeId: '',
-        nextNodeAdminId: formData.applyUserId,
+        nextNodeAdminId: formData.applyUserId || 0,
         passRemark: formData.passRemark
     }).then(() => {
         BeforeClose()

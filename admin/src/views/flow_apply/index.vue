@@ -2,9 +2,9 @@
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
-                <el-form-item label="模板" prop="templateId">
+                <!-- <el-form-item label="模板" prop="templateId">
                     <el-input v-model="queryParams.templateId" />
-                </el-form-item>
+                </el-form-item> -->
                 <!-- <el-form-item label="申请人id" prop="applyUserId">
                     <el-input   v-model="queryParams.applyUserId" />
                 </el-form-item>
@@ -17,9 +17,9 @@
                 <el-form-item label="流程分类" prop="flowGroup">
                     <el-input v-model="queryParams.flowGroup" />
                 </el-form-item>
-                <el-form-item label="流程描述" prop="flowRemark">
+                <!-- <el-form-item label="流程描述" prop="flowRemark">
                     <el-input v-model="queryParams.flowRemark" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="状态" prop="status">
                     <el-select v-model="queryParams.status" clearable>
                         <el-option label="全部" value="" />
@@ -115,7 +115,12 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { flow_apply_delete, flow_apply_lists, flow_apply_edit } from '@/api/flow_apply'
+import {
+    flow_apply_delete,
+    flow_apply_lists,
+    flow_apply_edit,
+    flow_apply_detail
+} from '@/api/flow_apply'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -175,27 +180,28 @@ const handleDelete = async (id: number) => {
     getLists()
 }
 
-const OpenViewForm = async (data: any) => {
+const OpenViewForm = async (row: any) => {
+    const detail = await flow_apply_detail({ id: row.id })
     let form_data = {}
     try {
-        form_data = JSON.parse(data.formValue)
+        form_data = JSON.parse(row.formValue)
     } catch (error) {
         // 解析失败
     }
     let form_json = {}
     try {
-        form_json = JSON.parse(data.flowFormData)
+        form_json = JSON.parse(detail.flowFormData)
     } catch (error) {
         // 解析失败
     }
-    console.log(data, form_data, form_json)
 
-    viewFormRef.value?.open(data, form_json, form_data)
+    console.log(detail, form_data, form_json)
+    viewFormRef.value?.open(detail, form_json, form_data)
 }
 const OpenApplySubmit = async (data: any) => {
     console.log('OpenApplySubmit')
 
-    ApplySubmitRef.value?.open(data)
+    ApplySubmitRef.value?.open(data.id)
 }
 const SaveViewForm = (id, form_data) => {
     return new Promise((resolve, reject) => {
@@ -203,13 +209,13 @@ const SaveViewForm = (id, form_data) => {
             id: id,
             formValue: JSON.stringify(form_data)
         })
-            .then(() => {
+            .then(async () => {
                 feedback.msgSuccess('保存成功')
-                getLists()
+                await getLists()
 
                 const row = pager.lists.find((item) => item.id === id)
 
-                ApplySubmitRef.value?.open(row)
+                ApplySubmitRef.value?.open(row.id)
 
                 resolve(true)
             })

@@ -141,11 +141,11 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 //
 //	@Router	/api/flow_apply/SubmitApply [post]
 func (hd FlowHistoryHandler) Pass(c *gin.Context) {
-	var nextNode NextNodeReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
+	var pass PassReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &pass)) {
 		return
 	}
-	err := Service.Pass(nextNode)
+	err := Service.Pass(pass)
 	response.CheckAndResp(c, err)
 
 	// 申请流程id，
@@ -174,7 +174,7 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 	}
 
 	// response.CheckAndResp(c, Service.GetNextNode(nextNode))
-	res, _, err := Service.GetNextNode(nextNode)
+	res, _, _, err := Service.GetNextNode(nextNode.ApplyId)
 	response.CheckAndRespWithData(c, res, err)
 }
 

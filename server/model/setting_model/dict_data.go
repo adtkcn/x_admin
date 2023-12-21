@@ -6,6 +6,7 @@ type DictData struct {
 	TypeId     uint   `gorm:"not null;default:0;comment:'类型'"`
 	Name       string `gorm:"not null;default:'';comment:'键名''"`
 	Value      string `gorm:"not null;default:'';comment:'数值'"`
+	Color      string `gorm:"default:'';comment:'颜色'"`
 	Remark     string `gorm:"not null;default:'';comment:'备注'"`
 	Sort       uint16 `gorm:"not null;default:0;comment:'排序'"`
 	Status     uint8  `gorm:"not null;default:1;comment:'字典状态: 0=停用, 1=正常'"`

@@ -5,12 +5,21 @@
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" inline>
                 <el-form-item label="字典名称">
                     <el-select class="w-[280px]" v-model="queryParams.dictType" @change="getLists">
-                        <el-option v-for="item in optionsData.dictType" :label="item.dictName" :value="item.dictType"
-                            :key="item.id" />
+                        <el-option
+                            v-for="item in optionsData.dictType"
+                            :label="item.dictName"
+                            :value="item.dictType"
+                            :key="item.id"
+                        />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="数据名称">
-                    <el-input class="w-[280px]" v-model="queryParams.name" clearable @keyup.enter="resetPage" />
+                    <el-input
+                        class="w-[280px]"
+                        v-model="queryParams.name"
+                        clearable
+                        @keyup.enter="resetPage"
+                    />
                 </el-form-item>
                 <el-form-item label="数据状态">
                     <el-select class="w-[280px]" v-model="queryParams.status">
@@ -33,8 +42,12 @@
                     </template>
                     添加数据
                 </el-button>
-                <el-button v-perms="['setting:dict:data:del']" :disabled="!selectData.length" type="danger"
-                    @click="handleDelete(selectData)">
+                <el-button
+                    v-perms="['setting:dict:data:del']"
+                    :disabled="!selectData.length"
+                    type="danger"
+                    @click="handleDelete(selectData)"
+                >
                     <template #icon>
                         <icon name="el-icon-Delete" />
                     </template>
@@ -43,27 +56,45 @@
             </div>
             <div class="mt-4" v-loading="pager.loading">
                 <div>
-                    <el-table :data="pager.lists" size="large" @selection-change="handleSelectionChange">
+                    <el-table
+                        :data="pager.lists"
+                        size="large"
+                        @selection-change="handleSelectionChange"
+                    >
                         <el-table-column type="selection" width="55" />
                         <el-table-column label="ID" prop="id" />
                         <el-table-column label="数据名称" prop="name" min-width="120" />
                         <el-table-column label="数据值" prop="value" min-width="120" />
+                        <el-table-column label="颜色" prop="color" min-width="120" />
                         <el-table-column label="状态">
                             <template v-slot="{ row }">
                                 <el-tag v-if="row.status == 1">正常</el-tag>
                                 <el-tag v-else type="danger">停用</el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column label="备注" prop="remark" min-width="120" show-tooltip-when-overflow />
+                        <el-table-column
+                            label="备注"
+                            prop="remark"
+                            min-width="120"
+                            show-tooltip-when-overflow
+                        />
                         <el-table-column label="排序" prop="sort" />
                         <el-table-column label="操作" width="120" fixed="right">
                             <template #default="{ row }">
-                                <el-button v-perms="['setting:dict:data:edit']" link type="primary"
-                                    @click="handleEdit(row)">
+                                <el-button
+                                    v-perms="['setting:dict:data:edit']"
+                                    link
+                                    type="primary"
+                                    @click="handleEdit(row)"
+                                >
                                     编辑
                                 </el-button>
-                                <el-button v-perms="['setting:dict:data:del']" link type="danger"
-                                    @click="handleDelete([row.id])">
+                                <el-button
+                                    v-perms="['setting:dict:data:del']"
+                                    link
+                                    type="danger"
+                                    @click="handleDelete([row.id])"
+                                >
                                     删除
                                 </el-button>
                             </template>
