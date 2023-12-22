@@ -60,7 +60,7 @@ import {
     flow_history_next_node,
     flow_history_get_approver,
     flow_history_pass
-} from '@/api/flow_history'
+} from '@/api/flow/flow_history'
 
 const dialogVisible = ref(false)
 
@@ -153,3 +153,4 @@ defineExpose({
 //   margin: 0; /* 如果页面出现垂直滚动条，则加入此行CSS以消除之 */
 // }
 </style>
+@/api/flow/flow_history

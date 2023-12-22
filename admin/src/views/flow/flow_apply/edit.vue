@@ -67,8 +67,8 @@
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import { flow_apply_edit, flow_apply_add, flow_apply_detail } from '@/api/flow_apply'
-import { flow_template_lists_all } from '@/api/flow_template'
+import { flow_apply_edit, flow_apply_add, flow_apply_detail } from '@/api/flow/flow_apply'
+import { flow_template_lists_all } from '@/api/flow/flow_template'
 
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
@@ -236,3 +236,4 @@ defineExpose({
     getDetail
 })
 </script>
+@/api/flow/flow_apply@/api/flow/flow_template

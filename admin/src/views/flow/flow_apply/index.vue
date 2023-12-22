@@ -120,13 +120,13 @@ import {
     flow_apply_lists,
     flow_apply_edit,
     flow_apply_detail
-} from '@/api/flow_apply'
+} from '@/api/flow/flow_apply'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 
-import ApplySubmit from '@/views/flow_apply/components/apply_submit.vue'
+import ApplySubmit from './components/apply_submit.vue'
 import ViewForm from '@/components/flow/XForm/view.vue'
 
 import useUserStore from '@/stores/modules/user'
@@ -227,3 +227,4 @@ const SaveViewForm = (id, form_data) => {
 }
 getLists()
 </script>
+@/api/flow/flow_apply

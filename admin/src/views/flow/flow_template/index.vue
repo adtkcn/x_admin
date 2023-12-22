@@ -75,9 +75,8 @@ import {
     flow_template_delete,
     flow_template_lists,
     flow_template_edit,
-    flow_template_add,
-    flow_template_detail
-} from '@/api/flow_template'
+    flow_template_add
+} from '@/api/flow/flow_template'
 
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -182,3 +181,4 @@ const handleConfig = async (data: any) => {
 }
 getLists()
 </script>
+@/api/flow/flow_template

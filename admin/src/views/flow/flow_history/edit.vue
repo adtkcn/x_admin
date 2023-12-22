@@ -10,51 +10,56 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                        <el-form-item label="申请id" prop="applyId">
-                            <el-input v-model="formData.applyId" placeholder="请输入申请id" />
-                        </el-form-item>
-                        <el-form-item label="模板id" prop="templateId">
-                            <el-input v-model="formData.templateId" placeholder="请输入模板id" />
-                        </el-form-item>
-                        <el-form-item label="申请人id" prop="applyUserId">
-                            <el-input v-model="formData.applyUserId" placeholder="请输入申请人id" />
-                        </el-form-item>
-                        <el-form-item label="申请人昵称" prop="applyUserNickname">
-                            <el-input v-model="formData.applyUserNickname" placeholder="请输入申请人昵称" />
-                        </el-form-item>
-                        <el-form-item label="审批人id" prop="approverId">
-                            <el-input v-model="formData.approverId" placeholder="请输入审批人id" />
-                        </el-form-item>
-                        <el-form-item label="审批用户昵称" prop="approverNickname">
-                            <el-input v-model="formData.approverNickname" placeholder="请输入审批用户昵称" />
-                        </el-form-item>
-                        <el-form-item label="节点" prop="nodeId">
-                            <el-input v-model="formData.nodeId" placeholder="请输入节点" />
-                        </el-form-item>
-                        <el-form-item label="表单值" prop="formValue">
-                            <el-input
-                                v-model="formData.formValue"
-                                placeholder="请输入表单值"
-                                type="textarea"
-                                :autosize="{ minRows: 4, maxRows: 6 }"
-                            />
-                        </el-form-item>
-                        <el-form-item label="通过状态：0待处理，1通过，2拒绝" prop="passStatus">
-                            <el-radio-group v-model="formData.passStatus" placeholder="请选择通过状态：0待处理，1通过，2拒绝">
-                                <el-radio label="0">请选择字典生成</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="通过备注" prop="passRemark">
-                            <el-input v-model="formData.passRemark" placeholder="请输入通过备注" />
-                        </el-form-item>
-            
+                <el-form-item label="申请id" prop="applyId">
+                    <el-input v-model="formData.applyId" placeholder="请输入申请id" />
+                </el-form-item>
+                <el-form-item label="模板id" prop="templateId">
+                    <el-input v-model="formData.templateId" placeholder="请输入模板id" />
+                </el-form-item>
+                <el-form-item label="申请人id" prop="applyUserId">
+                    <el-input v-model="formData.applyUserId" placeholder="请输入申请人id" />
+                </el-form-item>
+                <el-form-item label="申请人昵称" prop="applyUserNickname">
+                    <el-input v-model="formData.applyUserNickname" placeholder="请输入申请人昵称" />
+                </el-form-item>
+                <el-form-item label="审批人id" prop="approverId">
+                    <el-input v-model="formData.approverId" placeholder="请输入审批人id" />
+                </el-form-item>
+                <el-form-item label="审批用户昵称" prop="approverNickname">
+                    <el-input
+                        v-model="formData.approverNickname"
+                        placeholder="请输入审批用户昵称"
+                    />
+                </el-form-item>
+                <el-form-item label="节点" prop="nodeId">
+                    <el-input v-model="formData.nodeId" placeholder="请输入节点" />
+                </el-form-item>
+                <el-form-item label="表单值" prop="formValue">
+                    <el-input
+                        v-model="formData.formValue"
+                        placeholder="请输入表单值"
+                        type="textarea"
+                        :autosize="{ minRows: 4, maxRows: 6 }"
+                    />
+                </el-form-item>
+                <el-form-item label="通过状态：0待处理，1通过，2拒绝" prop="passStatus">
+                    <el-radio-group
+                        v-model="formData.passStatus"
+                        placeholder="请选择通过状态：0待处理，1通过，2拒绝"
+                    >
+                        <el-radio label="0">请选择字典生成</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="通过备注" prop="passRemark">
+                    <el-input v-model="formData.passRemark" placeholder="请输入通过备注" />
+                </el-form-item>
             </el-form>
         </popup>
     </div>
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import {  flow_history_edit, flow_history_add, flow_history_detail } from '@/api/flow_history'
+import { flow_history_edit, flow_history_add, flow_history_detail } from '@/api/flow/flow_history'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import type { PropType } from 'vue'
@@ -83,7 +88,7 @@ const formData = reactive({
     nodeId: '',
     formValue: '',
     passStatus: '',
-    passRemark: '',
+    passRemark: ''
 })
 
 const formRules = {
@@ -163,7 +168,7 @@ const formRules = {
             message: '请输入通过备注',
             trigger: ['blur']
         }
-    ],
+    ]
 }
 
 const handleSubmit = async () => {
@@ -206,3 +211,4 @@ defineExpose({
     getDetail
 })
 </script>
+@/api/flow/flow_history

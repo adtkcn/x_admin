@@ -85,7 +85,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { flow_history_delete, flow_history_list } from '@/api/flow_history'
+import { flow_history_delete, flow_history_list } from '@/api/flow/flow_history'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -134,3 +134,4 @@ const handleDelete = async (id: number) => {
 
 getLists()
 </script>
+@/api/flow/flow_history

@@ -30,11 +30,7 @@
                     <el-input v-model="formData.value" placeholder="请输入数据值" clearable />
                 </el-form-item>
                 <el-form-item label="颜色" prop="color">
-                    <el-input
-                        v-model="formData.color"
-                        placeholder="请输入颜色值（可选）"
-                        clearable
-                    />
+                    <el-color-picker v-model="formData.color" />
                 </el-form-item>
                 <el-form-item label="排序" prop="sort">
                     <div>

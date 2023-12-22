@@ -71,13 +71,13 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { flow_apply_detail } from '@/api/flow_apply'
-import { flow_history_list, flow_history_edit } from '@/api/flow_history'
+import { flow_apply_detail } from '@/api/flow/flow_apply'
+import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
-import ApplySubmit from '@/views/flow_apply/components/apply_submit.vue'
+import ApplySubmit from '@/views/flow/flow_apply/components/apply_submit.vue'
 import ViewForm from '@/components/flow/XForm/view.vue'
 const userStore = useUserStore()
 
@@ -153,3 +153,4 @@ const OpenApplySubmit = async (row: any) => {
 }
 getLists()
 </script>
+@/api/flow/flow_apply@/api/flow/flow_history
