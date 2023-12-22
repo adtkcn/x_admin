@@ -22,20 +22,22 @@ type ISystemLoginService interface {
 	RecordLoginLog(c *gin.Context, adminId uint, username string, errStr string) (e error)
 }
 
+var Service = NewSystemLoginService()
+
 // NewSystemLoginService 初始化
-func NewSystemLoginService(db *gorm.DB, adminSrv admin.ISystemAuthAdminService) ISystemLoginService {
-	return &systemLoginService{db: db, adminSrv: adminSrv}
+func NewSystemLoginService() ISystemLoginService {
+	db := core.GetDB()
+	return &systemLoginService{db: db}
 }
 
 // systemLoginService 系统登录服务实现类
 type systemLoginService struct {
-	db       *gorm.DB
-	adminSrv admin.ISystemAuthAdminService
+	db *gorm.DB
 }
 
 // Login 登录
 func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (res SystemLoginResp, e error) {
-	sysAdmin, err := loginSrv.adminSrv.FindByUsername(req.Username)
+	sysAdmin, err := admin.Service.FindByUsername(req.Username)
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		if e = loginSrv.RecordLoginLog(c, 0, req.Username, response.LoginAccountError.Msg()); e != nil {
 			return
@@ -106,7 +108,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (r
 
 	// 缓存登录信息
 	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, adminIdStr, 7200)
-	loginSrv.adminSrv.CacheAdminUserByUid(sysAdmin.ID)
+	admin.Service.CacheAdminUserByUid(sysAdmin.ID)
 
 	// 更新登录信息
 	err = loginSrv.db.Model(&sysAdmin).Updates(

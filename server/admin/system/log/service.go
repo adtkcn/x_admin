@@ -15,8 +15,11 @@ type ISystemLogsServer interface {
 	Login(page request.PageReq, logReq SystemLogLoginReq) (res response.PageResp, e error)
 }
 
+var Service = NewSystemLogsServer()
+
 // NewSystemLogsServer 初始化
-func NewSystemLogsServer(db *gorm.DB) ISystemLogsServer {
+func NewSystemLogsServer() ISystemLogsServer {
+	db := core.GetDB()
 	return &systemLogsServer{db: db}
 }
 

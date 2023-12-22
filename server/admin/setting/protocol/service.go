@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/util"
 
@@ -12,8 +13,11 @@ type ISettingProtocolService interface {
 	Save(pReq SettingProtocolReq) (e error)
 }
 
+var Service = NewSettingProtocolService()
+
 // NewSettingProtocolService 初始化
-func NewSettingProtocolService(db *gorm.DB) ISettingProtocolService {
+func NewSettingProtocolService() ISettingProtocolService {
+	db := core.GetDB()
 	return &settingProtocolService{db: db}
 }
 

@@ -1,7 +1,6 @@
 package album
 
 import (
-	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/middleware"
@@ -11,15 +10,15 @@ import (
 )
 
 func AlbumRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 
-	server := NewAlbumService(db)
+	// server := NewAlbumService(db)
 
-	handle := albumHandler{Service: server}
+	handle := albumHandler{}
 
 	rg = rg.Group("/common", middleware.TokenAuth())
 
@@ -33,9 +32,7 @@ func AlbumRoute(rg *gin.RouterGroup) {
 	rg.POST("/album/cateDel", middleware.RecordLog("相册分类删除"), handle.cateDel)
 }
 
-type albumHandler struct {
-	Service IAlbumService
-}
+type albumHandler struct{}
 
 // albumList 相册文件列表
 func (ah albumHandler) albumList(c *gin.Context) {
@@ -47,7 +44,7 @@ func (ah albumHandler) albumList(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := ah.Service.AlbumList(page, listReq)
+	res, err := Service.AlbumList(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -57,7 +54,7 @@ func (ah albumHandler) albumRename(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.AlbumRename(rnReq.ID, rnReq.Name))
+	response.CheckAndResp(c, Service.AlbumRename(rnReq.ID, rnReq.Name))
 }
 
 // albumMove 相册文件移动
@@ -66,7 +63,7 @@ func (ah albumHandler) albumMove(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &mvReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.AlbumMove(mvReq.Ids, mvReq.Cid))
+	response.CheckAndResp(c, Service.AlbumMove(mvReq.Ids, mvReq.Cid))
 }
 
 // albumDel 相册文件删除
@@ -75,7 +72,7 @@ func (ah albumHandler) albumDel(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.AlbumDel(delReq.Ids))
+	response.CheckAndResp(c, Service.AlbumDel(delReq.Ids))
 }
 
 // cateList 类目列表
@@ -84,7 +81,7 @@ func (ah albumHandler) cateList(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := ah.Service.CateList(listReq)
+	res, err := Service.CateList(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -94,7 +91,7 @@ func (ah albumHandler) cateAdd(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.CateAdd(addReq))
+	response.CheckAndResp(c, Service.CateAdd(addReq))
 }
 
 // cateRename 类目命名
@@ -103,7 +100,7 @@ func (ah albumHandler) cateRename(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.CateRename(rnReq.ID, rnReq.Name))
+	response.CheckAndResp(c, Service.CateRename(rnReq.ID, rnReq.Name))
 }
 
 // cateDel 类目删除
@@ -112,5 +109,5 @@ func (ah albumHandler) cateDel(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.CateDel(delReq.ID))
+	response.CheckAndResp(c, Service.CateDel(delReq.ID))
 }

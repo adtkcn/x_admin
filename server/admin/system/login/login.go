@@ -2,9 +2,6 @@ package login
 
 import (
 	"x_admin/admin/common/captcha"
-	"x_admin/admin/system/admin"
-	"x_admin/admin/system/role"
-	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -13,22 +10,20 @@ import (
 )
 
 func LoginRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
-	permSrv := role.NewSystemAuthPermService(db)
-	roleSrv := role.NewSystemAuthRoleService(db, permSrv)
-	adminSrv := admin.NewSystemAuthAdminService(db, permSrv, roleSrv)
-	service := NewSystemLoginService(db, adminSrv)
+	// db := core.GetDB()
+	// permSrv := role.NewSystemAuthPermService(db)
+	// roleSrv := role.NewSystemAuthRoleService(db, permSrv)
+	// adminSrv := admin.NewSystemAuthAdminService(db, permSrv, roleSrv)
+	// service := NewSystemLoginService(db, adminSrv)
 
-	handle := loginHandler{Service: service}
+	handle := loginHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.POST("/login", handle.login)
 	rg.POST("/logout", handle.logout)
 }
 
-type loginHandler struct {
-	Service ISystemLoginService
-}
+type loginHandler struct{}
 
 // login 登录系统
 func (lh loginHandler) login(c *gin.Context) {
@@ -46,7 +41,7 @@ func (lh loginHandler) login(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &loginReq)) {
 		return
 	}
-	res, err := lh.Service.Login(c, &loginReq)
+	res, err := Service.Login(c, &loginReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -56,5 +51,5 @@ func (lh loginHandler) logout(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyHeader(c, &logoutReq)) {
 		return
 	}
-	response.CheckAndResp(c, lh.Service.Logout(&logoutReq))
+	response.CheckAndResp(c, Service.Logout(&logoutReq))
 }

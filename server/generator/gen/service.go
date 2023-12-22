@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"x_admin/config"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/gen_model"
@@ -28,8 +29,11 @@ type IGenerateService interface {
 	DownloadCode(tableNames []string) ([]byte, error)
 }
 
+var Service = NewGenerateService()
+
 // NewGenerateService 初始化
-func NewGenerateService(db *gorm.DB) IGenerateService {
+func NewGenerateService() *generateService {
+	db := core.GetDB()
 	return &generateService{db: db}
 }
 

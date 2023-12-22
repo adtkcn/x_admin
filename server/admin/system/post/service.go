@@ -1,6 +1,7 @@
 package post
 
 import (
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
@@ -17,8 +18,11 @@ type ISystemAuthPostService interface {
 	Del(id uint) (e error)
 }
 
+var Service = NewSystemAuthPostService()
+
 // NewSystemAuthPostService 初始化
-func NewSystemAuthPostService(db *gorm.DB) ISystemAuthPostService {
+func NewSystemAuthPostService() *systemAuthPostService {
+	db := core.GetDB()
 	return &systemAuthPostService{db: db}
 }
 

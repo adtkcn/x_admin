@@ -1,7 +1,6 @@
 package gen
 
 import (
-	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 
@@ -14,15 +13,15 @@ import (
 )
 
 func GenRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 
-	server := NewGenerateService(db)
+	// server := NewGenerateService()
 
-	handle := genHandler{Service: server}
+	handle := genHandler{}
 
 	rg = rg.Group("/gen", middleware.TokenAuth())
 	rg.GET("/db", handle.dbTables)
@@ -37,7 +36,7 @@ func GenRoute(rg *gin.RouterGroup) {
 }
 
 type genHandler struct {
-	Service IGenerateService
+	// Service IGenerateService
 }
 
 // dbTables 数据表列表
@@ -50,7 +49,7 @@ func (gh genHandler) dbTables(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &tbReq)) {
 		return
 	}
-	res, err := gh.Service.DbTables(page, tbReq)
+	res, err := Service.DbTables(page, tbReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -64,7 +63,7 @@ func (gh genHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := gh.Service.List(page, listReq)
+	res, err := Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -74,7 +73,7 @@ func (gh genHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := gh.Service.Detail(detailReq.ID)
+	res, err := Service.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -84,7 +83,7 @@ func (gh genHandler) importTable(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &importReq)) {
 		return
 	}
-	err := gh.Service.ImportTable(strings.Split(importReq.Tables, ","))
+	err := Service.ImportTable(strings.Split(importReq.Tables, ","))
 	response.CheckAndResp(c, err)
 }
 
@@ -94,7 +93,7 @@ func (gh genHandler) syncTable(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &syncReq)) {
 		return
 	}
-	err := gh.Service.SyncTable(syncReq.ID)
+	err := Service.SyncTable(syncReq.ID)
 	response.CheckAndResp(c, err)
 }
 
@@ -104,7 +103,7 @@ func (gh genHandler) editTable(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	err := gh.Service.EditTable(editReq)
+	err := Service.EditTable(editReq)
 	response.CheckAndResp(c, err)
 }
 
@@ -114,7 +113,7 @@ func (gh genHandler) delTable(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	err := gh.Service.DelTable(delReq.Ids)
+	err := Service.DelTable(delReq.Ids)
 	response.CheckAndResp(c, err)
 }
 
@@ -124,7 +123,7 @@ func (gh genHandler) previewCode(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &previewReq)) {
 		return
 	}
-	res, err := gh.Service.PreviewCode(previewReq.ID)
+	res, err := Service.PreviewCode(previewReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -135,7 +134,7 @@ func (gh genHandler) previewCode(c *gin.Context) {
 // 		return
 // 	}
 // 	for _, table := range strings.Split(genReq.Tables, ",") {
-// 		err := gh.Service.GenCode(table)
+// 		err := Service.GenCode(table)
 // 		if response.IsFailWithResp(c, err) {
 // 			return
 // 		}
@@ -149,7 +148,7 @@ func (gh genHandler) downloadCode(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &downloadReq)) {
 		return
 	}
-	zipBytes, err := gh.Service.DownloadCode(strings.Split(downloadReq.Tables, ","))
+	zipBytes, err := Service.DownloadCode(strings.Split(downloadReq.Tables, ","))
 	if response.IsFailWithResp(c, err) {
 		return
 	}

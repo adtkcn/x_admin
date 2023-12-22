@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"strings"
 	"x_admin/config"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
@@ -22,15 +23,17 @@ type ISystemAuthRoleService interface {
 	Del(id uint) (e error)
 }
 
+var Service = NewSystemAuthRoleService()
+
 // NewSystemAuthRoleService 初始化
-func NewSystemAuthRoleService(db *gorm.DB, permSrv ISystemAuthPermService) ISystemAuthRoleService {
-	return &systemAuthRoleService{db: db, permSrv: permSrv}
+func NewSystemAuthRoleService() ISystemAuthRoleService {
+	db := core.GetDB()
+	return &systemAuthRoleService{db: db}
 }
 
 // systemAuthRoleService 系统角色服务实现类
 type systemAuthRoleService struct {
-	db      *gorm.DB
-	permSrv ISystemAuthPermService
+	db *gorm.DB
 }
 
 // All 角色所有
@@ -85,7 +88,7 @@ func (roleSrv systemAuthRoleService) Detail(id uint) (res SystemAuthRoleResp, e 
 	}
 	response.Copy(&res, role)
 	res.Member = roleSrv.getMemberCnt(role.ID)
-	res.Menus, e = roleSrv.permSrv.SelectMenuIdsByRoleId(role.ID)
+	res.Menus, e = PermService.SelectMenuIdsByRoleId(role.ID)
 	return
 }
 
@@ -111,7 +114,7 @@ func (roleSrv systemAuthRoleService) Add(addReq SystemAuthRoleAddReq) (e error) 
 		if te = response.CheckErr(txErr, "Add Create in tx err"); te != nil {
 			return te
 		}
-		te = roleSrv.permSrv.BatchSaveByMenuIds(role.ID, addReq.MenuIds, tx)
+		te = PermService.BatchSaveByMenuIds(role.ID, addReq.MenuIds, tx)
 		return te
 	})
 	e = response.CheckErr(err, "Add Transaction err")
@@ -143,13 +146,13 @@ func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e erro
 		if te = response.CheckErr(txErr, "Edit Updates in tx err"); te != nil {
 			return te
 		}
-		if te = roleSrv.permSrv.BatchDeleteByRoleId(editReq.ID, tx); te != nil {
+		if te = PermService.BatchDeleteByRoleId(editReq.ID, tx); te != nil {
 			return te
 		}
-		if te = roleSrv.permSrv.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
+		if te = PermService.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
 			return te
 		}
-		te = roleSrv.permSrv.CacheRoleMenusByRoleId(editReq.ID)
+		te = PermService.CacheRoleMenusByRoleId(editReq.ID)
 		return te
 	})
 	e = response.CheckErr(err, "Edit Transaction err")
@@ -175,7 +178,7 @@ func (roleSrv systemAuthRoleService) Del(id uint) (e error) {
 		if te = response.CheckErr(txErr, "Del Delete in tx err"); te != nil {
 			return te
 		}
-		if te = roleSrv.permSrv.BatchDeleteByRoleId(id, tx); te != nil {
+		if te = PermService.BatchDeleteByRoleId(id, tx); te != nil {
 			return te
 		}
 		util.RedisUtil.HDel(config.AdminConfig.BackstageRolesKey, strconv.FormatUint(uint64(id), 10))

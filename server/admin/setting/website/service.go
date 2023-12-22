@@ -1,6 +1,7 @@
 package website
 
 import (
+	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/util"
 
@@ -12,8 +13,11 @@ type ISettingWebsiteService interface {
 	Save(wsReq SettingWebsiteReq) (e error)
 }
 
+var Service = NewSettingWebsiteService()
+
 // NewSettingWebsiteService 初始化
-func NewSettingWebsiteService(db *gorm.DB) ISettingWebsiteService {
+func NewSettingWebsiteService() ISettingWebsiteService {
+	db := core.GetDB()
 	return &settingWebsiteService{db: db}
 }
 

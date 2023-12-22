@@ -1,6 +1,7 @@
 package copyright
 
 import (
+	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/util"
 
@@ -12,8 +13,11 @@ type ISettingCopyrightService interface {
 	Save(cReqs []SettingCopyrightItemReq) (e error)
 }
 
+var Service = NewSettingCopyrightService()
+
 // NewSettingCopyrightService 初始化
-func NewSettingCopyrightService(db *gorm.DB) ISettingCopyrightService {
+func NewSettingCopyrightService() *settingCopyrightService {
+	db := core.GetDB()
 	return &settingCopyrightService{db: db}
 }
 

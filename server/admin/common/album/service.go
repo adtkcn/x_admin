@@ -4,6 +4,7 @@ import (
 	"path"
 	"time"
 	"x_admin/config"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/common_model"
@@ -24,8 +25,11 @@ type IAlbumService interface {
 	CateDel(id uint) (e error)
 }
 
+var Service = NewAlbumService()
+
 // NewAlbumService 初始化
-func NewAlbumService(db *gorm.DB) IAlbumService {
+func NewAlbumService() IAlbumService {
+	db := core.GetDB()
 	return &albumService{db: db}
 }
 

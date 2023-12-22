@@ -1,7 +1,6 @@
 package dict_type
 
 import (
-	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/middleware"
@@ -11,15 +10,15 @@ import (
 )
 
 func DictTypeRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 
-	server := NewSettingDictTypeService(db)
+	// server := NewSettingDictTypeService(db)
 
-	handle := dictTypeHandler{Service: server}
+	handle := dictTypeHandler{}
 
 	rg = rg.Group("/setting", middleware.TokenAuth())
 	rg.GET("/dict/type/all", handle.All)
@@ -30,13 +29,11 @@ func DictTypeRoute(rg *gin.RouterGroup) {
 	rg.POST("/dict/type/del", handle.Del)
 }
 
-type dictTypeHandler struct {
-	Service ISettingDictTypeService
-}
+type dictTypeHandler struct{}
 
 // all 字典类型所有
 func (dth dictTypeHandler) All(c *gin.Context) {
-	res, err := dth.Service.All()
+	res, err := Service.All()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -50,7 +47,7 @@ func (dth dictTypeHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := dth.Service.List(page, listReq)
+	res, err := Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -60,7 +57,7 @@ func (dth dictTypeHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := dth.Service.Detail(detailReq.ID)
+	res, err := Service.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -70,7 +67,7 @@ func (dth dictTypeHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, dth.Service.Add(addReq))
+	response.CheckAndResp(c, Service.Add(addReq))
 }
 
 // edit 字典类型编辑
@@ -79,7 +76,7 @@ func (dth dictTypeHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, dth.Service.Edit(editReq))
+	response.CheckAndResp(c, Service.Edit(editReq))
 }
 
 // del 字典类型删除
@@ -88,5 +85,5 @@ func (dth dictTypeHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, dth.Service.Del(delReq))
+	response.CheckAndResp(c, Service.Del(delReq))
 }

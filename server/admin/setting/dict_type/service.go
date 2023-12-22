@@ -2,6 +2,7 @@ package dict_type
 
 import (
 	"time"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
@@ -18,8 +19,11 @@ type ISettingDictTypeService interface {
 	Del(delReq SettingDictTypeDelReq) (e error)
 }
 
+var Service = NewSettingDictTypeService()
+
 // NewSettingDictTypeService 初始化
-func NewSettingDictTypeService(db *gorm.DB) ISettingDictTypeService {
+func NewSettingDictTypeService() ISettingDictTypeService {
+	db := core.GetDB()
 	return &settingDictTypeService{db: db}
 }
 

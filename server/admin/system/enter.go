@@ -3,21 +3,20 @@ package system
 import (
 	"x_admin/admin/system/admin"
 	"x_admin/admin/system/role"
-	"x_admin/core"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func AdminRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 
-	permSrv := role.NewSystemAuthPermService(db)
-	roleSrv := role.NewSystemAuthRoleService(db, permSrv)
-	adminSrv := admin.NewSystemAuthAdminService(db, permSrv, roleSrv)
+	// permSrv := role.NewSystemAuthPermService(db)
+	// roleSrv := role.NewSystemAuthRoleService(db, permSrv)
+	// adminSrv := admin.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := NewSystemLoginService(db, adminSrv)
 
-	handle := admin.AdminHandler{Service: adminSrv}
+	handle := admin.AdminHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 
@@ -31,15 +30,15 @@ func AdminRoute(rg *gin.RouterGroup) {
 	rg.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handle.Disable)
 }
 func RoleRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
-	permSrv := role.NewSystemAuthPermService(db)
+	// db := core.GetDB()
+	// permSrv := role.NewSystemAuthPermService(db)
 	// roleSrv := NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := NewSystemLoginService(db, adminSrv)
 
-	server := role.NewSystemAuthRoleService(db, permSrv)
+	// server := role.NewSystemAuthRoleService()
 
-	handle := role.RoleHandler{Service: server}
+	handle := role.RoleHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.GET("/role/all", handle.All)

@@ -2,6 +2,7 @@ package dict_data
 
 import (
 	"time"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
@@ -18,8 +19,11 @@ type ISettingDictDataService interface {
 	Del(delReq SettingDictDataDelReq) (e error)
 }
 
+var Service = NewSettingDictDataService()
+
 // NewSettingDictDataService 初始化
-func NewSettingDictDataService(db *gorm.DB) ISettingDictDataService {
+func NewSettingDictDataService() ISettingDictDataService {
+	db := core.GetDB()
 	return &settingDictDataService{db: db}
 }
 

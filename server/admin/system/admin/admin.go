@@ -33,13 +33,13 @@ import (
 // }
 
 type AdminHandler struct {
-	Service ISystemAuthAdminService
+	// Service ISystemAuthAdminService
 }
 
 // self 管理员信息
 func (ah AdminHandler) Self(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
-	res, err := ah.Service.Self(adminId)
+	res, err := Service.Self(adminId)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -53,7 +53,7 @@ func (ah AdminHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := ah.Service.List(page, listReq)
+	res, err := Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -63,7 +63,7 @@ func (ah AdminHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := ah.Service.Detail(detailReq.ID)
+	res, err := Service.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -73,7 +73,7 @@ func (ah AdminHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.Add(addReq))
+	response.CheckAndResp(c, Service.Add(addReq))
 }
 
 // edit 管理员编辑
@@ -82,7 +82,7 @@ func (ah AdminHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.Edit(c, editReq))
+	response.CheckAndResp(c, Service.Edit(c, editReq))
 }
 
 // upInfo 管理员更新
@@ -91,7 +91,7 @@ func (ah AdminHandler) UpInfo(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &updateReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.Update(
+	response.CheckAndResp(c, Service.Update(
 		c, updateReq, config.AdminConfig.GetAdminId(c)))
 }
 
@@ -101,7 +101,7 @@ func (ah AdminHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.Del(c, delReq.ID))
+	response.CheckAndResp(c, Service.Del(c, delReq.ID))
 }
 
 // disable 管理员状态切换
@@ -110,5 +110,5 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &disableReq)) {
 		return
 	}
-	response.CheckAndResp(c, ah.Service.Disable(c, disableReq.ID))
+	response.CheckAndResp(c, Service.Disable(c, disableReq.ID))
 }

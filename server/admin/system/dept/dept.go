@@ -1,7 +1,6 @@
 package dept
 
 import (
-	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -10,14 +9,14 @@ import (
 )
 
 func DeptRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 	// authSrv := system.NewSystemAuthMenuService(db, permSrv)
-	Dept := NewSystemAuthDeptService(db)
-	handle := deptHandler{Service: Dept}
+
+	handle := deptHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.GET("/dept/all", handle.All)
@@ -29,12 +28,11 @@ func DeptRoute(rg *gin.RouterGroup) {
 }
 
 type deptHandler struct {
-	Service ISystemAuthDeptService
 }
 
 // all 部门所有
 func (dh deptHandler) All(c *gin.Context) {
-	res, err := dh.Service.All()
+	res, err := Service.All()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -44,7 +42,7 @@ func (dh deptHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := dh.Service.List(listReq)
+	res, err := Service.List(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -54,7 +52,7 @@ func (dh deptHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := dh.Service.Detail(detailReq.ID)
+	res, err := Service.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -64,7 +62,7 @@ func (dh deptHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, dh.Service.Add(addReq))
+	response.CheckAndResp(c, Service.Add(addReq))
 }
 
 // edit 部门编辑
@@ -73,7 +71,7 @@ func (dh deptHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, dh.Service.Edit(editReq))
+	response.CheckAndResp(c, Service.Edit(editReq))
 }
 
 // del 部门删除
@@ -82,5 +80,5 @@ func (dh deptHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, dh.Service.Del(delReq.ID))
+	response.CheckAndResp(c, Service.Del(delReq.ID))
 }

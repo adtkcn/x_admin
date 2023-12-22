@@ -1,6 +1,7 @@
 package article_collect
 
 import (
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
@@ -16,9 +17,11 @@ type IArticleCollectService interface {
 	Del(id int) (e error)
 }
 
-// NewArticleCollectService 初始化
-func NewArticleCollectService(db *gorm.DB) ArticleCollectService {
+var Service = NewArticleCollectService()
 
+// NewArticleCollectService 初始化
+func NewArticleCollectService() ArticleCollectService {
+	db := core.GetDB()
 	return ArticleCollectService{db: db}
 }
 

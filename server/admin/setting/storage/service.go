@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/util"
 
@@ -15,8 +16,11 @@ type ISettingStorageService interface {
 	Change(alias string, status int) (e error)
 }
 
+var Service = NewSettingStorageService()
+
 // NewSettingStorageService 初始化
-func NewSettingStorageService(db *gorm.DB) ISettingStorageService {
+func NewSettingStorageService() ISettingStorageService {
+	db := core.GetDB()
 	return &settingStorageService{db: db}
 }
 

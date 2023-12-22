@@ -15,8 +15,11 @@ type IIndexService interface {
 	Config() (res map[string]interface{}, e error)
 }
 
+var Service = NewIndexService()
+
 // NewIndexService 初始化
-func NewIndexService(db *gorm.DB) IIndexService {
+func NewIndexService() IIndexService {
+	db := core.GetDB()
 	return &indexService{db: db}
 }
 

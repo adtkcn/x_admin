@@ -1,7 +1,6 @@
 package post
 
 import (
-	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/middleware"
@@ -11,15 +10,15 @@ import (
 )
 
 func PostRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 
-	server := NewSystemAuthPostService(db)
+	// server := NewSystemAuthPostService(db)
 
-	handle := postHandler{Service: server}
+	handle := postHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.GET("/post/all", handle.All)
@@ -31,12 +30,11 @@ func PostRoute(rg *gin.RouterGroup) {
 }
 
 type postHandler struct {
-	Service ISystemAuthPostService
 }
 
 // all 岗位所有
 func (ph postHandler) All(c *gin.Context) {
-	res, err := ph.Service.All()
+	res, err := Service.All()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -50,7 +48,7 @@ func (ph postHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := ph.Service.List(page, listReq)
+	res, err := Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -60,7 +58,7 @@ func (ph postHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := ph.Service.Detail(detailReq.ID)
+	res, err := Service.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -70,7 +68,7 @@ func (ph postHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, ph.Service.Add(addReq))
+	response.CheckAndResp(c, Service.Add(addReq))
 }
 
 // edit 岗位编辑
@@ -79,7 +77,7 @@ func (ph postHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, ph.Service.Edit(editReq))
+	response.CheckAndResp(c, Service.Edit(editReq))
 }
 
 // del 岗位删除
@@ -88,5 +86,5 @@ func (ph postHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, ph.Service.Del(delReq.ID))
+	response.CheckAndResp(c, Service.Del(delReq.ID))
 }

@@ -1,7 +1,6 @@
 package website
 
 import (
-	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -10,28 +9,26 @@ import (
 )
 
 func WebsiteRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 
-	server := NewSettingWebsiteService(db)
+	// server := NewSettingWebsiteService(db)
 
-	handle := websiteHandler{Service: server}
+	handle := websiteHandler{}
 
 	rg = rg.Group("/setting", middleware.TokenAuth())
 	rg.GET("/website/detail", handle.Detail)
 	rg.POST("/website/save", handle.save)
 }
 
-type websiteHandler struct {
-	Service ISettingWebsiteService
-}
+type websiteHandler struct{}
 
 // detail 获取网站信息
 func (wh websiteHandler) Detail(c *gin.Context) {
-	res, err := wh.Service.Detail()
+	res, err := Service.Detail()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -41,5 +38,5 @@ func (wh websiteHandler) save(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &wsReq)) {
 		return
 	}
-	response.CheckAndResp(c, wh.Service.Save(wsReq))
+	response.CheckAndResp(c, Service.Save(wsReq))
 }

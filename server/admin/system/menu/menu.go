@@ -2,9 +2,7 @@ package menu
 
 import (
 	"strconv"
-	"x_admin/admin/system/role"
 	"x_admin/config"
-	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -13,15 +11,15 @@ import (
 )
 
 func MenuRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
-	permSrv := role.NewSystemAuthPermService(db)
+
+	// permSrv := role.NewSystemAuthPermService()
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 
-	authSrv := NewSystemAuthMenuService(db, permSrv)
+	// authSrv := NewSystemAuthMenuService()
 
-	handle := menuHandler{Service: authSrv}
+	handle := menuHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.GET("/menu/route", handle.route)
@@ -33,20 +31,19 @@ func MenuRoute(rg *gin.RouterGroup) {
 }
 
 type menuHandler struct {
-	Service ISystemAuthMenuService
 }
 
 // route 菜单路由
 func (mh menuHandler) route(c *gin.Context) {
 	roleId := config.AdminConfig.GetRoleId(c)
 	id, _ := strconv.ParseUint(roleId, 10, 64)
-	res, err := mh.Service.SelectMenuByRoleId(c, uint(id))
+	res, err := Service.SelectMenuByRoleId(c, uint(id))
 	response.CheckAndRespWithData(c, res, err)
 }
 
 // list 菜单列表
 func (mh menuHandler) List(c *gin.Context) {
-	res, err := mh.Service.List()
+	res, err := Service.List()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -56,7 +53,7 @@ func (mh menuHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := mh.Service.Detail(detailReq.ID)
+	res, err := Service.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -66,7 +63,7 @@ func (mh menuHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, mh.Service.Add(addReq))
+	response.CheckAndResp(c, Service.Add(addReq))
 }
 
 // edit 编辑菜单
@@ -75,7 +72,7 @@ func (mh menuHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, mh.Service.Edit(editReq))
+	response.CheckAndResp(c, Service.Edit(editReq))
 }
 
 // del 删除菜单
@@ -84,5 +81,5 @@ func (mh menuHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, mh.Service.Del(delReq.ID))
+	response.CheckAndResp(c, Service.Del(delReq.ID))
 }

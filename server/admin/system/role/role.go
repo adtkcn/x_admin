@@ -29,12 +29,12 @@ import (
 // }
 
 type RoleHandler struct {
-	Service ISystemAuthRoleService
+	// Service ISystemAuthRoleService
 }
 
 // all 角色所有
 func (rh RoleHandler) All(c *gin.Context) {
-	res, err := rh.Service.All()
+	res, err := Service.All()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -44,7 +44,7 @@ func (rh RoleHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	res, err := rh.Service.List(page)
+	res, err := Service.List(page)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -54,7 +54,7 @@ func (rh RoleHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := rh.Service.Detail(detailReq.ID)
+	res, err := Service.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -64,7 +64,7 @@ func (rh RoleHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, rh.Service.Add(addReq))
+	response.CheckAndResp(c, Service.Add(addReq))
 }
 
 // edit 编辑角色
@@ -73,7 +73,7 @@ func (rh RoleHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, rh.Service.Edit(editReq))
+	response.CheckAndResp(c, Service.Edit(editReq))
 }
 
 // del 删除角色
@@ -82,5 +82,5 @@ func (rh RoleHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, rh.Service.Del(delReq.ID))
+	response.CheckAndResp(c, Service.Del(delReq.ID))
 }

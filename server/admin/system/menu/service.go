@@ -3,6 +3,7 @@ package menu
 import (
 	"x_admin/admin/system/role"
 	"x_admin/config"
+	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
 	"x_admin/util"
@@ -21,15 +22,17 @@ type ISystemAuthMenuService interface {
 	Del(id uint) (e error)
 }
 
+var Service = NewSystemAuthMenuService()
+
 // NewSystemAuthMenuService 初始化
-func NewSystemAuthMenuService(db *gorm.DB, permSrv role.ISystemAuthPermService) ISystemAuthMenuService {
-	return &systemAuthMenuService{db: db, permSrv: permSrv}
+func NewSystemAuthMenuService() ISystemAuthMenuService {
+	db := core.GetDB()
+	return &systemAuthMenuService{db: db}
 }
 
 // systemAuthMenuService 系统菜单服务实现类
 type systemAuthMenuService struct {
-	db      *gorm.DB
-	permSrv role.ISystemAuthPermService
+	db *gorm.DB
 }
 
 // SelectMenuByRoleId 根据角色ID获取菜单
@@ -39,7 +42,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 	// 超管
 	if adminId == config.AdminConfig.SuperAdminId {
 		menuIds = []uint{0}
-	} else if menuIds, e = menuSrv.permSrv.SelectMenuIdsByRoleId(roleId); e != nil {
+	} else if menuIds, e = role.PermService.SelectMenuIdsByRoleId(roleId); e != nil {
 		return
 	}
 	if len(menuIds) == 0 {

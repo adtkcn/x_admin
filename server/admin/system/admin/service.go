@@ -32,16 +32,17 @@ type ISystemAuthAdminService interface {
 	CacheAdminUserByUid(id uint) (err error)
 }
 
+var Service = NewSystemAuthAdminService()
+
 // NewSystemAuthAdminService 初始化
-func NewSystemAuthAdminService(db *gorm.DB, permSrv role.ISystemAuthPermService, roleSrv role.ISystemAuthRoleService) ISystemAuthAdminService {
-	return &systemAuthAdminService{db: db, permSrv: permSrv, roleSrv: roleSrv}
+func NewSystemAuthAdminService() *systemAuthAdminService {
+	db := core.GetDB()
+	return &systemAuthAdminService{db: db}
 }
 
 // systemAuthAdminService 系统管理员服务实现类
 type systemAuthAdminService struct {
-	db      *gorm.DB
-	permSrv role.ISystemAuthPermService
-	roleSrv role.ISystemAuthRoleService
+	db *gorm.DB
 }
 
 // FindByUsername 根据账号查找管理员
@@ -63,7 +64,7 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 	if adminId > 1 {
 		roleId, _ := strconv.ParseUint(sysAdmin.Role, 10, 32)
 		var menuIds []uint
-		if menuIds, e = adminSrv.permSrv.SelectMenuIdsByRoleId(uint(roleId)); e != nil {
+		if menuIds, e = role.PermService.SelectMenuIdsByRoleId(uint(roleId)); e != nil {
 			return
 		}
 		if len(menuIds) > 0 {
@@ -211,7 +212,7 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 		return response.AssertArgumentError.Make("昵称已存在换一个吧！")
 	}
 	var roleResp role.SystemAuthRoleResp
-	if roleResp, e = adminSrv.roleSrv.Detail(addReq.Role); e != nil {
+	if roleResp, e = role.Service.Detail(addReq.Role); e != nil {
 		return
 	}
 	if roleResp.IsDisable > 0 {
@@ -266,7 +267,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 	}
 	// 检查role
 	if editReq.Role > 0 && editReq.ID != 1 {
-		if _, e = adminSrv.roleSrv.Detail(editReq.Role); e != nil {
+		if _, e = role.Service.Detail(editReq.Role); e != nil {
 			return
 		}
 	}

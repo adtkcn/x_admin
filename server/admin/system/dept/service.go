@@ -1,6 +1,7 @@
 package dept
 
 import (
+	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
 	"x_admin/util"
@@ -17,8 +18,11 @@ type ISystemAuthDeptService interface {
 	Del(id uint) (e error)
 }
 
+var Service = NewSystemAuthDeptService()
+
 // NewSystemAuthDeptService 初始化
-func NewSystemAuthDeptService(db *gorm.DB) ISystemAuthDeptService {
+func NewSystemAuthDeptService() *systemAuthDeptService {
+	db := core.GetDB()
 	return &systemAuthDeptService{db: db}
 }
 

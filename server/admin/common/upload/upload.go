@@ -3,7 +3,6 @@ package upload
 import (
 	"x_admin/admin/common/album"
 	"x_admin/config"
-	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -12,24 +11,22 @@ import (
 )
 
 func UploadRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
-	AlbumServer := album.NewAlbumService(db)
-	server := NewUploadService(AlbumServer)
+	// AlbumServer := album.NewAlbumService()
+	// server := NewUploadService()
 
-	handle := uploadHandler{Service: server}
+	handle := uploadHandler{}
 
 	rg = rg.Group("/common", middleware.TokenAuth())
 	rg.POST("/upload/image", middleware.RecordLog("上传图片", middleware.RequestFile), handle.uploadImage)
 	rg.POST("/upload/video", middleware.RecordLog("上传视频", middleware.RequestFile), handle.uploadVideo)
 }
 
-type uploadHandler struct {
-	Service IUploadService
-}
+type uploadHandler struct{}
 
 // uploadImage 上传图片
 func (uh uploadHandler) uploadImage(c *gin.Context) {
@@ -41,7 +38,7 @@ func (uh uploadHandler) uploadImage(c *gin.Context) {
 	if response.IsFailWithResp(c, ve) {
 		return
 	}
-	res, err := uh.Service.UploadImage(file, uReq.Cid, config.AdminConfig.GetAdminId(c))
+	res, err := Service.UploadImage(file, uReq.Cid, config.AdminConfig.GetAdminId(c))
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -55,6 +52,6 @@ func (uh uploadHandler) uploadVideo(c *gin.Context) {
 	if response.IsFailWithResp(c, ve) {
 		return
 	}
-	res, err := uh.Service.UploadVideo(file, uReq.Cid, config.AdminConfig.GetAdminId(c))
+	res, err := Service.UploadVideo(file, uReq.Cid, config.AdminConfig.GetAdminId(c))
 	response.CheckAndRespWithData(c, res, err)
 }

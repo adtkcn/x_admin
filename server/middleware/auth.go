@@ -15,12 +15,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var (
-	permSrv  = role.NewSystemAuthPermService(core.GetDB())
-	roleSrv  = role.NewSystemAuthRoleService(core.GetDB(), permSrv)
-	adminSrv = admin.NewSystemAuthAdminService(core.GetDB(), permSrv, roleSrv)
-)
-
 // TokenAuth Token认证中间件
 func TokenAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -69,7 +63,7 @@ func TokenAuth() gin.HandlerFunc {
 		}
 
 		if !util.RedisUtil.HExists(config.AdminConfig.BackstageManageKey, uidStr) {
-			err := adminSrv.CacheAdminUserByUid(uid)
+			err := admin.Service.CacheAdminUserByUid(uid)
 			if err != nil {
 				core.Logger.Errorf("TokenAuth CacheAdminUserByUid err: err=[%+v]", err)
 				response.Fail(c, response.SystemError)
@@ -129,7 +123,7 @@ func TokenAuth() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			err = permSrv.CacheRoleMenusByRoleId(uint(i))
+			err = role.PermService.CacheRoleMenusByRoleId(uint(i))
 			if err != nil {
 				core.Logger.Errorf("TokenAuth CacheRoleMenusByRoleId err: err=[%+v]", err)
 				response.Fail(c, response.SystemError)

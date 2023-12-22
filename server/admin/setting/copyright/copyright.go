@@ -1,7 +1,6 @@
 package copyright
 
 import (
-	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/util"
 
@@ -9,9 +8,9 @@ import (
 )
 
 func CopyrightRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
-	service := NewSettingCopyrightService(db)
-	handle := copyrightHandler{Service: service}
+	// db := core.GetDB()
+	// service := NewSettingCopyrightService(db)
+	handle := copyrightHandler{}
 
 	rg = rg.Group("/setting")
 	rg.GET("/copyright/detail", handle.Detail)
@@ -19,12 +18,11 @@ func CopyrightRoute(rg *gin.RouterGroup) {
 }
 
 type copyrightHandler struct {
-	Service ISettingCopyrightService
 }
 
 // detail 获取备案信息
 func (ch copyrightHandler) Detail(c *gin.Context) {
-	res, err := ch.Service.Detail()
+	res, err := Service.Detail()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -34,5 +32,5 @@ func (ch copyrightHandler) save(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSONArray(c, &cReqs)) {
 		return
 	}
-	response.CheckAndResp(c, ch.Service.Save(cReqs))
+	response.CheckAndResp(c, Service.Save(cReqs))
 }

@@ -1,7 +1,6 @@
 package log
 
 import (
-	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/middleware"
@@ -11,15 +10,15 @@ import (
 )
 
 func LogRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := NewSystemAuthPermService(db)
 	// roleSrv := NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := NewSystemLoginService(db, adminSrv)
 
-	authSrv := NewSystemLogsServer(db)
+	// authSrv := NewSystemLogsServer(db)
 
-	handle := logHandler{Service: authSrv}
+	handle := logHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.GET("/log/operate", handle.operate)
@@ -27,7 +26,7 @@ func LogRoute(rg *gin.RouterGroup) {
 }
 
 type logHandler struct {
-	Service ISystemLogsServer
+	// Service ISystemLogsServer
 }
 
 // operate 操作日志
@@ -40,7 +39,7 @@ func (lh logHandler) operate(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &logReq)) {
 		return
 	}
-	res, err := lh.Service.Operate(page, logReq)
+	res, err := Service.Operate(page, logReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -54,6 +53,6 @@ func (lh logHandler) login(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &logReq)) {
 		return
 	}
-	res, err := lh.Service.Login(page, logReq)
+	res, err := Service.Login(page, logReq)
 	response.CheckAndRespWithData(c, res, err)
 }

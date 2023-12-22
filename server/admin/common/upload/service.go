@@ -12,15 +12,15 @@ type IUploadService interface {
 	UploadVideo(file *multipart.FileHeader, cid uint, aid uint) (res album.CommonUploadFileResp, e error)
 }
 
+var Service = NewUploadService()
+
 // NewUploadService 初始化
-func NewUploadService(albSrv album.IAlbumService) IUploadService {
-	return &uploadService{albSrv}
+func NewUploadService() *uploadService {
+	return &uploadService{}
 }
 
 // uploadService 上传服务实现类
-type uploadService struct {
-	albSrv album.IAlbumService
-}
+type uploadService struct{}
 
 // UploadImage 上传图片
 func (upSrv uploadService) UploadImage(file *multipart.FileHeader, cid uint, aid uint) (res album.CommonUploadFileResp, e error) {
@@ -43,7 +43,7 @@ func (upSrv uploadService) uploadFile(file *multipart.FileHeader, folder string,
 	addReq.Aid = aid
 	addReq.Cid = cid
 	var albumId uint
-	if albumId, e = upSrv.albSrv.AlbumAdd(addReq); e != nil {
+	if albumId, e = album.Service.AlbumAdd(addReq); e != nil {
 		return
 	}
 	response.Copy(&res, addReq)

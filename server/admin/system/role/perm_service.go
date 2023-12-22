@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"strings"
 	"x_admin/config"
+	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
 	"x_admin/util"
@@ -19,8 +20,11 @@ type ISystemAuthPermService interface {
 	BatchDeleteByMenuId(menuId uint) (e error)
 }
 
+var PermService = NewSystemAuthPermService()
+
 // NewSystemAuthPermService 初始化
-func NewSystemAuthPermService(db *gorm.DB) ISystemAuthPermService {
+func NewSystemAuthPermService() *systemAuthPermService {
+	db := core.GetDB()
 	return &systemAuthPermService{db: db}
 }
 
@@ -30,14 +34,14 @@ type systemAuthPermService struct {
 }
 
 // SelectMenuIdsByRoleId 根据角色ID获取菜单ID
-func (permSrv systemAuthPermService) SelectMenuIdsByRoleId(roleId uint) (menuIds []uint, e error) {
+func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId uint) (menuIds []uint, e error) {
 	var role system_model.SystemAuthRole
-	err := permSrv.db.Where("id = ? AND is_disable = ?", roleId, 0).Limit(1).First(&role).Error
+	err := service.db.Where("id = ? AND is_disable = ?", roleId, 0).Limit(1).First(&role).Error
 	if e = response.CheckErr(err, "SelectMenuIdsByRoleId First err"); e != nil {
 		return []uint{}, e
 	}
 	var perms []system_model.SystemAuthPerm
-	err = permSrv.db.Where("role_id = ?", role.ID).Find(&perms).Error
+	err = service.db.Where("role_id = ?", role.ID).Find(&perms).Error
 	if e = response.CheckErr(err, "SelectMenuIdsByRoleId Find err"); e != nil {
 		return []uint{}, e
 	}
@@ -48,9 +52,9 @@ func (permSrv systemAuthPermService) SelectMenuIdsByRoleId(roleId uint) (menuIds
 }
 
 // CacheRoleMenusByRoleId 缓存角色菜单
-func (permSrv systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e error) {
+func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e error) {
 	var perms []system_model.SystemAuthPerm
-	err := permSrv.db.Where("role_id = ?", roleId).Find(&perms).Error
+	err := service.db.Where("role_id = ?", roleId).Find(&perms).Error
 	if e = response.CheckErr(err, "CacheRoleMenusByRoleId Find perms err"); e != nil {
 		return
 	}
@@ -59,7 +63,7 @@ func (permSrv systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e erro
 		menuIds = append(menuIds, perm.MenuId)
 	}
 	var menus []system_model.SystemAuthMenu
-	err = permSrv.db.Where(
+	err = service.db.Where(
 		"is_disable = ? and id in ? and menu_type in ?", 0, menuIds, []string{"C", "A"}).Order(
 		"menu_sort, id").Find(&menus).Error
 	if e = response.CheckErr(err, "CacheRoleMenusByRoleId Find menus err"); e != nil {
@@ -76,12 +80,12 @@ func (permSrv systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e erro
 }
 
 // BatchSaveByMenuIds 批量写入角色菜单
-func (permSrv systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds string, db *gorm.DB) (e error) {
+func (service systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds string, db *gorm.DB) (e error) {
 	if menuIds == "" {
 		return
 	}
 	if db == nil {
-		db = permSrv.db
+		db = service.db
 	}
 	err := db.Transaction(func(tx *gorm.DB) error {
 		var perms []system_model.SystemAuthPerm
@@ -99,9 +103,9 @@ func (permSrv systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds str
 }
 
 // BatchDeleteByRoleId 批量删除角色菜单(根据角色ID)
-func (permSrv systemAuthPermService) BatchDeleteByRoleId(roleId uint, db *gorm.DB) (e error) {
+func (service systemAuthPermService) BatchDeleteByRoleId(roleId uint, db *gorm.DB) (e error) {
 	if db == nil {
-		db = permSrv.db
+		db = service.db
 	}
 	err := db.Delete(&system_model.SystemAuthPerm{}, "role_id = ?", roleId).Error
 	e = response.CheckErr(err, "BatchDeleteByRoleId Delete err")
@@ -109,8 +113,8 @@ func (permSrv systemAuthPermService) BatchDeleteByRoleId(roleId uint, db *gorm.D
 }
 
 // BatchDeleteByMenuId 批量删除角色菜单(根据菜单ID)
-func (permSrv systemAuthPermService) BatchDeleteByMenuId(menuId uint) (e error) {
-	err := permSrv.db.Delete(&system_model.SystemAuthPerm{}, "menu_id = ?", menuId).Error
+func (service systemAuthPermService) BatchDeleteByMenuId(menuId uint) (e error) {
+	err := service.db.Delete(&system_model.SystemAuthPerm{}, "menu_id = ?", menuId).Error
 	e = response.CheckErr(err, "BatchDeleteByMenuId Delete err")
 	return
 }

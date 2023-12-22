@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -10,15 +9,15 @@ import (
 )
 
 func StorageRoute(rg *gin.RouterGroup) {
-	db := core.GetDB()
+	// db := core.GetDB()
 	// permSrv := system.NewSystemAuthPermService(db)
 	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
 	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
 	// service := system.NewSystemLoginService(db, adminSrv)
 
-	server := NewSettingStorageService(db)
+	// server := NewSettingStorageService()
 
-	handle := storageHandler{Service: server}
+	handle := storageHandler{}
 
 	rg = rg.Group("/setting", middleware.TokenAuth())
 	rg.GET("/storage/list", handle.List)
@@ -28,12 +27,11 @@ func StorageRoute(rg *gin.RouterGroup) {
 }
 
 type storageHandler struct {
-	Service ISettingStorageService
 }
 
 // list 存储列表
 func (sh storageHandler) List(c *gin.Context) {
-	res, err := sh.Service.List()
+	res, err := Service.List()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -43,7 +41,7 @@ func (sh storageHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := sh.Service.Detail(detailReq.Alias)
+	res, err := Service.Detail(detailReq.Alias)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -53,7 +51,7 @@ func (sh storageHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, sh.Service.Edit(editReq))
+	response.CheckAndResp(c, Service.Edit(editReq))
 }
 
 // change 存储切换
@@ -62,5 +60,5 @@ func (sh storageHandler) change(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &changeReq)) {
 		return
 	}
-	response.CheckAndResp(c, sh.Service.Change(changeReq.Alias, changeReq.Status))
+	response.CheckAndResp(c, Service.Change(changeReq.Alias, changeReq.Status))
 }
