@@ -1,7 +1,7 @@
 package login
 
 import (
-	"x_admin/admin/captcha"
+	"x_admin/admin/common/captcha"
 	"x_admin/admin/system/admin"
 	"x_admin/admin/system/role"
 	"x_admin/core"

@@ -66,7 +66,7 @@ func init() {
 }
 func CaptchaRoute(rg *gin.RouterGroup) {
 
-	rg = rg.Group("/captcha")
+	rg = rg.Group("/common/captcha")
 	rg.POST("/get", func(c *gin.Context) {
 		var captchaGet CaptchaGetParams
 		if err := c.ShouldBind(&captchaGet); err != nil {
