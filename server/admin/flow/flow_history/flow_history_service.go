@@ -2,7 +2,7 @@ package flow_history
 
 import (
 	"encoding/json"
-	"x_admin/admin/flow_apply"
+	"x_admin/admin/flow/flow_apply"
 	"x_admin/admin/system/admin"
 	"x_admin/core"
 	"x_admin/core/request"

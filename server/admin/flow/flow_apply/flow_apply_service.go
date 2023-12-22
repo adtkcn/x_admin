@@ -1,7 +1,7 @@
 package flow_apply
 
 import (
-	"x_admin/admin/flow_template"
+	"x_admin/admin/flow/flow_template"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"

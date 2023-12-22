@@ -5,6 +5,7 @@ import (
 	"x_admin/admin/common/captcha"
 	"x_admin/admin/common/index"
 	"x_admin/admin/common/upload"
+	"x_admin/admin/flow"
 	"x_admin/admin/monitor"
 	"x_admin/admin/setting/copyright"
 	"x_admin/admin/setting/dict_data"
@@ -46,9 +47,9 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	log.LogRoute(rg)
 
 	ArticleCollectRoute(rg)
-	FlowTemplateRoute(rg)
-	FlowApplyRoute(rg)
-	FlowHistoryRoute(rg)
+	flow.FlowTemplateRoute(rg)
+	flow.FlowApplyRoute(rg)
+	flow.FlowHistoryRoute(rg)
 
 	captcha.CaptchaRoute(rg)
 }
