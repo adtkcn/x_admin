@@ -134,4 +134,3 @@ const handleDelete = async (id: number) => {
 
 getLists()
 </script>
-@/api/flow/flow_history

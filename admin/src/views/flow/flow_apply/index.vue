@@ -227,4 +227,3 @@ const SaveViewForm = (id, form_data) => {
 }
 getLists()
 </script>
-@/api/flow/flow_apply

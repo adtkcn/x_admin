@@ -181,4 +181,3 @@ const handleConfig = async (data: any) => {
 }
 getLists()
 </script>
-@/api/flow/flow_template

@@ -236,4 +236,3 @@ defineExpose({
     getDetail
 })
 </script>
-@/api/flow/flow_apply@/api/flow/flow_template

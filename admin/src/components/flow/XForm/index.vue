@@ -17,9 +17,13 @@ function getFieldWidgets() {
 }
 function getData() {
     return new Promise((resolve, reject) => {
-        const jsonData = designerRef.value.getFormJson()
-        console.log('jsonData', jsonData)
-        resolve({ formData: jsonData })
+        try {
+            const jsonData = designerRef.value.getFormJson()
+            console.log('jsonData', jsonData)
+            resolve({ formData: jsonData })
+        } catch (error) {
+            reject(error)
+        }
     })
 }
 const props = defineProps({
@@ -44,7 +48,7 @@ defineExpose({
 </script>
 
 <style lang="scss">
-// body {
-//   margin: 0; /* 如果页面出现垂直滚动条，则加入此行CSS以消除之 */
-// }
+.el-range-editor.el-input__wrapper {
+    box-sizing: border-box;
+}
 </style>

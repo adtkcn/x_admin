@@ -150,4 +150,3 @@ defineExpose({
     getDetail
 })
 </script>
-@/api/flow/flow_template

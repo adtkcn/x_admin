@@ -153,4 +153,3 @@ const OpenApplySubmit = async (row: any) => {
 }
 getLists()
 </script>
-@/api/flow/flow_apply@/api/flow/flow_history

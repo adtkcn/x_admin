@@ -211,4 +211,3 @@ defineExpose({
     getDetail
 })
 </script>
-@/api/flow/flow_history
