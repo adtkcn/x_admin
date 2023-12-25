@@ -4,7 +4,6 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -44,7 +43,7 @@ func (deptSrv systemAuthDeptService) All() (res []SystemAuthDeptResp, e error) {
 }
 
 // List 部门列表
-func (deptSrv systemAuthDeptService) List(listReq SystemAuthDeptListReq) (mapList []interface{}, e error) {
+func (deptSrv systemAuthDeptService) List(listReq SystemAuthDeptListReq) (deptResps []SystemAuthDeptResp, e error) {
 	deptModel := deptSrv.db.Where("is_delete = ?", 0)
 	if listReq.Name != "" {
 		deptModel = deptModel.Where("name like ?", "%"+listReq.Name+"%")
@@ -57,10 +56,10 @@ func (deptSrv systemAuthDeptService) List(listReq SystemAuthDeptListReq) (mapLis
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
 	}
-	deptResps := []SystemAuthDeptResp{}
+	// deptResps = []SystemAuthDeptResp{}
 	response.Copy(&deptResps, depts)
-	mapList = util.ArrayUtil.ListToTree(
-		util.ConvertUtil.StructsToMaps(deptResps), "id", "pid", "children")
+	// mapList = util.ArrayUtil.ListToTree(
+	// util.ConvertUtil.StructsToMaps(deptResps), "id", "pid", "children")
 	return
 }
 

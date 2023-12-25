@@ -103,14 +103,14 @@ function open(applyId) {
         console.log('res', res)
         next_nodes.value = res
 
-        res.map((item) => {
-            if (item.type == 'bpmn:userTask') {
-                flow_history_get_approver(item).then((user) => {
-                    console.log('user', user)
-                    approverUserList.value = user
-                })
-            }
-        })
+        // res.map((item) => {
+        //     if (item.type == 'bpmn:userTask') {
+        //     }
+        // })
+    })
+    flow_history_get_approver({ applyId: applyId }).then((user) => {
+        console.log('user', user)
+        approverUserList.value = user
     })
 }
 function BeforeClose() {

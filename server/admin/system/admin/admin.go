@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"strconv"
 	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -111,4 +112,28 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 		return
 	}
 	response.CheckAndResp(c, Service.Disable(c, disableReq.ID))
+}
+
+// @Summary	获取部门的用户
+// @Description	获取部门的用户
+// @Tags		管理员
+// @Param	deptId	path	int	true	"部门id"
+// @Success	200	{object}	response.Response	"{"code": 200, "data": []}"
+// @Router	/system/admin/ListByDeptId/{deptId} [get]
+func (ah AdminHandler) ListByDeptId(c *gin.Context) {
+	deptIdStr, bool := c.GetQuery("deptId")
+	if bool == false {
+		response.FailWithMsg(c, response.Failed, "deptId不能为空")
+		return
+	}
+	deptId, err := strconv.Atoi(deptIdStr)
+	if err != nil {
+		response.FailWithMsg(c, response.Failed, "deptId参数错误")
+		return
+	}
+	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &deptId)) {
+	// return
+	// }
+	res, err := Service.ListByUserIdOrDeptIdPostId(0, deptId, 0)
+	response.CheckAndRespWithData(c, res, err)
 }

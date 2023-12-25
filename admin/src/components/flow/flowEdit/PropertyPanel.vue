@@ -133,9 +133,11 @@ export default {
         open(node, fieldList) {
             this.node = node
 
+            this.properties.userType = node?.properties?.userType || ''
             this.properties.userId = node?.properties?.userId || ''
             this.properties.deptId = node?.properties?.deptId || ''
             this.properties.postId = node?.properties?.postId || ''
+
             this.properties.fieldAuth = node?.properties?.fieldAuth
                 ? { ...node?.properties?.fieldAuth }
                 : {}
@@ -163,6 +165,7 @@ export default {
             this.setProperties('fieldAuth', {
                 ...fieldAuth
             })
+            this.setProperties('userType', this.properties.userType)
             this.setProperties('userId', this.properties.userId)
             this.setProperties('deptId', this.properties.deptId)
             this.setProperties('postId', this.properties.postId)

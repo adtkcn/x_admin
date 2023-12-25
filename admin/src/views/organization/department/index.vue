@@ -48,6 +48,8 @@
                     min-width="150"
                     show-overflow-tooltip
                 />
+                <el-table-column label="负责人" prop="duty" show-overflow-tooltip />
+
                 <el-table-column label="部门状态" prop="isStop" min-width="100">
                     <template #default="{ row }">
                         <el-tag class="ml-2" :type="row.isStop ? 'danger' : ''">
@@ -114,6 +116,8 @@ const getLists = async () => {
     // 根据id和pid处理层级关系
 
     lists.value = arrayToTree(list)
+    console.log('lists', lists)
+
     loading.value = false
 }
 

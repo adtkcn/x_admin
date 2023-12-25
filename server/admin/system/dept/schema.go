@@ -17,6 +17,7 @@ type SystemAuthDeptDetailReq struct {
 type SystemAuthDeptAddReq struct {
 	Pid    uint   `form:"pid" binding:"gte=0"`                   // 部门父级
 	Name   string `form:"name" binding:"required,min=1,max=100"` // 部门名称
+	DutyId int    `form:"dutyId" binding:"omitempty"`            // 负责人id
 	Duty   string `form:"duty" binding:"omitempty,min=1,max=30"` // 负责人
 	Mobile string `form:"mobile" binding:"omitempty,len=11"`     // 联系电话
 	IsStop uint8  `form:"isStop" binding:"oneof=0 1"`            // 是否停用: [0=否, 1=是]
@@ -28,6 +29,7 @@ type SystemAuthDeptEditReq struct {
 	ID     uint   `form:"id" binding:"required,gt=0"`            // 主键
 	Pid    uint   `form:"pid" binding:"gte=0"`                   // 部门父级
 	Name   string `form:"name" binding:"required,min=1,max=100"` // 部门名称
+	DutyId int    `form:"dutyId" binding:"omitempty"`            // 负责人id
 	Duty   string `form:"duty" binding:"omitempty,min=1,max=30"` // 负责人
 	Mobile string `form:"mobile" binding:"omitempty,len=11"`     // 联系电话
 	IsStop uint8  `form:"isStop" binding:"oneof=0 1"`            // 是否停用: [0=否, 1=是]
@@ -44,6 +46,7 @@ type SystemAuthDeptResp struct {
 	ID         uint        `json:"id" structs:"id"`                 // 主键
 	Pid        uint        `json:"pid" structs:"pid"`               // 部门父级
 	Name       string      `json:"name" structs:"name"`             // 部门名称
+	DutyId     int         `json:"dutyId" structs:"dutyId"`         // 负责人id
 	Duty       string      `json:"duty" structs:"duty"`             // 负责人
 	Mobile     string      `json:"mobile" structs:"mobile"`         // 联系电话
 	Sort       uint16      `json:"sort" structs:"sort"`             // 排序编号

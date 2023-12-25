@@ -33,15 +33,25 @@
                         :maxlength="100"
                     />
                 </el-form-item>
-                <el-form-item label="负责人" prop="duty">
-                    <el-input
-                        v-model="formData.duty"
-                        placeholder="请输入负责人姓名"
+                <el-form-item label="负责人" prop="duty_id" v-if="formData.id">
+                    <el-select
+                        class="flex-1"
+                        v-model="formData.dutyId"
                         clearable
-                        :maxlength="30"
-                    />
+                        placeholder="请选择上级部门"
+                        @change="dutyChange"
+                    >
+                        <el-option label="请先给管理员绑定部门" :value="0" />
+
+                        <el-option
+                            v-for="item in DeptUsers"
+                            :key="item.id"
+                            :label="item.nickname"
+                            :value="item.id"
+                        />
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="联系电话" prop="mobile">
+                <el-form-item label="部门电话" prop="mobile">
                     <el-input v-model="formData.mobile" placeholder="请输入联系电话" clearable />
                 </el-form-item>
                 <el-form-item label="排序" prop="sort">
@@ -60,6 +70,8 @@
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
 import { deptLists, deptEdit, deptAdd, deptDetail } from '@/api/org/department'
+import { adminListByDeptId } from '@/api/perms/admin'
+
 import Popup from '@/components/popup/index.vue'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import feedback from '@/utils/feedback'
@@ -74,11 +86,29 @@ const formData = reactive({
     id: '',
     pid: '' as string | number,
     name: '',
+    dutyId: 0,
     duty: '',
     mobile: '',
     sort: 0,
     isStop: 0
 })
+const DeptUsers = ref([])
+// 部门下的管理员
+async function getDeptUsers(deptId: number) {
+    const users = await adminListByDeptId({ deptId: deptId })
+    DeptUsers.value = users
+}
+function dutyChange(id: number) {
+    console.log('params', id)
+    if (id) {
+        const duty = DeptUsers.value.find((item) => item.id == id)
+        formData.duty = duty.nickname
+        // formData.duty_id = duty.id
+    } else {
+        formData.duty = ''
+    }
+    // formData
+}
 const checkMobile = (rule: any, value: any, callback: any) => {
     if (!value) {
         return callback()
@@ -115,11 +145,11 @@ const formRules = {
         }
     ],
     mobile: [
-        {
-            required: true,
-            message: '请输入联系电话',
-            trigger: ['blur']
-        },
+        // {
+        //     required: true,
+        //     message: '请输入联系电话',
+        //     trigger: ['blur']
+        // },
         {
             validator: checkMobile,
             trigger: ['blur']
@@ -146,27 +176,29 @@ const handleSubmit = async () => {
 const open = (type = 'add') => {
     mode.value = type
     popupRef.value?.open()
+    // if (type == 'edit') {
+    // }
 }
 
 const setFormData = (data: Record<any, any>) => {
-    for (const key in formData) {       
+    for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore          
+            //@ts-ignore
             formData[key] = data[key]
         }
         //TODO：因为后端返回字段为is_stop
-        else{
-            //@ts-ignore  
+        else {
+            //@ts-ignore
             formData[key] = data['is_stop']
         }
     }
-    
 }
 
 const getDetail = async (row: Record<string, any>) => {
     const data = await deptDetail({
         id: row.id
-    }) 
+    })
+    getDeptUsers(data.id)
     setFormData(data)
 }
 

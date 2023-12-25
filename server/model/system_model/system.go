@@ -75,8 +75,9 @@ type SystemAuthDept struct {
 	ID         uint   `gorm:"primarykey;comment:'主键'"`
 	Pid        uint   `gorm:"not null;default:0;comment:'上级主键'"`
 	Name       string `gorm:"not null;default:'';comment:'部门名称''"`
-	Duty       string `gorm:"not null;default:'';comment:'负责人名'"`
-	Mobile     string `gorm:"not null;default:'';comment:'联系电话'"`
+	DutyId     int    `gorm:"null;comment:'负责人id'"`
+	Duty       string `gorm:"null;default:'';comment:'负责人名'"`
+	Mobile     string `gorm:"null;default:'';comment:'联系电话'"`
 	Sort       uint16 `gorm:"not null;default:0;comment:'排序编号'"`
 	IsStop     uint8  `gorm:"not null;default:0;comment:'是否停用: 0=否, 1=是'"`
 	IsDelete   uint8  `gorm:"not null;default:0;comment:'是否删除: 0=否, 1=是'"`

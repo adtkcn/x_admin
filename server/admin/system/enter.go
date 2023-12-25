@@ -22,12 +22,14 @@ func AdminRoute(rg *gin.RouterGroup) {
 
 	rg.GET("/admin/self", handle.Self)
 	rg.GET("/admin/list", handle.List)
+	rg.GET("/admin/ListByDeptId", handle.ListByDeptId)
 	rg.GET("/admin/detail", handle.Detail)
 	rg.POST("/admin/add", middleware.RecordLog("管理员新增"), handle.Add)
 	rg.POST("/admin/edit", middleware.RecordLog("管理员编辑"), handle.Edit)
 	rg.POST("/admin/upInfo", middleware.RecordLog("管理员更新"), handle.UpInfo)
 	rg.POST("/admin/del", middleware.RecordLog("管理员删除"), handle.Del)
 	rg.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handle.Disable)
+
 }
 func RoleRoute(rg *gin.RouterGroup) {
 	// db := core.GetDB()

@@ -48,25 +48,18 @@ export const treeToArray = (data: any[], props = { children: 'children' }) => {
  * @param {Object} props `{ parent: 'pid', children: 'children' }`
  */
 
-export const arrayToTree = (
-    data: any[],
-    props = { id: 'id', parentId: 'pid', children: 'children' }
-) => {
-    data = cloneDeep(data)
-    const { id, parentId, children } = props
-    const result: any[] = []
-    const map = new Map()
-    data.forEach((item) => {
-        map.set(item[id], item)
-        const parent = map.get(item[parentId])
-        if (parent) {
-            parent[children] = parent[children] ?? []
-            parent[children].push(item)
-        } else {
-            result.push(item)
+export function arrayToTree(arr, parentId = '') {
+    const tree = []
+    for (const item of arr) {
+        if (item.pid == parentId) {
+            const children = arrayToTree(arr, item.id)
+            if (children.length > 0) {
+                item.children = children
+            }
+            tree.push(item)
         }
-    })
-    return result
+    }
+    return tree
 }
 
 /**

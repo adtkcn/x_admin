@@ -9,7 +9,6 @@ import (
 )
 
 type FlowHistoryHandler struct {
-	Service IFlowHistoryService
 }
 
 // @Summary	流程历史列表
@@ -180,14 +179,19 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 
 // 获取节点的可审批用户
 func (hd FlowHistoryHandler) GetApprover(c *gin.Context) {
-	var node FlowTree
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &node)) {
+	var nextNode NextNodeReq
+	// var node FlowTree
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
 		return
 	}
 
 	// response.CheckAndResp(c, Service.GetNextNode(node))
-	res, err := Service.GetApprover(node)
-	response.CheckAndRespWithData(c, res, err)
+	res, err := Service.GetApprover(nextNode.ApplyId)
+	if err != nil {
+		response.FailWithMsg(c, response.Failed, err.Error())
+		return
+	}
+	response.OkWithData(c, res)
 }
 
 // 同意审批(当前nodeId)

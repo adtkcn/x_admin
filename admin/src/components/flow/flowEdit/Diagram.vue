@@ -219,6 +219,8 @@ export default {
                             label: node?.text?.value,
                             type: node.type,
                             fieldAuth: node?.properties?.fieldAuth,
+
+                            userType: node?.properties?.userType || 0,
                             userId: node?.properties?.userId || 0,
                             deptId: node?.properties?.deptId || 0,
                             postId: node?.properties?.postId || 0

@@ -2,8 +2,10 @@ package flow_history
 
 import (
 	"encoding/json"
+	"errors"
 	"x_admin/admin/flow/flow_apply"
 	"x_admin/admin/system/admin"
+	"x_admin/admin/system/dept"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -14,17 +16,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type IFlowHistoryService interface {
-	List(page request.PageReq, listReq FlowHistoryListReq) (res response.PageResp, e error)
-	ListAll() (res []FlowHistoryResp, e error)
+// type IFlowHistoryService interface {
+// 	List(page request.PageReq, listReq FlowHistoryListReq) (res response.PageResp, e error)
+// 	ListAll() (res []FlowHistoryResp, e error)
 
-	Detail(id int) (res FlowHistoryResp, e error)
-	Add(addReq FlowHistoryAddReq) (e error)
-	Edit(editReq FlowHistoryEditReq) (e error)
-	Del(id int) (e error)
+// 	Detail(id int) (res FlowHistoryResp, e error)
+// 	Add(addReq FlowHistoryAddReq) (e error)
+// 	Edit(editReq FlowHistoryEditReq) (e error)
+// 	Del(id int) (e error)
 
-	GetNextNode(nextNode NextNodeReq) (e error)
-}
+// 	GetNextNode(nextNode NextNodeReq) (e error)
+// }
 
 var Service = NewFlowHistoryService()
 
@@ -177,32 +179,70 @@ func (Service flowHistoryService) Del(id int) (e error) {
 /**
 * 获取节点的审批用户
  */
-func (Service flowHistoryService) GetApprover(node FlowTree) (res []admin.SystemAuthAdminResp, e error) {
-	var userId = node.UserId
-	var deptId = node.DeptId
-	var postId = node.PostId
+func (Service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAuthAdminResp, e error) {
+	nextNodes, applyDetail, _, err := Service.GetNextNode(ApplyId)
+	if err != nil {
+		return nil, err
+	}
+	var userTask FlowTree
+	for n := 0; n < len(nextNodes); n++ {
+		if nextNodes[n].Type == "bpmn:userTask" {
+			userTask = nextNodes[n]
+			break
+		}
+	}
+	// 没有审批节点不用获取审批人
+	if userTask.Id == "" {
+		return nil, nil
+	}
+
+	var userType = userTask.UserType //用户类型,1指定部门、岗位,2用户部门负责人,3指定审批人
+	var userId = userTask.UserId
+	var deptId = userTask.DeptId
+	var postId = userTask.PostId
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
 	adminModel := Service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
 
-	dept := map[string]interface{}{}
-	if deptId > 0 {
-		dept["admin.dept_id"] = deptId
-		// adminModel.Or("admin.dept_id =?", deptId)
-	}
-	if postId > 0 {
-		dept["admin.post_id"] = postId
-		// adminModel.Or("admin.post_id =?", postId)
-	}
+	where := map[string]interface{}{}
+	if userType == 1 {
+		if deptId > 0 {
+			where["admin.dept_id"] = deptId
+			// adminModel.Or("admin.dept_id =?", deptId)
+		}
+		if postId > 0 {
+			where["admin.post_id"] = postId
+			// adminModel.Or("admin.post_id =?", postId)
+		}
+	} else if userType == 2 {
+		// 申请人所在的部门负责人
 
-	var where = Service.db.Where(dept)
-	if userId > 0 {
-		where.Or("admin.id =?", userId)
+		applyUser, err := admin.Service.Detail(uint(applyDetail.ApplyUserId))
+		if err != nil {
+			return nil, err
+		}
+		if applyUser.DeptId == 0 {
+			return nil, errors.New("申请人没有绑定部门")
+		}
+		deptDetails, err := dept.Service.Detail(applyUser.DeptId)
+		if err != nil {
+			return nil, err
+		}
+		if deptDetails.DutyId == 0 {
+			return nil, errors.New(deptDetails.Name + "部门没有绑定负责人")
+		}
+		where["admin.id"] = deptDetails.DutyId
+
+	} else if userType == 3 {
+		if userId > 0 {
+			where["admin.id"] = userId
+			// adminModel.Or("admin.id =?", userId)
+		}
 	}
 
 	// 数据
 	var adminResp []admin.SystemAuthAdminResp
-	err := adminModel.Where(where).Find(&adminResp).Error
+	err = adminModel.Where(where).Find(&adminResp).Error
 	if e = response.CheckErr(err, "获取审批用户失败"); e != nil {
 		return
 	}
@@ -215,6 +255,7 @@ func (Service flowHistoryService) GetApprover(node FlowTree) (res []admin.System
 	return adminResp, nil
 }
 
+// 通过审批
 func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 	nextNodes, applyDetail, LastHistory, err := Service.GetNextNode(pass.ApplyId)
 

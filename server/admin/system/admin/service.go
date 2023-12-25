@@ -94,19 +94,19 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 	return SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
 }
 
-// 获取管理员列表-用户id加部门岗位
+// 获取管理员列表-
 func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId, postId int) (res []SystemAuthAdminResp, e error) {
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
 	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
 	if userId > 0 {
-		adminModel.Or("admin.id =?", userId)
+		adminModel.Where("admin.id =?", userId)
 	}
 	if deptId > 0 {
-		adminModel.Or("admin.dept_id =?", deptId)
+		adminModel.Where("admin.dept_id =?", deptId)
 	}
 	if postId > 0 {
-		adminModel.Or("admin.post_id =?", postId)
+		adminModel.Where("admin.post_id =?", postId)
 	}
 	// 数据
 	var adminResp []SystemAuthAdminResp

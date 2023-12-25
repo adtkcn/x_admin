@@ -29,3 +29,8 @@ export function adminDelete(params: any) {
 export function adminStatus(params: any) {
     return request.post({ url: '/system/admin/disable', params })
 }
+
+// 部门下的管理员
+export function adminListByDeptId(params: any) {
+    return request.get({ url: '/system/admin/ListByDeptId', params })
+}

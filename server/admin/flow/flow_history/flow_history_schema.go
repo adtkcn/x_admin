@@ -78,9 +78,10 @@ type FlowTree struct {
 	Label string `json:"label"`
 	Type  string `json:"type"`
 
-	UserId int `json:"userId"`
-	DeptId int `json:"deptId"`
-	PostId int `json:"postId"`
+	UserType int `json:"userType"` // 用户类型,1指定部门、岗位,2用户部门负责人,3指定审批人
+	UserId   int `json:"userId"`
+	DeptId   int `json:"deptId"`
+	PostId   int `json:"postId"`
 
 	FieldAuth map[string]int `json:"fieldAuth"`
 
