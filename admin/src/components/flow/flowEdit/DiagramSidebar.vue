@@ -29,10 +29,10 @@
 
         <div
             class="image-node"
-            @mousedown.stop.prevent="dragInNode('bpmn:exclusiveGateway', '网关')"
+            @mousedown.stop.prevent="dragInNode('bpmn:exclusiveGateway', '条件')"
         >
             <div class="pattern-condition"></div>
-            <div>网关</div>
+            <div>条件</div>
         </div>
         <div class="image-node" @mousedown.stop.prevent="dragInNode('bpmn:endEvent', '结束')">
             <div class="pattern-end"></div>

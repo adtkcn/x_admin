@@ -48,7 +48,7 @@
 
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button type="primary" @click="getData"> 通过 </el-button>
+            <el-button type="primary" @click="submit"> 通过 </el-button>
         </template>
     </el-dialog>
 </template>
@@ -63,7 +63,6 @@ import {
 } from '@/api/flow/flow_history'
 
 const dialogVisible = ref(false)
-
 // const props = defineProps({
 //     save: {
 //         type: Function,
@@ -102,11 +101,6 @@ function open(applyId) {
     }).then((res) => {
         console.log('res', res)
         next_nodes.value = res
-
-        // res.map((item) => {
-        //     if (item.type == 'bpmn:userTask') {
-        //     }
-        // })
     })
     flow_history_get_approver({ applyId: applyId }).then((user) => {
         console.log('user', user)
@@ -118,8 +112,8 @@ function BeforeClose() {
 
     // formData = {}
 }
-function getData() {
-    console.log('getData', next_nodes)
+function submit() {
+    console.log('submit', next_nodes)
 
     if (userTask.value && !formData.applyUserId) {
         feedback.msgWarning('请选择审批人')
@@ -132,18 +126,8 @@ function getData() {
     }).then(() => {
         BeforeClose()
     })
-    // formRef.value.getFormData().then((formData) => {
-    //     console.log('formData', formData)
-    //     props
-    //         .save(formData)
-    //         .then(() => {
-    //             BeforeClose()
-    //         })
-    //         .catch(() => {})
-    // })
 }
 defineExpose({
-    getData,
     open
 })
 </script>

@@ -219,6 +219,7 @@ export default {
                             label: node?.text?.value,
                             type: node.type,
                             fieldAuth: node?.properties?.fieldAuth,
+                            gateway: node?.properties?.gateway,
 
                             userType: node?.properties?.userType || 0,
                             userId: node?.properties?.userId || 0,

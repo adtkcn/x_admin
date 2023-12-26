@@ -1,10 +1,10 @@
 // 基础图形
-import CircleNode from "./basic/CircleNode";
-import RectNode from "./basic/RectNode";
-import RectRadiusNode from "./basic/RectRadiusNode";
-import EllipseNode from "./basic/EllipseNode";
-import TextNode from "./basic/TextNode";
-import DiamondNode from "./basic/DiamondNode";
+// import CircleNode from './basic/CircleNode'
+// import RectNode from './basic/RectNode'
+// import RectRadiusNode from './basic/RectRadiusNode'
+// import EllipseNode from './basic/EllipseNode'
+// import TextNode from './basic/TextNode'
+// import DiamondNode from './basic/DiamondNode'
 // // path绘制的个性化图形
 // import CylindeNode from './path/CylindeNode'
 // import TriangleNode from './path/TriangleNode'
@@ -31,73 +31,72 @@ import DiamondNode from "./basic/DiamondNode";
 // image绘制左上角icon节点
 // import IconMessage from './icon/Message'
 // 注册边
-import Ployline from "./edge/Polyline";
-import Line from "./edge/Line";
-import Bezier from "./edge/Bezier";
+import Ployline from './edge/Polyline'
+import Line from './edge/Line'
+import Bezier from './edge/Bezier'
 
 export const List = [
-  // office_network,
-  // firewall,
-  // router,
-  // coreSwitch,
-];
-console.log(List);
+    // office_network,
+    // firewall,
+    // router,
+    // coreSwitch,
+]
+console.log(List)
 export const registerCustomElement = (lf) => {
-  // 注册基础图形
-  // lf.register(CircleNode);
-  // lf.register(RectNode);
-  // lf.register(RectRadiusNode);
-  // lf.register(EllipseNode);
-  // lf.register(DiamondNode);
-  // lf.register(TextNode);
- 
+    // 注册基础图形
+    // lf.register(CircleNode);
+    // lf.register(RectNode);
+    // lf.register(RectRadiusNode);
+    // lf.register(EllipseNode);
+    // lf.register(DiamondNode);
+    // lf.register(TextNode);
 
-  // lf.register(status_error);
+    // lf.register(status_error);
 
-  List.forEach((item) => {
-    lf.register({
-      type: item.type,
-      view: item.view,
-      model: item.model,
-    });
-  });
+    List.forEach((item) => {
+        lf.register({
+            type: item.type,
+            view: item.view,
+            model: item.model
+        })
+    })
 
-  // // 注册path绘制的个性化图形
-  // lf.register(CylindeNode)
-  // lf.register(TriangleNode)
-  // lf.register(ParallelogramNode)
-  // lf.register(ActorNode)
-  // lf.register(StarNode)
-  // lf.register(PentagonNode)
-  // lf.register(HexagonNode)
-  // lf.register(SeptagonNode)
-  // lf.register(HeptagonNode)
-  // lf.register(TrapezoidNode)
-  // lf.register(CrossNode)
-  // lf.register(MinusNode)
-  // lf.register(TimesNode)
-  // lf.register(DivideNode)
-  // // 注册多边形绘制的箭头
-  // lf.register(LeftArrow)
-  // lf.register(RightArrow)
-  // lf.register(HorizontalArrow)
-  // lf.register(UpArrow)
-  // lf.register(DownArrow)
-  // lf.register(VerticalArrow)
-  // // 注册image绘制图片节点
-  // lf.register(firewall)
-  // lf.register(ImageUser)
-  // lf.register(office_network)
+    // // 注册path绘制的个性化图形
+    // lf.register(CylindeNode)
+    // lf.register(TriangleNode)
+    // lf.register(ParallelogramNode)
+    // lf.register(ActorNode)
+    // lf.register(StarNode)
+    // lf.register(PentagonNode)
+    // lf.register(HexagonNode)
+    // lf.register(SeptagonNode)
+    // lf.register(HeptagonNode)
+    // lf.register(TrapezoidNode)
+    // lf.register(CrossNode)
+    // lf.register(MinusNode)
+    // lf.register(TimesNode)
+    // lf.register(DivideNode)
+    // // 注册多边形绘制的箭头
+    // lf.register(LeftArrow)
+    // lf.register(RightArrow)
+    // lf.register(HorizontalArrow)
+    // lf.register(UpArrow)
+    // lf.register(DownArrow)
+    // lf.register(VerticalArrow)
+    // // 注册image绘制图片节点
+    // lf.register(firewall)
+    // lf.register(ImageUser)
+    // lf.register(office_network)
 
-  // lf.register(status_success)
-  // lf.register(status_error)
+    // lf.register(status_success)
+    // lf.register(status_error)
 
-  // lf.register(router)
+    // lf.register(router)
 
-  // // 注册image绘制左上角icon节点
-  // lf.register(IconMessage)
-  // // 注册边
-  lf.register(Ployline);
-  lf.register(Line);
-  lf.register(Bezier);
-};
+    // // 注册image绘制左上角icon节点
+    // lf.register(IconMessage)
+    // // 注册边
+    lf.register(Ployline)
+    lf.register(Line)
+    lf.register(Bezier)
+}

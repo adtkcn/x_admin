@@ -72,6 +72,12 @@ type FlowHistoryResp struct {
 	CreateTime        core.TsTime `json:"createTime" structs:"createTime"`               // 创建时间
 }
 
+type gateway struct {
+	// 网关节点
+	Id        string `json:"id"`
+	Condition string `json:"condition"`
+	Value     string `json:"value"`
+}
 type FlowTree struct {
 	Id    string `json:"id"`
 	Pid   string `json:"pid"`
@@ -84,6 +90,8 @@ type FlowTree struct {
 	PostId   int `json:"postId"`
 
 	FieldAuth map[string]int `json:"fieldAuth"`
+
+	Gateway *[]gateway
 
 	Children *[]FlowTree `json:"children"`
 }

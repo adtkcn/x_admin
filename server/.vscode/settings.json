@@ -3,8 +3,11 @@
         "gocode",
         "gonic",
         "gorm",
-        "x_admin",
+        "Infof",
+        "jinzhu",
         "mapstructure",
-        "rmvb"
+        "rmvb",
+        "Warnf",
+        "x_admin"
     ]
 }

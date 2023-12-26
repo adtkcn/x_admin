@@ -3,6 +3,8 @@ package flow_history
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 	"x_admin/admin/flow/flow_apply"
 	"x_admin/admin/system/admin"
 	"x_admin/admin/system/dept"
@@ -390,12 +392,66 @@ func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[stri
 			break
 		} else if v.Type == "bpmn:exclusiveGateway" {
 			// 网关
+			// v.Gateway
+			var haveFalse = false
+			var gateway = *v.Gateway
+			for i := 0; i < len(gateway); i++ {
+				var id = gateway[i].Id
+				var value = gateway[i].Value
+				var condition = gateway[i].Condition
+				if condition == "==" {
+					if formValue[id].(string) == value { // 等与
 
-			// 判断formValue值，决定是不是递归这个网关
-			child := DeepNextNode(nextNodes, v.Children, formValue)
-			nextNodes = append(nextNodes, v)
-			nextNodes = append(nextNodes, child...)
-			break
+					} else {
+						haveFalse = true
+					}
+				} else if condition == "!=" {
+					if formValue[id].(string) != value { // 不等与
+
+					} else {
+						haveFalse = true
+					}
+				} else if condition == ">=" {
+					var val, err = strconv.Atoi(value)
+					if err != nil {
+						fmt.Println(err)
+						continue
+					}
+					var formVal = formValue[id].(int64)
+					if formVal >= int64(val) { // 大于等于
+
+					} else {
+						haveFalse = true
+					}
+				} else if condition == "<=" {
+					var val, err = strconv.Atoi(value)
+					if err != nil {
+						fmt.Println(err)
+						continue
+					}
+					var formVal = formValue[id].(int64)
+
+					if formVal <= int64(val) { // 小于等于
+
+					} else {
+						haveFalse = true
+					}
+				} else {
+					haveFalse = true
+					fmt.Println("未知的条件")
+				}
+
+			}
+			// 不满足条件，继续循环
+			if haveFalse {
+				continue
+			} else {
+				// 判断formValue值，决定是不是递归这个网关
+				child := DeepNextNode(nextNodes, v.Children, formValue)
+				nextNodes = append(nextNodes, v)
+				nextNodes = append(nextNodes, child...)
+				break
+			}
 		} else if v.Type == "bpmn:serviceTask" {
 			// 系统服务
 			child := DeepNextNode(nextNodes, v.Children, formValue)
