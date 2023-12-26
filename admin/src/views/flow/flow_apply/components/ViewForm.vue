@@ -6,8 +6,7 @@
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :destroy-on-close="true"
-        top="1px"
-        class="flow-config-dialog"
+        :title="applyDetail.flowName"
     >
         <v-form-render
             :form-json="formJson"
@@ -19,7 +18,7 @@
 
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button v-if="rowDetails.status == 1" type="primary" @click="getData">
+            <el-button v-if="applyDetail.status == 1" type="primary" @click="onSubmit">
                 确定
             </el-button>
         </template>
@@ -36,7 +35,7 @@ const optionData = reactive({})
 const vFormRef = ref(null)
 
 const dialogVisible = ref(false)
-const rowDetails = ref({})
+const applyDetail = ref({})
 
 const props = defineProps({
     save: {
@@ -45,7 +44,8 @@ const props = defineProps({
     }
 })
 function open(row, form_json, form_data) {
-    rowDetails.value = row
+    applyDetail.value = row
+
     formData.value = form_data
     formJson.value = form_json
     console.log('open')
@@ -53,15 +53,15 @@ function open(row, form_json, form_data) {
 }
 function closeFn() {
     dialogVisible.value = false
-    rowDetails.value = {}
+    applyDetail.value = {}
     formData.value = {}
     formJson.value = {}
 }
-function getData() {
+function onSubmit() {
     vFormRef.value.getFormData().then((formData) => {
         console.log('formData', formData)
         props
-            .save(rowDetails.value?.id, formData)
+            .save(applyDetail.value?.id, formData)
             .then(() => {
                 closeFn()
             })
@@ -69,7 +69,6 @@ function getData() {
     })
 }
 defineExpose({
-    getData,
     open
 })
 </script>

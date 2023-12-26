@@ -60,7 +60,7 @@
                 </el-table-column>
                 <el-table-column label="更新时间" prop="updateTime" min-width="130" />
                 <el-table-column label="创建时间" prop="createTime" min-width="130" />
-                <el-table-column label="操作" width="260" fixed="right">
+                <el-table-column label="操作" width="180" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['flow_apply:edit']"
@@ -68,7 +68,7 @@
                             link
                             @click="OpenViewForm(row)"
                         >
-                            {{ row.status == 1 ? '编辑表单' : '预览' }}
+                            {{ row.status == 1 ? '编辑' : '预览' }}
                         </el-button>
                         <el-button
                             v-if="row.status == 1 && row.formValue"
@@ -77,7 +77,7 @@
                             link
                             @click="OpenApplySubmit(row)"
                         >
-                            提交申请
+                            提交
                         </el-button>
 
                         <!-- <el-button
@@ -111,7 +111,12 @@
             @close="showEdit = false"
         />
         <ViewForm ref="viewFormRef" :save="SaveViewForm"></ViewForm>
-        <ApplySubmit ref="ApplySubmitRef" @close="getLists"></ApplySubmit>
+        <ApplySubmit
+            ref="ApplySubmitRef"
+            title="提交申请"
+            :showRemark="false"
+            @close="getLists"
+        ></ApplySubmit>
     </div>
 </template>
 <script lang="ts" setup>
@@ -127,7 +132,7 @@ import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 
 import ApplySubmit from './components/apply_submit.vue'
-import ViewForm from '@/components/flow/XForm/view.vue'
+import ViewForm from './components/ViewForm.vue'
 
 import useUserStore from '@/stores/modules/user'
 

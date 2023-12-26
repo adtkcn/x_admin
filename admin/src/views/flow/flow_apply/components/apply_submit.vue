@@ -6,7 +6,7 @@
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :destroy-on-close="true"
-        title="审批"
+        :title="title"
         top="1px"
     >
         <el-form
@@ -33,7 +33,8 @@
                     />
                 </el-select>
             </el-form-item>
-            <el-form-item label="审批意见" prop="passRemark">
+
+            <el-form-item label="审批意见" prop="passRemark" v-if="props.showRemark">
                 <el-input
                     v-model="formData.passRemark"
                     :rows="2"
@@ -61,7 +62,16 @@ import {
     flow_history_get_approver,
     flow_history_pass
 } from '@/api/flow/flow_history'
-
+const props = defineProps({
+    title: {
+        type: String,
+        default: ''
+    },
+    showRemark: {
+        type: Boolean,
+        default: true
+    }
+})
 const dialogVisible = ref(false)
 // const props = defineProps({
 //     save: {
@@ -105,6 +115,9 @@ function open(applyId) {
     flow_history_get_approver({ applyId: applyId }).then((user) => {
         console.log('user', user)
         approverUserList.value = user
+        if (user && user.length == 1) {
+            formData.applyUserId = user[0].id
+        }
     })
 }
 function BeforeClose() {

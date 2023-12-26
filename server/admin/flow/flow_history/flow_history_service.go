@@ -306,7 +306,6 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 			return err
 		}
 		// LastHistory
-		tx.Model(&LastHistory).Update("pass_status", 2)
 		if LastHistory.Id > 0 {
 			LastHistory.PassStatus = 2
 			LastHistory.PassRemark = pass.PassRemark

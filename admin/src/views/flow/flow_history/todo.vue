@@ -27,7 +27,7 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column label="通过备注" prop="passRemark" min-width="100" />
+                <el-table-column label="审批备注" prop="passRemark" min-width="100" />
                 <el-table-column label="更新时间" prop="updateTime" min-width="150" />
                 <el-table-column label="创建时间" prop="createTime" min-width="150" />
                 <el-table-column label="操作" width="120" fixed="right">
@@ -46,16 +46,16 @@
                             link
                             @click="OpenViewForm(row)"
                         >
-                            {{ row.status == 1 ? '编辑表单' : '预览' }}
+                            {{ row.passStatus == 1 ? '审批' : '预览' }}
                         </el-button>
-                        <el-button
+                        <!-- <el-button
                             v-perms="['flow_apply:edit']"
                             type="primary"
                             link
                             @click="OpenApplySubmit(row)"
                         >
                             审批
-                        </el-button>
+                        </el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -67,7 +67,7 @@
         <!-- <Approve ref="ApproveRef"></Approve> -->
 
         <ViewForm ref="viewFormRef" :save="SaveViewForm"></ViewForm>
-        <ApplySubmit ref="ApplySubmitRef" @close="getLists"></ApplySubmit>
+        <ApplySubmit ref="ApplySubmitRef" title="审批" @close="getLists"></ApplySubmit>
     </div>
 </template>
 <script lang="ts" setup>
@@ -78,7 +78,7 @@ import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
 import ApplySubmit from '@/views/flow/flow_apply/components/apply_submit.vue'
-import ViewForm from '@/components/flow/XForm/view.vue'
+import ViewForm from './components/ViewForm.vue'
 const userStore = useUserStore()
 
 defineOptions({
@@ -105,7 +105,7 @@ const { dictData } = useDictData<{
 //     ApproveRef.value?.open(toRaw(row))
 // }
 const OpenViewForm = async (row: any) => {
-    const detail = await flow_apply_detail({ id: row.applyId })
+    const applyDetail = await flow_apply_detail({ id: row.applyId })
 
     let form_data = {}
     try {
@@ -115,14 +115,14 @@ const OpenViewForm = async (row: any) => {
     }
     let form_json = {}
     try {
-        form_json = JSON.parse(detail.flowFormData)
+        form_json = JSON.parse(applyDetail.flowFormData)
     } catch (error) {
         // 解析失败
     }
 
-    console.log(detail, form_data, form_json)
+    console.log(applyDetail, form_data, form_json)
 
-    viewFormRef.value?.open(detail, form_json, form_data)
+    viewFormRef.value?.open(applyDetail, row, form_json, form_data)
 }
 const SaveViewForm = (id, form_data) => {
     return new Promise((resolve, reject) => {
