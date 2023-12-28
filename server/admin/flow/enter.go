@@ -53,6 +53,8 @@ func FlowHistoryRoute(rg *gin.RouterGroup) {
 	rg.POST("/flow_history/del", handle.Del)
 
 	rg.POST("/flow_history/pass", handle.Pass)
+	rg.POST("/flow_history/back", handle.Back)
+
 	rg.POST("/flow_history/next_node", handle.NextNode)
 	rg.POST("/flow_history/get_approver", handle.GetApprover)
 }

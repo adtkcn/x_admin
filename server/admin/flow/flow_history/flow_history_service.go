@@ -110,6 +110,12 @@ func (Service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []Flo
 	if listReq.ApplyId > 0 {
 		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
 	}
+	if listReq.PassStatus > 0 {
+		dbModel = dbModel.Where("pass_status = ?", listReq.PassStatus)
+	}
+	if listReq.NodeType != "" {
+		dbModel = dbModel.Where("node_type =?", listReq.NodeType)
+	}
 	// 数据
 	var objs []model.FlowHistory
 	err := dbModel.Find(&objs).Error
@@ -279,6 +285,8 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 		var flow = model.FlowHistory{
 			ApplyId:           applyDetail.Id,
 			NodeId:            v.Id,
+			NodeType:          v.Type,
+			NodeLabel:         v.Label,
 			FormValue:         FormValue,
 			PassStatus:        1,
 			ApplyUserId:       applyDetail.ApplyUserId,
@@ -286,7 +294,16 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 			ApplyUserNickname: applyDetail.ApplyUserNickname,
 			ApproverId:        0,
 		}
-		if v.Type == "bpmn:serviceTask" {
+		if v.Type == "bpmn:startEvent" {
+			flow.ApproverId = 0
+			flow.PassStatus = 2 //2通过
+		} else if v.Type == "bpmn:exclusiveGateway" {
+			flow.ApproverId = 0
+			flow.PassStatus = 2
+			// 发邮件之类的，待完善
+		} else if v.Type == "bpmn:serviceTask" {
+			flow.ApproverId = 0
+			flow.PassStatus = 1 //1待处理,异步任务可以失败
 			// 发邮件之类的，待完善
 		} else if v.Type == "bpmn:userTask" {
 			flow.ApproverId = pass.NextNodeAdminId
@@ -309,7 +326,10 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 		if LastHistory.Id > 0 {
 			LastHistory.PassStatus = 2
 			LastHistory.PassRemark = pass.PassRemark
-			tx.Save(&LastHistory)
+			err = tx.Save(&LastHistory).Error
+			if err != nil {
+				return err
+			}
 		}
 
 		// 待提交或者有结束节点，修改申请状态
@@ -318,9 +338,9 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 			if isEnd {
 				status = 3 //审批通过
 			}
-			tx.Model(&model.FlowApply{}).Where(model.FlowApply{
+			err = tx.Model(&model.FlowApply{}).Where(model.FlowApply{
 				Id: pass.ApplyId,
-			}).Update("status", status)
+			}).Update("status", status).Error
 
 			if err != nil {
 				return err
@@ -330,6 +350,105 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 	})
 
 	return err
+}
+
+// 驳回
+func (Service flowHistoryService) Back(back BackReq) (e error) {
+	// 得判断一下驳回的人权限
+	// 获取最后一条历史记录
+	var LastHistory model.FlowHistory
+	err := Service.db.Where(model.FlowHistory{
+		ApplyId: back.ApplyId,
+	}).Limit(1).Last(&LastHistory).Error
+	if err != nil {
+		return err
+	}
+
+	// 驳回到申请人，最后一条改驳回状态，驳回备注，新加一条
+	if back.HistoryId == 0 {
+
+		var applyDetail, err = flow_apply.Service.Detail(back.ApplyId)
+		if err != nil {
+			return err
+		}
+		err = Service.db.Transaction(func(tx *gorm.DB) error {
+			// 获取最早的一条历史记录，nodeType为"bpmn:startEvent"
+			var FirstHistory model.FlowHistory
+			err = Service.db.Where(model.FlowHistory{
+				ApplyId:  back.ApplyId,
+				NodeType: "bpmn:startEvent",
+			}).Limit(1).First(&FirstHistory).Error
+			if err != nil {
+				return err
+			}
+			var flow = model.FlowHistory{
+				ApplyId:   FirstHistory.ApplyId,
+				NodeId:    FirstHistory.NodeId,
+				NodeType:  FirstHistory.NodeType,
+				NodeLabel: FirstHistory.NodeLabel,
+				FormValue: FirstHistory.FormValue,
+
+				TemplateId:        FirstHistory.TemplateId,
+				ApplyUserId:       FirstHistory.ApplyUserId,
+				ApplyUserNickname: FirstHistory.ApplyUserNickname,
+				ApproverId:        0,
+				PassStatus:        1, //
+				PassRemark:        "",
+			}
+			err = tx.Create(&flow).Error
+			if err != nil {
+				return err
+			}
+
+			var obj model.FlowApply
+			response.Copy(&obj, applyDetail)
+			obj.Status = 4
+			err = tx.Save(&obj).Error
+			if err != nil {
+				return err
+			}
+
+			LastHistory.PassStatus = 3
+			LastHistory.PassRemark = back.Remark
+			err = tx.Save(&LastHistory).Error
+
+			return err
+		})
+
+		return err
+	} else {
+
+		err = Service.db.Transaction(func(tx *gorm.DB) error {
+			var historyDetail, err = Service.Detail(back.HistoryId)
+			if err != nil {
+				return err
+			}
+
+			LastHistory.PassStatus = 3
+			LastHistory.PassRemark = back.Remark
+			tx.Save(&LastHistory)
+			var flow = model.FlowHistory{
+				ApplyId:   historyDetail.ApplyId,
+				NodeId:    historyDetail.NodeId,
+				NodeType:  historyDetail.NodeType,
+				NodeLabel: historyDetail.NodeLabel,
+				FormValue: historyDetail.FormValue,
+
+				ApplyUserId:       historyDetail.ApplyUserId,
+				TemplateId:        historyDetail.TemplateId,
+				ApplyUserNickname: historyDetail.ApplyUserNickname,
+				ApproverId:        historyDetail.ApproverId,
+
+				PassStatus: 1, //
+				PassRemark: "",
+			}
+			err = tx.Create(&flow).Error
+			return err
+		})
+
+		return err
+
+	}
 }
 
 /**
@@ -361,16 +480,19 @@ func (Service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, appl
 
 	var next []FlowTree
 	if result.RowsAffected == 0 {
-		// if nextNode.CurrentNodeId == "" {
 		for _, v := range flowTree {
 			if v.Type == "bpmn:startEvent" {
-				next = *v.Children
+				next = []FlowTree{v}
 				break
 			}
 		}
 	} else {
 		for _, v := range flowTree {
 			if v.Id == LastHistory.NodeId {
+				fmt.Println(v.Children)
+				if v.Children == nil {
+					break
+				}
 				next = *v.Children
 				break
 			}
@@ -386,7 +508,9 @@ func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[stri
 	for _, v := range *flowTree {
 		if v.Type == "bpmn:startEvent" {
 			// 开始节点
+
 			child := DeepNextNode(nextNodes, v.Children, formValue)
+			nextNodes = append(nextNodes, v)
 			nextNodes = append(nextNodes, child...)
 			break
 		} else if v.Type == "bpmn:exclusiveGateway" {

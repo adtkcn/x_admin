@@ -41,3 +41,7 @@ export function flow_history_get_approver(params: Record<string, any>) {
 export function flow_history_pass(params: Record<string, any>) {
     return request.post({ url: '/flow/flow_history/pass', params })
 }
+
+export function flow_history_back(params: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/back', params })
+}

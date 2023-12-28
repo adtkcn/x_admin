@@ -79,6 +79,7 @@ import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
 // import ApplySubmit from '@/views/flow/flow_apply/components/apply_submit.vue'
 import ViewForm from './components/ViewForm.vue'
+
 const userStore = useUserStore()
 
 defineOptions({
@@ -86,6 +87,7 @@ defineOptions({
 })
 const ApproveRef = shallowRef<InstanceType<typeof ApproveRef>>()
 const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
+
 // const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 
 const queryParams = reactive({

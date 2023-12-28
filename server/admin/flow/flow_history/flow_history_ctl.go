@@ -49,9 +49,12 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 // @Tags		flow_history-流程历史
 // @Produce	json
 // @Success	200	{object}	[]FlowHistoryResp	"成功"
-// @Router		/api/flow_history/list [get]
+// @Router		/api/flow_history/listAll [get]
 func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 	var listReq FlowHistoryListReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
 	res, err := Service.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
@@ -136,9 +139,9 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 	response.CheckAndResp(c, Service.Del(delReq.Id))
 }
 
-// 提交申请
+// 提交申请,通过审批
 //
-//	@Router	/api/flow_apply/SubmitApply [post]
+//	@Router	/api/flow_apply/pass [post]
 func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	var pass PassReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &pass)) {
@@ -146,23 +149,17 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	}
 	err := Service.Pass(pass)
 	response.CheckAndResp(c, err)
+}
 
-	// 申请流程id，
-	// var addReq FlowApplyAddReq
-	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
-	// 	return
-	// }
-
-	// var Nickname = config.AdminConfig.GetNickname(c)
-	// var AdminId = config.AdminConfig.GetAdminId(c)
-	// addReq.ApplyUserNickname = Nickname
-	// addReq.ApplyUserId = int(AdminId)
-	// 解析json
-	// 查找开始节点
-	// 查找开始的下一级节点
-	// 下一个可能是网关，系统任务，用户任务，结束
-	// 网关，系统任务节点处理后继续向下查找节点，网关只能有一个满足条件
-
+// 拒绝审批
+// @Router	/api/flow_apply/back [post]
+func (hd FlowHistoryHandler) Back(c *gin.Context) {
+	var back BackReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &back)) {
+		return
+	}
+	err := Service.Back(back)
+	response.CheckAndResp(c, err)
 }
 
 // 获取下一个审批节点，中间可能存在系统任务节点和网关

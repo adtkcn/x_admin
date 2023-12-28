@@ -66,7 +66,10 @@
 
         <!-- <Approve ref="ApproveRef"></Approve> -->
 
-        <ViewForm ref="viewFormRef" :save="SaveViewForm"></ViewForm>
+        <ViewForm ref="viewFormRef" :save="SaveViewForm" @back="OpenBack"></ViewForm>
+
+        <Back ref="backRef"></Back>
+
         <ApplySubmit ref="ApplySubmitRef" title="审批" @close="getLists"></ApplySubmit>
     </div>
 </template>
@@ -79,6 +82,7 @@ import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
 import ApplySubmit from '@/views/flow/flow_apply/components/apply_submit.vue'
 import ViewForm from './components/ViewForm.vue'
+import Back from './components/Back.vue'
 const userStore = useUserStore()
 
 defineOptions({
@@ -87,6 +91,7 @@ defineOptions({
 const ApproveRef = shallowRef<InstanceType<typeof ApproveRef>>()
 const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
+const backRef = shallowRef<InstanceType<typeof Back>>()
 
 const queryParams = reactive({
     approverId: userStore?.userInfo?.id,
@@ -124,20 +129,19 @@ const OpenViewForm = async (row: any) => {
 
     viewFormRef.value?.open(applyDetail, row, form_json, form_data)
 }
-const SaveViewForm = (id, form_data) => {
+const SaveViewForm = (historyId, form_data) => {
     return new Promise((resolve, reject) => {
         flow_history_edit({
-            id: id,
+            id: historyId,
             formValue: JSON.stringify(form_data)
         })
             .then(async () => {
                 feedback.msgSuccess('保存成功')
                 await getLists()
 
-                const row = pager.lists.find((item) => item.id === id)
+                const row = pager.lists.find((item) => item.id === historyId)
 
-                ApplySubmitRef.value?.open(row.applyId)
-
+                OpenApplySubmit(row)
                 resolve(true)
             })
             .catch((err) => {
@@ -151,5 +155,11 @@ const OpenApplySubmit = async (row: any) => {
 
     ApplySubmitRef.value?.open(row.applyId)
 }
+const OpenBack = async (row: any) => {
+    console.log('OpenBack')
+
+    backRef.value?.open(row.applyId)
+}
+
 getLists()
 </script>

@@ -72,15 +72,16 @@ function closeFn() {
     applyDetail.value = {}
     formData.value = {}
     formJson.value = {}
+    historyDetail.value = {}
 }
 function onBack() {
-    emit('back')
+    emit('back', historyDetail.value)
 }
 function onSubmit() {
     vFormRef.value.getFormData().then((formData) => {
         console.log('formData', formData)
         props
-            .save(applyDetail.value?.id, formData)
+            .save(historyDetail.value?.id, formData)
             .then(() => {
                 closeFn()
             })

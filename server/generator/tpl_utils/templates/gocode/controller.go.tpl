@@ -41,9 +41,12 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
-//	@Router		/api/{{{ .ModuleName }}}/list [get]
+//	@Router		/api/{{{ .ModuleName }}}/listAll [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
 	res, err := Service.ListAll()
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
 	response.CheckAndRespWithData(c, res, err)
 }
 

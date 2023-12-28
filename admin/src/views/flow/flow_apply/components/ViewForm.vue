@@ -16,6 +16,12 @@
         >
         </v-form-render>
 
+        审批历史
+        <div v-for="history of historyList" :key="history.id">
+            {{ history.applyId }}{{ history.approverNickname || '无名' }} {{ history.passStatus }}
+            {{ history.passRemark }}
+        </div>
+        <!-- {{ historyList }} -->
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
             <el-button v-if="applyDetail.status == 1" type="primary" @click="onSubmit">
@@ -29,6 +35,8 @@
 import { ref } from 'vue'
 import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
 
+import { flow_history_list_all } from '@/api/flow/flow_history'
+
 const formJson = ref({})
 const formData = ref({})
 const optionData = reactive({})
@@ -36,6 +44,8 @@ const vFormRef = ref(null)
 
 const dialogVisible = ref(false)
 const applyDetail = ref({})
+
+const historyList = ref({})
 
 const props = defineProps({
     save: {
@@ -45,11 +55,20 @@ const props = defineProps({
 })
 function open(row, form_json, form_data) {
     applyDetail.value = row
-
+    getHistoryList(row.id)
     formData.value = form_data
     formJson.value = form_json
     console.log('open')
     dialogVisible.value = true
+}
+async function getHistoryList(applyId) {
+    try {
+        historyList.value = await flow_history_list_all({
+            applyId: applyId
+        })
+    } catch (error) {
+        historyList.value = []
+    }
 }
 function closeFn() {
     dialogVisible.value = false
