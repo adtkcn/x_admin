@@ -7,10 +7,10 @@
                 </el-form-item> -->
                 <!-- <el-form-item label="申请人id" prop="applyUserId">
                     <el-input   v-model="queryParams.applyUserId" />
-                </el-form-item>
-                <el-form-item label="申请人昵称" prop="applyUserNickname">
-                    <el-input   v-model="queryParams.applyUserNickname" />
                 </el-form-item> -->
+                <el-form-item label="申请人" prop="applyUserNickname">
+                    <el-input v-model="queryParams.applyUserNickname" />
+                </el-form-item>
                 <el-form-item label="流程名称" prop="flowName">
                     <el-input v-model="queryParams.flowName" />
                 </el-form-item>
@@ -28,7 +28,7 @@
                 <!-- <el-form-item label="流程描述" prop="flowRemark">
                     <el-input v-model="queryParams.flowRemark" />
                 </el-form-item> -->
-                <el-form-item label="状态" prop="status">
+                <!-- <el-form-item label="状态" prop="status">
                     <el-select v-model="queryParams.status" clearable>
                         <el-option label="全部" value="" />
                         <el-option
@@ -38,7 +38,7 @@
                             :value="item.value"
                         />
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>
@@ -46,14 +46,6 @@
             </el-form>
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
-            <div>
-                <el-button v-perms="['flow_apply:add']" type="primary" @click="handleAdd()">
-                    <template #icon>
-                        <icon name="el-icon-Plus" />
-                    </template>
-                    申请
-                </el-button>
-            </div>
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="申请人昵称" prop="applyUserNickname" min-width="100" />
                 <el-table-column label="流程名称" prop="flowName" min-width="100" />
@@ -82,24 +74,7 @@
                         >
                             {{ row.status == 1 ? '编辑' : '预览' }}
                         </el-button>
-                        <el-button
-                            v-if="row.status == 1 && row.formValue"
-                            v-perms="['flow_apply:edit']"
-                            type="primary"
-                            link
-                            @click="OpenApplySubmit(row)"
-                        >
-                            提交
-                        </el-button>
 
-                        <!-- <el-button
-                            v-perms="['flow_apply:edit']"
-                            type="primary"
-                            link
-                            @click="handleEdit(row)"
-                        >
-                            编辑
-                        </el-button> -->
                         <el-button
                             v-perms="['flow_apply:del']"
                             type="danger"
@@ -115,13 +90,7 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup
-            v-if="showEdit"
-            ref="editRef"
-            :dict-data="dictData"
-            @success="getLists"
-            @close="showEdit = false"
-        />
+
         <ViewForm ref="viewFormRef" :save="SaveViewForm"></ViewForm>
         <ApplySubmit
             ref="ApplySubmitRef"
@@ -142,7 +111,6 @@ import {
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
-import EditPopup from './edit.vue'
 
 import ApplySubmit from './components/apply_submit.vue'
 import ViewForm from './components/ViewForm.vue'
@@ -156,18 +124,16 @@ defineOptions({
 })
 const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+
 const showEdit = ref(false)
 const queryParams = reactive({
-    templateId: '',
-    applyUserId: userStore.userInfo?.id,
     applyUserNickname: '',
     flowName: '',
     flowGroup: '',
     flowRemark: '',
     flowFormData: '',
     flowProcessData: '',
-    status: ''
+    status: '3'
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
@@ -178,19 +144,6 @@ const { dictData } = useDictData<{
     flow_apply_status: any[]
     flow_group: any[]
 }>(['flow_apply_status', 'flow_group'])
-
-const handleAdd = async () => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('add')
-}
-
-// const handleEdit = async (data: any) => {
-//     showEdit.value = true
-//     await nextTick()
-//     editRef.value?.open('edit')
-//     editRef.value?.getDetail(data)
-// }
 
 const handleDelete = async (id: number) => {
     await feedback.confirm('确定要删除？')
@@ -217,11 +170,7 @@ const OpenViewForm = async (row: any) => {
     console.log(detail, form_data, form_json)
     viewFormRef.value?.open(detail, form_json, form_data)
 }
-const OpenApplySubmit = async (data: any) => {
-    console.log('OpenApplySubmit')
 
-    ApplySubmitRef.value?.open(data.id)
-}
 const SaveViewForm = (id, form_data) => {
     return new Promise((resolve, reject) => {
         flow_apply_edit({

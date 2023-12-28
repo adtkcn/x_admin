@@ -28,7 +28,11 @@
             </div>
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="流程名称" prop="flowName" min-width="100" />
-                <el-table-column label="流程分类" prop="flowGroup" min-width="100" />
+                <el-table-column label="流程分类" prop="flowGroup" min-width="100">
+                    <template #default="{ row }">
+                        <dict-value :options="dictData.flow_group" :value="row.flowGroup" />
+                    </template>
+                </el-table-column>
                 <el-table-column label="流程描述" prop="flowRemark" min-width="100" />
                 <!-- <el-table-column label="表单配置" prop="flowFormData" min-width="100" />
                 <el-table-column label="流程配置" prop="flowProcessData" min-width="100" /> -->
@@ -77,7 +81,7 @@ import {
     flow_template_edit,
     flow_template_add
 } from '@/api/flow/flow_template'
-
+import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -100,6 +104,9 @@ const { pager, getLists, resetPage, resetParams } = usePaging({
     fetchFun: flow_template_lists,
     params: queryParams
 })
+const { dictData } = useDictData<{
+    flow_group: any[]
+}>(['flow_group'])
 
 const handleAdd = async () => {
     // showEdit.value = true

@@ -7,7 +7,7 @@
         :close-on-press-escape="false"
         :destroy-on-close="true"
         :title="title"
-        top="1px"
+        draggable
     >
         <el-form
             ref="formRef"
