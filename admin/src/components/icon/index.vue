@@ -1,22 +1,17 @@
 <template>
-    <span style="display: inline-block; line-height: 1">
-        <span
-            v-if="isElIcon"
-            class="svg-icon-container"
-            :style="{ height: size ? size + 'px' : 'auto', color: color }"
-        >
-            <!-- <ElIcon v-if="isElIcon" :size="size" :color="color"> -->
+    <div class="svg-icon-container">
+        <ElIcon v-if="isElIcon" :size="size" :color="color">
             <component :is="name" style="width: 1em; height: 1em"></component>
-            <!-- </ElIcon> -->
-        </span>
+        </ElIcon>
+        <!-- </span> -->
         <ISvgIcon
-            v-if="isLocalIcon"
+            v-else-if="isLocalIcon"
             class="local-icon"
             :size="size"
             :color="color"
             :name="name"
         ></ISvgIcon>
-    </span>
+    </div>
 </template>
 <script lang="ts">
 // import { ElIcon } from 'element-plus'
@@ -62,15 +57,5 @@ export default defineComponent({
 <style>
 .svg-icon-container {
     display: inline-block;
-    line-height: 1;
-    overflow: hidden;
-    /* vertical-align: middle; */
-    /* height: auto; */
-    /* width: 1em;
-    */
-}
-.local-icon {
-    display: inline-block;
-    /* margin: 0 8px; */
 }
 </style>

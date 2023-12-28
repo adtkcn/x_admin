@@ -1,7 +1,9 @@
 <template>
-    <svg aria-hidden="true" :style="styles">
-        <use :xlink:href="symbolId" fill="currentColor" />
-    </svg>
+    <i class="el-icon" :style="styles">
+        <svg aria-hidden="true" style="width: 1em; height: 1em">
+            <use :xlink:href="symbolId" fill="currentColor" />
+        </svg>
+    </i>
 </template>
 
 <script lang="ts">
@@ -28,8 +30,7 @@ export default defineComponent({
         const symbolId = computed(() => `#${props.name}`)
         const styles = computed<CSSProperties>(() => {
             return {
-                width: addUnit(props.size),
-                height: addUnit(props.size),
+                fontSize: addUnit(props.size),
                 color: props.color
             }
         })
