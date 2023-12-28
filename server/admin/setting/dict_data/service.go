@@ -53,7 +53,7 @@ func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []Se
 		ddModel = ddModel.Where("status = ?", allReq.Status)
 	}
 	var dictDatas []setting_model.DictData
-	err = ddModel.Order("id desc").Find(&dictDatas).Error
+	err = ddModel.Order("id asc").Find(&dictDatas).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
@@ -86,11 +86,11 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 	}
 	var count int64
 	e = ddModel.Count(&count).Error
-	if e = response.CheckErr(err, "List Count err"); e != nil {
+	if e = response.CheckErr(e, "List Count err"); e != nil {
 		return
 	}
 	var dds []setting_model.DictData
-	err = ddModel.Limit(limit).Offset(offset).Order("id desc").Find(&dds).Error
+	err = ddModel.Limit(limit).Offset(offset).Order("id asc").Find(&dds).Error
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
 	}

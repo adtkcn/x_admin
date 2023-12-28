@@ -1,7 +1,6 @@
 <template>
     <el-dialog
         v-model="dialogVisible"
-        :show-close="false"
         :fullscreen="false"
         :close-on-click-modal="false"
         :close-on-press-escape="false"

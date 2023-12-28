@@ -16,9 +16,12 @@
             label-width="110px"
             :rules="formRules"
         >
-            {{ back_nodes }}
             <el-form-item :label="`驳回到`" prop="templateId">
-                <el-select class="flex-1" v-model="formData.historyId" placeholder="请选择驳回节点">
+                <el-select
+                    style="width: 100%"
+                    v-model="formData.historyId"
+                    placeholder="请选择驳回节点"
+                >
                     <el-option label="发起人" :value="0" clearable />
                     <el-option
                         v-for="item in back_nodes"
@@ -48,8 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import feedback from '@/utils/feedback'
+import { ref, reactive } from 'vue'
 import { flow_history_back, flow_history_list_all } from '@/api/flow/flow_history'
 const props = defineProps({
     title: {

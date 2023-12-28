@@ -1,7 +1,6 @@
 <template>
     <el-dialog
         v-model="dialogVisible"
-        :show-close="true"
         :fullscreen="false"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
@@ -19,7 +18,7 @@
             <!-- {{ userTask }} -->
             <el-form-item v-if="userTask" :label="`${userTask?.label}节点审批人`" prop="templateId">
                 <el-select
-                    class="flex-1"
+                    style="width: 100%"
                     v-if="approverUserList.length"
                     v-model="formData.applyUserId"
                     placeholder="请选择审批人"

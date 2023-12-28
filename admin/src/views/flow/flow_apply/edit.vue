@@ -10,11 +10,11 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="模板" prop="templateId">
+                <el-form-item label="审批流" prop="templateId">
                     <el-select
-                        class="flex-1"
                         v-model="formData.templateId"
-                        placeholder="请输入模板"
+                        placeholder="请选择审批流"
+                        style="width: 100%"
                         @change="handleTemplateChange"
                     >
                         <el-option
@@ -30,37 +30,6 @@
                 <el-form-item label="流程名称" prop="flowName">
                     <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
                 </el-form-item>
-                <!-- <el-form-item label="流程分类" prop="flowGroup">
-                    <el-input v-model="formData.flowGroup" placeholder="请输入流程分类" />
-                </el-form-item> -->
-                <!-- <el-form-item label="流程描述" prop="flowRemark">
-                    <el-input v-model="formData.flowRemark" placeholder="请输入流程描述" />
-                </el-form-item>
-
-                <el-form-item label="formValue" prop="formValue">
-                    <el-input
-                        v-model="formData.formValue"
-                        placeholder="请输入流程配置"
-                        type="textarea"
-                        :autosize="{ minRows: 4, maxRows: 6 }"
-                    />
-                </el-form-item> -->
-                <!-- <el-form-item label="状态：0待提交，1审批中，2审批完成，3审批失败" prop="status">
-                    <el-select
-                        class="flex-1"
-                        v-model.number="formData.status"
-                        placeholder="请选择状态：0待提交，1审批中，2审批完成，3审批失败"
-                    >
-                        <el-option
-                            v-for="(item, index) in dictData.flow_apply_status"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
-                            clearable
-                            :disabled="!item.status"
-                        />
-                    </el-select>
-                </el-form-item> -->
             </el-form>
         </popup>
     </div>

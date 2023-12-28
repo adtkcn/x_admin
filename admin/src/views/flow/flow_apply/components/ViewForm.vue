@@ -1,7 +1,6 @@
 <template>
     <el-dialog
         v-model="dialogVisible"
-        :show-close="false"
         :fullscreen="false"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
@@ -16,11 +15,13 @@
         >
         </v-form-render>
 
-        审批历史
-        <div v-for="history of historyList" :key="history.id">
-            {{ history.applyId }}{{ history.approverNickname || '无名' }} {{ history.passStatus }}
-            {{ history.passRemark }}
-        </div>
+        <el-table size="large" :data="historyList" v-if="historyList.length">
+            <el-table-column label="审批人" prop="approverNickname" />
+            <el-table-column label="节点" prop="nodeLabel" />
+            <el-table-column label="状态" prop="passStatus" />
+            <el-table-column label="备注" prop="passRemark" />
+        </el-table>
+
         <!-- {{ historyList }} -->
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
@@ -45,7 +46,7 @@ const vFormRef = ref(null)
 const dialogVisible = ref(false)
 const applyDetail = ref({})
 
-const historyList = ref({})
+const historyList = ref([])
 
 const props = defineProps({
     save: {
@@ -75,6 +76,7 @@ function closeFn() {
     applyDetail.value = {}
     formData.value = {}
     formJson.value = {}
+    historyList.value = []
 }
 function onSubmit() {
     vFormRef.value.getFormData().then((formData) => {

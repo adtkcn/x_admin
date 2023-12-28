@@ -24,11 +24,10 @@
                     :style="{ width: '100%' }"
                 >
                     <el-option
-                        v-for="(item, index) in flowGroupOptions"
-                        :key="index"
-                        :label="item.label"
+                        v-for="item in dictData.flow_group"
+                        :key="item.id"
+                        :label="item.name"
                         :value="item.value"
-                        :disabled="item.disabled"
                     ></el-option>
                 </el-select>
             </el-form-item>
@@ -52,6 +51,7 @@
 </template>
 
 <script>
+import { useDictData } from '@/hooks/useDictOptions'
 export default {
     name: 'BasicSetting',
     components: {},
@@ -110,7 +110,10 @@ export default {
                     label: '其他',
                     value: 7
                 }
-            ]
+            ],
+            dictData: {
+                flow_group: []
+            }
         }
     },
     computed: {
@@ -123,6 +126,8 @@ export default {
         if (typeof this.conf === 'object' && this.conf !== null) {
             Object.assign(this.formData, this.conf)
         }
+        const { dictData } = useDictData(['flow_group'])
+        this.dictData = dictData
     },
     methods: {
         // 给父级页面提供得获取本页数据得方法
