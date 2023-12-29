@@ -54,6 +54,10 @@ func initRouter() *gin.Engine {
 
 	routers.RegisterGroup(group)
 
+	for _, route := range router.Routes() {
+		fmt.Printf("%s %s\n", route.Method, route.Path)
+	}
+
 	return router
 }
 

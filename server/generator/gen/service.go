@@ -383,7 +383,7 @@ func (genSrv generateService) PreviewCode(id uint) (res map[string]string, e err
 	// for tplPath, tplCode := range tplCodeMap {
 	// 	res[strings.ReplaceAll(tplPath, ".tpl", "")] = tplCode
 	// }
-	res = tpl_utils.TemplateUtil.GetFilePaths(tplCodeMap, genTable.TableName)
+	res = tpl_utils.TemplateUtil.GetFilePaths(tplCodeMap, genTable.ModuleName)
 	return
 }
 

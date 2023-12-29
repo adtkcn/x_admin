@@ -202,20 +202,20 @@ func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 }
 
 // GetFilePaths 获取生成文件相对路径
-func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, TableName string) map[string]string {
+func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName string) map[string]string {
 	//模板文件对应的输出文件
 	fmtMap := map[string]string{
-		"gocode/model.go.tpl":   strings.Join([]string{"server/model/", TableName, ".go"}, ""),
-		"gocode/route.go.tpl":   strings.Join([]string{"server/admin/", TableName, "_route.go"}, ""),
-		"gocode/schema.go.tpl":  strings.Join([]string{"server/admin/", TableName, "/", TableName, "_schema.go"}, ""),  //"server/admin/%s/%s_schema.go"
-		"gocode/service.go.tpl": strings.Join([]string{"server/admin/", TableName, "/", TableName, "_service.go"}, ""), //"server/admin/%s/%s_service.go",
+		"gocode/model.go.tpl":   strings.Join([]string{"server/model/", ModuleName, ".go"}, ""),
+		"gocode/route.go.tpl":   strings.Join([]string{"server/admin/", ModuleName, "_route.go"}, ""),
+		"gocode/schema.go.tpl":  strings.Join([]string{"server/admin/", ModuleName, "/", ModuleName, "_schema.go"}, ""),  //"server/admin/%s/%s_schema.go"
+		"gocode/service.go.tpl": strings.Join([]string{"server/admin/", ModuleName, "/", ModuleName, "_service.go"}, ""), //"server/admin/%s/%s_service.go",
 		// "server/admin/%s_route.go",
-		"gocode/controller.go.tpl": strings.Join([]string{"server/admin/", TableName, "/", TableName, "_ctl.go"}, ""), //"server/admin/%s/%s_ctl.go",
+		"gocode/controller.go.tpl": strings.Join([]string{"server/admin/", ModuleName, "/", ModuleName, "_ctl.go"}, ""), //"server/admin/%s/%s_ctl.go",
 
-		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", TableName, ".ts"}, ""),               // "admin/src/api/%s.ts",
-		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", TableName, "/edit.vue"}, ""),       // "admin/src/views/%s/edit.vue",
-		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", TableName, "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
-		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", TableName, "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
+		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", ModuleName, ".ts"}, ""),               // "admin/src/api/%s.ts",
+		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", ModuleName, "/edit.vue"}, ""),       // "admin/src/views/%s/edit.vue",
+		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", ModuleName, "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
+		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", ModuleName, "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
 	}
 	filePath := make(map[string]string)
 	for tplPath, tplCode := range tplCodeMap {
@@ -242,8 +242,8 @@ func addFileToZip(zipWriter *zip.Writer, file zFile) error {
 }
 
 // GenZip 生成代码压缩包
-func (tu templateUtil) GenZip(zipWriter *zip.Writer, tplCodeMap map[string]string, TableName string) error {
-	filePaths := tu.GetFilePaths(tplCodeMap, TableName)
+func (tu templateUtil) GenZip(zipWriter *zip.Writer, tplCodeMap map[string]string, ModuleName string) error {
+	filePaths := tu.GetFilePaths(tplCodeMap, ModuleName)
 	files := make([]zFile, 0)
 	for file, tplCode := range filePaths {
 		files = append(files, zFile{

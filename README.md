@@ -1,17 +1,18 @@
-<h1 align="center">x_admin通用管理后台（Go）</h1>
+<h1 align="center">x_admin通用管理后台（GoLang）</h1>
 <h4 align="center">🚀快速开发、✅后台多端自适应</h4> 
 <p align="center">
 <a href=""><img src="https://img.shields.io/badge/Go-1.21+-69d6e1
 "> </a><a href="#"> <img src="https://img.shields.io/badge/Gin-1.9.1-3176d9"> </a><a href="https://www.tslang.cn/"><img src="https://img.shields.io/badge/TypeScript-5-294e80"></a> <a href="#"><img src="https://img.shields.io/badge/Vue.js-3-4eb883"> </a><a href="#"><img src="https://img.shields.io/badge/vite-4-ffc018"> </a><a href="#"><img src="https://img.shields.io/badge/Element Plus-2-409eff"> </a>
 <!-- <a target="_blank" href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker--139cff"></a> -->
 <br>
-<h4 align="center">本仓库基于魔改：<a href="https://gitee.com/likeadmin/likeadmin_go">https://gitee.com/likeadmin/likeadmin_go</a><h4>
+<h4 align="center">本仓库基于：<a href="https://gitee.com/likeadmin/likeadmin_go">https://gitee.com/likeadmin/likeadmin_go</a><h4>
 
  
  
  <br>
 
-## 体验
+## 体验 
+<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=3owvxQhAsj6oJ6_aJKuARd-GK6dDbMdu&jump_from=webapi&authKey=c989fefqSydvK0yM5uw+y5UIPy1WfMR/OlLPnubNW9ixVp9lKsTXXth07K7zOYOH"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="x_admin后台管理系统" title="x_admin后台管理系统"></a>
 
 本仓库演示地址：http://likeadmin.adtk.cn <br>
 原仓库演示地址：https://go-admin.likeadmin.cn <br>
@@ -31,8 +32,6 @@
 ## 进一步了解
 ### 场景介绍
 
-- 登录
-- 登出
 - 工作台
 - 菜单权限控制
 - 角色
@@ -41,17 +40,15 @@
 - 岗位管理
 - 素材管理
 - 网站设置
-- 图库管理等基础功能
+- 图库管理
+- 代码生成器：一键生成前后端业务代码
+- 审批流：基于`LogicFlow`和`VForm 3`,整体流程已实现，需要细化
 
-### 前端架构方面
 
-### 后台
-
-1.使用最流性的前后端分离方案 typescript、vue3、vite 开发，保持了代码的简洁、一致和规范。<br> 2.后台界面使用 element-plus UI 框架，简单精美的后台界面，丰富的组件库，方便快速开发，满足各种后台交互。
-<br>
-
-## 代码生成器
-
-一键生成前后端业务代码，大大提示开发效率。
-![](./docs/assets/work.png)
+![](./docs/assets/menu.png)
 ![](./docs/assets/genCode.png)
+
+# 支持 
+<img border="0" src="./docs/assets/alipay.jpg" height="400px" alt="alipay" title="alipay">
+<img border="0" src="./docs/assets/weixinpay.png" height="400px" alt="weixin" title="weixin" style="margin:0 60px">
+<img border="0" src="./docs/assets/group.jpg" height="400px" alt="group" title="group">
