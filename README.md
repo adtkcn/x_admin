@@ -12,7 +12,7 @@
  <br>
 
 ## 体验 
-<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=3owvxQhAsj6oJ6_aJKuARd-GK6dDbMdu&jump_from=webapi&authKey=c989fefqSydvK0yM5uw+y5UIPy1WfMR/OlLPnubNW9ixVp9lKsTXXth07K7zOYOH"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="x_admin后台管理系统" title="x_admin后台管理系统"></a>
+
 
 本仓库演示地址：http://likeadmin.adtk.cn <br>
 原仓库演示地址：https://go-admin.likeadmin.cn <br>
@@ -20,7 +20,7 @@
     
 ## 开发部署文档
 0. [使用](./docs/0.使用.md)
-1. [打包部署](./docs/1.go-打包部署) 
+1. [打包部署](./docs/1.go-打包部署.md) 
 2. [nginx配置.md](./docs/2.nginx配置.md)
 
 
@@ -44,11 +44,13 @@
 - 代码生成器：一键生成前后端业务代码
 - 审批流：基于`LogicFlow`和`VForm 3`,整体流程已实现，需要细化
 
-
-![](./docs/assets/menu.png)
+<img border="0" src="./docs/assets/menu.png" height="1000px" alt="alipay" title="alipay"/>
+ 
 ![](./docs/assets/genCode.png)
+![](./docs/assets/flow.png)
 
-# 支持 
-<img border="0" src="./docs/assets/alipay.jpg" height="400px" alt="alipay" title="alipay">
-<img border="0" src="./docs/assets/weixinpay.png" height="400px" alt="weixin" title="weixin" style="margin:0 60px">
+
+# QQ群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=3owvxQhAsj6oJ6_aJKuARd-GK6dDbMdu&jump_from=webapi&authKey=c989fefqSydvK0yM5uw+y5UIPy1WfMR/OlLPnubNW9ixVp9lKsTXXth07K7zOYOH">点击链接或扫码加入（目前没人）</a>
+
 <img border="0" src="./docs/assets/group.jpg" height="400px" alt="group" title="group">
+ 

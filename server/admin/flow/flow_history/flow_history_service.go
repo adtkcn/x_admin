@@ -270,7 +270,10 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 	if err != nil {
 		return err
 	}
-	isEnd := false // 是否是最后一个节点
+	// nextNodes必须包含审批节点或结束节点，否则流程抛出异常
+
+	isUserTask := false //是否有用户节点
+	isEndTask := false  // 是否是最后一个节点
 
 	FormValue := applyDetail.FormValue
 	if LastHistory.Id != 0 {
@@ -306,16 +309,19 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 			flow.PassStatus = 1 //1待处理,异步任务可以失败
 			// 发邮件之类的，待完善
 		} else if v.Type == "bpmn:userTask" {
+			isUserTask = true
 			flow.ApproverId = pass.NextNodeAdminId
 			flow.PassStatus = 1 //1待处理
 		} else if v.Type == "bpmn:endEvent" {
-			isEnd = true
+			isEndTask = true
 			flow.ApproverId = 0
 			flow.PassStatus = 2 //2通过
 		}
 		flows = append(flows, flow)
 	}
-
+	if !isUserTask && !isEndTask {
+		return errors.New("必须包含审批节点或者结束节点")
+	}
 	err = Service.db.Transaction(func(tx *gorm.DB) error {
 		// 在事务中执行一些 db 操作（从这里开始，您应该使用 'tx' 而不是 'db'）
 		if err := tx.Create(&flows).Error; err != nil {
@@ -333,9 +339,9 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 		}
 
 		// 待提交或者有结束节点，修改申请状态
-		if applyDetail.Status == 1 || isEnd {
+		if applyDetail.Status == 1 || isEndTask {
 			status := 2 //审批中
-			if isEnd {
+			if isEndTask {
 				status = 3 //审批通过
 			}
 			err = tx.Model(&model.FlowApply{}).Where(model.FlowApply{

@@ -1,6 +1,7 @@
 package flow_history
 
 import (
+	"fmt"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -148,6 +149,7 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 		return
 	}
 	err := Service.Pass(pass)
+	fmt.Println(err)
 	response.CheckAndResp(c, err)
 }
 
@@ -159,6 +161,7 @@ func (hd FlowHistoryHandler) Back(c *gin.Context) {
 		return
 	}
 	err := Service.Back(back)
+	fmt.Println(err)
 	response.CheckAndResp(c, err)
 }
 
