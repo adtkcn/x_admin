@@ -3,6 +3,7 @@ package gen
 import (
 	"archive/zip"
 	"bytes"
+	"x_admin/admin/generator/tpl_utils"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -10,7 +11,7 @@ import (
 	"x_admin/model/gen_model"
 
 	"strings"
-	"x_admin/generator/tpl_utils"
+
 	"x_admin/util"
 
 	"gorm.io/gorm"

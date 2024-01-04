@@ -23,7 +23,7 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 {{{- end }}}
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
 //	@Failure	400			{object}	string				"请求错误"
-//	@Router		/api/{{{ .ModuleName }}}/list [get]
+//	@Router		/api/admin/{{{ .ModuleName }}}/list [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
@@ -41,7 +41,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
-//	@Router		/api/{{{ .ModuleName }}}/listAll [get]
+//	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
 	res, err := Service.ListAll()
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -60,7 +60,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
-//	@Router		/api/{{{ .ModuleName }}}/detail [get]
+//	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context) {
 	var detailReq {{{ title (toCamelCase .EntityName) }}}DetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
@@ -81,7 +81,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context)
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.RespType	"成功"
-//	@Router		/api/{{{ .ModuleName }}}/add [post]
+//	@Router		/api/admin/{{{ .ModuleName }}}/add [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 	var addReq {{{ title (toCamelCase .EntityName) }}}AddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
@@ -99,7 +99,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.RespType	"成功"
-//	@Router		/api/{{{ .ModuleName }}}/edit [post]
+//	@Router		/api/admin/{{{ .ModuleName }}}/edit [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 	var editReq {{{ title (toCamelCase .EntityName) }}}EditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
@@ -117,7 +117,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.RespType	"成功"
-//	@Router		/api/{{{ .ModuleName }}}/del [post]
+//	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 	var delReq {{{ title (toCamelCase .EntityName) }}}DelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {

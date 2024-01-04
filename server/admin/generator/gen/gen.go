@@ -13,14 +13,6 @@ import (
 )
 
 func GenRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// permSrv := system.NewSystemAuthPermService(db)
-	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
-	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
-	// service := system.NewSystemLoginService(db, adminSrv)
-
-	// server := NewGenerateService()
-
 	handle := genHandler{}
 
 	rg = rg.Group("/gen", middleware.TokenAuth())

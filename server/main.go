@@ -39,7 +39,14 @@ func initRouter() *gin.Engine {
 
 		c.FileFromFS("static"+filepath, staticHttpFs)
 	})
-
+	router.GET("/api/admin/apiList", func(ctx *gin.Context) {
+		var path = []string{}
+		for _, route := range router.Routes() {
+			// fmt.Printf("%s 127.0.0.1:%v%s\n", route.Method, config.Config.ServerPort, route.Path)
+			path = append(path, route.Path)
+		}
+		response.Result(ctx, response.Success, path)
+	})
 	// 设置中间件
 	router.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 	// 演示模式
@@ -53,10 +60,6 @@ func initRouter() *gin.Engine {
 	group := router.Group("/api")
 
 	routers.RegisterGroup(group)
-
-	for _, route := range router.Routes() {
-		fmt.Printf("%s %s\n", route.Method, route.Path)
-	}
 
 	return router
 }

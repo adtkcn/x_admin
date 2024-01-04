@@ -15,29 +15,29 @@ var AdminConfig = adminConfig{
 
 	// 免登录验证
 	NotLoginUri: []string{
-		"system:login",        // 登录接口
-		"common:index:config", // 配置接口
+		"admin:system:login",        // 登录接口
+		"admin:common:index:config", // 配置接口
 	},
 
 	// 免权限验证
 	NotAuthUri: []string{
-		"system:logout",         // 退出登录
-		"system:menu:menus",     // 系统菜单
-		"system:menu:route",     // 菜单路由
-		"system:admin:upInfo",   // 管理员更新
-		"system:admin:self",     // 管理员信息
-		"system:role:all",       // 所有角色
-		"system:post:all",       // 所有岗位
-		"system:dept:list",      // 所有部门
-		"setting:dict:type:all", // 所有字典类型
-		"setting:dict:data:all", // 所有字典数据
-		"article:cate:all",      // 所有文章分类
+		"admin:system:logout",         // 退出登录
+		"admin:system:menu:menus",     // 系统菜单
+		"admin:system:menu:route",     // 菜单路由
+		"admin:system:admin:upInfo",   // 管理员更新
+		"admin:system:admin:self",     // 管理员信息
+		"admin:system:role:all",       // 所有角色
+		"admin:system:post:all",       // 所有岗位
+		"admin:system:dept:list",      // 所有部门
+		"admin:setting:dict:type:all", // 所有字典类型
+		"admin:setting:dict:data:all", // 所有字典数据
+		"admin:article:cate:all",      // 所有文章分类
 	},
 
 	// 演示模式白名单
 	ShowWhitelistUri: []string{
-		"system:login",  // 登录接口
-		"system:logout", // 退出登录
+		"admin:system:login",  // 登录接口
+		"admin:system:logout", // 退出登录
 	},
 
 	// 管理员账号id

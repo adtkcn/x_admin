@@ -38,11 +38,11 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 	version := map[string]interface{}{
 		"name":    name,
 		"version": config.Config.Version,
-		"website": "www.x_admin.cn",
+		"website": "x.adtk.cn",
 		"based":   "Vue3.x、ElementUI、MySQL",
 		"channel": map[string]string{
 			"gitee":   "https://gitee.com/x_admin/x_admin_python",
-			"website": "https://www.x_admin.cn",
+			"website": "https://x.adtk.cn",
 		},
 	}
 	// 今日数据

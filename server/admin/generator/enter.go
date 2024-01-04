@@ -1,7 +1,7 @@
 package generator
 
 import (
-	"x_admin/generator/gen"
+	"x_admin/admin/generator/gen"
 
 	"github.com/gin-gonic/gin"
 )

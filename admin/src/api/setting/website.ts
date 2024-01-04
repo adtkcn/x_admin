@@ -25,3 +25,8 @@ export function getProtocol() {
 export function setProtocol(params: any) {
     return request.post({ url: '/setting/protocol/save', params })
 }
+
+// 获取网站接口列表
+export function getApiList() {
+    return request.get({ url: '/apiList' })
+}

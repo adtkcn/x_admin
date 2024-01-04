@@ -31,7 +31,7 @@
         </div>
     </div>
 </template>
-<script type="text/babel">
+<script>
 /**
  * Verify 验证码组件
  * @description 分发验证码使用
@@ -41,7 +41,7 @@ import VerifyPoints from './Verify/VerifyPoints.vue'
 import { computed, ref, watch, toRefs, watchEffect } from 'vue'
 
 export default {
-    name: 'Vue2Verify',
+    name: 'Vue3Verify',
     components: {
         VerifySlide,
         VerifyPoints

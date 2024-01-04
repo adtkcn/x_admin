@@ -2,10 +2,10 @@ package admin
 
 import (
 	"x_admin/admin/common/album"
-	"x_admin/admin/common/captcha"
 	"x_admin/admin/common/index"
 	"x_admin/admin/common/upload"
 	"x_admin/admin/flow"
+	"x_admin/admin/generator"
 	"x_admin/admin/monitor"
 	"x_admin/admin/setting/copyright"
 	"x_admin/admin/setting/dict_data"
@@ -24,6 +24,10 @@ import (
 )
 
 func RegisterGroup(rg *gin.RouterGroup) {
+
+	rg = rg.Group("/admin")
+	// 所有子路由需要加上前缀 /api/admin
+
 	upload.UploadRoute(rg)
 	album.AlbumRoute(rg)
 	index.IndexRoute(rg)
@@ -51,5 +55,5 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	flow.FlowApplyRoute(rg)
 	flow.FlowHistoryRoute(rg)
 
-	captcha.CaptchaRoute(rg)
+	generator.RegisterGroup(rg)
 }

@@ -96,6 +96,19 @@
                 >
                     <div class="flex-1">
                         <el-input v-model="formData.perms" placeholder="请输入权限字符" clearable />
+                        <el-select
+                            v-model="formData.perms"
+                            placeholder="请选择权限字符"
+                            :style="{ width: '100%' }"
+                        >
+                            <el-option
+                                v-for="(item, index) in permissionOptions"
+                                :key="index"
+                                :label="item"
+                                :value="item"
+                            ></el-option>
+                        </el-select>
+
                         <div class="form-tips">
                             将作为server端API验权使用，请求路径`api/system/admin/list`权限为`system:admin:list`，请谨慎修改
                         </div>
@@ -177,6 +190,7 @@
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
 import { menuLists, menuEdit, menuAdd, menuDetail } from '@/api/perms/menu'
+import { getApiList } from '@/api/setting/website'
 import { getModulesKey } from '@/router'
 import { MenuEnum } from '@/enums/appEnums'
 import Popup from '@/components/popup/index.vue'
@@ -190,6 +204,7 @@ const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑菜单' : '新增菜单'
 })
+const permissionOptions = ref([])
 
 const componentsOptions = ref(getModulesKey())
 const querySearch = (queryString: string, cb: any) => {
@@ -271,7 +286,11 @@ const getMenu = async () => {
     )
     menuOptions.value.push(menu)
 }
-
+function getApiListFn() {
+    getApiList().then((res: any) => {
+        permissionOptions.value = res
+    })
+}
 const handleSubmit = async () => {
     await formRef.value?.validate()
     mode.value == 'edit' ? await menuEdit(formData) : await menuAdd(formData)
@@ -306,6 +325,7 @@ const handleClose = () => {
 }
 
 getMenu()
+getApiListFn()
 
 defineExpose({
     open,
