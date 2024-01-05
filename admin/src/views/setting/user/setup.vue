@@ -19,7 +19,7 @@
             </el-form>
         </el-card>
 
-        <footer-btns v-perms="['setting:user:save']">
+        <footer-btns v-perms="['admin:setting:user:save']">
             <el-button type="primary" @click="handleSubmit">保存</el-button>
         </footer-btns>
     </div>

@@ -27,30 +27,16 @@
                         <el-tag type="danger" v-else>关闭</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" min-width="80" fixed="right">
-                    <template #default="{ row }">
-                        <el-button v-perms="['setting:notice:detail']" type="primary" link>
-                            <router-link
-                                :to="{
-                                    path: getRoutePath('setting:notice:detail'),
-                                    query: {
-                                        id: row.id
-                                    }
-                                }"
-                            >
-                                设置
-                            </router-link>
-                        </el-button>
-                    </template>
-                </el-table-column>
             </el-table>
         </el-card>
     </div>
 </template>
-<script lang="ts" setup name="notice">
+<script lang="ts" setup>
 import { noticeLists } from '@/api/message'
-import { getRoutePath } from '@/router'
 
+defineOptions({
+    name: 'notice'
+})
 enum NoticeEnums {
     USER = 1,
     PLATFORM = 2

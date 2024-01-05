@@ -33,14 +33,18 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div>
-                <el-button v-perms="['setting:dict:type:add']" type="primary" @click="handleAdd">
+                <el-button
+                    v-perms="['admin:setting:dict:type:add']"
+                    type="primary"
+                    @click="handleAdd"
+                >
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
                     新增
                 </el-button>
                 <el-button
-                    v-perms="['setting:dict:type:list']"
+                    v-perms="['admin:setting:dict:type:list']"
                     :disabled="!selectData.length"
                     type="danger"
                     @click="handleDelete(selectData)"
@@ -77,17 +81,21 @@
                         <el-table-column label="操作" width="190" fixed="right">
                             <template #default="{ row }">
                                 <el-button
-                                    v-perms="['setting:dict:type:edit']"
+                                    v-perms="['admin:setting:dict:type:edit']"
                                     link
                                     type="primary"
                                     @click="handleEdit(row)"
                                 >
                                     编辑
                                 </el-button>
-                                <el-button v-perms="['setting:dict:data:list']" type="primary" link>
+                                <el-button
+                                    v-perms="['admin:setting:dict:data:list']"
+                                    type="primary"
+                                    link
+                                >
                                     <router-link
                                         :to="{
-                                            path: getRoutePath('setting:dict:data:list'),
+                                            path: '/dev_tools/dict/data',
                                             query: {
                                                 type: row.dictType
                                             }
@@ -97,7 +105,7 @@
                                     </router-link>
                                 </el-button>
                                 <el-button
-                                    v-perms="['setting:dict:type:del']"
+                                    v-perms="['admin:setting:dict:type:del']"
                                     link
                                     type="danger"
                                     @click="handleDelete([row.id])"
@@ -120,7 +128,6 @@
 <script lang="ts" setup name="dictType">
 import { dictTypeDelete, dictTypeLists } from '@/api/setting/dict'
 import { usePaging } from '@/hooks/usePaging'
-import { getRoutePath } from '@/router'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()

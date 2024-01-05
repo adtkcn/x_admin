@@ -44,7 +44,7 @@
             </el-form>
         </el-card>
 
-        <footer-btns v-perms="['setting:copyright:save']">
+        <footer-btns v-perms="['admin:setting:copyright:save']">
             <el-button type="primary" @click="handleSubmit">保存</el-button>
         </footer-btns>
     </div>

@@ -91,26 +91,31 @@
                 </el-form-item>
                 <el-form-item
                     v-if="formData.menuType != MenuEnum.CATALOGUE"
-                    label="权限字符"
+                    label="接口权限"
                     prop="perms"
                 >
                     <div class="flex-1">
-                        <el-input v-model="formData.perms" placeholder="请输入权限字符" clearable />
+                        <!-- {{ formData.permsArr }} -->
+                        <!-- <el-input v-model="formData.perms" placeholder="请输入接口权限" clearable /> -->
                         <el-select
-                            v-model="formData.perms"
-                            placeholder="请选择权限字符"
+                            v-model="formData.permsArr"
+                            clearable
+                            multiple
+                            filterable
+                            placeholder="请选择接口权限"
                             :style="{ width: '100%' }"
                         >
                             <el-option
                                 v-for="(item, index) in permissionOptions"
                                 :key="index"
-                                :label="item"
-                                :value="item"
+                                :label="item.label"
+                                :value="item.value"
                             ></el-option>
                         </el-select>
 
                         <div class="form-tips">
-                            将作为server端API验权使用，请求路径`api/system/admin/list`权限为`system:admin:list`，请谨慎修改
+                            <!-- 将作为server端API验权使用，请求路径`api/admin/system/admin/list`权限为`admin:system:admin:list` -->
+                            可以多个，但建议一个接口一个按钮
                         </div>
                     </div>
                 </el-form-item>
@@ -232,6 +237,7 @@ const formData = reactive({
     paths: '',
     //权限链接
     perms: '',
+    permsArr: [],
     //前端组件
     component: '',
     //选中路径
@@ -288,12 +294,30 @@ const getMenu = async () => {
 }
 function getApiListFn() {
     getApiList().then((res: any) => {
-        permissionOptions.value = res
+        const arr = []
+        res.forEach((item: string) => {
+            if (item.indexOf('/api/admin/') == 0) {
+                const per = item.replace(/\/api\//, '').replace(/\//g, ':')
+                arr.push({
+                    value: per,
+                    label: item
+                })
+            }
+        })
+        // console.log(pathsToTree(arr))
+        permissionOptions.value = arr.sort()
     })
 }
 const handleSubmit = async () => {
     await formRef.value?.validate()
-    mode.value == 'edit' ? await menuEdit(formData) : await menuAdd(formData)
+    const data = { ...formData }
+    if (data.permsArr) {
+        data.perms = data.permsArr.join(',')
+    } else {
+        data.perms = ''
+    }
+
+    mode.value == 'edit' ? await menuEdit(data) : await menuAdd(data)
     popupRef.value?.close()
     feedback.msgSuccess('操作成功')
     emit('success')
@@ -308,7 +332,11 @@ const setFormData = (data: Record<any, any>) => {
     for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
             //@ts-ignore
-            formData[key] = data[key]
+            if (key == 'perms') {
+                formData['permsArr'] = data[key].split(',')
+            } else {
+                formData[key] = data[key]
+            }
         }
     }
 }

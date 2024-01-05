@@ -47,7 +47,11 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div>
-                <el-button v-perms="['flow_apply:add']" type="primary" @click="handleAdd()">
+                <el-button
+                    v-perms="['admin:flow:flow_apply:add']"
+                    type="primary"
+                    @click="handleAdd()"
+                >
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
@@ -75,7 +79,7 @@
                 <el-table-column label="操作" width="180" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['flow_apply:edit']"
+                            v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
                             @click="OpenViewForm(row)"
@@ -84,7 +88,7 @@
                         </el-button>
                         <el-button
                             v-if="row.status == 1 && row.formValue"
-                            v-perms="['flow_apply:edit']"
+                            v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
                             @click="OpenApplySubmit(row)"
@@ -93,7 +97,7 @@
                         </el-button>
 
                         <!-- <el-button
-                            v-perms="['flow_apply:edit']"
+                            v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -101,7 +105,7 @@
                             编辑
                         </el-button> -->
                         <el-button
-                            v-perms="['flow_apply:del']"
+                            v-perms="['admin:flow:flow_apply:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.id)"

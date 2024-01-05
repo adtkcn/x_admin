@@ -35,21 +35,6 @@
             </el-form>
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
-            <div>
-                <router-link
-                    v-perms="['article:add', 'article:add/edit']"
-                    :to="{
-                        path: getRoutePath('article:add/edit')
-                    }"
-                >
-                    <el-button type="primary" class="mb-4">
-                        <template #icon>
-                            <icon name="el-icon-Plus" />
-                        </template>
-                        发布文章
-                    </el-button>
-                </router-link>
-            </div>
             <el-table size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="ID" prop="id" min-width="80" />
                 <el-table-column label="封面" min-width="100">
@@ -77,7 +62,7 @@
                 <el-table-column label="状态" min-width="100">
                     <template #default="{ row }">
                         <el-switch
-                            v-perms="['article:cate:change']"
+                            v-perms="['admin:article:cate:change']"
                             v-model="row.isShow"
                             :active-value="1"
                             :inactive-value="0"
@@ -90,23 +75,7 @@
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['article:edit', 'article:add/edit']"
-                            type="primary"
-                            link
-                        >
-                            <router-link
-                                :to="{
-                                    path: getRoutePath('article:add/edit'),
-                                    query: {
-                                        id: row.id
-                                    }
-                                }"
-                            >
-                                编辑
-                            </router-link>
-                        </el-button>
-                        <el-button
-                            v-perms="['article:del']"
+                            v-perms="['admin:article:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.id)"
@@ -126,7 +95,7 @@
 import { articleLists, articleDelete, articleStatus, articleCateAll } from '@/api/article'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
-import { getRoutePath } from '@/router'
+
 import feedback from '@/utils/feedback'
 const queryParams = reactive({
     title: '',

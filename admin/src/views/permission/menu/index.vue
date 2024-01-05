@@ -2,7 +2,7 @@
     <div class="menu-lists">
         <el-card class="!border-none" shadow="never">
             <div>
-                <el-button v-perms="['system:menu:add']" type="primary" @click="handleAdd()">
+                <el-button v-perms="['admin:system:menu:add']" type="primary" @click="handleAdd()">
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
@@ -39,19 +39,14 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column
-                    label="权限标识"
-                    prop="perms"
-                    min-width="150"
-                    show-overflow-tooltip
-                />
+                <el-table-column label="权限标识" prop="perms" min-width="180" />
                 <el-table-column label="状态" prop="isDisable" min-width="100">
                     <template #default="{ row }">
                         <el-tag v-if="row.isDisable == 0">正常</el-tag>
                         <el-tag v-else type="danger">停用</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column label="排序" prop="menuSort" min-width="100" />
+                <el-table-column label="排序" prop="menuSort" min-width="60" />
                 <el-table-column
                     label="更新时间"
                     prop="updateTime"
@@ -60,7 +55,7 @@
                 <el-table-column label="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['system:menu:add']"
+                            v-perms="['admin:system:menu:add']"
                             type="primary"
                             link
                             @click="handleAdd(row.id)"
@@ -68,7 +63,7 @@
                             新增
                         </el-button>
                         <el-button
-                            v-perms="['system:menu:edit']"
+                            v-perms="['admin:system:menu:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -76,7 +71,7 @@
                             编辑
                         </el-button>
                         <el-button
-                            v-perms="['system:menu:del']"
+                            v-perms="['admin:system:menu:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.id)"

@@ -20,7 +20,7 @@
                         :limit="32"
                         @confirm="handleEdit($event, 'username')"
                     >
-                        <el-button type="primary" link v-perms="['user:edit']">
+                        <el-button type="primary" link v-perms="['admin:user:edit']">
                             <icon name="el-icon-EditPen" />
                         </el-button>
                     </popover-input>
@@ -32,7 +32,7 @@
                         :limit="32"
                         @confirm="handleEdit($event, 'realName')"
                     >
-                        <el-button type="primary" link v-perms="['user:edit']">
+                        <el-button type="primary" link v-perms="['admin:user:edit']">
                             <icon name="el-icon-EditPen" />
                         </el-button>
                     </popover-input>
@@ -58,7 +58,7 @@
                         ]"
                         @confirm="handleEdit($event, 'sex')"
                     >
-                        <el-button type="primary" link v-perms="['user:edit']">
+                        <el-button type="primary" link v-perms="['admin:user:edit']">
                             <icon name="el-icon-EditPen" />
                         </el-button>
                     </popover-input>
@@ -70,7 +70,7 @@
                         type="number"
                         @confirm="handleEdit($event, 'mobile')"
                     >
-                        <el-button type="primary" link v-perms="['user:edit']">
+                        <el-button type="primary" link v-perms="['admin:user:edit']">
                             <icon name="el-icon-EditPen" />
                         </el-button>
                     </popover-input>

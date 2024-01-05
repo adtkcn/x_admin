@@ -45,7 +45,7 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div>
-                <el-button v-perms="['{{{ .ModuleName }}}:add']" type="primary" @click="handleAdd()">
+                <el-button v-perms="['admin:{{{ .ModuleName }}}:add']" type="primary" @click="handleAdd()">
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
@@ -87,7 +87,7 @@
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['{{{ .ModuleName }}}:edit']"
+                            v-perms="['admin:{{{ .ModuleName }}}:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -95,7 +95,7 @@
                             编辑
                         </el-button>
                         <el-button
-                            v-perms="['{{{ .ModuleName }}}:del']"
+                            v-perms="['admin:{{{ .ModuleName }}}:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.{{{ .PrimaryKey }}})"

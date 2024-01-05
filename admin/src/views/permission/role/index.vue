@@ -2,7 +2,7 @@
     <div class="role-lists">
         <el-card class="!border-none" shadow="never">
             <div>
-                <el-button v-perms="['system:role:add']" type="primary" @click="handleAdd">
+                <el-button v-perms="['admin:system:role:add']" type="primary" @click="handleAdd">
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
@@ -26,7 +26,7 @@
                         <el-table-column label="操作" width="190" fixed="right">
                             <template #default="{ row }">
                                 <el-button
-                                    v-perms="['system:role:edit']"
+                                    v-perms="['admin:system:role:edit']"
                                     link
                                     type="primary"
                                     @click="handleEdit(row)"
@@ -34,7 +34,7 @@
                                     编辑
                                 </el-button>
                                 <el-button
-                                    v-perms="['system:role:edit']"
+                                    v-perms="['admin:system:role:edit']"
                                     link
                                     type="primary"
                                     @click="handleAuth(row)"
@@ -42,7 +42,7 @@
                                     权限设置
                                 </el-button>
                                 <el-button
-                                    v-perms="['system:role:del']"
+                                    v-perms="['admin:system:role:del']"
                                     link
                                     type="danger"
                                     @click="handleDelete(row.id)"

@@ -47,22 +47,6 @@
                 <el-table-column label="性别" prop="sex" min-width="100" />
                 <el-table-column label="注册来源" prop="channel" min-width="100" />
                 <el-table-column label="注册时间" prop="createTime" min-width="120" />
-                <el-table-column label="操作" width="120" fixed="right">
-                    <template #default="{ row }">
-                        <el-button v-perms="['user:detail']" type="primary" link>
-                            <router-link
-                                :to="{
-                                    path: getRoutePath('user:detail'),
-                                    query: {
-                                        id: row.id
-                                    }
-                                }"
-                            >
-                                详情
-                            </router-link>
-                        </el-button>
-                    </template>
-                </el-table-column>
             </el-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
@@ -72,7 +56,7 @@
 </template>
 <script lang="ts" setup name="consumerLists">
 import { usePaging } from '@/hooks/usePaging'
-import { getRoutePath } from '@/router'
+
 import { getUserList } from '@/api/consumer'
 import { ClientMap } from '@/enums/appEnums'
 const queryParams = reactive({

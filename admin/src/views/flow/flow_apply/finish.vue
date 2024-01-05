@@ -67,7 +67,7 @@
                 <el-table-column label="操作" width="180" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['flow_apply:edit']"
+                            v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
                             @click="OpenViewForm(row)"
@@ -76,7 +76,7 @@
                         </el-button>
 
                         <el-button
-                            v-perms="['flow_apply:del']"
+                            v-perms="['admin:flow:flow_apply:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.id)"

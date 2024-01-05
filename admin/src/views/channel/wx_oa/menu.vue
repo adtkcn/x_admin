@@ -29,10 +29,14 @@ getOaMenuFunc()
         </el-card>
 
         <footer-btns>
-            <el-button type="primary" @click="handleSave" v-perms="['channel:oaMenu:save']">
+            <el-button type="primary" @click="handleSave" v-perms="['admin:channel:oaMenu:save']">
                 保存
             </el-button>
-            <el-button type="primary" @click="handlePublish" v-perms="['channel:oaMenu:publish']">
+            <el-button
+                type="primary"
+                @click="handlePublish"
+                v-perms="['admin:channel:oaMenu:publish']"
+            >
                 发布
             </el-button>
         </footer-btns>

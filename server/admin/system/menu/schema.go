@@ -14,7 +14,7 @@ type SystemAuthMenuAddReq struct {
 	MenuName  string `form:"menuName" binding:"required,min=1,max=30"` // 菜单名称
 	MenuIcon  string `form:"menuIcon" binding:"max=100"`               // 菜单图标
 	MenuSort  int    `form:"menuSort" binding:"gte=0"`                 // 菜单排序
-	Perms     string `form:"perms" binding:"max=100"`                  // 权限标识
+	Perms     string `form:"perms" binding:"max=10000"`                // 权限标识
 	Paths     string `form:"paths" binding:"max=200"`                  // 路由地址
 	Component string `form:"component" binding:"max=200"`              // 前端组件
 	Selected  string `form:"selected" binding:"max=200"`               // 选中路径
@@ -32,7 +32,7 @@ type SystemAuthMenuEditReq struct {
 	MenuName  string `form:"menuName" binding:"required,min=1,max=30"` // 菜单名称
 	MenuIcon  string `form:"menuIcon" binding:"max=100"`               // 菜单图标
 	MenuSort  int    `form:"menuSort" binding:"gte=0"`                 // 菜单排序
-	Perms     string `form:"perms" binding:"max=100"`                  // 权限标识
+	Perms     string `form:"perms" binding:"max=10000"`                // 权限标识
 	Paths     string `form:"paths" binding:"max=200"`                  // 路由地址
 	Component string `form:"component" binding:"max=200"`              // 前端组件
 	Selected  string `form:"selected" binding:"max=200"`               // 选中路径

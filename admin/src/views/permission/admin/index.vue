@@ -36,7 +36,7 @@
             </el-form>
         </el-card>
         <el-card v-loading="pager.loading" class="mt-4 !border-none" shadow="never">
-            <el-button v-perms="['system:admin:add']" type="primary" @click="handleAdd">
+            <el-button v-perms="['admin:system:admin:add']" type="primary" @click="handleAdd">
                 <template #icon>
                     <icon name="el-icon-Plus" />
                 </template>
@@ -60,7 +60,7 @@
                     <el-table-column label="状态" min-width="100">
                         <template #default="{ row }">
                             <el-switch
-                                v-perms="['system:admin:disable']"
+                                v-perms="['admin:system:admin:disable']"
                                 v-if="row.id != 1"
                                 :model-value="row.isDisable"
                                 :active-value="0"
@@ -72,7 +72,7 @@
                     <el-table-column label="操作" width="120" fixed="right">
                         <template #default="{ row }">
                             <el-button
-                                v-perms="['system:admin:edit']"
+                                v-perms="['admin:system:admin:edit']"
                                 type="primary"
                                 link
                                 @click="handleEdit(row)"
@@ -81,7 +81,7 @@
                             </el-button>
                             <el-button
                                 v-if="row.id != 1"
-                                v-perms="['system:admin:del']"
+                                v-perms="['admin:system:admin:del']"
                                 type="danger"
                                 link
                                 @click="handleDelete(row.id)"

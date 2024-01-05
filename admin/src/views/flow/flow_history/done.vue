@@ -33,7 +33,7 @@
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <!-- <el-button
-                            v-perms="['flow_history:edit']"
+                            v-perms="['admin:flow_history:edit']"
                             type="primary"
                             link
                             @click="handleOpen(row)"
@@ -41,7 +41,7 @@
                             审批
                         </el-button> -->
                         <el-button
-                            v-perms="['flow_apply:edit']"
+                            v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
                             @click="OpenViewForm(row)"
@@ -49,7 +49,7 @@
                             {{ row.passStatus == 1 ? '审批' : '预览' }}
                         </el-button>
                         <!-- <el-button
-                            v-perms="['flow_apply:edit']"
+                            v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
                             @click="OpenApplySubmit(row)"

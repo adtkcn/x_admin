@@ -35,7 +35,7 @@ export function createRouteRecord(route: any, firstRoute: boolean): RouteRecordR
             hidden: !route.isShow,
             keepAlive: !!route.isCache,
             title: route.menuName,
-            perms: route.perms,
+            perms: route.perms, //逗号分隔的字符串
             query: route.params,
             icon: route.menuIcon,
             type: route.menuType,
@@ -86,11 +86,11 @@ export function findFirstValidRoute(routes: RouteRecordRaw[]): string | undefine
         }
     }
 }
-//通过权限字符查询路由路径
-export function getRoutePath(perms: string) {
-    const routerObj = useRouter() || router
-    return routerObj.getRoutes().find((item) => item.meta?.perms == perms)?.path || ''
-}
+// //通过权限字符查询路由路径
+// export function getRoutePath(perms: string) {
+//     const routerObj = useRouter() || router
+//     return routerObj.getRoutes().find((item) => item.meta?.perms.split(',').includes(perms))?.path || ''
+// }
 
 // 重置路由
 export function resetRouter() {

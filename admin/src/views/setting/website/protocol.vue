@@ -25,7 +25,7 @@
             <editor class="mb-10" v-model="formData.privacy.content" height="500"></editor>
         </el-card>
     </div>
-    <footer-btns v-perms="['setting:protocol:save']">
+    <footer-btns v-perms="['admin:setting:protocol:save']">
         <el-button type="primary" @click="handelSave">保存</el-button>
     </footer-btns>
 </template>

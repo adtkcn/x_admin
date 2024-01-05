@@ -36,14 +36,18 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div>
-                <el-button v-perms="['setting:dict:data:add']" type="primary" @click="handleAdd">
+                <el-button
+                    v-perms="['admin:setting:dict:data:add']"
+                    type="primary"
+                    @click="handleAdd"
+                >
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
                     添加数据
                 </el-button>
                 <el-button
-                    v-perms="['setting:dict:data:del']"
+                    v-perms="['admin:setting:dict:data:del']"
                     :disabled="!selectData.length"
                     type="danger"
                     @click="handleDelete(selectData)"
@@ -86,7 +90,7 @@
                         <el-table-column label="操作" width="120" fixed="right">
                             <template #default="{ row }">
                                 <el-button
-                                    v-perms="['setting:dict:data:edit']"
+                                    v-perms="['admin:setting:dict:data:edit']"
                                     link
                                     type="primary"
                                     @click="handleEdit(row)"
@@ -94,7 +98,7 @@
                                     编辑
                                 </el-button>
                                 <el-button
-                                    v-perms="['setting:dict:data:del']"
+                                    v-perms="['admin:setting:dict:data:del']"
                                     link
                                     type="danger"
                                     @click="handleDelete([row.id])"

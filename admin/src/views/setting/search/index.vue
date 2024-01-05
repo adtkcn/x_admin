@@ -44,7 +44,7 @@
                         <el-table-column label="操作" min-width="80" fixed="right">
                             <template #default="{ $index }">
                                 <el-button
-                                    v-perms="['setting:storage:edit']"
+                                    v-perms="['admin:setting:storage:edit']"
                                     type="danger"
                                     link
                                     @click="handleDel($index)"
@@ -81,7 +81,7 @@
             </div>
         </el-card>
 
-        <footer-btns v-perms="['setting:search:save']">
+        <footer-btns v-perms="['admin:setting:search:save']">
             <el-button type="primary" @click="handleSave">保存</el-button>
         </footer-btns>
     </div>

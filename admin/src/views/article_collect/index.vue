@@ -16,19 +16,18 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div>
-                <el-button v-perms="['article_collect:add']" type="primary" @click="handleAdd()">
+                <el-button
+                    v-perms="['admin:article_collect:add']"
+                    type="primary"
+                    @click="handleAdd()"
+                >
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
                     新增
                 </el-button>
             </div>
-            <el-table
-                class="mt-4"
-                size="large"
-                v-loading="pager.loading"
-                :data="pager.lists"
-            >
+            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="用户ID" prop="userId" min-width="100" />
                 <el-table-column label="文章ID" prop="articleId" min-width="100" />
                 <el-table-column label="创建时间" prop="createTime" min-width="100" />
@@ -36,7 +35,7 @@
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['article_collect:edit']"
+                            v-perms="['admin:article_collect:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -44,7 +43,7 @@
                             编辑
                         </el-button>
                         <el-button
-                            v-perms="['article_collect:del']"
+                            v-perms="['admin:article_collect:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.id)"
@@ -58,12 +57,7 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup
-            v-if="showEdit"
-            ref="editRef"
-            @success="getLists"
-            @close="showEdit = false"
-        />
+        <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
 <script lang="ts" setup name="article_collect">
@@ -75,14 +69,13 @@ const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({
     userId: '',
-    articleId: '',
+    articleId: ''
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
     fetchFun: article_collect_lists,
     params: queryParams
 })
-
 
 const handleAdd = async () => {
     showEdit.value = true

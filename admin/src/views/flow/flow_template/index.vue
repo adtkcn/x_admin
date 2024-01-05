@@ -19,7 +19,11 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div>
-                <el-button v-perms="['flow_template:add']" type="primary" @click="handleAdd()">
+                <el-button
+                    v-perms="['admin:flow_template:add']"
+                    type="primary"
+                    @click="handleAdd()"
+                >
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
@@ -39,7 +43,7 @@
                 <el-table-column label="操作" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['flow_template:edit']"
+                            v-perms="['admin:flow_template:edit']"
                             type="primary"
                             link
                             @click="handleConfig(row)"
@@ -47,7 +51,7 @@
                             配置
                         </el-button>
                         <!-- <el-button
-                            v-perms="['flow_template:edit']"
+                            v-perms="['admin:flow_template:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -55,7 +59,7 @@
                             编辑
                         </el-button> -->
                         <el-button
-                            v-perms="['flow_template:del']"
+                            v-perms="['admin:flow_template:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.id)"

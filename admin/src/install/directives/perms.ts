@@ -1,7 +1,7 @@
 /**
  * perm 操作权限处理
  * 指令用法：
- *  <el-button v-perms="['auth.menu/edit']">编辑</el-button>
+ *  <el-button v-perms="['admin:auth.menu/edit']">编辑</el-button>
  */
 
 import useUserStore from '@/stores/modules/user'

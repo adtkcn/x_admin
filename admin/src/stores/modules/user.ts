@@ -68,7 +68,15 @@ const useUserStore = defineStore({
                 getUserInfo()
                     .then((data) => {
                         this.userInfo = data.user
-                        this.perms = data.permissions
+                        const permissions = []
+                        data.permissions.forEach((item: any) => {
+                            if (item) {
+                                item.split(',').forEach((item: any) => {
+                                    permissions.push(item)
+                                })
+                            }
+                        })
+                        this.perms = permissions
                         resolve(data)
                     })
                     .catch((error) => {

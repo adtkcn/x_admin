@@ -27,7 +27,7 @@
         <el-card class="!border-none mt-4" shadow="never" v-loading="pager.loading">
             <div class="flex">
                 <data-table
-                    v-perms="['gen:importTable']"
+                    v-perms="['admin:gen:importTable']"
                     class="inline-block mr-[10px]"
                     @success="getLists"
                 >
@@ -39,7 +39,7 @@
                     </el-button>
                 </data-table>
                 <el-button
-                    v-perms="['gen:delTable']"
+                    v-perms="['admin:gen:delTable']"
                     :disabled="!selectData.length"
                     @click="handleDelete()"
                     type="danger"
@@ -50,7 +50,7 @@
                     删除
                 </el-button>
                 <el-button
-                    v-perms="['gen:genCode', 'gen:downloadCode']"
+                    v-perms="['admin:gen:genCode', 'admin:gen:downloadCode']"
                     :disabled="!selectData.length"
                     @click="handleGenerate(selectData)"
                 >
@@ -72,7 +72,7 @@
                         <template #default="{ row }">
                             <div class="flex items-center">
                                 <el-button
-                                    v-perms="['gen:previewCode']"
+                                    v-perms="['admin:gen:previewCode']"
                                     type="primary"
                                     link
                                     @click="handlePreview(row.id)"
@@ -80,10 +80,10 @@
                                     预览
                                 </el-button>
 
-                                <el-button type="primary" link v-perms="['gen:editTable']">
+                                <el-button type="primary" link v-perms="['admin:gen:editTable']">
                                     <router-link
                                         :to="{
-                                            path: getRoutePath('gen:editTable'),
+                                            path: '/dev_tools/dev_tools/code/edit',
                                             query: {
                                                 id: row.id
                                             }
@@ -96,10 +96,10 @@
                                     class="ml-2"
                                     @command="handleCommand($event, row)"
                                     v-perms="[
-                                        'gen:genCode',
-                                        'gen:downloadCode',
-                                        'gen:syncTable',
-                                        'gen:delTable'
+                                        'admin:gen:genCode',
+                                        'admin:gen:downloadCode',
+                                        'admin:gen:syncTable',
+                                        'admin:gen:delTable'
                                     ]"
                                 >
                                     <el-button type="primary" link>
@@ -109,21 +109,26 @@
 
                                     <template #dropdown>
                                         <el-dropdown-menu>
-                                            <div v-perms="['gen:genCode', 'gen:downloadCode']">
+                                            <div
+                                                v-perms="[
+                                                    'admin:gen:genCode',
+                                                    'admin:gen:downloadCode'
+                                                ]"
+                                            >
                                                 <el-dropdown-item command="generate">
                                                     <el-button type="primary" link>
                                                         生成代码
                                                     </el-button>
                                                 </el-dropdown-item>
                                             </div>
-                                            <div v-perms="['gen:syncTable']">
+                                            <div v-perms="['admin:gen:syncTable']">
                                                 <el-dropdown-item command="sync">
                                                     <el-button type="primary" link>
                                                         同步
                                                     </el-button>
                                                 </el-dropdown-item>
                                             </div>
-                                            <div v-perms="['gen:delTable']">
+                                            <div v-perms="['admin:gen:delTable']">
                                                 <el-dropdown-item command="delete">
                                                     <el-button type="danger" link> 删除 </el-button>
                                                 </el-dropdown-item>
@@ -161,7 +166,6 @@ import DataTable from '../components/data-table.vue'
 import CodePreview from '../components/code-preview.vue'
 import feedback from '@/utils/feedback'
 import { streamFileDownload } from '@/utils/file'
-import { getRoutePath } from '@/router'
 
 const formData = reactive({
     tableName: '',

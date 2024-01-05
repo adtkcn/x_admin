@@ -7,7 +7,7 @@
                 <attr-setting class="flex-1" :widget="getSelectWidget" />
             </div>
         </el-card>
-        <footer-btns class="mt-4" :fixed="false" v-perms="['decorate:pages:save']">
+        <footer-btns class="mt-4" :fixed="false" v-perms="['admin:decorate:pages:save']">
             <el-button type="primary" @click="setData">保存</el-button>
         </footer-btns>
     </div>

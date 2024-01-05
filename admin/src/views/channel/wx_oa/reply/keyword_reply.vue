@@ -11,7 +11,7 @@
         <el-card class="!border-none mt-4" shadow="never">
             <div>
                 <el-button
-                    v-perms="['channel:oaReplyKeyword:add']"
+                    v-perms="['admin:channel:oaReplyKeyword:add']"
                     class="mb-4"
                     type="primary"
                     @click="handleAdd()"
@@ -39,7 +39,7 @@
                 <el-table-column label="状态" min-width="120">
                     <template #default="{ row }">
                         <el-switch
-                            v-perms="['channel:oaReplyKeyword:status']"
+                            v-perms="['admin:channel:oaReplyKeyword:status']"
                             v-model="row.status"
                             :active-value="1"
                             :inactive-value="0"
@@ -51,7 +51,7 @@
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['channel:oaReplyKeyword:edit']"
+                            v-perms="['admin:channel:oaReplyKeyword:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -59,7 +59,7 @@
                             编辑
                         </el-button>
                         <el-button
-                            v-perms="['channel:oaReplyKeyword:del']"
+                            v-perms="['admin:channel:oaReplyKeyword:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.id)"
