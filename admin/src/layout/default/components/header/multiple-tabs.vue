@@ -59,8 +59,12 @@ const handleCommand = (command: any) => {
 </script>
 <style lang="scss" scoped>
 .app-tabs {
-    border-top: 1px solid var(--el-border-color);
-    // border-color: var(--el-border-color);
+    border-top: 1px solid rgba($color: #ccc, $alpha: 0.4);
+    // border-bottom: 4px solid rgba($color: var(--el-bg-color-page), $alpha: 0.4);
+
+    border-bottom-width: 6px;
+    border-bottom-style: solid;
+    border-bottom-color: var(--el-bg-color-page);
 
     :deep(.el-tabs) {
         height: 40px;

@@ -100,6 +100,8 @@ watch(
 <style lang="scss" scoped>
 .decoration-pages {
     min-height: calc(100vh - var(--navbar-height) - 80px);
-    @apply flex flex-col;
+
+    display: flex;
+    flex-direction: column;
 }
 </style>

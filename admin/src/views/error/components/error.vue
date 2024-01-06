@@ -47,7 +47,7 @@ onUnmounted(() => {
     justify-content: center;
     align-items: center;
     .error-code {
-        @apply text-primary;
+        color: var(--el-color-primary);
         font-size: 150px;
     }
     .el-button {

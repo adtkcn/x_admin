@@ -156,7 +156,10 @@ onMounted(() => {
 <style lang="scss" scoped>
 .login {
     background-image: url('./images/login_bg.png');
-    @apply min-h-screen bg-no-repeat bg-center bg-cover;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+
     .login-card {
         height: 400px;
     }

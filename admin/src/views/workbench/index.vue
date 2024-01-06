@@ -139,17 +139,17 @@ const workbenchData: any = reactive({
         {
             name: '管理员',
             image: menu_admin,
-            url: '/permission/admin'
+            url: '/setting/permission/admin'
         },
         {
             name: '角色管理',
             image: menu_role,
-            url: '/permission/role'
+            url: '/setting/permission/role'
         },
         {
             name: '部门管理',
             image: menu_dept,
-            url: '/organization/department'
+            url: '/setting/organization/department'
         },
         {
             name: '字典管理',
@@ -169,7 +169,7 @@ const workbenchData: any = reactive({
         {
             name: '菜单权限',
             image: menu_auth,
-            url: '/permission/menu'
+            url: '/setting/permission/menu'
         },
         {
             name: '网站信息',
