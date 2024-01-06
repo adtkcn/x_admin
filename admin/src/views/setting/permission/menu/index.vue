@@ -24,22 +24,32 @@
                     prop="menuName"
                     min-width="150"
                     show-overflow-tooltip
-                />
-                <el-table-column label="类型" prop="menuType" min-width="80">
+                ></el-table-column>
+                <el-table-column label="类型" prop="menuType" width="60">
                     <template #default="{ row }">
                         <div v-if="row.menuType == MenuEnum.CATALOGUE">目录</div>
                         <div v-else-if="row.menuType == MenuEnum.MENU">菜单</div>
                         <div v-else-if="row.menuType == MenuEnum.BUTTON">按钮</div>
                     </template>
                 </el-table-column>
-                <el-table-column label="图标" prop="menuIcon" min-width="80">
+                <el-table-column label="图标" prop="menuIcon" width="60">
                     <template #default="{ row }">
                         <div class="flex">
                             <icon :name="row.menuIcon" :size="20" />
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="权限标识" prop="perms" min-width="180" />
+
+                <el-table-column label="路径" prop="paths" min-width="120" />
+                <el-table-column label="权限标识" prop="permsArr" min-width="180">
+                    <template #default="{ row }">
+                        <div v-if="row.perms">
+                            <el-tag v-for="item in row.perms.split(',')" :key="item" type="info">{{
+                                item
+                            }}</el-tag>
+                        </div>
+                    </template>
+                </el-table-column>
                 <el-table-column label="状态" prop="isDisable" min-width="100">
                     <template #default="{ row }">
                         <el-tag v-if="row.isDisable == 0">正常</el-tag>
@@ -50,7 +60,7 @@
                 <el-table-column
                     label="更新时间"
                     prop="updateTime"
-                    min-width="180"
+                    min-width="120"
                 ></el-table-column>
                 <el-table-column label="操作" width="160" fixed="right">
                     <template #default="{ row }">
@@ -102,7 +112,10 @@ const getLists = async () => {
     loading.value = true
     try {
         const data = await menuLists()
-        lists.value = data
+
+        lists.value = data.map((item: any) => {
+            return item
+        })
         loading.value = false
     } catch (error) {
         loading.value = false
