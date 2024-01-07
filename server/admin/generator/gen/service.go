@@ -95,7 +95,7 @@ func (genSrv generateService) List(page request.PageReq, listReq ListTableReq) (
 	}
 	// 数据
 	var genResp []GenTableResp
-	err = genModel.Limit(limit).Offset(offset).Find(&genResp).Error
+	err = genModel.Limit(limit).Offset(offset).Order("id desc").Find(&genResp).Error
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
 	}
