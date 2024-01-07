@@ -1,8 +1,15 @@
 body {
-    @apply text-base text-tx-primary overflow-hidden min-w-[375px];
+    font-family: '微软雅黑';
+    font-size: var(--el-font-size-base);
+    color: var(--el-text-color-primary);
+    overflow: hidden;
+    min-width: 375px;
 }
 .form-tips {
-    @apply text-tx-secondary text-xs leading-6 mt-1;
+    color: var(--el-text-color-secondary);
+    font-size: var(--el-font-size-extra-small);
+    line-height: 24px;
+    margin-top: 4px;
 }
 
 .clearfix:after {
@@ -14,7 +21,7 @@ body {
 
 /* NProgress */
 #nprogress .bar {
-    @apply bg-primary #{!important};
+    background-color: var(--el-color-primary);
 }
 
 a {

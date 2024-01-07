@@ -43,7 +43,7 @@ const config = computed(() => appStore.config)
     .logo-title {
         width: 70%;
         position: absolute;
-        @apply text-xl;
+        font-size: var(--el-font-size-large);
     }
 
     .title-width-enter-active {

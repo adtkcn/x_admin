@@ -38,7 +38,7 @@
             border-bottom: 1px solid var(--el-border-color-lighter);
         }
         &__title {
-            @apply text-tx-primary;
+            color: var(--el-text-color-primary);
         }
     }
 
@@ -67,7 +67,9 @@
             .el-menu {
                 .el-menu-item {
                     &.is-active {
-                        @apply bg-primary-light-9 border-primary border-r-2;
+                        border-right-width: 2px;
+                        border-color: var(--el-color-primary);
+                        background-color: var(--el-color-primary-light-9);
                     }
                 }
                 .el-menu-item:hover,
@@ -80,7 +82,7 @@
             .el-menu {
                 .el-menu-item {
                     &.is-active {
-                        @apply bg-primary;
+                        background-color: var(--el-color-primary);
                     }
                 }
             }

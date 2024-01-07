@@ -14,7 +14,7 @@
 ## 体验 
 
 
-本仓库演示地址：http://likeadmin.adtk.cn <br>
+本仓库演示地址：http://x.adtk.cn <br>
 原仓库演示地址：https://go-admin.likeadmin.cn <br>
 账号：admin 密码：123456
     

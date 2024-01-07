@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, defineProps, defineEmits } from 'vue'
+import { ref, reactive } from 'vue'
 import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
 // import { flow_apply_detail } from '@/api/flow/flow_apply'
 

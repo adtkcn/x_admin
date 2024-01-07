@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { Close } from '@element-plus/icons-vue'
 const props = defineProps({
     node: {

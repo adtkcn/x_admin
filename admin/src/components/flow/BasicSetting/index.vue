@@ -27,7 +27,7 @@
                         v-for="item in dictData.flow_group"
                         :key="item.id"
                         :label="item.name"
-                        :value="item.value"
+                        :value="parseInt(item.value)"
                     ></el-option>
                 </el-select>
             </el-form-item>
@@ -80,37 +80,7 @@ export default {
                     }
                 ]
             },
-            // iconList,
-            flowGroupOptions: [
-                {
-                    label: '假勤管理',
-                    value: 1
-                },
-                {
-                    label: '人事管理',
-                    value: 2
-                },
-                {
-                    label: '财务管理',
-                    value: 3
-                },
-                {
-                    label: '业务管理',
-                    value: 4
-                },
-                {
-                    label: '行政管理',
-                    value: 5
-                },
-                {
-                    label: '法务管理',
-                    value: 6
-                },
-                {
-                    label: '其他',
-                    value: 7
-                }
-            ],
+
             dictData: {
                 flow_group: []
             }

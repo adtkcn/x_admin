@@ -40,7 +40,7 @@ const styles = computed<CSSProperties>(() => {
 .el-image {
     display: block;
     .el-image__error {
-        @apply text-xs;
+        font-size: var(--el-font-size-extra-small);
     }
 }
 </style>
