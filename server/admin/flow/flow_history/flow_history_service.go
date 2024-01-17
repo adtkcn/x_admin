@@ -296,6 +296,7 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 			TemplateId:        applyDetail.TemplateId,
 			ApplyUserNickname: applyDetail.ApplyUserNickname,
 			ApproverId:        0,
+			ApproverNickname:  "",
 		}
 		if v.Type == "bpmn:startEvent" {
 			flow.ApproverId = 0
@@ -310,8 +311,15 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 			// 发邮件之类的，待完善
 		} else if v.Type == "bpmn:userTask" {
 			isUserTask = true
-			flow.ApproverId = pass.NextNodeAdminId
 			flow.PassStatus = 1 //1待处理
+			flow.ApproverId = pass.NextNodeAdminId
+			Approver, err := admin.Service.Detail(uint(pass.NextNodeAdminId))
+			if err != nil {
+				return err
+			} else {
+				flow.ApproverNickname = Approver.Nickname
+			}
+
 		} else if v.Type == "bpmn:endEvent" {
 			isEndTask = true
 			flow.ApproverId = 0
@@ -398,6 +406,7 @@ func (Service flowHistoryService) Back(back BackReq) (e error) {
 				ApplyUserId:       FirstHistory.ApplyUserId,
 				ApplyUserNickname: FirstHistory.ApplyUserNickname,
 				ApproverId:        0,
+				ApproverNickname:  "",
 				PassStatus:        1, //
 				PassRemark:        "",
 			}
@@ -444,6 +453,7 @@ func (Service flowHistoryService) Back(back BackReq) (e error) {
 				TemplateId:        historyDetail.TemplateId,
 				ApplyUserNickname: historyDetail.ApplyUserNickname,
 				ApproverId:        historyDetail.ApproverId,
+				ApproverNickname:  historyDetail.ApplyUserNickname,
 
 				PassStatus: 1, //
 				PassRemark: "",
