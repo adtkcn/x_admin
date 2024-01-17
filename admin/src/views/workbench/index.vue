@@ -73,25 +73,7 @@
                 </div>
             </el-card>
         </div>
-        <div class="function mb-4">
-            <el-card class="flex-1 !border-none" shadow="never">
-                <template #header>
-                    <span>常用功能</span>
-                </template>
-                <div class="flex flex-wrap">
-                    <div
-                        v-for="item in workbenchData.menu"
-                        class="md:w-[12.5%] w-1/4 flex flex-col items-center"
-                        :key="item"
-                    >
-                        <router-link :to="item.url" class="mb-3 flex flex-col items-center">
-                            <img width="40" height="40" :src="item.image" />
-                            <div class="mt-2">{{ item.name }}</div>
-                        </router-link>
-                    </div>
-                </div>
-            </el-card>
-        </div>
+
         <div class="md:flex">
             <el-card class="flex-1 !border-none md:mr-4 mb-4" shadow="never">
                 <template #header>
@@ -113,14 +95,6 @@
 import { getWorkbench } from '@/api/app'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'
-import menu_admin from './image/menu_admin.png'
-import menu_role from './image/menu_role.png'
-import menu_dept from './image/menu_dept.png'
-import menu_dict from './image/menu_dict.png'
-import menu_generator from './image/menu_generator.png'
-import menu_file from './image/menu_file.png'
-import menu_auth from './image/menu_auth.png'
-import menu_web from './image/menu_web.png'
 
 // 表单数据
 const workbenchData: any = reactive({
@@ -135,48 +109,7 @@ const workbenchData: any = reactive({
     },
 
     today: {}, // 今日数据
-    menu: [
-        {
-            name: '管理员',
-            image: menu_admin,
-            url: '/setting/permission/admin'
-        },
-        {
-            name: '角色管理',
-            image: menu_role,
-            url: '/setting/permission/role'
-        },
-        {
-            name: '部门管理',
-            image: menu_dept,
-            url: '/setting/organization/department'
-        },
-        {
-            name: '字典管理',
-            image: menu_dict,
-            url: '/dev_tools/dict'
-        },
-        {
-            name: '代码生成器',
-            image: menu_generator,
-            url: '/dev_tools/code'
-        },
-        {
-            name: '素材中心',
-            image: menu_file,
-            url: '/material/index'
-        },
-        {
-            name: '菜单权限',
-            image: menu_auth,
-            url: '/setting/permission/menu'
-        },
-        {
-            name: '网站信息',
-            image: menu_web,
-            url: '/setting/website/information'
-        }
-    ], // 常用功能
+
     visitor: [], // 访问量
     article: [], // 文章阅读量
 
