@@ -1,6 +1,7 @@
 package flow_apply
 
 import (
+	"errors"
 	"x_admin/admin/flow/flow_template"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -65,6 +66,7 @@ func (Service flowApplyService) List(page request.PageReq, listReq FlowApplyList
 	if listReq.Status > 0 {
 		dbModel = dbModel.Where("status = ?", listReq.Status)
 	}
+	dbModel = dbModel.Where("is_delete = ?", 0)
 	// 总数
 	var count int64
 	err := dbModel.Count(&count).Error
@@ -90,7 +92,7 @@ func (Service flowApplyService) List(page request.PageReq, listReq FlowApplyList
 // Detail 申请流程详情
 func (Service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
 	var obj model.FlowApply
-	err := Service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := Service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
@@ -124,7 +126,7 @@ func (Service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
 // Edit 申请流程编辑
 func (Service flowApplyService) Edit(editReq FlowApplyEditReq) (e error) {
 	var obj model.FlowApply
-	err := Service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
+	err := Service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -142,7 +144,7 @@ func (Service flowApplyService) Edit(editReq FlowApplyEditReq) (e error) {
 // Del 申请流程删除
 func (Service flowApplyService) Del(id int) (e error) {
 	var obj model.FlowApply
-	err := Service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := Service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -150,8 +152,14 @@ func (Service flowApplyService) Del(id int) (e error) {
 	if e = response.CheckErr(err, "Del First err"); e != nil {
 		return
 	}
+	if obj.Status == 2 {
+		// 审批中不允许删除
+		e = errors.New("审批中不允许删除")
+		return
+	}
 	// 删除
-	err = Service.db.Delete(&obj).Error
-	e = response.CheckErr(err, "Del Delete err")
+	obj.IsDelete = 1
+	err = Service.db.Save(&obj).Error
+	e = response.CheckErr(err, "Del Save err")
 	return
 }
