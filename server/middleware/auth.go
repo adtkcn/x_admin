@@ -29,6 +29,9 @@ func TokenAuth() gin.HandlerFunc {
 
 		// Token是否为空
 		token := c.Request.Header.Get("token")
+		if token == "" { // 从url获取token
+			token = c.Request.URL.Query().Get("token")
+		}
 		if token == "" {
 			response.Fail(c, response.TokenEmpty)
 			c.Abort()
