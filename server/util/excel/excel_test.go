@@ -66,3 +66,11 @@ func TestImports(t *testing.T) {
 		fmt.Println(t)
 	}
 }
+
+func TestGetExcelColumnName(t *testing.T) {
+	for i := 0; i < 100; i++ {
+		var col = GetExcelColumnName(i)
+		fmt.Println("col:", col)
+	}
+
+}

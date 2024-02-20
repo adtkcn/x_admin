@@ -16,11 +16,23 @@ import (
 func GetExcelColumnName(columnNumber int) string {
 	columnName := ""
 	for columnNumber > 0 {
-		columnNumber--
-		columnName = fmt.Sprint('A'+columnNumber%26) + columnName
-		columnNumber /= 26
+		remainder := (columnNumber - 1) % 26
+		columnName = string('A'+remainder) + columnName
+		columnNumber = (columnNumber - 1) / 26
 	}
 	return columnName
+}
+
+// NormalDynamicExport 导出excel
+// ** 需要在传入的结构体中的字段加上tag：excelize:"title:列头名称;index:列下标(从0开始);"
+// list 需要导出的对象数组、sheet sheet名称、title 标题、isGhbj 是否设置隔行背景色
+func NormalDynamicExport(list interface{}, sheet, title, fields string, isGhbj, isIgnore bool, changeHead map[string]string) (file *excelize.File, err error) {
+	e := ExcelInit()
+	err = ExportExcel(sheet, title, fields, isGhbj, isIgnore, list, changeHead, e)
+	if err != nil {
+		return
+	}
+	return e.F, err
 }
 
 // ExportExcel excel导出
@@ -45,44 +57,6 @@ func ExportExcel(sheet, title, fields string, isGhbj, isIgnore bool, list interf
 	// 构造数据行
 	err = normalBuildDataRow(e, sheet, endColName, fields, dataRow, isGhbj, isIgnore, dataValue)
 	return
-}
-
-// ================================= 普通导出 =================================
-
-// NormalDownLoad 导出excel并下载（单个sheet）
-func NormalDownLoad(fileName, sheet, title string, isGhbj bool, list interface{}, res http.ResponseWriter) error {
-	f, err := NormalDynamicExport(list, sheet, title, "", isGhbj, false, nil)
-	if err != nil {
-		return err
-	}
-	DownLoadExcel(fileName, res, f)
-	return nil
-}
-
-// NormalDynamicDownLoad 动态导出excel并下载（单个sheet）
-// isIgnore 是否忽略指定字段（true 要忽略的字段 false 要导出的字段）
-// fields 选择的字段，多个字段用逗号隔开，最后一个字段后面也要加逗号，如：字段1,字段2,字段3,
-// changeHead 要改变表头的字段，格式是{"字段1":"更改的表头1","字段2":"更改的表头2"}
-func NormalDynamicDownLoad(fileName, sheet, title, fields string, isGhbj, isIgnore bool,
-	list interface{}, changeHead map[string]string, res http.ResponseWriter) error {
-	f, err := NormalDynamicExport(list, sheet, title, fields, isGhbj, isIgnore, changeHead)
-	if err != nil {
-		return err
-	}
-	DownLoadExcel(fileName, res, f)
-	return nil
-}
-
-// NormalDynamicExport 导出excel
-// ** 需要在传入的结构体中的字段加上tag：excelize:"title:列头名称;index:列下标(从0开始);"
-// list 需要导出的对象数组、sheet sheet名称、title 标题、isGhbj 是否设置隔行背景色
-func NormalDynamicExport(list interface{}, sheet, title, fields string, isGhbj, isIgnore bool, changeHead map[string]string) (file *excelize.File, err error) {
-	e := ExcelInit()
-	err = ExportExcel(sheet, title, fields, isGhbj, isIgnore, list, changeHead, e)
-	if err != nil {
-		return
-	}
-	return e.F, err
 }
 
 // 构造表头（endColName 最后一列的列名 dataRow 数据行开始的行号）

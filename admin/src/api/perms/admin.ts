@@ -1,5 +1,6 @@
 import request from '@/utils/request'
-
+import queryString from 'query-string'
+import { getToken } from '@/utils/auth'
 // 管理员列表
 export function adminLists(params: any) {
     return request.get({ url: '/system/admin/list', params })
@@ -33,4 +34,11 @@ export function adminStatus(params: any) {
 // 部门下的管理员
 export function adminListByDeptId(params: any) {
     return request.get({ url: '/system/admin/ListByDeptId', params })
+}
+
+// 导出
+export function adminExportFile(params: any) {
+    // return request.get({ url: '/system/admin/ExportFile', params })
+    return (window.location.href =
+        `/api/admin/system/admin/ExportFile?token=${getToken()}&` + queryString.stringify(params))
 }

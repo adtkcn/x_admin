@@ -52,7 +52,7 @@
                 </el-table-column>
                 <el-table-column label="状态" prop="isDisable" min-width="100">
                     <template #default="{ row }">
-                        <el-tag v-if="row.isDisable == 0">正常</el-tag>
+                        <el-tag v-if="row.isDisable == 0" type="primary">正常</el-tag>
                         <el-tag v-else type="danger">停用</el-tag>
                     </template>
                 </el-table-column>

@@ -7,14 +7,17 @@
         "auto-imports.d.ts",
         "typings/**/*.d.ts"
     ],
+    "exclude": ["dist"],
     "compilerOptions": {
         "module": "esnext",
         "moduleResolution": "node",
         "allowJs": true,
+        "outDir": "./dist",
         "isolatedModules": true,
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
-        }
+        },
+        "types": ["element-plus/global"]
     }
 }

@@ -5,7 +5,7 @@
                 <el-table-column label="短信渠道" prop="name" min-width="120" />
                 <el-table-column label="状态" min-width="120">
                     <template #default="{ row }">
-                        <el-tag v-if="row.status == 1">开启</el-tag>
+                        <el-tag type="primary" v-if="row.status == 1">开启</el-tag>
                         <el-tag type="danger" v-else>关闭</el-tag>
                     </template>
                 </el-table-column>

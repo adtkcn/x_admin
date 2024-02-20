@@ -68,7 +68,7 @@
                         <el-table-column label="字典类型" prop="dictType" min-width="120" />
                         <el-table-column label="状态">
                             <template v-slot="{ row }">
-                                <el-tag v-if="row.dictStatus == 1">正常</el-tag>
+                                <el-tag v-if="row.dictStatus == 1" type="primary">正常</el-tag>
                                 <el-tag v-else type="danger">停用</el-tag>
                             </template>
                         </el-table-column>

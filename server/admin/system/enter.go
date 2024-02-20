@@ -30,6 +30,8 @@ func AdminRoute(rg *gin.RouterGroup) {
 	rg.POST("/admin/del", middleware.RecordLog("管理员删除"), handle.Del)
 	rg.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handle.Disable)
 
+	rg.GET("/admin/ExportFile", middleware.RecordLog("管理员导出"), handle.ExportFile)
+
 }
 func RoleRoute(rg *gin.RouterGroup) {
 	// db := core.GetDB()

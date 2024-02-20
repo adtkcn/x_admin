@@ -3,23 +3,13 @@
         <el-card class="!border-none" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
                 <el-form-item label="管理员账号">
-                    <el-input
-                        v-model="formData.username"
-                        class="w-[280px]"
-                        clearable
-                        @keyup.enter="resetPage"
-                    />
+                    <el-input v-model="formData.username" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="管理员名称">
-                    <el-input
-                        v-model="formData.nickname"
-                        class="w-[280px]"
-                        clearable
-                        @keyup.enter="resetPage"
-                    />
+                    <el-input v-model="formData.nickname" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="管理员角色">
-                    <el-select class="w-[280px]" v-model="formData.role">
+                    <el-select v-model="formData.role">
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in optionsData.role"
@@ -42,6 +32,13 @@
                 </template>
                 新增
             </el-button>
+            <el-button type="primary" @click="exportFile">
+                <template #icon>
+                    <icon name="el-icon-Download" />
+                </template>
+                导出
+            </el-button>
+
             <div class="mt-4">
                 <el-table :data="pager.lists" size="large">
                     <el-table-column label="ID" prop="id" min-width="60" />
@@ -101,7 +98,7 @@
 </template>
 
 <script lang="ts" setup name="admin">
-import { adminLists, adminDelete, adminStatus } from '@/api/perms/admin'
+import { adminLists, adminDelete, adminStatus, adminExportFile } from '@/api/perms/admin'
 import { roleAll } from '@/api/perms/role'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
@@ -135,7 +132,10 @@ const handleAdd = async () => {
     await nextTick()
     editRef.value?.open('add')
 }
-
+const exportFile = async () => {
+    await feedback.confirm('确定要导出？')
+    await adminExportFile(formData)
+}
 const handleEdit = async (data: any) => {
     showEdit.value = true
     await nextTick()

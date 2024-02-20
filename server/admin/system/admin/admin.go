@@ -5,6 +5,7 @@ import (
 	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	"x_admin/util/excel"
 
 	"x_admin/util"
 
@@ -42,6 +43,28 @@ func (ah AdminHandler) Self(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
 	res, err := Service.Self(adminId)
 	response.CheckAndRespWithData(c, res, err)
+}
+
+func (ah AdminHandler) ExportFile(c *gin.Context) {
+	var listReq SystemAuthAdminListReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := Service.ExportFile(listReq)
+	if err != nil {
+		response.FailWithMsg(c, response.SystemError, "查询导出失败")
+		return
+	}
+	f, err := excel.NormalDynamicExport(res, "Sheet1", "用户信息", "", true, false, nil)
+	if err != nil {
+		response.FailWithMsg(c, response.SystemError, "导出失败")
+		return
+	}
+	excel.DownLoadExcel("用户信息", c.Writer, f)
+	// c.Header("Content-Type", "application/octet-stream")
+	// c.Header("Content-Disposition", "attachment; filename="+"用户信息.xlsx")
+	// c.Header("Content-Transfer-Encoding", "binary")
+	// f.Write(c.Writer)
 }
 
 // list 管理员列表
@@ -114,12 +137,12 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 	response.CheckAndResp(c, Service.Disable(c, disableReq.ID))
 }
 
-//	@Summary		获取部门的用户
-//	@Description	获取部门的用户
-//	@Tags			管理员
-//	@Param			deptId	path		int					true	"部门id"
-//	@Success		200		{object}	response.Response	"{"code": 200, "data": []}"
-//	@Router			/system/admin/ListByDeptId/{deptId} [get]
+// @Summary		获取部门的用户
+// @Description	获取部门的用户
+// @Tags			管理员
+// @Param			deptId	path		int					true	"部门id"
+// @Success		200		{object}	response.Response	"{"code": 200, "data": []}"
+// @Router			/system/admin/ListByDeptId/{deptId} [get]
 func (ah AdminHandler) ListByDeptId(c *gin.Context) {
 	deptIdStr, bool := c.GetQuery("deptId")
 	if bool == false {

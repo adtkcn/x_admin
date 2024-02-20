@@ -41,8 +41,8 @@ export default ({ mode }) => {
                 }
             }),
             Components({
-                directoryAsNamespace: true
-                // resolvers: [ElementPlusResolver()]
+                directoryAsNamespace: true,
+                resolvers: [ElementPlusResolver()]
             }),
             // createStyleImportPlugin({
             //     resolves: [ElementPlusResolve()]

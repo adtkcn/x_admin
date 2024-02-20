@@ -2,6 +2,7 @@
     <el-dialog
         v-model="dialogVisible"
         append-to-body
+        :mask="false"
         :show-close="false"
         :fullscreen="true"
         :close-on-click-modal="false"
@@ -216,6 +217,9 @@ export default {
 }
 </script>
 <style>
+.flow-config-dialog {
+    padding: 0;
+}
 .flow-config-dialog .el-dialog__header {
     font-size: var(--el-font-size-large);
     padding: 0;
