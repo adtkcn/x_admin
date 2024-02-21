@@ -106,40 +106,6 @@
                     >
                         <el-button type="primary">本地上传</el-button>
                     </upload>
-                    <el-button
-                        v-perms="['admin:common:album:albumDel']"
-                        v-if="mode == 'page'"
-                        :disabled="!select.length"
-                        @click.stop="batchFileDelete()"
-                    >
-                        删除
-                    </el-button>
-
-                    <popup
-                        v-perms="['admin:common:album:albumMove']"
-                        v-if="mode == 'page'"
-                        class="ml-3"
-                        @confirm="batchFileMove"
-                        :disabled="!select.length"
-                        title="移动文件"
-                    >
-                        <template #trigger>
-                            <el-button :disabled="!select.length">移动</el-button>
-                        </template>
-
-                        <div>
-                            <span class="mr-5">移动文件至</span>
-                            <el-select v-model="moveId" placeholder="请选择">
-                                <template v-for="item in cateLists" :key="item.id">
-                                    <el-option
-                                        v-if="item.id !== ''"
-                                        :label="item.name"
-                                        :value="item.id"
-                                    ></el-option>
-                                </template>
-                            </el-select>
-                        </div>
-                    </popup>
                 </div>
                 <el-input
                     class="w-60"
@@ -155,100 +121,19 @@
                         </el-button>
                     </template>
                 </el-input>
-                <div class="flex items-center ml-2">
-                    <el-tooltip content="列表视图" placement="top">
-                        <div
-                            class="list-icon"
-                            :class="{
-                                select: listShowType == 'table'
-                            }"
-                            @click="listShowType = 'table'"
-                        >
-                            <icon name="local-icon-list-2" :size="18" />
-                        </div>
-                    </el-tooltip>
-                    <el-tooltip content="平铺视图" placement="top">
-                        <div
-                            class="list-icon"
-                            :class="{
-                                select: listShowType == 'normal'
-                            }"
-                            @click="listShowType = 'normal'"
-                        >
-                            <icon name="el-icon-Menu" :size="18" />
-                        </div>
-                    </el-tooltip>
-                </div>
             </div>
-            <div class="mt-3" v-if="mode == 'page'">
-                <el-checkbox
-                    :disabled="!pager.lists.length"
-                    v-model="isCheckAll"
-                    @change="selectAll"
-                    :indeterminate="isIndeterminate"
-                >
-                    当页全选
-                </el-checkbox>
-            </div>
+
             <div class="material-center__content flex flex-col flex-1 mb-1 min-h-0">
-                <el-scrollbar v-if="pager.lists.length" v-show="listShowType == 'normal'">
-                    <ul class="file-list flex flex-wrap mt-4">
-                        <li
-                            class="file-item-wrap"
-                            v-for="item in pager.lists"
-                            :key="item.id"
-                            :style="{ width: fileSize }"
-                        >
-                            <del-wrap @close="batchFileDelete([item.id])">
-                                <file-item
-                                    :uri="item.uri"
-                                    :file-size="fileSize"
-                                    :type="type"
-                                    @click="selectFile(item)"
-                                >
-                                    <div class="item-selected" v-if="isSelect(item.id)">
-                                        <icon :size="24" name="el-icon-Check" color="#fff" />
-                                    </div>
-                                </file-item>
-                            </del-wrap>
-
-                            <overflow-tooltip class="mt-1" :content="item.name" />
-                            <div class="operation-btns flex items-center">
-                                <popover-input
-                                    v-perms="['admin:common:album:albumRename']"
-                                    @confirm="handleFileRename($event, item.id)"
-                                    size="default"
-                                    :value="item.name"
-                                    width="400px"
-                                    :limit="50"
-                                    show-limit
-                                    teleported
-                                >
-                                    <el-button type="primary" link> 重命名 </el-button>
-                                </popover-input>
-                                <el-button type="primary" link @click="handlePreview(item.uri)">
-                                    查看
-                                </el-button>
-                            </div>
-                        </li>
-                    </ul>
-                </el-scrollbar>
-
                 <el-table
                     ref="tableRef"
                     class="mt-4"
-                    v-show="listShowType == 'table'"
                     :data="pager.lists"
                     width="100%"
                     height="100%"
                     size="large"
-                    @row-click="selectFile"
+                    @selection-change="handleSelectionChange"
                 >
-                    <el-table-column width="55">
-                        <template #default="{ row }">
-                            <el-checkbox :modelValue="isSelect(row.id)" @change="selectFile(row)" />
-                        </template>
-                    </el-table-column>
+                    <el-table-column type="selection" width="55" />
                     <el-table-column label="图片" width="100">
                         <template #default="{ row }">
                             <file-item :uri="row.uri" file-size="50px" :type="type"></file-item>
@@ -305,7 +190,7 @@
             <div class="material-center__footer flex justify-between items-center mt-2">
                 <div class="flex">
                     <template v-if="mode == 'page'">
-                        <span class="mr-3">
+                        <!-- <span class="mr-3">
                             <el-checkbox
                                 :disabled="!pager.lists.length"
                                 v-model="isCheckAll"
@@ -314,7 +199,7 @@
                             >
                                 当页全选
                             </el-checkbox>
-                        </span>
+                        </span> -->
                         <el-button
                             v-perms="['admin:common:album:albumDel']"
                             :disabled="!select.length"
@@ -333,18 +218,15 @@
                                 <el-button :disabled="!select.length">移动</el-button>
                             </template>
 
-                            <div>
-                                <span class="mr-5">移动文件至</span>
-                                <el-select v-model="moveId" placeholder="请选择">
-                                    <template v-for="item in cateLists" :key="item.id">
-                                        <el-option
-                                            v-if="item.id !== ''"
-                                            :label="item.name"
-                                            :value="item.id"
-                                        ></el-option>
-                                    </template>
-                                </el-select>
-                            </div>
+                            <el-select v-model="moveId" placeholder="请选择">
+                                <template v-for="item in cateLists" :key="item.id">
+                                    <el-option
+                                        v-if="item.id !== ''"
+                                        :label="item.name"
+                                        :value="item.id"
+                                    ></el-option>
+                                </template>
+                            </el-select>
                         </popup>
                     </template>
                 </div>
@@ -389,7 +271,6 @@
 import { useCate, useFile } from './hook'
 import FileItem from './file.vue'
 import Preview from './preview.vue'
-import type { Ref } from 'vue'
 const props = defineProps({
     fileSize: {
         type: String,
@@ -442,7 +323,6 @@ const {
 
 const {
     tableRef,
-    listShowType,
     moveId,
     pager,
     fileParams,
@@ -453,14 +333,18 @@ const {
     refresh,
     batchFileDelete,
     batchFileMove,
-    selectFile,
-    isSelect,
+
     clearSelect,
     cancelSelete,
-    selectAll,
+
+    selectItems,
     handleFileRename
 } = useFile(cateId, typeValue, limit, props.pageSize)
-
+function handleSelectionChange(val: any[]) {
+    console.log('handleSelectionChange', val)
+    selectItems(val)
+    // multipleSelection.value = val
+}
 const getData = async () => {
     await getCateLists()
     treeRef.value?.setCurrentKey(cateId.value)
@@ -519,9 +403,16 @@ defineExpose({
 
 <style scoped lang="scss">
 .material {
-    @apply h-full min-h-0 flex flex-1;
+    height: 100%;
+    min-height: 0px;
+    display: flex;
+    flex: 1 1 0%;
     &__left {
-        @apply border-r border-br flex flex-col w-[200px];
+        border-right-width: 1px;
+        border-color: var(--el-border-color);
+        display: flex;
+        flex-direction: column;
+        width: 200px;
         :deep(.el-tree-node__content) {
             height: 36px;
         }
@@ -537,7 +428,8 @@ defineExpose({
             padding: 5px;
             cursor: pointer;
             &.select {
-                @apply text-primary bg-primary-light-8;
+                color: var(--el-color-primary);
+                background-color: var(--el-color-primary-light-8);
             }
         }
         .file-list {
@@ -569,7 +461,10 @@ defineExpose({
         }
     }
     &__right {
-        @apply border-l border-br flex flex-col;
+        border-left-width: 1px;
+        border-color: var(--el-border-color);
+        display: flex;
+        flex-direction: column;
         width: 130px;
         .select-lists {
             padding: 10px;

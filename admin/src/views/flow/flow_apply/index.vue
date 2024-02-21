@@ -11,10 +11,10 @@
                 <el-form-item label="申请人昵称" prop="applyUserNickname">
                     <el-input   v-model="queryParams.applyUserNickname" />
                 </el-form-item> -->
-                <el-form-item label="流程名称" prop="flowName">
+                <el-form-item label="流程名称" prop="flowName" class="w-[280px]">
                     <el-input v-model="queryParams.flowName" />
                 </el-form-item>
-                <el-form-item label="流程分类" prop="flowGroup">
+                <el-form-item label="流程分类" prop="flowGroup" class="w-[280px]">
                     <el-select v-model="queryParams.flowGroup" clearable>
                         <el-option label="全部" value="" />
                         <el-option
@@ -28,7 +28,7 @@
                 <!-- <el-form-item label="流程描述" prop="flowRemark">
                     <el-input v-model="queryParams.flowRemark" />
                 </el-form-item> -->
-                <el-form-item label="状态" prop="status">
+                <el-form-item label="状态" prop="status" class="w-[280px]">
                     <el-select v-model="queryParams.status" clearable>
                         <el-option label="全部" value="" />
                         <el-option

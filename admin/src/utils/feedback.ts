@@ -64,6 +64,7 @@ export class Feedback {
     // 确认窗体
     confirm(msg: string) {
         return ElMessageBox.confirm(msg, '温馨提示', {
+            draggable: true,
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -72,6 +73,7 @@ export class Feedback {
     // 提交内容
     prompt(content: string, title: string, options?: ElMessageBoxOptions) {
         return ElMessageBox.prompt(content, title, {
+            draggable: true,
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             ...options

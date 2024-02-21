@@ -1,7 +1,6 @@
 <!-- 系统日志 -->
 <template>
     <div class="journal">
-        {{ formData }}
         <el-card class="!border-none" shadow="never">
             <el-form class="ls-form" :model="formData" inline>
                 <el-form-item label="管理员" class="w-[360px]">

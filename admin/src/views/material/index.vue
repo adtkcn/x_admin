@@ -15,7 +15,7 @@
                         mode="page"
                         file-size="120px"
                         :limit="-1"
-                        :page-size="20"
+                        :page-size="10"
                     />
                 </el-tab-pane>
             </el-tabs>
@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts" setup>
+import material from '@/components/material/index.vue'
 defineOptions({
     name: 'materialCenter'
 })

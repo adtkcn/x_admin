@@ -78,10 +78,10 @@ func initServer(router *gin.Engine) *http.Server {
 //	@title			x_admin文档
 //	@version		0.0.1
 //	@description	x_admin是一个完整的后台管理系统
-//	@termsOfService	http://likeadmin.adtk.cn
+//	@termsOfService	http://x.adtk.cn
 
 //	@contact.name	API Support
-//	@contact.url	http://likeadmin.adtk.cn
+//	@contact.url	http://x.adtk.cn
 //	@contact.email	11675084@qq.com
 
 //	@license.name	MIT License

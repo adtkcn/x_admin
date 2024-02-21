@@ -6,7 +6,15 @@
                     <el-input v-model="queryParams.flowName" />
                 </el-form-item>
                 <el-form-item class="w-[280px]" label="流程分类" prop="flowGroup">
-                    <el-input v-model="queryParams.flowGroup" />
+                    <el-select v-model="queryParams.flowGroup" clearable>
+                        <el-option label="全部" value="" />
+                        <el-option
+                            v-for="(item, index) in dictData.flow_group"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.value"
+                        />
+                    </el-select>
                 </el-form-item>
                 <el-form-item class="w-[280px]" label="流程描述" prop="flowRemark">
                     <el-input v-model="queryParams.flowRemark" />

@@ -10,6 +10,7 @@
             :center="center"
             :append-to-body="true"
             :width="width"
+            draggable
             :close-on-click-modal="clickModalClose"
             @closed="close"
         >

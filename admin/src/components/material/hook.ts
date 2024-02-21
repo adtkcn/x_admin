@@ -20,7 +20,7 @@ export function useCate(type: number) {
     const cateLists = ref<any[]>([])
 
     // 选中的分组id
-    const cateId = ref<number | string>('')
+    const cateId = ref<number | string>(0)
 
     // 获取分组列表
     const getCateLists = async () => {
@@ -28,10 +28,10 @@ export function useCate(type: number) {
             type
         })
         const item: any[] = [
-            // {
-            //     name: '全部',
-            //     id: ''
-            // },
+            {
+                name: '全部',
+                id: 0
+            }
             // {
             //     name: '未分组',
             //     id: 0
@@ -96,7 +96,6 @@ export function useFile(
     size: number
 ) {
     const tableRef = shallowRef()
-    const listShowType = ref('normal')
     const moveId = ref(0)
     const select = ref<any[]>([])
     const isCheckAll = ref(false)
@@ -118,10 +117,6 @@ export function useFile(
     }
     const refresh = () => {
         resetPage()
-    }
-
-    const isSelect = (id: number) => {
-        return !!select.value.find((item: any) => item.id == id)
     }
 
     const batchFileDelete = async (id?: number[]) => {
@@ -167,7 +162,9 @@ export function useFile(
     const cancelSelete = (id: number) => {
         select.value = select.value.filter((item: any) => item.id != id)
     }
-
+    const selectItems = (items: any[]) => {
+        select.value = items
+    }
     const selectAll = (value: CheckboxValueType) => {
         isIndeterminate.value = false
         tableRef.value?.toggleAllSelection()
@@ -186,7 +183,6 @@ export function useFile(
         getFileList()
     }
     return {
-        listShowType,
         tableRef,
         moveId,
         pager,
@@ -199,10 +195,10 @@ export function useFile(
         batchFileDelete,
         batchFileMove,
         selectFile,
-        isSelect,
         clearSelect,
         cancelSelete,
         selectAll,
+        selectItems,
         handleFileRename
     }
 }
