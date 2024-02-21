@@ -136,7 +136,12 @@
                     <el-table-column type="selection" width="55" />
                     <el-table-column label="图片" width="100">
                         <template #default="{ row }">
-                            <file-item :uri="row.uri" file-size="50px" :type="type"></file-item>
+                            <file-item
+                                :uri="row.uri"
+                                file-size="50px"
+                                :type="type"
+                                @click.stop="handlePreview(row.uri)"
+                            ></file-item>
                         </template>
                     </el-table-column>
                     <el-table-column label="名称" min-width="100" show-overflow-tooltip>
