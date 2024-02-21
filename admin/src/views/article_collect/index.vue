@@ -2,11 +2,11 @@
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
-                <el-form-item label="用户ID" prop="userId">
-                    <el-input class="w-[280px]" v-model="queryParams.userId" />
+                <el-form-item label="用户ID" prop="userId" class="w-[280px]">
+                    <el-input v-model="queryParams.userId" />
                 </el-form-item>
-                <el-form-item label="文章ID" prop="articleId">
-                    <el-input class="w-[280px]" v-model="queryParams.articleId" />
+                <el-form-item label="文章ID" prop="articleId" class="w-[280px]">
+                    <el-input v-model="queryParams.articleId" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>

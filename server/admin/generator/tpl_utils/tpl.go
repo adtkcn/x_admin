@@ -176,7 +176,7 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 
 //go:embed templates/gocode
 //go:embed templates/vue
-var fs embed.FS
+var templatesFs embed.FS
 
 /**
 * Render 渲染模板
@@ -188,7 +188,7 @@ var fs embed.FS
  */
 func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e error) {
 
-	tpl, err := tu.tpl.ParseFS(fs, "templates/"+tplPath)
+	tpl, err := tu.tpl.ParseFS(templatesFs, "templates/"+tplPath)
 	if e = response.CheckErr(err, "TemplateUtil.Render ParseFiles err"); e != nil {
 		return "", e
 	}

@@ -25,11 +25,14 @@
     </div>
 </template>
 
-<script lang="ts" setup name="userSetup">
+<script lang="ts" setup>
 import { getUserSetup, setUserSetup } from '@/api/setting/user'
 import feedback from '@/utils/feedback'
 // import type { FormInstance } from 'element-plus'
 
+defineOptions({
+    name: 'userSetup'
+})
 // 表单数据
 const formData = reactive({
     defaultAvatar: '' // 用户默认头像

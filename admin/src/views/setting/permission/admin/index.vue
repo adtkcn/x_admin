@@ -2,13 +2,13 @@
     <div class="admin">
         <el-card class="!border-none" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
-                <el-form-item label="管理员账号">
+                <el-form-item label="管理员账号" class="w-[280px]">
                     <el-input v-model="formData.username" clearable @keyup.enter="resetPage" />
                 </el-form-item>
-                <el-form-item label="管理员名称">
+                <el-form-item label="管理员名称" class="w-[280px]">
                     <el-input v-model="formData.nickname" clearable @keyup.enter="resetPage" />
                 </el-form-item>
-                <el-form-item label="管理员角色">
+                <el-form-item label="管理员角色" class="w-[280px]">
                     <el-select v-model="formData.role">
                         <el-option label="全部" value="" />
                         <el-option

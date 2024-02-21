@@ -24,7 +24,18 @@
                         <el-input v-model="formData.nickname" placeholder="请输入名称" />
                     </div>
                 </el-form-item>
-
+                <input
+                    type="password"
+                    style="
+                        position: absolute;
+                        height: 0;
+                        width: 0;
+                        line-height: 0;
+                        border: 0;
+                        opacity: 0;
+                        overflow: hidden;
+                    "
+                />
                 <el-form-item label="当前密码：" prop="currPassword">
                     <div class="w-80">
                         <el-input
@@ -32,6 +43,7 @@
                             placeholder="修改密码时必填, 不修改密码时留空"
                             type="password"
                             show-password
+                            autoComplete="new-password"
                         />
                     </div>
                 </el-form-item>

@@ -2,14 +2,14 @@
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
-                <el-form-item label="流程名称" prop="flowName">
-                    <el-input class="w-[280px]" v-model="queryParams.flowName" />
+                <el-form-item class="w-[280px]" label="流程名称" prop="flowName">
+                    <el-input v-model="queryParams.flowName" />
                 </el-form-item>
-                <el-form-item label="流程分类" prop="flowGroup">
-                    <el-input class="w-[280px]" v-model="queryParams.flowGroup" />
+                <el-form-item class="w-[280px]" label="流程分类" prop="flowGroup">
+                    <el-input v-model="queryParams.flowGroup" />
                 </el-form-item>
-                <el-form-item label="流程描述" prop="flowRemark">
-                    <el-input class="w-[280px]" v-model="queryParams.flowRemark" />
+                <el-form-item class="w-[280px]" label="流程描述" prop="flowRemark">
+                    <el-input v-model="queryParams.flowRemark" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>

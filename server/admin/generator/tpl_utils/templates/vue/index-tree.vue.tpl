@@ -12,10 +12,10 @@
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
                     <el-select
                         v-model="queryParams.{{{ (toCamelCase .GoField) }}}"
-                        class="w-[280px]"
+                        
                         clearable
                     >
                         {{{- if eq .DictType "" }}}
@@ -32,8 +32,8 @@
                     </el-select>
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                    <el-input class="w-[280px]" v-model="queryParams.{{{ (toCamelCase .GoField) }}}" />
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
+                    <el-input v-model="queryParams.{{{ (toCamelCase .GoField) }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
