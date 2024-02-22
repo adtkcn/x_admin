@@ -50,9 +50,12 @@
     </div>
 </template>
 
-<script lang="ts" setup name="webFilling">
+<script lang="ts" setup>
 import { getCopyright, setCopyright } from '@/api/setting/website'
 import feedback from '@/utils/feedback'
+defineOptions({
+    name: 'webFilling'
+})
 // 表单数据
 const formData = ref([
     {

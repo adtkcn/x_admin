@@ -113,8 +113,11 @@
     </div>
 </template>
 
-<script lang="ts" setup name="environment">
+<script lang="ts" setup>
 import { systemInfo } from '@/api/setting/system'
+defineOptions({
+    name: 'environment'
+})
 const loading = ref(false)
 const info = ref({
     cpu: {} as any,

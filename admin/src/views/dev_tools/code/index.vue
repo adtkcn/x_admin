@@ -143,7 +143,7 @@
     </div>
 </template>
 
-<script lang="ts" setup name="codeGenerate">
+<script lang="ts" setup>
 import {
     generateTable,
     syncColumn,
@@ -156,7 +156,9 @@ import DataTable from '../components/data-table.vue'
 import CodePreview from '../components/code-preview.vue'
 import feedback from '@/utils/feedback'
 import { streamFileDownload } from '@/utils/file'
-
+defineOptions({
+    name: 'codeGenerate'
+})
 const formData = reactive({
     tableName: '',
     tableComment: ''

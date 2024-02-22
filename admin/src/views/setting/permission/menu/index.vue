@@ -95,12 +95,16 @@
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
-<script lang="ts" setup name="menu">
+<script lang="ts" setup>
 import { menuDelete, menuLists } from '@/api/perms/menu'
 import type { ElTable } from 'element-plus'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
+defineOptions({
+    name: 'MenuView'
+})
+
 const tableRef = shallowRef<InstanceType<typeof ElTable>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 let isExpand = false

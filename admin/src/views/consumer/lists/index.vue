@@ -53,11 +53,14 @@
         </el-card>
     </div>
 </template>
-<script lang="ts" setup name="consumerLists">
+<script lang="ts" setup>
 import { usePaging } from '@/hooks/usePaging'
 
 import { getUserList } from '@/api/consumer'
 import { ClientMap } from '@/enums/appEnums'
+defineOptions({
+    name: 'consumerLists'
+})
 const queryParams = reactive({
     keyword: '',
     channel: '',

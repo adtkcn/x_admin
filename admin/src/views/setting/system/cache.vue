@@ -136,13 +136,15 @@
     </div>
 </template>
 
-<script setup lang="ts" name="cache">
+<script setup lang="ts">
 import { systemCache } from '@/api/setting/system'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'
 import { reactive } from 'vue'
 // import { ElTable } from 'element-plus'
-
+defineOptions({
+    name: 'cache'
+})
 const baseInfo = ref<any>({})
 
 const chartOptions = reactive({

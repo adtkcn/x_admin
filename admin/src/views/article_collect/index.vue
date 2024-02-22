@@ -60,11 +60,16 @@
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
-<script lang="ts" setup name="article_collect">
+<script lang="ts" setup>
 import { article_collect_delete, article_collect_lists } from '@/api/article_collect'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+
+defineOptions({
+    name: 'article_collect'
+})
+
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({

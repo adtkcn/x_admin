@@ -114,11 +114,15 @@
     </div>
 </template>
 
-<script lang="ts" setup name="dictType">
+<script lang="ts" setup>
 import { dictTypeDelete, dictTypeLists } from '@/api/setting/dict'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+defineOptions({
+    name: 'dictType'
+})
+
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({

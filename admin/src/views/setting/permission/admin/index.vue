@@ -97,13 +97,16 @@
     </div>
 </template>
 
-<script lang="ts" setup name="admin">
+<script lang="ts" setup>
 import { adminLists, adminDelete, adminStatus, adminExportFile } from '@/api/perms/admin'
 import { roleAll } from '@/api/perms/role'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+defineOptions({
+    name: 'admin'
+})
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 // 表单数据
 const formData = reactive<any>({

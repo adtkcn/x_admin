@@ -56,12 +56,14 @@
     </div>
 </template>
 
-<script lang="ts" setup name="noticeEdit">
+<script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
 import feedback from '@/utils/feedback'
 import { noticeDetail, setNoticeConfig } from '@/api/message'
 import useMultipleTabs from '@/hooks/useMultipleTabs'
-
+defineOptions({
+    name: 'noticeEdit'
+})
 const route = useRoute()
 const router = useRouter()
 

@@ -88,12 +88,15 @@
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
-<script lang="ts" setup name="department">
+<script lang="ts" setup>
 import type { ElTable, FormInstance } from 'element-plus'
 import EditPopup from './edit.vue'
 import { deptDelete, deptLists } from '@/api/org/department'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
+defineOptions({
+    name: 'department'
+})
 const tableRef = shallowRef<InstanceType<typeof ElTable>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const formRef = shallowRef<FormInstance>()

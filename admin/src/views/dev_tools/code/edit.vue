@@ -265,7 +265,7 @@
     </div>
 </template>
 
-<script lang="ts" setup name="tableEdit">
+<script lang="ts" setup>
 import { generateEdit, tableDetail } from '@/api/tools/code'
 import { dictTypeAll } from '@/api/setting/dict'
 import type { FormInstance } from 'element-plus'
@@ -277,7 +277,9 @@ enum GenTpl {
     CRUD = 'crud',
     TREE = 'tree'
 }
-
+defineOptions({
+    name: 'tableEdit'
+})
 const route = useRoute()
 const router = useRouter()
 const { removeTab } = useMultipleTabs()

@@ -77,11 +77,14 @@
     </div>
 </template>
 
-<script setup lang="ts" name="userSetting">
+<script setup lang="ts">
 import { setUserInfo } from '@/api/user'
 import useUserStore from '@/stores/modules/user'
 import feedback from '@/utils/feedback'
 import type { FormInstance } from 'element-plus'
+defineOptions({
+    name: 'userSetting'
+})
 const formRef = ref<FormInstance>()
 const userStore = useUserStore()
 // 表单数据

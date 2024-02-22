@@ -130,7 +130,7 @@
         />
     </div>
 </template>
-<script lang="ts" setup name="{{{ .ModuleName }}}">
+<script lang="ts" setup>
 import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{ .ModuleName }}}'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
@@ -138,7 +138,9 @@ import feedback from '@/utils/feedback'
 import { useDictData } from '@/hooks/useDictOptions'
 {{{- end }}}
 import type { ElTable } from 'element-plus'
-
+defineOptions({
+    name:"{{{ .ModuleName }}}"
+})
 const tableRef = shallowRef<InstanceType<typeof ElTable>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 let isExpand = false

@@ -21,9 +21,13 @@
         <edit-popup ref="editRef" @success="getLists" />
     </div>
 </template>
-<script lang="ts" setup name="shortLetter">
+<script lang="ts" setup>
 import { smsLists } from '@/api/message'
 import EditPopup from './edit.vue'
+defineOptions({
+    name: 'shortLetter'
+})
+
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 
 // 列表数据

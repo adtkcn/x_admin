@@ -76,10 +76,12 @@
     </div>
 </template>
 
-<script setup lang="ts" name="journal">
+<script setup lang="ts">
 import { systemLogLists } from '@/api/setting/system'
 import { usePaging } from '@/hooks/usePaging'
-
+defineOptions({
+    name: 'journal'
+})
 // 查询表单
 const formData = ref({
     username: '',

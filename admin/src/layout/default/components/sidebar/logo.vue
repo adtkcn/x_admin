@@ -39,7 +39,12 @@ const config = computed(() => appStore.config)
 .logo {
     height: var(--navbar-height);
     overflow: hidden;
-    @apply flex items-center p-2 relative;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+
     .logo-title {
         width: 70%;
         position: absolute;

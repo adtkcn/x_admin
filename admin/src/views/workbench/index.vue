@@ -91,10 +91,13 @@
     </div>
 </template>
 
-<script lang="ts" setup name="workbench">
+<script lang="ts" setup>
 import { getWorkbench } from '@/api/app'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'
+defineOptions({
+    name: 'workbench'
+})
 
 // 表单数据
 const workbenchData: any = reactive({

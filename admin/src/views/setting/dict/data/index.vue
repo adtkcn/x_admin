@@ -112,12 +112,17 @@
     </div>
 </template>
 
-<script lang="ts" setup name="dictData">
+<script lang="ts" setup>
 import { dictDataDelete, dictDataLists, dictTypeAll } from '@/api/setting/dict'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+
+defineOptions({
+    name: 'dictData'
+})
+
 const { query } = useRoute()
 const showEdit = ref(false)
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()

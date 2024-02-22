@@ -98,11 +98,14 @@
     </div>
 </template>
 
-<script lang="ts" setup name="loginRegister">
+<script lang="ts" setup>
 import type { LoginSetup } from '@/api/setting/user'
 import { getLogin, setLogin } from '@/api/setting/user'
 import feedback from '@/utils/feedback'
 import type { FormInstance, FormRules } from 'element-plus'
+defineOptions({
+    name: 'loginRegister'
+})
 const formRef = ref<FormInstance>()
 
 // 表单数据
