@@ -11,7 +11,7 @@ import (
 	"x_admin/admin/setting/dict_data"
 	"x_admin/admin/setting/dict_type"
 	"x_admin/admin/setting/protocol"
-	"x_admin/admin/setting/storage"
+
 	"x_admin/admin/setting/website"
 	"x_admin/admin/system"
 	"x_admin/admin/system/dept"
@@ -38,7 +38,7 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	dict_data.DictDataRoute(rg)
 	dict_type.DictTypeRoute(rg)
 	protocol.ProtocolRoute(rg)
-	storage.StorageRoute(rg)
+
 	website.WebsiteRoute(rg)
 
 	login.LoginRoute(rg)

@@ -18,7 +18,6 @@
                 </el-form-item>
                 <el-form-item class="w-[280px]" label="数据状态">
                     <el-select v-model="queryParams.status">
-                        <el-option label="全部" value />
                         <el-option label="正常" :value="1" />
                         <el-option label="停用" :value="0" />
                     </el-select>
@@ -61,7 +60,7 @@
                         @selection-change="handleSelectionChange"
                     >
                         <el-table-column type="selection" width="55" />
-                        <el-table-column label="ID" prop="id" />
+                        <!-- <el-table-column label="ID" prop="id" /> -->
                         <el-table-column label="数据名称" prop="name" min-width="120">
                             <template v-slot="{ row }">
                                 <span :style="{ color: row.color }">{{ row.name }}</span>

@@ -10,7 +10,6 @@
                 </el-form-item>
                 <el-form-item class="w-[280px]" label="状态">
                     <el-select v-model="queryParams.dictStatus">
-                        <el-option label="全部" value />
                         <el-option label="正常" :value="1" />
                         <el-option label="停用" :value="0" />
                     </el-select>
@@ -53,9 +52,9 @@
                         @selection-change="handleSelectionChange"
                     >
                         <el-table-column type="selection" width="55" />
-                        <el-table-column label="ID" prop="id" />
-                        <el-table-column label="字典名称" prop="dictName" min-width="120" />
-                        <el-table-column label="字典类型" prop="dictType" min-width="120" />
+                        <!-- <el-table-column label="ID" prop="id" width="100" /> -->
+                        <el-table-column label="字典名称" prop="dictName" />
+                        <el-table-column label="字典类型" prop="dictType" />
                         <el-table-column label="状态">
                             <template v-slot="{ row }">
                                 <el-tag v-if="row.dictStatus == 1" type="primary">正常</el-tag>
@@ -67,7 +66,7 @@
                             prop="dictRemark"
                             show-tooltip-when-overflow
                         />
-                        <el-table-column label="创建时间" prop="createTime" min-width="180" />
+                        <el-table-column label="创建时间" prop="createTime" />
                         <el-table-column label="操作" width="190" fixed="right">
                             <template #default="{ row }">
                                 <el-button
@@ -85,7 +84,7 @@
                                 >
                                     <router-link
                                         :to="{
-                                            path: '/dev_tools/dict/data',
+                                            path: '/setting/dict/data',
                                             query: {
                                                 type: row.dictType
                                             }
