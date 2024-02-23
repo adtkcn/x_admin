@@ -20,6 +20,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
+
         <el-card class="!border-none mt-4" shadow="never">
             <div>
                 <el-button
@@ -81,17 +82,9 @@
                                     v-perms="['admin:setting:dict:data:list']"
                                     type="primary"
                                     link
+                                    @click="openDataEdit(row)"
                                 >
-                                    <router-link
-                                        :to="{
-                                            path: '/setting/dict/data',
-                                            query: {
-                                                type: row.dictType
-                                            }
-                                        }"
-                                    >
-                                        数据管理
-                                    </router-link>
+                                    数据管理
                                 </el-button>
                                 <el-button
                                     v-perms="['admin:setting:dict:type:del']"
@@ -110,7 +103,9 @@
                 </div>
             </div>
         </el-card>
+
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <Data ref="dataRef" @success="getLists" @close="showDataEdit = false" />
     </div>
 </template>
 
@@ -119,12 +114,18 @@ import { dictTypeDelete, dictTypeLists } from '@/api/setting/dict'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+
+import Data from '../data/index.vue'
+
 defineOptions({
     name: 'dictType'
 })
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
+
+const dataRef = shallowRef<InstanceType<typeof Data>>()
+const showDataEdit = ref(false)
 const queryParams = reactive({
     dictName: '',
     dictType: '',
@@ -137,7 +138,11 @@ const { pager, getLists, resetPage, resetParams } = usePaging({
 })
 
 const selectData = ref<any[]>([])
+function openDataEdit(row: any) {
+    console.log(dataRef, row)
 
+    dataRef.value?.open(row)
+}
 const handleSelectionChange = (val: any[]) => {
     selectData.value = val.map(({ id }) => id)
 }

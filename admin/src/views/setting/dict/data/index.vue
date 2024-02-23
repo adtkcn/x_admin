@@ -1,34 +1,12 @@
 <template>
     <div class="dict-type">
-        <el-card class="!border-none" shadow="never">
-            <el-page-header class="mb-4" content="数据管理" @back="$router.back()" />
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" inline>
-                <el-form-item class="w-[280px]" label="字典名称">
-                    <el-select v-model="queryParams.dictType" @change="getLists">
-                        <el-option
-                            v-for="item in optionsData.dictType"
-                            :label="item.dictName"
-                            :value="item.dictType"
-                            :key="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-                <el-form-item class="w-[280px]" label="数据名称">
-                    <el-input v-model="queryParams.name" clearable @keyup.enter="resetPage" />
-                </el-form-item>
-                <el-form-item class="w-[280px]" label="数据状态">
-                    <el-select v-model="queryParams.status">
-                        <el-option label="正常" :value="1" />
-                        <el-option label="停用" :value="0" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="resetPage">查询</el-button>
-                    <el-button @click="resetParams">重置</el-button>
-                </el-form-item>
-            </el-form>
-        </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <popup
+            ref="popupRef"
+            :title="typeTitle"
+            :confirmButtonText="false"
+            :async="true"
+            width="850px"
+        >
             <div>
                 <el-button
                     v-perms="['admin:setting:dict:data:add']"
@@ -52,13 +30,9 @@
                     删除
                 </el-button>
             </div>
-            <div class="mt-4" v-loading="pager.loading">
+            <div class="mt-4">
                 <div>
-                    <el-table
-                        :data="pager.lists"
-                        size="large"
-                        @selection-change="handleSelectionChange"
-                    >
+                    <el-table :data="lists" size="large" @selection-change="handleSelectionChange">
                         <el-table-column type="selection" width="55" />
                         <!-- <el-table-column label="ID" prop="id" /> -->
                         <el-table-column label="数据名称" prop="name" min-width="120">
@@ -67,7 +41,7 @@
                             </template>
                         </el-table-column>
                         <el-table-column label="数据值" prop="value" min-width="120" />
-                        <el-table-column label="颜色" prop="color" min-width="120" />
+                        <!-- <el-table-column label="颜色" prop="color" min-width="120" /> -->
                         <el-table-column label="状态">
                             <template v-slot="{ row }">
                                 <el-tag v-if="row.status == 1" type="primary">正常</el-tag>
@@ -103,19 +77,17 @@
                         </el-table-column>
                     </el-table>
                 </div>
-                <div class="flex justify-end mt-4">
-                    <pagination v-model="pager" @change="getLists" />
-                </div>
             </div>
-        </el-card>
+        </popup>
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { dictDataDelete, dictDataLists, dictTypeAll } from '@/api/setting/dict'
-import { useDictOptions } from '@/hooks/useDictOptions'
-import { usePaging } from '@/hooks/usePaging'
+import Popup from '@/components/popup/index.vue'
+import { dictDataDelete, dictDataAll } from '@/api/setting/dict'
+// import { useDictOptions } from '@/hooks/useDictOptions'
+
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 
@@ -123,28 +95,32 @@ defineOptions({
     name: 'dictData'
 })
 
-const { query } = useRoute()
+const popupRef = shallowRef<InstanceType<typeof Popup>>()
 const showEdit = ref(false)
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 
-const queryParams = reactive({
-    dictType: String(query.type),
-    name: '',
-    status: 1
+const selectRow = ref<any>()
+const typeTitle = computed(() => {
+    return `${selectRow.value?.dictName} [ ${selectRow.value?.dictType} ]`
 })
 
-const { optionsData } = useDictOptions<{
-    dictType: any[]
-}>({
-    dictType: {
-        api: dictTypeAll
-    }
-})
+const lists = ref([])
+function getLists() {
+    lists.value = []
+    dictDataAll({
+        dictType: selectRow.value?.dictType
+    }).then((res) => {
+        console.log(res)
+        lists.value = res
+    })
+}
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
-    fetchFun: dictDataLists,
-    params: queryParams
-})
+const open = (row: any) => {
+    selectRow.value = row
+
+    getLists()
+    popupRef.value?.open()
+}
 
 const selectData = ref<any[]>([])
 
@@ -155,10 +131,9 @@ const handleSelectionChange = (val: any[]) => {
 const handleAdd = async () => {
     showEdit.value = true
     await nextTick()
-    const type = optionsData.dictType.find((item) => item.dictType == queryParams.dictType)
     editRef.value?.setFormData({
-        typeValue: type?.dictType,
-        typeId: type.id
+        typeValue: selectRow.value?.dictType,
+        typeId: selectRow.value?.id
     })
     editRef.value?.open('add')
 }
@@ -167,16 +142,21 @@ const handleEdit = async (data: any) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
-    const type = optionsData.dictType.find((item) => item.dictType == queryParams.dictType)
-    editRef.value?.setFormData({ ...data, typeValue: type?.dictType })
+    editRef.value?.setFormData({ ...data, typeValue: selectRow.value?.dictType })
 }
 
 const handleDelete = async (ids: any[] | number) => {
-    await feedback.confirm('确定要删除？')
-    await dictDataDelete({ ids })
-    feedback.msgSuccess('删除成功')
-    getLists()
+    try {
+        await feedback.confirm('确定要删除？')
+        await dictDataDelete({ ids })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {
+        console.log(error)
+    }
 }
 
-getLists()
+defineExpose({
+    open
+})
 </script>

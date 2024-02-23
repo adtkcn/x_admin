@@ -26,14 +26,14 @@ export function dictTypeDelete(params: any) {
 }
 
 // 字典数据列表
-export function dictDataLists(params: any) {
-    return request.get(
-        { url: '/setting/dict/data/list', params },
-        {
-            ignoreCancelToken: true
-        }
-    )
-}
+// export function dictDataLists(params: any) {
+//     return request.get(
+//         { url: '/setting/dict/data/list', params },
+//         {
+//             ignoreCancelToken: true
+//         }
+//     )
+// }
 
 // 字典数据列表
 export function dictDataAll(params: any) {
