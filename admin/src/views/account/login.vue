@@ -9,14 +9,53 @@
                     class="login-form bg-body flex flex-col justify-center px-10 py-10 md:w-[400px] w-[375px] flex-none mx-auto"
                 >
                     <div class="text-center text-3xl font-medium mb-8">{{ config.webName }}</div>
-                    <el-form ref="formRef" :model="formData" size="large" :rules="rules">
+
+                    <el-form
+                        ref="formRef"
+                        :model="formData"
+                        size="large"
+                        :rules="rules"
+                        autoComplete="off"
+                    >
                         <el-form-item prop="username">
-                            <el-input v-model.trim="formData.username" placeholder="请输入账号">
+                            <el-input
+                                v-model.trim="formData.username"
+                                type="text"
+                                autocomplete="off"
+                                placeholder="请输入账号"
+                            >
                                 <template #prepend>
                                     <icon name="el-icon-User" />
                                 </template>
                             </el-input>
                         </el-form-item>
+                        <input
+                            v-model.trim="formData.username"
+                            type="text"
+                            name="username-hide"
+                            style="
+                                position: absolute;
+                                height: 0;
+                                width: 0;
+                                line-height: 0;
+                                border: 0;
+                                opacity: 0;
+                                overflow: hidden;
+                            "
+                        />
+                        <input
+                            v-model="formData.password"
+                            type="password"
+                            style="
+                                position: absolute;
+                                height: 0;
+                                width: 0;
+                                line-height: 0;
+                                border: 0;
+                                opacity: 0;
+                                overflow: hidden;
+                            "
+                        />
                         <el-form-item prop="password">
                             <el-input
                                 ref="passwordRef"
@@ -31,9 +70,9 @@
                             </el-input>
                         </el-form-item>
                     </el-form>
-                    <div class="mb-5">
+                    <!-- <div class="mb-5">
                         <el-checkbox v-model="remAccount" label="记住账号"></el-checkbox>
-                    </div>
+                    </div> -->
                     <el-button
                         type="primary"
                         size="large"
@@ -102,7 +141,7 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
-const remAccount = ref(false)
+// const remAccount = ref(false)
 const config = computed(() => appStore.config)
 const formData = reactive({
     username: '',
@@ -132,8 +171,7 @@ const handleLogin = async (captchaInfo) => {
     await formRef.value?.validate()
     // 记住账号，缓存
     cache.set(ACCOUNT_KEY, {
-        remember: remAccount.value,
-        username: remAccount.value ? formData.username : ''
+        username: formData.username
     })
     await userStore.login({ ...formData, ...verifition })
     const {
@@ -146,10 +184,8 @@ const { isLock, lockFn: lockLogin } = useLockFn(handleLogin)
 
 onMounted(() => {
     const value = cache.get(ACCOUNT_KEY)
-    if (value?.remember) {
-        remAccount.value = value.remember
-        formData.username = value.username
-    }
+
+    formData.username = value.username
 })
 </script>
 
