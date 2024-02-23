@@ -38,7 +38,7 @@
  * */
 import VerifySlide from './Verify/VerifySlide.vue'
 import VerifyPoints from './Verify/VerifyPoints.vue'
-import { computed, ref, watch, toRefs, watchEffect } from 'vue'
+import { computed, ref, toRefs, watchEffect } from 'vue'
 
 export default {
     name: 'Vue3Verify',

@@ -47,9 +47,9 @@ const props = withDefaults(
     }
 )
 
-const emit = defineEmits<{
-    (event: 'update:modelValue', value: string): void
-}>()
+// const emit = defineEmits<{
+//     (event: 'update:modelValue', value: string): void
+// }>()
 
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
@@ -81,14 +81,17 @@ const styles = computed<CSSProperties>(() => ({
     height: addUnit(props.height),
     width: addUnit(props.width)
 }))
-const valueHtml = computed({
-    get() {
-        return props.modelValue
-    },
-    set(value) {
-        emit('update:modelValue', value)
-    }
+const valueHtml = defineModel({
+    type: String
 })
+// const valueHtml = computed({
+//     get() {
+//         return props.modelValue
+//     },
+//     set(value) {
+//         emit('update:modelValue', value)
+//     }
+// })
 
 const selectChange = (fileUrl: string[]) => {
     fileUrl.forEach((url) => {

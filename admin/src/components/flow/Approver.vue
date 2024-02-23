@@ -125,7 +125,7 @@ export default {
         window.removeEventListener('beforeunload', beforeUnload)
         next()
     },
-    computed: {},
+
     mounted() {},
     methods: {
         reset() {

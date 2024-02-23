@@ -67,20 +67,10 @@
  * VerifyPoints
  * @description 点选
  * */
-import { resetSize, _code_chars, _code_color1, _code_color2 } from './../utils/util'
+import { resetSize } from './../utils/util'
 import { aesEncrypt } from './../utils/ase'
 import { reqGet, reqCheck } from './../api/index'
-import {
-    computed,
-    onMounted,
-    reactive,
-    ref,
-    watch,
-    nextTick,
-    toRefs,
-    watchEffect,
-    getCurrentInstance
-} from 'vue'
+import { onMounted, reactive, ref, nextTick, toRefs, getCurrentInstance } from 'vue'
 export default {
     name: 'VerifyPoints',
     props: {
@@ -173,14 +163,6 @@ export default {
                 checkPosArr.push(...arr)
                 //等创建坐标执行完
                 setTimeout(() => {
-                    // var flag = this.comparePos(this.fontPos, this.checkPosArr);
-                    //发送后端请求
-                    const captchaVerification = secretKey.value
-                        ? aesEncrypt(
-                              backToken.value + '---' + JSON.stringify(checkPosArr),
-                              secretKey.value
-                          )
-                        : backToken.value + '---' + JSON.stringify(checkPosArr)
                     const data = {
                         captchaType: captchaType.value,
                         pointJson: secretKey.value

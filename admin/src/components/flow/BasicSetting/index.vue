@@ -86,12 +86,7 @@ export default {
             }
         }
     },
-    computed: {
-        // activeIconSrc() {
-        //   const icon = this.iconList.find((t) => t.id === this.activeIcon);
-        //   return icon ? icon.src : "";
-        // },
-    },
+
     created() {
         if (typeof this.conf === 'object' && this.conf !== null) {
             Object.assign(this.formData, this.conf)

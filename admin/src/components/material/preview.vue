@@ -31,24 +31,14 @@ const props = defineProps({
         default: 'image'
     }
 })
-const emit = defineEmits<{
-    (event: 'update:modelValue', value: boolean): void
-}>()
 
 const playerRef = shallowRef()
-
-const visible = computed({
-    get() {
-        return props.modelValue
-    },
-
-    set(value) {
-        emit('update:modelValue', value)
-    }
+const visible = defineModel({
+    type: Boolean
 })
 
 const handleClose = () => {
-    emit('update:modelValue', false)
+    visible.value = false
 }
 
 const previewLists = ref<any[]>([])
