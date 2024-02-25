@@ -5,9 +5,10 @@ import (
 	"image/color"
 	"x_admin/config"
 
-	config2 "github.com/TestsLing/aj-captcha-go/config"
-	constant "github.com/TestsLing/aj-captcha-go/const"
-	"github.com/TestsLing/aj-captcha-go/service"
+	config2 "x_admin/util/aj-captcha-go/config"
+	constant "x_admin/util/aj-captcha-go/const"
+	"x_admin/util/aj-captcha-go/service"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v9"
 )
