@@ -32,6 +32,8 @@ func AdminRoute(rg *gin.RouterGroup) {
 
 	rg.GET("/admin/ExportFile", middleware.RecordLog("管理员导出"), handle.ExportFile)
 
+	rg.POST("/admin/ImportFile", handle.ImportFile)
+
 }
 func RoleRoute(rg *gin.RouterGroup) {
 	// db := core.GetDB()

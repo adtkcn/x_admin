@@ -32,6 +32,17 @@
                 </template>
                 新增
             </el-button>
+            <upload
+                class="mr-3"
+                :url="adminImportFile"
+                :data="{ cid: 0 }"
+                type="file"
+                :show-progress="true"
+                @change="resetPage"
+            >
+                <el-button type="primary">导入</el-button>
+            </upload>
+
             <el-button type="primary" @click="exportFile">
                 <template #icon>
                     <icon name="el-icon-Download" />
@@ -98,7 +109,13 @@
 </template>
 
 <script lang="ts" setup>
-import { adminLists, adminDelete, adminStatus, adminExportFile } from '@/api/perms/admin'
+import {
+    adminLists,
+    adminDelete,
+    adminStatus,
+    adminExportFile,
+    adminImportFile
+} from '@/api/perms/admin'
 import { roleAll } from '@/api/perms/role'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
@@ -135,6 +152,7 @@ const handleAdd = async () => {
     await nextTick()
     editRef.value?.open('add')
 }
+
 const exportFile = async () => {
     await feedback.confirm('确定要导出？')
     await adminExportFile(formData)

@@ -1,6 +1,10 @@
 package admin
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"net/http"
 	"strconv"
 	"x_admin/config"
 	"x_admin/core/request"
@@ -10,6 +14,7 @@ import (
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 )
 
 // func AdminRoute(rg *gin.RouterGroup) {
@@ -65,6 +70,46 @@ func (ah AdminHandler) ExportFile(c *gin.Context) {
 	// c.Header("Content-Disposition", "attachment; filename="+"用户信息.xlsx")
 	// c.Header("Content-Transfer-Encoding", "binary")
 	// f.Write(c.Writer)
+}
+
+// 导入文件
+func (ah AdminHandler) ImportFile(c *gin.Context) {
+	// file, err := c.FormFile("file")
+	// if err != nil {
+	// 	c.String(500, "上传文件出错")
+	// }
+	// fmt.Println(file)
+
+	// 单文件
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		response.FailWithMsg(c, response.SystemError, "文件不存在")
+		return
+	}
+	defer file.Close()
+	// 创建缓冲区
+	buf := new(bytes.Buffer)
+
+	// 将文件内容复制到缓冲区
+	_, err = io.Copy(buf, file)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Failed to read file")
+		return
+	}
+	// 创建Excel文件对象
+	f, err := excelize.OpenReader(bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Failed to open Excel file")
+		return
+	}
+	importList := []SystemAuthAdminResp{}
+	err = excel.ImportExcel(f, &importList, 1, 2)
+	if err != nil {
+		fmt.Println(err)
+	}
+	for _, t := range importList {
+		fmt.Printf("%#v", t)
+	}
 }
 
 // list 管理员列表

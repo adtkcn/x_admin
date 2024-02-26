@@ -49,6 +49,11 @@ import { RequestCodeEnum } from '@/enums/requestEnums'
 export default defineComponent({
     components: {},
     props: {
+        // 上传地址
+        url: {
+            type: String,
+            default: ''
+        },
         // 上传文件类型
         type: {
             type: String,
@@ -79,7 +84,16 @@ export default defineComponent({
     setup(props, { emit }) {
         const userStore = useUserStore()
         const uploadRefs = shallowRef<InstanceType<typeof ElUpload>>()
-        const action = ref(`${config.baseUrl}${config.urlPrefix}/common/upload/${props.type}`)
+        let action = ''
+        if (props.url) {
+            if (props.url.startsWith('http')) {
+                action = props.url
+            } else {
+                action = `${config.baseUrl}${config.urlPrefix}${props.url}`
+            }
+        } else {
+            action = `${config.baseUrl}${config.urlPrefix}/common/upload/${props.type}`
+        }
         const headers = computed(() => ({
             token: userStore.token,
             version: config.version

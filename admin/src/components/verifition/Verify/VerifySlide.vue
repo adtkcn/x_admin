@@ -10,6 +10,7 @@
                 :style="{ width: setSize.imgWidth, height: setSize.imgHeight }"
             >
                 <img
+                    v-show="backImgBase"
                     :src="'data:image/png;base64,' + backImgBase"
                     alt=""
                     style="width: 100%; height: 100%; display: block"
@@ -74,6 +75,7 @@
                         }"
                     >
                         <img
+                            v-show="blockBackImgBase"
                             :src="'data:image/png;base64,' + blockBackImgBase"
                             alt=""
                             style="

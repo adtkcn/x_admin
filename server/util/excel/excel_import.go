@@ -30,28 +30,38 @@ func ImportBySheet(f *excelize.File, dst interface{}, sheetName string, headInde
 	return
 }
 
-// 判断数组中是否包含指定元素
-func IsContain(items interface{}, item interface{}) bool {
-	switch items.(type) {
-	case []int:
-		intArr := items.([]int)
-		for _, value := range intArr {
-			if value == item.(int) {
-				return true
-			}
+// 获取在数组中得下标
+func GetIndex(items []string, item string) int {
+	for i, v := range items {
+		if v == item {
+			return i
 		}
-	case []string:
-		strArr := items.([]string)
-		for _, value := range strArr {
-			if value == item.(string) {
-				return true
-			}
-		}
-	default:
-		return false
 	}
-	return false
+	return -1
 }
+
+// 判断数组中是否包含指定元素
+// func IsContain(items interface{}, item interface{}) bool {
+// 	switch items.(type) {
+// 	case []int:
+// 		intArr := items.([]int)
+// 		for _, value := range intArr {
+// 			if value == item.(int) {
+// 				return true
+// 			}
+// 		}
+// 	case []string:
+// 		strArr := items.([]string)
+// 		for _, value := range strArr {
+// 			if value == item.(string) {
+// 				return true
+// 			}
+// 		}
+// 	default:
+// 		return false
+// 	}
+// 	return false
+// }
 
 // 解析数据
 func importData(f *excelize.File, dst interface{}, sheetName string, headIndex, startRow int) (err error) {
@@ -98,11 +108,12 @@ func importData(f *excelize.File, dst interface{}, sheetName string, headIndex, 
 				}
 				cellValue = row[excelizeIndex] // 获取单元格的值
 			} else { // 否则根据表头名称来拿数据
-				if IsContain(heads, excelTag.Name) { // 当tag里的表头名称和excel表格里面的表头名称相匹配时
-					if i >= len(row) { // 防止下标越界
+				var index = GetIndex(heads, excelTag.Name)
+				if index != -1 {
+					if index >= len(row) { // 防止下标越界
 						continue
 					}
-					cellValue = row[i] // 获取单元格的值
+					cellValue = row[index] // 获取单元格的值
 				}
 			}
 			// 根据字段类型设置值
@@ -110,6 +121,12 @@ func importData(f *excelize.File, dst interface{}, sheetName string, headIndex, 
 			case reflect.Int:
 				v, _ := strconv.ParseInt(cellValue, 10, 64)
 				newData.Field(i).SetInt(v)
+			case reflect.Uint:
+				v, _ := strconv.ParseUint(cellValue, 10, 64)
+				newData.Field(i).SetUint(v)
+			// case reflect.Uint8:
+			// 	v, _ := strconv.ParseUint(cellValue, 10, 64)
+			// 	newData.Field(i).SetUint(v)
 			case reflect.String:
 				newData.Field(i).SetString(cellValue)
 			}

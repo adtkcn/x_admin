@@ -29,6 +29,7 @@ func initRouter() *gin.Engine {
 	// 初始化gin
 	gin.SetMode(config.Config.GinMode)
 	router := gin.New()
+	router.MaxMultipartMemory = 8 << 20 // 8 MiB
 	// 设置静态路径
 	router.Static(config.Config.PublicPrefix, config.Config.UploadDirectory)
 

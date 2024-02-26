@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 import queryString from 'query-string'
 import { getToken } from '@/utils/auth'
+import config from '@/config'
 // 管理员列表
 export function adminLists(params: any) {
     return request.get({ url: '/system/admin/list', params })
@@ -36,9 +37,13 @@ export function adminListByDeptId(params: any) {
     return request.get({ url: '/system/admin/ListByDeptId', params })
 }
 
+// 导入
+export const adminImportFile = '/system/admin/ImportFile'
+
 // 导出
 export function adminExportFile(params: any) {
     // return request.get({ url: '/system/admin/ExportFile', params })
     return (window.location.href =
-        `/api/admin/system/admin/ExportFile?token=${getToken()}&` + queryString.stringify(params))
+        `${config.baseUrl}${config.urlPrefix}/system/admin/ExportFile?token=${getToken()}&` +
+        queryString.stringify(params))
 }
