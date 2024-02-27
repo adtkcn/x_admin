@@ -19,19 +19,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type ISystemAuthAdminService interface {
-	FindByUsername(username string) (admin system_model.SystemAuthAdmin, err error)
-	Self(adminId uint) (res SystemAuthAdminSelfResp, e error)
-	List(page request.PageReq, listReq SystemAuthAdminListReq) (res response.PageResp, e error)
-	Detail(id uint) (res SystemAuthAdminResp, e error)
-	Add(addReq SystemAuthAdminAddReq) (e error)
-	Edit(c *gin.Context, editReq SystemAuthAdminEditReq) (e error)
-	Update(c *gin.Context, updateReq SystemAuthAdminUpdateReq, adminId uint) (e error)
-	Del(c *gin.Context, id uint) (e error)
-	Disable(c *gin.Context, id uint) (e error)
-	CacheAdminUserByUid(id uint) (err error)
-}
-
 var Service = NewSystemAuthAdminService()
 
 // NewSystemAuthAdminService 初始化
@@ -122,6 +109,8 @@ func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId
 	}
 	return adminResp, nil
 }
+
+// 导出
 func (adminSrv systemAuthAdminService) ExportFile(listReq SystemAuthAdminListReq) (res []SystemAuthAdminResp, e error) {
 	// 查询
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
@@ -148,12 +137,21 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq SystemAuthAdminListReq
 		return
 	}
 	for i := 0; i < len(adminResp); i++ {
-		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
+		// adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
 		if adminResp[i].ID == 1 {
 			adminResp[i].Role = "系统管理员"
 		}
 	}
 	return adminResp, nil
+}
+
+// 导入
+func (adminSrv systemAuthAdminService) ImportFile(importReq []SystemAuthAdminResp) (e error) {
+	var sysAdmin []system_model.SystemAuthAdmin
+	response.Copy(&sysAdmin, importReq)
+	err := adminSrv.db.Create(&sysAdmin).Error
+	e = response.CheckErr(err, "Add Create err")
+	return e
 }
 
 // List 管理员列表

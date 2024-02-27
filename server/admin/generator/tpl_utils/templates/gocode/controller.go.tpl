@@ -125,3 +125,56 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 	}
 	response.CheckAndResp(c, Service.Del(delReq.{{{ title (toCamelCase .PrimaryKey) }}}))
 }
+
+
+
+//	@Summary	{{{ .FunctionName }}}导出
+//	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
+//	@Produce	json
+//	@Param		Token		header		string				true	"token"
+{{{- range .Columns }}}
+{{{- if .IsQuery }}}
+//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
+{{{- end }}}
+{{{- end }}}
+//	@Router		/api/admin/{{{ .ModuleName }}}/ExportFile [get]
+func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Context) {
+	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := Service.ExportFile(listReq)
+	if err != nil {
+		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		return
+	}
+	f, err := excel.NormalDynamicExport(res, "Sheet1", "用户信息", "", true, false, nil)
+	if err != nil {
+		response.FailWithMsg(c, response.SystemError, "导出失败")
+		return
+	}
+	excel.DownLoadExcel("用户信息", c.Writer, f)
+}
+
+//	@Summary	{{{ .FunctionName }}}导入
+//	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
+//	@Produce	json
+func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ImportFile(c *gin.Context) {
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		c.String(http.StatusInternalServerError, "文件不存在")
+		return
+	}
+	defer file.Close()
+	importList := []{{{ title (toCamelCase .EntityName) }}}Resp{}
+	err = excel.GetExcelData(file, &importList)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+	for _, t := range importList {
+		fmt.Printf("%#v", t)
+	}
+	err = Service.ImportFile(importList)
+	response.CheckAndResp(c, err)
+}

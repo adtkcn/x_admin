@@ -155,3 +155,45 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del(id int) (e error) {
     {{{- end }}}
 	return
 }
+
+//ExportFile {{{ .FunctionName }}}导出
+func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
+	// 查询
+	dbModel := service.db.Model(&model.{{{ title (toCamelCase .EntityName) }}}{})
+	{{{- range .Columns }}}
+	{{{- if .IsQuery }}}
+	{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
+	{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
+	if listReq.{{{ title (toCamelCase .ColumnName) }}} != "" {
+        dbModel = dbModel.Where("{{{ .ColumnName }}} like ?", "%"+listReq.{{{ title (toCamelCase .ColumnName) }}}+"%")
+    }
+    {{{- else }}}
+    if listReq.{{{ title (toCamelCase .ColumnName) }}} {{{ if eq .GoType "string" }}}!= ""{{{ else }}}> 0{{{ end }}} {
+        dbModel = dbModel.Where("{{{ .ColumnName }}} = ?", listReq.{{{ title (toCamelCase .ColumnName) }}})
+    }
+    {{{- end }}}
+    {{{- end }}}
+    {{{- end }}}
+	{{{- if contains .AllFields "is_delete" }}}
+	dbModel = dbModel.Where("is_delete = ?", 0)
+	{{{- end }}}
+
+	// 数据
+	var objs []model.{{{ title (toCamelCase .EntityName) }}}
+	err = dbModel.Order("id asc").Find(&objs).Error
+	if e = response.CheckErr(err, "List Find err"); e != nil {
+		return
+	}
+	resps := []{{{ title (toCamelCase .EntityName) }}}Resp{}
+	response.Copy(&resps, objs)
+	return resps, nil
+}
+
+// 导入
+func (service {{{ toCamelCase .EntityName }}}Service) ImportFile(importReq []{{{ title (toCamelCase .EntityName) }}}Resp) (e error) {
+	var importData []model.{{{ title (toCamelCase .EntityName) }}}
+	response.Copy(&importData, importReq)
+	err := service.db.Create(&importData).Error
+	e = response.CheckErr(err, "Add Create err")
+	return e
+}

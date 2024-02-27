@@ -50,7 +50,7 @@ type {{{ title (toCamelCase .EntityName) }}}DelReq struct {
 type {{{ title (toCamelCase .EntityName) }}}Resp struct {
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
-    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `json:"{{{ toCamelCase .GoField }}}" structs:"{{{ toCamelCase .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `json:"{{{ toCamelCase .GoField }}}" structs:"{{{ toCamelCase .GoField }}}" excel:"name:{{{ .ColumnComment }}};"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }

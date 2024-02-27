@@ -83,30 +83,11 @@ func (ah AdminHandler) ImportFile(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	// // 创建缓冲区
-	// buf := new(bytes.Buffer)
-
-	// // 将文件内容复制到缓冲区
-	// _, err = io.Copy(buf, file)
-	// if err != nil {
-	// 	c.String(http.StatusInternalServerError, "读取失败")
-	// 	return
-	// }
-	// // 创建Excel文件对象
-	// f, err := excelize.OpenReader(bytes.NewReader(buf.Bytes()))
-	// if err != nil {
-	// 	c.String(http.StatusInternalServerError, "Excel读取失败")
-	// 	return
-	// }
-
-	// err = excel.ImportExcel(f, &importList, 1, 2)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
 	for _, t := range importList {
 		fmt.Printf("%#v", t)
 	}
+	err = Service.ImportFile(importList)
+	response.CheckAndResp(c, err)
 }
 
 // list 管理员列表
