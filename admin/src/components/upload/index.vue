@@ -159,4 +159,9 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.upload {
+    display: inline-block;
+    vertical-align: middle;
+}
+</style>

@@ -1,12 +1,43 @@
 package excel
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
+	"io"
+	"mime/multipart"
 	"reflect"
 	"strconv"
 
 	"github.com/xuri/excelize/v2"
 )
+
+func GetExcelData(file multipart.File, dst interface{}) (err error) {
+	// 创建缓冲区
+	buf := new(bytes.Buffer)
+
+	// 将文件内容复制到缓冲区
+	_, err = io.Copy(buf, file)
+	if err != nil {
+		fmt.Println(err)
+		// c.String(http.StatusInternalServerError, "读取失败")
+		err = errors.New("读取失败")
+		return
+	}
+	// 创建Excel文件对象
+	f, err := excelize.OpenReader(bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		fmt.Println(err)
+		// c.String(http.StatusInternalServerError, "Excel读取失败")
+		err = errors.New("Excel读取失败")
+		return
+	}
+	err = ImportExcel(f, dst, 1, 2)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	return err
+}
 
 // ImportExcel 导入数据（单个sheet）
 // 需要在传入的结构体中的字段加上tag：excel:"title:列头名称;"
@@ -116,17 +147,24 @@ func importData(f *excelize.File, dst interface{}, sheetName string, headIndex, 
 					cellValue = row[index] // 获取单元格的值
 				}
 			}
+			fmt.Println("Type.Name:", field.Type.Name(), field.Type.Kind())
 			// 根据字段类型设置值
 			switch field.Type.Kind() {
 			case reflect.Int:
 				v, _ := strconv.ParseInt(cellValue, 10, 64)
 				newData.Field(i).SetInt(v)
+			case reflect.Int64:
+				v, _ := strconv.ParseInt(cellValue, 10, 64)
+				newData.Field(i).SetInt(v)
 			case reflect.Uint:
 				v, _ := strconv.ParseUint(cellValue, 10, 64)
 				newData.Field(i).SetUint(v)
-			// case reflect.Uint8:
-			// 	v, _ := strconv.ParseUint(cellValue, 10, 64)
-			// 	newData.Field(i).SetUint(v)
+			case reflect.Uint8:
+				v, _ := strconv.ParseUint(cellValue, 10, 64)
+				newData.Field(i).SetUint(v)
+			case reflect.Uint16:
+				v, _ := strconv.ParseUint(cellValue, 10, 64)
+				newData.Field(i).SetUint(v)
 			case reflect.String:
 				newData.Field(i).SetString(cellValue)
 			}

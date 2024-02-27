@@ -32,15 +32,21 @@
                 </template>
                 新增
             </el-button>
+
             <upload
-                class="mr-3"
+                class="ml-3 mr-3"
                 :url="adminImportFile"
                 :data="{ cid: 0 }"
                 type="file"
                 :show-progress="true"
                 @change="resetPage"
             >
-                <el-button type="primary">导入</el-button>
+                <el-button type="primary">
+                    <template #icon>
+                        <icon name="el-icon-Upload" />
+                    </template>
+                    导入
+                </el-button>
             </upload>
 
             <el-button type="primary" @click="exportFile">
