@@ -295,7 +295,7 @@ $header-height: 54px;
     height: 100%;
 
     box-sizing: border-box;
-    background: #f5f5f7;
+    // background: #f5f5f7;
 }
 
 .publish-btn {

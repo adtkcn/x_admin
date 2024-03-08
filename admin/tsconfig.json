@@ -10,7 +10,7 @@
     "exclude": ["dist"],
     "compilerOptions": {
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "Bundler",
         "allowJs": true,
         "outDir": "./dist",
         "isolatedModules": true,
@@ -18,6 +18,6 @@
         "paths": {
             "@/*": ["./src/*"]
         },
-        "types": ["element-plus/global"]
+        "types": ["node", "element-plus/global"]
     }
 }

@@ -23,6 +23,7 @@
                                 type="text"
                                 autocomplete="off"
                                 placeholder="请输入账号"
+                                tabindex="1"
                             >
                                 <template #prepend>
                                     <icon name="el-icon-User" />
@@ -33,6 +34,7 @@
                             v-model.trim="formData.username"
                             type="text"
                             name="username-hide"
+                            tabindex="-1"
                             style="
                                 position: absolute;
                                 height: 0;
@@ -46,6 +48,7 @@
                         <input
                             v-model="formData.password"
                             type="password"
+                            tabindex="-1"
                             style="
                                 position: absolute;
                                 height: 0;
@@ -60,6 +63,7 @@
                             <el-input
                                 ref="passwordRef"
                                 v-model="formData.password"
+                                tabindex="1"
                                 show-password
                                 placeholder="请输入密码"
                                 @keyup.enter="handleLogin"
@@ -76,6 +80,7 @@
                     <el-button
                         type="primary"
                         size="large"
+                        tabindex="1"
                         :loading="isLock"
                         @click="onShowCaptcha('blockPuzzle')"
                     >
@@ -185,7 +190,7 @@ const { isLock, lockFn: lockLogin } = useLockFn(handleLogin)
 onMounted(() => {
     const value = cache.get(ACCOUNT_KEY)
 
-    formData.username = value.username
+    formData.username = value?.username
 })
 </script>
 
