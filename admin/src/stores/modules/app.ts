@@ -7,8 +7,7 @@ interface AppSate {
     isRouteShow: boolean
 }
 
-const useAppStore = defineStore({
-    id: 'app',
+const useAppStore = defineStore('app', {
     state: (): AppSate => {
         return {
             config: {},

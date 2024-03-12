@@ -57,8 +57,7 @@ export const getRouteParams = (tabItem: TabItem) => {
     }
 }
 
-const useTabsStore = defineStore({
-    id: 'tabs',
+const useTabsStore = defineStore('tabs', {
     state: (): TabsSate => ({
         cacheTabList: new Set(),
         tabList: [],

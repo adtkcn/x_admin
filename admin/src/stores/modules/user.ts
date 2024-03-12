@@ -14,18 +14,19 @@ export interface UserState {
     perms: string[]
 }
 
-const useUserStore = defineStore({
-    id: 'user',
-    state: (): UserState => ({
-        token: getToken() || '',
-        // 用户信息
-        userInfo: {},
-        // 路由
-        routes: [],
-        menu: [],
-        // 权限
-        perms: []
-    }),
+const useUserStore = defineStore('user', {
+    state: (): UserState => {
+        return {
+            token: getToken() || '',
+            // 用户信息
+            userInfo: {},
+            // 路由
+            routes: [],
+            menu: [],
+            // 权限
+            perms: []
+        }
+    },
     getters: {},
     actions: {
         resetState() {
