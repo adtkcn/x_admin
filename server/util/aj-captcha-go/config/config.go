@@ -85,7 +85,6 @@ func BuildConfig(cacheType, resourcePath string, waterConfig *WatermarkConfig, c
 	} else if strings.Compare(cacheType, constant.MemCacheKey) != 0 &&
 		strings.Compare(cacheType, constant.RedisCacheKey) != 0 {
 		panic(errors.New("cache type not support"))
-		return nil
 	}
 	if cacheExpireSec == 0 {
 		cacheExpireSec = 2 * 60

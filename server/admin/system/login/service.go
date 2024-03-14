@@ -91,21 +91,6 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (r
 	token := util.ToolsUtil.MakeToken()
 	adminIdStr := strconv.FormatUint(uint64(sysAdmin.ID), 10)
 
-	//非多处登录
-	if sysAdmin.IsMultipoint == 0 {
-		sysAdminSetKey := config.AdminConfig.BackstageTokenSet + adminIdStr
-		ts := util.RedisUtil.SGet(sysAdminSetKey)
-		if len(ts) > 0 {
-			var keys []string
-			for _, t := range ts {
-				keys = append(keys, t)
-			}
-			util.RedisUtil.Del(keys...)
-		}
-		util.RedisUtil.Del(sysAdminSetKey)
-		util.RedisUtil.SSet(sysAdminSetKey, token)
-	}
-
 	// 缓存登录信息
 	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, adminIdStr, 7200)
 	admin.Service.CacheAdminUserByUid(sysAdmin.ID)

@@ -103,17 +103,6 @@
                 <el-form-item label="管理员状态" v-if="!isRoot">
                     <el-switch v-model="formData.isDisable" :active-value="0" :inactive-value="1" />
                 </el-form-item>
-
-                <el-form-item label="多处登录">
-                    <div>
-                        <el-switch
-                            v-model="formData.isMultipoint"
-                            :active-value="1"
-                            :inactive-value="0"
-                        />
-                        <div class="form-tips">允许多人同时在线登录</div>
-                    </div>
-                </el-form-item>
             </el-form>
         </popup>
     </div>
@@ -146,7 +135,6 @@ const formData = reactive({
     password: '',
     passwordConfirm: '',
     isDisable: 0,
-    isMultipoint: 1,
     //服务端为必传参数，先给默认值
     sort: 1
 })

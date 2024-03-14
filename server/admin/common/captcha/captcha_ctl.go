@@ -1,7 +1,6 @@
 package captcha
 
 import (
-	"fmt"
 	"image/color"
 	"x_admin/config"
 
@@ -58,7 +57,7 @@ func init() {
 
 	// //注册自定义配置redis数据库
 	opt, _ := redis.ParseURL(config.Config.RedisUrl)
-	fmt.Printf("%#v", opt)
+	// fmt.Printf("%#v", opt)
 	factory.RegisterCache(constant.RedisCacheKey, service.NewConfigRedisCacheService([]string{opt.Addr}, opt.Username, opt.Password, false, 0))
 
 	// 注册了两种验证码服务 可以自行实现更多的验证

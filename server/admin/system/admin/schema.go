@@ -16,31 +16,30 @@ type SystemAuthAdminDetailReq struct {
 
 //SystemAuthAdminAddReq 管理员新增参数
 type SystemAuthAdminAddReq struct {
-	DeptId       uint   `form:"deptId" binding:"required,gt=0"`           // 部门ID
-	PostId       uint   `form:"postId" binding:"required,gt=0"`           // 岗位ID
-	Username     string `form:"username" binding:"required,min=2,max=20"` // 账号
-	Nickname     string `form:"nickname" binding:"required,min=2,max=30"` // 昵称
-	Password     string `form:"password" binding:"required"`              // 密码
-	Avatar       string `form:"avatar" binding:"required"`                // 头像
-	Role         uint   `form:"role" binding:"gte=0"`                     // 角色
-	Sort         int    `form:"sort" binding:"gte=0"`                     // 排序
-	IsDisable    uint8  `form:"isDisable" binding:"oneof=0 1"`            // 是否禁用: [0=否, 1=是]
-	IsMultipoint uint8  `form:"isMultipoint" binding:"oneof=0 1"`         // 多端登录: [0=否, 1=是]
+	DeptId    uint   `form:"deptId" binding:"required,gt=0"`           // 部门ID
+	PostId    uint   `form:"postId" binding:"required,gt=0"`           // 岗位ID
+	Username  string `form:"username" binding:"required,min=2,max=20"` // 账号
+	Nickname  string `form:"nickname" binding:"required,min=2,max=30"` // 昵称
+	Password  string `form:"password" binding:"required"`              // 密码
+	Avatar    string `form:"avatar" binding:"required"`                // 头像
+	Role      uint   `form:"role" binding:"gte=0"`                     // 角色
+	Sort      int    `form:"sort" binding:"gte=0"`                     // 排序
+	IsDisable uint8  `form:"isDisable" binding:"oneof=0 1"`            // 是否禁用: [0=否, 1=是]
+
 }
 
 //SystemAuthAdminEditReq 管理员编辑参数
 type SystemAuthAdminEditReq struct {
-	ID           uint   `form:"id" binding:"required,gt=0"`               // 主键
-	DeptId       uint   `form:"deptId" binding:"required,gt=0"`           // 部门ID
-	PostId       uint   `form:"postId" binding:"required,gt=0"`           // 岗位ID
-	Username     string `form:"username" binding:"required,min=2,max=20"` // 账号
-	Nickname     string `form:"nickname" binding:"required,min=2,max=30"` // 昵称
-	Password     string `form:"password"`                                 // 密码
-	Avatar       string `form:"avatar"`                                   // 头像
-	Role         uint   `form:"role" binding:"gte=0"`                     // 角色
-	Sort         int    `form:"sort" binding:"gte=0"`                     // 排序
-	IsDisable    uint8  `form:"isDisable" binding:"oneof=0 1"`            // 是否禁用: [0=否, 1=是]
-	IsMultipoint uint8  `form:"isMultipoint" binding:"oneof=0 1"`         // 多端登录: [0=否, 1=是]
+	ID        uint   `form:"id" binding:"required,gt=0"`               // 主键
+	DeptId    uint   `form:"deptId" binding:"required,gt=0"`           // 部门ID
+	PostId    uint   `form:"postId" binding:"required,gt=0"`           // 岗位ID
+	Username  string `form:"username" binding:"required,min=2,max=20"` // 账号
+	Nickname  string `form:"nickname" binding:"required,min=2,max=30"` // 昵称
+	Password  string `form:"password"`                                 // 密码
+	Avatar    string `form:"avatar"`                                   // 头像
+	Role      uint   `form:"role" binding:"gte=0"`                     // 角色
+	Sort      int    `form:"sort" binding:"gte=0"`                     // 排序
+	IsDisable uint8  `form:"isDisable" binding:"oneof=0 1"`            // 是否禁用: [0=否, 1=是]
 }
 
 //SystemAuthAdminUpdateReq 管理员更新参数
@@ -71,7 +70,6 @@ type SystemAuthAdminResp struct {
 	DeptId        uint        `json:"deptId" structs:"deptId" excel:"name:部门ID;"`                 // 部门ID
 	PostId        uint        `json:"postId" structs:"postId" excel:"name:岗位ID;"`                 // 岗位ID
 	Dept          string      `json:"dept" structs:"dept" excel:"name:部门;"`                       // 部门
-	IsMultipoint  uint8       `json:"isMultipoint" structs:"isMultipoint" excel:"name:多端登录;"`     // 多端登录: [0=否, 1=是]
 	IsDisable     uint8       `json:"isDisable" structs:"isDisable" excel:"name:是否禁用;"`           // 是否禁用: [0=否, 1=是]
 	LastLoginIp   string      `json:"lastLoginIp" structs:"lastLoginIp" excel:"name:最后登录IP;"`     // 最后登录IP
 	LastLoginTime core.TsTime `json:"lastLoginTime" structs:"lastLoginTime" excel:"name:最后登录时间;"` // 最后登录时间
@@ -87,7 +85,6 @@ type SystemAuthAdminSelfOneResp struct {
 	Avatar        string      `json:"avatar" structs:"avatar"`               // 头像
 	Role          string      `json:"role" structs:"role"`                   // 角色
 	Dept          string      `json:"dept" structs:"dept"`                   // 部门
-	IsMultipoint  uint8       `json:"isMultipoint" structs:"isMultipoint"`   // 多端登录: [0=否, 1=是]
 	IsDisable     uint8       `json:"isDisable" structs:"isDisable"`         // 是否禁用: [0=否, 1=是]
 	LastLoginIp   string      `json:"lastLoginIp" structs:"lastLoginIp"`     // 最后登录IP
 	LastLoginTime core.TsTime `json:"lastLoginTime" structs:"lastLoginTime"` // 最后登录时间

@@ -22,7 +22,6 @@ type SystemAuthAdmin struct {
 	Role          string `gorm:"not null;default:'';comment:'角色主键'"`
 	Salt          string `gorm:"not null;default:'';comment:'加密盐巴'"`
 	Sort          uint16 `gorm:"not null;default:0;comment:'排序编号'"`
-	IsMultipoint  uint8  `gorm:"not null;default:0;comment:'多端登录: 0=否, 1=是''"`
 	IsDisable     uint8  `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
 	IsDelete      uint8  `gorm:"not null;default:0;comment:'是否删除: 0=否, 1=是'"`
 	LastLoginIp   string `gorm:"not null;default:'';comment:'最后登录IP'"`

@@ -1,11 +1,12 @@
 package util
 
 import (
+	"log"
+	"os"
+	"unicode"
+
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
-	"io/ioutil"
-	"log"
-	"unicode"
 )
 
 type FontUtil struct {
@@ -19,7 +20,7 @@ func NewFontUtil(src string) *FontUtil {
 
 // GetFont 获取一个字体对象
 func (f *FontUtil) GetFont() *truetype.Font {
-	fontSourceBytes, err := ioutil.ReadFile(f.Src)
+	fontSourceBytes, err := os.ReadFile(f.Src)
 	if err != nil {
 		log.Println("读取字体失败:", err)
 	}
