@@ -5,7 +5,7 @@ const config = {
     // import.meta.env.VITE_APP_BASE_URL ||
     baseUrl: '', //请求接口域名
     urlPrefix: '/api/admin', //请求默认前缀
-    timeout: 60 * 3000 //请求超时时长
+    timeout: 120 * 1000 //请求超时时长
 }
 
 export default config

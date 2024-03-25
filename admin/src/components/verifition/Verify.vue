@@ -84,8 +84,7 @@ export default {
         }
     },
     setup(props) {
-        const { captchaType, figure, arith, mode, vSpace, explain, imgSize, blockSize, barSize } =
-            toRefs(props)
+        const { captchaType, mode } = toRefs(props)
         const clickShow = ref(false)
         const verifyType = ref(undefined)
         const componentType = ref(undefined)
@@ -105,8 +104,8 @@ export default {
          * */
         const refresh = () => {
             console.log(instance.value)
-            if (instance.value.refresh) {
-                instance.value.refresh()
+            if (instance.value?.refresh) {
+                instance.value?.refresh()
             }
         }
         const closeBox = () => {

@@ -44,7 +44,7 @@
                     width: leftBarWidth !== undefined ? leftBarWidth : barSize.height,
                     height: barSize.height,
                     'border-color': leftBarBorderColor,
-                    transaction: transitionWidth
+                    transition: transitionWidth
                 }"
             >
                 <span class="verify-msg" v-text="finishText"></span>
@@ -161,17 +161,16 @@ export default {
             }
         }
     },
-    setup(props, context) {
-        const { mode, captchaType, vSpace, imgSize, barSize, type, blockSize, explain } =
-            toRefs(props)
+    setup(props) {
+        const { mode, captchaType, type, blockSize, explain } = toRefs(props)
         const { proxy } = getCurrentInstance()
         const secretKey = ref(''), //后端返回的ase加密秘钥
-            passFlag = ref(''), //是否通过的标识
+            passFlag = ref(false), //是否通过的标识
             backImgBase = ref(''), //验证码背景图片
             blockBackImgBase = ref(''), //验证滑块的背景图片
             backToken = ref(''), //后端返回的唯一token值
-            startMoveTime = ref(''), //移动开始的时间
-            endMovetime = ref(''), //移动结束的时间
+            startMoveTime = ref(), //移动开始的时间
+            endMovetime = ref(), //移动结束的时间
             tipsBackColor = ref(''), //提示词的背景颜色
             tipWords = ref(''),
             text = ref(''),
@@ -256,12 +255,13 @@ export default {
         //鼠标按下
         function start(e) {
             e = e || window.event
+            let x = 0
             if (!e.touches) {
                 //兼容PC端
-                var x = e.clientX
+                x = e.clientX
             } else {
                 //兼容移动端
-                var x = e.touches[0].pageX
+                x = e.touches[0].pageX
             }
             console.log(barArea)
             startLeft.value = Math.floor(x - barArea.value.getBoundingClientRect().left)
@@ -325,7 +325,7 @@ export default {
                     token: backToken.value
                 }
                 reqCheck(data).then((res) => {
-                    if (res.repCode == '0000') {
+                    if (res && res.repCode == '0000') {
                         moveBlockBackgroundColor.value = '#5cb85c'
                         leftBarBorderColor.value = '#5cb85c'
                         iconColor.value = '#fff'
@@ -343,16 +343,6 @@ export default {
                             (endMovetime.value - startMoveTime.value) /
                             1000
                         ).toFixed(2)}s验证成功`
-                        const captchaVerification = secretKey.value
-                            ? aesEncrypt(
-                                  backToken.value +
-                                      '---' +
-                                      JSON.stringify({ x: moveLeftDistance, y: 5.0 }),
-                                  secretKey.value
-                              )
-                            : backToken.value +
-                              '---' +
-                              JSON.stringify({ x: moveLeftDistance, y: 5.0 })
                         setTimeout(() => {
                             tipWords.value = ''
                             proxy.$parent.closeBox()
@@ -381,6 +371,7 @@ export default {
         const refresh = () => {
             showRefresh.value = true
             finishText.value = ''
+            tipWords.value = ''
 
             transitionLeft.value = 'left .3s'
             moveBlockLeft.value = 0
@@ -408,6 +399,10 @@ export default {
                 captchaType: captchaType.value
             }
             reqGet(data).then((res) => {
+                if (!res) {
+                    tipWords.value = '无网络'
+                    return
+                }
                 if (res.repCode == '0000') {
                     backImgBase.value = res.repData.originalImageBase64
                     blockBackImgBase.value = res.repData.jigsawImageBase64
