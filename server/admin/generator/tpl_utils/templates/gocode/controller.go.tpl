@@ -43,10 +43,12 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
+	//var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
+	//if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	//	return
+	//}
 	res, err := Service.ListAll()
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
-		return
-	}
+
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -84,7 +86,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context)
 //	@Router		/api/admin/{{{ .ModuleName }}}/add [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 	var addReq {{{ title (toCamelCase .EntityName) }}}AddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
 	response.CheckAndResp(c, Service.Add(addReq))
@@ -102,7 +104,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 //	@Router		/api/admin/{{{ .ModuleName }}}/edit [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 	var editReq {{{ title (toCamelCase .EntityName) }}}EditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
 	response.CheckAndResp(c, Service.Edit(editReq))
@@ -120,7 +122,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 //	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 	var delReq {{{ title (toCamelCase .EntityName) }}}DelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	response.CheckAndResp(c, Service.Del(delReq.{{{ title (toCamelCase .PrimaryKey) }}}))

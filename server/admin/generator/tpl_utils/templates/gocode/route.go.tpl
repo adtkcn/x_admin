@@ -36,7 +36,7 @@ func {{{ title (toCamelCase .ModuleName) }}}Route(rg *gin.RouterGroup) {
 	rg.GET("/{{{ .ModuleName }}}/detail", handle.Detail)
 	rg.POST("/{{{ .ModuleName }}}/add",middleware.RecordLog("{{{ .FunctionName }}}新增"), handle.Add)
 	rg.POST("/{{{ .ModuleName }}}/edit",middleware.RecordLog("{{{ .FunctionName }}}编辑"), handle.Edit)
-	rg.POST("/{{{ .ModuleName }}}/del", middleware.RecordLog("{{{ .FunctionName }}}删除"),  ,handle.Del)
+	rg.POST("/{{{ .ModuleName }}}/del", middleware.RecordLog("{{{ .FunctionName }}}删除"), handle.Del)
 	rg.GET("/{{{ .ModuleName }}}/ExportFile", middleware.RecordLog("{{{ .FunctionName }}}导出"), handle.ExportFile)
 	rg.POST("/{{{ .ModuleName }}}/ImportFile", handle.ImportFile)
 }

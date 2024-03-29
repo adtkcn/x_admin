@@ -7,7 +7,7 @@ import (
 	"x_admin/model"
 	"gorm.io/gorm"
 )
-import "x_admin/core"
+
 
 type I{{{ title (toCamelCase .EntityName) }}}Service interface {
 	List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error)
@@ -180,7 +180,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ tit
 
 	// 数据
 	var objs []model.{{{ title (toCamelCase .EntityName) }}}
-	err = dbModel.Order("id asc").Find(&objs).Error
+	err := dbModel.Order("id asc").Find(&objs).Error
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
 	}
