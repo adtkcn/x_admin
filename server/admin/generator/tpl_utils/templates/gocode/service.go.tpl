@@ -111,6 +111,10 @@ func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ title (toCa
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
 	response.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
+	e = response.CheckMysqlErr(err)
+	if e != nil {
+		return e
+	}
 	e = response.CheckErr(err, "Add Create err")
 	return
 }

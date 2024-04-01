@@ -35,7 +35,8 @@ module.exports = {
         'prefer-spread': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
-        'vue/no-mutating-props': 'off'
+        'vue/no-mutating-props': 'off',
+        'no-empty': 'off'
     },
     globals: {
         module: 'readonly'

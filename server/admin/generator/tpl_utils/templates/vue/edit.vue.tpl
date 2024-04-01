@@ -189,17 +189,19 @@ const formRules = {
 }
 
 const handleSubmit = async () => {
-    await formRef.value?.validate()
-    const data: any = { ...formData }
-    {{{- range .Columns }}}
-    {{{- if eq .HtmlType "checkbox" }}}
-    data.{{{ (toCamelCase .GoField) }}} = data.{{{ (toCamelCase .GoField) }}}.join(',')
-    {{{- end }}}
-    {{{- end }}}
-    mode.value == 'edit' ? await {{{ .ModuleName }}}_edit(data) : await {{{ .ModuleName }}}_add(data)
-    popupRef.value?.close()
-    feedback.msgSuccess('操作成功')
-    emit('success')
+     try {
+        await formRef.value?.validate()
+        const data: any = { ...formData }
+        {{{- range .Columns }}}
+        {{{- if eq .HtmlType "checkbox" }}}
+        data.{{{ (toCamelCase .GoField) }}} = data.{{{ (toCamelCase .GoField) }}}.join(',')
+        {{{- end }}}
+        {{{- end }}}
+        mode.value == 'edit' ? await {{{ .ModuleName }}}_edit(data) : await {{{ .ModuleName }}}_add(data)
+        popupRef.value?.close()
+        feedback.msgSuccess('操作成功')
+        emit('success')
+     } catch (error) {}
 }
 
 const open = (type = 'add') => {
@@ -223,10 +225,12 @@ const setFormData = async (data: Record<string, any>) => {
 }
 
 const getDetail = async (row: Record<string, any>) => {
-    const data = await {{{ .ModuleName }}}_detail({
-        {{{ .PrimaryKey }}}: row.{{{ .PrimaryKey }}}
-    })
-    setFormData(data)
+     try {
+        const data = await {{{ .ModuleName }}}_detail({
+            {{{ .PrimaryKey }}}: row.{{{ .PrimaryKey }}}
+        })
+        setFormData(data)
+     } catch (error) {}
 }
 
 const handleClose = () => {

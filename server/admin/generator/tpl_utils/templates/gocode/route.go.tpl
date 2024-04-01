@@ -2,7 +2,6 @@ package admin
 
 import (
 	"github.com/gin-gonic/gin"
-	"x_admin/core" 
 	"x_admin/middleware" 
 	"x_admin/admin/{{{ .ModuleName }}}"
 )
