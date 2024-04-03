@@ -19,7 +19,7 @@ import (
 
 var trans ut.Translator
 
-// loca 通常取决于 http 请求头的 'Accept-Language'
+// local 通常取决于 http 请求头的 'Accept-Language'
 func transInit(local string) (err error) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		zhT := zh.New() //chinese
@@ -58,7 +58,8 @@ var VerifyUtil = verifyUtil{}
 type verifyUtil struct{}
 
 func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
-	if err := c.ShouldBindBodyWith(obj, binding.JSON); err != nil {
+	// var reqInfo interface{}
+	if err := c.ShouldBindBodyWith(&obj, binding.JSON); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
 			e = response.ParamsValidError.MakeData(err.Error())
@@ -67,7 +68,19 @@ func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
 		e = response.ParamsValidError.MakeData(errs.Translate(trans))
 		return
 	}
+	// response.Copy(obj, reqInfo)
 	return
+
+	// if err := c.ShouldBindBodyWith(obj, binding.JSON); err != nil {
+	// 	errs, ok := err.(validator.ValidationErrors)
+	// 	if !ok {
+	// 		e = response.ParamsValidError.MakeData(err.Error())
+	// 		return
+	// 	}
+	// 	e = response.ParamsValidError.MakeData(errs.Translate(trans))
+	// 	return
+	// }
+	// return
 }
 
 func (vu verifyUtil) VerifyJSONArray(c *gin.Context, obj any) (e error) {

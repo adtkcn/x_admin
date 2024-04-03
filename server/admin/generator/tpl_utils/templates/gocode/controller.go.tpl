@@ -1,6 +1,8 @@
 package {{{ .ModuleName }}}
 
 import (
+	"net/http"
+	"time"
 	"github.com/gin-gonic/gin" 
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -151,12 +153,12 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Cont
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel.NormalDynamicExport(res, "Sheet1", "用户信息", "", true, false, nil)
+	f, err := excel.NormalDynamicExport(res, "Sheet1", "{{{ .FunctionName }}}", "", true, false, nil)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
 	}
-	excel.DownLoadExcel("用户信息", c.Writer, f)
+	excel.DownLoadExcel("{{{ .FunctionName }}}" + time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 //	@Summary	{{{ .FunctionName }}}导入
@@ -175,9 +177,9 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ImportFile(c *gin.Cont
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	for _, t := range importList {
-		fmt.Printf("%#v", t)
-	}
+//	for _, t := range importList {
+//		fmt.Printf("%#v", t)
+//	}
 	err = Service.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }

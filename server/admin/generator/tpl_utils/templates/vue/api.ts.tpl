@@ -1,4 +1,8 @@
 import request from '@/utils/request'
+import config from '@/config'
+import queryString from 'query-string'
+import { getToken } from '@/utils/auth'
+
 
 // {{{.FunctionName}}}列表
 export function {{{.ModuleName}}}_list(params?: Record<string, any>) {
@@ -27,4 +31,12 @@ export function {{{.ModuleName}}}_edit(params: Record<string, any>) {
 // {{{.FunctionName}}}删除
 export function {{{.ModuleName}}}_delete(params: Record<string, any>) {
     return request.post({ url: '/{{{.ModuleName}}}/del', params })
+}
+
+// {{{.FunctionName}}}导入
+export const {{{.ModuleName}}}_import_file = '/{{{.ModuleName}}}/ImportFile'
+
+// {{{.FunctionName}}}导出
+export function {{{.ModuleName}}}_export_file(params: any) {
+    return (window.location.href =`${config.baseUrl}${config.urlPrefix}/{{{.ModuleName}}}/ExportFile?token=${getToken()}&` + queryString.stringify(params))
 }

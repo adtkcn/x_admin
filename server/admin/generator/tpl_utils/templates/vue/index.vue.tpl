@@ -51,6 +51,27 @@
                     </template>
                     新增
                 </el-button>
+                    <upload
+                    class="ml-3 mr-3"
+                    :url="{{{.ModuleName}}}_export_file"
+                    :data="{ cid: 0 }"
+                    type="file"
+                    :show-progress="true"
+                    @change="resetPage"
+                >
+                    <el-button type="primary">
+                        <template #icon>
+                            <icon name="el-icon-Upload" />
+                        </template>
+                        导入
+                    </el-button>
+                </upload>
+                <el-button type="primary" @click="exportFile">
+                    <template #icon>
+                        <icon name="el-icon-Download" />
+                    </template>
+                    导出
+                </el-button>
             </div>
             <el-table
                 class="mt-4"
@@ -121,7 +142,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{ .ModuleName }}}'
+import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{ .ModuleName }}}'
 {{{- if ge (len .DictFields) 1 }}}
 import { useDictData } from '@/hooks/useDictOptions'
 {{{- end }}}
@@ -168,18 +189,27 @@ const handleAdd = async () => {
 }
 
 const handleEdit = async (data: any) => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('edit')
-    editRef.value?.getDetail(data)
+    try {
+        showEdit.value = true
+        await nextTick()
+        editRef.value?.open('edit')
+        editRef.value?.getDetail(data)
+    } catch (error) {}
 }
 
 const handleDelete = async ({{{ .PrimaryKey }}}: number) => {
-    await feedback.confirm('确定要删除？')
-    await {{{ .ModuleName }}}_delete({ {{{ .PrimaryKey }}} })
-    feedback.msgSuccess('删除成功')
-    getLists()
+    try {
+        await feedback.confirm('确定要删除？')
+        await {{{ .ModuleName }}}_delete({ {{{ .PrimaryKey }}} })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {}
 }
-
+const exportFile = async () => {
+    try {
+        await feedback.confirm('确定要导出？')
+        await {{{.ModuleName}}}_export_file(queryParams)
+    } catch (error) {}
+}
 getLists()
 </script>

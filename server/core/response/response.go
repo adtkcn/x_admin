@@ -7,6 +7,7 @@ import (
 	"x_admin/core"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -193,7 +194,25 @@ func CheckErr(err error, template string, args ...interface{}) (e error) {
 	args = append(args, err)
 	if err != nil {
 		core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf(template+prefix+"err=[%+v]", args...)
-		return SystemError
+		return SystemError.Make(template)
+	}
+	return
+}
+
+// 插入操作违反唯一约束时，会发生此错误：
+func CheckMysqlErr(err error) (e error) {
+	if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+		switch mysqlErr.Number {
+		case 404:
+			core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf("record not found: err=[%+v]", err)
+			return SystemError.Make("record not found")
+		case 1062: // MySQL中表示重复条目的代码
+			core.Logger.WithOptions(zap.AddCallerSkip(1)).Infof("数据已存在: err=[%+v]", err)
+			return SystemError.Make("数据已存在")
+		default:
+			// 处理其他错误
+			core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf("未知错误: err=[%+v]", err)
+		}
 	}
 	return
 }
@@ -201,8 +220,8 @@ func CheckErr(err error, template string, args ...interface{}) (e error) {
 // CheckErrDBNotRecord 校验数据库记录不存在的错误
 func CheckErrDBNotRecord(err error, msg string) (e error) {
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		core.Logger.WithOptions(zap.AddCallerSkip(1)).Infof("CheckErrDBNotRecord err: err=[%+v]", err)
-		return AssertArgumentError.Make(msg)
+		core.Logger.WithOptions(zap.AddCallerSkip(1)).Infof("记录不存在: err=[%+v]", err)
+		return SystemError.Make(msg)
 	}
 	return
 }

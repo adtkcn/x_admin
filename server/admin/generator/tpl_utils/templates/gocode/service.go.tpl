@@ -9,15 +9,15 @@ import (
 )
 
 
-type I{{{ title (toCamelCase .EntityName) }}}Service interface {
-	List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error)
-	ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error)
-
-	Detail(id int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error)
-	Add(addReq {{{ title (toCamelCase .EntityName) }}}AddReq) (e error)
-	Edit(editReq {{{ title (toCamelCase .EntityName) }}}EditReq) (e error)
-	Del(id int) (e error)
-}
+// type I{{{ title (toCamelCase .EntityName) }}}Service interface {
+// 	List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error)
+// 	ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error)
+// 
+// 	Detail(id int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error)
+// 	Add(addReq {{{ title (toCamelCase .EntityName) }}}AddReq) (e error)
+// 	Edit(editReq {{{ title (toCamelCase .EntityName) }}}EditReq) (e error)
+// 	Del(id int) (e error)
+// }
 var Service=New{{{ title (toCamelCase .EntityName) }}}Service()
 //New{{{ title (toCamelCase .EntityName) }}}Service 初始化
 func New{{{ title (toCamelCase .EntityName) }}}Service() *{{{ toCamelCase .EntityName }}}Service {
