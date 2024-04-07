@@ -52,7 +52,6 @@ type TplVars struct {
 	EntitySnakeName string
 	ModuleName      string
 	FunctionName    string
-	JavaCamelField  string
 	DateFields      []string
 	PrimaryKey      string
 	PrimaryField    string

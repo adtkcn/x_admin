@@ -40,7 +40,9 @@ func initRouter() *gin.Engine {
 
 		c.FileFromFS("static"+filepath, staticHttpFs)
 	})
-	router.GET("/api/admin/apiList", func(ctx *gin.Context) {
+	// 设置中间件
+	router.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
+	router.GET("/api/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
 		var path = []string{}
 		for _, route := range router.Routes() {
 			// fmt.Printf("%s 127.0.0.1:%v%s\n", route.Method, config.Config.ServerPort, route.Path)
@@ -48,8 +50,7 @@ func initRouter() *gin.Engine {
 		}
 		response.Result(ctx, response.Success, path)
 	})
-	// 设置中间件
-	router.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
+
 	// 演示模式
 	if config.Config.DisallowModify {
 		router.Use(middleware.ShowMode())
@@ -58,9 +59,9 @@ func initRouter() *gin.Engine {
 	router.NoMethod(response.NoMethod)
 	// router.NoRoute(response.NoRoute)
 	// 注册路由
-	group := router.Group("/api")
+	apiGroup := router.Group("/api")
 
-	routers.RegisterGroup(group)
+	routers.RegisterGroup(apiGroup)
 
 	return router
 }
@@ -71,7 +72,7 @@ func initServer(router *gin.Engine) *http.Server {
 		Addr:           ":" + strconv.Itoa(config.Config.ServerPort),
 		Handler:        router,
 		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
+		WriteTimeout:   100 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 }

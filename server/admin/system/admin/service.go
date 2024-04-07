@@ -446,8 +446,10 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id uint) (e error
 	var isDisable uint8
 	if admin.IsDisable == 0 {
 		isDisable = 1
+	} else {
+		isDisable = 0
 	}
-	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDisable: isDisable, UpdateTime: time.Now().Unix()}).Error
+	err = adminSrv.db.Model(&admin).Updates(map[string]interface{}{"is_disable": isDisable, "update_time": time.Now().Unix()}).Error
 	e = response.CheckErr(err, "Disable Updates err")
 	return
 }
