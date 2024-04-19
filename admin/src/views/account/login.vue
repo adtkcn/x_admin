@@ -66,7 +66,7 @@
                                 tabindex="1"
                                 show-password
                                 placeholder="请输入密码"
-                                @keyup.enter="handleLogin"
+                                @keyup.enter="onShowCaptcha('blockPuzzle')"
                             >
                                 <template #prepend>
                                     <icon name="el-icon-Lock" />
