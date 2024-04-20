@@ -7,8 +7,8 @@
                 {{{- if eq .HtmlType "datetime" }}}
                 <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
                     <daterange-picker
-                        v-model:startTime="queryParams.createTimeStart"
-                        v-model:endTime="queryParams.createTimeEnd"
+                        v-model:startTime="queryParams.{{{ (toCamelCase .GoField) }}}Start"
+                        v-model:endTime="queryParams.{{{ (toCamelCase .GoField) }}}End"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}

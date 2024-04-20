@@ -5,7 +5,12 @@ package {{{ .ModuleName }}}
 type {{{ title (toCamelCase .EntityName) }}}ListReq struct {
     {{{- range .Columns }}}
     {{{- if .IsQuery }}}
-    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `form:"{{{ toCamelCase .GoField }}}"` // {{{ .ColumnComment }}}
+        {{{- if eq .HtmlType "datetime" }}}
+            {{{ title (toCamelCase .GoField) }}}Start string `form:"{{{ toCamelCase .GoField }}}Start"` // 开始{{{ .ColumnComment }}}
+            {{{ title (toCamelCase .GoField) }}}End string `form:"{{{ toCamelCase .GoField }}}End"` // 结束{{{ .ColumnComment }}}
+        {{{- else }}}
+            {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `form:"{{{ toCamelCase .GoField }}}"` // {{{ .ColumnComment }}}
+        {{{- end }}}
     {{{- end }}}
     {{{- end }}}
 }

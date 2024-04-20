@@ -29,7 +29,7 @@ var SqlConstants = sqlConstants{
 	//数据库数字类型
 	ColumnTypeNumber: []string{"tinyint", "smallint", "mediumint", "int", "integer", "bit", "bigint", "float", "double", "decimal"},
 	//时间日期字段名
-	ColumnTimeName: []string{"create_time", "update_time", "delete_time", "start_time", "end_time"},
+	ColumnTimeName: []string{"create_time", "update_time", "delete_time", "start_time", "end_time", "client_time"},
 	//页面不需要插入字段
 	ColumnNameNotAdd: []string{"id", "is_delete", "create_time", "update_time", "delete_time"},
 	//页面不需要编辑字段
@@ -37,7 +37,7 @@ var SqlConstants = sqlConstants{
 	//页面不需要列表字段
 	ColumnNameNotList: []string{"id", "intro", "content", "is_delete", "delete_time"},
 	//页面不需要查询字段
-	ColumnNameNotQuery: []string{"is_delete", "create_time", "update_time", "delete_time"},
+	ColumnNameNotQuery: []string{"is_delete", "delete_time"}, //"create_time", "update_time",
 }
 
 //HtmlConstants HTML相关常量
