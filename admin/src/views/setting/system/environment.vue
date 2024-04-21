@@ -7,7 +7,7 @@
                 <div class="mt-4">
                     <div class="flex flex-wrap">
                         <div class="sm:flex-1 w-1/2 mb-4">
-                            <div class="text-4xl mb-3">{{ info.cpu.cpuNum }}</div>
+                            <div class="text-4xl mb-3">{{ info.cpu.cpu_num }}</div>
                             <div class="text-tx-regular">核心数</div>
                         </div>
 
