@@ -1,13 +1,13 @@
 <template>
     <el-date-picker
         v-model="content"
-        type="daterange"
+        type="datetimerange"
         range-separator="-"
-        format="YYYY-MM-DD"
-        value-format="YYYY-MM-DD"
+        value-format="YYYY-MM-DD HH:mm:ss"
         start-placeholder="开始时间"
         end-placeholder="结束时间"
         clearable
+        :default-time="defaultTime"
         @change="changeDate"
     ></el-date-picker>
 </template>
@@ -24,9 +24,11 @@ const props = defineProps({
         default: ''
     }
 })
+const defaultTime: [Date, Date] = [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 2, 1, 23, 59, 59)] // '12:00:00', '08:00:00'
 
 const emit = defineEmits(['update:startTime', 'update:endTime'])
 const content = ref<[string, string]>([props.startTime, props.endTime])
+
 function changeDate(value: any) {
     console.log('change', value)
     if (value === null) {
@@ -37,6 +39,11 @@ function changeDate(value: any) {
         emit('update:endTime', value[1])
     }
 }
+
+watch([() => props.startTime, () => props.endTime], () => {
+    console.log('watch', props)
+    content.value = [props.startTime, props.endTime]
+})
 // const content = computed<any>({
 //     get: () => {
 //         return [props.startTime, props.endTime]

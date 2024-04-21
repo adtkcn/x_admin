@@ -172,11 +172,7 @@ func (gu genUtil) ToModuleName(name string) string {
 func (gu genUtil) ToClassName(name string) string {
 	tablePrefix := config.Config.DbTablePrefix
 	name = strings.TrimPrefix(name, tablePrefix)
-	// if config.GenConfig.IsRemoveTablePrefix && tablePrefix != "" {
-	// 	if strings.HasPrefix(name, tablePrefix) {
-	// 		name = name[len(tablePrefix):]
-	// 	}
-	// }
+
 	return util.StringUtil.ToCamelCase(name)
 }
 

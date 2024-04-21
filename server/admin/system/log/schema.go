@@ -1,26 +1,25 @@
 package log
 
 import (
-	"time"
 	"x_admin/core"
 )
 
 // //SystemLogOperateReq 操作日志列表参数
 type SystemLogOperateReq struct {
-	Title     string    `form:"title"`                                       // 操作标题
-	Username  string    `form:"username"`                                    // 用户账号
-	Ip        string    `form:"ip"`                                          // 请求IP
-	Type      string    `form:"type" binding:"omitempty,oneof=GET POST PUT"` // 请求类型: GET/POST/PUT
-	Status    int       `form:"status" binding:"omitempty,oneof=1 2"`        // 执行状态: [1=成功, 2=失败]
-	Url       string    `form:"url"`                                         // 请求地址
-	StartTime time.Time `form:"startTime" time_format:"2006-01-02"`          // 开始时间
-	EndTime   time.Time `form:"endTime" time_format:"2006-01-02"`            // 结束时间
+	Title     string `form:"title"`                                       // 操作标题
+	Username  string `form:"username"`                                    // 用户账号
+	Ip        string `form:"ip"`                                          // 请求IP
+	Type      string `form:"type" binding:"omitempty,oneof=GET POST PUT"` // 请求类型: GET/POST/PUT
+	Status    int    `form:"status" binding:"omitempty,oneof=1 2"`        // 执行状态: [1=成功, 2=失败]
+	Url       string `form:"url"`                                         // 请求地址
+	StartTime string `form:"startTime" time_format:"2006-01-02"`          // 开始时间
+	EndTime   string `form:"endTime" time_format:"2006-01-02"`            // 结束时间
 }
 type SystemLogLoginReq struct {
-	Username  string    `form:"username"`                             // 登录账号
-	Status    int       `form:"status" binding:"omitempty,oneof=1 2"` // 执行状态: [1=成功, 2=失败]
-	StartTime time.Time `form:"startTime" time_format:"2006-01-02"`   // 开始时间
-	EndTime   time.Time `form:"endTime" time_format:"2006-01-02"`     // 结束时间
+	Username  string `form:"username"`                             // 登录账号
+	Status    int    `form:"status" binding:"omitempty,oneof=1 2"` // 执行状态: [1=成功, 2=失败]
+	StartTime string `form:"startTime" time_format:"2006-01-02"`   // 开始时间
+	EndTime   string `form:"endTime" time_format:"2006-01-02"`     // 结束时间
 }
 
 // SystemLogOperateResp 操作日志返回信息

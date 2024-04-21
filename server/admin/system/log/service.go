@@ -58,11 +58,11 @@ func (logSrv systemLogsServer) Operate(page request.PageReq, logReq SystemLogOpe
 	if logReq.Url != "" {
 		logModel = logModel.Where("url = ?", logReq.Url)
 	}
-	if !logReq.StartTime.IsZero() {
-		logModel = logModel.Where("log.create_time >= ?", logReq.StartTime.Unix())
+	if logReq.StartTime != "" {
+		logModel = logModel.Where("log.create_time >= UNIX_TIMESTAMP(?)", logReq.StartTime)
 	}
-	if !logReq.EndTime.IsZero() {
-		logModel = logModel.Where("log.create_time <= ?", logReq.EndTime.Unix())
+	if logReq.EndTime != "" {
+		logModel = logModel.Where("log.create_time <= UNIX_TIMESTAMP(?)", logReq.EndTime)
 	}
 	// 总数
 	var count int64
@@ -98,11 +98,11 @@ func (logSrv systemLogsServer) Login(page request.PageReq, logReq SystemLogLogin
 	if logReq.Status > 0 {
 		logModel = logModel.Where("status = ?", logReq.Status)
 	}
-	if !logReq.StartTime.IsZero() {
-		logModel = logModel.Where("create_time >= ?", logReq.StartTime.Unix())
+	if logReq.StartTime != "" {
+		logModel = logModel.Where("create_time >= UNIX_TIMESTAMP(?)", logReq.StartTime)
 	}
-	if !logReq.EndTime.IsZero() {
-		logModel = logModel.Where("create_time <= ?", logReq.EndTime.Unix())
+	if logReq.EndTime != "" {
+		logModel = logModel.Where("create_time <= UNIX_TIMESTAMP(?)", logReq.EndTime)
 	}
 	// 总数
 	var count int64

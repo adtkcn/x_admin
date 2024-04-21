@@ -25,6 +25,7 @@ export default ({ mode }) => {
         server: {
             open: true,
             host: '0.0.0.0',
+            port: 5174,
             proxy: {
                 '/api': {
                     target: env.VITE_APP_BASE_URL,

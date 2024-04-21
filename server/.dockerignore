@@ -1,0 +1,5 @@
+### Go ###
+# Binaries for programs and plugins
+*.exe
+.vscode
+dist

@@ -56,4 +56,8 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	flow.FlowHistoryRoute(rg)
 
 	generator.RegisterGroup(rg)
+
+	MonitorProjectRoute(rg)
+	MonitorClientRoute(rg)
+	MonitorWebRoute(rg)
 }

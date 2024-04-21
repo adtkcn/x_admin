@@ -61,12 +61,14 @@
                     <el-table-column label="记录ID" prop="id" />
                     <el-table-column label="操作" prop="title" min-width="120" />
                     <el-table-column label="管理员" prop="username" min-width="120" />
-                    <el-table-column label="访问链接" prop="url" min-width="160" />
-                    <el-table-column label="访问方式" prop="type" min-width="100" />
+                    <el-table-column label="访问链接" prop="url" min-width="240">
+                        <template #default="{ row }"> {{ row.type }}：{{ row.url }} </template>
+                    </el-table-column>
+                    <!-- <el-table-column label="访问方式" prop="type" min-width="100" /> -->
                     <el-table-column label="来源IP" prop="ip" min-width="160" />
                     <el-table-column label="错误信息" prop="error" min-width="160" />
                     <el-table-column label="执行耗时(毫秒)" prop="taskTime" min-width="100" />
-                    <el-table-column label="日志时间" prop="createTime" min-width="180" />
+                    <el-table-column label="日志时间" prop="createTime" width="170" />
                 </el-table>
             </div>
             <div class="flex mt-4 justify-end">

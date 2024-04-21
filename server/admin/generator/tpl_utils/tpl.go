@@ -132,7 +132,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		GenTpl:          table.GenTpl,
 		TableName:       table.TableName,
 		AuthorName:      table.AuthorName,
-		PackageName:     table.ModuleName, //config.GenConfig.PackageName,
+		PackageName:     table.ModuleName,
 		EntityName:      table.EntityName,
 		EntitySnakeName: util.StringUtil.ToSnakeCase(table.EntityName),
 		ModuleName:      table.ModuleName,

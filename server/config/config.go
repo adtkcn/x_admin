@@ -51,10 +51,7 @@ func loadConfig(envPath string) envConfig {
 		viper.SetConfigFile(cfgPath)
 	}
 	viper.AutomaticEnv()
-	// var rootPath string
-	// if _, filename, _, ok := runtime.Caller(0); ok {
-	// 	rootPath = path.Dir(path.Dir(filename))
-	// }
+
 	rootPath, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)

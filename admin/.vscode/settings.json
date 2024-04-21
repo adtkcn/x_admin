@@ -8,5 +8,5 @@
     "css.validate": false,
     "less.validate": false,
     "scss.validate": false,
-    "cSpell.words": ["nprogress", "pinia", "vform"]
+    "cSpell.words": ["datetimerange", "nprogress", "pinia", "vform"]
 }

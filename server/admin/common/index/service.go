@@ -41,7 +41,7 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 		"website": "x.adtk.cn",
 		"based":   "Vue3.x、ElementUI、MySQL",
 		"channel": map[string]string{
-			"gitee":   "https://gitee.com/x_admin/x_admin_python",
+			"gitee":   "https://gitee.com/xiangheng/x_admin",
 			"website": "https://x.adtk.cn",
 		},
 	}

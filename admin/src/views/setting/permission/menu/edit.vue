@@ -43,18 +43,6 @@
                 </el-form-item>
 
                 <el-form-item
-                    v-if="formData.menuType != MenuEnum.BUTTON"
-                    label="路由路径"
-                    prop="paths"
-                >
-                    <div class="flex-1">
-                        <el-input v-model="formData.paths" placeholder="请输入路由路径" clearable />
-                        <div class="form-tips">
-                            访问的路由地址，如：`admin`，如外网地址需内链访问则以`http(s)://`开头
-                        </div>
-                    </div>
-                </el-form-item>
-                <el-form-item
                     v-if="formData.menuType == MenuEnum.MENU"
                     label="组件路径"
                     prop="component"
@@ -70,6 +58,38 @@
                         <!-- <el-input v-model="formData.component" placeholder="请输入组件路径" /> -->
                         <div class="form-tips">
                             访问的组件路径，如：`permission/admin/index`，默认在`views`目录下
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <el-form-item
+                    v-if="formData.menuType != MenuEnum.BUTTON"
+                    label="路由路径"
+                    prop="paths"
+                >
+                    <div class="flex-1">
+                        <el-input v-model="formData.paths" placeholder="请输入路由路径" clearable />
+                        <div class="form-tips">
+                            访问的路由地址，如：`admin`，如外网地址需内链访问则以`http(s)://`开头
+                        </div>
+                    </div>
+                </el-form-item>
+                <el-form-item
+                    v-if="formData.menuType == MenuEnum.MENU"
+                    label="路由参数"
+                    prop="params"
+                >
+                    <div>
+                        <div class="flex-1">
+                            <el-input
+                                v-model="formData.params"
+                                placeholder="请输入路由参数"
+                                clearable
+                            />
+                        </div>
+                        <div class="form-tips">
+                            访问路由的默认传递参数，如：`{"id": 1, "name":
+                            "admin"}`或`id=1&name=admin`
                         </div>
                     </div>
                 </el-form-item>
@@ -98,9 +118,8 @@
                         <!-- {{ formData.permsArr }} -->
                         <!-- <el-input v-model="formData.perms" placeholder="请输入接口权限" clearable /> -->
                         <el-select
-                            v-model="formData.permsArr"
+                            v-model="formData.perms"
                             clearable
-                            multiple
                             filterable
                             placeholder="请选择接口权限"
                             :style="{ width: '100%' }"
@@ -119,25 +138,7 @@
                         </div>
                     </div>
                 </el-form-item>
-                <el-form-item
-                    v-if="formData.menuType == MenuEnum.MENU"
-                    label="路由参数"
-                    prop="params"
-                >
-                    <div>
-                        <div class="flex-1">
-                            <el-input
-                                v-model="formData.params"
-                                placeholder="请输入路由参数"
-                                clearable
-                            />
-                        </div>
-                        <div class="form-tips">
-                            访问路由的默认传递参数，如：`{"id": 1, "name":
-                            "admin"}`或`id=1&name=admin`
-                        </div>
-                    </div>
-                </el-form-item>
+
                 <el-form-item
                     v-if="formData.menuType == MenuEnum.MENU"
                     label="是否缓存"
@@ -237,7 +238,7 @@ const formData = reactive({
     paths: '',
     //权限链接
     perms: '',
-    permsArr: [],
+    // permsArr: [],
     //前端组件
     component: '',
     //选中路径
@@ -311,11 +312,11 @@ function getApiListFn() {
 const handleSubmit = async () => {
     await formRef.value?.validate()
     const data = { ...formData }
-    if (data.permsArr) {
-        data.perms = data.permsArr.join(',')
-    } else {
-        data.perms = ''
-    }
+    // if (data.permsArr) {
+    //     data.perms = data.permsArr.join(',')
+    // } else {
+    //     data.perms = ''
+    // }
 
     mode.value == 'edit' ? await menuEdit(data) : await menuAdd(data)
     popupRef.value?.close()
@@ -332,11 +333,12 @@ const setFormData = (data: Record<any, any>) => {
     for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
             //@ts-ignore
-            if (key == 'perms') {
-                formData['permsArr'] = data[key].split(',')
-            } else {
-                formData[key] = data[key]
-            }
+            // if (key == 'perms') {
+            //     formData['permsArr'] = data[key].split(',')
+            // } else {
+            //     formData[key] = data[key]
+            // }
+            formData[key] = data[key]
         }
     }
 }
