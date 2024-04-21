@@ -2,10 +2,7 @@ package core
 
 import (
 	"encoding/json"
-	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 const DateFormat = "2006-01-02"
@@ -34,20 +31,6 @@ type OnlyRespTsTime time.Time
 //		return json.Marshal(tt)
 //	}
 //
-// 实现自定义的解析逻辑
-func (t *TsTime) Bind(ctx *gin.Context) error {
-	// 尝试从表单中获取时间字符串
-	str := ctx.Query("clientTime") // 对于GET请求使用Query，对于POST请求使用PostForm
-	// 对于POST请求中的JSON体，你应该使用 ShouldBindJSON 或其他相关的ShouldBind方法
-
-	// 假设传入的是UNIX时间戳的字符串形式
-	i, err := strconv.ParseInt(str, 10, 64)
-	if err != nil {
-		return err
-	}
-	*t = TsTime(i)
-	return nil
-}
 
 func (tst *TsTime) UnmarshalJSON(bs []byte) error {
 	var date string
@@ -65,6 +48,15 @@ func (tst *TsTime) UnmarshalJSON(bs []byte) error {
 func (tst TsTime) MarshalJSON() ([]byte, error) {
 	tt := time.Unix(int64(tst), 0).Format(TimeFormat)
 	return json.Marshal(tt)
+}
+
+// 通过时间字符串生成时间戳
+func ToUnix(date string) int64 {
+	if date == "" {
+		return 0
+	}
+	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
+	return tt.Unix()
 }
 
 func (otst OnlyRespTsTime) MarshalJSON() ([]byte, error) {

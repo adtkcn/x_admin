@@ -76,38 +76,7 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 	offset := page.PageSize * (page.PageNo - 1)
 
 	dbModel := service.GetModel(listReq)
-	// 查询
-	// dbModel := service.db.Model(&model.MonitorClient{})
-	// if listReq.ProjectKey != "" {
-	// 	dbModel = dbModel.Where("project_key = ?", listReq.ProjectKey)
-	// }
-	// if listReq.ClientId != "" {
-	// 	dbModel = dbModel.Where("client_id = ?", listReq.ClientId)
-	// }
-	// if listReq.UserId != "" {
-	// 	dbModel = dbModel.Where("user_id = ?", listReq.UserId)
-	// }
-	// if listReq.Os != "" {
-	// 	dbModel = dbModel.Where("os = ?", listReq.Os)
-	// }
-	// if listReq.Browser != "" {
-	// 	dbModel = dbModel.Where("browser = ?", listReq.Browser)
-	// }
-	// if listReq.City != "" {
-	// 	dbModel = dbModel.Where("city = ?", listReq.City)
-	// }
-	// if listReq.Width > 0 {
-	// 	dbModel = dbModel.Where("width = ?", listReq.Width)
-	// }
-	// if listReq.Height > 0 {
-	// 	dbModel = dbModel.Where("height = ?", listReq.Height)
-	// }
-	// if listReq.Ua != "" {
-	// 	dbModel = dbModel.Where("ua = ?", listReq.Ua)
-	// }
-	// if listReq.ClientTime > 0 {
-	// 	dbModel = dbModel.Where("client_time = ?", listReq.ClientTime)
-	// }
+
 	// 总数
 	var count int64
 	err := dbModel.Count(&count).Error
@@ -160,6 +129,8 @@ func (service monitorClientService) Detail(id int) (res MonitorClientResp, e err
 func (service monitorClientService) Add(addReq MonitorClientAddReq) (e error) {
 	var obj model.MonitorClient
 	response.Copy(&obj, addReq)
+	obj.ClientTime = core.ToUnix(addReq.ClientTime)
+
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -208,38 +179,6 @@ func (service monitorClientService) Del(id int) (e error) {
 func (service monitorClientService) ExportFile(listReq MonitorClientListReq) (res []MonitorClientResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
-
-	// dbModel := service.db.Model(&model.MonitorClient{})
-	// if listReq.ProjectKey != "" {
-	// 	dbModel = dbModel.Where("project_key = ?", listReq.ProjectKey)
-	// }
-	// if listReq.ClientId != "" {
-	// 	dbModel = dbModel.Where("client_id = ?", listReq.ClientId)
-	// }
-	// if listReq.UserId != "" {
-	// 	dbModel = dbModel.Where("user_id = ?", listReq.UserId)
-	// }
-	// if listReq.Os != "" {
-	// 	dbModel = dbModel.Where("os = ?", listReq.Os)
-	// }
-	// if listReq.Browser != "" {
-	// 	dbModel = dbModel.Where("browser = ?", listReq.Browser)
-	// }
-	// if listReq.City != "" {
-	// 	dbModel = dbModel.Where("city = ?", listReq.City)
-	// }
-	// if listReq.Width > 0 {
-	// 	dbModel = dbModel.Where("width = ?", listReq.Width)
-	// }
-	// if listReq.Height > 0 {
-	// 	dbModel = dbModel.Where("height = ?", listReq.Height)
-	// }
-	// if listReq.Ua != "" {
-	// 	dbModel = dbModel.Where("ua = ?", listReq.Ua)
-	// }
-	// if listReq.ClientTime > 0 {
-	// 	dbModel = dbModel.Where("client_time = ?", listReq.ClientTime)
-	// }
 
 	// 数据
 	var objs []model.MonitorClient
