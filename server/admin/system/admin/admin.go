@@ -57,7 +57,7 @@ func (ah AdminHandler) ExportFile(c *gin.Context) {
 		response.FailWithMsg(c, response.SystemError, "查询导出失败")
 		return
 	}
-	f, err := excel.NormalDynamicExport(res, "Sheet1", "用户信息", "", true, false, nil)
+	f, err := excel.NormalDynamicExport(res, "Sheet1", "用户信息", nil)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return

@@ -39,7 +39,7 @@ func TestExport(t *testing.T) {
 	}
 	changeHead := map[string]string{"Id": "账号", "Name": "真实姓名"}
 	//f, err := excel.NormalExport(testList, "Sheet1", "用户信息", "Id,Email,", true, true, changeHead)
-	f, err := NormalDynamicExport(testList, "Sheet1", "用户信息", "", true, false, changeHead)
+	f, err := NormalDynamicExport(testList, "Sheet1", "用户信息", changeHead)
 	if err != nil {
 		fmt.Println(err)
 		return

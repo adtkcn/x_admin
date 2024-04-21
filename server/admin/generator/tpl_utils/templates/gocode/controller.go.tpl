@@ -13,12 +13,12 @@ import (
  
 type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 
-//	@Summary	{{{ .FunctionName }}}列表
-//	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
-//	@Produce	json
-//	@Param		Token		header		string				true	"token"
-//	@Param		PageNo		query		int					true	"页码"
-//	@Param		PageSize	query		int					true	"每页数量"
+//  @Summary	{{{ .FunctionName }}}列表
+//  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
+//  @Produce	json
+//  @Param		Token		header		string				true	"token"
+//  @Param		PageNo		query		int					true	"页码"
+//  @Param		PageSize	query		int					true	"每页数量"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 //	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
@@ -153,7 +153,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Cont
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel.NormalDynamicExport(res, "Sheet1", "{{{ .FunctionName }}}", "", true, false, nil)
+	f, err := excel.NormalDynamicExport(res, "Sheet1", "{{{ .FunctionName }}}", nil)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
@@ -161,9 +161,9 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Cont
 	excel.DownLoadExcel("{{{ .FunctionName }}}" + time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
-//	@Summary	{{{ .FunctionName }}}导入
-//	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
-//	@Produce	json
+//  @Summary	{{{ .FunctionName }}}导入
+//  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
+//  @Produce	json
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

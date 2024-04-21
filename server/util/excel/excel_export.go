@@ -17,18 +17,23 @@ func GetExcelColumnName(columnNumber int) string {
 	columnName := ""
 	for columnNumber > 0 {
 		remainder := (columnNumber - 1) % 26
-		columnName = string('A'+remainder) + columnName
+		columnName = string(rune('A'+remainder)) + columnName
 		columnNumber = (columnNumber - 1) / 26
 	}
 	return columnName
 }
 
 // NormalDynamicExport 导出excel
-// ** 需要在传入的结构体中的字段加上tag：excelize:"title:列头名称;index:列下标(从0开始);"
-// list 需要导出的对象数组、sheet sheet名称、title 标题、isGhbj 是否设置隔行背景色
-func NormalDynamicExport(list interface{}, sheet, title, fields string, isGhbj, isIgnore bool, changeHead map[string]string) (file *excelize.File, err error) {
+//
+// 需要在传入的结构体中的字段加上tag：excel:"title:列头名称;index:列下标(从0开始);"
+//
+//	@param list 要导出的数据
+//	@param sheet 文档
+//	@param title 标题
+//	@param changeHead map[string]string{"Id": "账号", "Name": "真实姓名"}
+func NormalDynamicExport(list interface{}, sheet string, title string, changeHead map[string]string) (file *excelize.File, err error) {
 	e := ExcelInit()
-	err = ExportExcel(sheet, title, fields, isGhbj, isIgnore, list, changeHead, e)
+	err = ExportExcel(sheet, title, list, changeHead, e)
 	if err != nil {
 		return
 	}
@@ -36,7 +41,7 @@ func NormalDynamicExport(list interface{}, sheet, title, fields string, isGhbj, 
 }
 
 // ExportExcel excel导出
-func ExportExcel(sheet, title, fields string, isGhbj, isIgnore bool, list interface{}, changeHead map[string]string, e *Excel) (err error) {
+func ExportExcel(sheet, title string, list interface{}, changeHead map[string]string, e *Excel) (err error) {
 	index, _ := e.F.GetSheetIndex(sheet)
 	if index < 0 { // 如果sheet名称不存在
 		e.F.NewSheet(sheet)
@@ -50,17 +55,17 @@ func ExportExcel(sheet, title, fields string, isGhbj, isIgnore bool, list interf
 		return
 	}
 	// 构造表头
-	endColName, dataRow, err := normalBuildTitle(e, sheet, title, fields, isIgnore, changeHead, dataValue)
+	endColName, dataRow, err := normalBuildTitle(e, sheet, title, changeHead, dataValue)
 	if err != nil {
 		return
 	}
 	// 构造数据行
-	err = normalBuildDataRow(e, sheet, endColName, fields, dataRow, isGhbj, isIgnore, dataValue)
+	err = normalBuildDataRow(e, sheet, endColName, dataRow, dataValue)
 	return
 }
 
 // 构造表头（endColName 最后一列的列名 dataRow 数据行开始的行号）
-func normalBuildTitle(e *Excel, sheet, title, fields string, isIgnore bool, changeHead map[string]string, dataValue reflect.Value) (endColName string, dataRow int, err error) {
+func normalBuildTitle(e *Excel, sheet, title string, changeHead map[string]string, dataValue reflect.Value) (endColName string, dataRow int, err error) {
 	dataType := dataValue.Type().Elem() // 获取导入目标对象的类型信息
 	var exportTitle []ExcelTag          // 遍历目标对象的字段
 	for i := 0; i < dataType.NumField(); i++ {
@@ -70,14 +75,7 @@ func normalBuildTitle(e *Excel, sheet, title, fields string, isIgnore bool, chan
 		if tag == "" { // 如果非导出则跳过
 			continue
 		}
-		if fields != "" { // 选择要导出或要忽略的字段
-			if isIgnore && strings.Contains(fields, field.Name+",") { // 忽略指定字段
-				continue
-			}
-			if !isIgnore && !strings.Contains(fields, field.Name+",") { // 导出指定字段
-				continue
-			}
-		}
+
 		err = excelTag.GetTag(tag)
 		if err != nil {
 			return
@@ -126,7 +124,7 @@ func normalBuildTitle(e *Excel, sheet, title, fields string, isIgnore bool, chan
 }
 
 // 构造数据行
-func normalBuildDataRow(e *Excel, sheet, endColName, fields string, row int, isGhbj, isIgnore bool, dataValue reflect.Value) (err error) {
+func normalBuildDataRow(e *Excel, sheet, endColName string, row int, dataValue reflect.Value) (err error) {
 	//实时写入数据
 	for i := 0; i < dataValue.Len(); i++ {
 		startCol := fmt.Sprintf("A%d", row)
@@ -143,14 +141,7 @@ func normalBuildDataRow(e *Excel, sheet, endColName, fields string, row int, isG
 			if tagVal == "" { // 如果非导出则跳过
 				continue
 			}
-			if fields != "" { // 选择要导出或要忽略的字段
-				if isIgnore && strings.Contains(fields, dataField.Name+",") { // 忽略指定字段
-					continue
-				}
-				if !isIgnore && !strings.Contains(fields, dataField.Name+",") { // 导出指定字段
-					continue
-				}
-			}
+
 			var dataCol ExcelTag
 			err = dataCol.GetTag(tagVal)
 			fieldData := item.FieldByName(dataField.Name) // 取字段值
@@ -193,7 +184,7 @@ func normalBuildDataRow(e *Excel, sheet, endColName, fields string, row int, isG
 		for _, colTitle := range exportRow {
 			rowData = append(rowData, colTitle.Value)
 		}
-		if isGhbj && row%2 == 0 {
+		if row%2 == 0 {
 			_ = e.F.SetCellStyle(sheet, startCol, endCol, e.ContentStyle2)
 		} else {
 			_ = e.F.SetCellStyle(sheet, startCol, endCol, e.ContentStyle1)
