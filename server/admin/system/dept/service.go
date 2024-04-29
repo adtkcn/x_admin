@@ -8,14 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type ISystemAuthDeptService interface {
-	All() (res []SystemAuthDeptResp, e error)
-	List(listReq SystemAuthDeptListReq) (mapList []interface{}, e error)
-	Detail(id uint) (res SystemAuthDeptResp, e error)
-	Add(addReq SystemAuthDeptAddReq) (e error)
-	Edit(editReq SystemAuthDeptEditReq) (e error)
-	Del(id uint) (e error)
-}
+// type ISystemAuthDeptService interface {
+// 	All() (res []SystemAuthDeptResp, e error)
+// 	List(listReq SystemAuthDeptListReq) (mapList []interface{}, e error)
+// 	Detail(id uint) (res SystemAuthDeptResp, e error)
+// 	Add(addReq SystemAuthDeptAddReq) (e error)
+// 	Edit(editReq SystemAuthDeptEditReq) (e error)
+// 	Del(id uint) (e error)
+// }
 
 var Service = NewSystemAuthDeptService()
 
@@ -33,7 +33,7 @@ type systemAuthDeptService struct {
 // All 部门所有
 func (deptSrv systemAuthDeptService) All() (res []SystemAuthDeptResp, e error) {
 	var depts []system_model.SystemAuthDept
-	err := deptSrv.db.Where("pid > ? AND is_delete = ?", 0, 0).Order("sort desc, id desc").Find(&depts).Error
+	err := deptSrv.db.Where("is_delete = ?", 0).Order("sort desc, id desc").Find(&depts).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
@@ -114,7 +114,7 @@ func (deptSrv systemAuthDeptService) Edit(editReq SystemAuthDeptEditReq) (e erro
 	}
 	// 更新
 	response.Copy(&dept, editReq)
-	err = deptSrv.db.Model(&dept).Updates(dept).Error
+	err = deptSrv.db.Model(&dept).Select("*").Updates(dept).Error
 	e = response.CheckErr(err, "Edit Updates err")
 	return
 }

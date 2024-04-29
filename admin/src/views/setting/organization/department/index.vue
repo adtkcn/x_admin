@@ -1,6 +1,6 @@
 <template>
     <div class="dept-lists">
-        <el-card class="!border-none" shadow="never">
+        <!-- <el-card class="!border-none" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <el-form-item label="部门名称" prop="name" class="w-[280px]">
                     <el-input v-model="queryParams.name" clearable @keyup.enter="getLists" />
@@ -17,8 +17,8 @@
                     <el-button @click="resetParams">重置</el-button>
                 </el-form-item>
             </el-form>
-        </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        </el-card> -->
+        <el-card class="!border-none" shadow="never">
             <div>
                 <el-button v-perms="['admin:system:dept:add']" type="primary" @click="handleAdd()">
                     <template #icon>
@@ -91,7 +91,7 @@
 <script lang="ts" setup>
 import type { ElTable, FormInstance } from 'element-plus'
 import EditPopup from './edit.vue'
-import { deptDelete, deptLists } from '@/api/org/department'
+import { deptDelete, deptAll } from '@/api/org/department'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
 defineOptions({
@@ -104,13 +104,13 @@ let isExpand = false
 const loading = ref(false)
 const lists = ref<any[]>([])
 const queryParams = reactive({
-    isStop: '',
-    name: ''
+    // isStop: '',
+    // name: ''
 })
 const showEdit = ref(false)
 const getLists = async () => {
     loading.value = true
-    const list = await deptLists(queryParams)
+    const list = await deptAll(queryParams)
     // 根据id和pid处理层级关系
 
     lists.value = arrayToTree(list)
