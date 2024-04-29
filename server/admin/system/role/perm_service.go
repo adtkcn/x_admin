@@ -37,12 +37,12 @@ type systemAuthPermService struct {
 func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId uint) (menuIds []uint, e error) {
 	var role system_model.SystemAuthRole
 	err := service.db.Where("id = ? AND is_disable = ?", roleId, 0).Limit(1).First(&role).Error
-	if e = response.CheckErr(err, "SelectMenuIdsByRoleId First err"); e != nil {
+	if e = response.CheckErr(err, "角色不存在"); e != nil {
 		return []uint{}, e
 	}
 	var perms []system_model.SystemAuthPerm
 	err = service.db.Where("role_id = ?", role.ID).Find(&perms).Error
-	if e = response.CheckErr(err, "SelectMenuIdsByRoleId Find err"); e != nil {
+	if e = response.CheckErr(err, "查询角色的菜单失败"); e != nil {
 		return []uint{}, e
 	}
 	for _, perm := range perms {
@@ -55,7 +55,7 @@ func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId uint) (menuIds
 func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e error) {
 	var perms []system_model.SystemAuthPerm
 	err := service.db.Where("role_id = ?", roleId).Find(&perms).Error
-	if e = response.CheckErr(err, "CacheRoleMenusByRoleId Find perms err"); e != nil {
+	if e = response.CheckErr(err, "查询角色的菜单失败"); e != nil {
 		return
 	}
 	var menuIds []uint

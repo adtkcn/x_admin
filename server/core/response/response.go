@@ -205,7 +205,7 @@ func CheckMysqlErr(err error) (e error) {
 		switch mysqlErr.Number {
 		case 404:
 			core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf("record not found: err=[%+v]", err)
-			return SystemError.Make("record not found")
+			return SystemError.Make("数据不存在")
 		case 1062: // MySQL中表示重复条目的代码
 			core.Logger.WithOptions(zap.AddCallerSkip(1)).Infof("数据已存在: err=[%+v]", err)
 			return SystemError.Make("数据已存在")

@@ -88,7 +88,7 @@ func (roleSrv systemAuthRoleService) Detail(id uint) (res SystemAuthRoleResp, e 
 	}
 	response.Copy(&res, role)
 	res.Member = roleSrv.getMemberCnt(role.ID)
-	res.Menus, e = PermService.SelectMenuIdsByRoleId(role.ID)
+	res.Menus, _ = PermService.SelectMenuIdsByRoleId(role.ID)
 	return
 }
 
