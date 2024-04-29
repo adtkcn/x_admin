@@ -8,13 +8,13 @@
                 <el-form-item class="w-[280px]" label="岗位名称">
                     <el-input v-model="queryParams.name" clearable @keyup.enter="resetPage" />
                 </el-form-item>
-                <el-form-item class="w-[280px]" label="岗位状态">
+                <!-- <el-form-item class="w-[280px]" label="岗位状态">
                     <el-select v-model="queryParams.isStop">
                         <el-option label="全部" value />
                         <el-option label="正常" :value="0" />
                         <el-option label="停用" :value="1" />
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>

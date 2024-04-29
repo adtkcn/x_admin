@@ -9,14 +9,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type ISystemAuthPostService interface {
-	All() (res []SystemAuthPostResp, e error)
-	List(page request.PageReq, listReq SystemAuthPostListReq) (res response.PageResp, e error)
-	Detail(id uint) (res SystemAuthPostResp, e error)
-	Add(addReq SystemAuthPostAddReq) (e error)
-	Edit(editReq SystemAuthPostEditReq) (e error)
-	Del(id uint) (e error)
-}
+// type ISystemAuthPostService interface {
+// 	All() (res []SystemAuthPostResp, e error)
+// 	List(page request.PageReq, listReq SystemAuthPostListReq) (res response.PageResp, e error)
+// 	Detail(id uint) (res SystemAuthPostResp, e error)
+// 	Add(addReq SystemAuthPostAddReq) (e error)
+// 	Edit(editReq SystemAuthPostEditReq) (e error)
+// 	Del(id uint) (e error)
+// }
 
 var Service = NewSystemAuthPostService()
 
@@ -56,9 +56,9 @@ func (postSrv systemAuthPostService) List(page request.PageReq, listReq SystemAu
 	if listReq.Name != "" {
 		postModel = postModel.Where("name like ?", "%"+listReq.Name+"%")
 	}
-	if listReq.IsStop >= 0 {
-		postModel = postModel.Where("is_stop = ?", listReq.IsStop)
-	}
+	// if listReq.IsStop > 0 {
+	// 	postModel = postModel.Where("is_stop = ?", listReq.IsStop)
+	// }
 	// 总数
 	var count int64
 	err := postModel.Count(&count).Error
@@ -67,7 +67,7 @@ func (postSrv systemAuthPostService) List(page request.PageReq, listReq SystemAu
 	}
 	// 数据
 	var posts []system_model.SystemAuthPost
-	err = postModel.Limit(limit).Offset(offset).Order("id desc").Find(&posts).Error
+	err = postModel.Limit(limit).Offset(offset).Order("sort desc, id desc").Find(&posts).Error
 	if e = response.CheckErr(err, "List Find err"); e != nil {
 		return
 	}
@@ -131,7 +131,7 @@ func (postSrv systemAuthPostService) Edit(editReq SystemAuthPostEditReq) (e erro
 	}
 	// 更新
 	response.Copy(&post, editReq)
-	err = postSrv.db.Model(&post).Updates(post).Error
+	err = postSrv.db.Model(&post).Select("*").Updates(post).Error
 	e = response.CheckErr(err, "Edit Updates err")
 	return
 }
