@@ -17,7 +17,7 @@
                         clearable
                     />
                 </el-form-item>
-                <el-form-item label="头像">
+                <el-form-item label="头像" prop="avatar">
                     <div>
                         <div>
                             <material-picker v-model="formData.avatar" :limit="1" />
@@ -155,6 +155,13 @@ const formRules = reactive({
         {
             required: true,
             message: '请输入账号',
+            trigger: ['blur']
+        }
+    ],
+    avatar: [
+        {
+            required: true,
+            message: '请上传头像',
             trigger: ['blur']
         }
     ],
