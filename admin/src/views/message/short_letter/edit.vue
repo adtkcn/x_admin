@@ -44,7 +44,10 @@ import { setSmsConfig, smsDetail } from '@/api/message'
 import type { FormInstance } from 'element-plus'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
-const emit = defineEmits(['success'])
+// 基于类型
+const emit = defineEmits<{
+    (e: 'success'): void
+}>()
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
 const formData = reactive({
