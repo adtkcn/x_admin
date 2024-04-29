@@ -21,7 +21,15 @@
                             show-overflow-tooltip
                         />
                         <el-table-column prop="sort" label="排序" min-width="100" />
-                        <el-table-column prop="member" label="管理员人数" min-width="120" />
+                        <el-table-column prop="member" label="角色人数" min-width="120" />
+                        <el-table-column label="岗位状态" prop="isDisable" min-width="100">
+                            <template #default="{ row }">
+                                <el-tag class="ml-2" :type="row.isDisable ? 'danger' : 'primary'">
+                                    {{ row.isDisable ? '停用' : '正常' }}
+                                </el-tag>
+                            </template>
+                        </el-table-column>
+
                         <el-table-column prop="createTime" label="创建时间" min-width="180" />
                         <el-table-column label="操作" width="190" fixed="right">
                             <template #default="{ row }">
