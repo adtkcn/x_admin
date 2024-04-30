@@ -22,6 +22,10 @@ export default ({ mode }) => {
             // 依赖预构建，避免开发刷新
             include: ['@wangeditor/editor-for-vue', 'vuedraggable', 'vue-echarts', 'crypto-js']
         },
+        build: {
+            // 打包后文件名
+            sourcemap: true
+        },
         server: {
             open: true,
             host: '0.0.0.0',
@@ -58,10 +62,10 @@ export default ({ mode }) => {
             }),
             viteCompression({
                 algorithm: 'gzip'
-            }),
-            viteCompression({
-                algorithm: 'brotliCompress'
             })
+            // viteCompression({
+            //     algorithm: 'brotliCompress'
+            // })
             // visualizer({
             //     gzipSize: true,
             //     brotliSize: true,

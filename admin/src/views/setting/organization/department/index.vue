@@ -89,7 +89,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import type { ElTable, FormInstance } from 'element-plus'
+import type { ElTable } from 'element-plus'
 import EditPopup from './edit.vue'
 import { deptDelete, deptAll } from '@/api/org/department'
 import feedback from '@/utils/feedback'
@@ -99,7 +99,7 @@ defineOptions({
 })
 const tableRef = shallowRef<InstanceType<typeof ElTable>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-const formRef = shallowRef<FormInstance>()
+// const formRef = shallowRef<FormInstance>()
 let isExpand = false
 const loading = ref(false)
 const lists = ref<any[]>([])
@@ -119,10 +119,10 @@ const getLists = async () => {
     loading.value = false
 }
 
-const resetParams = () => {
-    formRef.value?.resetFields()
-    getLists()
-}
+// const resetParams = () => {
+//     formRef.value?.resetFields()
+//     getLists()
+// }
 
 const handleAdd = async (id?: number) => {
     showEdit.value = true
