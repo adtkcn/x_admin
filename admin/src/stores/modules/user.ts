@@ -34,10 +34,10 @@ const useUserStore = defineStore('user', {
             this.userInfo = {}
             this.perms = []
         },
-        login(playload: any) {
+        login(info: any) {
             return new Promise((resolve, reject) => {
                 login({
-                    ...playload
+                    ...info
                 })
                     .then((data) => {
                         this.token = data.token

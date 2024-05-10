@@ -10,9 +10,9 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="项目Key" prop="projectKey">
+                <!-- <el-form-item label="项目Key" prop="projectKey">
                     <el-input v-model="formData.projectKey" placeholder="请输入项目uuid" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="项目名称" prop="projectName">
                     <el-input v-model="formData.projectName" placeholder="请输入项目名称" />
                 </el-form-item>
@@ -62,7 +62,7 @@ const popupTitle = computed(() => {
 
 const formData = reactive({
     id: '',
-    projectKey: '',
+    // projectKey: '',
     projectName: '',
     projectType: ''
 })
@@ -75,13 +75,13 @@ const formRules = {
             trigger: ['blur']
         }
     ],
-    projectKey: [
-        {
-            required: true,
-            message: '请输入项目Key',
-            trigger: ['blur']
-        }
-    ],
+    // projectKey: [
+    //     {
+    //         required: true,
+    //         message: '请输入项目Key',
+    //         trigger: ['blur']
+    //     }
+    // ],
     projectName: [
         {
             required: true,

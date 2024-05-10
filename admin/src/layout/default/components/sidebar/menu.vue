@@ -34,7 +34,7 @@ defineOptions({
 })
 const props = defineProps({
     routes: {
-        type: Object as PropType<RouteRecordRaw[]>
+        type: Array as PropType<RouteRecordRaw[]>
     },
     config: {
         type: Object
@@ -69,13 +69,14 @@ const themeClass = computed(() => `theme-${props.theme}`)
         .el-menu {
             :deep(.el-menu-item) {
                 &.is-active {
-                    @apply bg-primary border-primary;
+                    background-color: var(--el-color-primary);
+                    border-color: var(--el-color-primary);
                 }
             }
         }
         :deep(.el-menu--collapse) {
             .el-sub-menu.is-active .el-sub-menu__title {
-                @apply bg-primary #{!important};
+                background-color: var(--el-color-primary) !important;
             }
         }
     }
@@ -84,7 +85,9 @@ const themeClass = computed(() => `theme-${props.theme}`)
             .el-menu-item {
                 border-color: transparent;
                 &.is-active {
-                    @apply bg-primary-light-9 border-r-2 border-primary;
+                    background-color: var(--el-color-primary-light-9);
+                    border-right-width: 2px;
+                    border-color: var(--el-color-primary);
                 }
             }
             .el-menu-item:hover,

@@ -40,8 +40,8 @@
             </div>
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="项目Key" prop="projectKey" min-width="130" />
-                <el-table-column label="项目名称" prop="projectName" min-width="130" />
-                <el-table-column label="项目类型" prop="projectType" min-width="100">
+                <el-table-column label="项目名称" prop="projectName" />
+                <el-table-column label="项目类型" prop="projectType">
                     <template #default="{ row }">
                         <dict-value :options="dictData.project_type" :value="row.projectType" />
                     </template>

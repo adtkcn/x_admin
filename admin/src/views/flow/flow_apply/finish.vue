@@ -115,17 +115,12 @@ import feedback from '@/utils/feedback'
 import ApplySubmit from './components/apply_submit.vue'
 import ViewForm from './components/ViewForm.vue'
 
-import useUserStore from '@/stores/modules/user'
-
-const userStore = useUserStore()
-
 defineOptions({
     name: 'flow_apply'
 })
 const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 
-const showEdit = ref(false)
 const queryParams = reactive({
     applyUserNickname: '',
     flowName: '',

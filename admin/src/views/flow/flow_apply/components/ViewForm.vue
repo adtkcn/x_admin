@@ -44,7 +44,11 @@ const optionData = reactive({})
 const vFormRef = ref(null)
 
 const dialogVisible = ref(false)
-const applyDetail = ref({})
+const applyDetail = ref({
+    id: null,
+    status: null,
+    flowName: ''
+})
 
 const historyList = ref([])
 
@@ -73,7 +77,11 @@ async function getHistoryList(applyId) {
 }
 function closeFn() {
     dialogVisible.value = false
-    applyDetail.value = {}
+    applyDetail.value = {
+        id: null,
+        status: null,
+        flowName: ''
+    }
     formData.value = {}
     formJson.value = {}
     historyList.value = []

@@ -40,8 +40,8 @@
                         'line-height': '20px',
                         'border-radius': '50%',
                         position: 'absolute',
-                        top: parseInt(tempPoint.y - 10) + 'px',
-                        left: parseInt(tempPoint.x - 10) + 'px'
+                        top: tempPoint.y - 10 + 'px',
+                        left: tempPoint.x - 10 + 'px'
                     }"
                 >
                     {{ index + 1 }}
@@ -62,7 +62,7 @@
         </div>
     </div>
 </template>
-<script type="text/babel">
+<script>
 /**
  * VerifyPoints
  * @description 点选
@@ -106,8 +106,8 @@ export default {
             }
         }
     },
-    setup(props, context) {
-        const { mode, captchaType, vSpace, imgSize, barSize } = toRefs(props)
+    setup(props) {
+        const { mode, captchaType } = toRefs(props)
         const { proxy } = getCurrentInstance()
         const secretKey = ref(''), //后端返回的ase加密秘钥
             checkNum = ref(3), //默认需要点击的字数

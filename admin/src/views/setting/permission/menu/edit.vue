@@ -132,10 +132,9 @@
                             ></el-option>
                         </el-select>
 
-                        <div class="form-tips">
-                            <!-- 将作为server端API验权使用，请求路径`api/admin/system/admin/list`权限为`admin:system:admin:list` -->
-                            可以多个，但建议一个接口一个按钮
-                        </div>
+                        <!-- <div class="form-tips">
+                            请求路径`api/admin/system/admin/list`权限为`admin:system:admin:list`
+                        </div> -->
                     </div>
                 </el-form-item>
 

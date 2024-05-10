@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import type { RouteRecordRaw } from 'vue-router'
 import useAppStore from '@/stores/modules/app'
 import useSettingStore from '@/stores/modules/setting'
 import useUserStore from '@/stores/modules/user'
@@ -35,7 +36,7 @@ const settingStore = useSettingStore()
 const sideTheme = computed(() => settingStore.sideTheme)
 const userStore = useUserStore()
 
-const routes = computed(() => userStore.routes)
+const routes = computed(() => userStore.routes as RouteRecordRaw[])
 
 const sideStyle = computed(() => {
     return sideTheme.value == 'dark'
@@ -62,7 +63,12 @@ const handleSelect = () => {
 .side {
     position: relative;
     z-index: 999;
-    @apply border-r border-br-light h-full flex flex-col;
+    border-right-width: 1px;
+    border-color: var(--el-border-color-light);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
     background-color: var(--side-dark-color, var(--el-bg-color));
 }
 </style>

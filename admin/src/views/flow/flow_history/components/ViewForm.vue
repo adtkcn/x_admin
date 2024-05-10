@@ -31,6 +31,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
+
 // import { flow_apply_detail } from '@/api/flow/flow_apply'
 
 const formJson = ref({})
@@ -39,8 +40,13 @@ const optionData = reactive({})
 const vFormRef = ref(null)
 
 const dialogVisible = ref(false)
-const applyDetail = ref({})
-const historyDetail = ref({})
+const applyDetail = ref({
+    flowName: ''
+})
+const historyDetail = ref({
+    id: null,
+    passStatus: null
+})
 
 const props = defineProps({
     save: {
@@ -68,10 +74,13 @@ function hideWidgets(widgetNames) {
 }
 function closeFn() {
     dialogVisible.value = false
-    applyDetail.value = {}
+    applyDetail.value = { flowName: '' }
     formData.value = {}
     formJson.value = {}
-    historyDetail.value = {}
+    historyDetail.value = {
+        id: null,
+        passStatus: null
+    }
 }
 function onBack() {
     emit('back', historyDetail.value)
