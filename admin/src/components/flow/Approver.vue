@@ -129,7 +129,12 @@ export default {
     mounted() {},
     methods: {
         reset() {
-            this.mockData = {}
+            this.mockData = {
+                basicSetting: {},
+                flowFormData: {},
+                flowProcessData: {},
+                advancedSetting: {}
+            }
             this.activeStep = 'basicSetting'
             this.fieldList = []
         },

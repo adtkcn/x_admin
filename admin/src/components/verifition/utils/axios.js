@@ -24,6 +24,6 @@ service.interceptors.response.use(
         const res = response.data
         return res
     },
-    (error) => {}
+    () => {}
 )
 export default service

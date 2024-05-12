@@ -62,11 +62,11 @@ async function getText() {
     return text
 }
 
-async function writeFile() {
-    const writable = await fileHandle.createWritable()
-    await writable.write('测试一下')
-    await writable.close()
-}
+// async function writeFile() {
+//     const writable = await fileHandle.createWritable()
+//     await writable.write('测试一下')
+//     await writable.close()
+// }
 
 export default {
     props: {

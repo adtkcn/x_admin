@@ -13,6 +13,8 @@ import useTabsStore from './stores/modules/multipleTabs'
 import { clearAuthInfo } from './utils/auth'
 import config from './config'
 
+import type { RouteRecordRaw } from 'vue-router'
+
 // NProgress配置
 NProgress.configure({ showSpinner: false })
 
@@ -42,7 +44,7 @@ router.beforeEach(async (to, from, next) => {
             try {
                 await userStore.getUserInfo()
                 await userStore.getMenu()
-                const routes = userStore.routes
+                const routes = userStore.routes as RouteRecordRaw[]
                 // 找到第一个有效路由
                 const routeName = findFirstValidRoute(routes)
                 // 没有有效路由跳转到403页面

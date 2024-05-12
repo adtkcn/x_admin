@@ -1,12 +1,13 @@
 import { RequestMethodsEnum } from '@/enums/requestEnums'
-import axios, {
-    AxiosError,
-    type AxiosInstance,
-    type AxiosRequestConfig,
-    type AxiosResponse
+import axios, { AxiosError } from 'axios'
+import type {
+    AxiosInstance,
+    AxiosRequestConfig,
+    AxiosResponse,
+    InternalAxiosRequestConfig
 } from 'axios'
 import { isFunction, merge, cloneDeep } from 'lodash-es'
-import axiosCancel from './cancel'
+
 import type { RequestData, RequestOptions } from './type'
 
 export class Axios {
@@ -42,9 +43,8 @@ export class Axios {
         } = this.config.axiosHooks
         this.axiosInstance.interceptors.request.use(
             (config) => {
-                this.addCancelToken(config)
                 if (isFunction(requestInterceptorsHook)) {
-                    config = requestInterceptorsHook(config)
+                    config = requestInterceptorsHook(config) as InternalAxiosRequestConfig
                 }
                 return config
             },
@@ -56,8 +56,7 @@ export class Axios {
             }
         )
         this.axiosInstance.interceptors.response.use(
-            (response: AxiosResponse<RequestData>) => {
-                this.removeCancelToken(response.config.url!)
+            (response: any) => {
                 if (isFunction(responseInterceptorsHook)) {
                     response = responseInterceptorsHook(response)
                 }
@@ -67,53 +66,12 @@ export class Axios {
                 if (isFunction(responseInterceptorsCatchHook)) {
                     responseInterceptorsCatchHook(err)
                 }
-                if (err.code != AxiosError.ERR_CANCELED) {
-                    this.removeCancelToken(err.config?.url!)
-                }
 
-                if (err.code == AxiosError.ECONNABORTED || err.code == AxiosError.ERR_NETWORK) {
-                    return new Promise((resolve) => setTimeout(resolve, 500)).then(() =>
-                        this.retryRequest(err)
-                    )
-                }
                 return Promise.reject(err)
             }
         )
     }
 
-    /**
-     * @description 添加CancelToken
-     */
-    addCancelToken(config: AxiosRequestConfig) {
-        const { ignoreCancelToken } = config.requestOptions
-        !ignoreCancelToken && axiosCancel.add(config)
-    }
-
-    /**
-     * @description 移除CancelToken
-     */
-    removeCancelToken(url: string) {
-        axiosCancel.remove(url)
-    }
-
-    /**
-     * @description 重新请求
-     */
-    retryRequest(error: AxiosError) {
-        const config = error.config
-        const { retryCount, isOpenRetry } = config.requestOptions
-        if (!isOpenRetry || config.method?.toUpperCase() == RequestMethodsEnum.POST) {
-            return Promise.reject(error)
-        }
-        config.retryCount = config.retryCount ?? 0
-
-        if (config.retryCount >= retryCount) {
-            return Promise.reject(error)
-        }
-        config.retryCount++
-
-        return this.axiosInstance.request(config)
-    }
     /**
      * @description get请求
      */

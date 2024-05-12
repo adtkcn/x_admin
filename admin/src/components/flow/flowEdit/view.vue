@@ -24,7 +24,7 @@ export default {
     components: {},
     data() {
         return {
-            lf: '',
+            lf: null,
             activeNodes: [],
             activeEdges: [],
             properties: {},

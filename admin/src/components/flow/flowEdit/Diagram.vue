@@ -60,7 +60,7 @@ export default {
             sidebarWidth: 200,
             diagramWidth: 0,
             diagramHeight: 0,
-            lf: '',
+            lf: null,
             filename: '',
             activeEdges: []
         }

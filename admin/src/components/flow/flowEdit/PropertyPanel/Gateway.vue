@@ -51,8 +51,9 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { PropType } from 'vue'
 import { Close } from '@element-plus/icons-vue'
 const props = defineProps({
     node: {
@@ -60,7 +61,12 @@ const props = defineProps({
         default: () => ({})
     },
     fieldList: {
-        type: Array,
+        type: Array as PropType<
+            {
+                id: string
+                label: string
+            }[]
+        >,
         default: () => []
     },
     properties: {
