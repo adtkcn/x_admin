@@ -59,10 +59,10 @@ func (logSrv systemLogsServer) Operate(page request.PageReq, logReq SystemLogOpe
 		logModel = logModel.Where("url = ?", logReq.Url)
 	}
 	if logReq.StartTime != "" {
-		logModel = logModel.Where("log.create_time >= UNIX_TIMESTAMP(?)", logReq.StartTime)
+		logModel = logModel.Where("log.create_time >= ?", logReq.StartTime)
 	}
 	if logReq.EndTime != "" {
-		logModel = logModel.Where("log.create_time <= UNIX_TIMESTAMP(?)", logReq.EndTime)
+		logModel = logModel.Where("log.create_time <= ?", logReq.EndTime)
 	}
 	// 总数
 	var count int64
@@ -99,10 +99,10 @@ func (logSrv systemLogsServer) Login(page request.PageReq, logReq SystemLogLogin
 		logModel = logModel.Where("status = ?", logReq.Status)
 	}
 	if logReq.StartTime != "" {
-		logModel = logModel.Where("create_time >= UNIX_TIMESTAMP(?)", logReq.StartTime)
+		logModel = logModel.Where("create_time >= now(?)", logReq.StartTime)
 	}
 	if logReq.EndTime != "" {
-		logModel = logModel.Where("create_time <= UNIX_TIMESTAMP(?)", logReq.EndTime)
+		logModel = logModel.Where("create_time <= now(?)", logReq.EndTime)
 	}
 	// 总数
 	var count int64

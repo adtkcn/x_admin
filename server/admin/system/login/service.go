@@ -4,7 +4,6 @@ import (
 	"errors"
 	"runtime/debug"
 	"strconv"
-	"time"
 	"x_admin/admin/system/admin"
 	"x_admin/config"
 	"x_admin/core"
@@ -97,7 +96,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (r
 
 	// 更新登录信息
 	err = loginSrv.db.Model(&sysAdmin).Updates(
-		system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: time.Now().Unix()}).Error
+		system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: core.NowTime()}).Error
 	if err != nil {
 		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.SystemError.Msg()); e != nil {
 			return

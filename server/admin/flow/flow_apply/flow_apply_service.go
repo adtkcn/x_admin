@@ -159,6 +159,7 @@ func (Service flowApplyService) Del(id int) (e error) {
 	}
 	// 删除
 	obj.IsDelete = 1
+	obj.DeleteTime = core.NowTime()
 	err = Service.db.Save(&obj).Error
 	e = response.CheckErr(err, "Del Save err")
 	return

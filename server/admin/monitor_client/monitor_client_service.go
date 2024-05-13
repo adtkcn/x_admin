@@ -126,7 +126,7 @@ func (service monitorClientService) Detail(id int) (res MonitorClientResp, e err
 func (service monitorClientService) Add(addReq MonitorClientAddReq) (e error) {
 	var obj model.MonitorClient
 	response.Copy(&obj, addReq)
-	obj.ClientTime = core.ToUnix(addReq.ClientTime)
+	// obj.ClientTime = core.ToUnix(addReq.ClientTime)
 
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)

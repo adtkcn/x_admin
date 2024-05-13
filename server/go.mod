@@ -26,6 +26,7 @@ require (
 	golang.org/x/image v0.15.0
 	gorm.io/driver/mysql v1.5.4
 	gorm.io/gorm v1.25.7
+	gorm.io/plugin/soft_delete v1.2.1
 )
 
 require (

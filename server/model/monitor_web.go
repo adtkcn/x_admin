@@ -1,5 +1,7 @@
 package model
 
+import "x_admin/core"
+
 //MonitorWeb 错误收集error实体
 type MonitorWeb struct {
 	Id int `gorm:"primarykey;comment:'uuid'" excel:"name:uuid;"` // uuid
@@ -16,8 +18,8 @@ type MonitorWeb struct {
 
 	Stack string `gorm:"comment:'错误堆栈'" excel:"name:错误堆栈;"` // 错误堆栈
 
-	ClientTime int64 `gorm:"comment:'客户端时间'" excel:"name:客户端时间;"` // 客户端时间
+	ClientTime core.TsTime `gorm:"comment:'客户端时间'" excel:"name:客户端时间;"` // 客户端时间
 
-	CreateTime int64 `gorm:"autoCreateTime;comment:'创建时间'" excel:"name:创建时间;"` // 创建时间
+	CreateTime core.TsTime `gorm:"autoCreateTime;comment:'创建时间'" excel:"name:创建时间;"` // 创建时间
 
 }

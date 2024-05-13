@@ -425,7 +425,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 	if id == config.AdminConfig.GetAdminId(c) {
 		return response.AssertArgumentError.Make("不能删除自己!")
 	}
-	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
+	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: core.TsTime(time.Now())}).Error
 	e = response.CheckErr(err, "Del Updates err")
 	return
 }
@@ -449,7 +449,7 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id uint) (e error
 	} else {
 		isDisable = 0
 	}
-	err = adminSrv.db.Model(&admin).Updates(map[string]interface{}{"is_disable": isDisable, "update_time": time.Now().Unix()}).Error
+	err = adminSrv.db.Model(&admin).Updates(map[string]interface{}{"is_disable": isDisable, "update_time": time.Now()}).Error
 	e = response.CheckErr(err, "Disable Updates err")
 	return
 }

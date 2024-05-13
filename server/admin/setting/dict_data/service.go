@@ -1,7 +1,6 @@
 package dict_data
 
 import (
-	"time"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -152,6 +151,6 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 // Del 字典数据删除
 func (ddSrv settingDictDataService) Del(delReq SettingDictDataDelReq) (e error) {
 	err := ddSrv.db.Model(&setting_model.DictData{}).Where("id IN ?", delReq.Ids).Updates(
-		setting_model.DictData{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
+		setting_model.DictData{IsDelete: 1, DeleteTime: core.NowTime()}).Error
 	return response.CheckErr(err, "Del Update err")
 }

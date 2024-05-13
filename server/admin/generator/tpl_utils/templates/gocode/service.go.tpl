@@ -29,10 +29,10 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq {{{ title
 	{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
 		{{{- if eq .HtmlType "datetime" }}}
 			if listReq.{{{ title (toCamelCase .ColumnName) }}}Start != "" {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} >= UNIX_TIMESTAMP(?)", listReq.{{{ title (toCamelCase .ColumnName) }}}Start)
+				dbModel = dbModel.Where("{{{ .ColumnName }}} >= ?", listReq.{{{ title (toCamelCase .ColumnName) }}}Start)
 			}
 			if listReq.{{{ title (toCamelCase .ColumnName) }}}End != "" {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} <= UNIX_TIMESTAMP(?)", listReq.{{{ title (toCamelCase .ColumnName) }}}End)
+				dbModel = dbModel.Where("{{{ .ColumnName }}} <= ?", listReq.{{{ title (toCamelCase .ColumnName) }}}End)
 			}
 		{{{- else }}}
 			{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
@@ -154,6 +154,9 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del(id int) (e error) {
     // 删除
     {{{- if contains .AllFields "is_delete" }}}
     obj.IsDelete = 1
+	{{{- if contains .AllFields "delete_time" }}}
+	obj.DeleteTime = core.NowTime()
+	{{{- end }}}
     err = service.db.Save(&obj).Error
     e = response.CheckErr(err, "删除失败")
     {{{- else }}}

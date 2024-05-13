@@ -2,7 +2,6 @@ package album
 
 import (
 	"path"
-	"time"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -154,7 +153,7 @@ func (albSrv albumService) AlbumDel(ids []uint) (e error) {
 		return response.AssertArgumentError.Make("文件丢失！")
 	}
 	err = albSrv.db.Model(&common_model.Album{}).Where("id in ?", ids).Updates(
-		common_model.Album{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
+		common_model.Album{IsDelete: 1, DeleteTime: core.NowTime()}).Error
 	e = response.CheckErr(err, "AlbumDel UpdateColumn err")
 	return
 }
@@ -222,7 +221,7 @@ func (albSrv albumService) CateDel(id uint) (e error) {
 		return response.AssertArgumentError.Make("当前分类正被使用中,不能删除！")
 	}
 	cate.IsDelete = 1
-	cate.DeleteTime = time.Now().Unix()
+	cate.DeleteTime = core.NowTime()
 	err = albSrv.db.Save(&cate).Error
 	e = response.CheckErr(err, "CateDel Save err")
 	return

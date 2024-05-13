@@ -30,3 +30,4 @@
 ### Go应该注意的问题
 1. 循环依赖
 2. 零值更新，避免数据库默认值为0
+3. 软删除，本系统需要IsDelete和DeleteTime字段，https://gorm.io/zh_CN/docs/delete.html#%E6%B7%B7%E5%90%88%E6%A8%A1%E5%BC%8F

@@ -1,7 +1,8 @@
 <template>
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
+            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true" label-width="70px"
+                label-position="left">
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}

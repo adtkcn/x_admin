@@ -32,7 +32,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 	}
 	return func(c *gin.Context) {
 		// 开始时间
-		startTime := time.Now().UnixMilli()
+		startTime := time.Now()
 		// 异常信息
 		errStr := ""
 		var status uint8 = 1 // 1=成功, 2=失败
@@ -85,9 +85,9 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				errStr = fmt.Sprintf("%+v", r)
 				status = 2
 				// 结束时间
-				endTime := time.Now().UnixMilli()
+				endTime := time.Now()
 				// 执行时间(毫秒)
-				taskTime := endTime - startTime
+				taskTime := endTime.UnixMilli() - startTime.UnixMilli()
 				// 获取当前的用户
 				adminId := config.AdminConfig.GetAdminId(c)
 				urlPath := c.Request.URL.Path
@@ -96,7 +96,9 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				err := core.GetDB().Create(&system_model.SystemLogOperate{
 					AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
 					Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
-					StartTime: startTime / 1000, EndTime: endTime / 1000, TaskTime: taskTime,
+					StartTime: core.TsTime(startTime),
+					EndTime:   core.TsTime(endTime),
+					TaskTime:  taskTime,
 				}).Error
 				response.CheckErr(err, "RecordLog recover Create err")
 				core.Logger.WithOptions(zap.AddCallerSkip(2)).Infof(
@@ -111,9 +113,9 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 			status = 2
 		}
 		// 结束时间
-		endTime := time.Now().UnixMilli()
+		endTime := time.Now()
 		// 执行时间(毫秒)
-		taskTime := endTime - startTime
+		taskTime := endTime.UnixMilli() - startTime.UnixMilli()
 		// 获取当前的用户
 		adminId := config.AdminConfig.GetAdminId(c)
 		urlPath := c.Request.URL.Path
@@ -122,7 +124,9 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		err := core.GetDB().Create(&system_model.SystemLogOperate{
 			AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
 			Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
-			StartTime: startTime / 1000, EndTime: endTime / 1000, TaskTime: taskTime,
+			StartTime: core.TsTime(startTime),
+			EndTime:   core.TsTime(endTime),
+			TaskTime:  taskTime,
 		}).Error
 		response.CheckErr(err, "RecordLog Create err")
 	}

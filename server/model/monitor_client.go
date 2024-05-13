@@ -1,5 +1,7 @@
 package model
 
+import "x_admin/core"
+
 //MonitorClient 客户端信息实体
 type MonitorClient struct {
 	Id int `gorm:"primarykey;comment:'uuid'" excel:"name:uuid;"` // uuid
@@ -22,8 +24,8 @@ type MonitorClient struct {
 
 	Ua string `gorm:"comment:'ua记录'" excel:"name:ua记录;"` // ua记录
 
-	ClientTime int64 `gorm:"comment:'客户端时间'" excel:"name:客户端时间;"` // 客户端时间
+	ClientTime core.TsTime `gorm:"comment:'客户端时间'" excel:"name:客户端时间;"` // 客户端时间
 
-	CreateTime int64 `gorm:"autoCreateTime;comment:'创建时间'" excel:"name:创建时间;"` // 创建时间
+	CreateTime core.TsTime `gorm:"autoCreateTime;comment:'创建时间'" excel:"name:创建时间;"` // 创建时间
 
 }

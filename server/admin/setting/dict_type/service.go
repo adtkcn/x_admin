@@ -1,7 +1,6 @@
 package dict_type
 
 import (
-	"time"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -132,6 +131,6 @@ func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e erro
 // Del 字典类型删除
 func (dtSrv settingDictTypeService) Del(delReq SettingDictTypeDelReq) (e error) {
 	err := dtSrv.db.Model(&setting_model.DictType{}).Where("id IN ?", delReq.Ids).Updates(
-		setting_model.DictType{IsDelete: 1, DeleteTime: time.Now().Unix()}).Error
+		setting_model.DictType{IsDelete: 1, DeleteTime: core.NowTime()}).Error
 	return response.CheckErr(err, "Del Update err")
 }

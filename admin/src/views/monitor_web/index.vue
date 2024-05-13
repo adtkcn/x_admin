@@ -113,7 +113,7 @@ import {
     monitor_web_export_file
 } from '@/api/monitor_web'
 import { monitor_project_list_all } from '@/api/monitor_project'
-import { useDictData, useDictOptions } from '@/hooks/useDictOptions'
+import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'

@@ -1,5 +1,7 @@
 package model
 
+import "x_admin/core"
+
 //FlowHistory 流程历史实体
 type FlowHistory struct {
 	Id int `gorm:"primarykey;comment:'历史id'"` // 历史id
@@ -26,10 +28,10 @@ type FlowHistory struct {
 
 	PassRemark string `gorm:"comment:'通过备注'"` // 通过备注
 
-	UpdateTime int64 `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
+	UpdateTime core.TsTime `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
 
-	CreateTime int64 `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
+	CreateTime core.TsTime `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
 
-	DeleteTime int64 `gorm:"comment:'删除时间'"` // 删除时间
+	DeleteTime core.TsTime `gorm:"default:null;comment:'删除时间'"` // 删除时间
 
 }

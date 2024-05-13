@@ -3,8 +3,8 @@ package tpl_utils
 import (
 	"strconv"
 	"strings"
-	"time"
 	"x_admin/config"
+	"x_admin/core"
 	"x_admin/model/gen_model"
 	"x_admin/util"
 
@@ -67,8 +67,8 @@ func (gu genUtil) InitTable(table gen_model.GenTable) gen_model.GenTable {
 		EntityName:   gu.ToClassName(table.TableName),
 		ModuleName:   gu.ToModuleName(table.TableName),
 		FunctionName: strings.Replace(table.TableComment, "表", "", -1),
-		CreateTime:   time.Now().Unix(),
-		UpdateTime:   time.Now().Unix(),
+		CreateTime:   core.NowTime(),
+		UpdateTime:   core.NowTime(),
 	}
 }
 
@@ -89,8 +89,8 @@ func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_
 		IsPk:          column.IsPk,
 		IsIncrement:   column.IsIncrement,
 		IsRequired:    column.IsRequired,
-		CreateTime:    time.Now().Unix(),
-		UpdateTime:    time.Now().Unix(),
+		CreateTime:    core.NowTime(),
+		UpdateTime:    core.NowTime(),
 	}
 	if util.ToolsUtil.Contains(append(SqlConstants.ColumnTypeStr, SqlConstants.ColumnTypeText...), columnType) {
 		//文本域组

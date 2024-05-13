@@ -82,10 +82,10 @@ func (genSrv generateService) List(page request.PageReq, listReq ListTableReq) (
 		genModel = genModel.Where("table_comment like ?", "%"+listReq.TableComment+"%")
 	}
 	if !listReq.StartTime.IsZero() {
-		genModel = genModel.Where("create_time >= ?", listReq.StartTime.Unix())
+		genModel = genModel.Where("create_time >= ?", listReq.StartTime)
 	}
 	if !listReq.EndTime.IsZero() {
-		genModel = genModel.Where("create_time <= ?", listReq.EndTime.Unix())
+		genModel = genModel.Where("create_time <= ?", listReq.EndTime)
 	}
 	// 总数
 	var count int64

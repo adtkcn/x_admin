@@ -57,16 +57,16 @@ func (service monitorWebService) List(page request.PageReq, listReq MonitorWebLi
 		dbModel = dbModel.Where("stack = ?", listReq.Stack)
 	}
 	if listReq.ClientTimeStart != "" {
-		dbModel = dbModel.Where("client_time >= UNIX_TIMESTAMP(?)", listReq.ClientTimeStart)
+		dbModel = dbModel.Where("client_time >= ?", listReq.ClientTimeStart)
 	}
 	if listReq.ClientTimeEnd != "" {
-		dbModel = dbModel.Where("client_time <= UNIX_TIMESTAMP(?)", listReq.ClientTimeEnd)
+		dbModel = dbModel.Where("client_time <= ?", listReq.ClientTimeEnd)
 	}
 	if listReq.CreateTimeStart != "" {
-		dbModel = dbModel.Where("create_time >= UNIX_TIMESTAMP(?)", listReq.CreateTimeStart)
+		dbModel = dbModel.Where("create_time >= ?", listReq.CreateTimeStart)
 	}
 	if listReq.CreateTimeEnd != "" {
-		dbModel = dbModel.Where("create_time <= UNIX_TIMESTAMP(?)", listReq.CreateTimeEnd)
+		dbModel = dbModel.Where("create_time <= ?", listReq.CreateTimeEnd)
 	}
 
 	// 总数

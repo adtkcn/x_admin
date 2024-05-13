@@ -1,5 +1,7 @@
 package model
 
+import "x_admin/core"
+
 //MonitorProject 错误项目实体
 type MonitorProject struct {
 	Id int `gorm:"primarykey;comment:'项目id'" excel:"name:项目id;"` // 项目id
@@ -12,10 +14,10 @@ type MonitorProject struct {
 
 	IsDelete int `gorm:"comment:'是否删除: 0=否, 1=是'" excel:"name:是否删除: 0=否, 1=是;"` // 是否删除: 0=否, 1=是
 
-	UpdateTime int64 `gorm:"autoUpdateTime;comment:'更新时间'" excel:"name:更新时间;"` // 更新时间
+	UpdateTime core.TsTime `gorm:"autoUpdateTime;comment:'更新时间'" excel:"name:更新时间;"` // 更新时间
 
-	CreateTime int64 `gorm:"autoCreateTime;comment:'创建时间'" excel:"name:创建时间;"` // 创建时间
+	CreateTime core.TsTime `gorm:"autoCreateTime;comment:'创建时间'" excel:"name:创建时间;"` // 创建时间
 
-	DeleteTime int64 `gorm:"comment:'删除时间'" excel:"name:删除时间;"` // 删除时间
+	DeleteTime core.TsTime `gorm:"default:null;comment:'删除时间'" excel:"name:删除时间;"` // 删除时间
 
 }
