@@ -55,37 +55,30 @@
                 :fieldList="fieldList"
                 :conf="mockData.flowProcessData"
             ></Diagram>
-
-            <AdvancedSetting
-                ref="advancedSetting"
-                :conf="mockData.advancedSetting"
-                v-show="activeStep === 'advancedSetting'"
-            />
         </div>
     </el-dialog>
 </template>
 
 <script>
+import { defineComponent } from 'vue'
 import XForm from './XForm/index.vue'
 import Diagram from './flowEdit/Diagram.vue'
 
 import BasicSetting from './BasicSetting/index.vue'
-import AdvancedSetting from './AdvancedSetting/index.vue'
 
 const beforeUnload = function (e) {
     const confirmationMessage = '离开网站可能会丢失您编辑得内容'
     ;(e || window.event).returnValue = confirmationMessage // Gecko and Trident
     return confirmationMessage // Gecko and WebKit
 }
-export default {
+export default defineComponent({
     name: 'Approver',
     components: {
         // Process,
         Diagram,
         // DynamicForm,
         XForm,
-        BasicSetting,
-        AdvancedSetting
+        BasicSetting
     },
     props: {
         title: {
@@ -105,15 +98,13 @@ export default {
             mockData: {
                 basicSetting: {},
                 flowFormData: {},
-                flowProcessData: {},
-                advancedSetting: {}
+                flowProcessData: {}
             },
             fieldList: [],
             steps: [
                 { label: '基础设置', key: 'basicSetting' },
                 { label: '表单设计', key: 'formDesign' },
                 { label: '流程设计', key: 'processDesign' }
-                // { label: "高级设置", key: "advancedSetting" },
             ]
         }
     },
@@ -132,8 +123,7 @@ export default {
             this.mockData = {
                 basicSetting: {},
                 flowFormData: {},
-                flowProcessData: {},
-                advancedSetting: {}
+                flowProcessData: {}
             }
             this.activeStep = 'basicSetting'
             this.fieldList = []
@@ -147,26 +137,26 @@ export default {
                 this.mockData = {
                     basicSetting: {},
                     flowFormData: {},
-                    flowProcessData: {},
-                    advancedSetting: {}
+                    flowProcessData: {}
                 }
             }
 
             this.dialogVisible = true
         },
         async changeSteps(item) {
-            const fieldList = this.$refs.formDesign.getFieldWidgets()
+            const fieldList = this.$refs?.formDesign?.getFieldWidgets()
 
             this.fieldList = fieldList
 
             this.activeStep = item.key
         },
+        // 发布
         publish() {
             const getCmpData = (name) => {
-                return this.$refs[name].getData()
+                return this.$refs[name]?.getData()
             }
             // basicSetting  formDesign processDesign 返回的是Promise 因为要做校验
-            // advancedSetting返回的就是值
+
             const p1 = getCmpData('basicSetting')
             const p2 = getCmpData('formDesign')
             const p3 = getCmpData('processDesign')
@@ -179,8 +169,6 @@ export default {
                         flowFormData: res[1].formData,
                         flowProcessData: res[2].formData,
                         flowProcessDataList: res[2].treeToList
-
-                        // advancedSetting: getCmpData("advancedSetting"),
                     }
                     console.log(param)
                     this.sendToServer(param)
@@ -219,7 +207,7 @@ export default {
                 .catch(() => {})
         }
     }
-}
+})
 </script>
 <style>
 .flow-config-dialog {

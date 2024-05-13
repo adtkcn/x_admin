@@ -9,16 +9,6 @@ interface Options {
     }
 }
 
-// {
-//     dict: {
-//         api: dictData,
-//         params: { name: 'user' },
-//         transformData(data: any) {
-//             return data.list
-//         }
-//     }
-// }
-
 export function useDictOptions<T = any>(options: Options) {
     const optionsData: any = reactive({})
     const optionsKey = Object.keys(options)
@@ -30,6 +20,8 @@ export function useDictOptions<T = any>(options: Options) {
 
     const refresh = async () => {
         const res = await Promise.allSettled<Promise<any>>(apiLists.map((api) => api()))
+        console.log(res)
+
         res.forEach((item, index) => {
             const key = optionsKey[index]
             if (item.status == 'fulfilled') {
@@ -46,12 +38,6 @@ export function useDictOptions<T = any>(options: Options) {
     }
 }
 
-// useDictOptions<{
-//     dict: any[]
-// }>({
-//     dict: dictData
-// })
-
 export function useDictData<T = any>(dict: string[]) {
     const options: Options = {}
     for (const type of dict) {
@@ -67,3 +53,5 @@ export function useDictData<T = any>(dict: string[]) {
         dictData: optionsData
     }
 }
+
+// export function useAllList<T = any>(options: Options) {}

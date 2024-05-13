@@ -1,7 +1,14 @@
 <template>
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
+            <el-form
+                ref="formRef"
+                class="mb-[-16px]"
+                :model="queryParams"
+                :inline="true"
+                label-width="70px"
+                label-position="left"
+            >
                 <el-form-item label="项目key" prop="projectKey" class="w-[280px]">
                     <el-input v-model="queryParams.projectKey" />
                 </el-form-item>

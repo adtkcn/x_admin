@@ -1,18 +1,28 @@
 <template>
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
+            <el-form
+                ref="formRef"
+                class="mb-[-16px]"
+                :model="queryParams"
+                :inline="true"
+                label-width="70px"
+                label-position="left"
+            >
                 <el-form-item label="项目Key" prop="projectKey" class="w-[280px]">
-                    <el-input v-model="queryParams.projectKey" />
+                    <el-select v-model="queryParams.projectKey" clearable>
+                        <el-option
+                            :label="project.projectName"
+                            :value="project.projectKey"
+                            v-for="project of listAllData.monitor_project_list_all"
+                            :key="project.id"
+                        />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="客户端id" prop="clientId" class="w-[280px]">
                     <el-input v-model="queryParams.clientId" />
                 </el-form-item>
-                <!-- <el-form-item label="事件类型" prop="eventType" class="w-[280px]">
-                    <el-select v-model="queryParams.eventType" clearable>
-                        <el-option label="请选择字典生成" value="" />
-                    </el-select>
-                </el-form-item> -->
+
                 <el-form-item label="时间" prop="clientTime" class="w-[400px]">
                     <daterange-picker
                         v-model:startTime="queryParams.clientTimeStart"
@@ -102,6 +112,8 @@ import {
     monitor_web_import_file,
     monitor_web_export_file
 } from '@/api/monitor_web'
+import { monitor_project_list_all } from '@/api/monitor_project'
+import { useDictData, useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -111,6 +123,18 @@ const route = useRoute()
 defineOptions({
     name: 'monitor_web'
 })
+// const { dictData } = useDictData<{
+//     project_type: any[]
+// }>(['project_type'])
+const { optionsData: listAllData } = useDictOptions<{
+    monitor_project_list_all: any[]
+}>({
+    monitor_project_list_all: {
+        api: monitor_project_list_all
+    }
+})
+console.log('listAllData', listAllData)
+
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({

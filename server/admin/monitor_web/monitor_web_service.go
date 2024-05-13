@@ -68,9 +68,7 @@ func (service monitorWebService) List(page request.PageReq, listReq MonitorWebLi
 	if listReq.CreateTimeEnd != "" {
 		dbModel = dbModel.Where("create_time <= UNIX_TIMESTAMP(?)", listReq.CreateTimeEnd)
 	}
-	// if len(listReq.ClientTime) == 2 {
-	// 	dbModel = dbModel.Where("client_time >= ?", listReq.ClientTime[0]).Where("client_time <= ?", listReq.ClientTime[1])
-	// }
+
 	// 总数
 	var count int64
 	err := dbModel.Count(&count).Error

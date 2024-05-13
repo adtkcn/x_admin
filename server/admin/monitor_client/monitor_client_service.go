@@ -62,10 +62,7 @@ func (service monitorClientService) GetModel(listReq MonitorClientListReq) *gorm
 	if listReq.Ua != "" {
 		dbModel = dbModel.Where("ua = ?", listReq.Ua)
 	}
-	if len(listReq.ClientTime) == 2 {
-		// dbModel = dbModel.Where("client_time = ?", listReq.ClientTime)
-		dbModel = dbModel.Where("client_time >= ?", listReq.ClientTime[0]).Where("client_time <= ?", listReq.ClientTime[1])
-	}
+
 	return dbModel
 }
 
