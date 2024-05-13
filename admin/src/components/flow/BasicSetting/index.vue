@@ -1,7 +1,7 @@
 <template>
     <div class="setting-container">
         <el-form
-            ref="elForm"
+            ref="elFormRef"
             :model="formData"
             :rules="rules"
             label-width="100px"
@@ -50,66 +50,58 @@
     </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { onMounted, ref, shallowRef } from 'vue'
+import type { FormInstance } from 'element-plus'
 import { useDictData } from '@/hooks/useDictOptions'
-export default {
-    name: 'BasicSetting',
-    components: {},
-    props: ['tabName', 'conf'],
-    data() {
-        return {
-            formData: {
-                flowName: '',
-                flowImg: '',
-                flowGroup: undefined,
-                flowRemark: undefined
-            },
-            rules: {
-                flowName: [
-                    {
-                        required: true,
-                        message: '请输入审批名称',
-                        trigger: 'blur'
-                    }
-                ],
-                flowGroup: [
-                    {
-                        required: true,
-                        message: '请选择选择分组',
-                        trigger: 'change'
-                    }
-                ]
-            },
-
-            dictData: {
-                flow_group: []
-            }
+defineOptions({
+    name: 'BasicSetting'
+})
+const { dictData } = useDictData(['flow_group'])
+const props = defineProps(['tabName', 'conf'])
+const formData = ref({
+    flowName: '',
+    flowImg: '',
+    flowGroup: undefined,
+    flowRemark: undefined
+})
+const rules = {
+    flowName: [
+        {
+            required: true,
+            message: '请输入审批名称',
+            trigger: 'blur'
         }
-    },
-
-    created() {
-        if (typeof this.conf === 'object' && this.conf !== null) {
-            Object.assign(this.formData, this.conf)
+    ],
+    flowGroup: [
+        {
+            required: true,
+            message: '请选择选择分组',
+            trigger: 'change'
         }
-        const { dictData } = useDictData(['flow_group'])
-        this.dictData = dictData
-    },
-    methods: {
-        // 给父级页面提供得获取本页数据得方法
-        getData() {
-            return new Promise((resolve, reject) => {
-                this.$refs['elForm'].validate((valid) => {
-                    if (!valid) {
-                        reject({ target: this.tabName })
-                        return
-                    }
-                    // this.formData.flowImg = this.activeIcon
-                    resolve({ formData: { ...this.formData }, target: this.tabName }) // TODO 提交表单
-                })
-            })
-        }
-    }
+    ]
 }
+onMounted(() => {
+    if (typeof props.conf === 'object' && props.conf !== null) {
+        Object.assign(formData.value, props.conf)
+    }
+})
+const elFormRef = shallowRef<FormInstance>()
+function getData() {
+    return new Promise((resolve, reject) => {
+        elFormRef.value.validate((valid) => {
+            if (!valid) {
+                reject({ target: this.tabName })
+                return
+            }
+            // this.formData.flowImg = this.activeIcon
+            resolve({ formData: { ...formData.value }, target: props.tabName }) // TODO 提交表单
+        })
+    })
+}
+defineExpose({
+    getData
+})
 </script>
 
 <style lang="scss" scoped>
