@@ -164,11 +164,12 @@ function save(info) {
                 })
         } else {
             flow_template_add({
-                flowName: info.flowName,
-                flowGroup: info.flowGroup,
-                flowRemark: info.flowRemark,
+                flowName: info.basicSetting.flowName,
+                flowGroup: info.basicSetting.flowGroup,
+                flowRemark: info.basicSetting.flowRemark,
                 flowFormData: JSON.stringify(info.flowFormData),
-                flowProcessData: JSON.stringify(info.flowProcessData)
+                flowProcessData: JSON.stringify(info.flowProcessData),
+                flowProcessDataList: JSON.stringify(info.flowProcessDataList)
             })
                 .then(() => {
                     feedback.msgSuccess('新增成功')

@@ -35,11 +35,11 @@
         <span style="font-size: 12px; color: #aaa">默认所有人</span>
       </el-form-item> -->
 
-            <el-form-item label="审批说明" prop="flowRemark">
+            <el-form-item label="流程描述" prop="flowRemark">
                 <el-input
                     v-model="formData.flowRemark"
                     type="textarea"
-                    placeholder="请输入审批说明"
+                    placeholder="请输入流程描述"
                     :maxlength="100"
                     show-word-limit
                     :autosize="{ minRows: 4, maxRows: 4 }"
@@ -104,7 +104,7 @@ export default {
                         return
                     }
                     // this.formData.flowImg = this.activeIcon
-                    resolve({ formData: this.formData, target: this.tabName }) // TODO 提交表单
+                    resolve({ formData: { ...this.formData }, target: this.tabName }) // TODO 提交表单
                 })
             })
         }
