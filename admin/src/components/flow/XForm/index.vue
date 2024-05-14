@@ -2,7 +2,7 @@
     <v-form-designer ref="designerRef" :designer-config="designerConfig"></v-form-designer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
 const designerRef = ref(null)
