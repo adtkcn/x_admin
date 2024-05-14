@@ -64,7 +64,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq SettingDi
 	}
 	var dts []setting_model.DictType
 	err = dtModel.Limit(limit).Offset(offset).Order("id desc").Find(&dts).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	dtResp := []SettingDictTypeResp{}

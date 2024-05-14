@@ -53,7 +53,7 @@ func (service systemAuthDeptService) List(listReq SystemAuthDeptListReq) (deptRe
 	}
 	var depts []system_model.SystemAuthDept
 	err := deptModel.Order("sort desc, id desc").Find(&depts).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	// deptResps = []SystemAuthDeptResp{}

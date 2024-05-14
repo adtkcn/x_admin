@@ -90,7 +90,7 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 	}
 	var dds []setting_model.DictData
 	err = ddModel.Limit(limit).Offset(offset).Order("id asc").Find(&dds).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	dtResp := []SettingDictDataResp{}

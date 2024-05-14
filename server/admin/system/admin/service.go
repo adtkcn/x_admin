@@ -98,7 +98,7 @@ func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId
 	// 数据
 	var adminResp []SystemAuthAdminResp
 	err := adminModel.Find(&adminResp).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	for i := 0; i < len(adminResp); i++ {
@@ -133,7 +133,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq SystemAuthAdminListReq
 	// 数据
 	var adminResp []SystemAuthAdminResp
 	err := adminModel.Order("id desc, sort desc").Find(&adminResp).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	for i := 0; i < len(adminResp); i++ {
@@ -186,7 +186,7 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq System
 	// 数据
 	var adminResp []SystemAuthAdminResp
 	err = adminModel.Limit(limit).Offset(offset).Order("id desc, sort desc").Find(&adminResp).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	for i := 0; i < len(adminResp); i++ {

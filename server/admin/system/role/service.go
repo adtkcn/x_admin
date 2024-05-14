@@ -59,7 +59,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 	}
 	var roles []system_model.SystemAuthRole
 	err = roleModel.Limit(limit).Offset(offset).Order("sort desc, id desc").Find(&roles).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	var roleResp []SystemAuthRoleResp

@@ -62,7 +62,7 @@ func (albSrv albumService) AlbumList(page request.PageReq, listReq CommonAlbumLi
 	// 数据
 	var albums []common_model.Album
 	err = albumModel.Limit(limit).Offset(offset).Order("id desc").Find(&albums).Error
-	if e = response.CheckErr(err, "AlbumList Find err"); e != nil {
+	if e = response.CheckErr(err, "Album列表获取失败"); e != nil {
 		return
 	}
 	albumResps := []CommonAlbumListResp{}
@@ -169,7 +169,7 @@ func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []interf
 		cateModel = cateModel.Where("name like ?", "%"+listReq.Name+"%")
 	}
 	err := cateModel.Find(&cates).Error
-	if e = response.CheckErr(err, "CateList Find err"); e != nil {
+	if e = response.CheckErr(err, "Cate列表获取失败"); e != nil {
 		return
 	}
 	cateResps := []CommonCateListResp{}

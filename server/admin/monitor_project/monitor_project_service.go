@@ -59,7 +59,7 @@ func (service monitorProjectService) List(page request.PageReq, listReq MonitorP
 	// 数据
 	var objs []model.MonitorProject
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	resps := []MonitorProjectResp{}
@@ -166,7 +166,7 @@ func (service monitorProjectService) ExportFile(listReq MonitorProjectListReq) (
 	// 数据
 	var objs []model.MonitorProject
 	err := dbModel.Order("id asc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	resps := []MonitorProjectResp{}

@@ -68,7 +68,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 func (menuSrv systemAuthMenuService) List() (res []interface{}, e error) {
 	var menus []system_model.SystemAuthMenu
 	err := menuSrv.db.Order("menu_sort desc, id").Find(&menus).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	var menuResps []SystemAuthMenuResp

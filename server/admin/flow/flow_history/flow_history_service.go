@@ -89,7 +89,7 @@ func (Service flowHistoryService) List(page request.PageReq, listReq FlowHistory
 	// 数据
 	var objs []model.FlowHistory
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	resps := []FlowHistoryResp{}

@@ -83,7 +83,7 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 	// 数据
 	var objs []model.MonitorClient
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	resps := []MonitorClientResp{}
@@ -180,7 +180,7 @@ func (service monitorClientService) ExportFile(listReq MonitorClientListReq) (re
 	// 数据
 	var objs []model.MonitorClient
 	err := dbModel.Order("id asc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	resps := []MonitorClientResp{}

@@ -68,7 +68,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq SystemAu
 	// 数据
 	var posts []system_model.SystemAuthPost
 	err = postModel.Limit(limit).Offset(offset).Order("sort desc, id desc").Find(&posts).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	postResps := []SystemAuthPostResp{}

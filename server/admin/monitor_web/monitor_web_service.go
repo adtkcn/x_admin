@@ -78,7 +78,7 @@ func (service monitorWebService) List(page request.PageReq, listReq MonitorWebLi
 	// 数据
 	var objs []model.MonitorWeb
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	resps := []MonitorWebResp{}
@@ -197,7 +197,7 @@ func (service monitorWebService) ExportFile(listReq MonitorWebListReq) (res []Mo
 	// 数据
 	var objs []model.MonitorWeb
 	err := dbModel.Order("id asc").Find(&objs).Error
-	if e = response.CheckErr(err, "List Find err"); e != nil {
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	resps := []MonitorWebResp{}
