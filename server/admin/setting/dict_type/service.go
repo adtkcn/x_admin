@@ -59,7 +59,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq SettingDi
 	}
 	var count int64
 	err := dtModel.Count(&count).Error
-	if e = response.CheckErr(err, "List Count err"); e != nil {
+	if e = response.CheckErr(err, "列表总数获取失败"); e != nil {
 		return
 	}
 	var dts []setting_model.DictType

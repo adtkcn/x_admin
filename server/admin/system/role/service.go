@@ -54,7 +54,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 	roleModel := roleSrv.db.Model(&system_model.SystemAuthRole{})
 	var count int64
 	err := roleModel.Count(&count).Error
-	if e = response.CheckErr(err, "List Count err"); e != nil {
+	if e = response.CheckErr(err, "列表总数获取失败"); e != nil {
 		return
 	}
 	var roles []system_model.SystemAuthRole

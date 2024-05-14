@@ -56,7 +56,7 @@ func (albSrv albumService) AlbumList(page request.PageReq, listReq CommonAlbumLi
 	// 总数
 	var count int64
 	err := albumModel.Count(&count).Error
-	if e = response.CheckErr(err, "AlbumList Count err"); e != nil {
+	if e = response.CheckErr(err, "Album列表总数获取失败"); e != nil {
 		return
 	}
 	// 数据

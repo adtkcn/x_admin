@@ -47,7 +47,7 @@ func (Service ArticleCollectService) List(page request.PageReq, listReq ArticleC
 	// 总数
 	var count int64
 	err := dbModel.Count(&count).Error
-	if e = response.CheckErr(err, "List Count err"); e != nil {
+	if e = response.CheckErr(err, "列表总数获取失败"); e != nil {
 		return
 	}
 	// 数据

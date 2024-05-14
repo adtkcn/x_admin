@@ -85,7 +85,7 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 	}
 	var count int64
 	e = ddModel.Count(&count).Error
-	if e = response.CheckErr(e, "List Count err"); e != nil {
+	if e = response.CheckErr(e, "列表总数获取失败"); e != nil {
 		return
 	}
 	var dds []setting_model.DictData
