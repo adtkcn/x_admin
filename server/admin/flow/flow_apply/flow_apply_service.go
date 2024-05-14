@@ -96,7 +96,7 @@ func (Service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, obj)
@@ -131,13 +131,13 @@ func (Service flowApplyService) Edit(editReq FlowApplyEditReq) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	// 更新
 	response.Copy(&obj, editReq)
 	err = Service.db.Model(&obj).Updates(obj).Error
-	e = response.CheckErr(err, "Edit Updates err")
+	e = response.CheckErr(err, "编辑失败")
 	return
 }
 
@@ -149,7 +149,7 @@ func (Service flowApplyService) Del(id int) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Del First err"); e != nil {
+	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
 	if obj.Status == 2 {

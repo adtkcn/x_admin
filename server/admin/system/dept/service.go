@@ -70,7 +70,7 @@ func (service systemAuthDeptService) Detail(id uint) (res SystemAuthDeptResp, e 
 	if e = response.CheckErrDBNotRecord(err, "部门已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, dept)
@@ -91,7 +91,7 @@ func (service systemAuthDeptService) Add(addReq SystemAuthDeptAddReq) (e error) 
 	var dept system_model.SystemAuthDept
 	response.Copy(&dept, addReq)
 	err := service.db.Create(&dept).Error
-	e = response.CheckErr(err, "Add Create err")
+	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -103,7 +103,7 @@ func (service systemAuthDeptService) Edit(editReq SystemAuthDeptEditReq) (e erro
 	if e = response.CheckErrDBNotRecord(err, "部门不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	if dept.Pid == 0 && editReq.Pid > 0 {
@@ -115,7 +115,7 @@ func (service systemAuthDeptService) Edit(editReq SystemAuthDeptEditReq) (e erro
 	// 更新
 	response.Copy(&dept, editReq)
 	err = service.db.Model(&dept).Select("*").Updates(dept).Error
-	e = response.CheckErr(err, "Edit Updates err")
+	e = response.CheckErr(err, "编辑失败")
 	return
 }
 
@@ -127,7 +127,7 @@ func (service systemAuthDeptService) Del(id uint) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "部门不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Del First err"); e != nil {
+	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
 	if dept.Pid == 0 {

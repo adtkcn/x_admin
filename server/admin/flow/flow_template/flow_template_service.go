@@ -79,7 +79,7 @@ func (Service flowTemplateService) List(page request.PageReq, listReq FlowTempla
 func (Service flowTemplateService) ListAll() (res []FlowTemplateResp, e error) {
 	var objs []model.FlowTemplate
 	err := Service.db.Find(&objs).Error
-	if e = response.CheckErr(err, "ListAll Find err"); e != nil {
+	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
 	response.Copy(&res, objs)
@@ -93,7 +93,7 @@ func (Service flowTemplateService) Detail(id int) (res FlowTemplateResp, e error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, obj)
@@ -105,7 +105,7 @@ func (Service flowTemplateService) Add(addReq FlowTemplateAddReq) (e error) {
 	var obj model.FlowTemplate
 	response.Copy(&obj, addReq)
 	err := Service.db.Create(&obj).Error
-	e = response.CheckErr(err, "Add Create err")
+	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -117,13 +117,13 @@ func (Service flowTemplateService) Edit(editReq FlowTemplateEditReq) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	// 更新
 	response.Copy(&obj, editReq)
 	err = Service.db.Model(&obj).Updates(obj).Error
-	e = response.CheckErr(err, "Edit Updates err")
+	e = response.CheckErr(err, "编辑失败")
 	return
 }
 
@@ -135,11 +135,11 @@ func (Service flowTemplateService) Del(id int) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Del First err"); e != nil {
+	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
 	// 删除
 	err = Service.db.Delete(&obj).Error
-	e = response.CheckErr(err, "Del Delete err")
+	e = response.CheckErr(err, "删除失败")
 	return
 }

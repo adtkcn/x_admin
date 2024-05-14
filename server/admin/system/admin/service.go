@@ -150,7 +150,7 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []SystemAuthAdminRes
 	var sysAdmin []system_model.SystemAuthAdmin
 	response.Copy(&sysAdmin, importReq)
 	err := adminSrv.db.Create(&sysAdmin).Error
-	e = response.CheckErr(err, "Add Create err")
+	e = response.CheckErr(err, "添加失败")
 	return e
 }
 
@@ -210,7 +210,7 @@ func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp,
 	if e = response.CheckErrDBNotRecord(err, "账号已不存在！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, sysAdmin)
@@ -263,7 +263,7 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 	}
 	sysAdmin.Avatar = util.UrlUtil.ToRelativeUrl(addReq.Avatar)
 	err = adminSrv.db.Create(&sysAdmin).Error
-	e = response.CheckErr(err, "Add Create err")
+	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -274,7 +274,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 	if e = response.CheckErrDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	// 检查username
@@ -326,7 +326,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 		delete(adminMap, "Password")
 	}
 	err = adminSrv.db.Model(&admin).Where("id = ?", editReq.ID).Updates(adminMap).Error
-	if e = response.CheckErr(err, "Edit Updates err"); e != nil {
+	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
 	adminSrv.CacheAdminUserByUid(editReq.ID)
@@ -416,7 +416,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "账号已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Del First err"); e != nil {
+	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
 	if id == 1 {

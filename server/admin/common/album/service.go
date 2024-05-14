@@ -136,7 +136,7 @@ func (albSrv albumService) AlbumAdd(addReq CommonAlbumAddReq) (res uint, e error
 	//}
 	response.Copy(&alb, addReq)
 	err := albSrv.db.Create(&alb).Error
-	if e = response.CheckErr(err, "AlbumAdd Create err"); e != nil {
+	if e = response.CheckErr(err, "Album添加失败"); e != nil {
 		return
 	}
 	return alb.ID, nil
@@ -183,7 +183,7 @@ func (albSrv albumService) CateAdd(addReq CommonCateAddReq) (e error) {
 	var cate common_model.AlbumCate
 	response.Copy(&cate, addReq)
 	err := albSrv.db.Create(&cate).Error
-	e = response.CheckErr(err, "CateAdd Create err")
+	e = response.CheckErr(err, "Cate添加失败")
 	return
 }
 
@@ -210,7 +210,7 @@ func (albSrv albumService) CateDel(id uint) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "分类已不存在！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "CateDel First err"); e != nil {
+	if e = response.CheckErr(err, "Cate待删除数据查找失败"); e != nil {
 		return
 	}
 	r := albSrv.db.Where("cid = ? AND is_delete = ?", id, 0).Limit(1).Find(&common_model.Album{})

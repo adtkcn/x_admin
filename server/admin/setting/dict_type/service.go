@@ -84,7 +84,7 @@ func (dtSrv settingDictTypeService) Detail(id uint) (res SettingDictTypeResp, e 
 	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, dt)
@@ -102,7 +102,7 @@ func (dtSrv settingDictTypeService) Add(addReq SettingDictTypeAddReq) (e error) 
 	var dt setting_model.DictType
 	response.Copy(&dt, addReq)
 	err := dtSrv.db.Create(&dt).Error
-	e = response.CheckErr(err, "Add Create err")
+	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -112,7 +112,7 @@ func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e erro
 	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	if r := dtSrv.db.Where("id != ? AND dict_name = ? AND is_delete = ?", editReq.ID, editReq.DictName, 0).Limit(1).First(&setting_model.DictType{}); r.RowsAffected > 0 {

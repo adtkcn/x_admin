@@ -83,7 +83,7 @@ func (roleSrv systemAuthRoleService) Detail(id uint) (res SystemAuthRoleResp, e 
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, role)
@@ -127,7 +127,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e erro
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	var role system_model.SystemAuthRole
@@ -165,7 +165,7 @@ func (roleSrv systemAuthRoleService) Del(id uint) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Del First err"); e != nil {
+	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
 	if r := roleSrv.db.Where("role = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {

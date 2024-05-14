@@ -119,7 +119,7 @@ func (Service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []Flo
 	// 数据
 	var objs []model.FlowHistory
 	err := dbModel.Find(&objs).Error
-	if e = response.CheckErr(err, "ListAll Find err"); e != nil {
+	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
 	response.Copy(&res, objs)
@@ -133,7 +133,7 @@ func (Service flowHistoryService) Detail(id int) (res FlowHistoryResp, e error) 
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, obj)
@@ -145,7 +145,7 @@ func (Service flowHistoryService) Add(addReq FlowHistoryAddReq) (e error) {
 	var obj model.FlowHistory
 	response.Copy(&obj, addReq)
 	err := Service.db.Create(&obj).Error
-	e = response.CheckErr(err, "Add Create err")
+	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -157,13 +157,13 @@ func (Service flowHistoryService) Edit(editReq FlowHistoryEditReq) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	// 更新
 	response.Copy(&obj, editReq)
 	err = Service.db.Model(&obj).Updates(obj).Error
-	e = response.CheckErr(err, "Edit Updates err")
+	e = response.CheckErr(err, "编辑失败")
 	return
 }
 
@@ -175,12 +175,12 @@ func (Service flowHistoryService) Del(id int) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Del First err"); e != nil {
+	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
 	// 删除
 	err = Service.db.Delete(&obj).Error
-	e = response.CheckErr(err, "Del Delete err")
+	e = response.CheckErr(err, "删除失败")
 	return
 }
 

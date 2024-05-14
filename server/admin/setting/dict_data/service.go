@@ -110,7 +110,7 @@ func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e 
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, dd)
@@ -125,7 +125,7 @@ func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) 
 	var dd setting_model.DictData
 	response.Copy(&dd, addReq)
 	err := ddSrv.db.Create(&dd).Error
-	e = response.CheckErr(err, "Add Create err")
+	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -135,7 +135,7 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Edit First err"); e != nil {
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
 	if r := ddSrv.db.Where("id != ? AND name = ? AND is_delete = ?", editReq.ID, editReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {

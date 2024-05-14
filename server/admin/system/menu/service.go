@@ -84,7 +84,7 @@ func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e 
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Detail First err"); e != nil {
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
 	response.Copy(&res, menu)
@@ -95,7 +95,7 @@ func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) 
 	var menu system_model.SystemAuthMenu
 	response.Copy(&menu, addReq)
 	err := menuSrv.db.Create(&menu).Error
-	if e = response.CheckErr(err, "Add Create err"); e != nil {
+	if e = response.CheckErr(err, "添加失败"); e != nil {
 		return
 	}
 	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
@@ -113,7 +113,7 @@ func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e erro
 	}
 	response.Copy(&menu, editReq)
 	err = menuSrv.db.Model(&menu).Updates(structs.Map(menu)).Error
-	if e = response.CheckErr(err, "Edit Updates err"); e != nil {
+	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
 	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
