@@ -9,7 +9,7 @@
                 label-width="70px"
                 label-position="left"
             >
-                <el-form-item label="项目Key" prop="projectKey" class="w-[280px]">
+                <el-form-item label="项目" prop="projectKey" class="w-[280px]">
                     <el-select v-model="queryParams.projectKey" clearable>
                         <el-option
                             :label="project.projectName"

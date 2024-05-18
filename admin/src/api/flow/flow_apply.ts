@@ -11,16 +11,16 @@ export function flow_apply_detail(params: Record<string, any>) {
 }
 
 // 申请流程新增
-export function flow_apply_add(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_apply/add', params })
+export function flow_apply_add(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_apply/add', data })
 }
 
 // 申请流程编辑
-export function flow_apply_edit(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_apply/edit', params })
+export function flow_apply_edit(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_apply/edit', data })
 }
 
 // 申请流程删除
-export function flow_apply_delete(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_apply/del', params })
+export function flow_apply_delete(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_apply/del', data })
 }

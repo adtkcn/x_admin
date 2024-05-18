@@ -18,18 +18,18 @@ export function monitor_web_detail(params: Record<string, any>) {
 }
 
 // 错误收集error新增
-export function monitor_web_add(params: Record<string, any>) {
-    return request.post({ url: '/monitor_web/add', params })
+export function monitor_web_add(data: Record<string, any>) {
+    return request.post({ url: '/monitor_web/add', data })
 }
 
 // 错误收集error编辑
-export function monitor_web_edit(params: Record<string, any>) {
-    return request.post({ url: '/monitor_web/edit', params })
+export function monitor_web_edit(data: Record<string, any>) {
+    return request.post({ url: '/monitor_web/edit', data })
 }
 
 // 错误收集error删除
-export function monitor_web_delete(params: Record<string, any>) {
-    return request.post({ url: '/monitor_web/del', params })
+export function monitor_web_delete(data: Record<string, any>) {
+    return request.post({ url: '/monitor_web/del', data })
 }
 
 // 错误收集error导入

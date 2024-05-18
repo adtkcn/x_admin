@@ -15,16 +15,16 @@ export function monitor_client_detail(params: Record<string, any>) {
 }
 
 // 客户端信息新增
-export function monitor_client_add(params: Record<string, any>) {
-    return request.post({ url: '/monitor_client/add', params })
+export function monitor_client_add(data: Record<string, any>) {
+    return request.post({ url: '/monitor_client/add', data })
 }
 
 // 客户端信息编辑
-export function monitor_client_edit(params: Record<string, any>) {
-    return request.post({ url: '/monitor_client/edit', params })
+export function monitor_client_edit(data: Record<string, any>) {
+    return request.post({ url: '/monitor_client/edit', data })
 }
 
 // 客户端信息删除
-export function monitor_client_delete(params: Record<string, any>) {
-    return request.post({ url: '/monitor_client/del', params })
+export function monitor_client_delete(data: Record<string, any>) {
+    return request.post({ url: '/monitor_client/del', data })
 }

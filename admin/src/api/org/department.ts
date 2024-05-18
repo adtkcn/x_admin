@@ -8,22 +8,22 @@ export function deptLists(params?: any) {
 export function deptAll(params?: any) {
     return request.get({ url: '/system/dept/all', params })
 }
-// 添加部门
-export function deptAdd(params: any) {
-    return request.post({ url: '/system/dept/add', params })
-}
-
-// 编辑部门
-export function deptEdit(params: any) {
-    return request.post({ url: '/system/dept/edit', params })
-}
-
-// 删除部门
-export function deptDelete(params: any) {
-    return request.post({ url: '/system/dept/del', params })
-}
-
 // 部门详情
 export function deptDetail(params?: any) {
     return request.get({ url: '/system/dept/detail', params })
+}
+
+// 添加部门
+export function deptAdd(data: any) {
+    return request.post({ url: '/system/dept/add', data })
+}
+
+// 编辑部门
+export function deptEdit(data: any) {
+    return request.post({ url: '/system/dept/edit', data })
+}
+
+// 删除部门
+export function deptDelete(data: any) {
+    return request.post({ url: '/system/dept/del', data })
 }

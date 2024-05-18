@@ -11,6 +11,6 @@ export function getUserDetail(params: any) {
 }
 
 // 用户编辑
-export function userEdit(params: any) {
-    return request.post({ url: '/user/edit', params })
+export function userEdit(data: any) {
+    return request.post({ url: '/user/edit', data })
 }

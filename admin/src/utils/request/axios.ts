@@ -1,5 +1,6 @@
 import { RequestMethodsEnum } from '@/enums/requestEnums'
 import axios, { AxiosError } from 'axios'
+
 import type {
     AxiosInstance,
     AxiosRequestConfig,
@@ -8,15 +9,17 @@ import type {
 } from 'axios'
 import { isFunction, merge, cloneDeep } from 'lodash-es'
 
-import type { RequestData, RequestOptions } from './type'
+import type { RequestOptions, AxiosHooks } from './type'
 
 export class Axios {
     private axiosInstance: AxiosInstance
-    private readonly config: AxiosRequestConfig
+    // private readonly config: AxiosRequestConfig
     private readonly options: RequestOptions
-    constructor(config: AxiosRequestConfig) {
-        this.config = config
-        this.options = config.requestOptions
+    private readonly axiosHooks: AxiosHooks
+    constructor(config: AxiosRequestConfig, options: RequestOptions, axiosHooks: AxiosHooks) {
+        // this.config = config
+        this.axiosHooks = axiosHooks
+        this.options = options
         this.axiosInstance = axios.create(config)
         this.setupInterceptors()
     }
@@ -32,7 +35,7 @@ export class Axios {
      * @description 设置拦截器
      */
     setupInterceptors() {
-        if (!this.config.axiosHooks) {
+        if (!this.axiosHooks) {
             return
         }
         const {
@@ -40,7 +43,7 @@ export class Axios {
             requestInterceptorsCatchHook,
             responseInterceptorsHook,
             responseInterceptorsCatchHook
-        } = this.config.axiosHooks
+        } = this.axiosHooks
         this.axiosInstance.interceptors.request.use(
             (config) => {
                 if (isFunction(requestInterceptorsHook)) {
@@ -56,7 +59,7 @@ export class Axios {
             }
         )
         this.axiosInstance.interceptors.response.use(
-            (response: any) => {
+            (response: AxiosResponse) => {
                 if (isFunction(responseInterceptorsHook)) {
                     response = responseInterceptorsHook(response)
                 }
@@ -95,23 +98,20 @@ export class Axios {
     /**
      * @description 请求函数
      */
-    request<T = any>(
-        config: Partial<AxiosRequestConfig>,
-        options?: Partial<RequestOptions>
-    ): Promise<any> {
+    request(config: Partial<AxiosRequestConfig>, options?: Partial<RequestOptions>): Promise<any> {
         const opt: RequestOptions = merge({}, this.options, options)
-        const axioxConfig: AxiosRequestConfig = {
+        const axiosConfig: AxiosRequestConfig = {
             ...cloneDeep(config),
             requestOptions: opt
         }
         const { urlPrefix } = opt
         // 拼接请求前缀如api
         if (urlPrefix) {
-            axioxConfig.url = `${urlPrefix}${config.url}`
+            axiosConfig.url = `${urlPrefix}${config.url}`
         }
         return new Promise((resolve, reject) => {
             this.axiosInstance
-                .request<any, AxiosResponse<RequestData<T>>>(axioxConfig)
+                .request(axiosConfig)
                 .then((res) => {
                     resolve(res)
                 })

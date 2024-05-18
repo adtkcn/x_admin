@@ -11,8 +11,8 @@ export function noticeDetail(params: any) {
 }
 
 // 通知设置保存
-export function setNoticeConfig(params: any) {
-    return request.post({ url: '/setting/notice/save', params })
+export function setNoticeConfig(data: any) {
+    return request.post({ url: '/setting/notice/save', data })
 }
 
 // 短信设置列表
@@ -26,6 +26,6 @@ export function smsDetail(params: any) {
 }
 
 // 短信设置保存
-export function setSmsConfig(params: any) {
-    return request.post({ url: '/setting/sms/save', params })
+export function setSmsConfig(data: any) {
+    return request.post({ url: '/setting/sms/save', data })
 }

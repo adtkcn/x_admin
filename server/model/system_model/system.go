@@ -31,7 +31,7 @@ type SystemAuthAdmin struct {
 	IsDisable     uint8                 `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
 	IsDelete      soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
 	LastLoginIp   string                `gorm:"not null;default:'';comment:'最后登录IP'"`
-	LastLoginTime core.TsTime           `gorm:"not null;default:null;comment:'最后登录时间'"`
+	LastLoginTime core.TsTime           `gorm:"default:null;comment:'最后登录时间'"`
 	CreateTime    core.TsTime           `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 	UpdateTime    core.TsTime           `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 	DeleteTime    core.TsTime           `gorm:"default:null;comment:'删除时间'"`

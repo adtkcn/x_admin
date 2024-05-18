@@ -15,33 +15,33 @@ export function flow_history_detail(params: Record<string, any>) {
 }
 
 // 流程历史新增
-export function flow_history_add(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_history/add', params })
+export function flow_history_add(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/add', data })
 }
 
 // 流程历史编辑
-export function flow_history_edit(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_history/edit', params })
+export function flow_history_edit(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/edit', data })
 }
 
 // 流程历史删除
-export function flow_history_delete(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_history/del', params })
+export function flow_history_delete(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/del', data })
 }
 
 // 获取下一个审批节点，中间可能有系统任务和结束节点被跳过
-export function flow_history_next_node(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_history/next_node', params })
+export function flow_history_next_node(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/next_node', data })
 }
 
 // 获取下一个审批节点，中间可能有系统任务和结束节点被跳过
-export function flow_history_get_approver(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_history/get_approver', params })
+export function flow_history_get_approver(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/get_approver', data })
 }
-export function flow_history_pass(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_history/pass', params })
+export function flow_history_pass(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/pass', data })
 }
 
-export function flow_history_back(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_history/back', params })
+export function flow_history_back(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_history/back', data })
 }

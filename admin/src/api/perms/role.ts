@@ -16,14 +16,14 @@ export function roleDetail(params: any) {
 }
 
 // 添加角色
-export function roleAdd(params: any) {
-    return request.post({ url: '/system/role/add', params })
+export function roleAdd(data: any) {
+    return request.post({ url: '/system/role/add', data })
 }
 // 编辑角色
-export function roleEdit(params: any) {
-    return request.post({ url: '/system/role/edit', params })
+export function roleEdit(data: any) {
+    return request.post({ url: '/system/role/edit', data })
 }
 // 删除角色
-export function roleDelete(params: any) {
-    return request.post({ url: '/system/role/del', params })
+export function roleDelete(data: any) {
+    return request.post({ url: '/system/role/del', data })
 }

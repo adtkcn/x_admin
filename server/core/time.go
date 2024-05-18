@@ -15,25 +15,6 @@ const TimeFormat = "2006-01-02 15:04:05"
 
 // TsTime 自定义时间格式
 type TsTime time.Time
-type OnlyRespTsTime time.Time
-
-// func (tst *TsTime) UnmarshalJSON(bs []byte) error {
-// 	var date string
-// 	err := json.Unmarshal(bs, &date)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
-// 	*tst = TsTime(tt.Unix())
-// 	return nil
-// }
-
-// // MarshalJSON 将TsTime类型的时间转化为JSON字符串格式
-// // 返回转化后的JSON字符串和错误信息
-// func (tst TsTime) MarshalJSON() ([]byte, error) {
-// 	tt := time.Unix(int64(tst), 0).Format(TimeFormat)
-// 	return json.Marshal(tt)
-// }
 
 // 通过时间字符串生成时间戳
 func ToUnix(date string) int64 {
@@ -43,16 +24,10 @@ func ToUnix(date string) int64 {
 	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
 	return tt.Unix()
 }
+
 func NowTime() TsTime {
 	return TsTime(time.Now())
 }
-
-func (otst OnlyRespTsTime) MarshalJSON() ([]byte, error) {
-	tt := time.Time(otst).Format(TimeFormat)
-	return json.Marshal(tt)
-}
-
-// type TsTime time.Time
 
 func (tst *TsTime) UnmarshalJSON(bs []byte) error {
 	var date string

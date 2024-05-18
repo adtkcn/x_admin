@@ -2,8 +2,8 @@ import config from '@/config'
 import request from '@/utils/request'
 
 // 登录
-export function login(params: Record<string, any>) {
-    return request.post({ url: '/system/login', params: { ...params, terminal: config.terminal } })
+export function login(data: Record<string, any>) {
+    return request.post({ url: '/system/login', data: { ...data, terminal: config.terminal } })
 }
 
 // 退出登录
@@ -22,6 +22,6 @@ export function getMenu() {
 }
 
 // 编辑管理员信息
-export function setUserInfo(params: any) {
-    return request.post({ url: '/system/admin/upInfo', params })
+export function setUserInfo(data: any) {
+    return request.post({ url: '/system/admin/upInfo', data })
 }

@@ -11,16 +11,16 @@ export function article_collect_detail(params: Record<string, any>) {
 }
 
 // 文章收藏新增
-export function article_collect_add(params: Record<string, any>) {
-    return request.post({ url: '/article_collect/add', params })
+export function article_collect_add(data: Record<string, any>) {
+    return request.post({ url: '/article_collect/add', data })
 }
 
 // 文章收藏编辑
-export function article_collect_edit(params: Record<string, any>) {
-    return request.post({ url: '/article_collect/edit', params })
+export function article_collect_edit(data: Record<string, any>) {
+    return request.post({ url: '/article_collect/edit', data })
 }
 
 // 文章收藏删除
-export function article_collect_delete(params: Record<string, any>) {
-    return request.post({ url: '/article_collect/del', params })
+export function article_collect_delete(data: Record<string, any>) {
+    return request.post({ url: '/article_collect/del', data })
 }

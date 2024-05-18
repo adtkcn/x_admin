@@ -15,16 +15,16 @@ export function monitor_project_detail(params: Record<string, any>) {
 }
 
 // 错误项目新增
-export function monitor_project_add(params: Record<string, any>) {
-    return request.post({ url: '/monitor_project/add', params })
+export function monitor_project_add(data: Record<string, any>) {
+    return request.post({ url: '/monitor_project/add', data })
 }
 
 // 错误项目编辑
-export function monitor_project_edit(params: Record<string, any>) {
-    return request.post({ url: '/monitor_project/edit', params })
+export function monitor_project_edit(data: Record<string, any>) {
+    return request.post({ url: '/monitor_project/edit', data })
 }
 
 // 错误项目删除
-export function monitor_project_delete(params: Record<string, any>) {
-    return request.post({ url: '/monitor_project/del', params })
+export function monitor_project_delete(data: Record<string, any>) {
+    return request.post({ url: '/monitor_project/del', data })
 }

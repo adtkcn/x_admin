@@ -19,18 +19,18 @@ export function {{{.ModuleName}}}_detail(params: Record<string, any>) {
 }
 
 // {{{.FunctionName}}}新增
-export function {{{.ModuleName}}}_add(params: Record<string, any>) {
-    return request.post({ url: '/{{{.ModuleName}}}/add', params })
+export function {{{.ModuleName}}}_add(data: Record<string, any>) {
+    return request.post({ url: '/{{{.ModuleName}}}/add', data })
 }
 
 // {{{.FunctionName}}}编辑
-export function {{{.ModuleName}}}_edit(params: Record<string, any>) {
-    return request.post({ url: '/{{{.ModuleName}}}/edit', params })
+export function {{{.ModuleName}}}_edit(data: Record<string, any>) {
+    return request.post({ url: '/{{{.ModuleName}}}/edit', data })
 }
 
 // {{{.FunctionName}}}删除
-export function {{{.ModuleName}}}_delete(params: Record<string, any>) {
-    return request.post({ url: '/{{{.ModuleName}}}/del', params })
+export function {{{.ModuleName}}}_delete(data: Record<string, any>) {
+    return request.post({ url: '/{{{.ModuleName}}}/del', data })
 }
 
 // {{{.FunctionName}}}导入

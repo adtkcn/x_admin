@@ -94,9 +94,9 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (r
 	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, adminIdStr, 7200)
 	admin.Service.CacheAdminUserByUid(sysAdmin.ID)
 
+	u := system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: core.NowTime()}
 	// 更新登录信息
-	err = loginSrv.db.Model(&sysAdmin).Updates(
-		system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: core.NowTime()}).Error
+	err = loginSrv.db.Model(&sysAdmin).Updates(u).Error
 	if err != nil {
 		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.SystemError.Msg()); e != nil {
 			return

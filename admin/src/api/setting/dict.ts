@@ -11,51 +11,43 @@ export function dictTypeAll(params?: any) {
 }
 
 // 添加字典类型
-export function dictTypeAdd(params: any) {
-    return request.post({ url: '/setting/dict/type/add', params })
+export function dictTypeAdd(data: any) {
+    return request.post({ url: '/setting/dict/type/add', data })
 }
 
 // 编辑字典类型
-export function dictTypeEdit(params: any) {
-    return request.post({ url: '/setting/dict/type/edit', params })
+export function dictTypeEdit(data: any) {
+    return request.post({ url: '/setting/dict/type/edit', data })
 }
 
 // 删除字典类型
-export function dictTypeDelete(params: any) {
-    return request.post({ url: '/setting/dict/type/del', params })
+export function dictTypeDelete(data: any) {
+    return request.post({ url: '/setting/dict/type/del', data })
 }
 
 // 字典数据列表
 // export function dictDataLists(params: any) {
 //     return request.get(
 //         { url: '/setting/dict/data/list', params },
-//         {
-//             ignoreCancelToken: true
-//         }
 //     )
 // }
 
 // 字典数据列表
 export function dictDataAll(params: any) {
-    return request.get(
-        { url: '/setting/dict/data/all', params },
-        {
-            ignoreCancelToken: true
-        }
-    )
+    return request.get({ url: '/setting/dict/data/all', params })
 }
 
 // 添加字典数据
-export function dictDataAdd(params: any) {
-    return request.post({ url: '/setting/dict/data/add', params })
+export function dictDataAdd(data: any) {
+    return request.post({ url: '/setting/dict/data/add', data })
 }
 
 // 编辑字典数据
-export function dictDataEdit(params: any) {
-    return request.post({ url: '/setting/dict/data/edit', params })
+export function dictDataEdit(data: any) {
+    return request.post({ url: '/setting/dict/data/edit', data })
 }
 
 // 删除字典数据
-export function dictDataDelete(params: any) {
-    return request.post({ url: '/setting/dict/data/del', params })
+export function dictDataDelete(data: any) {
+    return request.post({ url: '/setting/dict/data/del', data })
 }

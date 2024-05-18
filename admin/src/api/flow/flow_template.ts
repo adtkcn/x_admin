@@ -16,16 +16,16 @@ export function flow_template_detail(params: Record<string, any>) {
 }
 
 // 流程模板新增
-export function flow_template_add(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_template/add', params })
+export function flow_template_add(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_template/add', data })
 }
 
 // 流程模板编辑
-export function flow_template_edit(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_template/edit', params })
+export function flow_template_edit(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_template/edit', data })
 }
 
 // 流程模板删除
-export function flow_template_delete(params: Record<string, any>) {
-    return request.post({ url: '/flow/flow_template/del', params })
+export function flow_template_delete(data: Record<string, any>) {
+    return request.post({ url: '/flow/flow_template/del', data })
 }

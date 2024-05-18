@@ -12,12 +12,7 @@ export function dataTable(params: any) {
 
 //选择要生成代码的数据表
 export function selectTable(params: any) {
-    return request.post(
-        { url: '/gen/importTable', params },
-        {
-            isParamsToData: false
-        }
-    )
+    return request.post({ url: '/gen/importTable', params })
 }
 
 // 已选择的数据表详情
@@ -27,27 +22,22 @@ export function tableDetail(params: any) {
 
 //同步字段
 export function syncColumn(params: any) {
-    return request.post(
-        { url: '/gen/syncTable', params },
-        {
-            isParamsToData: false
-        }
-    )
+    return request.post({ url: '/gen/syncTable', params })
 }
 
 //删除已选择的数据表
-export function generateDelete(params: any) {
-    return request.post({ url: '/gen/delTable', params })
+export function generateDelete(data: any) {
+    return request.post({ url: '/gen/delTable', data })
 }
 
 //编辑已选表字段
-export function generateEdit(params: any) {
-    return request.post({ url: '/gen/editTable', params })
+export function generateEdit(data: any) {
+    return request.post({ url: '/gen/editTable', data })
 }
 
 //预览代码
-export function generatePreview(params: any) {
-    return request.get({ url: '/gen/previewCode', params })
+export function generatePreview(data: any) {
+    return request.get({ url: '/gen/previewCode', data })
 }
 
 //下载代码

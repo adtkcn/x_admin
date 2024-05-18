@@ -10,18 +10,18 @@ export function articleCateAll(params?: any) {
 }
 
 // 添加文章分类
-export function articleCateAdd(params: any) {
-    return request.post({ url: '/article/cate/add', params })
+export function articleCateAdd(data: any) {
+    return request.post({ url: '/article/cate/add', data })
 }
 
 // 编辑文章分类
-export function articleCateEdit(params: any) {
-    return request.post({ url: '/article/cate/edit', params })
+export function articleCateEdit(data: any) {
+    return request.post({ url: '/article/cate/edit', data })
 }
 
 // 删除文章分类
-export function articleCateDelete(params: any) {
-    return request.post({ url: '/article/cate/del', params })
+export function articleCateDelete(data: any) {
+    return request.post({ url: '/article/cate/del', data })
 }
 
 // 文章分类详情
@@ -30,8 +30,8 @@ export function articleCateDetail(params: any) {
 }
 
 // 文章分类状态
-export function articleCateStatus(params: any) {
-    return request.post({ url: '/article/cate/change', params })
+export function articleCateStatus(data: any) {
+    return request.post({ url: '/article/cate/change', data })
 }
 
 // 文章列表
@@ -44,18 +44,18 @@ export function articleAll(params?: any) {
 }
 
 // 添加文章
-export function articleAdd(params: any) {
-    return request.post({ url: '/article/add', params })
+export function articleAdd(data: any) {
+    return request.post({ url: '/article/add', data })
 }
 
 // 编辑文章
-export function articleEdit(params: any) {
-    return request.post({ url: '/article/edit', params })
+export function articleEdit(data: any) {
+    return request.post({ url: '/article/edit', data })
 }
 
 // 删除文章
-export function articleDelete(params: any) {
-    return request.post({ url: '/article/del', params })
+export function articleDelete(data: any) {
+    return request.post({ url: '/article/del', data })
 }
 
 // 文章详情
@@ -64,6 +64,6 @@ export function articleDetail(params: any) {
 }
 
 // 文章分类状态
-export function articleStatus(params: any) {
-    return request.post({ url: '/article/change', params })
+export function articleStatus(data: any) {
+    return request.post({ url: '/article/change', data })
 }

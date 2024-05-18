@@ -13,8 +13,8 @@ export function getUserSetup() {
  * @param { string } defaultAvatar 默认用户头像
  * @description 设置用户设置
  */
-export function setUserSetup(params: { defaultAvatar: string }) {
-    return request.post({ url: '/setting/user/save', params })
+export function setUserSetup(data: { defaultAvatar: string }) {
+    return request.post({ url: '/setting/user/save', data })
 }
 
 /**
@@ -37,6 +37,6 @@ export interface LoginSetup {
  * @param { LoginSetup } LoginSetup
  * @description 设置登录注册规则
  */
-export function setLogin(params: LoginSetup) {
-    return request.post({ url: '/setting/login/save', params })
+export function setLogin(data: LoginSetup) {
+    return request.post({ url: '/setting/login/save', data })
 }

@@ -140,7 +140,7 @@ const formRules = {
     ],
     clientTime: [
         {
-            required: true,
+            required: false,
             message: '请输入客户端时间',
             trigger: ['blur']
         }
@@ -152,10 +152,14 @@ const handleSubmit = async () => {
         await formRef.value?.validate()
         const data: any = { ...formData }
         mode.value == 'edit' ? await monitor_web_edit(data) : await monitor_web_add(data)
-        popupRef.value?.close()
+        // popupRef.value?.close()
         feedback.msgSuccess('操作成功')
         emit('success')
-    } catch (error) {}
+    } catch (error) {
+        console.log('error', error)
+
+        feedback.msgError(error?.message || error || '操作失败')
+    }
 }
 
 const open = (type = 'add') => {
