@@ -2,12 +2,13 @@ import { merge } from 'lodash-es'
 import configs from '@/config'
 import { Axios } from './axios'
 import { ContentTypeEnum, RequestCodeEnum } from '@/enums/requestEnums'
-import type { AxiosHooks } from './type'
+import type { AxiosHooks, NewAxiosRequestConfig, NewInternalAxiosRequestConfig } from './type'
 import { clearAuthInfo, getToken } from '../auth'
 import feedback from '../feedback'
 import NProgress from 'nprogress'
 import { AxiosError } from 'axios'
-import type { AxiosRequestConfig, AxiosResponse } from 'axios'
+// AxiosRequestConfig
+import type { AxiosResponse } from 'axios'
 
 import router from '@/router'
 import { PageEnum } from '@/enums/pageEnum'
@@ -37,7 +38,8 @@ const axiosHooks: AxiosHooks = {
         console.log('返回Hook', response)
 
         NProgress.done()
-        const { isTransformResponse, isReturnDefaultResponse } = response.config.requestOptions
+        const config: NewInternalAxiosRequestConfig = response.config
+        const { isTransformResponse, isReturnDefaultResponse } = config.requestOptions
 
         //返回默认响应，当需要获取响应头及其他数据时可使用
         if (isReturnDefaultResponse) {
@@ -92,7 +94,7 @@ const axiosHooks: AxiosHooks = {
     }
 }
 
-const defaultOptions: AxiosRequestConfig = {
+const defaultOptions: NewAxiosRequestConfig = {
     timeout: configs.timeout,
     // 基础接口地址
     baseURL: configs.baseUrl,
@@ -111,7 +113,7 @@ const requestOptions = {
     urlPrefix: configs.urlPrefix
 }
 
-function createAxios(opt?: Partial<AxiosRequestConfig>) {
+function createAxios(opt?: Partial<NewAxiosRequestConfig>) {
     return new Axios(
         // 深度合并
         merge(defaultOptions, opt || {}),

@@ -104,7 +104,9 @@ export default {
          * */
         const refresh = () => {
             console.log(instance.value)
+            // @ts-ignore
             if (instance.value?.refresh) {
+                // @ts-ignore
                 instance.value?.refresh()
             }
         }

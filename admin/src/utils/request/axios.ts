@@ -9,14 +9,14 @@ import type {
 } from 'axios'
 import { isFunction, merge, cloneDeep } from 'lodash-es'
 
-import type { RequestOptions, AxiosHooks } from './type'
+import type { RequestOptions, NewAxiosRequestConfig, AxiosHooks } from './type'
 
 export class Axios {
     private axiosInstance: AxiosInstance
     // private readonly config: AxiosRequestConfig
     private readonly options: RequestOptions
     private readonly axiosHooks: AxiosHooks
-    constructor(config: AxiosRequestConfig, options: RequestOptions, axiosHooks: AxiosHooks) {
+    constructor(config: NewAxiosRequestConfig, options: RequestOptions, axiosHooks: AxiosHooks) {
         // this.config = config
         this.axiosHooks = axiosHooks
         this.options = options
@@ -100,7 +100,7 @@ export class Axios {
      */
     request(config: Partial<AxiosRequestConfig>, options?: Partial<RequestOptions>): Promise<any> {
         const opt: RequestOptions = merge({}, this.options, options)
-        const axiosConfig: AxiosRequestConfig = {
+        const axiosConfig: NewAxiosRequestConfig = {
             ...cloneDeep(config),
             requestOptions: opt
         }

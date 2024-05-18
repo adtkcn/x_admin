@@ -1,11 +1,20 @@
-import type { AxiosRequestConfig, AxiosError } from 'axios'
+import type { AxiosRequestConfig, InternalAxiosRequestConfig, AxiosError } from 'axios'
 
-import 'axios'
-declare module 'axios' {
-    // 扩展 RouteMeta
-    interface AxiosRequestConfig {
-        requestOptions?: RequestOptions
-    }
+// import 'axios'
+// declare module 'axios' {
+//     // 扩展 RouteMeta
+//     interface AxiosRequestConfig {
+//         requestOptions?: RequestOptions
+//     }
+// }
+
+// 扩展 axios 的请求配置
+export interface NewAxiosRequestConfig extends AxiosRequestConfig {
+    requestOptions?: RequestOptions
+}
+// 扩展 axios 的返回配置
+export interface NewInternalAxiosRequestConfig extends InternalAxiosRequestConfig {
+    requestOptions?: RequestOptions
 }
 
 export interface RequestOptions {

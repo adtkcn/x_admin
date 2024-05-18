@@ -96,6 +96,7 @@ export default defineComponent({
 
             activeStep: 'basicSetting', // 激活的步骤面板
             mockData: {
+                id: '',
                 basicSetting: {},
                 flowFormData: {},
                 flowProcessData: {}
@@ -121,6 +122,7 @@ export default defineComponent({
     methods: {
         reset() {
             this.mockData = {
+                id: '',
                 basicSetting: {},
                 flowFormData: {},
                 flowProcessData: {}
@@ -135,6 +137,7 @@ export default defineComponent({
                 this.mockData = { ...data }
             } else {
                 this.mockData = {
+                    id: '',
                     basicSetting: {},
                     flowFormData: {},
                     flowProcessData: {}

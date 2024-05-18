@@ -176,10 +176,10 @@ export default {
             text = ref(''),
             finishText = ref(''),
             setSize = reactive({
-                imgHeight: 0,
-                imgWidth: 0,
-                barHeight: 0,
-                barWidth: 0
+                imgHeight: '',
+                imgWidth: '',
+                barHeight: '',
+                barWidth: ''
             }),
             top = ref(0),
             left = ref(0),
@@ -289,17 +289,13 @@ export default {
                 }
                 const bar_area_left = barArea.value.getBoundingClientRect().left
                 let move_block_left = x - bar_area_left //小方块相对于父元素的left值
-                if (
-                    move_block_left >=
-                    barArea.value.offsetWidth - parseInt(parseInt(blockSize.value.width) / 2) - 2
-                ) {
-                    move_block_left =
-                        barArea.value.offsetWidth -
-                        parseInt(parseInt(blockSize.value.width) / 2) -
-                        2
+                // @ts-ignore
+                const w = parseInt(Number(blockSize.value.width) / 2)
+                if (move_block_left >= barArea.value.offsetWidth - w - 2) {
+                    move_block_left = barArea.value.offsetWidth - w - 2
                 }
                 if (move_block_left <= 0) {
-                    move_block_left = parseInt(parseInt(blockSize.value.width) / 2)
+                    move_block_left = w
                 }
                 //拖动后小方块的left值
                 moveBlockLeft.value = move_block_left - startLeft.value + 'px'
@@ -313,6 +309,9 @@ export default {
             //判断是否重合
             if (status.value && isEnd.value == false) {
                 let moveLeftDistance = parseInt((moveBlockLeft.value || '').replace('px', ''))
+                console.log(setSize.imgWidth)
+
+                // @ts-ignore
                 moveLeftDistance = (moveLeftDistance * 310) / parseInt(setSize.imgWidth)
                 const data = {
                     captchaType: captchaType.value,

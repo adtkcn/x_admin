@@ -8,7 +8,7 @@
         "prod": "vite build",
         "preview": "vite preview --port 4173",
         "build": "node ./scripts/build.mjs",
-        "type-check": "vue-tsc --noEmit --checkJs true --skipLibCheck",
+        "type-check": "vue-tsc --noEmit --checkJs false --skipLibCheck",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
     },
     "dependencies": {

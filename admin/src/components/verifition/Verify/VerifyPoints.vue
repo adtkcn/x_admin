@@ -69,7 +69,7 @@
  * */
 import { resetSize } from './../utils/util'
 import { aesEncrypt } from './../utils/ase'
-import { reqGet, reqCheck } from './../api/index'
+import { reqGet, reqCheck } from '../api/index'
 import { onMounted, reactive, ref, nextTick, toRefs, getCurrentInstance } from 'vue'
 export default {
     name: 'VerifyPoints',
@@ -115,7 +115,7 @@ export default {
             checkPosArr = reactive([]), //用户点击的坐标
             num = ref(1), //点击的记数
             pointBackImgBase = ref(''), //后端获取到的背景图片
-            poinTextList = reactive([]), //后端返回的点击字体顺序
+            poinTextList = ref([]), //后端返回的点击字体顺序
             backToken = ref(''), //后端返回的token值
             setSize = reactive({
                 imgHeight: 0,

@@ -2,12 +2,22 @@
  * 此处可直接引用自己项目封装好的 axios 配合后端联调
  */
 
-import request from './../utils/axios' //组件内部封装的axios
+import request from '../utils/axios' //组件内部封装的axios
 // import request from "@/api/axios.js"       //调用项目封装的axios
-
+interface ResponseData {
+    repData: {
+        originalImageBase64: string
+        token: string
+        secretKey: string
+        wordList: Array<string>
+    }
+    repCode: string
+    repMsg: string
+    error?: boolean
+}
 //获取验证图片  以及token
 export function reqGet(data) {
-    return request({
+    return request<any, ResponseData>({
         url: '/common/captcha/get',
         method: 'post',
         data
@@ -16,7 +26,7 @@ export function reqGet(data) {
 
 //滑动或者点选验证
 export function reqCheck(data) {
-    return request({
+    return request<any, ResponseData>({
         url: '/common/captcha/check',
         method: 'post',
         data
