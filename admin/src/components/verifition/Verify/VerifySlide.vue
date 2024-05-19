@@ -399,7 +399,7 @@ export default {
             }
             reqGet(data).then((res) => {
                 if (!res) {
-                    tipWords.value = '无网络'
+                    tipWords.value = '网络错误'
                     return
                 }
                 if (res.repCode == '0000') {

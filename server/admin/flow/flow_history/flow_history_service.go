@@ -523,10 +523,13 @@ func (Service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, appl
 func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[string]interface{}) []FlowTree {
 	for _, v := range *flowTree {
 		if v.Type == "bpmn:startEvent" {
-			// 开始节点
-
-			child := DeepNextNode(nextNodes, v.Children, formValue)
 			nextNodes = append(nextNodes, v)
+
+			// 开始节点
+			if v.Children == nil {
+				break
+			}
+			child := DeepNextNode(nextNodes, v.Children, formValue)
 			nextNodes = append(nextNodes, child...)
 			break
 		} else if v.Type == "bpmn:exclusiveGateway" {
@@ -585,16 +588,23 @@ func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[stri
 			if haveFalse {
 				continue
 			} else {
+				nextNodes = append(nextNodes, v)
+
+				if v.Children == nil {
+					break
+				}
 				// 判断formValue值，决定是不是递归这个网关
 				child := DeepNextNode(nextNodes, v.Children, formValue)
-				nextNodes = append(nextNodes, v)
 				nextNodes = append(nextNodes, child...)
 				break
 			}
 		} else if v.Type == "bpmn:serviceTask" {
+			nextNodes = append(nextNodes, v)
+			if v.Children == nil {
+				break
+			}
 			// 系统服务
 			child := DeepNextNode(nextNodes, v.Children, formValue)
-			nextNodes = append(nextNodes, v)
 			nextNodes = append(nextNodes, child...)
 		} else if v.Type == "bpmn:userTask" {
 			//用户节点

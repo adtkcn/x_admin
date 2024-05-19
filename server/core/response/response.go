@@ -164,7 +164,7 @@ func IsFailWithResp(c *gin.Context, err error) bool {
 		FailWithData(c, v, data)
 	// 其他类型
 	default:
-		Fail(c, SystemError)
+		Fail(c, SystemError.Make(err.Error()))
 	}
 	return true
 }

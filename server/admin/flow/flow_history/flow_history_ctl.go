@@ -149,7 +149,7 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 		return
 	}
 	err := Service.Pass(pass)
-	fmt.Println(err)
+
 	response.CheckAndResp(c, err)
 }
 

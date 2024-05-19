@@ -7,6 +7,7 @@ import request from '../utils/axios' //组件内部封装的axios
 interface ResponseData {
     repData: {
         originalImageBase64: string
+        jigsawImageBase64: string
         token: string
         secretKey: string
         wordList: Array<string>
