@@ -14,8 +14,8 @@ export function {{{.ModuleName}}}_list_all(params?: Record<string, any>) {
 }
 
 // {{{.FunctionName}}}详情
-export function {{{.ModuleName}}}_detail(params: Record<string, any>) {
-    return request.get({ url: '/{{{.ModuleName}}}/detail', params })
+export function {{{.ModuleName}}}_detail({{{ .PrimaryKey }}}: number | string) {
+    return request.get({ url: '/{{{.ModuleName}}}/detail', { {{{ .PrimaryKey }}} } })
 }
 
 // {{{.FunctionName}}}新增
@@ -29,8 +29,8 @@ export function {{{.ModuleName}}}_edit(data: Record<string, any>) {
 }
 
 // {{{.FunctionName}}}删除
-export function {{{.ModuleName}}}_delete(data: Record<string, any>) {
-    return request.post({ url: '/{{{.ModuleName}}}/del', data })
+export function {{{.ModuleName}}}_delete({{{ .PrimaryKey }}}: number | string) {
+    return request.post({ url: '/{{{.ModuleName}}}/del', { {{{ .PrimaryKey }}} } })
 }
 
 // {{{.FunctionName}}}导入

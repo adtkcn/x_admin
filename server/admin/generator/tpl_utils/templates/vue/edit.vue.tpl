@@ -226,9 +226,7 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
      try {
-        const data = await {{{ .ModuleName }}}_detail({
-            {{{ .PrimaryKey }}}: row.{{{ .PrimaryKey }}}
-        })
+        const data = await {{{ .ModuleName }}}_detail(row.{{{ .PrimaryKey }}})
         setFormData(data)
      } catch (error) {}
 }

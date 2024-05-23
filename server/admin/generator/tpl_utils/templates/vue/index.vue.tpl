@@ -190,18 +190,16 @@ const handleAdd = async () => {
 }
 
 const handleEdit = async (data: any) => {
-    try {
-        showEdit.value = true
-        await nextTick()
-        editRef.value?.open('edit')
-        editRef.value?.getDetail(data)
-    } catch (error) {}
+    showEdit.value = true
+    await nextTick()
+    editRef.value?.open('edit')
+    editRef.value?.getDetail(data)
 }
 
 const handleDelete = async ({{{ .PrimaryKey }}}: number) => {
     try {
         await feedback.confirm('确定要删除？')
-        await {{{ .ModuleName }}}_delete({ {{{ .PrimaryKey }}} })
+        await {{{ .ModuleName }}}_delete( {{{ .PrimaryKey }}} )
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {}
