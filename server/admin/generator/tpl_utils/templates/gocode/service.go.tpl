@@ -64,13 +64,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 		return
 	}
 	// 数据
-	var objs []model.{{{ title (toCamelCase .EntityName) }}}
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.{{{ title (toCamelCase .EntityName) }}}
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
 	result := []{{{ title (toCamelCase .EntityName) }}}Resp{}
-	response.Copy(&result, objs)
+	response.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -80,13 +80,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 }
 // ListAll {{{ .FunctionName }}}列表
 func (service {{{ toCamelCase .EntityName }}}Service) ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
-	var objs []model.{{{ title (toCamelCase .EntityName) }}}
+	var modelList []model.{{{ title (toCamelCase .EntityName) }}}
 	
-	err := service.db.Find(&objs).Error
+	err := service.db.Find(&modelList).Error
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	response.Copy(&res, objs)
+	response.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -172,13 +172,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ tit
 	dbModel := service.GetModel(listReq)
 
 	// 数据
-	var objs []model.{{{ title (toCamelCase .EntityName) }}}
-	err := dbModel.Order("id asc").Find(&objs).Error
+	var modelList []model.{{{ title (toCamelCase .EntityName) }}}
+	err := dbModel.Order("id asc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
 	result := []{{{ title (toCamelCase .EntityName) }}}Resp{}
-	response.Copy(&result, objs)
+	response.Copy(&result, modelList)
 	return result, nil
 }
 
