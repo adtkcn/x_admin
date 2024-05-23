@@ -76,13 +76,12 @@
                             <el-table-column label="go类型" min-width="100">
                                 <template v-slot="{ row }">
                                     <el-select v-model="row.goType">
-                                        <el-option label="Long" value="Long" />
-                                        <el-option label="String" value="String" />
-                                        <el-option label="Integer" value="Integer" />
-                                        <el-option label="Double" value="Double" />
-                                        <el-option label="BigDecimal" value="BigDecimal" />
-                                        <el-option label="Date" value="Date" />
-                                        <el-option label="Boolean" value="Boolean" />
+                                        <el-option label="int" value="int" />
+                                        <el-option label="int64" value="int64" />
+                                        <el-option label="string" value="string" />
+                                        <el-option label="float64" value="float64" />
+                                        <el-option label="rune" value="rune" />
+                                        <el-option label="bool" value="bool" />
                                         <el-option label="TsTime" value="core.TsTime" />
                                     </el-select>
                                 </template>
