@@ -36,8 +36,8 @@ export function generateEdit(data: any) {
 }
 
 //预览代码
-export function generatePreview(data: any) {
-    return request.get({ url: '/gen/previewCode', data })
+export function generatePreview(params: any) {
+    return request.get({ url: '/gen/previewCode', params })
 }
 
 //下载代码
