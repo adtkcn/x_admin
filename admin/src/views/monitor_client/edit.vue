@@ -163,14 +163,27 @@ const formRules = {
 }
 
 const handleSubmit = async () => {
-    try {
-        await formRef.value?.validate()
-        const data: any = { ...formData }
-        mode.value == 'edit' ? await monitor_client_edit(data) : await monitor_client_add(data)
-        popupRef.value?.close()
-        feedback.msgSuccess('操作成功')
-        emit('success')
-    } catch (error) {}
+    formRef.value
+        ?.validate()
+        .then(() => {
+            try {
+                const data: any = { ...formData }
+                let req = null
+                if (mode.value == 'edit') {
+                    req = monitor_client_edit(data)
+                } else {
+                    req = monitor_client_add(data)
+                }
+                req.then(() => {
+                    popupRef.value?.close()
+                    feedback.msgSuccess('操作成功')
+                    emit('success')
+                }).catch((err) => {
+                    feedback.msgError(err.msg)
+                })
+            } catch (error) {}
+        })
+        .catch(() => {})
 }
 
 const open = (type = 'add') => {
@@ -181,7 +194,6 @@ const open = (type = 'add') => {
 const setFormData = async (data: Record<string, any>) => {
     for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
             formData[key] = data[key]
         }
     }

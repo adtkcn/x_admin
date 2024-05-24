@@ -69,7 +69,7 @@
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
                                     :key="index"
                                     :label="item.name"
-                                    {{{- if eq .GoType "Integer" }}}
+                                    {{{- if eq .GoType "int" }}}
                                     :value="parseInt(item.value)"
                                     {{{- else }}}
                                     :value="item.value"
@@ -89,7 +89,7 @@
                                 <el-radio
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
                                     :key="index"
-                                    {{{- if eq .GoType "Integer" }}}
+                                    {{{- if eq .GoType "int" }}}
                                     :label="parseInt(item.value)"
                                     {{{- else }}}
                                     :label="item.value"

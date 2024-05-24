@@ -10,7 +10,7 @@ export function monitor_client_list_all(params?: Record<string, any>) {
 }
 
 // 客户端信息详情
-export function monitor_client_detail(params: Record<string, any>) {
+export function monitor_client_detail(params: { id: string }) {
     return request.get({ url: '/monitor_client/detail', params })
 }
 

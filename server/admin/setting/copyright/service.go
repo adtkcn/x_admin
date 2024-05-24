@@ -43,6 +43,6 @@ func (cSrv settingCopyrightService) Save(cReqs []SettingCopyrightItemReq) (e err
 		return
 	}
 	err = util.ConfigUtil.Set(cSrv.db, "website", "copyright", json)
-	e = response.CheckErr(err, "Save Set err")
+	e = response.CheckErr(err, "保存失败")
 	return
 }

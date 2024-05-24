@@ -87,18 +87,18 @@ func (Service flowHistoryService) List(page request.PageReq, listReq FlowHistory
 		return
 	}
 	// 数据
-	var objs []model.FlowHistory
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.FlowHistory
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []FlowHistoryResp{}
-	response.Copy(&resps, objs)
+	list := []FlowHistoryResp{}
+	response.Copy(&list, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    list,
 	}, nil
 }
 
@@ -117,12 +117,12 @@ func (Service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []Flo
 		dbModel = dbModel.Where("node_type =?", listReq.NodeType)
 	}
 	// 数据
-	var objs []model.FlowHistory
-	err := dbModel.Find(&objs).Error
+	var modelList []model.FlowHistory
+	err := dbModel.Find(&modelList).Error
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	response.Copy(&res, objs)
+	response.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -208,6 +208,12 @@ func (Service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAu
 	var userId = userTask.UserId
 	var deptId = userTask.DeptId
 	var postId = userTask.PostId
+	if userType == 0 && userId == 0 && deptId == 0 && postId == 0 {
+		// return nil, errors.New("未设置审批人")
+
+		// 未设置审批人时默认为2用户部门负责人
+		userType = 2
+	}
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
 	adminModel := Service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
@@ -523,7 +529,7 @@ func (Service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, appl
 func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[string]interface{}) []FlowTree {
 	for _, v := range *flowTree {
 		if v.Type == "bpmn:startEvent" {
-			nextNodes = append(nextNodes, v)
+			// nextNodes = append(nextNodes, v)
 
 			// 开始节点
 			if v.Children == nil {

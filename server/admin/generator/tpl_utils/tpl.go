@@ -164,6 +164,11 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 		"gocode/controller.go.tpl",
 		"vue/api.ts.tpl",
 		"vue/edit.vue.tpl",
+
+		"uniapp/api.ts.tpl",
+		"uniapp/edit.vue.tpl",
+		"uniapp/index.vue.tpl",
+		"uniapp/search.vue.tpl",
 	}
 	if genTpl == GenConstants.TplCrud {
 		tplPaths = append(tplPaths, "vue/index.vue.tpl")
@@ -175,6 +180,7 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 
 //go:embed templates/gocode
 //go:embed templates/vue
+//go:embed templates/uniapp
 var templatesFs embed.FS
 
 /**
@@ -215,6 +221,11 @@ func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName str
 		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", ModuleName, "/edit.vue"}, ""),       // "admin/src/views/%s/edit.vue",
 		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", ModuleName, "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
 		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", ModuleName, "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
+
+		"uniapp/api.ts.tpl":     strings.Join([]string{"uniapp/src/api/", ModuleName, ".ts"}, ""),       // "admin/src/api/%s.ts",
+		"uniapp/edit.vue.tpl":   strings.Join([]string{"uniapp/pages/", ModuleName, "/edit.vue"}, ""),   // "uniapp/pages/%s/edit.vue",
+		"uniapp/index.vue.tpl":  strings.Join([]string{"uniapp/pages/", ModuleName, "/index.vue"}, ""),  // "uniapp/pages/%s/index.vue",
+		"uniapp/search.vue.tpl": strings.Join([]string{"uniapp/pages/", ModuleName, "/search.vue"}, ""), // "uniapp/pages/%s/index-tree.vue",
 	}
 	filePath := make(map[string]string)
 	for tplPath, tplCode := range tplCodeMap {
