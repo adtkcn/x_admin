@@ -58,6 +58,10 @@ type EditColumn struct {
 	QueryType   string `form:"queryType" binding:"required,max=30"` // 查询方式
 	HtmlType    string `form:"htmlType" binding:"required,max=30"`  // 表单类型
 	DictType    string `form:"dictType" binding:"required,max=200"` // 字典类型
+
+	CreateTime core.TsTime `form:"createTime"` // 创建时间
+	UpdateTime core.TsTime `form:"updateTime"` // 更新时间
+
 }
 
 // EditTableReq 编辑表结构参数
