@@ -21,7 +21,12 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 //  @Param		PageSize	query		int					true	"每页数量"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
-//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
+{{{- if eq .HtmlType "datetime" }}}
+//	@Param {{{ title (toCamelCase .ColumnName) }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+//	@Param {{{ title (toCamelCase .ColumnName) }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
+{{{- else }}}
+//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+{{{- end }}}
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
@@ -43,15 +48,24 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 //	@Summary	{{{ .FunctionName }}}列表-所有
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
+{{{- range .Columns }}}
+{{{- if .IsQuery }}}
+{{{- if eq .HtmlType "datetime" }}}
+//	@Param {{{ title (toCamelCase .ColumnName) }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+//	@Param {{{ title (toCamelCase .ColumnName) }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
+{{{- else }}}
+//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+{{{- end }}}
+{{{- end }}}
+{{{- end }}}
 //	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
-	//var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
-	//if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
-	//	return
-	//}
-	res, err := Service.ListAll()
-
+	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := Service.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 

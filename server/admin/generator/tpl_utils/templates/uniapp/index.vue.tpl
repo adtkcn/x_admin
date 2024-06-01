@@ -33,9 +33,9 @@
       :key="item.id"
       clickable
       show-arrow
-      :title="item.name"
-      :note="item.placedPostion+'('+item.placedName+')'"
-      :right-text="item.status == 1 ? '在线' : ''"
+      :title="item.id"
+      :note="item.id"
+      :right-text="item.id"
       @click="toDetails(item)"
     ></uv-list-item>
   </uv-list>
@@ -65,7 +65,7 @@ import {
   onReachBottom,
   onPageScroll,
 } from "@dcloudio/uni-app";
-import { equipment_list } from "@/api/equipment.js";
+import { {{{ .ModuleName }}}_list } from "@/api/{{{ .ModuleName }}}.js";
 import { usePaging } from "@/utils/usePaging";
 import { toPath } from "@/utils/utils";
 const queryParams = reactive({
@@ -74,7 +74,7 @@ const queryParams = reactive({
 });
 let fromSearch=ref(false);
 onLoad((e) => {
-  console.log("equipment onLoad", e);
+  console.log("{{{ .ModuleName }}} onLoad", e);
   if (e) {
     for (const key in e) {
       if (Object.hasOwnProperty.call(e, key)) {
@@ -86,7 +86,7 @@ onLoad((e) => {
   getLists();
 });
 const { pager, getLists, NextPage, resetPage, resetParams } = usePaging({
-  fetchFun: equipment_list,
+  fetchFun: {{{ .ModuleName }}}_list,
   params: queryParams,
 });
 let scrollTop = ref(0);
@@ -101,10 +101,10 @@ onReachBottom(() => {
 });
 
 function toDetails(item) {
-  toPath("/pages/equipment/details", { id: item.id });
+  toPath("/pages/{{{ .ModuleName }}}/details", { id: item.id });
 }
 function moreSearch() {
-  toPath("/pages/equipment/search");
+  toPath("/pages/{{{ .ModuleName }}}/search");
 }
 </script>
 

@@ -1,40 +1,25 @@
 <template>
 	<view class="page-content">
-		<uv-form labelPosition="left" :model="form" :rules="rules" ref="formRef">
-			<uv-form-item label="IMEI" prop="imei" borderBottom>
-				<uv-input v-model="form.imei" border="surround">
-				</uv-input>
+		<uv-form labelPosition="left" :model="form" :rules="formRules" ref="formRef">
+			{{{- range .Columns }}}
+            {{{- if .IsEdit }}}			
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" borderBottom>
+                {{{- if eq .HtmlType "input" }}}
+				<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-input>
+				{{{- else if eq .HtmlType "number" }}}
+				<uv-number-box v-model="form.{{{ (toCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+				{{{- else if eq .HtmlType "textarea" }}}
+				<uv-textarea v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-textarea>
+				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
+				<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+				{{{- end }}}
 			</uv-form-item>
-			<uv-form-item label="位置" prop="location" borderBottom>
-				<uv-input v-model="form.location" border="surround">
-				</uv-input>
-			</uv-form-item>
-
-			<uv-form-item label="关联表号" prop="meters" borderBottom>
-				<uv-textarea v-model="form.meters" border="surround"></uv-textarea>
-			</uv-form-item>
-
-
-			<uv-form-item label="卡1" prop="sim0" borderBottom>
-				<uv-input v-model="form.sim0" border="surround">
-				</uv-input>
-			</uv-form-item>
-			<uv-form-item label="卡2" prop="sim1" borderBottom>
-				<uv-input v-model="form.sim1" border="surround">
-				</uv-input>
-			</uv-form-item>
-			<uv-form-item label="备注" prop="remark" borderBottom>
-				<uv-textarea v-model="form.remark" border="surround"></uv-textarea>
-			</uv-form-item>
+			{{{- end }}}
+			{{{- end }}}
 
 			<uv-button   type="primary" text="提交" customStyle="margin-top: 20rpx"
 				@click="submit"></uv-button>
-
-
-
 		</uv-form>
-
-
 	</view>
 </template>
 
@@ -47,57 +32,87 @@
 	import {
 		onLoad
 	} from "@dcloudio/uni-app";
-	import {
-		equipment_list,
-		equipment_edit,
-
-	} from "@/api/equipment.js";
- 
+ 	import {
+		{{{ .ModuleName }}}_detail,
+		{{{ .ModuleName }}}_edit
+	} from "@/api/{{{ .ModuleName }}}.js";
 	import {
 		toast,
 		alert
 	} from "@/utils/utils";
 
 	let formRef = ref();
-	let form = ref({});
-	let rules = {};
-
-
-
-
+	let form = ref({
+	{{{- range .Columns }}}
+    {{{- if eq (toCamelCase .GoField) $.PrimaryKey }}}
+    {{{ $.PrimaryKey }}}: '',
+    {{{- else if .IsEdit }}}
+    {{{- if eq .HtmlType "checkbox" }}}
+    {{{ (toCamelCase .GoField) }}}: [],
+    {{{- else if eq .HtmlType "number" }}}
+    {{{ (toCamelCase .GoField) }}}: 0,
+    {{{- else }}}
+    {{{ (toCamelCase .GoField) }}}: '',
+    {{{- end }}}
+    {{{- end }}}
+    {{{- end }}}
+	});
+	const formRules = {
+		{{{- range .Columns }}}
+		{{{- if and .IsEdit .IsRequired }}}
+		{{{ (toCamelCase .GoField) }}}: [
+			{
+				required: true,
+				{{{- if or (eq .HtmlType "checkbox") (eq .HtmlType "datetime") (eq .HtmlType "radio") (eq .HtmlType "select") (eq .HtmlType "imageUpload") }}}
+				message: '请选择{{{ .ColumnComment }}}',
+				{{{- else }}}
+				message: '请输入{{{ .ColumnComment }}}',
+				{{{- end }}}
+				trigger: ['blur']
+			}
+		],
+		{{{- end }}}
+		{{{- end }}}
+	}
 	onLoad((e) => {
 		console.log("onLoad", e);
-		//   form.value = e;
 		getDetails(e.id);
 	});
 
 
+	{{{- if ge (len .DictFields) 1 }}}
+	{{{- $dictSize := sub (len .DictFields) 1 }}}
+	const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+	{{{- end }}}
+
 	function getDetails(id) {
-		equipment_list({
-				id
-			})
-			.then((res) => {
-				if (res.code == 200) {
-					// form.value = e;
-					if (res?.result?.records?.length == 1) {
-						form.value = res?.result?.records[0];
-					}
-				}
-			})
-			.catch((err) => {});
+		{{{ .ModuleName }}}_detail(id).then((res) => {
+            if (res.code == 200) {
+                if (res?.result) {
+                    form.value = res?.result
+                }
+            } else {
+                toast(res.message);
+            }
+        })
+        .catch((err) => {
+            toast(err.message||"网络错误");
+        });
 	}
 
 	function submit(item) {
 		console.log("submit", form);
-		equipment_edit(form.value).then((res) => {
-			if (res.code == 200) {
-				toast("编辑成功");
-		 
-				getDetails(form.value?.id);
-			} else {
-				toast(res.message);
-			}
-		});
+		formRef.value.validate().then(() => {
+			{{{ .ModuleName }}}_edit(form.value).then((res) => {
+				if (res.code == 200) {
+					toast("编辑成功");
+			
+					getDetails(form.value?.id);
+				} else {
+					toast(res.message);
+				}
+			});
+		})
 	}
 </script>
 

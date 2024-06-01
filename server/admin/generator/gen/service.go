@@ -173,7 +173,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 		return nil
 	})
 	e = response.CheckErr(err, "ImportTable Transaction err")
-	return nil
+	return e
 }
 
 // SyncTable 同步表结构
@@ -256,7 +256,7 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 		return nil
 	})
 	e = response.CheckErr(err, "SyncTable Transaction err")
-	return nil
+	return e
 }
 
 // EditTable 编辑表结构
@@ -276,21 +276,21 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据已丢失！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "EditTable First err"); e != nil {
+	if e = response.CheckErr(err, "查找数据失败"); e != nil {
 		return
 	}
 	response.Copy(&genTable, editReq)
 	err = genSrv.db.Transaction(func(tx *gorm.DB) error {
 		genTable.SubTableName = strings.Replace(editReq.SubTableName, config.Config.DbTablePrefix, "", 1)
 		txErr := tx.Save(&genTable).Error
-		if te := response.CheckErr(txErr, "EditTable Save GenTable err"); te != nil {
+		if te := response.CheckErr(txErr, "更新失败"); te != nil {
 			return te
 		}
 		for i := 0; i < len(editReq.Columns); i++ {
 			var col gen_model.GenTableColumn
 			response.Copy(&col, editReq.Columns[i])
 			txErr = tx.Save(&col).Error
-			if te := response.CheckErr(txErr, "EditTable Save GenTableColumn err"); te != nil {
+			if te := response.CheckErr(txErr, "更新失败"); te != nil {
 				return te
 			}
 		}

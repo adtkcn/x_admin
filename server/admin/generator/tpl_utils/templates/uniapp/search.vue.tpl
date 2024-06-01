@@ -2,14 +2,6 @@
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" labelWidth="80" :model="form"  ref="formRef">
-			<!-- <uv-form-item label="所属产品" prop="productId" borderBottom>
-				<x-picker valueKey="id" labelKey="name" :columns="fotaProductList" v-model="form.productId"></x-picker>
-			</uv-form-item>
-			<uv-form-item label="所属产品" prop="groupId" borderBottom>
-				<x-picker valueKey="id" labelKey="name" :columns="showFotaGroupList" v-model="form.groupId"></x-picker>
-			</uv-form-item> -->
-	 
-
 			<uv-form-item label="在线状态" prop="status" borderBottom>
 				<x-picker valueKey="value" labelKey="label" :columns="dictData.devices_status"
 					v-model="form.status"></x-picker>
@@ -98,27 +90,6 @@
 
 		toPath("/pages/equipment/equipment", search);
 	}
-
-	// const fotaProductList = ref([]);
-	// const fotaGroupList = ref([]);
-	// const showFotaGroupList = computed(() => {
-	// 	return fotaGroupList.value.filter((item) => {
-	// 		if (form.value.productId === "") {
-	// 			return true;
-	// 		}
-	// 		return item.productId == form.value.productId;
-	// 	});
-	// });
-
-	// function getList() {
-	// 	product_listAll().then((r) => {
-	// 		fotaProductList.value = r.result;
-	// 	});
-	// 	group_listAll().then((r) => {
-	// 		fotaGroupList.value = r.result;
-	// 	});
-	// }
-	// getList();
 </script>
 
 <style lang="scss" scoped>

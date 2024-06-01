@@ -79,10 +79,12 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 	}, nil
 }
 // ListAll {{{ .FunctionName }}}列表
-func (service {{{ toCamelCase .EntityName }}}Service) ListAll() (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res []{{{ title (toCamelCase .EntityName) }}}Resp, e error) {
+	dbModel := service.GetModel(listReq)
+
 	var modelList []model.{{{ title (toCamelCase .EntityName) }}}
-	
-	err := service.db.Find(&modelList).Error
+
+	err := dbModel.Find(&modelList).Error
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
