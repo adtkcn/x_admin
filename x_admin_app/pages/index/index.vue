@@ -33,33 +33,12 @@
 	let text = ["Fota", "轻松管理"];
 
 
-	let baseList = [
-		// {
-		// 	icon: "/static/index/product.png",
-		// 	path: "/pages/product/product",
-		// 	title: "产品",
-		// },
-		// {
-		// 	icon: "/static/index/group.png",
-		// 	path: "/pages/group/group",
-		// 	title: "分组",
-		// },
-		// {
-		// 	icon: "/static/index/version.png",
-		// 	path: "/pages/version/version",
-		// 	title: "版本",
-		// },
-		{
+	let baseList = [{
 			icon: "/static/index/equipment.png",
 			path: "/pages/monitor_project/index",
 			title: "项目监控",
 		},
 
-		{
-			icon: "/static/index/equipment.png",
-			path: "/pages/equipment/equipment",
-			title: "设备管理",
-		},
 
 		{
 			icon: "scan",
@@ -83,26 +62,8 @@
 				});
 			},
 		},
-		{
-			icon: "/static/index/equipmentLog.png",
-			path: "/pages/statistics/statistics",
-			title: "销量统计",
-		},
-		// {
-		// 	icon: "/static/index/sysUp.png",
-		// 	path: "/pages/log/sysUp/sysUp",
-		// 	title: "上行日志",
-		// },
-		// {
-		// 	icon: "/static/index/sysDown.png",
-		// 	path: "/pages/log/sysDown/sysDown",
-		// 	title: "下行日志",
-		// },
-		// {
-		// 	icon: "/static/index/log.png",
-		// 	path: "/pages/log/sysLog/sysLog",
-		// 	title: "系统日志",
-		// },
+
+
 	];
 
 	function toList(item) {

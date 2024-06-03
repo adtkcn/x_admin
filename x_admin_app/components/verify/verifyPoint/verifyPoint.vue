@@ -1,95 +1,87 @@
 <template>
-  <view :class="mode == 'pop' ? 'mask' : ''" v-show="showBox">
-    <view
-      :class="mode == 'pop' ? 'verifybox' : ''"
-      :style="{ 'max-width': parseInt(imgSize.width) + 30 + 'px' }"
-    >
-      <view class="verifybox-top" v-if="mode == 'pop'">
-        请完成安全验证
-        <text class="verifybox-close" @click="clickShow = false">
-          <text class="iconfont icon-close"></text>
-        </text>
-      </view>
+  <view style="position: relative">
+    <view class="verify-image-out" v-show="showImage">
       <view
-        class="verifybox-bottom"
-        :style="{ padding: mode == 'pop' ? '15px' : '0' }"
+        class="verify-image-panel"
+        :style="{
+          width: imgSize.width,
+          height: imgSize.height,
+          'margin-bottom': vSpace + 'px',
+        }"
       >
-        <!-- 验证码容器 -->
-        <!-- 滑动 -->
-        <view v-if="componentType == 'VerifySlide'">
-          <VerifySlide
-            @success="success"
-            :captchaType="captchaType"
-            :type="verifyType"
-            :figure="figure"
-            :arith="arith"
-            :mode="mode"
-            :vSpace="vSpace"
-            :explain="explain"
-            :imgSize="imgSize"
-            :blockSize="blockSize"
-            :barSize="barSize"
-            :defaultImg="defaultImg"
-            ref="instance"
-          ></VerifySlide>
+        <view
+          class="verify-refresh"
+          style="z-index: 3"
+          @click="refresh"
+          v-show="showRefresh"
+        >
+          <text class="iconfont icon-refresh"></text>
         </view>
-        <!-- 点选 -->
-        <view v-if="componentType == 'VerifyPoints'">
-          <VerifyPoint
-            :captchaType="captchaType"
-            :type="verifyType"
-            :figure="figure"
-            :arith="arith"
-            :mode="mode"
-            :vSpace="vSpace"
-            :explain="explain"
-            :imgSize="imgSize"
-            :blockSize="blockSize"
-            :barSize="barSize"
-            :defaultImg="defaultImg"
-            ref="instance"
-          ></VerifyPoint>
+        <image
+          :src="'data:image/png;base64,' + pointBackImgBase"
+          id="image"
+          ref="canvas"
+          style="width: 100%; height: 100%; display: block"
+          @click="bindingClick ? canvasClick($event) : undefined"
+        ></image>
+        <view
+          v-for="(tempPoint, index) in tempPoints"
+          :key="index"
+          class="point-area"
+          :style="{
+            'background-color': '#1abd6c',
+            color: '#fff',
+            'z-index': 9999,
+            width: '20px',
+            height: '20px',
+            'text-align': 'center',
+            'line-height': '20px',
+            'border-radius': '50%',
+            position: 'absolute',
+            top: parseInt(tempPoint.y - 10) + 'px',
+            left: parseInt(tempPoint.x - 10) + 'px',
+          }"
+        >
+          {{ index + 1 }}
         </view>
       </view>
     </view>
+    <!-- 'height': this.barSize.height, -->
+    <view
+      class="verify-bar-area"
+      :style="{
+        width: imgSize.width,
+        color: barAreaColor,
+        'border-color': barAreaBorderColor,
+        'line-height': '40px',
+      }"
+    >
+      <text class="verify-msg">{{ text }}</text>
+    </view>
   </view>
 </template>
-<script>
+<script type="text/babel">
 /**
- * Verify 验证码组件
- * @description 分发验证码使用
+ * VerifyPoints
+ * @description 点选
  * */
-import VerifySlide from "./verifySlider/verifySlider";
-import VerifyPoint from "./verifyPoint/verifyPoint";
-import defaultJpg from "@/static/default.jpg";
+import { aesEncrypt } from "./../utils/ase.js";
+import { myRequest } from "../utils/request.js";
 export default {
-  name: "Vue2Verify",
-  components: {
-    VerifySlide,
-    VerifyPoint,
-  },
+  name: "VerifyPoints",
   props: {
-    captchaType: {
-      type: String,
-      required: true,
-    },
-    figure: {
-      type: Number,
-    },
-    arith: {
-      type: Number,
-    },
+    //弹出式pop，固定fixed
     mode: {
       type: String,
-      default: "pop",
+      default: "fixed",
     },
+    captchaType: {
+      type: String,
+    },
+    //间隔
     vSpace: {
       type: Number,
       default: 5,
-    },
-    explain: {
-      type: String,
-      default: "向右滑动完成验证",
     },
     imgSize: {
       type: Object,
@@ -100,106 +92,198 @@ export default {
         };
       },
     },
-    blockSize: {
+    barSize: {
       type: Object,
       default() {
         return {
-          width: "50px",
-          height: "50px",
+          width: "310px",
+          height: "40px",
         };
       },
-    },
-    barSize: {
-      type: Object,
-    },
+    }
   },
   data() {
     return {
-      // showBox:true,
-      clickShow: false,
-
-      defaultImg: defaultJpg,
+      secretKey: "", //后端返回的加密秘钥 字段
+      checkNum: 3, //
+      fontPos: [], // 选中的坐标信息
+      checkPosArr: [], //用户点击的坐标
+      num: 1, //点击的记数
+      pointBackImgBase: "", //后端获取到的背景图片
+      poinTextList: [], //后端返回的点击字体顺序
+      backToken: "", //后端返回的token值
+      imgRand: 0, //随机的背景图片
+      setSize: {
+        imgHeight: 0,
+        imgWidth: 0,
+        barHeight: 0,
+        barWidth: 0,
+      },
+      showImage: true,
+      tempPoints: [],
+      text: "",
+      barAreaColor: "#fff",
+      barAreaBorderColor: "#fff",
+      showRefresh: true,
+      bindingClick: true,
+      imgLeft: "",
+      imgTop: "",
     };
   },
-  computed: {
-    instance() {
-      return this.$refs.instance || {};
-    },
-    showBox() {
-      if (this.mode == "pop") {
-        return this.clickShow;
-      } else {
-        return true;
-      }
-    },
-    // 内部类型
-    verifyType() {
-      if (this.captchaType == "blockPuzzle") {
-        return "2";
-      }
-      return "1";
-    },
-    // 所用组件类型
-    componentType() {
-      if (this.captchaType == "blockPuzzle") {
-        return "VerifySlide";
-      } else {
-        return "VerifyPoint";
-      }
-    },
-  },
-
-  mounted() {
-    this.uuid();
-  },
   methods: {
-    // 生成 uuid
-    uuid() {
-      var s = [];
-      var hexDigits = "0123456789abcdef";
-      for (var i = 0; i < 36; i++) {
-        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-      }
-      s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
-      s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
-      s[8] = s[13] = s[18] = s[23] = "-";
+    init() {
+      //加载页面
+      this.fontPos.splice(0, this.fontPos.length);
+      this.checkPosArr.splice(0, this.checkPosArr.length);
+      this.num = 1;
+      this.$nextTick(() => {
+        this.refresh();
+        this.$parent.$emit("ready", this);
+      });
+    },
+    canvasClick(e) {
+      const query = uni.createSelectorQuery().in(this);
+      query
+        .select("#image")
+        .boundingClientRect((data) => {
+          this.imgLeft = Math.ceil(data.left);
+          this.imgTop = Math.ceil(data.top);
+          this.checkPosArr.push(this.getMousePos(this.$refs.canvas, e));
+          if (this.num == this.checkNum) {
+            this.num = this.createPoint(this.getMousePos(this.$refs.canvas, e));
+            //按比例转换坐标值
+            this.checkPosArr = this.pointTransfrom(
+              this.checkPosArr,
+              this.imgSize
+            );
+            //等创建坐标执行完
+            setTimeout(() => {
+              //发送后端请求
+              // var captchaVerification =this.secretKey? aesEncrypt(this.backToken+'---'+JSON.stringify(this.checkPosArr),this.secretKey):this.backToken+'---'+JSON.stringify(this.checkPosArr)
+              let data = {
+                captchaType: this.captchaType,
+                pointJson: this.secretKey
+                  ? aesEncrypt(JSON.stringify(this.checkPosArr), this.secretKey)
+                  : JSON.stringify(this.checkPosArr),
+                token: this.backToken,
+              };
+              myRequest({
+                url: `/captcha/check`,
+                data,
+                method: "POST",
+              }).then((result) => {
+                let res = result.data;
+                if (res.repCode == "0000") {
+                  this.barAreaColor = "#4cae4c";
+                  this.barAreaBorderColor = "#5cb85c";
+                  this.text = "验证成功";
+                  this.bindingClick = false;
+                  setTimeout(() => {
+                    if (this.mode == "pop") {
+                      this.$parent.clickShow = false;
+                    }
+                    this.refresh();
+                  }, 1500);
+                  this.$parent.$emit("success", { ...data });
+                } else {
+                  this.$parent.$emit("error", this);
+                  this.barAreaColor = "#d9534f";
+                  this.barAreaBorderColor = "#d9534f";
+                  this.text = "验证失败";
+                  setTimeout(() => {
+                    this.refresh();
+                  }, 700);
+                }
+              });
+            }, 400);
+          }
+          if (this.num < this.checkNum) {
+            this.num = this.createPoint(this.getMousePos(this.$refs.canvas, e));
+          }
+        })
+        .exec();
+    },
+    //获取坐标
+    getMousePos: function (obj, e) {
+      let position = {
+        x: Math.ceil(e.detail.x) - this.imgLeft,
+        y: Math.ceil(e.detail.y) - this.imgTop,
+      };
+      return position;
+    },
+    //创建坐标点
+    createPoint: function (pos) {
+      this.tempPoints.push(Object.assign({}, pos));
+      return ++this.num;
+    },
+    refresh: function () {
+      this.tempPoints.splice(0, this.tempPoints.length);
+      this.barAreaColor = "#000";
+      this.barAreaBorderColor = "#ddd";
+      this.bindingClick = true;
 
-      var slider = "slider" + "-" + s.join("");
-      var point = "point" + "-" + s.join("");
-      // 判断下是否存在 slider
-      if (!uni.getStorageSync("slider")) {
-        uni.setStorageSync("slider", slider);
-      }
-      if (!uni.getStorageSync("point")) {
-        uni.setStorageSync("point", point);
-      }
+      this.fontPos.splice(0, this.fontPos.length);
+      this.checkPosArr.splice(0, this.checkPosArr.length);
+      this.num = 1;
+
+      this.getPictrue();
+
+      // this.text = '验证失败'
+      this.showRefresh = true;
     },
-    success(e) {
-      console.log("success", e);
-      this.$emit("success", e);
+    // 请求背景图片和验证图片
+    getPictrue() {
+      let data = {
+        captchaType: this.captchaType,
+        clientUid: uni.getStorageSync("point"),
+        ts: Date.now(), // 现在的时间戳
+      };
+      myRequest({
+        url: "/captcha/get", //仅为示例，并非真实接口地址。
+        data,
+        method: "POST",
+      }).then((result) => {
+        let res = result.data;
+        if (res.repCode == "0000") {
+          this.pointBackImgBase = res.repData.originalImageBase64;
+          this.backToken = res.repData.token;
+          this.secretKey = res.repData.secretKey;
+          this.poinTextList = res.repData.wordList;
+          this.text = "请依次点击【" + this.poinTextList.join(",") + "】";
+        }
+        // 判断接口请求次数是否失效
+        if (res.repCode == "6201") {
+          this.pointBackImgBase = null;
+        }
+      });
+    },
+    //坐标转换函数
+    pointTransfrom(pointArr, imgSize) {
+      var newPointArr = pointArr.map((p) => {
+        let x = Math.round((310 * p.x) / parseInt(imgSize.width));
+        let y = Math.round((155 * p.y) / parseInt(imgSize.height));
+        return { x, y };
+      });
+      // console.log(newPointArr,"newPointArr");
+      return newPointArr;
+    },
+  },
+  watch: {
+    // type变化则全面刷新
+    type: {
+      immediate: true,
+      handler() {
+        this.init();
+      },
+    },
+  },
+  mounted() {
   
-      if (this.mode == "pop") {
-        this.clickShow = false;
-      }
-    },
-    /**
-     * refresh
-     * @description 刷新
-     * */
-    refresh() {
-      if (this.instance.refresh) {
-        this.instance.refresh();
-      }
-    },
-    show() {
-      if (this.mode == "pop") {
-        this.clickShow = true;
-      }
-    },
   },
 };
 </script>
-<style>
+
+<style scoped>
 .verifybox {
   position: relative;
   box-sizing: border-box;
@@ -355,7 +439,7 @@ export default {
   border: 1px solid #ddd;
 }
 
-.verify-img-panel {
+.verify-image-panel {
   margin: 0;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
@@ -366,7 +450,7 @@ export default {
   position: relative;
 }
 
-.verify-img-panel .verify-refresh {
+.verify-image-panel .verify-refresh {
   width: 25px;
   height: 25px;
   text-align: center;
@@ -378,12 +462,12 @@ export default {
   z-index: 2;
 }
 
-.verify-img-panel .icon-refresh {
+.verify-image-panel .icon-refresh {
   font-size: 20px;
   color: #fff;
 }
 
-.verify-img-panel .verify-gap {
+.verify-image-panel .verify-gap {
   background-color: #fff;
   position: relative;
   z-index: 2;
