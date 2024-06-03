@@ -65,8 +65,8 @@ import {
   onReachBottom,
   onPageScroll,
 } from "@dcloudio/uni-app";
-import { {{{ .ModuleName }}}_list } from "@/api/{{{ .ModuleName }}}.js";
-import { usePaging } from "@/utils/usePaging";
+import { {{{ .ModuleName }}}_list } from "@/api/{{{ .ModuleName }}}";
+import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";
 const queryParams = reactive({
   key: "",

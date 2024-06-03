@@ -27,10 +27,10 @@ func GetExcelColumnName(columnNumber int) string {
 //
 // 需要在传入的结构体中的字段加上tag：excel:"title:列头名称;index:列下标(从0开始);"
 //
-//	@param	list		要导出的数据
-//	@param	sheet		文档
-//	@param	title		标题
-//	@param	changeHead	map[string]string{"Id": "账号", "Name": "真实姓名"}
+//	list		要导出的数据
+//	sheet		文档
+//	title		标题
+//	changeHead	map[string]string{"Id": "账号", "Name": "真实姓名"}
 func NormalDynamicExport(list interface{}, sheet string, title string, changeHead map[string]string) (file *excelize.File, err error) {
 	e := ExcelInit()
 	err = ExportExcel(sheet, title, list, changeHead, e)

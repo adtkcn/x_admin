@@ -223,7 +223,7 @@ func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName str
 		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", ModuleName, "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
 		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", ModuleName, "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
 
-		"uniapp/api.ts.tpl":      strings.Join([]string{"uniapp/src/api/", ModuleName, ".ts"}, ""),
+		"uniapp/api.ts.tpl":      strings.Join([]string{"uniapp/api/", ModuleName, ".ts"}, ""),
 		"uniapp/edit.vue.tpl":    strings.Join([]string{"uniapp/pages/", ModuleName, "/edit.vue"}, ""),
 		"uniapp/index.vue.tpl":   strings.Join([]string{"uniapp/pages/", ModuleName, "/index.vue"}, ""),
 		"uniapp/search.vue.tpl":  strings.Join([]string{"uniapp/pages/", ModuleName, "/search.vue"}, ""),

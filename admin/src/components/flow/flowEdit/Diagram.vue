@@ -191,13 +191,13 @@ export default {
                 if (haveMoreChildNode) {
                     // 如果都是网关就可以,等优化
                     return reject({
-                        msg: '流程设计-一个节点只能有一个子节点，可以有多个网关'
+                        message: '流程设计-一个节点只能有一个子节点，可以有多个网关'
                     })
                 }
 
                 // if (data.nodes.length != data.edges.length + 1) {
                 //   return reject({
-                //     msg: "流程设计-节点之间必须连线，可以清理多余的节点",//不是很重要
+                //     message: "流程设计-节点之间必须连线，可以清理多余的节点",//不是很重要
                 //   });
                 // }
                 // 检查开始节点和结束节点是否存在
@@ -205,7 +205,7 @@ export default {
                 const findEndNode = nodes.filter((item) => item.type == 'bpmn:endEvent')
                 if (findStartNode.length != 1 || findEndNode.length != 1) {
                     return reject({
-                        msg: '流程设计-流程必须有且只有一个开始节点和结束节点'
+                        message: '流程设计-流程必须有且只有一个开始节点和结束节点'
                     })
                 }
 

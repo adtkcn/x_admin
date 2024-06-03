@@ -1,32 +1,20 @@
-<!-- 产品，分组，IMEI，SIm卡1、2，安装位置，在线状态 ，启用状态-->
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" labelWidth="80" :model="form"  ref="formRef">
-			<uv-form-item label="在线状态" prop="status" borderBottom>
-				<x-picker valueKey="value" labelKey="label" :columns="dictData.devices_status"
-					v-model="form.status"></x-picker>
+			{{{- range .Columns }}}
+			{{{- if eq .IsQuery 1 }}}
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" borderBottom>
+				{{{- if eq .HtmlType "datetime" }}}
+					<x-date-range v-model:startTime="form.{{{ (toCamelCase .GoField) }}}Start"
+							v-model:endTime="form.{{{ (toCamelCase .GoField) }}}End"></x-date-range>
+				{{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
+					<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+				{{{- else if eq .HtmlType "input" }}}
+					<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}"> </uv-input>
+				{{{- end }}}
 			</uv-form-item>
-
-	 
-			<uv-form-item label="位置" prop="placedName" borderBottom>
-				<uv-input v-model="form.placedName"> </uv-input>
-			</uv-form-item>
- 
-			<uv-form-item label="开始时间" prop="startTime" borderBottom>
-				<uv-input v-model="form.startTime" :readonly="true" placeholder="请选择时间"
-					@click="startTimePicker.open()"> </uv-input>
-				<uv-datetime-picker ref="startTimePicker" :minDate="minDate" :maxDate="maxDate" :value="form.startTime"
-					mode="datetime" @confirm="startTimeConfirm">
-				</uv-datetime-picker>
-			</uv-form-item>
-			<uv-form-item label="结束时间" prop="endTime" borderBottom>
-
-				<uv-input v-model="form.endTime" :readonly="true" placeholder="请选择时间"
-					@click="endTimePicker.open()"> </uv-input>
-				<uv-datetime-picker ref="endTimePicker" :minDate="minDate" :maxDate="maxDate" :value="form.endTime" mode="datetime"
-					@confirm="endTimeConfirm">
-				</uv-datetime-picker>
-			</uv-form-item>
+			{{{- end }}}
+			{{{- end }}}
 
 			<uv-button type="primary" text="搜索" customStyle="margin-top: 20rpx" @click="submit"></uv-button>
 		</uv-form>
@@ -34,7 +22,7 @@
 </template>
 
 <script setup>
-	import dayjs from 'dayjs'
+ 
 	import {
 		onLoad
 	} from "@dcloudio/uni-app";
@@ -50,34 +38,26 @@
 	} from "@/utils/utils";
 	import {
 		useDictData
-	} from "@/methods/useDictOptions";
-	const startTimePicker = ref();
-	const endTimePicker = ref();
+	} from "@/hooks/useDictOptions";
 	
-	const {
-		dictData
-	} = useDictData(["devices_status"]);
+{{{- if ge (len .DictFields) 1 }}}
+{{{- $dictSize := sub (len .DictFields) 1 }}}
+const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+{{{- end }}}
 
 	let formRef = ref();
 	let form = ref({
-	 
-		location: "",
-
-		placedName: "",
-		status: "",
-		startTime: '',
-		endTime: '',
+{{{- range .Columns }}}
+{{{- if .IsQuery }}}
+    {{{- if eq .HtmlType "datetime" }}}
+    {{{ (toCamelCase .GoField) }}}Start: '',
+    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{- else }}}
+    {{{ (toCamelCase .GoField) }}}: '',
+    {{{- end }}}
+{{{- end }}}
+{{{- end }}}
 	});
-	let minDate = dayjs('2022-01-01 00:00:00').valueOf()
-	let maxDate = dayjs().endOf('month').valueOf()
-	function startTimeConfirm(e) {		
-		form.value.startTime = dayjs(e.value).format('YYYY-MM-DD HH:mm:ss')
-	}
-
-	function endTimeConfirm(e) { 
-		form.value.endTime = dayjs(e.value).format('YYYY-MM-DD HH:mm:ss')
-	}
- 
 
 	function submit() {
 		console.log("submit", form.value);

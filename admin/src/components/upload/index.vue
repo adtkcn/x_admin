@@ -113,8 +113,8 @@ export default defineComponent({
                 visible.value = false
                 emit('change')
             }
-            if (response.code == RequestCodeEnum.FAILED && response.msg) {
-                feedback.msgError(response.msg)
+            if (response.code == RequestCodeEnum.FAILED && response.message) {
+                feedback.msgError(response.message)
             }
         }
         const handleError = (event: any, file: any) => {

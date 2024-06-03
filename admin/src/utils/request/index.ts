@@ -49,7 +49,7 @@ const axiosHooks: AxiosHooks = {
         if (!isTransformResponse) {
             return response.data
         }
-        const { code, data, msg } = response.data
+        const { code, data, message } = response.data
         switch (code) {
             case RequestCodeEnum.SUCCESS:
                 return data
@@ -64,7 +64,7 @@ const axiosHooks: AxiosHooks = {
             case RequestCodeEnum.NO_PERMISSTION:
             case RequestCodeEnum.FAILED:
             case RequestCodeEnum.SYSTEM_ERROR:
-                msg && feedback.msgError(msg)
+                message && feedback.msgError(message)
                 return Promise.reject(data)
 
             case RequestCodeEnum.TOKEN_INVALID:

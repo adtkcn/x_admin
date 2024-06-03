@@ -179,7 +179,7 @@ export default defineComponent({
                 .catch((err) => {
                     console.error(err)
                     err.target && (this.activeStep = err.target)
-                    err.msg && this.$message.error(err.msg)
+                    err.message && this.$message.error(err.message)
                 })
         },
 

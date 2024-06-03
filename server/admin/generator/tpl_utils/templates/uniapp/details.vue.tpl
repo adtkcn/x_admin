@@ -43,11 +43,11 @@
 		onShow
 	} from "@dcloudio/uni-app";
 	import {
-		useDictOptions
-	} from "@/api/dict.js";
+		useDictData
+	} from "@/hooks/useDictOptions";
 	import {
 		{{{ .ModuleName }}}_detail 
-	} from "@/api/{{{ .ModuleName }}}.js";
+	} from "@/api/{{{ .ModuleName }}}";
 
 
 	import {
@@ -57,7 +57,10 @@
 	} from "@/utils/utils";
 
 	let form = ref({});
-
+{{{- if ge (len .DictFields) 1 }}}
+{{{- $dictSize := sub (len .DictFields) 1 }}}
+const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+{{{- end }}}
 	onLoad((e) => {
 		console.log("onLoad", e);
 		getDetails(e.id);
@@ -67,18 +70,22 @@
 			getDetails(form.value.id);
 		}
 	});
-
+	onPullDownRefresh(() => {
+		getDetails(form.value.id);
+	});
 	function getDetails(id) {
 		{{{ .ModuleName }}}_detail(id).then((res) => {
+			uni.stopPullDownRefresh();
             if (res.code == 200) {
-                if (res?.result) {
-                    form.value = res?.result
+                if (res?.data) {
+                    form.value = res?.data
                 }
             } else {
                 toast(res.message);
             }
         })
         .catch((err) => {
+			uni.stopPullDownRefresh();
             toast(err.message||"网络错误");
         });
 	}

@@ -5,13 +5,17 @@
             {{{- if .IsEdit }}}			
 			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" borderBottom>
                 {{{- if eq .HtmlType "input" }}}
-				<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-input>
+					<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-input>
 				{{{- else if eq .HtmlType "number" }}}
-				<uv-number-box v-model="form.{{{ (toCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+					<uv-number-box v-model="form.{{{ (toCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 				{{{- else if eq .HtmlType "textarea" }}}
-				<uv-textarea v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-textarea>
+					<uv-textarea v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-textarea>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
-				<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+				{{{- if ne .DictType "" }}}
+					<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+				{{{- else }}}
+					请选择字典生成代码
+				{{{- end }}}
 				{{{- end }}}
 			</uv-form-item>
 			{{{- end }}}
@@ -35,12 +39,15 @@
  	import {
 		{{{ .ModuleName }}}_detail,
 		{{{ .ModuleName }}}_edit
-	} from "@/api/{{{ .ModuleName }}}.js";
+	} from "@/api/{{{ .ModuleName }}}";
 	import {
 		toast,
 		alert
 	} from "@/utils/utils";
-
+	import {
+		useDictData
+	} from "@/hooks/useDictOptions";
+	
 	let formRef = ref();
 	let form = ref({
 	{{{- range .Columns }}}

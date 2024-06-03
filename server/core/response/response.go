@@ -15,47 +15,47 @@ import (
 
 // RespType 响应类型
 type RespType struct {
-	code int
-	msg  string
-	data interface{}
+	code    int
+	message string
+	data    interface{}
 }
 
 // Response 响应格式结构
 type Response struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
 var (
-	Success = RespType{code: 200, msg: "成功"}
-	Failed  = RespType{code: 300, msg: "失败"}
+	Success = RespType{code: 200, message: "成功"}
+	Failed  = RespType{code: 300, message: "失败"}
 
-	ParamsValidError    = RespType{code: 310, msg: "参数校验错误"}
-	ParamsTypeError     = RespType{code: 311, msg: "参数类型错误"}
-	RequestMethodError  = RespType{code: 312, msg: "请求方法错误"}
-	AssertArgumentError = RespType{code: 313, msg: "断言参数错误"}
+	ParamsValidError    = RespType{code: 310, message: "参数校验错误"}
+	ParamsTypeError     = RespType{code: 311, message: "参数类型错误"}
+	RequestMethodError  = RespType{code: 312, message: "请求方法错误"}
+	AssertArgumentError = RespType{code: 313, message: "断言参数错误"}
 
-	LoginAccountError = RespType{code: 330, msg: "登录账号或密码错误"}
-	LoginDisableError = RespType{code: 331, msg: "登录账号已被禁用了"}
-	TokenEmpty        = RespType{code: 332, msg: "token参数为空"}
-	TokenInvalid      = RespType{code: 333, msg: "token参数无效"}
+	LoginAccountError = RespType{code: 330, message: "登录账号或密码错误"}
+	LoginDisableError = RespType{code: 331, message: "登录账号已被禁用了"}
+	TokenEmpty        = RespType{code: 332, message: "token参数为空"}
+	TokenInvalid      = RespType{code: 333, message: "token参数无效"}
 
-	NoPermission    = RespType{code: 403, msg: "无相关权限"}
-	Request404Error = RespType{code: 404, msg: "请求接口不存在"}
-	Request405Error = RespType{code: 405, msg: "请求方法不允许"}
+	NoPermission    = RespType{code: 403, message: "无相关权限"}
+	Request404Error = RespType{code: 404, message: "请求接口不存在"}
+	Request405Error = RespType{code: 405, message: "请求方法不允许"}
 
-	SystemError = RespType{code: 500, msg: "系统错误"}
+	SystemError = RespType{code: 500, message: "系统错误"}
 )
 
 // Error 实现error方法
 func (rt RespType) Error() string {
-	return strconv.Itoa(rt.code) + ":" + rt.msg
+	return strconv.Itoa(rt.code) + ":" + rt.message
 }
 
 // Make 以响应类型生成信息
-func (rt RespType) Make(msg string) RespType {
-	rt.msg = msg
+func (rt RespType) Make(message string) RespType {
+	rt.message = message
 	return rt
 }
 
@@ -72,7 +72,7 @@ func (rt RespType) Code() int {
 
 // Msg 获取msg
 func (rt RespType) Msg() string {
-	return rt.msg
+	return rt.message
 }
 
 // Data 获取data
@@ -89,9 +89,9 @@ func Result(c *gin.Context, resp RespType, data interface{}) {
 		c.Error(resp)
 	}
 	c.JSON(http.StatusOK, Response{
-		Code: resp.code,
-		Msg:  resp.msg,
-		Data: data,
+		Code:    resp.code,
+		Message: resp.message,
+		Data:    data,
 	})
 }
 
@@ -110,9 +110,9 @@ func Ok(c *gin.Context) {
 }
 
 // OkWithMsg 正常响应附带msg
-func OkWithMsg(c *gin.Context, msg string) {
+func OkWithMsg(c *gin.Context, message string) {
 	resp := Success
-	resp.msg = msg
+	resp.message = message
 	Result(c, resp, []string{})
 }
 
@@ -137,8 +137,8 @@ func Fail(c *gin.Context, resp RespType) {
 }
 
 // FailWithMsg 错误响应附带msg
-func FailWithMsg(c *gin.Context, resp RespType, msg string) {
-	resp.msg = msg
+func FailWithMsg(c *gin.Context, resp RespType, message string) {
+	resp.message = message
 	respLogger(resp, "Request FailWithMsg: url=[%s], resp=[%+v]", c.Request.URL.Path, resp)
 	Result(c, resp, []string{})
 }
@@ -218,10 +218,10 @@ func CheckMysqlErr(err error) (e error) {
 }
 
 // CheckErrDBNotRecord 校验数据库记录不存在的错误
-func CheckErrDBNotRecord(err error, msg string) (e error) {
+func CheckErrDBNotRecord(err error, message string) (e error) {
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		core.Logger.WithOptions(zap.AddCallerSkip(1)).Infof("记录不存在: err=[%+v]", err)
-		return SystemError.Make(msg)
+		return SystemError.Make(message)
 	}
 	return
 }

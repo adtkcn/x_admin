@@ -47,7 +47,6 @@ export function {{{.ModuleName}}}_edit(data: Record<string, any>) {
 
 // {{{.FunctionName}}}删除
 export function {{{.ModuleName}}}_delete({{{ .PrimaryKey }}}: number | string) {
-    return request.post({ url: '/{{{.ModuleName}}}/del', { {{{ .PrimaryKey }}} } })
     return request({
         url: '/{{{.ModuleName}}}/del',
         method: "POST",

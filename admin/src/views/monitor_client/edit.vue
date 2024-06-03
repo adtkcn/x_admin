@@ -179,7 +179,7 @@ const handleSubmit = async () => {
                     feedback.msgSuccess('操作成功')
                     emit('success')
                 }).catch((err) => {
-                    feedback.msgError(err.msg)
+                    feedback.msgError(err.message)
                 })
             } catch (error) {}
         })
