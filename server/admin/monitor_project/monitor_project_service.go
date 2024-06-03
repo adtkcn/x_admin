@@ -49,6 +49,18 @@ func (service monitorProjectService) List(page request.PageReq, listReq MonitorP
 	if listReq.ProjectType != "" {
 		dbModel = dbModel.Where("project_type = ?", listReq.ProjectType)
 	}
+	if listReq.CreateTimeStart != "" {
+		dbModel = dbModel.Where("create_time >= ?", listReq.CreateTimeStart)
+	}
+	if listReq.CreateTimeEnd != "" {
+		dbModel = dbModel.Where("create_time <= ?", listReq.CreateTimeEnd)
+	}
+	if listReq.UpdateTimeStart != "" {
+		dbModel = dbModel.Where("update_time >= ?", listReq.UpdateTimeStart)
+	}
+	if listReq.UpdateTimeEnd != "" {
+		dbModel = dbModel.Where("update_time <= ?", listReq.UpdateTimeEnd)
+	}
 	dbModel = dbModel.Where("is_delete = ?", 0)
 	// 总数
 	var count int64

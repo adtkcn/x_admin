@@ -8,7 +8,9 @@
 					<x-date-range v-model:startTime="form.{{{ (toCamelCase .GoField) }}}Start"
 							v-model:endTime="form.{{{ (toCamelCase .GoField) }}}End"></x-date-range>
 				{{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
+				{{{- if ne .DictType "" }}}
 					<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+				{{{- end }}}
 				{{{- else if eq .HtmlType "input" }}}
 					<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}"> </uv-input>
 				{{{- end }}}
@@ -68,7 +70,7 @@ const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if n
 			return toast("请输入查询条件");
 		}
 
-		toPath("/pages/equipment/equipment", search);
+		toPath("/pages/{{{ .ModuleName }}}/index", search);
 	}
 </script>
 

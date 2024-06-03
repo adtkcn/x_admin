@@ -1,0 +1,25 @@
+.DS_Store
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+tests/**/coverage/
+pnpm-lock.yaml
+# Editor directories and files
+.idea
+
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+stats.html
+.vscode/*
+!/.vscode/settings.json
+
+release
+dist-electron
+unpackage/*
+!unpackage/res
+HBuilderConfigTemp.json

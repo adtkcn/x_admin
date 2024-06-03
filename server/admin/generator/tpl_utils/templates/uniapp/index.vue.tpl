@@ -42,12 +42,14 @@
 
   <uv-back-top :scroll-top="scrollTop"></uv-back-top>
 
+  <uv-empty v-if="pager.loading =='nomore'&&pager.lists.length == 0" marginTop="150" mode="data"></uv-empty>
   <uv-loading-page
     :loading="pager.pageNo == 1 && pager.loading == 'loading'"
     loading-text="加载中..."
     font-size="24rpx"
   ></uv-loading-page>
   <uv-load-more
+    v-if="pager.lists.length > 0"
     :status="pager.loading"
     :loading-text="pager.loadingText"
     :loadmore-text="pager.loadmoreText"

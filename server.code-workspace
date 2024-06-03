@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "docs"
+		},
+		{
+			"path": "x_admin_app"
 		}
 	]
 }

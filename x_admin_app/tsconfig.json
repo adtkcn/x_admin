@@ -1,0 +1,29 @@
+{
+  "include": [
+    "global.d.ts",
+    "methods/**/*",
+    "api/**/*.ts",
+    "pages/**/*.vue",
+    "components/**/*.vue",
+    "stores/**/*",
+    "utils/**/*",
+    "typings/**/*.d.ts",
+    "hooks/usePaging.ts"
+  ],
+  "exclude": ["dist", "node_modules", "uni_modules", "unpackage"],
+
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "./dist",
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "types": ["@dcloudio/types", "@uni-helper/uni-app-types"]
+  }
+}

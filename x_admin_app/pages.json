@@ -1,0 +1,84 @@
+{
+	"pages": [{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "管理系统"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/my/my",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/monitor_project/index",
+			"style": {
+				"navigationBarTitleText": "项目监控",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 100,
+				"navigationStyle": "custom"
+			}
+		},
+
+		{
+			"path": "pages/monitor_project/details",
+			"style": {
+				"navigationBarTitleText": "项目监控详情",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/monitor_project/edit",
+			"style": {
+				"navigationBarTitleText": "编辑项目监控"
+			}
+		},
+		{
+			"path": "pages/monitor_project/search",
+			"style": {
+				"navigationBarTitleText": "搜索项目监控"
+			}
+		}
+
+
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "x admin",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#ccc",
+		"pageOrientation": "portrait"
+	},
+
+
+	"tabBar": {
+		"color": "#000000",
+		"selectedColor": "#007aff",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [
+
+			{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/icons/tabs/home.png",
+				"selectedIconPath": "static/icons/tabs/homeActive.png",
+				"text": "首页"
+			},
+
+			{
+				"pagePath": "pages/my/my",
+				"iconPath": "static/icons/tabs/my.png",
+				"selectedIconPath": "static/icons/tabs/myActive.png",
+				"text": "我的"
+			}
+		]
+	}
+}

@@ -4,9 +4,13 @@ import "x_admin/core"
 
 //MonitorProjectListReq 错误项目列表参数
 type MonitorProjectListReq struct {
-	ProjectKey  string `form:"projectKey"`  // 项目uuid
-	ProjectName string `form:"projectName"` // 项目名称
-	ProjectType string `form:"projectType"` // 项目类型go java web node php 等
+	ProjectKey      string `form:"projectKey"`      // 项目uuid
+	ProjectName     string `form:"projectName"`     // 项目名称
+	ProjectType     string `form:"projectType"`     // 项目类型go java web node php 等
+	CreateTimeStart string `form:"createTimeStart"` // 开始创建时间
+	CreateTimeEnd   string `form:"createTimeEnd"`   // 结束创建时间
+	UpdateTimeStart string `form:"updateTimeStart"` // 开始更新时间
+	UpdateTimeEnd   string `form:"updateTimeEnd"`   // 结束更新时间
 }
 
 //MonitorProjectDetailReq 错误项目详情参数
