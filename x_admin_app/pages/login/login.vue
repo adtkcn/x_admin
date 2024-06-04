@@ -1,11 +1,11 @@
 <template>
-	<view>
-		<uv-form class="form" ref="form" labelWidth="60" labelAlign="right" :model="model" :rules="rules">
-			<uv-form-item class="hide">
-				<uv-input class="hide" v-model="model.username" placeholder="请输入账号"
+	<view  class="form">
+		<uv-form ref="form" labelWidth="60" labelAlign="right" :model="model" :rules="rules">
+			<uv-form-item  :customStyle="hide">
+				<uv-input  v-model="model.username" placeholder="请输入账号"
 					:rules="[{ required: true, message: '请填写账号' }]" />
 			</uv-form-item>
-			<uv-form-item class="hide">
+			<uv-form-item  :customStyle="hide">
 				<uv-input type="password" v-model="model.password" placeholder="请输入密码"
 					:rules="[{ required: true, message: '请填写密码' }]" />
 			</uv-form-item>
@@ -21,10 +21,9 @@
 			<Verify :mode="'pop'" :captchaType="'blockPuzzle'" ref="verifyRef"
 				:imgSize="{ width: '310px', height: '155px' }" @success="VerifySuccess"></Verify>
 
-			<view class="footer">
-				<!--  -->
-
-				<wd-button class="btn" size="large" @click="VerifyShow" block>登录</wd-button>
+			<view class="footer"> 
+				<uv-button type="primary" text="登录"  @click="VerifyShow"></uv-button>
+				
 			</view>
 		</uv-form>
 	</view>
@@ -41,7 +40,13 @@
 	// import appicon from "@/static/appicon.png";
 
 	import { useUserStore } from "@/stores/user";
-
+	const hide = {
+		overflow: "hidden",
+		// visibility: 'hidden',
+		height:0,
+		padding:0,
+		border:0,
+	}
 	const userStore = useUserStore();
 
 	const model = reactive({
@@ -112,14 +117,6 @@
 </script>
 
 <style lang="scss" scoped>
-	.hide {
-		height: 0 !important;
-		padding: 0 !important;
-
-		border: 0 !important;
-		overflow: hidden !important;
-	}
-
 	.form {
 		margin: 200rpx 20rpx;
 

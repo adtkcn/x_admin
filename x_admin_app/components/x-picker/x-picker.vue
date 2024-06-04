@@ -17,15 +17,7 @@
 </template>
 
 <script setup>
-import {
-  reactive,
-  ref,
-  defineModel,
-
-  onMounted,
-  computed,
-  watch,
-} from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 const props = defineProps({
   columns: {
     type: Array,
@@ -55,13 +47,13 @@ function openPicker() {
 }
 function handleConfirm(e) {
   // debugger;
-  if (e.value[0]!==undefined) {
+  if (e.value[0] !== undefined) {
     model.value = e.value[0][props.valueKey];
     selectItem.value = e.value[0];
-  }else{
+  } else {
     model.value = null;
     selectItem.value = {};
-    console.log('handleConfirm没有数据',e);
+    console.log("handleConfirm没有数据", e);
   }
 }
 function updateSelectItem() {
@@ -71,22 +63,22 @@ function updateSelectItem() {
     selectItem.value = {};
     return;
   }
-  if(props.columns.length==0){
+  if (props.columns.length == 0) {
     pickerIndex.value = [0];
     selectItem.value = {};
     return;
   }
-  let find=false
+  let find = false;
   for (let index = 0; index < props.columns.length; index++) {
     const item = props.columns[index];
     if (model.value == item[props.valueKey]) {
       selectItem.value = item;
       pickerIndex.value = [index];
-      find=true
+      find = true;
       break;
     }
   }
-  if(!find){
+  if (!find) {
     selectItem.value = {};
     pickerIndex.value = [0];
     model.value = null;

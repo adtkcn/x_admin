@@ -2,30 +2,30 @@
   <view class="my">
     <uv-sticky offsetTop="-1" bgColor="#ffffff">
       <view style="background: #fff">
-        <uv-cell :title="userStore?.username"  :label="userStore?.nickname" isLink>
+        <uv-cell
+          :title="userStore?.username"
+          :label="userStore?.nickname"
+          isLink
+        >
           <!--       -->
           <template v-slot:icon>
             <button class="avatar-wrapper" open-type="chooseAvatar" @click.stop>
               <uv-avatar
-                width="100%"
-                height="100%"
-                shape="circle"
+                height="80rpx"
+                width="80rpx"
+                shape="square"
                 :src="$filePath(userStore.avatar)"
-                mode="widthFix"
+                mode="aspectFill"
               ></uv-avatar>
             </button>
           </template>
         </uv-cell>
       </view>
     </uv-sticky>
-    <uv-button
-      class="btn"
-      type="primary"
-      text="登录"
-      @click="toLogin"
-    ></uv-button>
+    <view class="btn">
+      <uv-button type="primary" text="登录" @click="toLogin"></uv-button>
+    </view>
   </view>
-
 </template>
 
 <script setup>
@@ -49,9 +49,9 @@ function toLogin() {
 }
 
 .avatar-wrapper {
-  width: 100%;
-  height: 100%;
-  padding: 7px;
+  width: 80rpx;
+  height: 80rpx;
+  padding: 0px;
   background-color: white;
   border: 0;
   outline: none;
