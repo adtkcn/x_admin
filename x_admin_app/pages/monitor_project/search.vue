@@ -7,12 +7,13 @@
       <uv-form-item label="项目名称" prop="projectName" borderBottom>
         <uv-input v-model="form.projectName"> </uv-input>
       </uv-form-item>
-      <uv-form-item
-        label="项目类型"
-        prop="projectType"
-        borderBottom
-      >
-	  <x-picker v-model="form.projectType" valueKey="value" labelKey="name" :columns="dictData.project_type"></x-picker>
+      <uv-form-item label="项目类型" prop="projectType" borderBottom>
+        <!-- <x-picker
+          v-model="form.projectType"
+          valueKey="value"
+          labelKey="name"
+          :columns="dictData.project_type"
+        ></x-picker> -->
       </uv-form-item>
       <uv-form-item label="创建时间" prop="createTime" borderBottom>
         <xDateRange
@@ -42,8 +43,8 @@ import { onLoad } from "@dcloudio/uni-app";
 import { reactive, ref, computed } from "vue";
 import { toPath, toast, clearObjEmpty } from "@/utils/utils";
 import { useDictData } from "@/hooks/useDictOptions";
-import xDateRange from "@/components/x-date-range/x-date-range.vue"
-const { dictData } = useDictData(['project_type'])
+import xDateRange from "@/components/x-date-range/x-date-range.vue";
+const { dictData } = useDictData(["project_type"]);
 let formRef = ref();
 let form = ref({
   projectKey: "",

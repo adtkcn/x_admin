@@ -15,7 +15,7 @@
         <uv-input v-model="form.projectName" border="surround"></uv-input>
       </uv-form-item>
       <uv-form-item label="项目类型" prop="projectType" borderBottom>
-        <x-picker v-model="form.projectType" valueKey="value" labelKey="name" :columns="dictData.project_type"></x-picker>
+        <!-- <x-picker v-model="form.projectType" valueKey="value" labelKey="name" :columns="dictData.project_type"></x-picker> -->
       </uv-form-item>
 
       <uv-button

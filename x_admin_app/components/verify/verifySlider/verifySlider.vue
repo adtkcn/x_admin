@@ -9,9 +9,9 @@
 				<view class="verify-refresh" @click="refresh" v-show="showRefresh">
 					<text class="iconfont icon-refresh"></text>
 				</view>
-				<transition name="tips">
+				<!-- <transition name="tips"> -->
 					<text class="verify-tips" v-if="tipWords" :class="passFalg ? 'suc-bg':'err-bg'">{{tipWords}}</text>
-				</transition>
+				<!-- </transition> -->
 			</view>
 		</view>
 
@@ -104,8 +104,8 @@
 				backImgBase: '', //验证码背景图片
 				blockBackImgBase: '', //验证滑块的背景图片
 				backToken: "", //后端返回的唯一token值
-				startMoveTime: "", //移动开始的时间
-				endMovetime: '', //移动结束的时间
+				startMoveTime: 0, //移动开始的时间
+				endMovetime: 0, //移动结束的时间
 				tipsBackColor: '', //提示词的北京颜色
 				tipWords: '',
 				text: '',
@@ -227,7 +227,7 @@
 			//鼠标松开
 			end: function() {
 				this.endMovetime = new Date().getTime();
-				var _this = this;
+
 				//                判断是否重合
 				if (this.status && this.isEnd == false) {
 					if (this.type !== '1') { //图片滑动
@@ -261,20 +261,15 @@
 								this.showRefresh = true
 								this.isEnd = true;
 								setTimeout(() => {
-									if (this.mode == 'pop') {
-										this.$parent.clickShow = false;
-									}
 									this.refresh();
-								}, 1500)
+								}, 1000)
 								this.passFalg = true
-								this.tipWords =
-									`${((this.endMovetime-this.startMoveTime)/1000).toFixed(2)}s验证成功`
+								this.tipWords =`${((this.endMovetime-this.startMoveTime)/1000).toFixed(2)}s验证成功`
 								setTimeout(() => {
 									this.tipWords = ""
 									this.$emit('success', {
 										...data
 									})
-									// this.$parent.$emit('success', {captchaVerification})
 								}, 500)
 							} else {
 								this.moveBlockBackgroundColor = '#d9534f'
@@ -285,7 +280,7 @@
 								setTimeout(() => {
 									this.refresh();
 								}, 1000);
-								this.$parent.$emit('error', this)
+								this.$emit('error')
 								this.tipWords = "验证失败"
 								setTimeout(() => {
 									this.tipWords = ""
@@ -359,15 +354,15 @@
 				})
 			},
 		},
-		watch: {
-			// type变化则全面刷新
-			type: {
-				handler() {
-					console.log('type change', this.type);
-					// this.init()
-				}
-			}
-		},
+		// watch: {
+		// 	// type变化则全面刷新
+		// 	type: {
+		// 		handler() {
+		// 			console.log('type change', this.type);
+		// 			// this.init()
+		// 		}
+		// 	}
+		// },
 		mounted() {
 			this.init()
 		},
