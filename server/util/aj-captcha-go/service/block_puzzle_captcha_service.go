@@ -35,7 +35,7 @@ func (b *BlockPuzzleCaptchaService) Get() (map[string]interface{}, error) {
 	backgroundImage := img.GetBackgroundImage()
 
 	// 为背景图片设置水印
-	backgroundImage.SetText(b.factory.config.Watermark.Text, b.factory.config.Watermark.FontSize, b.factory.config.Watermark.Color)
+	// backgroundImage.SetText(b.factory.config.Watermark.Text, b.factory.config.Watermark.FontSize, b.factory.config.Watermark.Color)
 
 	// 初始化模板图片
 	templateImage := img.GetTemplateImage()
@@ -44,8 +44,10 @@ func (b *BlockPuzzleCaptchaService) Get() (map[string]interface{}, error) {
 	b.pictureTemplatesCut(backgroundImage, templateImage)
 
 	originalImageBase64, err := backgroundImage.Base64()
+	if err != nil {
+		return nil, err
+	}
 	jigsawImageBase64, err := templateImage.Base64()
-
 	if err != nil {
 		return nil, err
 	}
