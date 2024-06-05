@@ -2,14 +2,13 @@ package captcha
 
 import (
 	"image/color"
-	"x_admin/config"
+	"x_admin/core"
 
 	config2 "x_admin/util/aj-captcha-go/config"
 	constant "x_admin/util/aj-captcha-go/const"
 	"x_admin/util/aj-captcha-go/service"
 
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 )
 
 type CaptchaGetParams struct {
@@ -56,9 +55,7 @@ func init() {
 	// factory.RegisterCache(constant.MemCacheKey, service.NewMemCacheService(200000)) // 这里20指的是缓存阈值
 
 	// //注册自定义配置redis数据库
-	opt, _ := redis.ParseURL(config.Config.RedisUrl)
-	// fmt.Printf("%#v", opt)
-	factory.RegisterCache(constant.RedisCacheKey, service.NewConfigRedisCacheService([]string{opt.Addr}, opt.Username, opt.Password, false, 0))
+	factory.RegisterCache(constant.RedisCacheKey, service.NewConfigRedisCacheService(core.Redis))
 
 	// 注册了两种验证码服务 可以自行实现更多的验证
 	factory.RegisterService(constant.ClickWordCaptcha, service.NewClickWordCaptchaService(factory))

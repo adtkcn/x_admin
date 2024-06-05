@@ -3,6 +3,8 @@ package service
 import (
 	"strconv"
 	"x_admin/util/aj-captcha-go/util"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type RedisCacheService struct {
@@ -10,8 +12,8 @@ type RedisCacheService struct {
 }
 
 // NewConfigRedisCacheService 初始化自定义redis配置
-func NewConfigRedisCacheService(rdsAddr []string, dbUserName, dbPassword string, enableCluster bool, db int) CaptchaCacheInterface {
-	redisUtils := util.NewConfigRedisUtil(rdsAddr, dbUserName, dbPassword, enableCluster, db)
+func NewConfigRedisCacheService(client redis.UniversalClient) CaptchaCacheInterface {
+	redisUtils := util.NewConfigRedisUtil(client)
 	return &RedisCacheService{Cache: redisUtils}
 }
 

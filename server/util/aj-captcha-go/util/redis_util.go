@@ -13,39 +13,10 @@ type RedisUtil struct {
 	Rdb redis.UniversalClient
 }
 
-// InitConfigRedis 初始化自定义配置redis客户端（可单机， 可集群）
-func (l *RedisUtil) InitConfigRedis(rdsAddr []string, dbUserName, dbPassword string, enableCluster bool, db int) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if enableCluster {
-		l.Rdb = redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs:    rdsAddr,
-			Username: dbUserName,
-			Password: dbPassword,
-			PoolSize: 100,
-		})
-		_, err := l.Rdb.Ping(ctx).Result()
-		if err != nil {
-			panic(err.Error())
-		}
-	} else {
-		l.Rdb = redis.NewClient(&redis.Options{
-			Addr:     rdsAddr[0],
-			Username: dbUserName,
-			Password: dbPassword, // no password set
-			DB:       db,         // use select DB
-			PoolSize: 100,        // 连接池大小
-		})
-		_, err := l.Rdb.Ping(ctx).Result()
-		if err != nil {
-			panic(err.Error())
-		}
+func NewConfigRedisUtil(client redis.UniversalClient) *RedisUtil {
+	redisUtil := &RedisUtil{
+		Rdb: client,
 	}
-}
-
-func NewConfigRedisUtil(rdsAddr []string, dbUserName, dbPassword string, enableCluster bool, db int) *RedisUtil {
-	redisUtil := &RedisUtil{}
-	redisUtil.InitConfigRedis(rdsAddr, dbUserName, dbPassword, enableCluster, db)
 	return redisUtil
 }
 
