@@ -2,8 +2,8 @@
 	"id": "wot-design-uni",
 	"name": "wot-design-uni",
 	"displayName": "wot-design-uni 基于vue3+Typescript的高颜值组件库",
-	"version": "1.2.19",
-	"description": "一个基于Vue3+TS开发的uni-app组件库，提供60+高质量组件，支持暗黑模式、国际化和自定义主题。",
+	"version": "1.2.24",
+	"description": "一个基于Vue3+TS开发的uni-app组件库，提供70+高质量组件，支持暗黑模式、国际化和自定义主题。",
 	"keywords": [
         "wot-design-uni",
         "国际化",
@@ -42,7 +42,8 @@
 		"platforms": {
 			"cloud": {
 				"tcb": "y",
-				"aliyun": "y"
+                "aliyun": "y",
+                "alipay": "n"
 			},
 			"client": {
 				"Vue": {
