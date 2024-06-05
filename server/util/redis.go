@@ -8,7 +8,7 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 
-	"github.com/go-redis/redis/v9"
+	"github.com/redis/go-redis/v9"
 )
 
 var RedisUtil = redisUtil{redis: core.Redis}

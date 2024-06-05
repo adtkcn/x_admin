@@ -6,7 +6,7 @@ import (
 	"time"
 	"x_admin/config"
 
-	"github.com/go-redis/redis/v9"
+	"github.com/redis/go-redis/v9"
 )
 
 var Redis = initRedis()

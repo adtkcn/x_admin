@@ -9,7 +9,7 @@ import (
 	"x_admin/util/aj-captcha-go/service"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v9"
+	"github.com/redis/go-redis/v9"
 )
 
 type CaptchaGetParams struct {
