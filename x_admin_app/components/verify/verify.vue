@@ -18,7 +18,6 @@
         <!-- 滑动 -->
         <view v-if="componentType == 'VerifySlide'">
           <VerifySlide
-           
             :captchaType="captchaType"
             :type="verifyType"
             :figure="figure"
@@ -30,8 +29,8 @@
             :blockSize="blockSize"
             :barSize="barSize"
             ref="VerifySlideInstance"
-			@success="success"
-			@error="error"
+            @success="success"
+            @error="error"
           ></VerifySlide>
         </view>
         <!-- 点选 -->
@@ -48,6 +47,8 @@
             :blockSize="blockSize"
             :barSize="barSize"
             ref="VerifyPointsInstance"
+            @success="success"
+            @error="error"
           ></VerifyPoint>
         </view>
       </view>
@@ -144,31 +145,8 @@ export default {
     },
   },
 
-  mounted() {
-    this.uuid();
-  },
+  mounted() {},
   methods: {
-    // 生成 uuid
-    uuid() {
-      var s = [];
-      var hexDigits = "0123456789abcdef";
-      for (var i = 0; i < 36; i++) {
-        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-      }
-      s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
-      s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
-      s[8] = s[13] = s[18] = s[23] = "-";
-
-      var slider = "slider" + "-" + s.join("");
-      var point = "point" + "-" + s.join("");
-      // 判断下是否存在 slider
-      if (!uni.getStorageSync("slider")) {
-        uni.setStorageSync("slider", slider);
-      }
-      if (!uni.getStorageSync("point")) {
-        uni.setStorageSync("point", point);
-      }
-    },
     success(e) {
       this.$emit("success", e);
 
@@ -176,24 +154,24 @@ export default {
         this.clickShow = false;
       }
     },
-	error() {
-	  this.$emit("error");
-	},
+    error() {
+      this.$emit("error");
+    },
     /**
      * refresh
      * @description 刷新
      * */
     refresh() {
       if (this.captchaType == "blockPuzzle") {
-        this.$refs.VerifySlideInstance?.refresh();
+        this.$refs.VerifySlideInstance?.refresh?.();
       } else {
-        this.$refs.VerifyPointsInstance?.refresh();
+        this.$refs.VerifyPointsInstance?.refresh?.();
       }
     },
     show() {
       if (this.mode == "pop") {
         this.clickShow = true;
-		// this.refresh()
+        // this.refresh()
       }
     },
   },

@@ -234,7 +234,6 @@ export default {
     getPictrue() {
       let data = {
         captchaType: this.captchaType,
-        clientUid: uni.getStorageSync("point"),
         ts: Date.now(), // 现在的时间戳
       };
       myRequest({

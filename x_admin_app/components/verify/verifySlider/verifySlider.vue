@@ -326,7 +326,6 @@
 			getPictrue() {
 				let data = {
 					captchaType: this.captchaType,
-					clientUid: uni.getStorageSync('slider'),
 					ts: Date.now(), // 现在的时间戳
 				}
 				myRequest({
