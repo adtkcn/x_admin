@@ -83,7 +83,7 @@ func (l *CacheUtil) Delete(key string) {
 }
 
 func (l *CacheUtil) Clear() {
-	for key, _ := range l.Data {
+	for key := range l.Data {
 		l.Delete(key)
 	}
 }

@@ -44,10 +44,7 @@ func NewImageUtil(src string, fontPath string) *ImageUtil {
 func (i *ImageUtil) IsOpacity(x, y int) bool {
 	A := i.RgbaImage.RGBAAt(x, y).A
 
-	if float32(A) <= 125 {
-		return true
-	}
-	return false
+	return float32(A) <= 125
 }
 
 // DecodeImageToFile 将图片转换为新的文件 调试使用
@@ -171,8 +168,8 @@ func (i *ImageUtil) VagueImage(x int, y int) {
 
 	}
 
-	var avg uint32
-	avg = 8
+	var avg uint32 = 8
+	// avg = 8
 
 	rgba := color.RGBA{R: uint8(red / avg), G: uint8(green / avg), B: uint8(blue / avg), A: uint8(alpha / avg)}
 
