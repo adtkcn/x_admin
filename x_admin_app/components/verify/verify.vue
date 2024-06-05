@@ -27,7 +27,7 @@
             :explain="explain"
             :imgSize="imgSize"
             :blockSize="blockSize"
-            :barSize="barSize"
+   
             ref="VerifySlideInstance"
             @success="success"
             @error="error"
@@ -45,7 +45,7 @@
             :explain="explain"
             :imgSize="imgSize"
             :blockSize="blockSize"
-            :barSize="barSize"
+        
             ref="VerifyPointsInstance"
             @success="success"
             @error="error"
@@ -55,129 +55,105 @@
     </view>
   </view>
 </template>
-<script>
+<script setup>
 /**
  * Verify 验证码组件
  * @description 分发验证码使用
  * */
+
+ import { ref, computed, onMounted } from 'vue';
 import VerifySlide from "./verifySlider/verifySlider.vue";
 import VerifyPoint from "./verifyPoint/verifyPoint.vue";
 
-export default {
-  name: "Vue2Verify",
-  components: {
-    VerifySlide,
-    VerifyPoint,
+const props = defineProps({
+  captchaType: {
+    type: String,
+    required: true
   },
-  props: {
-    captchaType: {
-      type: String,
-      required: true,
-    },
-    figure: {
-      type: Number,
-    },
-    arith: {
-      type: Number,
-    },
-    mode: {
-      type: String,
-      default: "pop",
-    },
-    vSpace: {
-      type: Number,
-      default: 5,
-    },
-    explain: {
-      type: String,
-      default: "向右滑动完成验证",
-    },
-    imgSize: {
-      type: Object,
-      default() {
-        return {
-          width: "310px",
-          height: "155px",
-        };
-      },
-    },
-    blockSize: {
-      type: Object,
-      default() {
-        return {
-          width: "50px",
-          height: "50px",
-        };
-      },
-    },
-    barSize: {
-      type: Object,
-    },
+  figure: Number,
+  arith: Number,
+  mode: {
+    type: String,
+    default: 'pop'
   },
-  data() {
-    return {
-      // showBox:true,
-      clickShow: false,
-    };
+  vSpace: {
+    type: Number,
+    default: 5
   },
-  computed: {
-    showBox() {
-      if (this.mode == "pop") {
-        return this.clickShow;
-      } else {
-        return true;
-      }
-    },
-    // 内部类型
-    verifyType() {
-      if (this.captchaType == "blockPuzzle") {
-        return "2";
-      }
-      return "1";
-    },
-    // 所用组件类型
-    componentType() {
-      if (this.captchaType == "blockPuzzle") {
-        return "VerifySlide";
-      } else {
-        return "VerifyPoints";
-      }
-    },
+  explain: {
+    type: String,
+    default: '向右滑动完成验证'
+  },
+  imgSize: {
+    type: Object,
+    default: () => ({
+      width: 310,
+      height: 155
+    })
+  },
+  blockSize: {
+    type: Object,
+    default: () => ({
+      width: 50,
+      height: 50
+    })
   },
 
-  mounted() {},
-  methods: {
-    success(e) {
-      this.$emit("success", e);
+});
 
-      if (this.mode == "pop") {
-        this.clickShow = false;
-      }
-    },
-    error() {
-      this.$emit("error");
-    },
-    /**
-     * refresh
-     * @description 刷新
-     * */
-    refresh() {
-      if (this.captchaType == "blockPuzzle") {
-        this.$refs.VerifySlideInstance?.refresh?.();
-      } else {
-        this.$refs.VerifyPointsInstance?.refresh?.();
-      }
-    },
-    show() {
-      if (this.mode == "pop") {
-        this.clickShow = true;
-        // this.refresh()
-      }
-    },
-  },
+const emit = defineEmits(['success', 'error']);
+
+const clickShow = ref(false);
+const showBox = computed(() => {
+  return props.mode === 'pop' ? clickShow.value : true;
+});
+
+const verifyType = computed(() => {
+  return props.captchaType === 'blockPuzzle' ? '2' : '1';
+});
+
+const componentType = computed(() => {
+  return props.captchaType === 'blockPuzzle' ? 'VerifySlide' : 'VerifyPoints';
+});
+
+const VerifySlideInstance = ref(null);
+const VerifyPointsInstance = ref(null);
+
+const success = (e) => {
+  emit('success', e);
+  if (props.mode === 'pop') {
+    clickShow.value = false;
+  }
 };
+
+const error = () => {
+  emit('error');
+};
+
+const refresh = () => {
+  if (props.captchaType === 'blockPuzzle') {
+    VerifySlideInstance.value.refresh();
+  } else {
+    VerifyPointsInstance.value.refresh();
+  }
+};
+
+const show = () => {
+  if (props.mode === 'pop') {
+    clickShow.value = true;
+    // refresh();
+  }
+};
+defineExpose({
+  refresh,
+  show
+})
+onMounted(() => {
+  // 组件挂载后执行的逻辑
+});
+
 </script>
-<style>
+<style scoped>
 .verifybox {
   position: relative;
   box-sizing: border-box;
