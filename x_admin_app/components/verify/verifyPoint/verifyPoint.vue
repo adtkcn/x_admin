@@ -38,15 +38,15 @@
             'line-height': '20px',
             'border-radius': '50%',
             position: 'absolute',
-            top: parseInt(tempPoint.y - 10) + 'px',
-            left: parseInt(tempPoint.x - 10) + 'px',
+            top: tempPoint.y - 10 + 'px',
+            left: tempPoint.x - 10 + 'px',
           }"
         >
           {{ index + 1 }}
         </view>
       </view>
     </view>
-    <!-- 'height': this.barSize.height, -->
+
     <view
       class="verify-bar-area"
       :style="{
@@ -70,11 +70,7 @@ import { myRequest } from "../utils/request.js";
 export default {
   name: "VerifyPoints",
   props: {
-    //弹出式pop，固定fixed
-    mode: {
-      type: String,
-      default: "fixed",
-    },
+ 
     captchaType: {
       type: String,
     },
@@ -85,21 +81,10 @@ export default {
     },
     imgSize: {
       type: Object,
-      default() {
-        return {
-          width: "310px",
-          height: "155px",
-        };
-      },
-    },
-    barSize: {
-      type: Object,
-      default() {
-        return {
-          width: "310px",
-          height: "40px",
-        };
-      },
+      default: () => ({
+        width: 310,
+        height: 155,
+      }),
     },
   },
   data() {
@@ -146,7 +131,9 @@ export default {
       query
         .select("#image")
         .boundingClientRect((data) => {
+          // @ts-ignore
           this.imgLeft = Math.ceil(data.left);
+          // @ts-ignore
           this.imgTop = Math.ceil(data.top);
           this.checkPosArr.push(this.getMousePos(this.$refs.canvas, e));
           if (this.num == this.checkNum) {
@@ -269,16 +256,9 @@ export default {
       return newPointArr;
     },
   },
-  watch: {
-    // type变化则全面刷新
-    type: {
-      immediate: true,
-      handler() {
-        this.init();
-      },
-    },
+  mounted() {
+    this.init();
   },
-  mounted() {},
 };
 </script>
 

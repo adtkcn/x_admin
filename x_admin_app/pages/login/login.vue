@@ -40,7 +40,7 @@
 
       <Verify
         :mode="'pop'"
-        :captchaType="'blockPuzzle'"
+        :captchaType="'clickWord'"
         ref="verifyRef"
         :imgSize="{ width: '310px', height: '155px' }"
         @success="VerifySuccess"

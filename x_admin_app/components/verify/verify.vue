@@ -1,10 +1,10 @@
 <template>
-  <view :class="mode == 'pop' ? 'mask' : ''" v-show="showBox">
+  <view :class="props.mode == 'pop' ? 'mask' : ''" v-show="showBox">
     <view
-      :class="mode == 'pop' ? 'verifybox' : ''"
-      :style="{ 'max-width': parseInt(imgSize.width) + 30 + 'px' }"
+      :class="props.mode == 'pop' ? 'verifybox' : ''"
+      :style="{ 'max-width': parseInt(props.imgSize.width) + 30 + 'px' }"
     >
-      <view class="verifybox-top" v-if="mode == 'pop'">
+      <view class="verifybox-top" v-if="props.mode == 'pop'">
         请完成安全验证
         <text class="verifybox-close" @click="clickShow = false">
           <text class="iconfont icon-close"></text>
@@ -12,40 +12,29 @@
       </view>
       <view
         class="verifybox-bottom"
-        :style="{ padding: mode == 'pop' ? '15px' : '0' }"
+        :style="{ padding: props.mode == 'pop' ? '15px' : '0' }"
       >
         <!-- 验证码容器 -->
         <!-- 滑动 -->
-        <view v-if="componentType == 'VerifySlide'">
+        <view v-if="props.captchaType == 'blockPuzzle'">
           <VerifySlide
-            :captchaType="captchaType"
-            :type="verifyType"
-            :figure="figure"
-            :arith="arith"
-            :mode="mode"
-            :vSpace="vSpace"
-            :explain="explain"
-            :imgSize="imgSize"
-            :blockSize="blockSize"
-   
+            :captchaType="'blockPuzzle'"
+            :vSpace="props.vSpace"
+            :explain="props.explain"
+            :imgSize="props.imgSize"
+            :blockSize="props.blockSize"
             ref="VerifySlideInstance"
             @success="success"
             @error="error"
           ></VerifySlide>
         </view>
         <!-- 点选 -->
-        <view v-if="componentType == 'VerifyPoints'">
+        <view v-if="props.captchaType == 'clickWord'">
           <VerifyPoint
-            :captchaType="captchaType"
-            :type="verifyType"
-            :figure="figure"
-            :arith="arith"
-            :mode="mode"
-            :vSpace="vSpace"
-            :explain="explain"
-            :imgSize="imgSize"
-            :blockSize="blockSize"
-        
+            :captchaType="'clickWord'"
+            :vSpace="props.vSpace"
+            :explain="props.explain"
+            :imgSize="props.imgSize"
             ref="VerifyPointsInstance"
             @success="success"
             @error="error"
@@ -61,77 +50,67 @@
  * @description 分发验证码使用
  * */
 
- import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from "vue";
 import VerifySlide from "./verifySlider/verifySlider.vue";
 import VerifyPoint from "./verifyPoint/verifyPoint.vue";
 
 const props = defineProps({
   captchaType: {
-    type: String,
-    required: true
+    type: String, //clickWord,blockPuzzle
+    required: true,
   },
-  figure: Number,
-  arith: Number,
+
   mode: {
     type: String,
-    default: 'pop'
+    default: "pop",
   },
   vSpace: {
     type: Number,
-    default: 5
+    default: 5,
   },
   explain: {
     type: String,
-    default: '向右滑动完成验证'
+    default: "向右滑动完成验证",
   },
   imgSize: {
     type: Object,
     default: () => ({
       width: 310,
-      height: 155
-    })
+      height: 155,
+    }),
   },
   blockSize: {
     type: Object,
     default: () => ({
       width: 50,
-      height: 50
-    })
+      height: 50,
+    }),
   },
-
 });
 
-const emit = defineEmits(['success', 'error']);
+const emit = defineEmits(["success", "error"]);
 
 const clickShow = ref(false);
 const showBox = computed(() => {
-  return props.mode === 'pop' ? clickShow.value : true;
-});
-
-const verifyType = computed(() => {
-  return props.captchaType === 'blockPuzzle' ? '2' : '1';
-});
-
-const componentType = computed(() => {
-  return props.captchaType === 'blockPuzzle' ? 'VerifySlide' : 'VerifyPoints';
+  return props.mode === "pop" ? clickShow.value : true;
 });
 
 const VerifySlideInstance = ref(null);
 const VerifyPointsInstance = ref(null);
 
 const success = (e) => {
-  emit('success', e);
-  if (props.mode === 'pop') {
+  emit("success", e);
+  if (props.mode === "pop") {
     clickShow.value = false;
   }
 };
 
 const error = () => {
-  emit('error');
+  emit("error");
 };
 
 const refresh = () => {
-  if (props.captchaType === 'blockPuzzle') {
+  if (props.captchaType === "blockPuzzle") {
     VerifySlideInstance.value.refresh();
   } else {
     VerifyPointsInstance.value.refresh();
@@ -139,19 +118,18 @@ const refresh = () => {
 };
 
 const show = () => {
-  if (props.mode === 'pop') {
+  if (props.mode === "pop") {
     clickShow.value = true;
     // refresh();
   }
 };
 defineExpose({
   refresh,
-  show
-})
+  show,
+});
 onMounted(() => {
   // 组件挂载后执行的逻辑
 });
-
 </script>
 <style scoped>
 .verifybox {

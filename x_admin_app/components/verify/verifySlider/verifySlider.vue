@@ -1,8 +1,7 @@
 <template>
 	<view style="position: relative; touch-action: none; touch-action: pan-y">
 
-		<view v-if="type === '2'" class="verify-img-out"
-			:style="{ height: (parseInt(props.imgSize.height) + vSpace) + 'px' }">
+		<view class="verify-img-out" :style="{ height: (parseInt(props.imgSize.height) + vSpace) + 'px' }">
 			<view class="verify-img-panel" :style="{
 				width: props.imgSize.width,
 				height: props.imgSize.height,
@@ -13,8 +12,8 @@
 					<text class="iconfont icon-refresh"></text>
 				</view>
 				<!-- <transition name="tips"> -->
-				<text class="verify-tips" v-if="data.tipWords"
-					:class="data.passFalg ? 'suc-bg' : 'err-bg'">{{ data.tipWords }}</text>
+				<text class="verify-tips" v-if="data.tipWords" :class="data.passFalg ? 'suc-bg' : 'err-bg'">{{
+					data.tipWords }}</text>
 				<!-- </transition> -->
 			</view>
 		</view>
@@ -28,7 +27,7 @@
 				<view class="verify-move-block" @touchstart="start" @mousedown="start" @touchend="end" @touchmove="move"
 					:style="{ width: '40px', height: '40px', 'background-color': data.moveBlockBackgroundColor, left: data.moveBlockLeft, transition: data.transitionLeft }">
 					<text :class="['verify-icon iconfont', data.iconClass]" :style="{ color: data.iconColor }"></text>
-					<view v-if="type === '2'" class="verify-sub-block" :style="{
+					<view class="verify-sub-block" :style="{
 						'width': Math.floor(parseInt(props.imgSize.width) * 47 / 310) + 'px',
 						'height': props.imgSize.height,
 						'top': '-' + (parseInt(props.imgSize.height) + vSpace) + 'px',
@@ -45,7 +44,7 @@
  * VerifySlide
  * @description 滑块
  * */
-import { ref, reactive, onMounted, watch,getCurrentInstance } from 'vue'
+import { ref, reactive, onMounted, watch, getCurrentInstance } from 'vue'
 import {
 	aesEncrypt
 } from "./../utils/ase.js"
@@ -59,14 +58,7 @@ let emit = defineEmits(['success', 'error'])
 
 const props = defineProps({
 	captchaType: String,
-	type: {
-		type: String,
-		default: '1'
-	},
-	mode: {
-		type: String,
-		default: 'fixed'
-	},
+
 	vSpace: {
 		type: Number,
 		default: 5
@@ -184,7 +176,6 @@ const move = (e) => {
 	var barArea = query.select('.verify-bar-area')
 	var bar_area_left, barArea_offsetWidth;
 	barArea.boundingClientRect(rect => {
-		console.log('rect',rect);
 		// @ts-ignore
 		bar_area_left = Math.ceil(rect?.left)
 		// @ts-ignore
@@ -196,13 +187,13 @@ const move = (e) => {
 			} else { //兼容PC端
 				var x = Math.ceil(e.touches[0].pageX);
 			}
- 
+
 			var move_block_left = x - bar_area_left //小方块相对于父元素的left值
-			if (props.type !== '1') { //图片滑动
-				if (move_block_left >= barArea_offsetWidth - (props.blockSize.width / 2) - 2) {
-					move_block_left = barArea_offsetWidth - (props.blockSize.width / 2) - 2;
-				}
+
+			if (move_block_left >= barArea_offsetWidth - (props.blockSize.width / 2) - 2) {
+				move_block_left = barArea_offsetWidth - (props.blockSize.width / 2) - 2;
 			}
+
 
 			if (move_block_left <= 0) {
 				move_block_left = ((props.blockSize.width) / 2);
@@ -213,7 +204,7 @@ const move = (e) => {
 				"px"
 			data.leftBarWidth = (move_block_left - ((props.blockSize.width) / 2)) +
 				"px"
-console.log(data.moveBlockLeft,data.leftBarWidth);
+
 		}
 	}).exec();
 }
@@ -224,64 +215,64 @@ const end = () => {
 
 	//                判断是否重合
 	if (data.status && data.isEnd == false) {
-		if (props.type !== '1') { //图片滑动
-			var moveLeftDistance = parseInt((data.moveBlockLeft || '').replace('px', ''));
 
-			moveLeftDistance = moveLeftDistance * 310 / parseInt(props.imgSize.width)
+		var moveLeftDistance = parseInt((data.moveBlockLeft || '').replace('px', ''));
 
-			// var captchaVerification = this.secretKey ?aesEncrypt(this.backToken+'---'+JSON.stringify({x:moveLeftDistance,y:5.0}),this.secretKey):this.backToken+'---'+JSON.stringify({x:moveLeftDistance,y:5.0})
-			let sendData = {
-				captchaType: props.captchaType,
-				"pointJson": data.secretKey ? aesEncrypt(JSON.stringify({
-					x: moveLeftDistance,
-					y: 5.0
-				}), data.secretKey) : JSON.stringify({
-					x: moveLeftDistance,
-					y: 5.0
-				}),
-				"token": data.backToken
-			}
-			myRequest({
-				url: `/captcha/check`,
-				data: sendData,
-				method: "POST",
-			}).then((result) => {
-				let res = result.data
-				if (res.repCode == "0000") {
-					data.moveBlockBackgroundColor = '#5cb85c'
-					data.leftBarBorderColor = '#5cb85c'
-					data.iconColor = '#fff'
-					data.iconClass = 'icon-check'
-					data.showRefresh = true
-					data.isEnd = true;
-					setTimeout(() => {
-						refresh();
-					}, 1000)
-					data.passFalg = true
-					data.tipWords = `${((data.endMovetime - data.startMoveTime) / 1000).toFixed(2)}s验证成功`
-					setTimeout(() => {
-						data.tipWords = ""
-						emit('success', {
-							...sendData
-						})
-					}, 500)
-				} else {
-					data.moveBlockBackgroundColor = '#d9534f'
-					data.leftBarBorderColor = '#d9534f'
-					data.iconColor = '#fff'
-					data.iconClass = 'icon-close'
-					data.passFalg = false
-					setTimeout(() => {
-						refresh();
-					}, 1000);
-					emit('error')
-					data.tipWords = "验证失败"
-					setTimeout(() => {
-						data.tipWords = ""
-					}, 1000)
-				}
-			})
+		moveLeftDistance = moveLeftDistance * 310 / parseInt(props.imgSize.width)
+
+		// var captchaVerification = this.secretKey ?aesEncrypt(this.backToken+'---'+JSON.stringify({x:moveLeftDistance,y:5.0}),this.secretKey):this.backToken+'---'+JSON.stringify({x:moveLeftDistance,y:5.0})
+		let sendData = {
+			captchaType: props.captchaType,
+			"pointJson": data.secretKey ? aesEncrypt(JSON.stringify({
+				x: moveLeftDistance,
+				y: 5.0
+			}), data.secretKey) : JSON.stringify({
+				x: moveLeftDistance,
+				y: 5.0
+			}),
+			"token": data.backToken
 		}
+		myRequest({
+			url: `/captcha/check`,
+			data: sendData,
+			method: "POST",
+		}).then((result) => {
+			let res = result.data
+			if (res.repCode == "0000") {
+				data.moveBlockBackgroundColor = '#5cb85c'
+				data.leftBarBorderColor = '#5cb85c'
+				data.iconColor = '#fff'
+				data.iconClass = 'icon-check'
+				data.showRefresh = true
+				data.isEnd = true;
+				setTimeout(() => {
+					refresh();
+				}, 1000)
+				data.passFalg = true
+				data.tipWords = `${((data.endMovetime - data.startMoveTime) / 1000).toFixed(2)}s验证成功`
+				setTimeout(() => {
+					data.tipWords = ""
+					emit('success', {
+						...sendData
+					})
+				}, 500)
+			} else {
+				data.moveBlockBackgroundColor = '#d9534f'
+				data.leftBarBorderColor = '#d9534f'
+				data.iconColor = '#fff'
+				data.iconClass = 'icon-close'
+				data.passFalg = false
+				setTimeout(() => {
+					refresh();
+				}, 1000);
+				emit('error')
+				data.tipWords = "验证失败"
+				setTimeout(() => {
+					data.tipWords = ""
+				}, 1000)
+			}
+		})
+
 		data.status = false;
 	}
 }
@@ -305,7 +296,7 @@ const refresh = () => {
 		data.text = props.explain
 	}, 300)
 }
- 
+
 const getPictrue = () => {
 	// ... 请求背景图片和验证图片逻辑
 	let sendData = {
@@ -314,7 +305,7 @@ const getPictrue = () => {
 	}
 	myRequest({
 		url: '/captcha/get', //仅为示例，并非真实接口地址。
-		data:sendData,
+		data: sendData,
 		method: "POST",
 	}).then((result) => {
 
@@ -658,9 +649,9 @@ onMounted(() => {
 </style>// @ts-ignore
 // @ts-ignore
 // @ts-ignore
-		// @ts-ignore
-		// @ts-ignore
-	// @ts-ignore
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
@@ -689,9 +680,6 @@ onMounted(() => {
 // @ts-ignore// @ts-ignore
 // @ts-ignore
 // @ts-ignore
-		// @ts-ignore
-		// @ts-ignore
-	// @ts-ignore
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
@@ -718,4 +706,6 @@ onMounted(() => {
 // @ts-ignore
 // @ts-ignore
 // @ts-ignore
-
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
