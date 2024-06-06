@@ -1,22 +1,20 @@
 <template>
-    <div :class="mode == 'pop' ? 'mask' : ''" v-show="showBox">
+    <div :class="props.mode == 'pop' ? 'mask' : ''" v-show="showBox">
         <div
-            :class="mode == 'pop' ? 'verifybox' : ''"
+            :class="props.mode == 'pop' ? 'verify-box' : ''"
             :style="{ 'max-width': parseInt(imgSize.width) + 30 + 'px' }"
         >
-            <div class="verifybox-top" v-if="mode == 'pop'">
+            <div class="verify-box-top" v-if="mode == 'pop'">
                 请完成安全验证
-                <span class="verifybox-close" @click="closeBox">
+                <span class="verify-box-close" @click="closeBox">
                     <i class="iconfont icon-close"></i>
                 </span>
             </div>
-            <div class="verifybox-bottom" :style="{ padding: mode == 'pop' ? '15px' : '0' }">
+            <div class="verify-box-bottom" :style="{ padding: mode == 'pop' ? '15px' : '0' }">
                 <!-- 验证码容器 -->
                 <component
-                    v-if="componentType"
-                    :is="componentType"
-                    :captchaType="captchaType"
-                    :type="verifyType"
+                    :is="props.captchaType == 'blockPuzzle' ? VerifySlide : VerifyPoints"
+                    :captchaType="props.captchaType"
                     :figure="figure"
                     :arith="arith"
                     :mode="mode"
@@ -26,126 +24,105 @@
                     :blockSize="blockSize"
                     :barSize="barSize"
                     ref="instance"
+                    @success="success"
+                    @error="error"
                 ></component>
             </div>
         </div>
     </div>
 </template>
-<script>
-/**
- * Verify 验证码组件
- * @description 分发验证码使用
- * */
+<script setup>
 import VerifySlide from './Verify/VerifySlide.vue'
 import VerifyPoints from './Verify/VerifyPoints.vue'
-import { computed, ref, toRefs, watchEffect } from 'vue'
+import { computed, ref } from 'vue'
 
-export default {
-    name: 'Vue3Verify',
-    components: {
-        VerifySlide,
-        VerifyPoints
+defineOptions({
+    name: 'Vue3Verify'
+})
+const props = defineProps({
+    captchaType: {
+        type: String,
+        required: true
     },
-    props: {
-        captchaType: {
-            type: String,
-            required: true
-        },
-        figure: {
-            type: Number
-        },
-        arith: {
-            type: Number
-        },
-        mode: {
-            type: String,
-            default: 'pop'
-        },
-        vSpace: {
-            type: Number
-        },
-        explain: {
-            type: String
-        },
-        imgSize: {
-            type: Object,
-            default() {
-                return {
-                    width: '310px',
-                    height: '155px'
-                }
+    figure: {
+        type: Number
+    },
+    arith: {
+        type: Number
+    },
+    mode: {
+        type: String,
+        default: 'pop'
+    },
+    vSpace: {
+        type: Number
+    },
+    explain: {
+        type: String
+    },
+    imgSize: {
+        type: Object,
+        default() {
+            return {
+                width: '310px',
+                height: '155px'
             }
-        },
-        blockSize: {
-            type: Object
-        },
-        barSize: {
-            type: Object
         }
     },
-    setup(props) {
-        const { captchaType, mode } = toRefs(props)
-        const clickShow = ref(false)
-        const verifyType = ref(undefined)
-        const componentType = ref(undefined)
+    blockSize: {
+        type: Object
+    },
+    barSize: {
+        type: Object
+    }
+})
 
-        const instance = ref({})
+const clickShow = ref(false)
 
-        const showBox = computed(() => {
-            if (mode.value == 'pop') {
-                return clickShow.value
-            } else {
-                return true
-            }
-        })
-        /**
-         * refresh
-         * @description 刷新
-         * */
-        const refresh = () => {
-            console.log(instance.value)
-            // @ts-ignore
-            if (instance.value?.refresh) {
-                // @ts-ignore
-                instance.value?.refresh()
-            }
-        }
-        const closeBox = () => {
-            clickShow.value = false
-            refresh()
-        }
-        const show = () => {
-            if (mode.value == 'pop') {
-                clickShow.value = true
-            }
-        }
-        watchEffect(() => {
-            switch (captchaType.value) {
-                case 'blockPuzzle':
-                    verifyType.value = '2'
-                    componentType.value = 'VerifySlide'
-                    break
-                case 'clickWord':
-                    verifyType.value = ''
-                    componentType.value = 'VerifyPoints'
-                    break
-            }
-        })
+const instance = ref({})
 
-        return {
-            clickShow,
-            verifyType,
-            componentType,
-            instance,
-            showBox,
-            closeBox,
-            show
-        }
+const showBox = computed(() => {
+    if (props.mode == 'pop') {
+        return clickShow.value
+    } else {
+        return true
+    }
+})
+/**
+ * refresh
+ * @description 刷新
+ * */
+const refresh = () => {
+    console.log(instance.value)
+    // @ts-ignore
+    if (instance.value?.refresh) {
+        // @ts-ignore
+        instance.value?.refresh()
     }
 }
+const closeBox = () => {
+    clickShow.value = false
+    refresh()
+}
+const show = () => {
+    if (props.mode == 'pop') {
+        clickShow.value = true
+    }
+}
+
+const emit = defineEmits(['success', 'error'])
+const success = (info) => {
+    // refresh()
+    emit('success', info)
+    closeBox()
+}
+const error = () => {
+    emit('error')
+}
+defineExpose({ show, refresh, closeBox })
 </script>
 <style>
-.verifybox {
+.verify-box {
     position: relative;
     box-sizing: border-box;
     border-radius: 2px;
@@ -156,7 +133,7 @@ export default {
     top: 50%;
     transform: translate(-50%, -50%);
 }
-.verifybox-top {
+.verify-box-top {
     padding: 0 15px;
     height: 50px;
     line-height: 50px;
@@ -166,11 +143,11 @@ export default {
     border-bottom: 1px solid #e4e7eb;
     box-sizing: border-box;
 }
-.verifybox-bottom {
+.verify-box-bottom {
     padding: 15px;
     box-sizing: border-box;
 }
-.verifybox-close {
+.verify-box-close {
     position: absolute;
     top: 13px;
     right: 9px;
@@ -270,11 +247,10 @@ export default {
     position: relative;
     background: #ffffff;
     text-align: center;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
+
     box-sizing: content-box;
     border: 1px solid #ddd;
-    -webkit-border-radius: 4px;
+    border-radius: 4px;
 }
 
 .verify-bar-area .verify-move-block {
@@ -283,11 +259,10 @@ export default {
     left: 0;
     background: #fff;
     cursor: pointer;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
+
     box-sizing: content-box;
     box-shadow: 0 0 2px #888888;
-    -webkit-border-radius: 1px;
+    border-radius: 1px;
 }
 
 .verify-bar-area .verify-move-block:hover {
@@ -301,16 +276,14 @@ export default {
     left: -1px;
     background: #f0fff0;
     cursor: pointer;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
+
     box-sizing: content-box;
     border: 1px solid #ddd;
 }
 
 .verify-img-panel {
     margin: 0;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
+
     box-sizing: content-box;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;

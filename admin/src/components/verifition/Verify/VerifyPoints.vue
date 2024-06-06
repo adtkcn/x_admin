@@ -73,6 +73,7 @@ import { reqGet, reqCheck } from '../api/index'
 import { onMounted, reactive, ref, nextTick, toRefs, getCurrentInstance } from 'vue'
 export default {
     name: 'VerifyPoints',
+    emits: ['success', 'error'],
     props: {
         //弹出式pop，固定fixed
         mode: {
@@ -106,7 +107,7 @@ export default {
             }
         }
     },
-    setup(props) {
+    setup(props, { emit }) {
         const { mode, captchaType } = toRefs(props)
         const { proxy } = getCurrentInstance()
         const secretKey = ref(''), //后端返回的ase加密秘钥
@@ -115,7 +116,7 @@ export default {
             checkPosArr = reactive([]), //用户点击的坐标
             num = ref(1), //点击的记数
             pointBackImgBase = ref(''), //后端获取到的背景图片
-            poinTextList = ref([]), //后端返回的点击字体顺序
+            pointTextList = ref([]), //后端返回的点击字体顺序
             backToken = ref(''), //后端返回的token值
             setSize = reactive({
                 imgHeight: 0,
@@ -135,14 +136,13 @@ export default {
             fontPos.splice(0, fontPos.length)
             checkPosArr.splice(0, checkPosArr.length)
             num.value = 1
-            getPictrue()
+            getPicture()
             nextTick(() => {
                 const { imgHeight, imgWidth, barHeight, barWidth } = resetSize(proxy)
                 setSize.imgHeight = imgHeight
                 setSize.imgWidth = imgWidth
                 setSize.barHeight = barHeight
                 setSize.barWidth = barWidth
-                proxy.$parent.$emit('ready', proxy)
             })
         }
         onMounted(() => {
@@ -158,7 +158,7 @@ export default {
             if (num.value == checkNum.value) {
                 num.value = createPoint(getMousePos(canvas, e))
                 //按比例转换坐标值
-                const arr = pointTransfrom(checkPosArr, setSize)
+                const arr = pointTransform(checkPosArr, setSize)
                 checkPosArr.length = 0
                 checkPosArr.push(...arr)
                 //等创建坐标执行完
@@ -178,13 +178,12 @@ export default {
                             bindingClick.value = false
                             if (mode.value == 'pop') {
                                 setTimeout(() => {
-                                    proxy.$parent.clickShow = false
                                     refresh()
                                 }, 1500)
                             }
-                            proxy.$parent.$emit('success', { ...data })
+                            emit('success', { ...data })
                         } else {
-                            proxy.$parent.$emit('error', proxy)
+                            emit('error')
                             barAreaColor.value = '#d9534f'
                             barAreaBorderColor.value = '#d9534f'
                             text.value = '验证失败'
@@ -218,13 +217,13 @@ export default {
             fontPos.splice(0, fontPos.length)
             checkPosArr.splice(0, checkPosArr.length)
             num.value = 1
-            getPictrue()
+            getPicture()
             text.value = '验证失败'
             showRefresh.value = true
         }
 
         // 请求背景图片和验证图片
-        function getPictrue() {
+        function getPicture() {
             const data = {
                 captchaType: captchaType.value
             }
@@ -233,15 +232,15 @@ export default {
                     pointBackImgBase.value = res.repData.originalImageBase64
                     backToken.value = res.repData.token
                     secretKey.value = res.repData.secretKey
-                    poinTextList.value = res.repData.wordList
-                    text.value = '请依次点击【' + poinTextList.value.join(',') + '】'
+                    pointTextList.value = res.repData.wordList
+                    text.value = '请依次点击【' + pointTextList.value.join(',') + '】'
                 } else {
                     text.value = res.repMsg
                 }
             })
         }
         //坐标转换函数
-        const pointTransfrom = function (pointArr, imgSize) {
+        const pointTransform = function (pointArr, imgSize) {
             const newPointArr = pointArr.map((p) => {
                 const x = Math.round((310 * p.x) / parseInt(imgSize.imgWidth))
                 const y = Math.round((155 * p.y) / parseInt(imgSize.imgHeight))
@@ -256,7 +255,7 @@ export default {
             checkPosArr,
             num,
             pointBackImgBase,
-            poinTextList,
+            pointTextList,
             backToken,
             setSize,
             tempPoints,
@@ -271,8 +270,8 @@ export default {
             getMousePos,
             createPoint,
             refresh,
-            getPictrue,
-            pointTransfrom
+            getPicture,
+            pointTransform
         }
     }
 }
