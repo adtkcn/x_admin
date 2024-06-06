@@ -1,6 +1,7 @@
 package captcha
 
 import (
+	"errors"
 	"image/color"
 	"x_admin/core"
 
@@ -71,7 +72,10 @@ func CaptchaRoute(rg *gin.RouterGroup) {
 			c.JSON(200, errorRes(err))
 			return
 		}
-
+		if captchaGet.CaptchaType == "" {
+			c.JSON(200, errorRes(errors.New("验证码类型不能为空")))
+			return
+		}
 		// 根据参数类型获取不同服务即可
 		data, _ := factory.GetService(captchaGet.CaptchaType).Get()
 		//输出json结果给调用方

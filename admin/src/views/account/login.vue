@@ -66,7 +66,7 @@
                                 tabindex="1"
                                 show-password
                                 placeholder="请输入密码"
-                                @keyup.enter="onShowCaptcha('blockPuzzle')"
+                                @keyup.enter="onShowCaptcha"
                             >
                                 <template #prepend>
                                     <icon name="el-icon-Lock" />
@@ -82,25 +82,18 @@
                         size="large"
                         tabindex="1"
                         :loading="isLock"
-                        @click="onShowCaptcha('blockPuzzle')"
+                        @click="onShowCaptcha"
                     >
                         登录
                     </el-button>
 
-                    <!-- <button @click="onShowCaptcha('blockPuzzle')">滑块</button>
-                    <button @click="onShowCaptcha('clickWord')">点击文字</button> -->
                     <Verify
                         mode="pop"
-                        :captchaType="captchaType"
+                        captchaType="blockPuzzle"
                         :imgSize="{ width: '400px', height: '200px' }"
-                        ref="verify"
+                        ref="verifyRef"
                         @success="handleSuccess"
                         @error="
-                            (e) => {
-                                console.log(e)
-                            }
-                        "
-                        @ready="
                             (e) => {
                                 console.log(e)
                             }
@@ -114,7 +107,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, shallowRef } from 'vue'
+import { computed, onMounted, reactive, shallowRef } from 'vue'
 import type { InputInstance, FormInstance } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
 import useAppStore from '@/stores/modules/app'
@@ -124,19 +117,17 @@ import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
 
-import Verify from '@/components/verifition/Verify.vue'
+import Verify from '@/components/verify/Verify.vue'
 
-const verify = ref(null)
-const captchaType = ref('')
-const onShowCaptcha = (type) => {
-    captchaType.value = type
-    verify.value.show()
+// const verifyRef = ref(null)
+const verifyRef = shallowRef<InstanceType<typeof Verify>>()
+const onShowCaptcha = () => {
+    verifyRef.value.show()
 }
-let verifition = null
+let verifyInfo = null
 const handleSuccess = (res) => {
     console.log(res)
-    console.log('sucess')
-    verifition = res
+    verifyInfo = res
     lockLogin(res)
 }
 
@@ -178,7 +169,7 @@ const handleLogin = async (captchaInfo) => {
     cache.set(ACCOUNT_KEY, {
         username: formData.username
     })
-    await userStore.login({ ...formData, ...verifition })
+    await userStore.login({ ...formData, ...verifyInfo })
     const {
         query: { redirect }
     } = route

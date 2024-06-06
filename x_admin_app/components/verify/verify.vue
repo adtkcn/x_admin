@@ -59,7 +59,7 @@ const props = defineProps({
   captchaType: {
     type: String as PropType<"clickWord" | "blockPuzzle">, //clickWord,blockPuzzle
     required: true,
-    default: "",
+    default: "blockPuzzle",
   },
 
   mode: {
