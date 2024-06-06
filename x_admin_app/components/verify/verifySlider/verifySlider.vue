@@ -1,32 +1,33 @@
 <template>
+
 	<view style="position: relative; touch-action: none; touch-action: pan-y">
 
-		<view class="verify-img-out" :style="{ height: (parseInt(props.imgSize.height) + vSpace) + 'px' }">
+		<view class="verify-img-out" :style="{ height: (parseInt(props.imgSize.height) + props.vSpace) + 'px' }">
 			<view class="verify-img-panel" :style="{
-				width: props.imgSize.width,
-				height: props.imgSize.height,
+				width: props.imgSize.width+ 'px',
+				height: props.imgSize.height+ 'px',
 			}">
 
-				<img :src="data.backImgBase" style="width:100%;height:100%;display:block"></img>
-				<view class="verify-refresh" @click="refresh" v-show="data.showRefresh">
-					<text class="iconfont icon-refresh"></text>
+				<image :src="data.backImgBase" style="width:100%;height:100%;display:block"></image>
+				<view class="verify-refresh icon-refresh" @click="refresh" v-show="data.showRefresh">
+		 
 				</view>
 				<!-- <transition name="tips"> -->
-				<text class="verify-tips" v-if="data.tipWords" :class="data.passFalg ? 'suc-bg' : 'err-bg'">{{
+				<text class="verify-tips" v-if="data.tipWords" :class="data.passFlag ? 'suc-bg' : 'err-bg'">{{
 					data.tipWords }}</text>
 				<!-- </transition> -->
 			</view>
 		</view>
 
 		<!-- 公共部分 -->
-		<view class="verify-bar-area" :style="{ width: imgSize.width, height: '40px', 'line-height': '40px' }">
+		<view class="verify-bar-area" :style="{ width: props.imgSize.width+ 'px', height: '40px', 'line-height': '40px' }">
 			<text class="verify-msg" v-text="data.text"></text>
 			<view class="verify-left-bar"
 				:style="{ width: data.leftBarWidth ? data.leftBarWidth : '40px', height: '40px', 'border-color': data.leftBarBorderColor, }">
 				<text class="verify-msg" v-text="data.finishText"></text>
 				<view class="verify-move-block" @touchstart="start" @mousedown="start" @touchend="end" @touchmove="move"
 					:style="{ width: '40px', height: '40px', 'background-color': data.moveBlockBackgroundColor, left: data.moveBlockLeft, transition: data.transitionLeft }">
-					<text :class="['verify-icon iconfont', data.iconClass]" :style="{ color: data.iconColor }"></text>
+					<text :class="['verify-icon', data.iconClass]" :style="{ color: data.iconColor }"></text>
 					<view class="verify-sub-block" :style="{
 						'width': Math.floor(parseInt(props.imgSize.width) * 47 / 310) + 'px',
 						'height': props.imgSize.height,
@@ -39,7 +40,7 @@
 		</view>
 	</view>
 </template>
-<script setup>
+<script setup lang="ts">
 /**
  * VerifySlide
  * @description 滑块
@@ -57,7 +58,10 @@ defineOptions({
 let emit = defineEmits(['success', 'error'])
 
 const props = defineProps({
-	captchaType: String,
+	captchaType: {
+		type: String,
+		default: ''
+	},
 
 	vSpace: {
 		type: Number,
@@ -86,7 +90,7 @@ const props = defineProps({
 // Data 定义
 const data = reactive({
 	secretKey: '', //后端返回的加密秘钥 字段
-	passFalg: false, //请求通过与否
+	passFlag: false, //请求通过与否
 	backImgBase: '', //验证码背景图片
 	blockBackImgBase: '', //验证滑块的背景图片
 	backToken: "", //后端返回的唯一token值
@@ -248,7 +252,7 @@ const end = () => {
 				setTimeout(() => {
 					refresh();
 				}, 1000)
-				data.passFalg = true
+				data.passFlag = true
 				data.tipWords = `${((data.endMovetime - data.startMoveTime) / 1000).toFixed(2)}s验证成功`
 				setTimeout(() => {
 					data.tipWords = ""
@@ -261,7 +265,7 @@ const end = () => {
 				data.leftBarBorderColor = '#d9534f'
 				data.iconColor = '#fff'
 				data.iconClass = 'icon-close'
-				data.passFalg = false
+				data.passFlag = false
 				setTimeout(() => {
 					refresh();
 				}, 1000);
@@ -565,14 +569,6 @@ onMounted(() => {
 	z-index: 3;
 }
 
-/*字体图标的css*/
-/*@font-face {font-family: "iconfont";*/
-/*src: url('../fonts/iconfont.eot?t=1508229193188'); !* IE9*!*/
-/*src: url('../fonts/iconfont.eot?t=1508229193188#iefix') format('embedded-opentype'), !* IE6-IE8 *!*/
-/*url('data:application/x-font-woff;charset=utf-8;base64,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') format('woff'),*/
-/*url('../fonts/iconfont.ttf?t=1508229193188') format('truetype'), !* chrome, firefox, opera, Safari, Android, iOS 4.2+*!*/
-/*url('../fonts/iconfont.svg?t=1508229193188#iconfont') format('svg'); !* iOS 4.1- *!*/
-/*}*/
 
 .iconfont {
 	font-family: "iconfont" !important;

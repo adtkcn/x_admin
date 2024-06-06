@@ -1,12 +1,6 @@
 <template>
   <view class="form">
-    <uv-form
-      ref="form"
-
-      labelAlign="right"
-      :model="model"
-      :rules="rules"
-    >
+    <uv-form ref="form" labelAlign="right" :model="model" :rules="rules">
       <uv-form-item :customStyle="hide">
         <uv-input
           v-model="model.username"
@@ -40,9 +34,9 @@
 
       <Verify
         :mode="'pop'"
-        :captchaType="'clickWord'"
+        :captchaType="'blockPuzzle'"
         ref="verifyRef"
-        :imgSize="{ width: '310px', height: '155px' }"
+        :imgSize="{ width: 310, height: 155 }"
         @success="VerifySuccess"
       ></Verify>
 
@@ -54,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
+import { ref, reactive ,shallowRef} from "vue";
 
 import Verify from "@/components/verify/verify.vue";
 
@@ -94,13 +88,14 @@ const rules = {
   ],
 };
 const form = ref();
-const verifyRef = ref();
-function VerifyShow(e) {
+// const verifyRef = ref();
+const verifyRef = shallowRef<InstanceType<typeof Verify>>()
 
+function VerifyShow() {
   form.value
     .validate()
-    .then((res) => {
-		verifyRef.value.show();
+    .then(() => {
+      verifyRef.value.show();
     })
     .catch((err) => {
       // alert(err.message);
@@ -144,16 +139,8 @@ function handleSubmit(verify) {
 .form {
   margin: 200rpx 20rpx;
 
-  .captchaImage {
-    padding: 0 10rpx;
-  }
-
   .footer {
     padding: 60rpx 20rpx 200rpx;
-
-    .btn {
-      background-color: #00b294;
-    }
   }
 }
 </style>

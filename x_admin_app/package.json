@@ -7,6 +7,7 @@
   },
   "devDependencies": {
     "@dcloudio/types": "^3.4.8",
-    "@uni-helper/uni-app-types": "^0.5.13"
+    "@uni-helper/uni-app-types": "^0.5.13",
+    "typescript": "^5.4.5"
   }
 }

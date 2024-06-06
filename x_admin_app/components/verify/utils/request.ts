@@ -3,7 +3,7 @@
 import env from "@/utils/env";
 let baseUrl =env.baseUrl+'/api/common';
 
-export const myRequest = (option={})=>{
+export const myRequest = (option):any=>{
 	return new Promise((reslove,reject)=>{
 		uni.request({
 			url: baseUrl + option.url, 
