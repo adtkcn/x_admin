@@ -20,8 +20,10 @@ type album_cate_query = {
     pid?: number
     type?: number
     name?: string
-    createTime?: string
-    updateTime?: string
+    createTimeStart?: string
+    createTimeEnd?: string
+    updateTimeStart?: string
+    updateTimeEnd?: string
 }
 // 添加编辑
 type album_cate_edit = {

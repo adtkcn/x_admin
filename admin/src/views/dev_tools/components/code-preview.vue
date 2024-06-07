@@ -41,12 +41,14 @@
 import feedback from '@/utils/feedback'
 import useClipboard from 'vue-clipboard3'
 
-import 'highlight.js/styles/github.css'
+import 'highlight.js/styles/monokai.min.css'
 import hljs from 'highlight.js/lib/common'
 import javascript from 'highlight.js/lib/languages/javascript'
+import go from 'highlight.js/lib/languages/go'
 
 // Then register the languages you need
 hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('go', go)
 
 import hljsVuePlugin from '@highlightjs/vue-plugin'
 const highlightjs = hljsVuePlugin.component

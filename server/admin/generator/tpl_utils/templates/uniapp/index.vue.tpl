@@ -14,17 +14,7 @@
         <uv-icon v-if="!fromSearch" name="search" size="24" @click="moreSearch"></uv-icon>
       </template>
     </uv-navbar>
-    <view class="search">
-      <uv-search
-        placeholder="请输入搜索内容"
-        shape="square"
-        v-model="queryParams.key"
-        :showAction="false"
-        bgColor="#fff"
-        borderColor="rgba(0, 0, 0, .1)"
-        @search="resetPage"
-      ></uv-search>
-    </view>
+ 
   </uv-sticky>
 
   <uv-list>
@@ -59,7 +49,7 @@
 </view>
 </template>
 
-<script setup>
+<script setup  lang="ts">
 import { reactive, ref } from "vue";
 import {
   onLoad,
@@ -68,9 +58,11 @@ import {
   onPageScroll,
 } from "@dcloudio/uni-app";
 import { {{{ .ModuleName }}}_list } from "@/api/{{{ .ModuleName }}}";
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{ .ModuleName }}}";
+
 import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";
-const queryParams = reactive({
+const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
@@ -95,7 +87,7 @@ onLoad((e) => {
   }
   getLists();
 });
-const { pager, getLists, NextPage, resetPage, resetParams } = usePaging({
+const { pager, getLists, NextPage, resetPage, resetParams } = usePaging<type_{{{ .ModuleName }}}>({
   fetchFun: {{{ .ModuleName }}}_list,
   params: queryParams,
 });
@@ -119,8 +111,5 @@ function moreSearch() {
 </script>
 
 <style lang="scss" scoped>
-.search {
-  padding: 5rpx;
-  background-color: #fff;
-}
+ 
 </style>

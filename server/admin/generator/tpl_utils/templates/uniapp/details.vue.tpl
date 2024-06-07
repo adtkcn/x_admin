@@ -32,22 +32,11 @@
 	</view>
 </template>
 
-<script setup>
-	import {
-		reactive,
-		ref,
-		computed
-	} from "vue";
-	import {
-		onLoad,
-		onShow
-	} from "@dcloudio/uni-app";
-	import {
-		useDictData
-	} from "@/hooks/useDictOptions";
-	import {
-		{{{ .ModuleName }}}_detail 
-	} from "@/api/{{{ .ModuleName }}}";
+<script setup lang="ts">
+	import {ref} from "vue";
+	import { onLoad,onShow } from "@dcloudio/uni-app";
+	import { useDictData } from "@/hooks/useDictOptions";
+	import { {{{ .ModuleName }}}_detail } from "@/api/{{{ .ModuleName }}}";
 
 
 	import {
@@ -65,7 +54,12 @@
 	});
 {{{- if ge (len .DictFields) 1 }}}
 {{{- $dictSize := sub (len .DictFields) 1 }}}
-const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+const { dictData } = useDictData<
+{
+    {{{- range .DictFields }}}
+    {{{ . }}}: any[]
+    {{{- end }}}
+}>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 {{{- end }}}
 	onLoad((e) => {
 		console.log("onLoad", e);
@@ -79,7 +73,7 @@ const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if n
 	onPullDownRefresh(() => {
 		getDetails(form.value.id);
 	});
-	function getDetails(id) {
+	function getDetails(id: number | string) {
 		{{{ .ModuleName }}}_detail(id).then((res) => {
 			uni.stopPullDownRefresh();
             if (res.code == 200) {

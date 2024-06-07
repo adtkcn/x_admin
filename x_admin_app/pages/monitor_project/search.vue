@@ -1,6 +1,6 @@
 <template>
   <view class="page-content">
-    <uv-form labelPosition="left" labelWidth="80" :model="form" ref="formRef">
+    <uv-form labelPosition="left" labelWidth="80" :model="form" >
       <uv-form-item label="项目uuid" prop="projectKey" borderBottom>
         <uv-input v-model="form.projectKey"> </uv-input>
       </uv-form-item>
@@ -38,15 +38,18 @@
   </view>
 </template>
 
-<script setup>
-import { onLoad } from "@dcloudio/uni-app";
-import { reactive, ref, computed } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import { toPath, toast, clearObjEmpty } from "@/utils/utils";
 import { useDictData } from "@/hooks/useDictOptions";
 import xDateRange from "@/components/x-date-range/x-date-range.vue";
-const { dictData } = useDictData(["project_type"]);
-let formRef = ref();
-let form = ref({
+import type {type_monitor_project_query} from "@/api/monitor_project";
+
+const { dictData } = useDictData<{
+  project_type: any[];
+}>(["project_type"]);
+ 
+let form = ref<type_monitor_project_query>({
   projectKey: "",
   projectName: "",
   projectType: "",

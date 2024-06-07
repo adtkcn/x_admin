@@ -5,54 +5,54 @@ import config from '@/config'
 import queryString from 'query-string'
 import { getToken } from '@/utils/auth'
 
-type {{{.ModuleName}}} = {
+export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
-{{{ toCamelCase .GoField }}}: {{{goToTsType .GoType}}};
+    {{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 }
 // 查询
-type {{{.ModuleName}}}_query = {
+export type type_{{{.ModuleName}}}_query = {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-{{{ toCamelCase .GoField }}}Start: string;
-{{{ toCamelCase .GoField }}}End:string;
+    {{{ toCamelCase .GoField }}}Start?: string;
+    {{{ toCamelCase .GoField }}}End?: string;
 {{{- else }}}
-{{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
 }
 // 添加编辑
-type {{{.ModuleName}}}_edit = {
+export type type_{{{.ModuleName}}}_edit = {
 {{{- range .Columns }}}
 {{{- if or .IsEdit .IsInsert }}}
-{{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 {{{- end }}}
 }
 
 // {{{.FunctionName}}}列表
-export function {{{.ModuleName}}}_list(params?: {{{.ModuleName}}}_query) {
-    return request.get<Pages<{{{.ModuleName}}}>>({ url: '/{{{.ModuleName}}}/list', params })
+export function {{{.ModuleName}}}_list(params?: type_{{{.ModuleName}}}_query) {
+    return request.get<Pages<type_{{{.ModuleName}}}>>({ url: '/{{{.ModuleName}}}/list', params })
 }
 // {{{.FunctionName}}}列表-所有
-export function {{{.ModuleName}}}_list_all(params?: {{{.ModuleName}}}_query) {
-    return request.get<Pages<{{{.ModuleName}}}>>({ url: '/{{{.ModuleName}}}/listAll', params })
+export function {{{.ModuleName}}}_list_all(params?: type_{{{.ModuleName}}}_query) {
+    return request.get<Pages<type_{{{.ModuleName}}}>>({ url: '/{{{.ModuleName}}}/listAll', params })
 }
 
 // {{{.FunctionName}}}详情
 export function {{{.ModuleName}}}_detail({{{ .PrimaryKey }}}: number | string) {
-    return request.get<{{{.ModuleName}}}>({ url: '/{{{.ModuleName}}}/detail', params: { {{{ .PrimaryKey }}} } })
+    return request.get<type_{{{.ModuleName}}}>({ url: '/{{{.ModuleName}}}/detail', params: { {{{ .PrimaryKey }}} } })
 }
 
 // {{{.FunctionName}}}新增
-export function {{{.ModuleName}}}_add(data: {{{.ModuleName}}}_edit) {
+export function {{{.ModuleName}}}_add(data: type_{{{.ModuleName}}}_edit) {
     return request.post<null>({ url: '/{{{.ModuleName}}}/add', data })
 }
 
 // {{{.FunctionName}}}编辑
-export function {{{.ModuleName}}}_edit(data: {{{.ModuleName}}}_edit) {
+export function {{{.ModuleName}}}_edit(data: type_{{{.ModuleName}}}_edit) {
     return request.post<null>({ url: '/{{{.ModuleName}}}/edit', data })
 }
 

@@ -1,6 +1,6 @@
 <template>
 	<view class="page-content">
-		<uv-form labelPosition="left" labelWidth="80" :model="form"  ref="formRef">
+		<uv-form labelPosition="left" labelWidth="80" :model="form">
 			{{{- range .Columns }}}
 			{{{- if eq .IsQuery 1 }}}
 			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" borderBottom>
@@ -23,7 +23,7 @@
 	</view>
 </template>
 
-<script setup>
+<script setup  lang="ts">
  
 	import {
 		onLoad
@@ -41,14 +41,19 @@
 	import {
 		useDictData
 	} from "@/hooks/useDictOptions";
-	
+	import xDateRange from "@/components/x-date-range/x-date-range.vue";
+	import type {type_{{{.ModuleName}}}_query} from "@/api/monitor_project";
 {{{- if ge (len .DictFields) 1 }}}
 {{{- $dictSize := sub (len .DictFields) 1 }}}
-const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+const { dictData } = useDictData<{
+    {{{- range .DictFields }}}
+    {{{ . }}}: any[]
+    {{{- end }}}
+}>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 {{{- end }}}
 
-	let formRef = ref();
-	let form = ref({
+
+	let form = ref<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}

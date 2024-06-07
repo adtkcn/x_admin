@@ -14,7 +14,7 @@ interface Options {
   firstStatus?: string; //loadmore - 加载前，loading - 加载中，nomore - 没有数据
 }
 
-export function usePaging(options: Options) {
+export function usePaging<T>(options: Options) {
   const {
     pageNo = 1,
     pageSize = 30,
@@ -36,7 +36,7 @@ export function usePaging(options: Options) {
     nomoreText,
     loading: firstStatus,
     count: 0,
-    lists: [] as any[],
+    lists: [] as T[],
   });
   // 请求分页接口
   const getLists = () => {

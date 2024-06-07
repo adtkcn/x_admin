@@ -144,6 +144,8 @@
 </template>
 <script lang="ts" setup>
 import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{ .ModuleName }}}'
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{ .ModuleName }}}";
+
 {{{- if ge (len .DictFields) 1 }}}
 import { useDictData } from '@/hooks/useDictOptions'
 {{{- end }}}
@@ -155,7 +157,7 @@ defineOptions({
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
-const queryParams = reactive({
+const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
@@ -168,7 +170,7 @@ const queryParams = reactive({
 {{{- end }}}
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_{{{ .ModuleName }}}>({
     fetchFun: {{{ .ModuleName }}}_list,
     params: queryParams
 })

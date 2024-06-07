@@ -19,6 +19,10 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 const props = defineProps({
+  modelValue: {
+    type: [String, Number],
+    default: null,
+  },
   columns: {
     type: Array,
     default: () => [],
@@ -37,7 +41,7 @@ const columns = computed(() => {
 });
 const picker = ref(null);
 
-const model = defineModel();
+const model = defineModel('modelValue');
 const pickerIndex = ref([0]);
 
 const selectItem = ref({});

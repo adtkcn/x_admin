@@ -34,7 +34,7 @@
 	</view>
 </template>
 
-<script setup>
+<script setup lang="ts">
 	import {
 		reactive,
 		ref,
@@ -52,7 +52,7 @@
 	import {
 		monitor_project_detail 
 	} from "@/api/monitor_project";
-
+	import type {type_monitor_project} from "@/api/monitor_project";
 
 	import {
 		toast,
@@ -60,7 +60,7 @@
 		toPath
 	} from "@/utils/utils";
 
-	let form = ref({
+	let form = ref<type_monitor_project>({
 		id: 0,
 		projectKey: "",
 		projectName: "",

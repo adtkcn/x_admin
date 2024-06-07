@@ -9,7 +9,7 @@ interface Options {
     firstLoading?: boolean
 }
 
-export function usePaging(options: Options) {
+export function usePaging<T>(options: Options) {
     const { page = 1, size = 15, fetchFun, params = {}, firstLoading = false } = options
     // 记录分页初始参数
     const paramsInit: Record<any, any> = Object.assign({}, toRaw(params))
@@ -19,7 +19,7 @@ export function usePaging(options: Options) {
         size,
         loading: firstLoading,
         count: 0,
-        lists: [] as any[]
+        lists: [] as T[]
     })
     // 请求分页接口
     const getLists = () => {

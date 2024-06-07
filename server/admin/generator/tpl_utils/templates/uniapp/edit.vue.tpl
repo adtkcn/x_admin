@@ -27,12 +27,8 @@
 	</view>
 </template>
 
-<script setup>
-	import {
-		reactive,
-		ref,
-		computed
-	} from "vue";
+<script setup lang="ts">
+	import { ref } from "vue";
 	import {
 		onLoad
 	} from "@dcloudio/uni-app";
@@ -40,6 +36,8 @@
 		{{{ .ModuleName }}}_detail,
 		{{{ .ModuleName }}}_edit
 	} from "@/api/{{{ .ModuleName }}}";
+	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{ .ModuleName }}}";
+
 	import {
 		toast,
 		alert
@@ -49,7 +47,7 @@
 	} from "@/hooks/useDictOptions";
 	
 	let formRef = ref();
-	let form = ref({
+	let form = ref<type_{{{ .ModuleName }}}_edit>({
 	{{{- range .Columns }}}
     {{{- if eq (toCamelCase .GoField) $.PrimaryKey }}}
     {{{ $.PrimaryKey }}}: '',
@@ -89,14 +87,18 @@
 
 	{{{- if ge (len .DictFields) 1 }}}
 	{{{- $dictSize := sub (len .DictFields) 1 }}}
-	const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+	const { dictData } = useDictData<{
+    {{{- range .DictFields }}}
+    {{{ . }}}: any[]
+    {{{- end }}}
+}>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 	{{{- end }}}
 
 	function getDetails(id) {
 		{{{ .ModuleName }}}_detail(id).then((res) => {
             if (res.code == 200) {
-                if (res?.result) {
-                    form.value = res?.result
+                if (res?.data) {
+                    form.value = res?.data
                 }
             } else {
                 toast(res.message);
@@ -107,8 +109,8 @@
         });
 	}
 
-	function submit(item) {
-		console.log("submit", form);
+	function submit() {
+		console.log("submit", form.value);
 		formRef.value.validate().then(() => {
 			{{{ .ModuleName }}}_edit(form.value).then((res) => {
 				if (res.code == 200) {
