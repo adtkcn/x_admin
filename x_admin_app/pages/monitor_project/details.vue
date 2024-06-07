@@ -60,7 +60,14 @@
 		toPath
 	} from "@/utils/utils";
 
-	let form = ref({});
+	let form = ref({
+		id: 0,
+		projectKey: "",
+		projectName: "",
+		projectType: "",
+		createTime: "",
+		updateTime: "",
+	});
 	onLoad((e) => {
 		console.log("onLoad", e);
 		getDetails(e.id);
@@ -77,7 +84,7 @@
 		monitor_project_detail(id).then((res) => {
 			uni.stopPullDownRefresh();
             if (res.code == 200) {
-                if (res?.data) {
+                if (res.data) {
                     form.value = res?.data
                 }
             } else {

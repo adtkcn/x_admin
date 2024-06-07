@@ -106,14 +106,14 @@ func Copy(toValue interface{}, fromValue interface{}) interface{} {
 
 // Ok 正常响应
 func Ok(c *gin.Context) {
-	Result(c, Success, []string{})
+	Result(c, Success, nil)
 }
 
 // OkWithMsg 正常响应附带msg
 func OkWithMsg(c *gin.Context, message string) {
 	resp := Success
 	resp.message = message
-	Result(c, resp, []string{})
+	Result(c, resp, nil)
 }
 
 // OkWithData 正常响应附带data
@@ -133,14 +133,14 @@ func respLogger(resp RespType, template string, args ...interface{}) {
 // Fail 错误响应
 func Fail(c *gin.Context, resp RespType) {
 	respLogger(resp, "Request Fail: url=[%s], resp=[%+v]", c.Request.URL.Path, resp)
-	Result(c, resp, []string{})
+	Result(c, resp, nil)
 }
 
 // FailWithMsg 错误响应附带msg
 func FailWithMsg(c *gin.Context, resp RespType, message string) {
 	resp.message = message
 	respLogger(resp, "Request FailWithMsg: url=[%s], resp=[%+v]", c.Request.URL.Path, resp)
-	Result(c, resp, []string{})
+	Result(c, resp, nil)
 }
 
 // FailWithData 错误响应附带data
@@ -159,7 +159,7 @@ func IsFailWithResp(c *gin.Context, err error) bool {
 	case RespType:
 		data := v.Data()
 		if data == nil {
-			data = []string{}
+			data = nil
 		}
 		FailWithData(c, v, data)
 	// 其他类型

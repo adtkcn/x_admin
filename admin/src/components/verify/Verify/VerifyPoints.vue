@@ -67,8 +67,8 @@
  * VerifyPoints
  * @description 点选
  * */
-import { resetSize } from './../utils/util'
-import { aesEncrypt } from './../utils/ase'
+import { resetSize } from '../utils/util'
+import { aesEncrypt } from '../utils/ase'
 import { reqGet, reqCheck } from '../api/index'
 import { onMounted, reactive, ref, nextTick, toRefs, getCurrentInstance } from 'vue'
 export default {

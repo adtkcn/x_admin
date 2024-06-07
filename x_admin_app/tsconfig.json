@@ -8,7 +8,7 @@
     "stores/**/*",
     "utils/**/*",
     "typings/**/*.d.ts",
-    "hooks/usePaging.ts"
+    "hooks/**/*"
   ],
   "exclude": ["dist", "node_modules", "uni_modules", "unpackage"],
 
@@ -24,6 +24,6 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "types": ["@dcloudio/types", "@uni-helper/uni-app-types"]
+    "types": ["@dcloudio/types", "@uni-helper/uni-app-types","./uni_modules/wot-design-uni/global.d.ts"]
   }
 }

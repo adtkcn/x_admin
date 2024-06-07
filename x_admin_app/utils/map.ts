@@ -1,5 +1,11 @@
 import { toast } from "@/utils/utils";
 
+/**
+ * 调起地图
+ * @param {number} lat: 纬度gcj02
+ * @param {number} lon: 经度
+ * @param {string} title: 地址
+ */
 export function openMap(lat, lon, title) {
   // #ifdef APP-PLUS
   openGaoDe(lat, lon, title).catch(() => {
@@ -36,7 +42,7 @@ function openGaoDe(lat, lon, title) {
       reject();
     });
     setTimeout(() => {
-      resolve();
+      resolve(true);
     }, 1000);
   });
 }
@@ -57,12 +63,15 @@ function openBaidu(lat, lon, title) {
       reject();
     });
     setTimeout(() => {
-      resolve();
+      resolve(true);
     }, 1000);
   });
 }
 /**
  * 网页调起高德地图
+ * @param {number} lat: 纬度gcj02
+ * @param {number} lon: 经度
+ * @param {string} title: 地址
  */
 function openGaoDeWeb(lat, lon, title) {
   let gaodeURl = `https://uri.amap.com/marker?position=${lon},${lat}&name=${title}&src=uni.UNIF9B953B&coordinate=gaode&callnative=1`;

@@ -1,6 +1,6 @@
 import { useUserStore } from "@/stores/user";
 
-export const perms = (perms) => {
+export const perms = (perms:string) => {
   if (!perms) return true;
   const userStore = useUserStore();
   const auth = userStore.auth;

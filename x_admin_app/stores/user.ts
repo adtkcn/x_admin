@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { logout, getInfo } from "@/api/user";
 
-import { getLocalStorage, removeLocalStorage } from "@/utils/storage.js";
+import { getLocalStorage, removeLocalStorage } from "@/utils/storage";
 
 export const useUserStore = defineStore("user", {
   state: () => {
@@ -55,7 +55,7 @@ export const useUserStore = defineStore("user", {
           .then(() => {
             //   resetRouter();
             this.resetToken();
-            resolve();
+            resolve(true);
           })
           .catch((error) => {
             reject(error);
@@ -67,10 +67,12 @@ export const useUserStore = defineStore("user", {
     resetToken() {
       return new Promise((resolve) => {
         // this.token = "";
-        this.name = "";
+        this.nickname = '';
+        this.username = "";
+        
         this.avatar = "";
         removeLocalStorage("token");
-        resolve();
+        resolve(true);
       });
     },
   },

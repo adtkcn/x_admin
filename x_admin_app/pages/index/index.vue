@@ -13,7 +13,7 @@
 	</view>
 </template>
 
-<script setup>
+<script setup lang="ts">
 	import {
 		ref
 	} from "vue";
@@ -23,7 +23,7 @@
 		toast,
 		scanCode,
 		queryToObj,
-	} from "@/utils/utils.js";
+	} from "@/utils/utils";
 
 	let list = [
 		"https://cdn.uviewui.com/uview/swiper/swiper1.png",

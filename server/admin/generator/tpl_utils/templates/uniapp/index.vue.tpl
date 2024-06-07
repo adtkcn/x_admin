@@ -71,8 +71,16 @@ import { {{{ .ModuleName }}}_list } from "@/api/{{{ .ModuleName }}}";
 import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";
 const queryParams = reactive({
-  key: "",
-  
+{{{- range .Columns }}}
+{{{- if .IsQuery }}}
+    {{{- if eq .HtmlType "datetime" }}}
+    {{{ (toCamelCase .GoField) }}}Start: '',
+    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{- else }}}
+    {{{ (toCamelCase .GoField) }}}: '',
+    {{{- end }}}
+{{{- end }}}
+{{{- end }}}
 });
 let fromSearch=ref(false);
 onLoad((e) => {

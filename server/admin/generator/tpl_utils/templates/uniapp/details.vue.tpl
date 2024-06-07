@@ -56,7 +56,13 @@
 		toPath
 	} from "@/utils/utils";
 
-	let form = ref({});
+	let form = ref({
+	{{{- range .Columns }}}
+    {{{- if or .IsList .IsPk }}}
+		{{{ toCamelCase .GoField }}}: "",
+	{{{- end }}}
+    {{{- end }}}
+	});
 {{{- if ge (len .DictFields) 1 }}}
 {{{- $dictSize := sub (len .DictFields) 1 }}}
 const { dictData } = useDictData([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])

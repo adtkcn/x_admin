@@ -9,7 +9,8 @@
         "preview": "vite preview --port 4173",
         "build": "node ./scripts/build.mjs",
         "type-check": "vue-tsc --noEmit --checkJs true --skipLibCheck",
-        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+        "preinstall": "npx only-allow pnpm"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.1",

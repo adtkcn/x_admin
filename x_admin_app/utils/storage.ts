@@ -3,14 +3,14 @@
  * @param {string} key 
  * @param {*} data 
  */
-export function setLocalStorage(key, data) {
+export function setLocalStorage(key :string, data:any) {
 	uni.setStorageSync(key, JSON.stringify(data))
 }
 /**
  * 获取本地的key
  *  @param {string} key
  * */
-export function getLocalStorage(key) {
+export function getLocalStorage(key:string) {
 	var val = uni.getStorageSync(key)
 	try {
 		if (val) {
@@ -26,6 +26,6 @@ export function getLocalStorage(key) {
  * 删除key
  * @param {string} key 
  **/
-export function removeLocalStorage(key) {
+export function removeLocalStorage(key:string) {
 	return uni.removeStorageSync(key)
 }

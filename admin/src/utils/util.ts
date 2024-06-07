@@ -1,6 +1,21 @@
 import { isObject } from '@vue/shared'
 import { cloneDeep } from 'lodash-es'
-
+// import { md5 } from 'js-md5'
+import MD5 from 'crypto-js/md5'
+/**
+ * 密码加密
+ * @param {String} password 密码
+ * @param {String} beforeSalt 前置盐
+ * @param {String} afterSalt 后置盐
+ * @returns {String} 加密后的密码
+ */
+export const encryptPassword = (
+    password: string,
+    beforeSalt = 'opuoaqwehjkyuisdf',
+    afterSalt = 'asdjioewurtjfgiopu'
+): string => {
+    return MD5(beforeSalt + MD5(password).toString() + afterSalt).toString()
+}
 /**
  * @description 添加单位
  * @param {String | Number} value 值 100

@@ -1,5 +1,5 @@
-import { perms } from "@/utils/perms.js";
-import { toPath } from "@/utils/utils.js";
+import { perms } from "@/utils/perms";
+import { toPath } from "@/utils/utils";
 import env from "@/utils/env";
 
 /**

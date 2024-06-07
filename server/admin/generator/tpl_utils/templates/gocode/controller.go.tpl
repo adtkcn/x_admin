@@ -22,8 +22,8 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ title (toCamelCase .ColumnName) }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
-//	@Param {{{ title (toCamelCase .ColumnName) }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
+//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
 {{{- else }}}
 //	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
 {{{- end }}}
@@ -51,8 +51,8 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ title (toCamelCase .ColumnName) }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
-//	@Param {{{ title (toCamelCase .ColumnName) }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
+//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
 {{{- else }}}
 //	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
 {{{- end }}}

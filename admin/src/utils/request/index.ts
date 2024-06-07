@@ -13,6 +13,18 @@ import type { AxiosResponse } from 'axios'
 import router from '@/router'
 import { PageEnum } from '@/enums/pageEnum'
 
+export interface Pages<T> {
+    count: number
+    lists: T[]
+    pageNo: number
+    pageSize: number
+}
+export interface Response<T> {
+    code: number
+    message: string
+    data: T
+}
+
 // 处理axios的钩子函数
 const axiosHooks: AxiosHooks = {
     requestInterceptorsHook(config) {

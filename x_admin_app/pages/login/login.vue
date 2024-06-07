@@ -50,11 +50,12 @@
 <script lang="ts" setup>
 import { ref, reactive ,shallowRef} from "vue";
 
+import uvForm from "@/uni_modules/uv-form/components/uv-form/uv-form.vue";
 import Verify from "@/components/verify/verify.vue";
 
-import { login } from "@/api/user.js";
-import { setLocalStorage } from "@/utils/storage.js";
-import { alert } from "@/utils/utils.js";
+import { login } from "@/api/user";
+import { setLocalStorage } from "@/utils/storage";
+import { alert ,encryptPassword} from "@/utils/utils";
 // import appicon from "@/static/appicon.png";
 
 import { useUserStore } from "@/stores/user";
@@ -108,7 +109,7 @@ function VerifySuccess(e) {
 function handleSubmit(verify) {
   let data = {
     username: model.username,
-    password: model.password,
+    password:(model.password),
 
     ...verify,
   };
