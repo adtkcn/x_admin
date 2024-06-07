@@ -18,6 +18,9 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
+
+ const emit = defineEmits(["update:modelValue"])
+
 const props = defineProps({
   modelValue: {
     type: [String, Number],
@@ -36,12 +39,21 @@ const props = defineProps({
     default: "id",
   },
 });
+const model = computed({
+    get() {
+        return props.modelValue
+    },
+    set(value) {
+        emit('update:modelValue', value)
+    }
+})
+
 const columns = computed(() => {
   return [props.columns];
 });
 const picker = ref(null);
 
-const model = defineModel('modelValue');
+// const model = defineModel('modelValue');
 const pickerIndex = ref([0]);
 
 const selectItem = ref({});
