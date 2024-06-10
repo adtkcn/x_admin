@@ -119,21 +119,6 @@ func (gh genHandler) previewCode(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// // genCode 生成代码,生成到服务器自定义路径存在风险，禁止使用
-// func (gh genHandler) genCode(c *gin.Context) {
-// 	var genReq GenCodeReq
-// 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &genReq)) {
-// 		return
-// 	}
-// 	for _, table := range strings.Split(genReq.Tables, ",") {
-// 		err := Service.GenCode(table)
-// 		if response.IsFailWithResp(c, err) {
-// 			return
-// 		}
-// 	}
-// 	response.Ok(c)
-// }
-
 // downloadCode 下载代码
 func (gh genHandler) downloadCode(c *gin.Context) {
 	var downloadReq DownloadReq

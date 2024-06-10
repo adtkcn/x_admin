@@ -29,13 +29,13 @@ monitor_client:detail
 func MonitorClientRoute(rg *gin.RouterGroup) {
 	handle := monitor_client.MonitorClientHandler{}
 
-	rg = rg.Group("/", middleware.TokenAuth())
-	rg.GET("/monitor_client/list", handle.List)
-	rg.GET("/monitor_client/listAll", handle.ListAll)
-	rg.GET("/monitor_client/detail", handle.Detail)
-	rg.POST("/monitor_client/add", middleware.RecordLog("客户端信息新增"), handle.Add)
-	rg.POST("/monitor_client/edit", middleware.RecordLog("客户端信息编辑"), handle.Edit)
-	rg.POST("/monitor_client/del", middleware.RecordLog("客户端信息删除"), handle.Del)
-	rg.GET("/monitor_client/ExportFile", middleware.RecordLog("客户端信息导出"), handle.ExportFile)
-	rg.POST("/monitor_client/ImportFile", handle.ImportFile)
+	r := rg.Group("/", middleware.TokenAuth())
+	r.GET("/monitor_client/list", handle.List)
+	r.GET("/monitor_client/listAll", handle.ListAll)
+	r.GET("/monitor_client/detail", handle.Detail)
+	r.POST("/monitor_client/add", middleware.RecordLog("客户端信息新增"), handle.Add)
+	r.POST("/monitor_client/edit", middleware.RecordLog("客户端信息编辑"), handle.Edit)
+	r.POST("/monitor_client/del", middleware.RecordLog("客户端信息删除"), handle.Del)
+	r.GET("/monitor_client/ExportFile", middleware.RecordLog("客户端信息导出"), handle.ExportFile)
+	r.POST("/monitor_client/ImportFile", handle.ImportFile)
 }

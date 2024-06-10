@@ -11,14 +11,6 @@ import (
 )
 
 func UploadRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// permSrv := system.NewSystemAuthPermService(db)
-	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
-	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
-	// service := system.NewSystemLoginService(db, adminSrv)
-	// AlbumServer := album.NewAlbumService()
-	// server := NewUploadService()
-
 	handle := uploadHandler{}
 
 	rg = rg.Group("/common", middleware.TokenAuth())

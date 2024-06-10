@@ -47,7 +47,7 @@ const axiosHooks: AxiosHooks = {
         return err
     },
     async responseInterceptorsHook(response: AxiosResponse) {
-        console.log('返回Hook', response)
+        // console.log('返回Hook', response)
 
         NProgress.done()
         const config: NewInternalAxiosRequestConfig = response.config
@@ -96,7 +96,7 @@ const axiosHooks: AxiosHooks = {
      * @returns
      */
     responseInterceptorsCatchHook(error) {
-        console.log('返回异常Hook', error)
+        // console.log('返回异常Hook', error)
 
         NProgress.done()
         if (error.code !== AxiosError.ERR_CANCELED) {

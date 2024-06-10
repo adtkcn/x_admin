@@ -32,13 +32,13 @@ admin:monitor_web:ImportFile
 func MonitorWebRoute(rg *gin.RouterGroup) {
 	handle := monitor_web.MonitorWebHandler{}
 
-	rg = rg.Group("/", middleware.TokenAuth())
-	rg.GET("/monitor_web/list", handle.List)
-	rg.GET("/monitor_web/listAll", handle.ListAll)
-	rg.GET("/monitor_web/detail", handle.Detail)
-	rg.POST("/monitor_web/add", middleware.RecordLog("错误收集error新增"), handle.Add)
-	rg.POST("/monitor_web/edit", middleware.RecordLog("错误收集error编辑"), handle.Edit)
-	rg.POST("/monitor_web/del", middleware.RecordLog("错误收集error删除"), handle.Del)
-	rg.GET("/monitor_web/ExportFile", middleware.RecordLog("错误收集error导出"), handle.ExportFile)
-	rg.POST("/monitor_web/ImportFile", handle.ImportFile)
+	r := rg.Group("/", middleware.TokenAuth())
+	r.GET("/monitor_web/list", handle.List)
+	r.GET("/monitor_web/listAll", handle.ListAll)
+	r.GET("/monitor_web/detail", handle.Detail)
+	r.POST("/monitor_web/add", middleware.RecordLog("错误收集error新增"), handle.Add)
+	r.POST("/monitor_web/edit", middleware.RecordLog("错误收集error编辑"), handle.Edit)
+	r.POST("/monitor_web/del", middleware.RecordLog("错误收集error删除"), handle.Del)
+	r.GET("/monitor_web/ExportFile", middleware.RecordLog("错误收集error导出"), handle.ExportFile)
+	r.POST("/monitor_web/ImportFile", handle.ImportFile)
 }

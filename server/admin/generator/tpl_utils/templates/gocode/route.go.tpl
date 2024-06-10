@@ -43,13 +43,13 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 func {{{ title (toCamelCase .ModuleName) }}}Route(rg *gin.RouterGroup) {
 	handle := {{{ .ModuleName}}}.{{{ title (toCamelCase .EntityName) }}}Handler{}
 
-	rg = rg.Group("/", middleware.TokenAuth())
-	rg.GET("/{{{ .ModuleName }}}/list", handle.List)
-	rg.GET("/{{{ .ModuleName }}}/listAll", handle.ListAll)
-	rg.GET("/{{{ .ModuleName }}}/detail", handle.Detail)
-	rg.POST("/{{{ .ModuleName }}}/add",middleware.RecordLog("{{{ .FunctionName }}}新增"), handle.Add)
-	rg.POST("/{{{ .ModuleName }}}/edit",middleware.RecordLog("{{{ .FunctionName }}}编辑"), handle.Edit)
-	rg.POST("/{{{ .ModuleName }}}/del", middleware.RecordLog("{{{ .FunctionName }}}删除"), handle.Del)
-	rg.GET("/{{{ .ModuleName }}}/ExportFile", middleware.RecordLog("{{{ .FunctionName }}}导出"), handle.ExportFile)
-	rg.POST("/{{{ .ModuleName }}}/ImportFile", handle.ImportFile)
+	r := rg.Group("/", middleware.TokenAuth())
+	r.GET("/{{{ .ModuleName }}}/list", handle.List)
+	r.GET("/{{{ .ModuleName }}}/listAll", handle.ListAll)
+	r.GET("/{{{ .ModuleName }}}/detail", handle.Detail)
+	r.POST("/{{{ .ModuleName }}}/add",middleware.RecordLog("{{{ .FunctionName }}}新增"), handle.Add)
+	r.POST("/{{{ .ModuleName }}}/edit",middleware.RecordLog("{{{ .FunctionName }}}编辑"), handle.Edit)
+	r.POST("/{{{ .ModuleName }}}/del", middleware.RecordLog("{{{ .FunctionName }}}删除"), handle.Del)
+	r.GET("/{{{ .ModuleName }}}/ExportFile", middleware.RecordLog("{{{ .FunctionName }}}导出"), handle.ExportFile)
+	r.POST("/{{{ .ModuleName }}}/ImportFile", handle.ImportFile)
 }

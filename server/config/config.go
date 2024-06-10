@@ -95,7 +95,7 @@ func loadConfig(envPath string) envConfig {
 		// 上传视频限制
 		UploadVideoSize: 1024 * 1024 * 30,
 		// 上传图片扩展
-		UploadImageExt: []string{"png", "jpg", "jpeg", "gif", "ico", "bmp"},
+		UploadImageExt: []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp"},
 		// 上传视频扩展
 		UploadVideoExt: []string{"mp4", "mp3", "avi", "flv", "rmvb", "mov"},
 	}
