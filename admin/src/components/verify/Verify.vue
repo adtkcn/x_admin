@@ -1,5 +1,5 @@
 <template>
-    <div :class="props.mode == 'pop' ? 'mask' : ''" v-show="showBox">
+    <div :class="props.mode == 'pop' ? 'mask' : ''" v-if="showBox">
         <div
             :class="props.mode == 'pop' ? 'verify-box' : ''"
             :style="{ 'max-width': parseInt(imgSize.width) + 30 + 'px' }"
@@ -65,8 +65,8 @@ const props = defineProps({
         type: Object,
         default() {
             return {
-                width: '310px',
-                height: '155px'
+                width: 310,
+                height: 155
             }
         }
     },
@@ -133,6 +133,7 @@ defineExpose({ show, refresh, closeBox })
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    user-select: none;
 }
 .verify-box-top {
     padding: 0 15px;
@@ -258,6 +259,7 @@ defineExpose({ show, refresh, closeBox })
     position: absolute;
     top: 0px;
     left: 0;
+
     background: #fff;
     cursor: pointer;
 
@@ -316,10 +318,12 @@ defineExpose({ show, refresh, closeBox })
     border: 1px solid #fff;
 }
 
-.verify-bar-area .verify-move-block .verify-sub-block {
+.verify-img-panel .verify-sub-block {
     position: absolute;
     text-align: center;
     z-index: 3;
+    top: 0;
+    bottom: 0;
     /* border: 1px solid #fff; */
 }
 

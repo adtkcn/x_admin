@@ -8,5 +8,22 @@
     "css.validate": false,
     "less.validate": false,
     "scss.validate": false,
-    "cSpell.words": ["datetimerange", "nprogress", "pinia", "vform"]
+    "cSpell.words": [
+        "brotli",
+        "datetimerange",
+        "echarts",
+        "execa",
+        "highlightjs",
+        "logicflow",
+        "nprogress",
+        "pinia",
+        "preinstall",
+        "rushstack",
+        "tailwindcss",
+        "unplugin",
+        "vform",
+        "vuedraggable",
+        "vueuse",
+        "wangeditor"
+    ]
 }

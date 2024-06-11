@@ -89,15 +89,10 @@
 
                     <Verify
                         mode="pop"
-                        captchaType="blockPuzzle"
-                        :imgSize="{ width: '400px', height: '200px' }"
+                        captchaType="clickWord"
+                        :imgSize="{ width: 400, height: 200 }"
                         ref="verifyRef"
                         @success="handleSuccess"
-                        @error="
-                            (e) => {
-                                console.log(e)
-                            }
-                        "
                     ></Verify>
                 </div>
             </div>

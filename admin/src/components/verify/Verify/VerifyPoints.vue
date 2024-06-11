@@ -4,9 +4,9 @@
             <div
                 class="verify-img-panel"
                 :style="{
-                    width: setSize.imgWidth,
-                    height: setSize.imgHeight,
-                    'background-size': setSize.imgWidth + ' ' + setSize.imgHeight,
+                    width: imgSize.width + 'px',
+                    height: imgSize.height + 'px',
+
                     'margin-bottom': vSpace + 'px'
                 }"
             >
@@ -48,14 +48,14 @@
                 </div>
             </div>
         </div>
-        <!-- 'height': this.barSize.height, -->
+
         <div
             class="verify-bar-area"
             :style="{
-                width: setSize.imgWidth,
-                color: this.barAreaColor,
-                'border-color': this.barAreaBorderColor,
-                'line-height': this.barSize.height
+                width: imgSize.width + 'px',
+                color: barAreaColor,
+                'border-color': barAreaBorderColor,
+                'line-height': '40px'
             }"
         >
             <span class="verify-msg">{{ text }}</span>
@@ -67,10 +67,10 @@
  * VerifyPoints
  * @description 点选
  * */
-import { resetSize } from '../utils/util'
+// import { resetSize } from '../utils/util'
 import { aesEncrypt } from '../utils/ase'
 import { reqGet, reqCheck } from '../api/index'
-import { onMounted, reactive, ref, nextTick, toRefs, getCurrentInstance } from 'vue'
+import { onMounted, reactive, ref, toRefs, getCurrentInstance } from 'vue'
 export default {
     name: 'VerifyPoints',
     emits: ['success', 'error'],
@@ -92,17 +92,8 @@ export default {
             type: Object,
             default() {
                 return {
-                    width: '310px',
-                    height: '155px'
-                }
-            }
-        },
-        barSize: {
-            type: Object,
-            default() {
-                return {
-                    width: '310px',
-                    height: '40px'
+                    width: 310,
+                    height: 155
                 }
             }
         }
@@ -118,12 +109,6 @@ export default {
             pointBackImgBase = ref(''), //后端获取到的背景图片
             pointTextList = ref([]), //后端返回的点击字体顺序
             backToken = ref(''), //后端返回的token值
-            setSize = reactive({
-                imgHeight: 0,
-                imgWidth: 0,
-                barHeight: 0,
-                barWidth: 0
-            }),
             tempPoints = reactive([]),
             text = ref(''),
             barAreaColor = ref(undefined),
@@ -137,13 +122,6 @@ export default {
             checkPosArr.splice(0, checkPosArr.length)
             num.value = 1
             getPicture()
-            nextTick(() => {
-                const { imgHeight, imgWidth, barHeight, barWidth } = resetSize(proxy)
-                setSize.imgHeight = imgHeight
-                setSize.imgWidth = imgWidth
-                setSize.barHeight = barHeight
-                setSize.barWidth = barWidth
-            })
         }
         onMounted(() => {
             // 禁止拖拽
@@ -158,7 +136,7 @@ export default {
             if (num.value == checkNum.value) {
                 num.value = createPoint(getMousePos(canvas, e))
                 //按比例转换坐标值
-                const arr = pointTransform(checkPosArr, setSize)
+                const arr = pointTransform(checkPosArr)
                 checkPosArr.length = 0
                 checkPosArr.push(...arr)
                 //等创建坐标执行完
@@ -240,10 +218,10 @@ export default {
             })
         }
         //坐标转换函数
-        const pointTransform = function (pointArr, imgSize) {
+        const pointTransform = function (pointArr) {
             const newPointArr = pointArr.map((p) => {
-                const x = Math.round((310 * p.x) / parseInt(imgSize.imgWidth))
-                const y = Math.round((155 * p.y) / parseInt(imgSize.imgHeight))
+                const x = null // Math.round((310 * p.x) / parseInt(props.imgSize.width))
+                const y = null //Math.round((155 * p.y) / parseInt(props.imgSize.height))
                 return { x, y }
             })
             return newPointArr
@@ -257,7 +235,7 @@ export default {
             pointBackImgBase,
             pointTextList,
             backToken,
-            setSize,
+
             tempPoints,
             text,
             barAreaColor,
