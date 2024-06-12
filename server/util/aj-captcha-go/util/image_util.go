@@ -31,7 +31,8 @@ type ImageUtil struct {
 func NewImageUtil(src string, fontPath string) *ImageUtil {
 	srcImage := OpenPngImage(src)
 
-	return &ImageUtil{Src: src,
+	return &ImageUtil{
+		Src:       src,
 		SrcImage:  srcImage,
 		RgbaImage: ImageToRGBA(srcImage),
 		Width:     srcImage.Bounds().Dx(),

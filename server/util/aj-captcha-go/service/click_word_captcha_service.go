@@ -85,11 +85,11 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 	if err != nil {
 		return err
 	}
-	fontsize := c.factory.config.ClickWord.FontSize
+	fontSize := c.factory.config.ClickWord.FontSize
 	for i, pointVO := range cachePoint {
 		targetPoint := userPoint[i]
 
-		if targetPoint.X >= pointVO.X-10 && targetPoint.X <= pointVO.X+fontsize+10 && targetPoint.Y >= pointVO.Y-10 && targetPoint.Y <= pointVO.Y+fontsize+10 {
+		if targetPoint.X >= pointVO.X-10 && targetPoint.X <= pointVO.X+fontSize+10 && targetPoint.Y >= pointVO.Y-10 && targetPoint.Y <= pointVO.Y+fontSize+10 {
 
 		} else {
 			return errors.New("验证失败")

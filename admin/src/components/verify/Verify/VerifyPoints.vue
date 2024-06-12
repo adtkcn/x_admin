@@ -220,8 +220,8 @@ export default {
         //坐标转换函数
         const pointTransform = function (pointArr) {
             const newPointArr = pointArr.map((p) => {
-                const x = null // Math.round((310 * p.x) / parseInt(props.imgSize.width))
-                const y = null //Math.round((155 * p.y) / parseInt(props.imgSize.height))
+                const x = Math.round((310 * p.x) / parseInt(props.imgSize.width))
+                const y = Math.round((155 * p.y) / parseInt(props.imgSize.height))
                 return { x, y }
             })
             return newPointArr
