@@ -109,7 +109,7 @@ function VerifySuccess(e) {
 function handleSubmit(verify) {
   let data = {
     username: model.username,
-    password:(model.password),
+    password:encryptPassword(model.password),
 
     ...verify,
   };
