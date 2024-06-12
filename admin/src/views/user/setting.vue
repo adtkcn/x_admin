@@ -81,6 +81,7 @@
 import { setUserInfo } from '@/api/user'
 import useUserStore from '@/stores/modules/user'
 import feedback from '@/utils/feedback'
+import { encryptPassword } from '@/utils/util'
 import type { FormInstance } from 'element-plus'
 defineOptions({
     name: 'userSetting'
@@ -160,7 +161,19 @@ const getUser = async () => {
 
 // 设置个人设置
 const setUser = async () => {
-    await setUserInfo(formData)
+    const info = {
+        avatar: formData.avatar,
+        nickname: formData.nickname,
+        password: '',
+        currPassword: ''
+    }
+    if (formData.password) {
+        info.password = encryptPassword(formData.password)
+    }
+    if (formData.currPassword) {
+        info.currPassword = encryptPassword(formData.currPassword)
+    }
+    await setUserInfo(info)
     feedback.msgSuccess('保存成功')
     userStore.getUserInfo()
 }

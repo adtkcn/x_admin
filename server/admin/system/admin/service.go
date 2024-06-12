@@ -316,8 +316,8 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 	}
 	if editReq.Password != "" {
 		passwdLen := len(editReq.Password)
-		if !(passwdLen >= 6 && passwdLen <= 20) {
-			return response.Failed.Make("密码必须在6~20位")
+		if passwdLen != 32 {
+			return response.Failed.Make("密码格式不正确")
 		}
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt
@@ -376,8 +376,8 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq SystemAu
 			return response.Failed.Make("当前密码不正确!")
 		}
 		passwdLen := len(updateReq.Password)
-		if !(passwdLen >= 6 && passwdLen <= 20) {
-			return response.Failed.Make("密码必须在6~20位")
+		if passwdLen != 32 {
+			return response.Failed.Make("新密码格式不正确")
 		}
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt

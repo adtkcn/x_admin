@@ -196,7 +196,7 @@ export default {
             checkPosArr.splice(0, checkPosArr.length)
             num.value = 1
             getPicture()
-            text.value = '验证失败'
+            text.value = '获取中...'
             showRefresh.value = true
         }
 

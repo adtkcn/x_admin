@@ -111,7 +111,7 @@ import cache from '@/utils/cache'
 import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
-
+import { encryptPassword } from '@/utils/util'
 import Verify from '@/components/verify/Verify.vue'
 
 // const verifyRef = ref(null)
@@ -157,14 +157,22 @@ const rules = {
 
 // 登录处理
 const handleLogin = async (captchaInfo) => {
-    console.log('captchaInfo', captchaInfo, { ...formData, ...captchaInfo })
+    console.log('captchaInfo', {
+        username: formData.username,
+        password: encryptPassword(formData.password),
+        ...captchaInfo
+    })
 
     await formRef.value?.validate()
     // 记住账号，缓存
     cache.set(ACCOUNT_KEY, {
         username: formData.username
     })
-    await userStore.login({ ...formData, ...verifyInfo })
+    await userStore.login({
+        username: formData.username,
+        password: encryptPassword(formData.password),
+        ...verifyInfo
+    })
     const {
         query: { redirect }
     } = route
