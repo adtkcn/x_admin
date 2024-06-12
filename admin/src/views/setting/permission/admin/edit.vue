@@ -116,6 +116,8 @@ import { roleAll } from '@/api/perms/role'
 import { postAll } from '@/api/org/post'
 import { deptLists } from '@/api/org/department'
 import feedback from '@/utils/feedback'
+import { encryptPassword } from '@/utils/util'
+
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
@@ -231,7 +233,15 @@ const { optionsData } = useDictOptions<{
 
 const handleSubmit = async () => {
     await formRef.value?.validate()
-    mode.value == 'edit' ? await adminEdit(formData) : await adminAdd(formData)
+    const data = {
+        ...formData
+    }
+    if (formData.password) {
+        data.password = encryptPassword(formData.password)
+        data.passwordConfirm = encryptPassword(formData.passwordConfirm)
+    }
+
+    mode.value == 'edit' ? await adminEdit(data) : await adminAdd(data)
     popupRef.value?.close()
     feedback.msgSuccess('操作成功')
     emit('success')
