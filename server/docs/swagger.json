@@ -1,0 +1,2808 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "x_admin是一个完整的后台管理系统",
+        "title": "x_admin文档",
+        "termsOfService": "http://x.adtk.cn",
+        "contact": {
+            "name": "API Support",
+            "url": "http://x.adtk.cn",
+            "email": "11675084@qq.com"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://gitee.com/xiangheng/x_admin/blob/main/LICENSE"
+        },
+        "version": "0.0.1"
+    },
+    "host": "localhost:8001",
+    "basePath": "/",
+    "paths": {
+        "/api/admin/monitor_client/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-客户端信息"
+                ],
+                "summary": "客户端信息导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户id.",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "系统.",
+                        "name": "os",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器.",
+                        "name": "browser",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市.",
+                        "name": "city",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "屏幕.",
+                        "name": "width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "屏幕高度.",
+                        "name": "height",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ua记录.",
+                        "name": "ua",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_client/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-客户端信息"
+                ],
+                "summary": "客户端信息新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "用户id.",
+                        "name": "userId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "系统.",
+                        "name": "os",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "浏览器.",
+                        "name": "browser",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "城市.",
+                        "name": "city",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "屏幕.",
+                        "name": "width",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "屏幕高度.",
+                        "name": "height",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "ua记录.",
+                        "name": "ua",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_client/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-客户端信息"
+                ],
+                "summary": "客户端信息删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "uuid.",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_client/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-客户端信息"
+                ],
+                "summary": "客户端信息详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "uuid.",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_client/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-客户端信息"
+                ],
+                "summary": "客户端信息编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "uuid.",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "用户id.",
+                        "name": "userId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "系统.",
+                        "name": "os",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "浏览器.",
+                        "name": "browser",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "城市.",
+                        "name": "city",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "屏幕.",
+                        "name": "width",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "屏幕高度.",
+                        "name": "height",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "ua记录.",
+                        "name": "ua",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_client/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-客户端信息"
+                ],
+                "summary": "客户端信息列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户id.",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "系统.",
+                        "name": "os",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器.",
+                        "name": "browser",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市.",
+                        "name": "city",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "屏幕.",
+                        "name": "width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "屏幕高度.",
+                        "name": "height",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ua记录.",
+                        "name": "ua",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_client/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-客户端信息"
+                ],
+                "summary": "客户端信息列表-所有",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-错误项目"
+                ],
+                "summary": "错误项目导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目uuid.",
+                        "name": "projectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目名称.",
+                        "name": "projectName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目类型go java web node php 等.",
+                        "name": "projectType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_project/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-错误项目"
+                ],
+                "summary": "错误项目新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目uuid.",
+                        "name": "projectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目名称.",
+                        "name": "projectName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目类型go java web node php 等.",
+                        "name": "projectType",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-错误项目"
+                ],
+                "summary": "错误项目删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目id.",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-错误项目"
+                ],
+                "summary": "错误项目详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "项目id.",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-错误项目"
+                ],
+                "summary": "错误项目编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目id.",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "项目uuid.",
+                        "name": "projectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目名称.",
+                        "name": "projectName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目类型go java web node php 等.",
+                        "name": "projectType",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-错误项目"
+                ],
+                "summary": "错误项目列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目uuid.",
+                        "name": "projectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目名称.",
+                        "name": "projectName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目类型go java web node php 等.",
+                        "name": "projectType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-错误项目"
+                ],
+                "summary": "错误项目列表-所有",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_web/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_web-错误收集error"
+                ],
+                "summary": "错误收集error导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "事件类型.",
+                        "name": "eventType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址.",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误消息.",
+                        "name": "message",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误堆栈.",
+                        "name": "stack",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_web/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_web-错误收集error"
+                ],
+                "summary": "错误收集error新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "事件类型.",
+                        "name": "eventType",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "URL地址.",
+                        "name": "page",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "错误消息.",
+                        "name": "message",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "错误堆栈.",
+                        "name": "stack",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_web/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_web-错误收集error"
+                ],
+                "summary": "错误收集error删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "uuid.",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_web/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_web-错误收集error"
+                ],
+                "summary": "错误收集error详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "uuid.",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/monitor_web.MonitorWebResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_web/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_web-错误收集error"
+                ],
+                "summary": "错误收集error编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "uuid.",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "事件类型.",
+                        "name": "eventType",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "URL地址.",
+                        "name": "page",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "错误消息.",
+                        "name": "message",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "错误堆栈.",
+                        "name": "stack",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_web/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_web-错误收集error"
+                ],
+                "summary": "错误收集error列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "事件类型.",
+                        "name": "eventType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址.",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误消息.",
+                        "name": "message",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误堆栈.",
+                        "name": "stack",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "客户端时间.",
+                        "name": "clientTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/monitor_web.MonitorWebResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_web/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_web-错误收集error"
+                ],
+                "summary": "错误收集error列表-所有",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/monitor_web.MonitorWebResp"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/article_collect/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article_collect文章"
+                ],
+                "summary": "article_collect列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "文章ID",
+                        "name": "articleId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.PageResp"
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_apply/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "模板",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
+                        "name": "status",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_apply/back": {
+            "post": {
+                "responses": {}
+            }
+        },
+        "/api/flow_apply/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_apply/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/flow_apply.FlowApplyResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_apply/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "模板",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
+                        "name": "status",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_apply/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "模板",
+                        "name": "templateId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/flow_apply.FlowApplyResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_apply/pass": {
+            "post": {
+                "responses": {}
+            }
+        },
+        "/api/flow_history/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "模板id",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "审批人id",
+                        "name": "approverId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "审批用户昵称",
+                        "name": "approverNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "节点",
+                        "name": "nodeId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单值",
+                        "name": "formValue",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "通过状态：0待处理，1通过，2拒绝",
+                        "name": "passStatus",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "通过备注",
+                        "name": "passRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_history/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_history/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_history/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "模板id",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "审批人id",
+                        "name": "approverId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "审批用户昵称",
+                        "name": "approverNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "节点",
+                        "name": "nodeId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单值",
+                        "name": "formValue",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "通过状态：0待处理，1通过，2拒绝",
+                        "name": "passStatus",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "通过备注",
+                        "name": "passRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_history/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "模板id",
+                        "name": "templateId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "审批人id",
+                        "name": "approverId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "审批用户昵称",
+                        "name": "approverNickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "节点",
+                        "name": "nodeId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表单值",
+                        "name": "formValue",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "通过状态：0待处理，1通过，2拒绝",
+                        "name": "passStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "通过备注",
+                        "name": "passRemark",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_history/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史列表-所有",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_template/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_template/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_template/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/flow_template.FlowTemplateResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_template/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": ".",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.RespType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_template/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/flow_template.FlowTemplateResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/flow_template/listAll": {
+            "get": {
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板列表-所有",
+                "responses": {}
+            }
+        },
+        "/system/admin/ListByDeptId/{deptId}": {
+            "get": {
+                "description": "获取部门的用户",
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "获取部门的用户",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "部门id",
+                        "name": "deptId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": []}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "flow_apply.FlowApplyResp": {
+            "type": "object",
+            "properties": {
+                "applyUserId": {
+                    "description": "申请人id",
+                    "type": "integer"
+                },
+                "applyUserNickname": {
+                    "description": "申请人昵称",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "flowFormData": {
+                    "description": "表单配置",
+                    "type": "string"
+                },
+                "flowGroup": {
+                    "description": "流程分类",
+                    "type": "integer"
+                },
+                "flowName": {
+                    "description": "流程名称",
+                    "type": "string"
+                },
+                "flowProcessData": {
+                    "description": "流程配置",
+                    "type": "string"
+                },
+                "flowProcessDataList": {
+                    "description": "流程配置list数据",
+                    "type": "string"
+                },
+                "flowRemark": {
+                    "description": "流程描述",
+                    "type": "string"
+                },
+                "formValue": {
+                    "description": "表单值",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
+                    "type": "integer"
+                },
+                "templateId": {
+                    "description": "模板",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "flow_history.FlowHistoryResp": {
+            "type": "object",
+            "properties": {
+                "applyId": {
+                    "description": "申请id",
+                    "type": "integer"
+                },
+                "applyUserId": {
+                    "description": "申请人id",
+                    "type": "integer"
+                },
+                "applyUserNickname": {
+                    "description": "申请人昵称",
+                    "type": "string"
+                },
+                "approverId": {
+                    "description": "审批人id",
+                    "type": "integer"
+                },
+                "approverNickname": {
+                    "description": "审批用户昵称",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "formValue": {
+                    "description": "表单值",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "历史id",
+                    "type": "integer"
+                },
+                "nodeId": {
+                    "description": "节点",
+                    "type": "string"
+                },
+                "nodeLabel": {
+                    "description": "节点名称",
+                    "type": "string"
+                },
+                "nodeType": {
+                    "description": "节点类型",
+                    "type": "string"
+                },
+                "passRemark": {
+                    "description": "通过备注",
+                    "type": "string"
+                },
+                "passStatus": {
+                    "description": "通过状态：1待处理，2通过，3拒绝",
+                    "type": "integer"
+                },
+                "templateId": {
+                    "description": "模板id",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "flow_template.FlowTemplateResp": {
+            "type": "object",
+            "properties": {
+                "flowFormData": {
+                    "description": "表单配置",
+                    "type": "string"
+                },
+                "flowGroup": {
+                    "description": "流程分类",
+                    "type": "integer"
+                },
+                "flowName": {
+                    "description": "流程名称",
+                    "type": "string"
+                },
+                "flowProcessData": {
+                    "description": "流程配置",
+                    "type": "string"
+                },
+                "flowProcessDataList": {
+                    "description": "流程配置list数据",
+                    "type": "string"
+                },
+                "flowRemark": {
+                    "description": "流程描述",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "monitor_client.MonitorClientResp": {
+            "type": "object",
+            "properties": {
+                "browser": {
+                    "description": "浏览器",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "城市",
+                    "type": "string"
+                },
+                "clientId": {
+                    "description": "sdk生成的客户端id",
+                    "type": "string"
+                },
+                "clientTime": {
+                    "description": "客户端时间",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "height": {
+                    "description": "屏幕高度",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "uuid",
+                    "type": "integer"
+                },
+                "os": {
+                    "description": "系统",
+                    "type": "string"
+                },
+                "projectKey": {
+                    "description": "项目key",
+                    "type": "string"
+                },
+                "ua": {
+                    "description": "ua记录",
+                    "type": "string"
+                },
+                "userId": {
+                    "description": "用户id",
+                    "type": "string"
+                },
+                "width": {
+                    "description": "屏幕",
+                    "type": "integer"
+                }
+            }
+        },
+        "monitor_project.MonitorProjectResp": {
+            "type": "object",
+            "properties": {
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "项目id",
+                    "type": "integer"
+                },
+                "projectKey": {
+                    "description": "项目uuid",
+                    "type": "string"
+                },
+                "projectName": {
+                    "description": "项目名称",
+                    "type": "string"
+                },
+                "projectType": {
+                    "description": "项目类型go java web node php 等",
+                    "type": "string"
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "monitor_web.MonitorWebResp": {
+            "type": "object",
+            "properties": {
+                "clientId": {
+                    "description": "sdk生成的客户端id",
+                    "type": "string"
+                },
+                "clientTime": {
+                    "description": "客户端时间",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "eventType": {
+                    "description": "事件类型",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "uuid",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "错误消息",
+                    "type": "string"
+                },
+                "page": {
+                    "description": "URL地址",
+                    "type": "string"
+                },
+                "projectKey": {
+                    "description": "项目key",
+                    "type": "string"
+                },
+                "stack": {
+                    "description": "错误堆栈",
+                    "type": "string"
+                }
+            }
+        },
+        "response.PageResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "总数",
+                    "type": "integer"
+                },
+                "lists": {
+                    "description": "数据"
+                },
+                "pageNo": {
+                    "description": "每页数量",
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "description": "每页Size",
+                    "type": "integer"
+                }
+            }
+        },
+        "response.RespType": {
+            "type": "object"
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}
