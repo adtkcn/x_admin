@@ -2,8 +2,8 @@
 	"name": "x_admin_app",
 	"appid": "__UNI__FB29F21",
 	"description": "",
-	"versionName": "1.0.2",
-	"versionCode": 102,
+	"versionName": "1.0.3",
+	"versionCode": 103,
 	"transformPx": false,
 	"app-plus": {
 		"compatible": {
@@ -86,22 +86,7 @@
 			}
 		},
 		"nvueLaunchMode": "",
-		"nativePlugins": {
-			"usb-serial-for-uniapp": {
-				"__plugin_info__": {
-					"name": "usb-serial-for-uniapp",
-					"description": "uniapp的USB串口通信插件，驱动基于开源项目usb-serial-for-android，无需ROOT，支持OTG USB串口、CP210X、CH34X等",
-					"platforms": "Android",
-					"url": "https://ext.dcloud.net.cn/plugin?id=13935",
-					"android_package_name": "uni.UNIFB29F21",
-					"ios_bundle_id": "",
-					"isCloud": true,
-					"bought": 1,
-					"pid": "13935",
-					"parameters": {}
-				}
-			}
-		}
+		"nativePlugins": {}
 	},
 	"quickapp": {},
 	"mp-weixin": {

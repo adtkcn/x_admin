@@ -41,10 +41,10 @@
 - 素材管理
 - 网站设置
 - 图库管理
-- 代码生成器：一键生成前后端业务代码
+- 代码生成器：一键生成前端、后端、app代码
 - 审批流：基于`LogicFlow`和`VForm 3`,整体流程已实现，需要细化
 
-<img border="0" src="./docs/assets/menu.png" height="1000px" alt="alipay" title="alipay"/>
+<img border="0" src="./docs/assets/menu.png" height="1000px" />
  
 ![](./docs/assets/genCode.png)
 ![](./docs/assets/flow.png)
