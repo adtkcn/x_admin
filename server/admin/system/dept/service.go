@@ -85,7 +85,7 @@ func (service systemAuthDeptService) Add(addReq SystemAuthDeptAddReq) (e error) 
 			return
 		}
 		if r.RowsAffected > 0 {
-			return response.AssertArgumentError.Make("顶级部门只允许有一个!")
+			return response.AssertArgumentError.SetMessage("顶级部门只允许有一个!")
 		}
 	}
 	var dept system_model.SystemAuthDept
@@ -107,10 +107,10 @@ func (service systemAuthDeptService) Edit(editReq SystemAuthDeptEditReq) (e erro
 		return
 	}
 	if dept.Pid == 0 && editReq.Pid > 0 {
-		return response.AssertArgumentError.Make("顶级部门不能修改上级!")
+		return response.AssertArgumentError.SetMessage("顶级部门不能修改上级!")
 	}
 	if editReq.ID == editReq.Pid {
-		return response.AssertArgumentError.Make("上级部门不能是自己!")
+		return response.AssertArgumentError.SetMessage("上级部门不能是自己!")
 	}
 	// 更新
 	response.Copy(&dept, editReq)
@@ -131,21 +131,21 @@ func (service systemAuthDeptService) Del(id uint) (e error) {
 		return
 	}
 	if dept.Pid == 0 {
-		return response.AssertArgumentError.Make("顶级部门不能删除!")
+		return response.AssertArgumentError.SetMessage("顶级部门不能删除!")
 	}
 	r := service.db.Where("pid = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthDept{})
 	if e = response.CheckErr(r.Error, "Del Find dept err"); e != nil {
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("请先删除子级部门!")
+		return response.AssertArgumentError.SetMessage("请先删除子级部门!")
 	}
 	r = service.db.Where("dept_id = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{})
 	if e = response.CheckErr(r.Error, "Del Find admin err"); e != nil {
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("该部门已被管理员使用,请先移除!")
+		return response.AssertArgumentError.SetMessage("该部门已被管理员使用,请先移除!")
 	}
 	// dept.IsDelete = 1
 	// err = service.db.Save(&dept).Error

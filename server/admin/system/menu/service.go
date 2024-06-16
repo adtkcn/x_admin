@@ -136,7 +136,7 @@ func (menuSrv systemAuthMenuService) Del(id uint) (e error) {
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("请先删除子菜单再操作！")
+		return response.AssertArgumentError.SetMessage("请先删除子菜单再操作！")
 	}
 	err = menuSrv.db.Delete(&menu).Error
 	e = response.CheckErr(err, "Delete Delete err")

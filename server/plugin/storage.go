@@ -44,7 +44,7 @@ func (sd storageDriver) Upload(file *multipart.FileHeader, folder string, fileTy
 		}
 	} else {
 		core.Logger.Errorf("storageDriver.Upload engine err: err=[unsupported engine]")
-		return nil, response.Failed.Make(fmt.Sprintf("engine:%s 暂时不支持", engine))
+		return nil, response.Failed.SetMessage(fmt.Sprintf("engine:%s 暂时不支持", engine))
 	}
 	fileRelPath := path.Join(folder, key)
 	return &UploadFile{
@@ -66,7 +66,7 @@ func (sd storageDriver) localUpload(file *multipart.FileHeader, key string, fold
 	src, err := file.Open()
 	if err != nil {
 		core.Logger.Errorf("storageDriver.localUpload Open err: err=[%+v]", err)
-		return response.Failed.Make("打开文件失败!")
+		return response.Failed.SetMessage("打开文件失败!")
 	}
 	defer src.Close()
 	// 文件信息
@@ -77,14 +77,14 @@ func (sd storageDriver) localUpload(file *multipart.FileHeader, key string, fold
 	if err != nil && !os.IsExist(err) {
 		core.Logger.Errorf(
 			"storageDriver.localUpload MkdirAll err: path=[%s], err=[%+v]", savePath, err)
-		return response.Failed.Make("创建上传目录失败!")
+		return response.Failed.SetMessage("创建上传目录失败!")
 	}
 	// 创建目标文件
 	out, err := os.Create(saveFilePath)
 	if err != nil {
 		core.Logger.Errorf(
 			"storageDriver.localUpload Create err: file=[%s], err=[%+v]", saveFilePath, err)
-		return response.Failed.Make("创建文件失败!")
+		return response.Failed.SetMessage("创建文件失败!")
 	}
 	defer out.Close()
 	// 写入目标文件
@@ -92,7 +92,7 @@ func (sd storageDriver) localUpload(file *multipart.FileHeader, key string, fold
 	if err != nil {
 		core.Logger.Errorf(
 			"storageDriver.localUpload Copy err: file=[%s], err=[%+v]", saveFilePath, err)
-		return response.Failed.Make("上传文件失败: " + err.Error())
+		return response.Failed.SetMessage("上传文件失败: " + err.Error())
 	}
 	return nil
 }
@@ -113,22 +113,22 @@ func (sd storageDriver) checkFile(file *multipart.FileHeader, fileType int) (e e
 	if fileType == 10 {
 		// 图片文件
 		if !util.ToolsUtil.Contains(config.Config.UploadImageExt, fileExt) {
-			return response.Failed.Make("不被支持的图片扩展: " + fileExt)
+			return response.Failed.SetMessage("不被支持的图片扩展: " + fileExt)
 		}
 		if fileSize > config.Config.UploadImageSize {
-			return response.Failed.Make("上传图片不能超出限制: " + strconv.FormatInt(config.Config.UploadImageSize/1024/1024, 10) + "M")
+			return response.Failed.SetMessage("上传图片不能超出限制: " + strconv.FormatInt(config.Config.UploadImageSize/1024/1024, 10) + "M")
 		}
 	} else if fileType == 20 {
 		// 视频文件
 		if !util.ToolsUtil.Contains(config.Config.UploadVideoExt, fileExt) {
-			return response.Failed.Make("不被支持的视频扩展: " + fileExt)
+			return response.Failed.SetMessage("不被支持的视频扩展: " + fileExt)
 		}
 		if fileSize > config.Config.UploadVideoSize {
-			return response.Failed.Make("上传视频不能超出限制: " + strconv.FormatInt(config.Config.UploadVideoSize/1024/1024, 10) + "M")
+			return response.Failed.SetMessage("上传视频不能超出限制: " + strconv.FormatInt(config.Config.UploadVideoSize/1024/1024, 10) + "M")
 		}
 	} else {
 		core.Logger.Errorf("storageDriver.checkFile fileType err: err=[unsupported fileType]")
-		return response.Failed.Make("上传文件类型错误")
+		return response.Failed.SetMessage("上传文件类型错误")
 	}
 	return nil
 }
