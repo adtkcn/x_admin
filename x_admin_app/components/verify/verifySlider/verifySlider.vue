@@ -22,7 +22,6 @@
             height: props.imgSize.height + 'px',
             top: '0px',
             left: data.moveBlockLeft,
-            transition: data.transitionLeft,
           }"
         >
           <image
@@ -73,11 +72,10 @@
           @touchend="end"
           @touchmove="move"
           :style="{
-            width: blockSize.width+'px',
+            width: blockSize.width + 'px',
             height: '40px',
             'background-color': data.moveBlockBackgroundColor,
             left: data.moveBlockLeft,
-            transition: data.transitionLeft,
           }"
         >
           <text
@@ -98,6 +96,7 @@ import {
   ref,
   reactive,
   onMounted,
+  onUnmounted,
   watch,
   computed,
   getCurrentInstance,
@@ -175,47 +174,13 @@ const data = reactive({
   status: false, //鼠标状态
   isEnd: false, //是够验证完成
   showRefresh: true,
-  transitionLeft: "",
 });
-
-// Methods 定义
-const init = () => {
-  data.text = props.explain;
-  getPictrue();
-
-  // #ifdef WEB
-  window.removeEventListener("touchmove", (e) => {
-    move(e);
-  });
-  window.removeEventListener("mousemove", (e) => {
-    move(e);
-  });
-
-  window.addEventListener("touchmove", (e) => {
-    move(e);
-  });
-  window.addEventListener("mousemove", (e) => {
-    move(e);
-  });
-
-  //鼠标松开
-  window.addEventListener("touchend", (e) => {
-    console.log('touchend');
-    
-    end(e);
-  });
-  window.addEventListener("mouseup", (e) => {
-    console.log('mouseup');
-    end(e);
-  });
-  // #endif
-};
 
 let startLeft = ref(0);
 const start = (e) => {
   // ... 鼠标按下逻辑
   // console.log('e',e);
-  
+
   data.startMoveTime = new Date().getTime(); //开始滑动的时间
   if (data.isEnd == false) {
     data.text = "";
@@ -266,6 +231,8 @@ const move = (e) => {
 
 const end = (e) => {
   e.stopPropagation();
+  console.log('end');
+  
   // ... 鼠标松开逻辑
   data.endMovetime = new Date().getTime();
 
@@ -298,53 +265,53 @@ const end = (e) => {
       url: `/captcha/check`,
       data: sendData,
       method: "POST",
-    }).then((result) => {
-      let res = result.data;
-      data.showRefresh = true;
+    })
+      .then((result) => {
+        let res = result.data;
+        data.showRefresh = true;
         data.status = false;
         data.isEnd = true;
-      if (res.repCode == "0000") {
-        data.moveBlockBackgroundColor = "#5cb85c";
-        data.leftBarBorderColor = "#5cb85c";
-        data.iconColor = "#fff";
-        data.iconClass = "icon-check";
+        if (res.repCode == "0000") {
+          data.moveBlockBackgroundColor = "#5cb85c";
+          data.leftBarBorderColor = "#5cb85c";
+          data.iconColor = "#fff";
+          data.iconClass = "icon-check";
 
-        setTimeout(() => {
-          refresh();
-        }, 1000);
-        data.passFlag = true;
-        data.tipWords = `${(
-          (data.endMovetime - data.startMoveTime) /
-          1000
-        ).toFixed(2)}s验证成功`;
-        setTimeout(() => {
-          data.tipWords = "";
-          emit("success", {
-            ...sendData,
-          });
-        }, 500);
-      } else {
-        data.moveBlockBackgroundColor = "#d9534f";
-        data.leftBarBorderColor = "#d9534f";
-        data.iconColor = "#fff";
-        data.iconClass = "icon-close";
-        data.passFlag = false;
-        setTimeout(() => {
-          refresh();
-        }, 1000);
-        emit("error");
-        data.tipWords = "验证失败";
-        setTimeout(() => {
-          data.tipWords = "";
-        }, 1000);
-      }
-    }).catch((err) => {
-      data.status = false;
-      data.isEnd = true;
-      console.log(err);
-    })
-
-
+          setTimeout(() => {
+            refresh();
+          }, 1000);
+          data.passFlag = true;
+          data.tipWords = `${(
+            (data.endMovetime - data.startMoveTime) /
+            1000
+          ).toFixed(2)}s验证成功`;
+          setTimeout(() => {
+            data.tipWords = "";
+            emit("success", {
+              ...sendData,
+            });
+          }, 500);
+        } else {
+          data.moveBlockBackgroundColor = "#d9534f";
+          data.leftBarBorderColor = "#d9534f";
+          data.iconColor = "#fff";
+          data.iconClass = "icon-close";
+          data.passFlag = false;
+          setTimeout(() => {
+            refresh();
+          }, 1000);
+          emit("error");
+          data.tipWords = "验证失败";
+          setTimeout(() => {
+            data.tipWords = "";
+          }, 1000);
+        }
+      })
+      .catch((err) => {
+        data.status = false;
+        data.isEnd = true;
+        console.log(err);
+      });
   }
 };
 
@@ -352,7 +319,7 @@ const refresh = () => {
   // ... 刷新验证码逻辑
   data.showRefresh = true;
   data.finishText = "";
-  //   data.transitionLeft = "left .3s";
+
   data.moveBlockLeft = "0";
   data.leftBarWidth = "";
 
@@ -363,7 +330,6 @@ const refresh = () => {
   getPictrue();
   data.isEnd = false;
   setTimeout(() => {
-    data.transitionLeft = "";
     data.text = props.explain;
   }, 300);
 };
@@ -400,12 +366,38 @@ const getPictrue = () => {
   });
 };
 
-defineExpose({
-  refresh,
-});
+// Methods 定义
+const init = () => {
+  data.text = props.explain;
+  getPictrue();
+
+  // #ifdef WEB
+  // window.removeEventListener("touchmove",move);
+  // window.removeEventListener("mousemove",move);
+
+  window.addEventListener("touchmove", move);
+  window.addEventListener("mousemove", move);
+
+  //鼠标松开
+  window.addEventListener("touchend", end);
+  window.addEventListener("mouseup", end);
+  // #endif
+};
 // 组件挂载时调用
 onMounted(() => {
   init();
+});
+onUnmounted(() => {
+  // #ifdef WEB
+  window.removeEventListener("touchmove", move);
+  window.removeEventListener("mousemove", move);
+  window.removeEventListener("touchend", end);
+  window.removeEventListener("mouseup", end);
+  // #endif
+});
+
+defineExpose({
+  refresh,
 });
 </script>
 <style scoped>
