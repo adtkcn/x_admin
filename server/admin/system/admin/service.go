@@ -250,8 +250,8 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 		return response.AssertArgumentError.SetMessage("当前角色已被禁用!")
 	}
 	passwdLen := len(addReq.Password)
-	if !(passwdLen >= 6 && passwdLen <= 20) {
-		return response.Failed.SetMessage("密码必须在6~20位")
+	if passwdLen != 32 {
+		return response.Failed.SetMessage("密码格式不正确")
 	}
 	salt := util.ToolsUtil.RandomString(5)
 	response.Copy(&sysAdmin, addReq)
