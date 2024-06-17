@@ -43,7 +43,7 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 	// 管理员信息
 	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&sysAdmin).Error
-	if e = response.CheckErr(err, "Self First err"); e != nil {
+	if e = response.CheckErr(err, "获取用户信息失败"); e != nil {
 		return
 	}
 	// 角色权限
@@ -59,18 +59,21 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 			err := adminSrv.db.Where(
 				"id in ? AND is_disable = ? AND menu_type in ?", menuIds, 0, []string{"C", "A"}).Order(
 				"menu_sort, id").Find(&menus).Error
-			if e = response.CheckErr(err, "Self SystemAuthMenu Find err"); e != nil {
+			if e = response.CheckErr(err, "查找权限失败"); e != nil {
 				return
 			}
 			if len(menus) > 0 {
 				for _, v := range menus {
+					if v.Perms == "" {
+						continue
+					}
 					auths = append(auths, strings.Trim(v.Perms, " "))
 				}
 			}
 		}
-		if len(auths) > 0 {
-			auths = append(auths, "")
-		}
+		// if len(auths) > 0 {
+		// 	auths = append(auths, "")
+		// }
 	} else {
 		auths = append(auths, "*")
 	}

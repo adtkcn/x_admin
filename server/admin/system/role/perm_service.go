@@ -66,7 +66,7 @@ func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e erro
 	err = service.db.Where(
 		"is_disable = ? and id in ? and menu_type in ?", 0, menuIds, []string{"C", "A"}).Order(
 		"menu_sort, id").Find(&menus).Error
-	if e = response.CheckErr(err, "CacheRoleMenusByRoleId Find menus err"); e != nil {
+	if e = response.CheckErr(err, "查找角色菜单失败"); e != nil {
 		return
 	}
 	var menuArray []string

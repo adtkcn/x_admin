@@ -143,12 +143,14 @@ func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e erro
 	err = roleSrv.db.Transaction(func(tx *gorm.DB) error {
 		txErr := tx.Model(&role).Updates(roleMap).Error
 		var te error
-		if te = response.CheckErr(txErr, "Edit Updates in tx err"); te != nil {
+		if te = response.CheckErr(txErr, "编辑角色失败"); te != nil {
 			return te
 		}
+		// 删除角色菜单
 		if te = PermService.BatchDeleteByRoleId(editReq.ID, tx); te != nil {
 			return te
 		}
+		// 重新保存角色菜单
 		if te = PermService.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
 			return te
 		}

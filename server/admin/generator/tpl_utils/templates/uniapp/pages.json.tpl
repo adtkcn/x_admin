@@ -6,16 +6,14 @@
 			"style": {
 				"navigationBarTitleText": "{{{.FunctionName}}}",
 				"enablePullDownRefresh": true,
-				"onReachBottomDistance": 100,
-				"navigationStyle": "custom"
+				"onReachBottomDistance": 100
 			}
 		},
 		{
 			"path": "pages/{{{ .ModuleName }}}/details",
 			"style": {
 				"navigationBarTitleText": "{{{.FunctionName}}}详情",
-				"enablePullDownRefresh": true,
-				"navigationStyle": "custom"
+				"enablePullDownRefresh": true
 			}
 		},
 		{

@@ -21,7 +21,7 @@
 			{{{- end }}}
 			{{{- end }}}
 
-			<uv-button   type="primary" text="提交" customStyle="margin-top: 20rpx"
+			<uv-button   type="primary" text="提交" customStyle="margin: 40rpx 0"
 				@click="submit"></uv-button>
 		</uv-form>
 	</view>
@@ -34,7 +34,8 @@
 	} from "@dcloudio/uni-app";
  	import {
 		{{{ .ModuleName }}}_detail,
-		{{{ .ModuleName }}}_edit
+		{{{ .ModuleName }}}_edit,
+		{{{ .ModuleName }}}_add
 	} from "@/api/{{{ .ModuleName }}}";
 	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{ .ModuleName }}}";
 
@@ -81,7 +82,9 @@
 	}
 	onLoad((e) => {
 		console.log("onLoad", e);
-		getDetails(e.id);
+		if (e.id) {
+			getDetails(e.id);
+		}
 	});
 
 
@@ -112,15 +115,26 @@
 	function submit() {
 		console.log("submit", form.value);
 		formRef.value.validate().then(() => {
-			{{{ .ModuleName }}}_edit(form.value).then((res) => {
-				if (res.code == 200) {
-					toast("编辑成功");
-			
-					getDetails(form.value?.id);
-				} else {
-					toast(res.message);
-				}
-			});
+			if (form.value.id) {
+				{{{ .ModuleName }}}_edit(form.value).then((res) => {
+					if (res.code == 200) {
+						toast("编辑成功");				
+						getDetails(form.value?.id);
+					} else {
+						toast(res.message);
+					}
+				});
+			}else{
+				{{{ .ModuleName }}}_add(form.value).then((res) => {
+					if (res.code == 200) {
+						toast("添加成功");
+						uni.navigateBack();
+					} else {
+						toast(res.message);
+					}
+				});
+			}
+
 		})
 	}
 </script>
