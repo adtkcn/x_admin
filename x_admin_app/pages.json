@@ -45,6 +45,34 @@
 			"style": {
 				"navigationBarTitleText": "搜索项目监控"
 			}
+		},
+
+		{
+			"path": "pages/monitor_client/index",
+			"style": {
+				"navigationBarTitleText": "监控-客户端信息",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 100
+			}
+		},
+		{
+			"path": "pages/monitor_client/details",
+			"style": {
+				"navigationBarTitleText": "监控-客户端信息详情",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/monitor_client/edit",
+			"style": {
+				"navigationBarTitleText": "编辑监控-客户端信息"
+			}
+		},
+		{
+			"path": "pages/monitor_client/search",
+			"style": {
+				"navigationBarTitleText": "搜索监控-客户端信息"
+			}
 		}
 
 

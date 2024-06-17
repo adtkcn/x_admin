@@ -38,6 +38,11 @@
 			path: "/pages/monitor_project/index",
 			title: "项目监控",
 		},
+		{
+			icon: "/static/index/equipment.png",
+			path: "/pages/monitor_client/index",
+			title: "项目用户",
+		},
 
 
 		{

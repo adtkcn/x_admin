@@ -10,12 +10,14 @@
 					<uv-number-box v-model="form.{{{ (toCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 				{{{- else if eq .HtmlType "textarea" }}}
 					<uv-textarea v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-textarea>
+				{{{- else if eq .HtmlType "datetime" }}}
+					<x-date v-model:time="form.{{{ (toCamelCase .GoField) }}}"></x-date>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
-				{{{- if ne .DictType "" }}}
-					<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
-				{{{- else }}}
-					请选择字典生成代码
-				{{{- end }}}
+					{{{- if ne .DictType "" }}}
+						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+					{{{- else }}}
+						请选择字典生成代码
+					{{{- end }}}
 				{{{- end }}}
 			</uv-form-item>
 			{{{- end }}}
