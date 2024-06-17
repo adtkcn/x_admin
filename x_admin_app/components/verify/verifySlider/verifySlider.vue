@@ -18,8 +18,7 @@
         <view
           class="verify-sub-block"
           :style="{
-            width:
-              Math.floor((parseInt(props.imgSize.width) * 47) / 310) + 'px',
+            width: blockSize.width + 'px',
             height: props.imgSize.height + 'px',
             top: '0px',
             left: data.moveBlockLeft,
@@ -74,7 +73,7 @@
           @touchend="end"
           @touchmove="move"
           :style="{
-            width: '40px',
+            width: blockSize.width+'px',
             height: '40px',
             'background-color': data.moveBlockBackgroundColor,
             left: data.moveBlockLeft,
@@ -95,7 +94,14 @@
  * VerifySlide
  * @description 滑块
  * */
-import { ref, reactive, onMounted, watch, getCurrentInstance } from "vue";
+import {
+  ref,
+  reactive,
+  onMounted,
+  watch,
+  computed,
+  getCurrentInstance,
+} from "vue";
 import { aesEncrypt } from "./../utils/ase.js";
 import { myRequest } from "../utils/request.js";
 defineOptions({
@@ -127,12 +133,17 @@ const props = defineProps({
   blockSize: {
     type: Object,
     default: () => ({
-      width: 50,
-      height: 50,
+      // width: 47,
+      height: 47,
     }),
   },
 });
-
+const blockSize = computed(() => {
+  return {
+    width: (props.imgSize.width / 310) * 47,
+    height: props.blockSize.height,
+  };
+});
 // Data 定义
 const data = reactive({
   secretKey: "", //后端返回的加密秘钥 字段
@@ -180,14 +191,6 @@ const init = () => {
     move(e);
   });
 
-  //鼠标松开
-  window.removeEventListener("touchend", () => {
-    end();
-  });
-  window.removeEventListener("mouseup", () => {
-    end();
-  });
-
   window.addEventListener("touchmove", (e) => {
     move(e);
   });
@@ -196,17 +199,23 @@ const init = () => {
   });
 
   //鼠标松开
-  window.addEventListener("touchend", () => {
-    end();
+  window.addEventListener("touchend", (e) => {
+    console.log('touchend');
+    
+    end(e);
   });
-  window.addEventListener("mouseup", () => {
-    end();
+  window.addEventListener("mouseup", (e) => {
+    console.log('mouseup');
+    end(e);
   });
   // #endif
 };
 
+let startLeft = ref(0);
 const start = (e) => {
   // ... 鼠标按下逻辑
+  // console.log('e',e);
+  
   data.startMoveTime = new Date().getTime(); //开始滑动的时间
   if (data.isEnd == false) {
     data.text = "";
@@ -215,54 +224,48 @@ const start = (e) => {
     data.iconColor = "#fff";
     e.stopPropagation();
     data.status = true;
+    if (!e.touches) {
+      //兼容移动端
+      startLeft.value = Math.ceil(e.clientX);
+    } else {
+      //兼容PC端
+      startLeft.value = Math.ceil(e.touches[0].pageX);
+    }
   }
 };
 
-const appInstance = getCurrentInstance().proxy;
+// const appInstance = getCurrentInstance().proxy;
 
 const move = (e) => {
-  // ... 鼠标移动逻辑
-  var query = uni.createSelectorQuery().in(appInstance);
-  var barArea = query.select(".verify-bar-area");
-  var bar_area_left, barArea_offsetWidth;
-  barArea
-    .boundingClientRect((rect) => {
-      // @ts-ignore
-      bar_area_left = Math.ceil(rect?.left);
-      // @ts-ignore
-      barArea_offsetWidth = Math.ceil(rect?.width);
+  e.stopPropagation();
+  if (data.status == true) {
+    if (!e.touches) {
+      //兼容移动端
+      var x = Math.ceil(e.clientX);
+    } else {
+      //兼容PC端
+      var x = Math.ceil(e.touches[0].pageX);
+    }
+    let left = x - startLeft.value; //小方块相对于父元素的left值
+    // console.log("left", left);
+    if (left < 0) {
+      left = 0;
+    }
 
-      if (data.status && data.isEnd == false) {
-        if (!e.touches) {
-          //兼容移动端
-          var x = Math.ceil(e.clientX);
-        } else {
-          //兼容PC端
-          var x = Math.ceil(e.touches[0].pageX);
-        }
+    if (left >= props.imgSize.width - blockSize.value.width) {
+      left = props.imgSize.width - blockSize.value.width;
+    }
 
-        var move_block_left = x - bar_area_left; //小方块相对于父元素的left值
+    //拖动后小方块的left值
+    data.moveBlockLeft = left + "px";
+    data.leftBarWidth = left + "px";
 
-        if (
-          move_block_left >=
-          barArea_offsetWidth - props.blockSize.width / 2 - 2
-        ) {
-          move_block_left = barArea_offsetWidth - props.blockSize.width / 2 - 2;
-        }
-
-        if (move_block_left <= 0) {
-          move_block_left = props.blockSize.width / 2;
-        }
-
-        //拖动后小方块的left值
-        data.moveBlockLeft = move_block_left - props.blockSize.width / 2 + "px";
-        data.leftBarWidth = move_block_left - props.blockSize.width / 2 + "px";
-      }
-    })
-    .exec();
+    return;
+  }
 };
 
-const end = () => {
+const end = (e) => {
+  e.stopPropagation();
   // ... 鼠标松开逻辑
   data.endMovetime = new Date().getTime();
 
@@ -297,13 +300,15 @@ const end = () => {
       method: "POST",
     }).then((result) => {
       let res = result.data;
+      data.showRefresh = true;
+        data.status = false;
+        data.isEnd = true;
       if (res.repCode == "0000") {
         data.moveBlockBackgroundColor = "#5cb85c";
         data.leftBarBorderColor = "#5cb85c";
         data.iconColor = "#fff";
         data.iconClass = "icon-check";
-        data.showRefresh = true;
-        data.isEnd = true;
+
         setTimeout(() => {
           refresh();
         }, 1000);
@@ -333,9 +338,13 @@ const end = () => {
           data.tipWords = "";
         }, 1000);
       }
-    });
+    }).catch((err) => {
+      data.status = false;
+      data.isEnd = true;
+      console.log(err);
+    })
 
-    data.status = false;
+
   }
 };
 
