@@ -103,7 +103,7 @@ func (roleSrv systemAuthRoleService) getMemberCnt(roleId uint) (count int64) {
 func (roleSrv systemAuthRoleService) Add(addReq SystemAuthRoleAddReq) (e error) {
 	var role system_model.SystemAuthRole
 	if r := roleSrv.db.Where("name = ?", strings.Trim(addReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("角色名称已存在!")
+		return response.AssertArgumentError.SetMessage("角色名称已存在!")
 	}
 	response.Copy(&role, addReq)
 	role.Name = strings.Trim(addReq.Name, " ")
@@ -132,7 +132,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e erro
 	}
 	var role system_model.SystemAuthRole
 	if r := roleSrv.db.Where("id != ? AND name = ?", editReq.ID, strings.Trim(editReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("角色名称已存在!")
+		return response.AssertArgumentError.SetMessage("角色名称已存在!")
 	}
 	role.ID = editReq.ID
 	roleMap := structs.Map(editReq)
@@ -143,12 +143,14 @@ func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e erro
 	err = roleSrv.db.Transaction(func(tx *gorm.DB) error {
 		txErr := tx.Model(&role).Updates(roleMap).Error
 		var te error
-		if te = response.CheckErr(txErr, "Edit Updates in tx err"); te != nil {
+		if te = response.CheckErr(txErr, "编辑角色失败"); te != nil {
 			return te
 		}
+		// 删除角色菜单
 		if te = PermService.BatchDeleteByRoleId(editReq.ID, tx); te != nil {
 			return te
 		}
+		// 重新保存角色菜单
 		if te = PermService.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
 			return te
 		}
@@ -169,7 +171,7 @@ func (roleSrv systemAuthRoleService) Del(id uint) (e error) {
 		return
 	}
 	if r := roleSrv.db.Where("role = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("角色已被管理员使用,请先移除!")
+		return response.AssertArgumentError.SetMessage("角色已被管理员使用,请先移除!")
 	}
 	// 事务
 	err = roleSrv.db.Transaction(func(tx *gorm.DB) error {

@@ -19,7 +19,8 @@
                     <i class="iconfont icon-refresh"></i>
                 </div>
                 <img
-                    :src="'data:image/png;base64,' + pointBackImgBase"
+                    v-if="pointBackImgBase"
+                    :src="pointBackImgBase"
                     ref="canvas"
                     alt=""
                     style="width: 100%; height: 100%; display: block"
@@ -207,7 +208,8 @@ export default {
             }
             reqGet(data).then((res) => {
                 if (res.repCode == '0000') {
-                    pointBackImgBase.value = res.repData.originalImageBase64
+                    pointBackImgBase.value =
+                        'data:image/png;base64,' + res.repData.originalImageBase64
                     backToken.value = res.repData.token
                     secretKey.value = res.repData.secretKey
                     pointTextList.value = res.repData.wordList

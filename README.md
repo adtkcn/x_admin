@@ -18,10 +18,8 @@
 原仓库演示地址：https://go-admin.likeadmin.cn <br>
 账号：admin 密码：123456
     
-## 开发部署文档
-0. [使用](./docs/0.使用.md)
-1. [打包部署](./docs/1.go-打包部署.md) 
-2. [nginx配置.md](./docs/2.nginx配置.md)
+## 文档
+开发部署文档：https://adtkcn.github.io/x_admin/
 
 
 ## 简介
@@ -41,10 +39,10 @@
 - 素材管理
 - 网站设置
 - 图库管理
-- 代码生成器：一键生成前后端业务代码
+- 代码生成器：一键生成前端、后端、app代码
 - 审批流：基于`LogicFlow`和`VForm 3`,整体流程已实现，需要细化
 
-<img border="0" src="./docs/assets/menu.png" height="1000px" alt="alipay" title="alipay"/>
+<img border="0" src="./docs/assets/menu.png" height="1000px" />
  
 ![](./docs/assets/genCode.png)
 ![](./docs/assets/flow.png)

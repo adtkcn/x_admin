@@ -145,7 +145,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 	var tables []gen_model.GenTable
 	response.Copy(&tables, dbTbs)
 	if len(tables) == 0 {
-		e = response.AssertArgumentError.Make("表不存在!")
+		e = response.AssertArgumentError.SetMessage("表不存在!")
 		return
 	}
 	err = genSrv.db.Transaction(func(tx *gorm.DB) error {
@@ -193,7 +193,7 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 		return
 	}
 	if len(genTableCols) <= 0 {
-		e = response.AssertArgumentError.Make("旧数据异常！")
+		e = response.AssertArgumentError.SetMessage("旧数据异常！")
 		return
 	}
 	prevColMap := make(map[string]gen_model.GenTableColumn)
@@ -207,7 +207,7 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 		return
 	}
 	if len(columns) <= 0 {
-		e = response.AssertArgumentError.Make("同步结构失败,原表结构不存在！")
+		e = response.AssertArgumentError.SetMessage("同步结构失败,原表结构不存在！")
 		return
 	}
 	//事务处理
@@ -263,11 +263,11 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 	if editReq.GenTpl == tpl_utils.GenConstants.TplTree {
 		if editReq.TreePrimary == "" {
-			e = response.AssertArgumentError.Make("树主ID不能为空！")
+			e = response.AssertArgumentError.SetMessage("树主ID不能为空！")
 			return
 		}
 		if editReq.TreeParent == "" {
-			e = response.AssertArgumentError.Make("树父ID不能为空！")
+			e = response.AssertArgumentError.SetMessage("树父ID不能为空！")
 			return
 		}
 	}

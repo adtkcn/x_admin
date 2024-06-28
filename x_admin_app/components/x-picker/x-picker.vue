@@ -1,14 +1,16 @@
 <template>
-  <uv-input
-    :modelValue="selectItem?.[props.labelKey]"
-    placeholder="请选择"
-    readonly
-    @click="openPicker"
-  >
-  </uv-input>
+  <!-- 在微信小程序readonly后无法click,所以套一层view -->
+  <view style="flex: 1" @click="openPicker">
+    <uv-input
+      :modelValue="selectItem?.[props.labelKey]"
+      placeholder="请选择"
+      readonly
+    >
+    </uv-input>
+  </view>
 
   <uv-picker
-    ref="picker"
+    ref="pickerRef"
     :columns="columns"
     :keyName="props.labelKey"
     :defaultIndex="pickerIndex"
@@ -19,7 +21,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 
- const emit = defineEmits(["update:modelValue"])
+const emit = defineEmits(["update:modelValue"]);
 
 const props = defineProps({
   modelValue: {
@@ -40,18 +42,18 @@ const props = defineProps({
   },
 });
 const model = computed({
-    get() {
-        return props.modelValue
-    },
-    set(value) {
-        emit('update:modelValue', value)
-    }
-})
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit("update:modelValue", value);
+  },
+});
 
 const columns = computed(() => {
   return [props.columns];
 });
-const picker = ref(null);
+const pickerRef = ref(null);
 
 // const model = defineModel('modelValue');
 const pickerIndex = ref([0]);
@@ -59,7 +61,8 @@ const pickerIndex = ref([0]);
 const selectItem = ref({});
 
 function openPicker() {
-  picker.value.open();
+
+  pickerRef.value.open();
 }
 function handleConfirm(e) {
   // debugger;
@@ -73,7 +76,7 @@ function handleConfirm(e) {
   }
 }
 function updateSelectItem() {
-  console.log("updateSelectItem", model.value, props.columns);
+ 
   if (!model.value) {
     pickerIndex.value = [0];
     selectItem.value = {};
@@ -101,13 +104,13 @@ function updateSelectItem() {
   }
 }
 onMounted(() => {
-  console.log("onMounted");
+ 
   updateSelectItem();
 });
 watch(
   () => [model.value, props.columns],
   (newVal) => {
-    console.log("watch", newVal);
+ 
     updateSelectItem();
   }
 );

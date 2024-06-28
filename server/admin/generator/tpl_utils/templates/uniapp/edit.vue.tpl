@@ -10,18 +10,20 @@
 					<uv-number-box v-model="form.{{{ (toCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 				{{{- else if eq .HtmlType "textarea" }}}
 					<uv-textarea v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-textarea>
+				{{{- else if eq .HtmlType "datetime" }}}
+					<x-date v-model:time="form.{{{ (toCamelCase .GoField) }}}"></x-date>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
-				{{{- if ne .DictType "" }}}
-					<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
-				{{{- else }}}
-					请选择字典生成代码
-				{{{- end }}}
+					{{{- if ne .DictType "" }}}
+						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+					{{{- else }}}
+						请选择字典生成代码
+					{{{- end }}}
 				{{{- end }}}
 			</uv-form-item>
 			{{{- end }}}
 			{{{- end }}}
 
-			<uv-button   type="primary" text="提交" customStyle="margin-top: 20rpx"
+			<uv-button   type="primary" text="提交" customStyle="margin: 40rpx 0"
 				@click="submit"></uv-button>
 		</uv-form>
 	</view>
@@ -34,7 +36,8 @@
 	} from "@dcloudio/uni-app";
  	import {
 		{{{ .ModuleName }}}_detail,
-		{{{ .ModuleName }}}_edit
+		{{{ .ModuleName }}}_edit,
+		{{{ .ModuleName }}}_add
 	} from "@/api/{{{ .ModuleName }}}";
 	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{ .ModuleName }}}";
 
@@ -81,7 +84,9 @@
 	}
 	onLoad((e) => {
 		console.log("onLoad", e);
-		getDetails(e.id);
+		if (e.id) {
+			getDetails(e.id);
+		}
 	});
 
 
@@ -112,15 +117,26 @@
 	function submit() {
 		console.log("submit", form.value);
 		formRef.value.validate().then(() => {
-			{{{ .ModuleName }}}_edit(form.value).then((res) => {
-				if (res.code == 200) {
-					toast("编辑成功");
-			
-					getDetails(form.value?.id);
-				} else {
-					toast(res.message);
-				}
-			});
+			if (form.value.id) {
+				{{{ .ModuleName }}}_edit(form.value).then((res) => {
+					if (res.code == 200) {
+						toast("编辑成功");				
+						getDetails(form.value?.id);
+					} else {
+						toast(res.message);
+					}
+				});
+			}else{
+				{{{ .ModuleName }}}_add(form.value).then((res) => {
+					if (res.code == 200) {
+						toast("添加成功");
+						uni.navigateBack();
+					} else {
+						toast(res.message);
+					}
+				});
+			}
+
 		})
 	}
 </script>

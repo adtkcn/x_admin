@@ -18,12 +18,10 @@
         <view
           class="verify-sub-block"
           :style="{
-            width:
-              Math.floor((parseInt(props.imgSize.width) * 47) / 310) + 'px',
+            width: blockSize.width + 'px',
             height: props.imgSize.height + 'px',
             top: '0px',
             left: data.moveBlockLeft,
-            transition: data.transitionLeft,
           }"
         >
           <image
@@ -74,11 +72,10 @@
           @touchend="end"
           @touchmove="move"
           :style="{
-            width: '40px',
+            width: blockSize.width + 'px',
             height: '40px',
             'background-color': data.moveBlockBackgroundColor,
             left: data.moveBlockLeft,
-            transition: data.transitionLeft,
           }"
         >
           <text
@@ -95,7 +92,15 @@
  * VerifySlide
  * @description 滑块
  * */
-import { ref, reactive, onMounted, watch, getCurrentInstance } from "vue";
+import {
+  ref,
+  reactive,
+  onMounted,
+  onUnmounted,
+  watch,
+  computed,
+  getCurrentInstance,
+} from "vue";
 import { aesEncrypt } from "./../utils/ase.js";
 import { myRequest } from "../utils/request.js";
 defineOptions({
@@ -127,12 +132,17 @@ const props = defineProps({
   blockSize: {
     type: Object,
     default: () => ({
-      width: 50,
-      height: 50,
+      // width: 47,
+      height: 47,
     }),
   },
 });
-
+const blockSize = computed(() => {
+  return {
+    width: (props.imgSize.width / 310) * 47,
+    height: props.blockSize.height,
+  };
+});
 // Data 定义
 const data = reactive({
   secretKey: "", //后端返回的加密秘钥 字段
@@ -164,49 +174,13 @@ const data = reactive({
   status: false, //鼠标状态
   isEnd: false, //是够验证完成
   showRefresh: true,
-  transitionLeft: "",
 });
 
-// Methods 定义
-const init = () => {
-  data.text = props.explain;
-  getPictrue();
-
-  // #ifdef WEB
-  window.removeEventListener("touchmove", (e) => {
-    move(e);
-  });
-  window.removeEventListener("mousemove", (e) => {
-    move(e);
-  });
-
-  //鼠标松开
-  window.removeEventListener("touchend", () => {
-    end();
-  });
-  window.removeEventListener("mouseup", () => {
-    end();
-  });
-
-  window.addEventListener("touchmove", (e) => {
-    move(e);
-  });
-  window.addEventListener("mousemove", (e) => {
-    move(e);
-  });
-
-  //鼠标松开
-  window.addEventListener("touchend", () => {
-    end();
-  });
-  window.addEventListener("mouseup", () => {
-    end();
-  });
-  // #endif
-};
-
+let startLeft = ref(0);
 const start = (e) => {
   // ... 鼠标按下逻辑
+  // console.log('e',e);
+
   data.startMoveTime = new Date().getTime(); //开始滑动的时间
   if (data.isEnd == false) {
     data.text = "";
@@ -215,54 +189,50 @@ const start = (e) => {
     data.iconColor = "#fff";
     e.stopPropagation();
     data.status = true;
+    if (!e.touches) {
+      //兼容移动端
+      startLeft.value = Math.ceil(e.clientX);
+    } else {
+      //兼容PC端
+      startLeft.value = Math.ceil(e.touches[0].pageX);
+    }
   }
 };
 
-const appInstance = getCurrentInstance().proxy;
+// const appInstance = getCurrentInstance().proxy;
 
 const move = (e) => {
-  // ... 鼠标移动逻辑
-  var query = uni.createSelectorQuery().in(appInstance);
-  var barArea = query.select(".verify-bar-area");
-  var bar_area_left, barArea_offsetWidth;
-  barArea
-    .boundingClientRect((rect) => {
-      // @ts-ignore
-      bar_area_left = Math.ceil(rect?.left);
-      // @ts-ignore
-      barArea_offsetWidth = Math.ceil(rect?.width);
+  e.stopPropagation();
+  if (data.status == true) {
+    if (!e.touches) {
+      //兼容移动端
+      var x = Math.ceil(e.clientX);
+    } else {
+      //兼容PC端
+      var x = Math.ceil(e.touches[0].pageX);
+    }
+    let left = x - startLeft.value; //小方块相对于父元素的left值
+    // console.log("left", left);
+    if (left < 0) {
+      left = 0;
+    }
 
-      if (data.status && data.isEnd == false) {
-        if (!e.touches) {
-          //兼容移动端
-          var x = Math.ceil(e.clientX);
-        } else {
-          //兼容PC端
-          var x = Math.ceil(e.touches[0].pageX);
-        }
+    if (left >= props.imgSize.width - blockSize.value.width) {
+      left = props.imgSize.width - blockSize.value.width;
+    }
 
-        var move_block_left = x - bar_area_left; //小方块相对于父元素的left值
+    //拖动后小方块的left值
+    data.moveBlockLeft = left + "px";
+    data.leftBarWidth = left + "px";
 
-        if (
-          move_block_left >=
-          barArea_offsetWidth - props.blockSize.width / 2 - 2
-        ) {
-          move_block_left = barArea_offsetWidth - props.blockSize.width / 2 - 2;
-        }
-
-        if (move_block_left <= 0) {
-          move_block_left = props.blockSize.width / 2;
-        }
-
-        //拖动后小方块的left值
-        data.moveBlockLeft = move_block_left - props.blockSize.width / 2 + "px";
-        data.leftBarWidth = move_block_left - props.blockSize.width / 2 + "px";
-      }
-    })
-    .exec();
+    return;
+  }
 };
 
-const end = () => {
+const end = (e) => {
+  e.stopPropagation();
+  console.log('end');
+  
   // ... 鼠标松开逻辑
   data.endMovetime = new Date().getTime();
 
@@ -295,47 +265,53 @@ const end = () => {
       url: `/captcha/check`,
       data: sendData,
       method: "POST",
-    }).then((result) => {
-      let res = result.data;
-      if (res.repCode == "0000") {
-        data.moveBlockBackgroundColor = "#5cb85c";
-        data.leftBarBorderColor = "#5cb85c";
-        data.iconColor = "#fff";
-        data.iconClass = "icon-check";
+    })
+      .then((result) => {
+        let res = result.data;
         data.showRefresh = true;
+        data.status = false;
         data.isEnd = true;
-        setTimeout(() => {
-          refresh();
-        }, 1000);
-        data.passFlag = true;
-        data.tipWords = `${(
-          (data.endMovetime - data.startMoveTime) /
-          1000
-        ).toFixed(2)}s验证成功`;
-        setTimeout(() => {
-          data.tipWords = "";
-          emit("success", {
-            ...sendData,
-          });
-        }, 500);
-      } else {
-        data.moveBlockBackgroundColor = "#d9534f";
-        data.leftBarBorderColor = "#d9534f";
-        data.iconColor = "#fff";
-        data.iconClass = "icon-close";
-        data.passFlag = false;
-        setTimeout(() => {
-          refresh();
-        }, 1000);
-        emit("error");
-        data.tipWords = "验证失败";
-        setTimeout(() => {
-          data.tipWords = "";
-        }, 1000);
-      }
-    });
+        if (res.repCode == "0000") {
+          data.moveBlockBackgroundColor = "#5cb85c";
+          data.leftBarBorderColor = "#5cb85c";
+          data.iconColor = "#fff";
+          data.iconClass = "icon-check";
 
-    data.status = false;
+          setTimeout(() => {
+            refresh();
+          }, 1000);
+          data.passFlag = true;
+          data.tipWords = `${(
+            (data.endMovetime - data.startMoveTime) /
+            1000
+          ).toFixed(2)}s验证成功`;
+          setTimeout(() => {
+            data.tipWords = "";
+            emit("success", {
+              ...sendData,
+            });
+          }, 500);
+        } else {
+          data.moveBlockBackgroundColor = "#d9534f";
+          data.leftBarBorderColor = "#d9534f";
+          data.iconColor = "#fff";
+          data.iconClass = "icon-close";
+          data.passFlag = false;
+          setTimeout(() => {
+            refresh();
+          }, 1000);
+          emit("error");
+          data.tipWords = "验证失败";
+          setTimeout(() => {
+            data.tipWords = "";
+          }, 1000);
+        }
+      })
+      .catch((err) => {
+        data.status = false;
+        data.isEnd = true;
+        console.log(err);
+      });
   }
 };
 
@@ -343,7 +319,7 @@ const refresh = () => {
   // ... 刷新验证码逻辑
   data.showRefresh = true;
   data.finishText = "";
-  //   data.transitionLeft = "left .3s";
+
   data.moveBlockLeft = "0";
   data.leftBarWidth = "";
 
@@ -354,7 +330,6 @@ const refresh = () => {
   getPictrue();
   data.isEnd = false;
   setTimeout(() => {
-    data.transitionLeft = "";
     data.text = props.explain;
   }, 300);
 };
@@ -391,12 +366,38 @@ const getPictrue = () => {
   });
 };
 
-defineExpose({
-  refresh,
-});
+// Methods 定义
+const init = () => {
+  data.text = props.explain;
+  getPictrue();
+
+  // #ifdef WEB
+  // window.removeEventListener("touchmove",move);
+  // window.removeEventListener("mousemove",move);
+
+  window.addEventListener("touchmove", move);
+  window.addEventListener("mousemove", move);
+
+  //鼠标松开
+  window.addEventListener("touchend", end);
+  window.addEventListener("mouseup", end);
+  // #endif
+};
 // 组件挂载时调用
 onMounted(() => {
   init();
+});
+onUnmounted(() => {
+  // #ifdef WEB
+  window.removeEventListener("touchmove", move);
+  window.removeEventListener("mousemove", move);
+  window.removeEventListener("touchend", end);
+  window.removeEventListener("mouseup", end);
+  // #endif
+});
+
+defineExpose({
+  refresh,
 });
 </script>
 <style scoped>

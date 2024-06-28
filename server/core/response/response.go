@@ -53,14 +53,14 @@ func (rt RespType) Error() string {
 	return strconv.Itoa(rt.code) + ":" + rt.message
 }
 
-// Make 以响应类型生成信息
-func (rt RespType) Make(message string) RespType {
+// SetMessage 以响应类型生成信息
+func (rt RespType) SetMessage(message string) RespType {
 	rt.message = message
 	return rt
 }
 
-// MakeData 以响应类型生成数据
-func (rt RespType) MakeData(data interface{}) RespType {
+// SetData 以响应类型生成数据
+func (rt RespType) SetData(data interface{}) RespType {
 	rt.data = data
 	return rt
 }
@@ -164,7 +164,7 @@ func IsFailWithResp(c *gin.Context, err error) bool {
 		FailWithData(c, v, data)
 	// 其他类型
 	default:
-		Fail(c, SystemError.Make(err.Error()))
+		Fail(c, SystemError.SetMessage(err.Error()))
 	}
 	return true
 }
@@ -194,7 +194,7 @@ func CheckErr(err error, template string, args ...interface{}) (e error) {
 	args = append(args, err)
 	if err != nil {
 		core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf(template+prefix+"err=[%+v]", args...)
-		return SystemError.Make(template)
+		return SystemError.SetMessage(template)
 	}
 	return
 }
@@ -205,10 +205,10 @@ func CheckMysqlErr(err error) (e error) {
 		switch mysqlErr.Number {
 		case 404:
 			core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf("record not found: err=[%+v]", err)
-			return SystemError.Make("数据不存在")
+			return SystemError.SetMessage("数据不存在")
 		case 1062: // MySQL中表示重复条目的代码
 			core.Logger.WithOptions(zap.AddCallerSkip(1)).Infof("数据已存在: err=[%+v]", err)
-			return SystemError.Make("数据已存在")
+			return SystemError.SetMessage("数据已存在")
 		default:
 			// 处理其他错误
 			core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf("未知错误: err=[%+v]", err)
@@ -221,7 +221,7 @@ func CheckMysqlErr(err error) (e error) {
 func CheckErrDBNotRecord(err error, message string) (e error) {
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		core.Logger.WithOptions(zap.AddCallerSkip(1)).Infof("记录不存在: err=[%+v]", err)
-		return SystemError.Make(message)
+		return SystemError.SetMessage(message)
 	}
 	return
 }

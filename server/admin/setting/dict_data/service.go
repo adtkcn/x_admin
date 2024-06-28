@@ -120,7 +120,7 @@ func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e 
 // Add 字典数据新增
 func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) {
 	if r := ddSrv.db.Where("name = ? AND is_delete = ?", addReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("字典数据已存在！")
+		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 	var dd setting_model.DictData
 	response.Copy(&dd, addReq)
@@ -139,7 +139,7 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 		return
 	}
 	if r := ddSrv.db.Where("id != ? AND name = ? AND is_delete = ?", editReq.ID, editReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("字典数据已存在！")
+		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 	var dd setting_model.DictData
 	response.Copy(&dd, editReq)

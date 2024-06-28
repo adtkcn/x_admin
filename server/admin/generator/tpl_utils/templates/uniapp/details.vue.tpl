@@ -1,11 +1,5 @@
 <template>
 	<view class="page-content">
-        <uv-navbar leftText="" :placeholder="true" title="{{{.FunctionName}}}详情" autoBack>
-            <template v-slot:right>
-                <uv-icon name="edit-pen" size="20" @click="edit"></uv-icon>
-            </template>
-        </uv-navbar>
-
 		<uv-form labelPosition="left" :model="form">
         {{{- range .Columns }}}
         {{{- if .IsList }}}
@@ -25,7 +19,7 @@
             v-if="$perms('admin:{{{ .ModuleName }}}:edit')"
             type="primary"
             text="编辑"
-            customStyle="margin-top: 20rpx"
+            customStyle="margin: 40rpx 0"
             @click="edit"
         ></uv-button>
 

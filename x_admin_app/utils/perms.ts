@@ -1,12 +1,12 @@
 import { useUserStore } from "@/stores/user";
 
 export const perms = (perms:string) => {
-  if (!perms) return true;
+  if (!perms) return false;
   const userStore = useUserStore();
-  const auth = userStore.auth;
+  const permissions = userStore.permissions;
 
-  let find = auth.find((item) => {
-    return item.action === perms;
+  let find = permissions.find((item) => {
+    return item === perms|| item === "*";
   });
   return !!find;
 };

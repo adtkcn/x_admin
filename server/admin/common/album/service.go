@@ -110,7 +110,7 @@ func (albSrv albumService) AlbumMove(ids []uint, cid int) (e error) {
 		return
 	}
 	if len(albums) == 0 {
-		return response.AssertArgumentError.Make("文件丢失！")
+		return response.AssertArgumentError.SetMessage("文件丢失！")
 	}
 	if cid > 0 {
 		err = albSrv.db.Where("id = ? AND is_delete = ?", cid, 0).Limit(1).First(&common_model.AlbumCate{}).Error
@@ -150,7 +150,7 @@ func (albSrv albumService) AlbumDel(ids []uint) (e error) {
 		return
 	}
 	if len(albums) == 0 {
-		return response.AssertArgumentError.Make("文件丢失！")
+		return response.AssertArgumentError.SetMessage("文件丢失！")
 	}
 	err = albSrv.db.Model(&common_model.Album{}).Where("id in ?", ids).Updates(
 		common_model.Album{IsDelete: 1, DeleteTime: core.NowTime()}).Error
@@ -218,7 +218,7 @@ func (albSrv albumService) CateDel(id uint) (e error) {
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("当前分类正被使用中,不能删除！")
+		return response.AssertArgumentError.SetMessage("当前分类正被使用中,不能删除！")
 	}
 	cate.IsDelete = 1
 	cate.DeleteTime = core.NowTime()

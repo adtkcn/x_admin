@@ -102,7 +102,7 @@ func (service systemAuthPostService) Add(addReq SystemAuthPostAddReq) (e error) 
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("该岗位已存在!")
+		return response.AssertArgumentError.SetMessage("该岗位已存在!")
 	}
 	var post system_model.SystemAuthPost
 	response.Copy(&post, addReq)
@@ -127,7 +127,7 @@ func (service systemAuthPostService) Edit(editReq SystemAuthPostEditReq) (e erro
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("该岗位已存在!")
+		return response.AssertArgumentError.SetMessage("该岗位已存在!")
 	}
 	// 更新
 	response.Copy(&post, editReq)
@@ -152,7 +152,7 @@ func (service systemAuthPostService) Del(id uint) (e error) {
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("该岗位存在管理员,请先移除!")
+		return response.AssertArgumentError.SetMessage("该岗位存在管理员,请先移除!")
 	}
 
 	err = service.db.Delete(&post).Error

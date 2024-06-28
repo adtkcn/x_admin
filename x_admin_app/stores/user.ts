@@ -10,8 +10,8 @@ export const useUserStore = defineStore("user", {
       username: "",
       avatar: "",
       userInfo: {},
-      menu: [],
-      auth: [],
+      // menu: [],
+      permissions: [],
     };
   },
   // 也可以这样定义
@@ -33,7 +33,7 @@ export const useUserStore = defineStore("user", {
               
               this.avatar = data.user.avatar ||"";
               // this.menu = data.menu;
-              // this.auth = data.auth;
+              this.permissions = data.permissions;
               this.userInfo = data.user;
               resolve(data);
             } else {

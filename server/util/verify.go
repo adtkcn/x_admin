@@ -62,10 +62,10 @@ func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
 	if err := c.ShouldBindBodyWith(&obj, binding.JSON); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
-			e = response.ParamsValidError.MakeData(err.Error())
+			e = response.ParamsValidError.SetData(err.Error())
 			return
 		}
-		e = response.ParamsValidError.MakeData(errs.Translate(trans))
+		e = response.ParamsValidError.SetData(errs.Translate(trans))
 		return
 	}
 	// response.Copy(obj, reqInfo)
@@ -74,10 +74,10 @@ func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
 	// if err := c.ShouldBindBodyWith(obj, binding.JSON); err != nil {
 	// 	errs, ok := err.(validator.ValidationErrors)
 	// 	if !ok {
-	// 		e = response.ParamsValidError.MakeData(err.Error())
+	// 		e = response.ParamsValidError.SetData(err.Error())
 	// 		return
 	// 	}
-	// 	e = response.ParamsValidError.MakeData(errs.Translate(trans))
+	// 	e = response.ParamsValidError.SetData(errs.Translate(trans))
 	// 	return
 	// }
 	// return
@@ -86,12 +86,12 @@ func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
 func (vu verifyUtil) VerifyJSONArray(c *gin.Context, obj any) (e error) {
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		e = response.ParamsValidError.MakeData(err.Error())
+		e = response.ParamsValidError.SetData(err.Error())
 		return
 	}
 	err = json.Unmarshal(body, &obj)
 	if err != nil {
-		e = response.ParamsValidError.MakeData(err.Error())
+		e = response.ParamsValidError.SetData(err.Error())
 		return
 	}
 	return
@@ -101,10 +101,10 @@ func (vu verifyUtil) VerifyBody(c *gin.Context, obj any) (e error) {
 	if err := c.ShouldBind(obj); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
-			e = response.ParamsValidError.MakeData(err.Error())
+			e = response.ParamsValidError.SetData(err.Error())
 			return
 		}
-		e = response.ParamsValidError.MakeData(errs.Translate(trans))
+		e = response.ParamsValidError.SetData(errs.Translate(trans))
 		return
 	}
 	return
@@ -114,10 +114,10 @@ func (vu verifyUtil) VerifyHeader(c *gin.Context, obj any) (e error) {
 	if err := c.ShouldBindHeader(obj); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
-			e = response.ParamsValidError.MakeData(err.Error())
+			e = response.ParamsValidError.SetData(err.Error())
 			return
 		}
-		e = response.ParamsValidError.MakeData(errs.Translate(trans))
+		e = response.ParamsValidError.SetData(errs.Translate(trans))
 		return
 	}
 	return
@@ -127,10 +127,10 @@ func (vu verifyUtil) VerifyQuery(c *gin.Context, obj any) (e error) {
 	if err := c.ShouldBindQuery(obj); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
-			e = response.ParamsValidError.MakeData(err.Error())
+			e = response.ParamsValidError.SetData(err.Error())
 			return
 		}
-		e = response.ParamsValidError.MakeData(errs.Translate(trans))
+		e = response.ParamsValidError.SetData(errs.Translate(trans))
 		return
 	}
 	return
@@ -141,10 +141,10 @@ func (vu verifyUtil) VerifyFile(c *gin.Context, name string) (file *multipart.Fi
 	if err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
-			e = response.ParamsValidError.MakeData(err.Error())
+			e = response.ParamsValidError.SetData(err.Error())
 			return
 		}
-		e = response.ParamsValidError.MakeData(errs.Translate(trans))
+		e = response.ParamsValidError.SetData(errs.Translate(trans))
 		return
 	}
 	return

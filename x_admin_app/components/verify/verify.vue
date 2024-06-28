@@ -1,5 +1,5 @@
 <template>
-  <view :class="props.mode == 'pop' ? 'mask' : ''" v-show="showBox">
+  <view :class="props.mode == 'pop' ? 'mask' : ''" v-if="showBox">
     <view
       :class="props.mode == 'pop' ? 'verify-box' : ''"
       :style="{ 'max-width': parseInt(props.imgSize.width) + 30 + 'px' }"

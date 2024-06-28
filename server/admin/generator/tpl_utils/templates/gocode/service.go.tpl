@@ -50,6 +50,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq {{{ title
 	{{{- if contains .AllFields "is_delete" }}}
 	dbModel = dbModel.Where("is_delete = ?", 0)
 	{{{- end }}}
+	return dbModel
 }
 // List {{{ .FunctionName }}}列表
 func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq, listReq {{{ title (toCamelCase .EntityName) }}}ListReq) (res response.PageResp, e error) {

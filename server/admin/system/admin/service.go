@@ -43,7 +43,7 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 	// 管理员信息
 	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&sysAdmin).Error
-	if e = response.CheckErr(err, "Self First err"); e != nil {
+	if e = response.CheckErr(err, "获取用户信息失败"); e != nil {
 		return
 	}
 	// 角色权限
@@ -59,18 +59,21 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 			err := adminSrv.db.Where(
 				"id in ? AND is_disable = ? AND menu_type in ?", menuIds, 0, []string{"C", "A"}).Order(
 				"menu_sort, id").Find(&menus).Error
-			if e = response.CheckErr(err, "Self SystemAuthMenu Find err"); e != nil {
+			if e = response.CheckErr(err, "查找权限失败"); e != nil {
 				return
 			}
 			if len(menus) > 0 {
 				for _, v := range menus {
+					if v.Perms == "" {
+						continue
+					}
 					auths = append(auths, strings.Trim(v.Perms, " "))
 				}
 			}
 		}
-		if len(auths) > 0 {
-			auths = append(auths, "")
-		}
+		// if len(auths) > 0 {
+		// 	auths = append(auths, "")
+		// }
 	} else {
 		auths = append(auths, "*")
 	}
@@ -231,7 +234,7 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("账号已存在换一个吧！")
+		return response.AssertArgumentError.SetMessage("账号已存在换一个吧！")
 	}
 	// 检查nickname
 	r = adminSrv.db.Where("nickname = ? AND is_delete = ?", addReq.Nickname, 0).Limit(1).Find(&sysAdmin)
@@ -240,18 +243,18 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("昵称已存在换一个吧！")
+		return response.AssertArgumentError.SetMessage("昵称已存在换一个吧！")
 	}
 	var roleResp role.SystemAuthRoleResp
 	if roleResp, e = role.Service.Detail(addReq.Role); e != nil {
 		return
 	}
 	if roleResp.IsDisable > 0 {
-		return response.AssertArgumentError.Make("当前角色已被禁用!")
+		return response.AssertArgumentError.SetMessage("当前角色已被禁用!")
 	}
 	passwdLen := len(addReq.Password)
-	if !(passwdLen >= 6 && passwdLen <= 20) {
-		return response.Failed.Make("密码必须在6~20位")
+	if passwdLen != 32 {
+		return response.Failed.SetMessage("密码格式不正确")
 	}
 	salt := util.ToolsUtil.RandomString(5)
 	response.Copy(&sysAdmin, addReq)
@@ -285,7 +288,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("账号已存在换一个吧！")
+		return response.AssertArgumentError.SetMessage("账号已存在换一个吧！")
 	}
 	// 检查nickname
 	r = adminSrv.db.Where("nickname = ? AND is_delete = ? AND id != ?", editReq.Nickname, 0, editReq.ID).Find(&admin)
@@ -294,7 +297,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.Make("昵称已存在换一个吧！")
+		return response.AssertArgumentError.SetMessage("昵称已存在换一个吧！")
 	}
 	// 检查role
 	if editReq.Role > 0 && editReq.ID != 1 {
@@ -317,7 +320,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq SystemAuthAd
 	if editReq.Password != "" {
 		passwdLen := len(editReq.Password)
 		if passwdLen != 32 {
-			return response.Failed.Make("密码格式不正确")
+			return response.Failed.SetMessage("密码格式不正确")
 		}
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt
@@ -373,11 +376,11 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq SystemAu
 	if updateReq.Password != "" {
 		currPass := util.ToolsUtil.MakeMd5(updateReq.CurrPassword + admin.Salt)
 		if currPass != admin.Password {
-			return response.Failed.Make("当前密码不正确!")
+			return response.Failed.SetMessage("当前密码不正确!")
 		}
 		passwdLen := len(updateReq.Password)
 		if passwdLen != 32 {
-			return response.Failed.Make("新密码格式不正确")
+			return response.Failed.SetMessage("新密码格式不正确")
 		}
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt
@@ -420,10 +423,10 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 		return
 	}
 	if id == 1 {
-		return response.AssertArgumentError.Make("系统管理员不允许删除!")
+		return response.AssertArgumentError.SetMessage("系统管理员不允许删除!")
 	}
 	if id == config.AdminConfig.GetAdminId(c) {
-		return response.AssertArgumentError.Make("不能删除自己!")
+		return response.AssertArgumentError.SetMessage("不能删除自己!")
 	}
 	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: core.TsTime(time.Now())}).Error
 	e = response.CheckErr(err, "Del Updates err")
@@ -438,10 +441,10 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id uint) (e error
 		return
 	}
 	if admin.ID == 0 {
-		return response.AssertArgumentError.Make("账号已不存在!")
+		return response.AssertArgumentError.SetMessage("账号已不存在!")
 	}
 	if id == config.AdminConfig.GetAdminId(c) {
-		return response.AssertArgumentError.Make("不能禁用自己!")
+		return response.AssertArgumentError.SetMessage("不能禁用自己!")
 	}
 	var isDisable uint8
 	if admin.IsDisable == 0 {

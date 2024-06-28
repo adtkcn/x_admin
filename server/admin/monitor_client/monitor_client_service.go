@@ -9,16 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type IMonitorClientService interface {
-	List(page request.PageReq, listReq MonitorClientListReq) (res response.PageResp, e error)
-	ListAll() (res []MonitorClientResp, e error)
-
-	Detail(id int) (res MonitorClientResp, e error)
-	Add(addReq MonitorClientAddReq) (e error)
-	Edit(editReq MonitorClientEditReq) (e error)
-	Del(id int) (e error)
-}
-
 var Service = NewMonitorClientService()
 
 // NewMonitorClientService 初始化
@@ -27,11 +17,12 @@ func NewMonitorClientService() *monitorClientService {
 	return &monitorClientService{db: db}
 }
 
-// monitorClientService 客户端信息服务实现类
+// monitorClientService 监控-客户端信息服务实现类
 type monitorClientService struct {
 	db *gorm.DB
 }
 
+// List 监控-客户端信息列表
 func (service monitorClientService) GetModel(listReq MonitorClientListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.MonitorClient{})
@@ -62,72 +53,81 @@ func (service monitorClientService) GetModel(listReq MonitorClientListReq) *gorm
 	if listReq.Ua != "" {
 		dbModel = dbModel.Where("ua = ?", listReq.Ua)
 	}
-
+	if listReq.CreateTimeStart != "" {
+		dbModel = dbModel.Where("create_time >= ?", listReq.CreateTimeStart)
+	}
+	if listReq.CreateTimeEnd != "" {
+		dbModel = dbModel.Where("create_time <= ?", listReq.CreateTimeEnd)
+	}
+	if listReq.ClientTimeStart != "" {
+		dbModel = dbModel.Where("client_time >= ?", listReq.ClientTimeStart)
+	}
+	if listReq.ClientTimeEnd != "" {
+		dbModel = dbModel.Where("client_time <= ?", listReq.ClientTimeEnd)
+	}
 	return dbModel
 }
 
-// List 客户端信息列表
+// List 监控-客户端信息列表
 func (service monitorClientService) List(page request.PageReq, listReq MonitorClientListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
-
 	dbModel := service.GetModel(listReq)
-
 	// 总数
 	var count int64
 	err := dbModel.Count(&count).Error
-	if e = response.CheckErr(err, "列表总数获取失败"); e != nil {
+	if e = response.CheckErr(err, "失败"); e != nil {
 		return
 	}
 	// 数据
-	var objs []model.MonitorClient
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
-	if e = response.CheckErr(err, "列表获取失败"); e != nil {
+	var modelList []model.MonitorClient
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
+	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	resps := []MonitorClientResp{}
-	response.Copy(&resps, objs)
+	result := []MonitorClientResp{}
+	response.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    result,
 	}, nil
 }
 
-// ListAll 客户端信息列表
-func (service monitorClientService) ListAll() (res []MonitorClientResp, e error) {
-	var objs []model.MonitorClient
+// ListAll 监控-客户端信息列表
+func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res []MonitorClientResp, e error) {
+	dbModel := service.GetModel(listReq)
 
-	err := service.db.Find(&objs).Error
-	if e = response.CheckErr(err, "获取列表失败"); e != nil {
+	var modelList []model.MonitorClient
+
+	err := dbModel.Find(&modelList).Error
+	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	response.Copy(&res, objs)
+	response.Copy(&res, modelList)
 	return res, nil
 }
 
-// Detail 客户端信息详情
+// Detail 监控-客户端信息详情
 func (service monitorClientService) Detail(id int) (res MonitorClientResp, e error) {
 	var obj model.MonitorClient
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckErr(err, "获取详情失败"); e != nil {
 		return
 	}
 	response.Copy(&res, obj)
 	return
 }
 
-// Add 客户端信息新增
+// Add 监控-客户端信息新增
 func (service monitorClientService) Add(addReq MonitorClientAddReq) (e error) {
 	var obj model.MonitorClient
 	response.Copy(&obj, addReq)
-	// obj.ClientTime = core.ToUnix(addReq.ClientTime)
-
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -137,7 +137,7 @@ func (service monitorClientService) Add(addReq MonitorClientAddReq) (e error) {
 	return
 }
 
-// Edit 客户端信息编辑
+// Edit 监控-客户端信息编辑
 func (service monitorClientService) Edit(editReq MonitorClientEditReq) (e error) {
 	var obj model.MonitorClient
 	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
@@ -145,17 +145,17 @@ func (service monitorClientService) Edit(editReq MonitorClientEditReq) (e error)
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
+	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
 	// 更新
 	response.Copy(&obj, editReq)
-	err = service.db.Model(&obj).Updates(obj).Error
-	e = response.CheckErr(err, "编辑失败")
+	err = service.db.Model(&obj).Select("*").Updates(obj).Error
+	e = response.CheckErr(err, "更新失败")
 	return
 }
 
-// Del 客户端信息删除
+// Del 监控-客户端信息删除
 func (service monitorClientService) Del(id int) (e error) {
 	var obj model.MonitorClient
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
@@ -163,7 +163,7 @@ func (service monitorClientService) Del(id int) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
+	if e = response.CheckErr(err, "查询数据失败"); e != nil {
 		return
 	}
 	// 删除
@@ -172,20 +172,20 @@ func (service monitorClientService) Del(id int) (e error) {
 	return
 }
 
-// ExportFile 客户端信息导出
+// ExportFile 监控-客户端信息导出
 func (service monitorClientService) ExportFile(listReq MonitorClientListReq) (res []MonitorClientResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
 	// 数据
-	var objs []model.MonitorClient
-	err := dbModel.Order("id asc").Find(&objs).Error
-	if e = response.CheckErr(err, "列表获取失败"); e != nil {
+	var modelList []model.MonitorClient
+	err := dbModel.Order("id asc").Find(&modelList).Error
+	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	resps := []MonitorClientResp{}
-	response.Copy(&resps, objs)
-	return resps, nil
+	result := []MonitorClientResp{}
+	response.Copy(&result, modelList)
+	return result, nil
 }
 
 // 导入

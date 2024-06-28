@@ -61,6 +61,7 @@ export function usePaging<T>(options: Options) {
             pager.loading = "loadmore";
           }
         }else{
+          toast(res.message);
           pager.loading = "loadmore";
         }
         return Promise.resolve(res);

@@ -25,9 +25,9 @@ admin:{{{.ModuleName }}}:detail
 admin:{{{.ModuleName }}}:ExportFile
 admin:{{{.ModuleName }}}:ImportFile
 
-// 列表
+// 列表-先添加菜单获取菜单id
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'C', '{{{ .FunctionName }}}', '/{{{ .ModuleName }}}/index', '{{{ .ModuleName }}}/index', 0, 1, 0, now(), now());
-按钮
+按钮-替换pid参数为菜单id
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '{{{ .FunctionName }}}添加','admin:{{{ .ModuleName }}}:add', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '{{{ .FunctionName }}}编辑','admin:{{{ .ModuleName }}}:edit', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '{{{ .FunctionName }}}删除','admin:{{{ .ModuleName }}}:del', 0, 1, 0, now(), now());

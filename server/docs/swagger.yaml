@@ -1,0 +1,1839 @@
+basePath: /
+definitions:
+  flow_apply.FlowApplyResp:
+    properties:
+      applyUserId:
+        description: 申请人id
+        type: integer
+      applyUserNickname:
+        description: 申请人昵称
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      flowFormData:
+        description: 表单配置
+        type: string
+      flowGroup:
+        description: 流程分类
+        type: integer
+      flowName:
+        description: 流程名称
+        type: string
+      flowProcessData:
+        description: 流程配置
+        type: string
+      flowProcessDataList:
+        description: 流程配置list数据
+        type: string
+      flowRemark:
+        description: 流程描述
+        type: string
+      formValue:
+        description: 表单值
+        type: string
+      id:
+        type: integer
+      status:
+        description: 状态：1待提交，2审批中，3审批完成，4审批失败
+        type: integer
+      templateId:
+        description: 模板
+        type: integer
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  flow_history.FlowHistoryResp:
+    properties:
+      applyId:
+        description: 申请id
+        type: integer
+      applyUserId:
+        description: 申请人id
+        type: integer
+      applyUserNickname:
+        description: 申请人昵称
+        type: string
+      approverId:
+        description: 审批人id
+        type: integer
+      approverNickname:
+        description: 审批用户昵称
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      formValue:
+        description: 表单值
+        type: string
+      id:
+        description: 历史id
+        type: integer
+      nodeId:
+        description: 节点
+        type: string
+      nodeLabel:
+        description: 节点名称
+        type: string
+      nodeType:
+        description: 节点类型
+        type: string
+      passRemark:
+        description: 通过备注
+        type: string
+      passStatus:
+        description: 通过状态：1待处理，2通过，3拒绝
+        type: integer
+      templateId:
+        description: 模板id
+        type: integer
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  flow_template.FlowTemplateResp:
+    properties:
+      flowFormData:
+        description: 表单配置
+        type: string
+      flowGroup:
+        description: 流程分类
+        type: integer
+      flowName:
+        description: 流程名称
+        type: string
+      flowProcessData:
+        description: 流程配置
+        type: string
+      flowProcessDataList:
+        description: 流程配置list数据
+        type: string
+      flowRemark:
+        description: 流程描述
+        type: string
+      id:
+        type: integer
+    type: object
+  monitor_client.MonitorClientResp:
+    properties:
+      browser:
+        description: 浏览器
+        type: string
+      city:
+        description: 城市
+        type: string
+      clientId:
+        description: sdk生成的客户端id
+        type: string
+      clientTime:
+        description: 客户端时间
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      height:
+        description: 屏幕高度
+        type: integer
+      id:
+        description: uuid
+        type: integer
+      os:
+        description: 系统
+        type: string
+      projectKey:
+        description: 项目key
+        type: string
+      ua:
+        description: ua记录
+        type: string
+      userId:
+        description: 用户id
+        type: string
+      width:
+        description: 屏幕
+        type: integer
+    type: object
+  monitor_project.MonitorProjectResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 项目id
+        type: integer
+      projectKey:
+        description: 项目uuid
+        type: string
+      projectName:
+        description: 项目名称
+        type: string
+      projectType:
+        description: 项目类型go java web node php 等
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  monitor_web.MonitorWebResp:
+    properties:
+      clientId:
+        description: sdk生成的客户端id
+        type: string
+      clientTime:
+        description: 客户端时间
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      eventType:
+        description: 事件类型
+        type: string
+      id:
+        description: uuid
+        type: integer
+      message:
+        description: 错误消息
+        type: string
+      page:
+        description: URL地址
+        type: string
+      projectKey:
+        description: 项目key
+        type: string
+      stack:
+        description: 错误堆栈
+        type: string
+    type: object
+  response.PageResp:
+    properties:
+      count:
+        description: 总数
+        type: integer
+      lists:
+        description: 数据
+      pageNo:
+        description: 每页数量
+        type: integer
+      pageSize:
+        description: 每页Size
+        type: integer
+    type: object
+  response.RespType:
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8001
+info:
+  contact:
+    email: 11675084@qq.com
+    name: API Support
+    url: http://x.adtk.cn
+  description: x_admin是一个完整的后台管理系统
+  license:
+    name: MIT License
+    url: https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
+  termsOfService: http://x.adtk.cn
+  title: x_admin文档
+  version: 0.0.1
+paths:
+  /api/admin/monitor_client/ExportFile:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目key.
+        in: query
+        name: projectKey
+        type: string
+      - description: sdk生成的客户端id.
+        in: query
+        name: clientId
+        type: string
+      - description: 用户id.
+        in: query
+        name: userId
+        type: string
+      - description: 系统.
+        in: query
+        name: os
+        type: string
+      - description: 浏览器.
+        in: query
+        name: browser
+        type: string
+      - description: 城市.
+        in: query
+        name: city
+        type: string
+      - description: 屏幕.
+        in: query
+        name: width
+        type: integer
+      - description: 屏幕高度.
+        in: query
+        name: height
+        type: integer
+      - description: ua记录.
+        in: query
+        name: ua
+        type: string
+      - description: 客户端时间.
+        in: query
+        name: clientTime
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 客户端信息导出
+      tags:
+      - monitor_client-客户端信息
+  /api/admin/monitor_client/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目key.
+        in: body
+        name: projectKey
+        schema:
+          type: string
+      - description: sdk生成的客户端id.
+        in: body
+        name: clientId
+        schema:
+          type: string
+      - description: 用户id.
+        in: body
+        name: userId
+        schema:
+          type: string
+      - description: 系统.
+        in: body
+        name: os
+        schema:
+          type: string
+      - description: 浏览器.
+        in: body
+        name: browser
+        schema:
+          type: string
+      - description: 城市.
+        in: body
+        name: city
+        schema:
+          type: string
+      - description: 屏幕.
+        in: body
+        name: width
+        schema:
+          type: integer
+      - description: 屏幕高度.
+        in: body
+        name: height
+        schema:
+          type: integer
+      - description: ua记录.
+        in: body
+        name: ua
+        schema:
+          type: string
+      - description: 客户端时间.
+        in: body
+        name: clientTime
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 客户端信息新增
+      tags:
+      - monitor_client-客户端信息
+  /api/admin/monitor_client/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: uuid.
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 客户端信息删除
+      tags:
+      - monitor_client-客户端信息
+  /api/admin/monitor_client/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: uuid.
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/monitor_client.MonitorClientResp'
+      summary: 客户端信息详情
+      tags:
+      - monitor_client-客户端信息
+  /api/admin/monitor_client/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: uuid.
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 项目key.
+        in: body
+        name: projectKey
+        schema:
+          type: string
+      - description: sdk生成的客户端id.
+        in: body
+        name: clientId
+        schema:
+          type: string
+      - description: 用户id.
+        in: body
+        name: userId
+        schema:
+          type: string
+      - description: 系统.
+        in: body
+        name: os
+        schema:
+          type: string
+      - description: 浏览器.
+        in: body
+        name: browser
+        schema:
+          type: string
+      - description: 城市.
+        in: body
+        name: city
+        schema:
+          type: string
+      - description: 屏幕.
+        in: body
+        name: width
+        schema:
+          type: integer
+      - description: 屏幕高度.
+        in: body
+        name: height
+        schema:
+          type: integer
+      - description: ua记录.
+        in: body
+        name: ua
+        schema:
+          type: string
+      - description: 客户端时间.
+        in: body
+        name: clientTime
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 客户端信息编辑
+      tags:
+      - monitor_client-客户端信息
+  /api/admin/monitor_client/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 项目key.
+        in: query
+        name: projectKey
+        type: string
+      - description: sdk生成的客户端id.
+        in: query
+        name: clientId
+        type: string
+      - description: 用户id.
+        in: query
+        name: userId
+        type: string
+      - description: 系统.
+        in: query
+        name: os
+        type: string
+      - description: 浏览器.
+        in: query
+        name: browser
+        type: string
+      - description: 城市.
+        in: query
+        name: city
+        type: string
+      - description: 屏幕.
+        in: query
+        name: width
+        type: integer
+      - description: 屏幕高度.
+        in: query
+        name: height
+        type: integer
+      - description: ua记录.
+        in: query
+        name: ua
+        type: string
+      - description: 客户端时间.
+        in: query
+        name: clientTime
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/monitor_client.MonitorClientResp'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+      summary: 客户端信息列表
+      tags:
+      - monitor_client-客户端信息
+  /api/admin/monitor_client/listAll:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/monitor_client.MonitorClientResp'
+            type: array
+      summary: 客户端信息列表-所有
+      tags:
+      - monitor_client-客户端信息
+  /api/admin/monitor_project/ExportFile:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目uuid.
+        in: query
+        name: projectKey
+        type: string
+      - description: 项目名称.
+        in: query
+        name: projectName
+        type: string
+      - description: 项目类型go java web node php 等.
+        in: query
+        name: projectType
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: 错误项目导出
+      tags:
+      - monitor_project-错误项目
+  /api/admin/monitor_project/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目uuid.
+        in: body
+        name: projectKey
+        schema:
+          type: string
+      - description: 项目名称.
+        in: body
+        name: projectName
+        schema:
+          type: string
+      - description: 项目类型go java web node php 等.
+        in: body
+        name: projectType
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 错误项目新增
+      tags:
+      - monitor_project-错误项目
+  /api/admin/monitor_project/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目id.
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 错误项目删除
+      tags:
+      - monitor_project-错误项目
+  /api/admin/monitor_project/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目id.
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/monitor_project.MonitorProjectResp'
+      summary: 错误项目详情
+      tags:
+      - monitor_project-错误项目
+  /api/admin/monitor_project/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目id.
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 项目uuid.
+        in: body
+        name: projectKey
+        schema:
+          type: string
+      - description: 项目名称.
+        in: body
+        name: projectName
+        schema:
+          type: string
+      - description: 项目类型go java web node php 等.
+        in: body
+        name: projectType
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 错误项目编辑
+      tags:
+      - monitor_project-错误项目
+  /api/admin/monitor_project/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 项目uuid.
+        in: query
+        name: projectKey
+        type: string
+      - description: 项目名称.
+        in: query
+        name: projectName
+        type: string
+      - description: 项目类型go java web node php 等.
+        in: query
+        name: projectType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/monitor_project.MonitorProjectResp'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+      summary: 错误项目列表
+      tags:
+      - monitor_project-错误项目
+  /api/admin/monitor_project/listAll:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/monitor_project.MonitorProjectResp'
+            type: array
+      summary: 错误项目列表-所有
+      tags:
+      - monitor_project-错误项目
+  /api/admin/monitor_web/ExportFile:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目key.
+        in: query
+        name: projectKey
+        type: string
+      - description: sdk生成的客户端id.
+        in: query
+        name: clientId
+        type: string
+      - description: 事件类型.
+        in: query
+        name: eventType
+        type: string
+      - description: URL地址.
+        in: query
+        name: page
+        type: string
+      - description: 错误消息.
+        in: query
+        name: message
+        type: string
+      - description: 错误堆栈.
+        in: query
+        name: stack
+        type: string
+      - description: 客户端时间.
+        in: query
+        name: clientTime
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 错误收集error导出
+      tags:
+      - monitor_web-错误收集error
+  /api/admin/monitor_web/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目key.
+        in: body
+        name: projectKey
+        schema:
+          type: string
+      - description: sdk生成的客户端id.
+        in: body
+        name: clientId
+        schema:
+          type: string
+      - description: 事件类型.
+        in: body
+        name: eventType
+        schema:
+          type: string
+      - description: URL地址.
+        in: body
+        name: page
+        schema:
+          type: string
+      - description: 错误消息.
+        in: body
+        name: message
+        schema:
+          type: string
+      - description: 错误堆栈.
+        in: body
+        name: stack
+        schema:
+          type: string
+      - description: 客户端时间.
+        in: body
+        name: clientTime
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 错误收集error新增
+      tags:
+      - monitor_web-错误收集error
+  /api/admin/monitor_web/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: uuid.
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 错误收集error删除
+      tags:
+      - monitor_web-错误收集error
+  /api/admin/monitor_web/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: uuid.
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/monitor_web.MonitorWebResp'
+      summary: 错误收集error详情
+      tags:
+      - monitor_web-错误收集error
+  /api/admin/monitor_web/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: uuid.
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 项目key.
+        in: body
+        name: projectKey
+        schema:
+          type: string
+      - description: sdk生成的客户端id.
+        in: body
+        name: clientId
+        schema:
+          type: string
+      - description: 事件类型.
+        in: body
+        name: eventType
+        schema:
+          type: string
+      - description: URL地址.
+        in: body
+        name: page
+        schema:
+          type: string
+      - description: 错误消息.
+        in: body
+        name: message
+        schema:
+          type: string
+      - description: 错误堆栈.
+        in: body
+        name: stack
+        schema:
+          type: string
+      - description: 客户端时间.
+        in: body
+        name: clientTime
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 错误收集error编辑
+      tags:
+      - monitor_web-错误收集error
+  /api/admin/monitor_web/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 项目key.
+        in: query
+        name: projectKey
+        type: string
+      - description: sdk生成的客户端id.
+        in: query
+        name: clientId
+        type: string
+      - description: 事件类型.
+        in: query
+        name: eventType
+        type: string
+      - description: URL地址.
+        in: query
+        name: page
+        type: string
+      - description: 错误消息.
+        in: query
+        name: message
+        type: string
+      - description: 错误堆栈.
+        in: query
+        name: stack
+        type: string
+      - description: 客户端时间.
+        in: query
+        name: clientTime
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/monitor_web.MonitorWebResp'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+      summary: 错误收集error列表
+      tags:
+      - monitor_web-错误收集error
+  /api/admin/monitor_web/listAll:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/monitor_web.MonitorWebResp'
+            type: array
+      summary: 错误收集error列表-所有
+      tags:
+      - monitor_web-错误收集error
+  /api/article_collect/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 用户ID
+        in: query
+        name: userId
+        type: integer
+      - description: 文章ID
+        in: query
+        name: articleId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.PageResp'
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: article_collect列表
+      tags:
+      - article_collect文章
+  /api/flow_apply/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 模板
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
+        in: body
+        name: status
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 申请流程新增
+      tags:
+      - flow_apply-申请流程
+  /api/flow_apply/back:
+    post:
+      responses: {}
+  /api/flow_apply/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 申请流程删除
+      tags:
+      - flow_apply-申请流程
+  /api/flow_apply/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/flow_apply.FlowApplyResp'
+      summary: 申请流程详情
+      tags:
+      - flow_apply-申请流程
+  /api/flow_apply/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 模板
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
+        in: body
+        name: status
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 申请流程编辑
+      tags:
+      - flow_apply-申请流程
+  /api/flow_apply/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 模板
+        in: query
+        name: templateId
+        type: integer
+      - description: 申请人id
+        in: query
+        name: applyUserId
+        type: integer
+      - description: 申请人昵称
+        in: query
+        name: applyUserNickname
+        type: string
+      - description: 流程名称
+        in: query
+        name: flowName
+        type: string
+      - description: 流程分类
+        in: query
+        name: flowGroup
+        type: integer
+      - description: 流程描述
+        in: query
+        name: flowRemark
+        type: string
+      - description: 表单配置
+        in: query
+        name: flowFormData
+        type: string
+      - description: 流程配置
+        in: query
+        name: flowProcessData
+        type: string
+      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/flow_apply.FlowApplyResp'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+      summary: 申请流程列表
+      tags:
+      - flow_apply-申请流程
+  /api/flow_apply/pass:
+    post:
+      responses: {}
+  /api/flow_history/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        schema:
+          type: integer
+      - description: 模板id
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 审批人id
+        in: body
+        name: approverId
+        schema:
+          type: integer
+      - description: 审批用户昵称
+        in: body
+        name: approverNickname
+        schema:
+          type: string
+      - description: 节点
+        in: body
+        name: nodeId
+        schema:
+          type: string
+      - description: 表单值
+        in: body
+        name: formValue
+        schema:
+          type: string
+      - description: 通过状态：0待处理，1通过，2拒绝
+        in: body
+        name: passStatus
+        schema:
+          type: integer
+      - description: 通过备注
+        in: body
+        name: passRemark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 流程历史新增
+      tags:
+      - flow_history-流程历史
+  /api/flow_history/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 流程历史删除
+      tags:
+      - flow_history-流程历史
+  /api/flow_history/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/flow_history.FlowHistoryResp'
+      summary: 流程历史详情
+      tags:
+      - flow_history-流程历史
+  /api/flow_history/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 申请id
+        in: body
+        name: applyId
+        schema:
+          type: integer
+      - description: 模板id
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 审批人id
+        in: body
+        name: approverId
+        schema:
+          type: integer
+      - description: 审批用户昵称
+        in: body
+        name: approverNickname
+        schema:
+          type: string
+      - description: 节点
+        in: body
+        name: nodeId
+        schema:
+          type: string
+      - description: 表单值
+        in: body
+        name: formValue
+        schema:
+          type: string
+      - description: 通过状态：0待处理，1通过，2拒绝
+        in: body
+        name: passStatus
+        schema:
+          type: integer
+      - description: 通过备注
+        in: body
+        name: passRemark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 流程历史编辑
+      tags:
+      - flow_history-流程历史
+  /api/flow_history/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 申请id
+        in: query
+        name: applyId
+        type: integer
+      - description: 模板id
+        in: query
+        name: templateId
+        type: integer
+      - description: 申请人id
+        in: query
+        name: applyUserId
+        type: integer
+      - description: 申请人昵称
+        in: query
+        name: applyUserNickname
+        type: string
+      - description: 审批人id
+        in: query
+        name: approverId
+        type: integer
+      - description: 审批用户昵称
+        in: query
+        name: approverNickname
+        type: string
+      - description: 节点
+        in: query
+        name: nodeId
+        type: string
+      - description: 表单值
+        in: query
+        name: formValue
+        type: string
+      - description: 通过状态：0待处理，1通过，2拒绝
+        in: query
+        name: passStatus
+        type: integer
+      - description: 通过备注
+        in: query
+        name: passRemark
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/flow_history.FlowHistoryResp'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+      summary: 流程历史列表
+      tags:
+      - flow_history-流程历史
+  /api/flow_history/listAll:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/flow_history.FlowHistoryResp'
+            type: array
+      summary: 流程历史列表-所有
+      tags:
+      - flow_history-流程历史
+  /api/flow_template/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 流程模板新增
+      tags:
+      - flow_template-流程模板
+  /api/flow_template/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 流程模板删除
+      tags:
+      - flow_template-流程模板
+  /api/flow_template/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/flow_template.FlowTemplateResp'
+      summary: 流程模板详情
+      tags:
+      - flow_template-流程模板
+  /api/flow_template/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: .
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.RespType'
+      summary: 流程模板编辑
+      tags:
+      - flow_template-流程模板
+  /api/flow_template/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 流程名称
+        in: query
+        name: flowName
+        type: string
+      - description: 流程分类
+        in: query
+        name: flowGroup
+        type: integer
+      - description: 流程描述
+        in: query
+        name: flowRemark
+        type: string
+      - description: 表单配置
+        in: query
+        name: flowFormData
+        type: string
+      - description: 流程配置
+        in: query
+        name: flowProcessData
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/flow_template.FlowTemplateResp'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+      summary: 流程模板列表
+      tags:
+      - flow_template-流程模板
+  /api/flow_template/listAll:
+    get:
+      responses: {}
+      summary: 流程模板列表-所有
+      tags:
+      - flow_template-流程模板
+  /system/admin/ListByDeptId/{deptId}:
+    get:
+      description: 获取部门的用户
+      parameters:
+      - description: 部门id
+        in: path
+        name: deptId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": []}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取部门的用户
+      tags:
+      - 管理员
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

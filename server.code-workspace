@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "x_admin_app"
+		},
+		{
+			"path": ".github"
 		}
 	]
 }
