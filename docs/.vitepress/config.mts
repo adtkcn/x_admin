@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  // base:'/docs/',
+  base:'/x_admin/',
   title: "x_admin",
   description: "x_admin 开发文档",
   themeConfig: {
