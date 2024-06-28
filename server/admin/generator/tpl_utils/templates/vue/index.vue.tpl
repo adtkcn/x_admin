@@ -54,7 +54,7 @@
                 </el-button>
                     <upload
                     class="ml-3 mr-3"
-                    :url="{{{.ModuleName}}}_export_file"
+                    :url="{{{.ModuleName}}}_import_file"
                     :data="{ cid: 0 }"
                     type="file"
                     :show-progress="true"

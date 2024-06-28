@@ -85,8 +85,10 @@ export default defineComponent({
         const userStore = useUserStore()
         const uploadRefs = shallowRef<InstanceType<typeof ElUpload>>()
         let action = ''
-        if (props.url) {
-            if (props.url.startsWith('http')) {
+        if (props.url && typeof props.url === 'string') {
+            console.log('props.url', props.url)
+
+            if (props.url.indexOf('http') === 0) {
                 action = props.url
             } else {
                 action = `${config.baseUrl}${config.urlPrefix}${props.url}`
