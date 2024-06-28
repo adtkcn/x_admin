@@ -273,14 +273,14 @@ const formRules = {
             message: '请输入路由地址',
             trigger: 'blur'
         }
-    ],
-    component: [
-        {
-            required: true,
-            message: '请输入组件地址',
-            trigger: 'blur'
-        }
     ]
+    // component: [
+    //     {
+    //         required: true,
+    //         message: '请输入组件地址',
+    //         trigger: 'blur'
+    //     }
+    // ]
 }
 const menuOptions = ref<any[]>([])
 
