@@ -1,8 +1,12 @@
 package model
 
-import "x_admin/core"
+import (
+	"x_admin/core"
 
-//MonitorProject 错误项目实体
+	"gorm.io/plugin/soft_delete"
+)
+
+// MonitorProject 错误项目实体
 type MonitorProject struct {
 	Id int `gorm:"primarykey;comment:'项目id'" excel:"name:项目id;"` // 项目id
 
@@ -12,7 +16,7 @@ type MonitorProject struct {
 
 	ProjectType string `gorm:"comment:'项目类型go java web node php 等'" excel:"name:项目类型"` // 项目类型go java web node php 等
 
-	IsDelete int `gorm:"comment:'是否删除: 0=否, 1=是'" excel:"name:是否删除: 0=否, 1=是;"` // 是否删除: 0=否, 1=是
+	IsDelete soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
 
 	UpdateTime core.TsTime `gorm:"autoUpdateTime;comment:'更新时间'" excel:"name:更新时间;"` // 更新时间
 
