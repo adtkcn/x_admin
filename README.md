@@ -18,7 +18,8 @@
 原仓库演示地址：https://go-admin.likeadmin.cn <br>
 账号：admin 密码：123456
     
-## 开发部署文档
+## 文档
+开发部署文档：https://adtkcn.github.io/x_admin/
 
 
 ## 简介
