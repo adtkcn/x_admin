@@ -2,7 +2,7 @@ version: '1.0'
 name: pipeline-go
 displayName: pipeline-go
 triggers:
-  trigger: manual
+  trigger: auto
   push:
     branches:
       prefix:

@@ -12,7 +12,7 @@ var AdminConfig = adminConfig{
 	BackstageTokenKey: "backstage:token:",
 	// 令牌的集合
 	BackstageTokenSet: "backstage:token:set:",
-
+	// #region NotAuth
 	// 免登录验证
 	NotLoginUri: []string{
 		"admin:system:login",        // 登录接口
@@ -33,7 +33,7 @@ var AdminConfig = adminConfig{
 		"admin:setting:dict:data:all", // 所有字典数据
 		"admin:article:cate:all",      // 所有文章分类
 	},
-
+	// #endregion NotAuth
 	// 演示模式白名单
 	ShowWhitelistUri: []string{
 		"admin:system:login",  // 登录接口

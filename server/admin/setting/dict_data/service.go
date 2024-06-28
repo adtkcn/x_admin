@@ -131,7 +131,8 @@ func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) 
 
 // Edit 字典数据编辑
 func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e error) {
-	err := ddSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&setting_model.DictData{}).Error
+	var dd setting_model.DictData
+	err := ddSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dd).Error
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {
 		return
 	}
@@ -141,10 +142,10 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 	if r := ddSrv.db.Where("id != ? AND name = ? AND is_delete = ?", editReq.ID, editReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
-	var dd setting_model.DictData
+
 	response.Copy(&dd, editReq)
 	err = ddSrv.db.Save(&dd).Error
-	e = response.CheckErr(err, "Edit Save err")
+	e = response.CheckErr(err, "编辑失败")
 	return
 }
 

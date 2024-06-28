@@ -11,6 +11,7 @@ import (
 
 var Config = loadConfig(".")
 
+// #region envConfig
 // envConfig 环境配置
 type envConfig struct {
 	RootPath                 string // 项目根目录
@@ -38,6 +39,8 @@ type envConfig struct {
 	UploadImageExt  []string // 上传图片扩展
 	UploadVideoExt  []string // 上传视频扩展
 }
+
+// #endregion envConfig
 
 // loadConfig 加载配置
 func loadConfig(envPath string) envConfig {
