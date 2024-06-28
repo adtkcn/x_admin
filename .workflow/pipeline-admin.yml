@@ -2,7 +2,7 @@ version: '1.0'
 name: pipeline-admin
 displayName: pipeline-admin
 triggers:
-  trigger: manual
+  trigger: auto
   push:
     branches:
       prefix:
