@@ -108,7 +108,8 @@ func (dtSrv settingDictTypeService) Add(addReq SettingDictTypeAddReq) (e error) 
 
 // Edit 字典类型编辑
 func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e error) {
-	err := dtSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&setting_model.DictType{}).Error
+	var dt setting_model.DictType
+	err := dtSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dt).Error
 	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {
 		return
 	}
@@ -121,10 +122,11 @@ func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e erro
 	if r := dtSrv.db.Where("id != ? AND dict_type = ? AND is_delete = ?", editReq.ID, editReq.DictType, 0).Limit(1).First(&setting_model.DictType{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典类型已存在！")
 	}
-	var dt setting_model.DictType
+
 	response.Copy(&dt, editReq)
+	// err = dtSrv.db.Model(&dt).Updates(&up).Error
 	err = dtSrv.db.Save(&dt).Error
-	e = response.CheckErr(err, "Edit Save err")
+	e = response.CheckErr(err, "编辑失败")
 	return
 }
 
