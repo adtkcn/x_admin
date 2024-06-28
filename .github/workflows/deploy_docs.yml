@@ -32,22 +32,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # 如果未启用 lastUpdated，则不需要
+      - uses: pnpm/action-setup@v4
+        with:
+            version: 9
+        
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm # 或 pnpm / yarn
-      - name: Install pnpm
-        run: npm install -g pnpm
       - name: Install dependencies
-        run: |
-            cd docs
-            pnpm install
+        run: pnpm install
+        working-directory: docs
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Build with VitePress
-        run: cd docs && npm run docs:build # 或 pnpm docs:build / yarn docs:build / bun run docs:build
+        run: npm run docs:build # 或 pnpm docs:build / yarn docs:build / bun run docs:build
+        working-directory: docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
