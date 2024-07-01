@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -93,15 +92,6 @@ func Result(c *gin.Context, resp RespType, data interface{}) {
 		Message: resp.message,
 		Data:    data,
 	})
-}
-
-// Copy 拷贝结构体
-func Copy(toValue interface{}, fromValue interface{}) interface{} {
-	if err := copier.Copy(toValue, fromValue); err != nil {
-		core.Logger.Errorf("Copy err: err=[%+v]", err)
-		panic(SystemError)
-	}
-	return toValue
 }
 
 // Ok 正常响应
