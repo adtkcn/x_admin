@@ -22,16 +22,15 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
-//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
+//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
-//	@Failure	400			{object}	string				"请求错误"
-//	@Router		/api/admin/{{{ .ModuleName }}}/list [get]
+//@Success 200	{object} {{{getPageResp (title (toCamelCase .EntityName))  }}}	"成功"
+//@Router	/api/admin/{{{ .ModuleName }}}/list [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
@@ -51,14 +50,14 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
-//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}."	
+//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}."
+//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	[]{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
+//	@Success	200			{object}	response.Response{ data=[]{{{ title (toCamelCase .EntityName) }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
 	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
@@ -75,10 +74,10 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
+//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	{{{ title (toCamelCase .EntityName) }}}Resp	"成功"
+//	@Success	200			{object}	response.Response{ data={{{ title (toCamelCase .EntityName) }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context) {
 	var detailReq {{{ title (toCamelCase .EntityName) }}}DetailReq
@@ -96,10 +95,10 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context)
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsInsert }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
+//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.RespType	"成功"
+//	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/add [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 	var addReq {{{ title (toCamelCase .EntityName) }}}AddReq
@@ -114,10 +113,10 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsEdit }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
+//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.RespType	"成功"
+//	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/edit [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 	var editReq {{{ title (toCamelCase .EntityName) }}}EditReq
@@ -132,10 +131,10 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
+//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.RespType	"成功"
+//	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 	var delReq {{{ title (toCamelCase .EntityName) }}}DelReq
@@ -153,7 +152,12 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
-//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}."
+{{{- if eq .HtmlType "datetime" }}}
+//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
+{{{- else }}}
+//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+{{{- end }}}
 {{{- end }}}
 {{{- end }}}
 //	@Router		/api/admin/{{{ .ModuleName }}}/ExportFile [get]
@@ -178,6 +182,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Cont
 //  @Summary	{{{ .FunctionName }}}导入
 //  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
+//	@Router		/api/admin/{{{ .ModuleName }}}/ImportFile [post]
 func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

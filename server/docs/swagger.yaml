@@ -127,7 +127,7 @@ definitions:
         description: sdk生成的客户端id
         type: string
       clientTime:
-        description: 客户端时间
+        description: 更新时间
         type: string
       createTime:
         description: 创建时间
@@ -219,8 +219,6 @@ definitions:
         description: 每页Size
         type: integer
     type: object
-  response.RespType:
-    type: object
   response.Response:
     properties:
       code:
@@ -246,6 +244,759 @@ info:
   title: x_admin文档
   version: 0.0.1
 paths:
+  /api/admin/flow/flow_apply/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 模板
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
+        in: body
+        name: status
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 申请流程新增
+      tags:
+      - flow_apply-申请流程
+  /api/admin/flow/flow_apply/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 申请流程删除
+      tags:
+      - flow_apply-申请流程
+  /api/admin/flow/flow_apply/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/flow_apply.FlowApplyResp'
+              type: object
+      summary: 申请流程详情
+      tags:
+      - flow_apply-申请流程
+  /api/admin/flow/flow_apply/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 模板
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
+        in: body
+        name: status
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 申请流程编辑
+      tags:
+      - flow_apply-申请流程
+  /api/admin/flow/flow_apply/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 模板
+        in: query
+        name: templateId
+        type: integer
+      - description: 申请人id
+        in: query
+        name: applyUserId
+        type: integer
+      - description: 申请人昵称
+        in: query
+        name: applyUserNickname
+        type: string
+      - description: 流程名称
+        in: query
+        name: flowName
+        type: string
+      - description: 流程分类
+        in: query
+        name: flowGroup
+        type: integer
+      - description: 流程描述
+        in: query
+        name: flowRemark
+        type: string
+      - description: 表单配置
+        in: query
+        name: flowFormData
+        type: string
+      - description: 流程配置
+        in: query
+        name: flowProcessData
+        type: string
+      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        items:
+                          $ref: '#/definitions/flow_apply.FlowApplyResp'
+                        type: array
+                    type: object
+              type: object
+      summary: 申请流程列表
+      tags:
+      - flow_apply-申请流程
+  /api/admin/flow/flow_history/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        schema:
+          type: integer
+      - description: 模板id
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 审批人id
+        in: body
+        name: approverId
+        schema:
+          type: integer
+      - description: 审批用户昵称
+        in: body
+        name: approverNickname
+        schema:
+          type: string
+      - description: 节点
+        in: body
+        name: nodeId
+        schema:
+          type: string
+      - description: 表单值
+        in: body
+        name: formValue
+        schema:
+          type: string
+      - description: 通过状态：0待处理，1通过，2拒绝
+        in: body
+        name: passStatus
+        schema:
+          type: integer
+      - description: 通过备注
+        in: body
+        name: passRemark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史新增
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史删除
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/flow_history.FlowHistoryResp'
+              type: object
+      summary: 流程历史详情
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 申请id
+        in: body
+        name: applyId
+        schema:
+          type: integer
+      - description: 模板id
+        in: body
+        name: templateId
+        schema:
+          type: integer
+      - description: 申请人id
+        in: body
+        name: applyUserId
+        schema:
+          type: integer
+      - description: 申请人昵称
+        in: body
+        name: applyUserNickname
+        schema:
+          type: string
+      - description: 审批人id
+        in: body
+        name: approverId
+        schema:
+          type: integer
+      - description: 审批用户昵称
+        in: body
+        name: approverNickname
+        schema:
+          type: string
+      - description: 节点
+        in: body
+        name: nodeId
+        schema:
+          type: string
+      - description: 表单值
+        in: body
+        name: formValue
+        schema:
+          type: string
+      - description: 通过状态：0待处理，1通过，2拒绝
+        in: body
+        name: passStatus
+        schema:
+          type: integer
+      - description: 通过备注
+        in: body
+        name: passRemark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史编辑
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 申请id
+        in: query
+        name: applyId
+        type: integer
+      - description: 模板id
+        in: query
+        name: templateId
+        type: integer
+      - description: 申请人id
+        in: query
+        name: applyUserId
+        type: integer
+      - description: 申请人昵称
+        in: query
+        name: applyUserNickname
+        type: string
+      - description: 审批人id
+        in: query
+        name: approverId
+        type: integer
+      - description: 审批用户昵称
+        in: query
+        name: approverNickname
+        type: string
+      - description: 节点
+        in: query
+        name: nodeId
+        type: string
+      - description: 表单值
+        in: query
+        name: formValue
+        type: string
+      - description: 通过状态：0待处理，1通过，2拒绝
+        in: query
+        name: passStatus
+        type: integer
+      - description: 通过备注
+        in: query
+        name: passRemark
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        items:
+                          $ref: '#/definitions/flow_history.FlowHistoryResp'
+                        type: array
+                    type: object
+              type: object
+      summary: 流程历史列表
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/listAll:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/flow_history.FlowHistoryResp'
+              type: object
+      summary: 流程历史列表-所有
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_template/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程模板新增
+      tags:
+      - flow_template-流程模板
+  /api/admin/flow/flow_template/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: body
+        name: id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程模板删除
+      tags:
+      - flow_template-流程模板
+  /api/admin/flow/flow_template/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 历史id
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/flow_template.FlowTemplateResp'
+      summary: 流程模板详情
+      tags:
+      - flow_template-流程模板
+  /api/admin/flow/flow_template/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: .
+        in: body
+        name: id
+        schema:
+          type: integer
+      - description: 流程名称
+        in: body
+        name: flowName
+        schema:
+          type: string
+      - description: 流程分类
+        in: body
+        name: flowGroup
+        schema:
+          type: integer
+      - description: 流程描述
+        in: body
+        name: flowRemark
+        schema:
+          type: string
+      - description: 表单配置
+        in: body
+        name: flowFormData
+        schema:
+          type: string
+      - description: 流程配置
+        in: body
+        name: flowProcessData
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程模板编辑
+      tags:
+      - flow_template-流程模板
+  /api/admin/flow/flow_template/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 流程名称
+        in: query
+        name: flowName
+        type: string
+      - description: 流程分类
+        in: query
+        name: flowGroup
+        type: integer
+      - description: 流程描述
+        in: query
+        name: flowRemark
+        type: string
+      - description: 表单配置
+        in: query
+        name: flowFormData
+        type: string
+      - description: 流程配置
+        in: query
+        name: flowProcessData
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        items:
+                          $ref: '#/definitions/flow_template.FlowTemplateResp'
+                        type: array
+                    type: object
+              type: object
+      summary: 流程模板列表
+      tags:
+      - flow_template-流程模板
+  /api/admin/flow/flow_template/listAll:
+    get:
+      responses: {}
+      summary: 流程模板列表-所有
+      tags:
+      - flow_template-流程模板
+  /api/admin/flow_apply/back:
+    post:
+      responses: {}
+  /api/admin/flow_apply/pass:
+    post:
+      responses: {}
   /api/admin/monitor_client/ExportFile:
     get:
       parameters:
@@ -290,16 +1041,12 @@ paths:
         in: query
         name: ua
         type: string
-      - description: 客户端时间.
-        in: query
-        name: clientTime
-        type: integer
       produces:
       - application/json
       responses: {}
-      summary: 客户端信息导出
+      summary: 监控-客户端信息导出
       tags:
-      - monitor_client-客户端信息
+      - monitor_client-监控-客户端信息
   /api/admin/monitor_client/add:
     post:
       parameters:
@@ -308,11 +1055,6 @@ paths:
         name: Token
         required: true
         type: string
-      - description: 项目key.
-        in: body
-        name: projectKey
-        schema:
-          type: string
       - description: sdk生成的客户端id.
         in: body
         name: clientId
@@ -353,21 +1095,21 @@ paths:
         name: ua
         schema:
           type: string
-      - description: 客户端时间.
+      - description: 更新时间.
         in: body
         name: clientTime
         schema:
-          type: integer
+          type: string
       produces:
       - application/json
       responses:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 客户端信息新增
+            $ref: '#/definitions/response.Response'
+      summary: 监控-客户端信息新增
       tags:
-      - monitor_client-客户端信息
+      - monitor_client-监控-客户端信息
   /api/admin/monitor_client/del:
     post:
       parameters:
@@ -387,10 +1129,10 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 客户端信息删除
+            $ref: '#/definitions/response.Response'
+      summary: 监控-客户端信息删除
       tags:
-      - monitor_client-客户端信息
+      - monitor_client-监控-客户端信息
   /api/admin/monitor_client/detail:
     get:
       parameters:
@@ -409,10 +1151,15 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/monitor_client.MonitorClientResp'
-      summary: 客户端信息详情
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/monitor_client.MonitorClientResp'
+              type: object
+      summary: 监控-客户端信息详情
       tags:
-      - monitor_client-客户端信息
+      - monitor_client-监控-客户端信息
   /api/admin/monitor_client/edit:
     post:
       parameters:
@@ -421,16 +1168,6 @@ paths:
         name: Token
         required: true
         type: string
-      - description: uuid.
-        in: body
-        name: id
-        schema:
-          type: integer
-      - description: 项目key.
-        in: body
-        name: projectKey
-        schema:
-          type: string
       - description: sdk生成的客户端id.
         in: body
         name: clientId
@@ -471,21 +1208,21 @@ paths:
         name: ua
         schema:
           type: string
-      - description: 客户端时间.
+      - description: 更新时间.
         in: body
         name: clientTime
         schema:
-          type: integer
+          type: string
       produces:
       - application/json
       responses:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 客户端信息编辑
+            $ref: '#/definitions/response.Response'
+      summary: 监控-客户端信息编辑
       tags:
-      - monitor_client-客户端信息
+      - monitor_client-监控-客户端信息
   /api/admin/monitor_client/list:
     get:
       parameters:
@@ -540,40 +1277,88 @@ paths:
         in: query
         name: ua
         type: string
-      - description: 客户端时间.
-        in: query
-        name: clientTime
-        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: 成功
           schema:
-            items:
-              $ref: '#/definitions/monitor_client.MonitorClientResp'
-            type: array
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        items:
+                          $ref: '#/definitions/monitor_client.MonitorClientResp'
+                        type: array
+                    type: object
+              type: object
         "400":
           description: 请求错误
           schema:
             type: string
-      summary: 客户端信息列表
+      summary: 监控-客户端信息列表
       tags:
-      - monitor_client-客户端信息
+      - monitor_client-监控-客户端信息
   /api/admin/monitor_client/listAll:
     get:
+      parameters:
+      - description: 项目key.
+        in: query
+        name: projectKey
+        type: string
+      - description: sdk生成的客户端id.
+        in: query
+        name: clientId
+        type: string
+      - description: 用户id.
+        in: query
+        name: userId
+        type: string
+      - description: 系统.
+        in: query
+        name: os
+        type: string
+      - description: 浏览器.
+        in: query
+        name: browser
+        type: string
+      - description: 城市.
+        in: query
+        name: city
+        type: string
+      - description: 屏幕.
+        in: query
+        name: width
+        type: integer
+      - description: 屏幕高度.
+        in: query
+        name: height
+        type: integer
+      - description: ua记录.
+        in: query
+        name: ua
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: 成功
           schema:
-            items:
-              $ref: '#/definitions/monitor_client.MonitorClientResp'
-            type: array
-      summary: 客户端信息列表-所有
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/monitor_client.MonitorClientResp'
+                  type: array
+              type: object
+      summary: 监控-客户端信息列表-所有
       tags:
-      - monitor_client-客户端信息
+      - monitor_client-监控-客户端信息
   /api/admin/monitor_project/ExportFile:
     get:
       parameters:
@@ -629,7 +1414,7 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
+            $ref: '#/definitions/response.Response'
       summary: 错误项目新增
       tags:
       - monitor_project-错误项目
@@ -652,7 +1437,7 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
+            $ref: '#/definitions/response.Response'
       summary: 错误项目删除
       tags:
       - monitor_project-错误项目
@@ -674,7 +1459,12 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/monitor_project.MonitorProjectResp'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/monitor_project.MonitorProjectResp'
+              type: object
       summary: 错误项目详情
       tags:
       - monitor_project-错误项目
@@ -712,7 +1502,7 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
+            $ref: '#/definitions/response.Response'
       summary: 错误项目编辑
       tags:
       - monitor_project-错误项目
@@ -752,9 +1542,19 @@ paths:
         "200":
           description: 成功
           schema:
-            items:
-              $ref: '#/definitions/monitor_project.MonitorProjectResp'
-            type: array
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        items:
+                          $ref: '#/definitions/monitor_project.MonitorProjectResp'
+                        type: array
+                    type: object
+              type: object
         "400":
           description: 请求错误
           schema:
@@ -770,9 +1570,14 @@ paths:
         "200":
           description: 成功
           schema:
-            items:
-              $ref: '#/definitions/monitor_project.MonitorProjectResp'
-            type: array
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/monitor_project.MonitorProjectResp'
+                  type: array
+              type: object
       summary: 错误项目列表-所有
       tags:
       - monitor_project-错误项目
@@ -867,7 +1672,7 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
+            $ref: '#/definitions/response.Response'
       summary: 错误收集error新增
       tags:
       - monitor_web-错误收集error
@@ -890,7 +1695,7 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
+            $ref: '#/definitions/response.Response'
       summary: 错误收集error删除
       tags:
       - monitor_web-错误收集error
@@ -970,7 +1775,7 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/response.RespType'
+            $ref: '#/definitions/response.Response'
       summary: 错误收集error编辑
       tags:
       - monitor_web-错误收集error
@@ -1094,728 +1899,6 @@ paths:
       summary: article_collect列表
       tags:
       - article_collect文章
-  /api/flow_apply/add:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 模板
-        in: body
-        name: templateId
-        schema:
-          type: integer
-      - description: 申请人id
-        in: body
-        name: applyUserId
-        schema:
-          type: integer
-      - description: 申请人昵称
-        in: body
-        name: applyUserNickname
-        schema:
-          type: string
-      - description: 流程名称
-        in: body
-        name: flowName
-        schema:
-          type: string
-      - description: 流程分类
-        in: body
-        name: flowGroup
-        schema:
-          type: integer
-      - description: 流程描述
-        in: body
-        name: flowRemark
-        schema:
-          type: string
-      - description: 表单配置
-        in: body
-        name: flowFormData
-        schema:
-          type: string
-      - description: 流程配置
-        in: body
-        name: flowProcessData
-        schema:
-          type: string
-      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
-        in: body
-        name: status
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 申请流程新增
-      tags:
-      - flow_apply-申请流程
-  /api/flow_apply/back:
-    post:
-      responses: {}
-  /api/flow_apply/del:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 申请id
-        in: body
-        name: id
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 申请流程删除
-      tags:
-      - flow_apply-申请流程
-  /api/flow_apply/detail:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 申请id
-        in: query
-        name: id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/flow_apply.FlowApplyResp'
-      summary: 申请流程详情
-      tags:
-      - flow_apply-申请流程
-  /api/flow_apply/edit:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 申请id
-        in: body
-        name: id
-        schema:
-          type: integer
-      - description: 模板
-        in: body
-        name: templateId
-        schema:
-          type: integer
-      - description: 申请人id
-        in: body
-        name: applyUserId
-        schema:
-          type: integer
-      - description: 申请人昵称
-        in: body
-        name: applyUserNickname
-        schema:
-          type: string
-      - description: 流程名称
-        in: body
-        name: flowName
-        schema:
-          type: string
-      - description: 流程分类
-        in: body
-        name: flowGroup
-        schema:
-          type: integer
-      - description: 流程描述
-        in: body
-        name: flowRemark
-        schema:
-          type: string
-      - description: 表单配置
-        in: body
-        name: flowFormData
-        schema:
-          type: string
-      - description: 流程配置
-        in: body
-        name: flowProcessData
-        schema:
-          type: string
-      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
-        in: body
-        name: status
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 申请流程编辑
-      tags:
-      - flow_apply-申请流程
-  /api/flow_apply/list:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 页码
-        in: query
-        name: PageNo
-        required: true
-        type: integer
-      - description: 每页数量
-        in: query
-        name: PageSize
-        required: true
-        type: integer
-      - description: 模板
-        in: query
-        name: templateId
-        type: integer
-      - description: 申请人id
-        in: query
-        name: applyUserId
-        type: integer
-      - description: 申请人昵称
-        in: query
-        name: applyUserNickname
-        type: string
-      - description: 流程名称
-        in: query
-        name: flowName
-        type: string
-      - description: 流程分类
-        in: query
-        name: flowGroup
-        type: integer
-      - description: 流程描述
-        in: query
-        name: flowRemark
-        type: string
-      - description: 表单配置
-        in: query
-        name: flowFormData
-        type: string
-      - description: 流程配置
-        in: query
-        name: flowProcessData
-        type: string
-      - description: 状态：1待提交，2审批中，3审批完成，4审批失败
-        in: query
-        name: status
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            items:
-              $ref: '#/definitions/flow_apply.FlowApplyResp'
-            type: array
-        "400":
-          description: 请求错误
-          schema:
-            type: string
-      summary: 申请流程列表
-      tags:
-      - flow_apply-申请流程
-  /api/flow_apply/pass:
-    post:
-      responses: {}
-  /api/flow_history/add:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 申请id
-        in: body
-        name: applyId
-        schema:
-          type: integer
-      - description: 模板id
-        in: body
-        name: templateId
-        schema:
-          type: integer
-      - description: 申请人id
-        in: body
-        name: applyUserId
-        schema:
-          type: integer
-      - description: 申请人昵称
-        in: body
-        name: applyUserNickname
-        schema:
-          type: string
-      - description: 审批人id
-        in: body
-        name: approverId
-        schema:
-          type: integer
-      - description: 审批用户昵称
-        in: body
-        name: approverNickname
-        schema:
-          type: string
-      - description: 节点
-        in: body
-        name: nodeId
-        schema:
-          type: string
-      - description: 表单值
-        in: body
-        name: formValue
-        schema:
-          type: string
-      - description: 通过状态：0待处理，1通过，2拒绝
-        in: body
-        name: passStatus
-        schema:
-          type: integer
-      - description: 通过备注
-        in: body
-        name: passRemark
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 流程历史新增
-      tags:
-      - flow_history-流程历史
-  /api/flow_history/del:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 历史id
-        in: body
-        name: id
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 流程历史删除
-      tags:
-      - flow_history-流程历史
-  /api/flow_history/detail:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 历史id
-        in: query
-        name: id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/flow_history.FlowHistoryResp'
-      summary: 流程历史详情
-      tags:
-      - flow_history-流程历史
-  /api/flow_history/edit:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 历史id
-        in: body
-        name: id
-        schema:
-          type: integer
-      - description: 申请id
-        in: body
-        name: applyId
-        schema:
-          type: integer
-      - description: 模板id
-        in: body
-        name: templateId
-        schema:
-          type: integer
-      - description: 申请人id
-        in: body
-        name: applyUserId
-        schema:
-          type: integer
-      - description: 申请人昵称
-        in: body
-        name: applyUserNickname
-        schema:
-          type: string
-      - description: 审批人id
-        in: body
-        name: approverId
-        schema:
-          type: integer
-      - description: 审批用户昵称
-        in: body
-        name: approverNickname
-        schema:
-          type: string
-      - description: 节点
-        in: body
-        name: nodeId
-        schema:
-          type: string
-      - description: 表单值
-        in: body
-        name: formValue
-        schema:
-          type: string
-      - description: 通过状态：0待处理，1通过，2拒绝
-        in: body
-        name: passStatus
-        schema:
-          type: integer
-      - description: 通过备注
-        in: body
-        name: passRemark
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 流程历史编辑
-      tags:
-      - flow_history-流程历史
-  /api/flow_history/list:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 页码
-        in: query
-        name: PageNo
-        required: true
-        type: integer
-      - description: 每页数量
-        in: query
-        name: PageSize
-        required: true
-        type: integer
-      - description: 申请id
-        in: query
-        name: applyId
-        type: integer
-      - description: 模板id
-        in: query
-        name: templateId
-        type: integer
-      - description: 申请人id
-        in: query
-        name: applyUserId
-        type: integer
-      - description: 申请人昵称
-        in: query
-        name: applyUserNickname
-        type: string
-      - description: 审批人id
-        in: query
-        name: approverId
-        type: integer
-      - description: 审批用户昵称
-        in: query
-        name: approverNickname
-        type: string
-      - description: 节点
-        in: query
-        name: nodeId
-        type: string
-      - description: 表单值
-        in: query
-        name: formValue
-        type: string
-      - description: 通过状态：0待处理，1通过，2拒绝
-        in: query
-        name: passStatus
-        type: integer
-      - description: 通过备注
-        in: query
-        name: passRemark
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            items:
-              $ref: '#/definitions/flow_history.FlowHistoryResp'
-            type: array
-        "400":
-          description: 请求错误
-          schema:
-            type: string
-      summary: 流程历史列表
-      tags:
-      - flow_history-流程历史
-  /api/flow_history/listAll:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            items:
-              $ref: '#/definitions/flow_history.FlowHistoryResp'
-            type: array
-      summary: 流程历史列表-所有
-      tags:
-      - flow_history-流程历史
-  /api/flow_template/add:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 流程名称
-        in: body
-        name: flowName
-        schema:
-          type: string
-      - description: 流程分类
-        in: body
-        name: flowGroup
-        schema:
-          type: integer
-      - description: 流程描述
-        in: body
-        name: flowRemark
-        schema:
-          type: string
-      - description: 表单配置
-        in: body
-        name: flowFormData
-        schema:
-          type: string
-      - description: 流程配置
-        in: body
-        name: flowProcessData
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 流程模板新增
-      tags:
-      - flow_template-流程模板
-  /api/flow_template/del:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 历史id
-        in: body
-        name: id
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 流程模板删除
-      tags:
-      - flow_template-流程模板
-  /api/flow_template/detail:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 历史id
-        in: query
-        name: id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/flow_template.FlowTemplateResp'
-      summary: 流程模板详情
-      tags:
-      - flow_template-流程模板
-  /api/flow_template/edit:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: .
-        in: body
-        name: id
-        schema:
-          type: integer
-      - description: 流程名称
-        in: body
-        name: flowName
-        schema:
-          type: string
-      - description: 流程分类
-        in: body
-        name: flowGroup
-        schema:
-          type: integer
-      - description: 流程描述
-        in: body
-        name: flowRemark
-        schema:
-          type: string
-      - description: 表单配置
-        in: body
-        name: flowFormData
-        schema:
-          type: string
-      - description: 流程配置
-        in: body
-        name: flowProcessData
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.RespType'
-      summary: 流程模板编辑
-      tags:
-      - flow_template-流程模板
-  /api/flow_template/list:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 页码
-        in: query
-        name: PageNo
-        required: true
-        type: integer
-      - description: 每页数量
-        in: query
-        name: PageSize
-        required: true
-        type: integer
-      - description: 流程名称
-        in: query
-        name: flowName
-        type: string
-      - description: 流程分类
-        in: query
-        name: flowGroup
-        type: integer
-      - description: 流程描述
-        in: query
-        name: flowRemark
-        type: string
-      - description: 表单配置
-        in: query
-        name: flowFormData
-        type: string
-      - description: 流程配置
-        in: query
-        name: flowProcessData
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            items:
-              $ref: '#/definitions/flow_template.FlowTemplateResp'
-            type: array
-        "400":
-          description: 请求错误
-          schema:
-            type: string
-      summary: 流程模板列表
-      tags:
-      - flow_template-流程模板
-  /api/flow_template/listAll:
-    get:
-      responses: {}
-      summary: 流程模板列表-所有
-      tags:
-      - flow_template-流程模板
   /system/admin/ListByDeptId/{deptId}:
     get:
       description: 获取部门的用户

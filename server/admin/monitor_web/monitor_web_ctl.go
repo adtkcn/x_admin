@@ -85,7 +85,7 @@ func (hd MonitorWebHandler) Detail(c *gin.Context) {
 // @Param		message		body		string				false	"错误消息."
 // @Param		stack		body		string				false	"错误堆栈."
 // @Param		clientTime	body		int					false	"客户端时间."
-// @Success	200			{object}	response.RespType	"成功"
+// @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_web/add [post]
 func (hd MonitorWebHandler) Add(c *gin.Context) {
 	var addReq MonitorWebAddReq
@@ -107,7 +107,7 @@ func (hd MonitorWebHandler) Add(c *gin.Context) {
 // @Param		message		body		string				false	"错误消息."
 // @Param		stack		body		string				false	"错误堆栈."
 // @Param		clientTime	body		int					false	"客户端时间."
-// @Success	200			{object}	response.RespType	"成功"
+// @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_web/edit [post]
 func (hd MonitorWebHandler) Edit(c *gin.Context) {
 	var editReq MonitorWebEditReq
@@ -122,7 +122,7 @@ func (hd MonitorWebHandler) Edit(c *gin.Context) {
 // @Produce	json
 // @Param		Token	header		string				true	"token"
 // @Param		id		body		int					false	"uuid."
-// @Success	200		{object}	response.RespType	"成功"
+// @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_web/del [post]
 func (hd MonitorWebHandler) Del(c *gin.Context) {
 	var delReq MonitorWebDelReq

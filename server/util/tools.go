@@ -97,6 +97,11 @@ func (tu toolsUtil) GoToTsType(s string) string {
 	return "string"
 }
 
+// 拼接字符串
+func (tu toolsUtil) GetPageResp(s string) string {
+	return `response.Response{ data=response.PageResp{ lists= []` + s + `Resp}}`
+}
+
 // Round float四舍五入
 func (tu toolsUtil) Round(val float64, n int) float64 {
 	base := math.Pow(10, float64(n))

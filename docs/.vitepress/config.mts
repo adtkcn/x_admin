@@ -14,7 +14,8 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: '后端', link: '/server/准备.md' },
-      { text: '前端', link: '/admin/准备.md' }
+      { text: '前端', link: '/admin/准备.md' },
+      { text: '在线体验', link: 'https://x.adtk.cn/' },
     ],
 
     sidebar: [

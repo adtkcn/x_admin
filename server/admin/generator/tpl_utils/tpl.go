@@ -24,6 +24,7 @@ var TemplateUtil = templateUtil{
 			"toCamelCase": util.StringUtil.ToCamelCase,
 			"contains":    util.ToolsUtil.Contains,
 			"goToTsType":  util.ToolsUtil.GoToTsType,
+			"getPageResp": util.ToolsUtil.GetPageResp,
 		}),
 }
 

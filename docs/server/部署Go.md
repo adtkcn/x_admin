@@ -40,15 +40,14 @@ pm2 start 打包后的二进制文件名 --name x_admin
 pm2 startup
 # 保存
 pm2 save
+
+
+
 # 所有任务列表
 pm2 list
-
-
 # 停止
-```bash
 pm2 stop x_admin
 # 重启
-```bash
 pm2 restart x_admin
 # 查看日志
 pm2 log x_admin 
