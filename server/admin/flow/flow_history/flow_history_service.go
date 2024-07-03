@@ -520,22 +520,22 @@ func (service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, appl
 			}
 		}
 	}
-	var nextNodes []FlowTree
-	res = DeepNextNode(nextNodes, &next, formValue)
+	res = DeepNextNode(&next, formValue)
 	return res, applyDetail, LastHistory, e
 }
 
 // 返回节点数组，最后一个节点为用户或结束节点
-func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[string]interface{}) []FlowTree {
+func DeepNextNode(flowTree *[]FlowTree, formValue map[string]interface{}) []FlowTree {
+	var nextNodes []FlowTree
 	for _, v := range *flowTree {
 		if v.Type == "bpmn:startEvent" {
-			// nextNodes = append(nextNodes, v)
+			nextNodes = append(nextNodes, v)
 
 			// 开始节点
 			if v.Children == nil {
 				break
 			}
-			child := DeepNextNode(nextNodes, v.Children, formValue)
+			child := DeepNextNode(v.Children, formValue)
 			nextNodes = append(nextNodes, child...)
 			break
 		} else if v.Type == "bpmn:exclusiveGateway" {
@@ -600,7 +600,7 @@ func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[stri
 					break
 				}
 				// 判断formValue值，决定是不是递归这个网关
-				child := DeepNextNode(nextNodes, v.Children, formValue)
+				child := DeepNextNode(v.Children, formValue)
 				nextNodes = append(nextNodes, child...)
 				break
 			}
@@ -610,7 +610,7 @@ func DeepNextNode(nextNodes []FlowTree, flowTree *[]FlowTree, formValue map[stri
 				break
 			}
 			// 系统服务
-			child := DeepNextNode(nextNodes, v.Children, formValue)
+			child := DeepNextNode(v.Children, formValue)
 			nextNodes = append(nextNodes, child...)
 		} else if v.Type == "bpmn:userTask" {
 			//用户节点

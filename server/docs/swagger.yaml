@@ -307,6 +307,11 @@ paths:
       summary: 申请流程新增
       tags:
       - flow_apply-申请流程
+  /api/admin/flow/flow_apply/back:
+    post:
+      responses: {}
+      tags:
+      - flow_history-流程历史
   /api/admin/flow/flow_apply/del:
     post:
       parameters:
@@ -501,6 +506,11 @@ paths:
       summary: 申请流程列表
       tags:
       - flow_apply-申请流程
+  /api/admin/flow/flow_apply/pass:
+    post:
+      responses: {}
+      tags:
+      - flow_history-流程历史
   /api/admin/flow/flow_history/add:
     post:
       parameters:
@@ -595,7 +605,8 @@ paths:
   /api/admin/flow/flow_history/detail:
     get:
       parameters:
-      - description: token
+      - default: '{{Token}}'
+        description: token
         in: header
         name: Token
         required: true
@@ -991,12 +1002,6 @@ paths:
       summary: 流程模板列表-所有
       tags:
       - flow_template-流程模板
-  /api/admin/flow_apply/back:
-    post:
-      responses: {}
-  /api/admin/flow_apply/pass:
-    post:
-      responses: {}
   /api/admin/monitor_client/ExportFile:
     get:
       parameters:

@@ -124,6 +124,14 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/flow/flow_apply/back": {
+            "post": {
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "responses": {}
+            }
+        },
         "/api/admin/flow/flow_apply/del": {
             "post": {
                 "produces": [
@@ -437,6 +445,14 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/flow/flow_apply/pass": {
+            "post": {
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "responses": {}
+            }
+        },
         "/api/admin/flow/flow_history/add": {
             "post": {
                 "produces": [
@@ -593,6 +609,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "{{Token}}",
                         "description": "token",
                         "name": "Token",
                         "in": "header",
@@ -1222,16 +1239,6 @@ const docTemplate = `{
                     "flow_template-流程模板"
                 ],
                 "summary": "流程模板列表-所有",
-                "responses": {}
-            }
-        },
-        "/api/admin/flow_apply/back": {
-            "post": {
-                "responses": {}
-            }
-        },
-        "/api/admin/flow_apply/pass": {
-            "post": {
                 "responses": {}
             }
         },
