@@ -31,12 +31,12 @@ type ArticleCollectService struct {
 }
 
 // List 文章收藏列表
-func (Service ArticleCollectService) List(page request.PageReq, listReq ArticleCollectListReq) (res response.PageResp, e error) {
+func (service ArticleCollectService) List(page request.PageReq, listReq ArticleCollectListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	dbModel := Service.db.Model(&model.ArticleCollect{})
+	dbModel := service.db.Model(&model.ArticleCollect{})
 	if listReq.UserId > 0 {
 		dbModel = dbModel.Where("user_id = ?", listReq.UserId)
 	}

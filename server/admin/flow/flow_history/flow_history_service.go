@@ -44,12 +44,12 @@ type flowHistoryService struct {
 }
 
 // List 流程历史列表
-func (Service flowHistoryService) List(page request.PageReq, listReq FlowHistoryListReq) (res response.PageResp, e error) {
+func (service flowHistoryService) List(page request.PageReq, listReq FlowHistoryListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	dbModel := Service.db.Model(&model.FlowHistory{})
+	dbModel := service.db.Model(&model.FlowHistory{})
 	if listReq.ApplyId > 0 {
 		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
 	}
@@ -103,10 +103,10 @@ func (Service flowHistoryService) List(page request.PageReq, listReq FlowHistory
 }
 
 // ListAll 流程历史列表
-func (Service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []FlowHistoryResp, e error) {
+func (service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []FlowHistoryResp, e error) {
 
 	// 查询
-	dbModel := Service.db.Model(&model.FlowHistory{})
+	dbModel := service.db.Model(&model.FlowHistory{})
 	if listReq.ApplyId > 0 {
 		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
 	}
@@ -127,9 +127,9 @@ func (Service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []Flo
 }
 
 // Detail 流程历史详情
-func (Service flowHistoryService) Detail(id int) (res FlowHistoryResp, e error) {
+func (service flowHistoryService) Detail(id int) (res FlowHistoryResp, e error) {
 	var obj model.FlowHistory
-	err := Service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
@@ -141,18 +141,18 @@ func (Service flowHistoryService) Detail(id int) (res FlowHistoryResp, e error) 
 }
 
 // Add 流程历史新增
-func (Service flowHistoryService) Add(addReq FlowHistoryAddReq) (e error) {
+func (service flowHistoryService) Add(addReq FlowHistoryAddReq) (e error) {
 	var obj model.FlowHistory
 	response.Copy(&obj, addReq)
-	err := Service.db.Create(&obj).Error
+	err := service.db.Create(&obj).Error
 	e = response.CheckErr(err, "添加失败")
 	return
 }
 
 // Edit 流程历史编辑
-func (Service flowHistoryService) Edit(editReq FlowHistoryEditReq) (e error) {
+func (service flowHistoryService) Edit(editReq FlowHistoryEditReq) (e error) {
 	var obj model.FlowHistory
-	err := Service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -162,15 +162,15 @@ func (Service flowHistoryService) Edit(editReq FlowHistoryEditReq) (e error) {
 	}
 	// 更新
 	response.Copy(&obj, editReq)
-	err = Service.db.Model(&obj).Updates(obj).Error
+	err = service.db.Model(&obj).Updates(obj).Error
 	e = response.CheckErr(err, "编辑失败")
 	return
 }
 
 // Del 流程历史删除
-func (Service flowHistoryService) Del(id int) (e error) {
+func (service flowHistoryService) Del(id int) (e error) {
 	var obj model.FlowHistory
-	err := Service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -179,7 +179,7 @@ func (Service flowHistoryService) Del(id int) (e error) {
 		return
 	}
 	// 删除
-	err = Service.db.Delete(&obj).Error
+	err = service.db.Delete(&obj).Error
 	e = response.CheckErr(err, "删除失败")
 	return
 }
@@ -187,8 +187,8 @@ func (Service flowHistoryService) Del(id int) (e error) {
 /**
 * 获取节点的审批用户
  */
-func (Service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAuthAdminResp, e error) {
-	nextNodes, applyDetail, _, err := Service.GetNextNode(ApplyId)
+func (service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAuthAdminResp, e error) {
+	nextNodes, applyDetail, _, err := service.GetNextNode(ApplyId)
 	if err != nil {
 		return nil, err
 	}
@@ -216,7 +216,7 @@ func (Service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAu
 	}
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
-	adminModel := Service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
+	adminModel := service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
 
 	where := map[string]interface{}{}
 	if userType == 1 {
@@ -270,8 +270,8 @@ func (Service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAu
 }
 
 // 通过审批
-func (Service flowHistoryService) Pass(pass PassReq) (e error) {
-	nextNodes, applyDetail, LastHistory, err := Service.GetNextNode(pass.ApplyId)
+func (service flowHistoryService) Pass(pass PassReq) (e error) {
+	nextNodes, applyDetail, LastHistory, err := service.GetNextNode(pass.ApplyId)
 
 	if err != nil {
 		return err
@@ -336,7 +336,7 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 	if !isUserTask && !isEndTask {
 		return errors.New("必须包含审批节点或者结束节点")
 	}
-	err = Service.db.Transaction(func(tx *gorm.DB) error {
+	err = service.db.Transaction(func(tx *gorm.DB) error {
 		// 在事务中执行一些 db 操作（从这里开始，您应该使用 'tx' 而不是 'db'）
 		if err := tx.Create(&flows).Error; err != nil {
 			// 返回任何错误都会回滚事务
@@ -373,11 +373,11 @@ func (Service flowHistoryService) Pass(pass PassReq) (e error) {
 }
 
 // 驳回
-func (Service flowHistoryService) Back(back BackReq) (e error) {
+func (service flowHistoryService) Back(back BackReq) (e error) {
 	// 得判断一下驳回的人权限
 	// 获取最后一条历史记录
 	var LastHistory model.FlowHistory
-	err := Service.db.Where(model.FlowHistory{
+	err := service.db.Where(model.FlowHistory{
 		ApplyId: back.ApplyId,
 	}).Limit(1).Last(&LastHistory).Error
 	if err != nil {
@@ -391,10 +391,10 @@ func (Service flowHistoryService) Back(back BackReq) (e error) {
 		if err != nil {
 			return err
 		}
-		err = Service.db.Transaction(func(tx *gorm.DB) error {
+		err = service.db.Transaction(func(tx *gorm.DB) error {
 			// 获取最早的一条历史记录，nodeType为"bpmn:startEvent"
 			var FirstHistory model.FlowHistory
-			err = Service.db.Where(model.FlowHistory{
+			err = service.db.Where(model.FlowHistory{
 				ApplyId:  back.ApplyId,
 				NodeType: "bpmn:startEvent",
 			}).Limit(1).First(&FirstHistory).Error
@@ -439,8 +439,8 @@ func (Service flowHistoryService) Back(back BackReq) (e error) {
 		return err
 	} else {
 
-		err = Service.db.Transaction(func(tx *gorm.DB) error {
-			var historyDetail, err = Service.Detail(back.HistoryId)
+		err = service.db.Transaction(func(tx *gorm.DB) error {
+			var historyDetail, err = service.Detail(back.HistoryId)
 			if err != nil {
 				return err
 			}
@@ -476,7 +476,7 @@ func (Service flowHistoryService) Back(back BackReq) (e error) {
 /**
  * 获取下一批流程，直到审批或结束节点
  */
-func (Service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, apply flow_apply.FlowApplyResp, LastHistory model.FlowHistory, e error) {
+func (service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, apply flow_apply.FlowApplyResp, LastHistory model.FlowHistory, e error) {
 	var applyDetail, err = flow_apply.Service.Detail(ApplyId)
 
 	if e = response.CheckErr(err, "获取审批申请失败"); e != nil {
@@ -484,7 +484,7 @@ func (Service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, appl
 	}
 	// 获取最后一条历史记录
 	// var LastHistory model.FlowHistory
-	result := Service.db.Where(model.FlowHistory{
+	result := service.db.Where(model.FlowHistory{
 		ApplyId: ApplyId,
 	}).Limit(1).Last(&LastHistory)
 
