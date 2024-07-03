@@ -51,17 +51,17 @@ func (Service ArticleCollectService) List(page request.PageReq, listReq ArticleC
 		return
 	}
 	// 数据
-	var objs []model.ArticleCollect
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.ArticleCollect
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []ArticleCollectResp{}
-	response.Copy(&resps, objs)
+	result := []ArticleCollectResp{}
+	response.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    result,
 	}, nil
 }

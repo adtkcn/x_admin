@@ -99,12 +99,12 @@ func Ok(c *gin.Context) {
 	Result(c, Success, nil)
 }
 
-// OkWithMsg 正常响应附带msg
-func OkWithMsg(c *gin.Context, message string) {
-	resp := Success
-	resp.message = message
-	Result(c, resp, nil)
-}
+// // OkWithMsg 正常响应附带msg
+// func OkWithMsg(c *gin.Context, message string) {
+// 	resp := Success
+// 	resp.message = message
+// 	Result(c, resp, nil)
+// }
 
 // OkWithData 正常响应附带data
 func OkWithData(c *gin.Context, data interface{}) {

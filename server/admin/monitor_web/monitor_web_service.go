@@ -76,30 +76,30 @@ func (service monitorWebService) List(page request.PageReq, listReq MonitorWebLi
 		return
 	}
 	// 数据
-	var objs []model.MonitorWeb
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.MonitorWeb
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []MonitorWebResp{}
-	response.Copy(&resps, objs)
+	result := []MonitorWebResp{}
+	response.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    result,
 	}, nil
 }
 
 // ListAll 错误收集error列表
 func (service monitorWebService) ListAll() (res []MonitorWebResp, e error) {
-	var objs []model.MonitorWeb
+	var modelList []model.MonitorWeb
 
-	err := service.db.Find(&objs).Error
+	err := service.db.Find(&modelList).Error
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	response.Copy(&res, objs)
+	response.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -195,14 +195,14 @@ func (service monitorWebService) ExportFile(listReq MonitorWebListReq) (res []Mo
 	// }
 
 	// 数据
-	var objs []model.MonitorWeb
-	err := dbModel.Order("id asc").Find(&objs).Error
+	var modelList []model.MonitorWeb
+	err := dbModel.Order("id asc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []MonitorWebResp{}
-	response.Copy(&resps, objs)
-	return resps, nil
+	result := []MonitorWebResp{}
+	response.Copy(&result, modelList)
+	return result, nil
 }
 
 // 导入

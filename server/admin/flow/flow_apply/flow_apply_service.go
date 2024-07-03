@@ -74,18 +74,18 @@ func (Service flowApplyService) List(page request.PageReq, listReq FlowApplyList
 		return
 	}
 	// 数据
-	var objs []model.FlowApply
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.FlowApply
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []FlowApplyResp{}
-	response.Copy(&resps, objs)
+	result := []FlowApplyResp{}
+	response.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    result,
 	}, nil
 }
 

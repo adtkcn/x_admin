@@ -69,30 +69,30 @@ func (service monitorProjectService) List(page request.PageReq, listReq MonitorP
 		return
 	}
 	// 数据
-	var objs []model.MonitorProject
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.MonitorProject
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []MonitorProjectResp{}
-	response.Copy(&resps, objs)
+	result := []MonitorProjectResp{}
+	response.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    result,
 	}, nil
 }
 
 // ListAll 错误项目列表
 func (service monitorProjectService) ListAll() (res []MonitorProjectResp, e error) {
-	var objs []model.MonitorProject
+	var modelList []model.MonitorProject
 
-	err := service.db.Find(&objs).Error
+	err := service.db.Find(&modelList).Error
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	response.Copy(&res, objs)
+	response.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -176,14 +176,14 @@ func (service monitorProjectService) ExportFile(listReq MonitorProjectListReq) (
 	dbModel = dbModel.Where("is_delete = ?", 0)
 
 	// 数据
-	var objs []model.MonitorProject
-	err := dbModel.Order("id asc").Find(&objs).Error
+	var modelList []model.MonitorProject
+	err := dbModel.Order("id asc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []MonitorProjectResp{}
-	response.Copy(&resps, objs)
-	return resps, nil
+	result := []MonitorProjectResp{}
+	response.Copy(&result, modelList)
+	return result, nil
 }
 
 // 导入

@@ -60,29 +60,29 @@ func (Service flowTemplateService) List(page request.PageReq, listReq FlowTempla
 		return
 	}
 	// 数据
-	var objs []model.FlowTemplate
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.FlowTemplate
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []FlowTemplateResp{}
-	response.Copy(&resps, objs)
+	result := []FlowTemplateResp{}
+	response.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    result,
 	}, nil
 }
 
 // ListAll 流程模板列表
 func (Service flowTemplateService) ListAll() (res []FlowTemplateResp, e error) {
-	var objs []model.FlowTemplate
-	err := Service.db.Find(&objs).Error
+	var modelList []model.FlowTemplate
+	err := Service.db.Find(&modelList).Error
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	response.Copy(&res, objs)
+	response.Copy(&res, modelList)
 	return res, nil
 }
 
