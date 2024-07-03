@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var Service=New{{{ title (toCamelCase .EntityName) }}}Service()
+var {{{ title (toCamelCase .EntityName) }}}Service=New{{{ title (toCamelCase .EntityName) }}}Service()
 // New{{{ title (toCamelCase .EntityName) }}}Service 初始化
 func New{{{ title (toCamelCase .EntityName) }}}Service() *{{{ toCamelCase .EntityName }}}Service {
 	db := core.GetDB()
