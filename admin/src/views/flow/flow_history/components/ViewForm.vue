@@ -99,7 +99,8 @@ function onSubmit() {
 defineExpose({
     open,
     disableWidgets,
-    hideWidgets
+    hideWidgets,
+    closeFn
 })
 </script>
 

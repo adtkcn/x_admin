@@ -48,7 +48,7 @@
 
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button type="primary" @click="submit"> 确定 </el-button>
+            <el-button type="primary" @click="submit"> 通过 </el-button>
         </template>
     </el-dialog>
 </template>

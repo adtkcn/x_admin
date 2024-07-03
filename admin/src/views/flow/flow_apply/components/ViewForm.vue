@@ -25,7 +25,11 @@
         <!-- {{ historyList }} -->
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button v-if="applyDetail.status == 1" type="primary" @click="onSubmit">
+            <el-button
+                v-if="applyDetail.status == 1 || applyDetail.status == 4"
+                type="primary"
+                @click="onSubmit"
+            >
                 确定
             </el-button>
         </template>

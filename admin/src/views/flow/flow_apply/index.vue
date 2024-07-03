@@ -84,10 +84,10 @@
                             link
                             @click="OpenViewForm(row)"
                         >
-                            {{ row.status == 1 ? '编辑' : '预览' }}
+                            {{ row.status == 1 || row.status == 4 ? '编辑' : '预览' }}
                         </el-button>
                         <el-button
-                            v-if="row.status == 1 && row.formValue"
+                            v-if="(row.status == 1 || row.status == 4) && row.formValue"
                             v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link

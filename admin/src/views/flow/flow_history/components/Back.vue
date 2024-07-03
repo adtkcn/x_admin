@@ -63,6 +63,8 @@ const props = defineProps({
         default: true
     }
 })
+const emit = defineEmits(['close'])
+
 const dialogVisible = ref(false)
 // const props = defineProps({
 //     save: {
@@ -105,6 +107,7 @@ function open(applyId) {
 }
 function BeforeClose() {
     dialogVisible.value = false
+    emit('close')
 }
 function submit() {
     flow_history_back(formData).then(() => {
