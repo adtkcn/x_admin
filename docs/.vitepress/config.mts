@@ -20,7 +20,7 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: '后端',
+        text: '后端-server',
         items: [
           // { text: '后端', link: '/markdown-examples' },
           // { text: '前端', link: '/api-examples' },
@@ -32,10 +32,11 @@ export default defineConfig({
           { text: '权限验证', link: '/server/权限验证.md' },
           { text: '结构说明', link: '/server/结构说明.md' },
           { text: '注意事项', link: '/server/注意事项.md' },
+          { text: '数据库null值', link: '/server/数据库null值.md' },
         ]
       },
       {
-        text: '前端',
+        text: '前端-admin',
         items: [          
           { text: '准备', link: '/admin/准备.md' },
   
