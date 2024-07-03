@@ -43,6 +43,7 @@ export default defineConfig({
           { text: 'nginx配置', link: '/admin/nginx配置.md' },
 
           { text: '路由', link: '/admin/路由.md' },
+          { text: '自定义hooks', link: '/admin/自定义hooks.md' },
         ]
       }
     ],

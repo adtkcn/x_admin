@@ -9,6 +9,17 @@ interface Options {
     firstLoading?: boolean
 }
 
+/**
+ *
+ * @param {object} options
+ * @param {number} options.page 页码
+ * @param {number} options.size 每页条数
+ * @param {function} options.fetchFun 分页接口函数
+ * @param {object} options.params 分页参数
+ * @param {boolean} options.firstLoading 是否首次加载
+ *
+ *
+ */
 export function usePaging<T>(options: Options) {
     const { page = 1, size = 15, fetchFun, params = {}, firstLoading = false } = options
     // 记录分页初始参数
@@ -51,7 +62,8 @@ export function usePaging<T>(options: Options) {
         Object.keys(paramsInit).forEach((item) => {
             params[item] = paramsInit[item]
         })
-        getLists()
+
+        resetPage()
     }
     return {
         pager,

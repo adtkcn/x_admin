@@ -174,7 +174,7 @@ const queryParams = reactive({
     status: ''
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<any>({
     fetchFun: flow_apply_lists,
     params: queryParams
 })
