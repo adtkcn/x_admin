@@ -8,11 +8,12 @@ hero:
   tagline: x_admin是一套快速开发通用管理后台，使用流行的技术栈Go、TypeScript、Vue3、vite、Element Plus。一键生成前端、后端、uniapp代码
   actions:
     - theme: brand
-      text: 前端文档
-      link: /admin/准备.html
-    - theme: brand
       text: 后端文档
       link: /server/准备.html
+    - theme: brand
+      text: 前端文档
+      link: /admin/准备.html
+
 
 features:
   - title: 方便部署

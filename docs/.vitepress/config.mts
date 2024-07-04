@@ -33,6 +33,7 @@ export default defineConfig({
           { text: '结构说明', link: '/server/结构说明.md' },
           { text: '注意事项', link: '/server/注意事项.md' },
           { text: '数据库null值', link: '/server/数据库null值.md' },
+          { text: 'swaggo', link: '/server/swaggo.md' },
         ]
       },
       {
