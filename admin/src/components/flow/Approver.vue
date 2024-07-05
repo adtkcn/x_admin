@@ -48,13 +48,13 @@
                 v-show="activeStep === 'formDesign'"
                 tabName="formDesign"
             />
-            <Diagram
-                ref="processDesign"
-                v-show="activeStep === 'processDesign'"
-                tabName="processDesign"
+            <FlowEdit
+                ref="flowEdit"
+                v-show="activeStep === 'flowEdit'"
+                tabName="flowEdit"
                 :fieldList="fieldList"
                 :conf="mockData.flowProcessData"
-            ></Diagram>
+            ></FlowEdit>
         </div>
     </el-dialog>
 </template>
@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { ref, shallowRef, watch } from 'vue'
 import XForm from './XForm/index.vue'
-import Diagram from './flowEdit/Diagram.vue'
+import FlowEdit from './flowEdit/index.vue'
 import BasicSetting from './BasicSetting/index.vue'
 
 import feedback from '@/utils/feedback'
@@ -89,7 +89,7 @@ const props = defineProps({
 
 const basicSetting = shallowRef<InstanceType<typeof BasicSetting>>()
 const formDesign = shallowRef<InstanceType<typeof XForm>>()
-const processDesign = shallowRef<InstanceType<typeof Diagram>>()
+const flowEdit = shallowRef<InstanceType<typeof FlowEdit>>()
 const dialogVisible = ref(false)
 const activeStep = ref('basicSetting')
 const mockData = ref({
@@ -102,7 +102,7 @@ const fieldList = ref([])
 const steps = [
     { label: '基础设置', key: 'basicSetting' },
     { label: '表单设计', key: 'formDesign' },
-    { label: '流程设计', key: 'processDesign' }
+    { label: '流程设计', key: 'flowEdit' }
 ]
 watch(
     () => dialogVisible.value,
@@ -151,7 +151,7 @@ function changeSteps(item) {
 function publish() {
     const p1 = basicSetting.value.getData()
     const p2 = formDesign.value.getData()
-    const p3 = processDesign.value.getData()
+    const p3 = flowEdit.value.getData()
     Promise.all([p1, p2, p3])
         .then((res) => {
             console.log('res', res)
