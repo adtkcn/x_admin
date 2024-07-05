@@ -1,7 +1,7 @@
 <template>
     <div class="code-preview">
-        <el-dialog v-model="show" width="95%" title="代码预览">
-            <el-container style="height: 75vh">
+        <el-dialog v-model="show" width="95%" title="代码预览" top="10px" draggable>
+            <el-container style="height: calc(100vh - 170px)">
                 <el-aside
                     width="400px"
                     style="padding: 10px 0; margin-right: 20px; border: 1px solid #dcdfe6"

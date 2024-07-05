@@ -605,8 +605,7 @@ paths:
   /api/admin/flow/flow_history/detail:
     get:
       parameters:
-      - default: '{{Token}}'
-        description: token
+      - description: token
         in: header
         name: Token
         required: true

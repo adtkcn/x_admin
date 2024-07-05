@@ -18,5 +18,8 @@
 		{
 			"path": ".workflow"
 		}
-	]
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "admin"
+	}
 }

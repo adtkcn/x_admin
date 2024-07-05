@@ -609,7 +609,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "default": "{{Token}}",
                         "description": "token",
                         "name": "Token",
                         "in": "header",
