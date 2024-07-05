@@ -167,8 +167,8 @@ function publish() {
         })
         .catch((err) => {
             console.error(err)
-            err.target && (this.activeStep = err.target)
-            err.message && this.$message.error(err.message)
+            err.target && (activeStep.value = err.target)
+            err.message && feedback.msgError(err.message)
         })
 }
 

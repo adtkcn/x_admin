@@ -94,7 +94,7 @@ function getData() {
     }>((resolve, reject) => {
         elFormRef.value.validate((valid) => {
             if (!valid) {
-                reject({ target: this.tabName })
+                reject({ target: props.tabName })
                 return
             }
             // this.formData.flowImg = this.activeIcon
