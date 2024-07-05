@@ -16,7 +16,9 @@ function getFieldWidgets() {
     return fieldList
 }
 function getData() {
-    return new Promise((resolve, reject) => {
+    return new Promise<{
+        formData: any
+    }>((resolve, reject) => {
         try {
             const jsonData = designerRef.value.getFormJson()
             console.log('jsonData', jsonData)
