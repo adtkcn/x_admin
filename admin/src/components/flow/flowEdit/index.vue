@@ -31,7 +31,7 @@ import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 import DiagramToolbar from './DiagramToolbar.vue'
 import DiagramSidebar from './DiagramSidebar.vue'
-import PropertyPanel from './PropertyPanel/PropertyPanel.vue'
+import PropertyPanel from './PropertyPanel/index.vue'
 import { registerCustomElement } from './node'
 
 defineOptions({
@@ -106,7 +106,7 @@ function initLogicFlow(data) {
 
     // Event listener for node clicks
     lf.value.on('node:click', (e) => {
-        console.log('Click on node', e.data)
+        console.log('Click on node', e.data, props.fieldList)
         PropertyPanelRef.value.open(e.data, props.fieldList)
     })
 }
@@ -121,6 +121,8 @@ function dragInNode(type, text = '') {
 
 // Function to set properties of a node
 function setProperties(node, item) {
+    console.log('setProperties', node, item)
+
     lf.value.setProperties(node.id, item)
 }
 // function setZIndex(node, type) {

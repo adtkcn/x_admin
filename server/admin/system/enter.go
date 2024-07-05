@@ -22,6 +22,7 @@ func AdminRoute(rg *gin.RouterGroup) {
 
 	rg.GET("/admin/self", handle.Self)
 	rg.GET("/admin/list", handle.List)
+	rg.GET("/admin/listAll", handle.ListAll)
 	rg.GET("/admin/ListByDeptId", handle.ListByDeptId)
 	rg.GET("/admin/detail", handle.Detail)
 	rg.POST("/admin/add", middleware.RecordLog("管理员新增"), handle.Add)

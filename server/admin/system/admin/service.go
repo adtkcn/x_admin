@@ -206,6 +206,44 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq System
 	}, nil
 }
 
+// List 管理员列表
+func (adminSrv systemAuthAdminService) ListAll(listReq SystemAuthAdminListReq) (res []SystemAuthAdminResp, e error) {
+	// 分页信息
+
+	// 查询
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
+	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
+	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
+	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.role = %s.id", roleTbName, roleTbName)).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
+		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
+	// 条件
+	if listReq.Username != "" {
+		adminModel = adminModel.Where("username like ?", "%"+listReq.Username+"%")
+	}
+	if listReq.Nickname != "" {
+		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
+	}
+	if listReq.Role >= 0 {
+		adminModel = adminModel.Where("role = ?", listReq.Role)
+	}
+
+	// 数据
+	var adminResp []SystemAuthAdminResp
+	err := adminModel.Order("id desc, sort desc").Find(&adminResp).Error
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
+		return
+	}
+	for i := 0; i < len(adminResp); i++ {
+		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
+		if adminResp[i].ID == 1 {
+			adminResp[i].Role = "系统管理员"
+		}
+	}
+	return adminResp, nil
+}
+
 // Detail 管理员详细
 func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp, e error) {
 	var sysAdmin system_model.SystemAuthAdmin

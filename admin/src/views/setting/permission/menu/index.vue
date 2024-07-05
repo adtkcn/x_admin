@@ -16,8 +16,10 @@
                 class="mt-4"
                 size="large"
                 :data="lists"
+                :lazy="true"
                 row-key="id"
                 :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+                height="calc(100vh - 220px)"
             >
                 <el-table-column
                     label="菜单名称"

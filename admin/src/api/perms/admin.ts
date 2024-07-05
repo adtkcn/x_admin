@@ -6,6 +6,10 @@ import config from '@/config'
 export function adminLists(params: any) {
     return request.get({ url: '/system/admin/list', params })
 }
+// 管理员列表
+export function adminListAll(params: any) {
+    return request.get({ url: '/system/admin/listAll', params })
+}
 // 管理员详情
 export function adminDetail(params: any) {
     return request.get({ url: '/system/admin/detail', params })

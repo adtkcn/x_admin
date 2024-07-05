@@ -141,9 +141,8 @@ function open(data) {
     dialogVisible.value = true
 }
 function changeSteps(item) {
-    const fieldList = formDesign.value.getFieldWidgets()
-
-    fieldList.value = fieldList
+    fieldList.value = formDesign.value.getFieldWidgets()
+    console.log('fieldList', fieldList.value)
 
     activeStep.value = item.key
 }
