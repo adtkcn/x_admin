@@ -27,7 +27,10 @@ require (
 	gorm.io/plugin/soft_delete v1.2.1
 )
 
-require github.com/redis/go-redis/v9 v9.5.2
+require (
+	github.com/redis/go-redis/v9 v9.5.2
+	golang.org/x/sync v0.7.0
+)
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

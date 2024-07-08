@@ -30,6 +30,7 @@ func MonitorProjectRoute(rg *gin.RouterGroup) {
 	handle := monitor_project.MonitorProjectHandler{}
 
 	r := rg.Group("/", middleware.TokenAuth())
+
 	r.GET("/monitor_project/list", handle.List)
 	r.GET("/monitor_project/listAll", handle.ListAll)
 	r.GET("/monitor_project/detail", handle.Detail)

@@ -1,6 +1,8 @@
 package monitor_project
 
 import (
+	"errors"
+	"strconv"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -31,6 +33,35 @@ func NewMonitorProjectService() *monitorProjectService {
 // monitorProjectService 错误项目服务实现类
 type monitorProjectService struct {
 	db *gorm.DB
+}
+
+// 设置缓存
+func (service monitorProjectService) SetCache(obj model.MonitorProject) bool {
+	str, e := util.ToolsUtil.ObjToJson(obj)
+	if e != nil {
+		return false
+	}
+	return util.RedisUtil.Set("MonitorProject:id:"+strconv.Itoa(obj.Id), str, 3600)
+}
+
+// 获取缓存
+func (service monitorProjectService) GetCache(id int) (model.MonitorProject, error) {
+	var obj model.MonitorProject
+	str := util.RedisUtil.Get("MonitorProject:id:" + strconv.Itoa(id))
+	if str == "" {
+		return obj, errors.New("获取缓存失败")
+	}
+	err := util.ToolsUtil.JsonToObj(str, &obj)
+
+	if err != nil {
+		return obj, errors.New("获取缓存失败")
+	}
+	return obj, nil
+}
+
+// 删除缓存
+func (service monitorProjectService) RemoveCache(obj model.MonitorProject) bool {
+	return util.RedisUtil.Del("{{{ toCamelCase .EntityName }}}:id:" + strconv.Itoa(obj.Id))
 }
 
 // List 错误项目列表
@@ -98,14 +129,19 @@ func (service monitorProjectService) ListAll() (res []MonitorProjectResp, e erro
 
 // Detail 错误项目详情
 func (service monitorProjectService) Detail(id int) (res MonitorProjectResp, e error) {
-	var obj model.MonitorProject
-	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-		return
+
+	var obj, err = service.GetCache(id)
+	if err != nil {
+		err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
+		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+			return
+		}
+		if e = response.CheckErr(err, "详情获取失败"); e != nil {
+			return
+		}
+		service.SetCache(obj)
 	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
-		return
-	}
+
 	response.Copy(&res, obj)
 	return
 }
@@ -120,6 +156,7 @@ func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (e error) 
 	if e = response.CheckMysqlErr(err); e != nil {
 		return e
 	}
+	service.SetCache(obj)
 	e = response.CheckErr(err, "添加失败")
 	return
 }
@@ -138,6 +175,7 @@ func (service monitorProjectService) Edit(editReq MonitorProjectEditReq) (e erro
 	// 更新
 	response.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Updates(obj).Error
+	service.SetCache(obj)
 	e = response.CheckErr(err, "编辑失败")
 	return
 }
@@ -156,6 +194,7 @@ func (service monitorProjectService) Del(id int) (e error) {
 	// 删除
 	obj.IsDelete = 1
 	err = service.db.Save(&obj).Error
+	util.RedisUtil.Del("MonitorProject:id:" + strconv.Itoa(obj.Id))
 	e = response.CheckErr(err, "Del Save err")
 	return
 }

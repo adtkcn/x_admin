@@ -20,6 +20,36 @@ type {{{ toCamelCase .EntityName }}}Service struct {
 	db *gorm.DB
 }
 
+
+// 设置缓存
+func (service {{{ toCamelCase .EntityName }}}Service) SetCache(obj model.{{{ title (toCamelCase .EntityName) }}}) bool {
+	str, e := util.ToolsUtil.ObjToJson(obj)
+	if e != nil {
+		return false
+	}
+	return util.RedisUtil.Set("{{{ toCamelCase .EntityName }}}:id:"+strconv.Itoa(obj.Id), str, 3600)
+}
+
+// 获取缓存
+func (service {{{ toCamelCase .EntityName }}}Service) GetCache(id int) (model.{{{ title (toCamelCase .EntityName) }}}, error) {
+	var obj model.{{{ title (toCamelCase .EntityName) }}}
+	str := util.RedisUtil.Get("{{{ toCamelCase .EntityName }}}:id:" + strconv.Itoa(id))
+	if str == "" {
+		return obj, errors.New("获取缓存失败")
+	}
+	err := util.ToolsUtil.JsonToObj(str, &obj)
+
+	if err != nil {
+		return obj, errors.New("获取缓存失败")
+	}
+	return obj, nil
+}
+// 删除缓存
+func (service {{{ toCamelCase .EntityName }}}Service) RemoveCache(obj model.{{{ title (toCamelCase .EntityName) }}}) bool {
+	return util.RedisUtil.Del("{{{ toCamelCase .EntityName }}}:id:" + strconv.Itoa(obj.Id))
+}
+
+
 // List {{{ .FunctionName }}}列表
 func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq {{{ title (toCamelCase .EntityName) }}}ListReq) *gorm.DB {
 	// 查询
@@ -95,20 +125,26 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ title 
 
 // Detail {{{ .FunctionName }}}详情
 func (service {{{ toCamelCase .EntityName }}}Service) Detail(id int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error) {
-	var obj model.{{{ title (toCamelCase .EntityName) }}}
-	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-		return
+	var obj, err = service.GetCache(id)
+	// var obj model.{{{ title (toCamelCase .EntityName) }}}
+	if err != nil {
+		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+			return
+		}
+		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+			return
+		}
+		response.Copy(&res, obj)
+		{{{- range .Columns }}}
+		{{{- if and .IsEdit (contains (slice "image" "avatar" "logo" "img") .GoField) }}}
+		res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
+		{{{- end }}}
+		{{{- end }}}
+		service.SetCache(obj)
 	}
-	if e = response.CheckErr(err, "获取详情失败"); e != nil {
-		return
-	}
-	response.Copy(&res, obj)
-	{{{- range .Columns }}}
-    {{{- if and .IsEdit (contains (slice "image" "avatar" "logo" "img") .GoField) }}}
-    res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
-    {{{- end }}}
-    {{{- end }}}
+
+
 	return
 }
 
@@ -121,6 +157,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ title (toCa
 	if e != nil {
 		return e
 	}
+	service.SetCache(obj)
 	e = response.CheckErr(err, "添加失败")
 	return
 }
@@ -140,6 +177,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ title (to
 	response.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	e = response.CheckErr(err, "更新失败")
+	service.SetCache(obj)
 	return
 }
 
@@ -166,6 +204,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del(id int) (e error) {
     err = service.db.Delete(&obj).Error
     e = response.CheckErr(err, "删除失败")
     {{{- end }}}
+	service.RemoveCache(obj)
 	return
 }
 
