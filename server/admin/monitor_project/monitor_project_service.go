@@ -41,13 +41,13 @@ func (service monitorProjectService) SetCache(obj model.MonitorProject) bool {
 	if e != nil {
 		return false
 	}
-	return util.RedisUtil.Set("MonitorProject:id:"+strconv.Itoa(obj.Id), str, 3600)
+	return util.RedisUtil.HSet("MonitorProject", strconv.Itoa(obj.Id), str, 3600)
 }
 
 // 获取缓存
 func (service monitorProjectService) GetCache(id int) (model.MonitorProject, error) {
 	var obj model.MonitorProject
-	str := util.RedisUtil.Get("MonitorProject:id:" + strconv.Itoa(id))
+	str := util.RedisUtil.HGet("MonitorProject", strconv.Itoa(id))
 	if str == "" {
 		return obj, errors.New("获取缓存失败")
 	}
@@ -61,7 +61,7 @@ func (service monitorProjectService) GetCache(id int) (model.MonitorProject, err
 
 // 删除缓存
 func (service monitorProjectService) RemoveCache(obj model.MonitorProject) bool {
-	return util.RedisUtil.Del("{{{ toCamelCase .EntityName }}}:id:" + strconv.Itoa(obj.Id))
+	return util.RedisUtil.HDel("MonitorProject", strconv.Itoa(obj.Id))
 }
 
 // List 错误项目列表
@@ -147,16 +147,17 @@ func (service monitorProjectService) Detail(id int) (res MonitorProjectResp, e e
 }
 
 // Add 错误项目新增
-func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (e error) {
+func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (createId int, e error) {
 	var obj model.MonitorProject
 	response.Copy(&obj, addReq)
 	obj.ProjectKey = util.ToolsUtil.MakeUuid()
 	err := service.db.Create(&obj).Error
 
 	if e = response.CheckMysqlErr(err); e != nil {
-		return e
+		return 0, e
 	}
 	service.SetCache(obj)
+	createId = obj.Id
 	e = response.CheckErr(err, "添加失败")
 	return
 }
@@ -194,7 +195,7 @@ func (service monitorProjectService) Del(id int) (e error) {
 	// 删除
 	obj.IsDelete = 1
 	err = service.db.Save(&obj).Error
-	util.RedisUtil.Del("MonitorProject:id:" + strconv.Itoa(obj.Id))
+	service.RemoveCache(obj)
 	e = response.CheckErr(err, "Del Save err")
 	return
 }

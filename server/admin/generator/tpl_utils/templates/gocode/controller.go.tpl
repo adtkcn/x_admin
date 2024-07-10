@@ -2,16 +2,20 @@ package {{{ .ModuleName }}}
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 	"github.com/gin-gonic/gin" 
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
 	"x_admin/util/excel"
+	"golang.org/x/sync/singleflight"
 )
 
  
-type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
+type {{{ title (toCamelCase .ModuleName) }}}Handler struct {
+	requestGroup singleflight.Group
+}
 
 //  @Summary	{{{ .FunctionName }}}列表
 //  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -31,7 +35,7 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {}
 {{{- end }}}
 //@Success 200	{object} {{{getPageResp (title (toCamelCase .EntityName))  }}}	"成功"
 //@Router	/api/admin/{{{ .ModuleName }}}/list [get]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
@@ -59,7 +63,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
 {{{- end }}}
 //	@Success	200			{object}	response.Response{ data=[]{{{ title (toCamelCase .EntityName) }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
 	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
@@ -79,12 +83,16 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context
 {{{- end }}}
 //	@Success	200			{object}	response.Response{ data={{{ title (toCamelCase .EntityName) }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context) {
 	var detailReq {{{ title (toCamelCase .EntityName) }}}DetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := {{{ title (toCamelCase .EntityName) }}}Service.Detail(detailReq.{{{ title (toCamelCase .PrimaryKey) }}})
+	res, err, _ := hd.requestGroup.Do("{{{ title (toCamelCase .EntityName) }}}:Detail:"+strconv.Itoa(detailReq.{{{ title (toCamelCase .PrimaryKey) }}}), func() (any, error) {
+		v, err := {{{ title (toCamelCase .EntityName) }}}Service.Detail(detailReq.{{{ title (toCamelCase .PrimaryKey) }}})
+		return v, err
+	})
+
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -100,12 +108,13 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context)
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/add [post]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 	var addReq {{{ title (toCamelCase .EntityName) }}}AddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, {{{ title (toCamelCase .EntityName) }}}Service.Add(addReq))
+	createId, e := {{{ title (toCamelCase .EntityName) }}}Service.Add(addReq)
+	response.CheckAndRespWithData(c,createId, e)
 }
 //	@Summary	{{{ .FunctionName }}}编辑
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -118,12 +127,12 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/edit [post]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 	var editReq {{{ title (toCamelCase .EntityName) }}}EditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, {{{ title (toCamelCase .EntityName) }}}Service.Edit(editReq))
+	response.CheckAndRespWithData(c,editReq.{{{ title (toCamelCase .PrimaryKey) }}}, {{{ title (toCamelCase .EntityName) }}}Service.Edit(editReq))
 }
 //	@Summary	{{{ .FunctionName }}}删除
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -136,7 +145,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 	var delReq {{{ title (toCamelCase .EntityName) }}}DelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
@@ -161,7 +170,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 {{{- end }}}
 {{{- end }}}
 //	@Router		/api/admin/{{{ .ModuleName }}}/ExportFile [get]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Context) {
 	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
@@ -183,7 +192,7 @@ func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Cont
 //  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
 //	@Router		/api/admin/{{{ .ModuleName }}}/ImportFile [post]
-func (hd {{{  title (toCamelCase .ModuleName) }}}Handler) ImportFile(c *gin.Context) {
+func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
 		c.String(http.StatusInternalServerError, "文件不存在")

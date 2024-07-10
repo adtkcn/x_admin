@@ -1,8 +1,8 @@
 package monitor_project
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -13,7 +13,9 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
-type MonitorProjectHandler struct{}
+type MonitorProjectHandler struct {
+	requestGroup singleflight.Group
+}
 
 // @Summary	错误项目列表
 // @Tags		monitor_project-错误项目
@@ -27,7 +29,7 @@ type MonitorProjectHandler struct{}
 // @Success	200			{object}	response.Response{data=response.PageResp{lists=[]MonitorProjectResp}}	"成功"
 // @Failure	400			{object}	string																	"请求错误"
 // @Router		/api/admin/monitor_project/list [get]
-func (hd MonitorProjectHandler) List(c *gin.Context) {
+func (hd *MonitorProjectHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq MonitorProjectListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
@@ -45,14 +47,14 @@ func (hd MonitorProjectHandler) List(c *gin.Context) {
 // @Produce	json
 // @Success	200	{object}	response.Response{data=[]MonitorProjectResp}	"成功"
 // @Router		/api/admin/monitor_project/listAll [get]
-var sg singleflight.Group
+// var sg singleflight.Group
 
-func (hd MonitorProjectHandler) ListAll(c *gin.Context) {
-	res, err, shared := sg.Do("key", func() (any, error) {
+func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
+	res, err, _ := hd.requestGroup.Do("monitor_project:listAll", func() (any, error) {
 		v, err := Service.ListAll()
 		return v, err
 	})
-	fmt.Printf("v: %v, shared: %v\n", res, shared)
+	// fmt.Printf("v: %v, shared: %v\n", res, shared)
 
 	// var listReq MonitorProjectListReq
 	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -68,12 +70,16 @@ func (hd MonitorProjectHandler) ListAll(c *gin.Context) {
 // @Param		id		query		int											false	"项目id."
 // @Success	200		{object}	response.Response{data=MonitorProjectResp}	"成功"
 // @Router		/api/admin/monitor_project/detail [get]
-func (hd MonitorProjectHandler) Detail(c *gin.Context) {
+func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 	var detailReq MonitorProjectDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := Service.Detail(detailReq.Id)
+	res, err, _ := hd.requestGroup.Do("monitor_project:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
+		v, err := Service.Detail(detailReq.Id)
+		return v, err
+	})
+	// fmt.Printf("v: %v, shared: %v\n", res, shared)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -86,12 +92,13 @@ func (hd MonitorProjectHandler) Detail(c *gin.Context) {
 // @Param		projectType	body		string				false	"项目类型go java web node php 等."
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/add [post]
-func (hd MonitorProjectHandler) Add(c *gin.Context) {
+func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 	var addReq MonitorProjectAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Add(addReq))
+	createId, e := Service.Add(addReq)
+	response.CheckAndRespWithData(c, createId, e)
 }
 
 // @Summary	错误项目编辑
@@ -104,12 +111,12 @@ func (hd MonitorProjectHandler) Add(c *gin.Context) {
 // @Param		projectType	body		string				false	"项目类型go java web node php 等."
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/edit [post]
-func (hd MonitorProjectHandler) Edit(c *gin.Context) {
+func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 	var editReq MonitorProjectEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Edit(editReq))
+	response.CheckAndRespWithData(c, editReq.Id, Service.Edit(editReq))
 }
 
 // @Summary	错误项目删除
@@ -119,7 +126,7 @@ func (hd MonitorProjectHandler) Edit(c *gin.Context) {
 // @Param		id		body		int					false	"项目id."
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/del [post]
-func (hd MonitorProjectHandler) Del(c *gin.Context) {
+func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 	var delReq MonitorProjectDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
@@ -135,7 +142,7 @@ func (hd MonitorProjectHandler) Del(c *gin.Context) {
 // @Param		projectName	query	string	false	"项目名称."
 // @Param		projectType	query	string	false	"项目类型go java web node php 等."
 // @Router		/api/admin/monitor_project/ExportFile [get]
-func (hd MonitorProjectHandler) ExportFile(c *gin.Context) {
+func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorProjectListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
@@ -156,7 +163,7 @@ func (hd MonitorProjectHandler) ExportFile(c *gin.Context) {
 // @Summary	错误项目导入
 // @Tags		monitor_project-错误项目
 // @Produce	json
-func (hd MonitorProjectHandler) ImportFile(c *gin.Context) {
+func (hd *MonitorProjectHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
 		c.String(http.StatusInternalServerError, "文件不存在")
@@ -169,9 +176,9 @@ func (hd MonitorProjectHandler) ImportFile(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	for _, t := range importList {
-		fmt.Printf("%#v", t)
-	}
+	// for _, t := range importList {
+	// 	fmt.Printf("%#v", t)
+	// }
 	err = Service.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }

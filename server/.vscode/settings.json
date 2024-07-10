@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "dcloudio",
+        "endregion",
         "excelize",
         "fontsize",
         "freetype",
@@ -9,10 +10,13 @@
         "gorm",
         "Infof",
         "Inno",
+        "Itoa",
         "jinzhu",
         "mapstructure",
         "oneof",
         "rmvb",
+        "strconv",
+        "struct",
         "uniapp",
         "Warnf",
         "webp",

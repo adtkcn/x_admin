@@ -27,13 +27,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) SetCache(obj model.{{{ tit
 	if e != nil {
 		return false
 	}
-	return util.RedisUtil.Set("{{{ toCamelCase .EntityName }}}:id:"+strconv.Itoa(obj.Id), str, 3600)
+	return util.RedisUtil.HSet("{{{ toCamelCase .EntityName }}}",strconv.Itoa(obj.{{{ title (toCamelCase .PrimaryKey) }}}), str, 3600)
 }
 
 // 获取缓存
-func (service {{{ toCamelCase .EntityName }}}Service) GetCache(id int) (model.{{{ title (toCamelCase .EntityName) }}}, error) {
+func (service {{{ toCamelCase .EntityName }}}Service) GetCache(key int) (model.{{{ title (toCamelCase .EntityName) }}}, error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
-	str := util.RedisUtil.Get("{{{ toCamelCase .EntityName }}}:id:" + strconv.Itoa(id))
+	str := util.RedisUtil.HGet("{{{ toCamelCase .EntityName }}}", strconv.Itoa(key))
 	if str == "" {
 		return obj, errors.New("获取缓存失败")
 	}
@@ -46,7 +46,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetCache(id int) (model.{{
 }
 // 删除缓存
 func (service {{{ toCamelCase .EntityName }}}Service) RemoveCache(obj model.{{{ title (toCamelCase .EntityName) }}}) bool {
-	return util.RedisUtil.Del("{{{ toCamelCase .EntityName }}}:id:" + strconv.Itoa(obj.Id))
+	return util.RedisUtil.HDel("{{{ toCamelCase .EntityName }}}", strconv.Itoa(obj.{{{ title (toCamelCase .PrimaryKey) }}}))
 }
 
 
@@ -124,11 +124,11 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ title 
 }
 
 // Detail {{{ .FunctionName }}}详情
-func (service {{{ toCamelCase .EntityName }}}Service) Detail(id int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error) {
-	var obj, err = service.GetCache(id)
+func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ title (toCamelCase .PrimaryKey) }}} int) (res {{{ title (toCamelCase .EntityName) }}}Resp, e error) {
+	var obj, err = service.GetCache({{{ title (toCamelCase .PrimaryKey) }}})
 	// var obj model.{{{ title (toCamelCase .EntityName) }}}
 	if err != nil {
-		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ title (toCamelCase .PrimaryKey) }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -149,15 +149,16 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail(id int) (res {{{ ti
 }
 
 // Add {{{ .FunctionName }}}新增
-func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ title (toCamelCase .EntityName) }}}AddReq) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ title (toCamelCase .EntityName) }}}AddReq) (createId int,e error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
 	response.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
-		return e
+		return 0,e
 	}
 	service.SetCache(obj)
+	createId = obj.{{{ title (toCamelCase .PrimaryKey) }}}
 	e = response.CheckErr(err, "添加失败")
 	return
 }
@@ -165,7 +166,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ title (toCa
 // Edit {{{ .FunctionName }}}编辑
 func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ title (toCamelCase .EntityName) }}}EditReq) (e error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
-	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", editReq.Id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", editReq.{{{ title (toCamelCase .PrimaryKey) }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -182,9 +183,9 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ title (to
 }
 
 // Del {{{ .FunctionName }}}删除
-func (service {{{ toCamelCase .EntityName }}}Service) Del(id int) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ title (toCamelCase .PrimaryKey) }}} int) (e error) {
 	var obj model.{{{ title (toCamelCase .EntityName) }}}
-	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", id{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ title (toCamelCase .PrimaryKey) }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 		return

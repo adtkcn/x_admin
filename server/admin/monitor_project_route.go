@@ -38,5 +38,5 @@ func MonitorProjectRoute(rg *gin.RouterGroup) {
 	r.POST("/monitor_project/edit", middleware.RecordLog("错误项目编辑"), handle.Edit)
 	r.POST("/monitor_project/del", middleware.RecordLog("错误项目删除"), handle.Del)
 	r.GET("/monitor_project/ExportFile", middleware.RecordLog("错误项目导出"), handle.ExportFile)
-	r.POST("/monitor_project/ImportFile", handle.ImportFile)
+	r.POST("/monitor_project/ImportFile", middleware.RecordLog("错误项目导入"), handle.ImportFile)
 }

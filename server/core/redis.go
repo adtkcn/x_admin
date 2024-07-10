@@ -17,7 +17,10 @@ func initRedis() *redis.Client {
 	if err != nil {
 		log.Fatal("initRedis redis.ParseURL err: ", err)
 	}
-	opt.PoolSize = config.Config.RedisPoolSize
+	// opt.PoolSize = config.Config.RedisPoolSize
+	opt.MaxIdleConns = config.Config.RedisMaxIdleConns
+	opt.ConnMaxLifetime = config.Config.RedisConnMaxLifetime
+
 	client := redis.NewClient(opt)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

@@ -51,5 +51,5 @@ func {{{ title (toCamelCase .ModuleName) }}}Route(rg *gin.RouterGroup) {
 	r.POST("/{{{ .ModuleName }}}/edit",middleware.RecordLog("{{{ .FunctionName }}}编辑"), handle.Edit)
 	r.POST("/{{{ .ModuleName }}}/del", middleware.RecordLog("{{{ .FunctionName }}}删除"), handle.Del)
 	r.GET("/{{{ .ModuleName }}}/ExportFile", middleware.RecordLog("{{{ .FunctionName }}}导出"), handle.ExportFile)
-	r.POST("/{{{ .ModuleName }}}/ImportFile", handle.ImportFile)
+	r.POST("/{{{ .ModuleName }}}/ImportFile",middleware.RecordLog("{{{ .FunctionName }}}导入"),  handle.ImportFile)
 }
