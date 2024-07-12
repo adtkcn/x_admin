@@ -37,7 +37,7 @@ type {{{ title (toCamelCase .EntityName) }}}AddReq struct {
 type {{{ title (toCamelCase .EntityName) }}}EditReq struct {
     {{{- range .Columns }}}
     {{{- if .IsEdit }}}
-    {{{ title (toCamelCase .GoField) }}} {{{ .GoType }}} `form:"{{{ toCamelCase .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ title (toCamelCase .GoField) }}} *{{{ .GoType }}} `form:"{{{ toCamelCase .GoField }}}"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }

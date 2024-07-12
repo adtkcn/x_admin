@@ -29,8 +29,8 @@ type MonitorProjectAddReq struct {
 type MonitorProjectEditReq struct {
 	Id int `form:"id"` // 项目id
 	// ProjectKey  string `form:"projectKey"`  // 项目uuid
-	ProjectName string `form:"projectName"` // 项目名称
-	ProjectType string `form:"projectType"` // 项目类型go java web node php 等
+	ProjectName *string `form:"projectName"` // 项目名称
+	ProjectType *string `form:"projectType"` // 项目类型go java web node php 等
 }
 
 //MonitorProjectDelReq 错误项目新增参数

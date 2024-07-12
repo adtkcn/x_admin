@@ -63,7 +63,7 @@ const popupTitle = computed(() => {
 const formData = reactive({
     id: '',
     // projectKey: '',
-    projectName: '',
+    projectName: null,
     projectType: ''
 })
 
@@ -82,13 +82,13 @@ const formRules = {
     //         trigger: ['blur']
     //     }
     // ],
-    projectName: [
-        {
-            required: true,
-            message: '请输入项目名称',
-            trigger: ['blur']
-        }
-    ],
+    // projectName: [
+    //     {
+    //         required: true,
+    //         message: '请输入项目名称',
+    //         trigger: ['blur']
+    //     }
+    // ],
     projectType: [
         {
             required: true,

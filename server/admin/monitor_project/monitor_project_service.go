@@ -175,9 +175,12 @@ func (service monitorProjectService) Edit(editReq MonitorProjectEditReq) (e erro
 	}
 	// 更新
 	response.Copy(&obj, editReq)
-	err = service.db.Model(&obj).Updates(obj).Error
+
+	err = service.db.Model(&obj).Select("*").Updates(obj).Error
+	if e = response.CheckErr(err, "编辑失败"); e != nil {
+		return
+	}
 	service.SetCache(obj)
-	e = response.CheckErr(err, "编辑失败")
 	return
 }
 
