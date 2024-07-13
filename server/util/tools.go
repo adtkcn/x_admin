@@ -102,6 +102,11 @@ func (tu toolsUtil) GetPageResp(s string) string {
 	return `response.Response{ data=response.PageResp{ lists= []` + s + `Resp}}`
 }
 
+// NameToPath 下划线文件路径
+func (tu toolsUtil) NameToPath(s string) string {
+	return strings.ReplaceAll(s, "_", "/")
+}
+
 // Round float四舍五入
 func (tu toolsUtil) Round(val float64, n int) float64 {
 	base := math.Pow(10, float64(n))

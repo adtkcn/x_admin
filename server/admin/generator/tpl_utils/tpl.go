@@ -25,6 +25,7 @@ var TemplateUtil = templateUtil{
 			"contains":    util.ToolsUtil.Contains,
 			"goToTsType":  util.ToolsUtil.GoToTsType,
 			"getPageResp": util.ToolsUtil.GetPageResp,
+			"nameToPath":  util.ToolsUtil.NameToPath,
 		}),
 }
 
@@ -221,17 +222,17 @@ func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName str
 		// "server/admin/%s_route.go",
 		"gocode/controller.go.tpl": strings.Join([]string{"server/admin/", ModuleName, "/", ModuleName, "_ctl.go"}, ""), //"server/admin/%s/%s_ctl.go",
 
-		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", ModuleName, ".ts"}, ""),               // "admin/src/api/%s.ts",
-		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", ModuleName, "/edit.vue"}, ""),       // "admin/src/views/%s/edit.vue",
-		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", ModuleName, "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
-		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", ModuleName, "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
+		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", ModuleName, ".ts"}, ""),                                          // "admin/src/api/%s.ts",
+		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", util.ToolsUtil.NameToPath(ModuleName), "/edit.vue"}, ""),       // "admin/src/views/%s/edit.vue",
+		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", util.ToolsUtil.NameToPath(ModuleName), "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
+		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", util.ToolsUtil.NameToPath(ModuleName), "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
 
 		"uniapp/api.ts.tpl":      strings.Join([]string{"x_admin_app/api/", ModuleName, ".ts"}, ""),
-		"uniapp/edit.vue.tpl":    strings.Join([]string{"x_admin_app/pages/", ModuleName, "/edit.vue"}, ""),
-		"uniapp/index.vue.tpl":   strings.Join([]string{"x_admin_app/pages/", ModuleName, "/index.vue"}, ""),
-		"uniapp/search.vue.tpl":  strings.Join([]string{"x_admin_app/pages/", ModuleName, "/search.vue"}, ""),
-		"uniapp/details.vue.tpl": strings.Join([]string{"x_admin_app/pages/", ModuleName, "/details.vue"}, ""),
-		"uniapp/pages.json.tpl":  strings.Join([]string{"x_admin_app/pages/", ModuleName, "/pages.json"}, ""),
+		"uniapp/edit.vue.tpl":    strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/edit.vue"}, ""),
+		"uniapp/index.vue.tpl":   strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/index.vue"}, ""),
+		"uniapp/search.vue.tpl":  strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/search.vue"}, ""),
+		"uniapp/details.vue.tpl": strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/details.vue"}, ""),
+		"uniapp/pages.json.tpl":  strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/pages.json"}, ""),
 	}
 	filePath := make(map[string]string)
 	for tplPath, tplCode := range tplCodeMap {
