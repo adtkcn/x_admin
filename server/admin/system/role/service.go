@@ -154,9 +154,12 @@ func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e erro
 		if te = PermService.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
 			return te
 		}
-		te = PermService.CacheRoleMenusByRoleId(editReq.ID)
-		return te
+		return nil
 	})
+	e = PermService.CacheRoleMenusByRoleId(editReq.ID)
+	if e != nil {
+		return e
+	}
 	e = response.CheckErr(err, "Edit Transaction err")
 	return
 }
