@@ -53,7 +53,7 @@ stages:
           - mkdir -p /www/wwwroot/likeadmin
           - tar zxvf ~/gitee_go/deploy/x_admin.tar.gz -C /www/wwwroot/likeadmin
           - '# sh /home/admin/app/deploy.sh restart'
-          - pm2 reload 4
+          - pm2 reload x_admin
           - echo 'Go部署完成'
         notify: []
         strategy:
