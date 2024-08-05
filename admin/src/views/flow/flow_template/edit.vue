@@ -134,9 +134,7 @@ const setFormData = async (data: Record<string, any>) => {
 }
 
 const getDetail = async (row: Record<string, any>) => {
-    const data = await flow_template_detail({
-        id: row.id
-    })
+    const data = await flow_template_detail(row.id)
     setFormData(data)
 }
 

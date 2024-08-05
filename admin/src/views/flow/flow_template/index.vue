@@ -137,7 +137,7 @@ const handleAdd = async () => {
 
 const handleDelete = async (id: number) => {
     await feedback.confirm('确定要删除？')
-    await flow_template_delete({ id })
+    await flow_template_delete(id)
     feedback.msgSuccess('删除成功')
     getLists()
 }

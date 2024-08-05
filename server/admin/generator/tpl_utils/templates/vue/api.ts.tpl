@@ -38,7 +38,7 @@ export function {{{.ModuleName}}}_list(params?: type_{{{.ModuleName}}}_query) {
 }
 // {{{.FunctionName}}}列表-所有
 export function {{{.ModuleName}}}_list_all(params?: type_{{{.ModuleName}}}_query) {
-    return request.get<Pages<type_{{{.ModuleName}}}>>({ url: '/{{{.ModuleName}}}/listAll', params })
+    return request.get<type_{{{.ModuleName}}}[]>({ url: '/{{{.ModuleName}}}/listAll', params })
 }
 
 // {{{.FunctionName}}}详情

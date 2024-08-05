@@ -71,6 +71,7 @@
 <script lang="ts" setup>
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
+import type { type_flow_history } from '@/api/flow/flow_history'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -94,7 +95,7 @@ const queryParams = reactive({
     passStatus: 1
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_history>({
     fetchFun: flow_history_list,
     params: queryParams
 })

@@ -143,7 +143,10 @@ import {
     flow_apply_detail
 } from '@/api/flow/flow_apply'
 
+import type { type_flow_apply } from '@/api/flow/flow_apply'
+
 import { useDictData } from '@/hooks/useDictOptions'
+import type { type_dict } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -174,13 +177,13 @@ const queryParams = reactive({
     status: ''
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging<any>({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_apply>({
     fetchFun: flow_apply_lists,
     params: queryParams
 })
 const { dictData } = useDictData<{
-    flow_apply_status: any[]
-    flow_group: any[]
+    flow_apply_status: type_dict[]
+    flow_group: type_dict[]
 }>(['flow_apply_status', 'flow_group'])
 
 const handleAdd = async () => {
@@ -198,7 +201,7 @@ const handleAdd = async () => {
 
 const handleDelete = async (id: number) => {
     await feedback.confirm('确定要删除？')
-    await flow_apply_delete({ id })
+    await flow_apply_delete(id)
     feedback.msgSuccess('删除成功')
     getLists()
 }

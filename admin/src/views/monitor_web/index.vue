@@ -123,9 +123,7 @@ const route = useRoute()
 defineOptions({
     name: 'monitor_web'
 })
-// const { dictData } = useDictData<{
-//     project_type: any[]
-// }>(['project_type'])
+
 const { optionsData: listAllData } = useDictOptions<{
     monitor_project_list_all: any[]
 }>({
@@ -133,8 +131,6 @@ const { optionsData: listAllData } = useDictOptions<{
         api: monitor_project_list_all
     }
 })
-console.log('listAllData', listAllData)
-
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive({
