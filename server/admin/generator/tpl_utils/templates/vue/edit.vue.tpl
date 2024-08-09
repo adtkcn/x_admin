@@ -33,7 +33,7 @@
                         </el-form-item>
                     {{{- else if eq .HtmlType "number" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <el-input-number v-model="formData.{{{ (toCamelCase .GoField) }}}" :max="9999" />
+                            <el-input-number v-model="formData.{{{ (toCamelCase .GoField) }}}" />
                         </el-form-item>
                     {{{- else if eq .HtmlType "textarea" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
@@ -51,11 +51,17 @@
                                 <el-checkbox
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
                                     :key="index"
-                                    :label="item.value"
+                                    :label="item.name"
+                                    :value="item.value"
                                     :disabled="!item.status"
-                                >
-                                    {{ item.name }}
-                                </el-checkbox>
+                                ></el-checkbox>
+                                {{{- else if ne .ListAllApi "" }}}
+                                <el-checkbox
+                                    v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
+                                    :key="index"
+                                    :label="item.id"
+                                    :value="item.id"
+                                ></el-checkbox>
                                 {{{- else }}}
                                 <el-checkbox>请选择字典生成</el-checkbox>
                                 {{{- end }}}
@@ -77,6 +83,18 @@
                                     clearable
                                     :disabled="!item.status"
                                 />
+                                 {{{- else if ne .ListAllApi "" }}}
+                                 <el-option
+                                    v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
+                                    :key="index"
+                                    :label="item.id"
+                                    {{{- if eq .GoType "int" }}}
+                                    :value="parseInt(item.id)"
+                                    {{{- else }}}
+                                    :value="String(item.id)"
+                                    {{{- end }}}
+                                    clearable
+                                />
                                 {{{- else }}}
                                 <el-option label="请选择字典生成" value="" />
                                 {{{- end }}}
@@ -89,14 +107,26 @@
                                 <el-radio
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
                                     :key="index"
+                                    :label="item.name"
                                     {{{- if eq .GoType "int" }}}
-                                    :label="parseInt(item.value)"
+                                    :value="parseInt(item.value)"
                                     {{{- else }}}
-                                    :label="item.value"
+                                    :value="item.value"
                                     {{{- end }}}
                                     :disabled="!item.status"
+                                ></el-radio>
+                                {{{- else if ne .ListAllApi "" }}}
+                                <el-radio
+                                    v-for="(item, index) in listAllData.{{{ pathToName .ListAllApi }}}"
+                                    :key="index"
+                                    :label="item.name"
+                                    {{{- if eq .GoType "int" }}}
+                                    :value="parseInt(item.id)"
+                                    {{{- else }}}
+                                    :value="item.id"
+                                    {{{- end }}}
                                 >
-                                    {{ item.name }}
+                                    {{ item.id }}
                                 </el-radio>
                                 {{{- else }}}
                                 <el-radio label="0">请选择字典生成</el-radio>
@@ -139,6 +169,10 @@ import feedback from '@/utils/feedback'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {
+        type: Object as PropType<Record<string, any[]>>,
+        default: () => ({})
+    },
+    listAllData:{
         type: Object as PropType<Record<string, any[]>>,
         default: () => ({})
     }

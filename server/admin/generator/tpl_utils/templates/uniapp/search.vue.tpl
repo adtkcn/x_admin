@@ -7,10 +7,12 @@
 				{{{- if eq .HtmlType "datetime" }}}
 					<x-date-range v-model:startTime="form.{{{ (toCamelCase .GoField) }}}Start"
 							v-model:endTime="form.{{{ (toCamelCase .GoField) }}}End"></x-date-range>
-				{{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-				{{{- if ne .DictType "" }}}
-					<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
-				{{{- end }}}
+				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select") }}}
+					{{{- if ne .DictType "" }}}
+						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+					{{{- else if ne .ListAllApi "" }}}
+							<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="id" labelKey="id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+					{{{- end }}}
 				{{{- else if eq .HtmlType "input" }}}
 					<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}"> </uv-input>
 				{{{- end }}}
@@ -39,7 +41,7 @@
 		clearObjEmpty
 	} from "@/utils/utils";
 	import {
-		useDictData
+		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
 	import xDateRange from "@/components/x-date-range/x-date-range.vue";
 	import type {type_{{{.ModuleName}}}_query} from "@/api/monitor_project";
@@ -52,15 +54,27 @@ const { dictData } = useDictData<{
 }>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 {{{- end }}}
 
+{{{- if ge (len .ListAllFields) 1 }}}
+{{{- $list_all_size := sub (len .ListAllFields) 1 }}}
+const { listAllData } = useListAllData<{
+    {{{- range .ListAllFields }}}
+    {{{pathToName . }}}: any[]
+    {{{- end }}}
+}>({ 
+	{{{- range .ListAllFields }}}
+		{{{pathToName . }}}:'{{{deletePathPrefix . }}}',
+	{{{- end }}}
+})
+{{{- end }}}
 
 	let form = ref<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toCamelCase .GoField) }}}Start: '',
-    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{ (toCamelCase .GoField) }}}Start: null,
+    {{{ (toCamelCase .GoField) }}}End: null,
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (toCamelCase .GoField) }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -75,7 +89,7 @@ const { dictData } = useDictData<{
 			return toast("请输入查询条件");
 		}
 
-		toPath("/pages/{{{ .ModuleName }}}/index", search);
+		toPath("/pages/{{{nameToPath .ModuleName }}}/index", search);
 	}
 </script>
 

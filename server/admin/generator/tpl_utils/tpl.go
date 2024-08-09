@@ -17,15 +17,18 @@ var TemplateUtil = templateUtil{
 
 	tpl: template.New("").Delims("{{{", "}}}").Funcs(
 		template.FuncMap{
-			"sub":         sub,
-			"slice":       slice,
-			"title":       strings.Title,
-			"toSnakeCase": util.StringUtil.ToSnakeCase,
-			"toCamelCase": util.StringUtil.ToCamelCase,
-			"contains":    util.ToolsUtil.Contains,
-			"goToTsType":  util.ToolsUtil.GoToTsType,
-			"getPageResp": util.ToolsUtil.GetPageResp,
-			"nameToPath":  util.ToolsUtil.NameToPath,
+			"sub":              sub,
+			"slice":            slice,
+			"toSnakeCase":      util.StringUtil.ToSnakeCase,
+			"toCamelCase":      util.StringUtil.ToCamelCase,
+			"toUpperCamelCase": util.StringUtil.ToUpperCamelCase,
+			"contains":         util.ToolsUtil.Contains,
+			"goToTsType":       GenUtil.GoToTsType,
+			"goToNullType":     GenUtil.GoToNullType,
+			"getPageResp":      GenUtil.GetPageResp,
+			"nameToPath":       GenUtil.NameToPath,
+			"pathToName":       GenUtil.PathToName,
+			"deletePathPrefix": GenUtil.DeletePathPrefix,
 		}),
 }
 
@@ -65,6 +68,7 @@ type TplVars struct {
 	ListFields      []string
 	DetailFields    []string
 	DictFields      []string
+	ListAllFields   []string
 	IsSearch        bool
 	ModelOprMap     map[string]string
 	Table           gen_model.GenTable
@@ -91,6 +95,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 	var listFields []string
 	var detailFields []string
 	var dictFields []string
+	var listAllFields []string
 	var subColumns []gen_model.GenTableColumn
 	var oriSubColNames []string
 	for _, column := range oriSubCols {
@@ -122,6 +127,9 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		if column.DictType != "" && !util.ToolsUtil.Contains(dictFields, column.DictType) {
 			dictFields = append(dictFields, column.DictType)
 		}
+		if column.ListAllApi != "" && !util.ToolsUtil.Contains(listAllFields, column.ListAllApi) {
+			listAllFields = append(listAllFields, column.ListAllApi)
+		}
 	}
 	//QueryType转换查询比较运算符
 	modelOprMap := map[string]string{
@@ -150,6 +158,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		ListFields:      listFields,
 		DetailFields:    detailFields,
 		DictFields:      dictFields,
+		ListAllFields:   listAllFields,
 		IsSearch:        isSearch,
 		ModelOprMap:     modelOprMap,
 		Columns:         columns,
@@ -222,17 +231,17 @@ func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName str
 		// "server/admin/%s_route.go",
 		"gocode/controller.go.tpl": strings.Join([]string{"server/admin/", ModuleName, "/", ModuleName, "_ctl.go"}, ""), //"server/admin/%s/%s_ctl.go",
 
-		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", ModuleName, ".ts"}, ""),                                          // "admin/src/api/%s.ts",
-		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", util.ToolsUtil.NameToPath(ModuleName), "/edit.vue"}, ""),       // "admin/src/views/%s/edit.vue",
-		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", util.ToolsUtil.NameToPath(ModuleName), "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
-		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", util.ToolsUtil.NameToPath(ModuleName), "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
+		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", ModuleName, ".ts"}, ""),                                   // "admin/src/api/%s.ts",
+		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),       // "admin/src/views/%s/edit.vue",
+		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""),      // "admin/src/views/%s/index.vue",
+		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index-tree.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
 
 		"uniapp/api.ts.tpl":      strings.Join([]string{"x_admin_app/api/", ModuleName, ".ts"}, ""),
-		"uniapp/edit.vue.tpl":    strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/edit.vue"}, ""),
-		"uniapp/index.vue.tpl":   strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/index.vue"}, ""),
-		"uniapp/search.vue.tpl":  strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/search.vue"}, ""),
-		"uniapp/details.vue.tpl": strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/details.vue"}, ""),
-		"uniapp/pages.json.tpl":  strings.Join([]string{"x_admin_app/pages/", util.ToolsUtil.NameToPath(ModuleName), "/pages.json"}, ""),
+		"uniapp/edit.vue.tpl":    strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),
+		"uniapp/index.vue.tpl":   strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""),
+		"uniapp/search.vue.tpl":  strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/search.vue"}, ""),
+		"uniapp/details.vue.tpl": strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/details.vue"}, ""),
+		"uniapp/pages.json.tpl":  strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/pages.json"}, ""),
 	}
 	filePath := make(map[string]string)
 	for tplPath, tplCode := range tplCodeMap {

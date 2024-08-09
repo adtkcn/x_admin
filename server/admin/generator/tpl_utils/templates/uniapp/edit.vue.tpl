@@ -15,6 +15,8 @@
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
 					{{{- if ne .DictType "" }}}
 						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+					{{{- else if ne .ListAllApi "" }}}
+						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="id" labelKey="id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- else }}}
 						请选择字典生成代码
 					{{{- end }}}
@@ -46,9 +48,10 @@
 		alert
 	} from "@/utils/utils";
 	import {
-		useDictData
+		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
-	
+	import type { type_dict } from '@/hooks/useDictOptions'
+
 	let formRef = ref();
 	let form = ref<type_{{{ .ModuleName }}}_edit>({
 	{{{- range .Columns }}}
@@ -94,10 +97,23 @@
 	{{{- $dictSize := sub (len .DictFields) 1 }}}
 	const { dictData } = useDictData<{
     {{{- range .DictFields }}}
-    {{{ . }}}: any[]
+    {{{ . }}}: type_dict[]
     {{{- end }}}
 }>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 	{{{- end }}}
+
+{{{- if ge (len .ListAllFields) 1 }}}
+{{{- $list_all_size := sub (len .ListAllFields) 1 }}}
+const { listAllData } = useListAllData<{
+    {{{- range .ListAllFields }}}
+    {{{pathToName . }}}: any[]
+    {{{- end }}}
+}>({ 
+	{{{- range .ListAllFields }}}
+		{{{pathToName . }}}:'{{{deletePathPrefix . }}}',
+	{{{- end }}}
+})
+{{{- end }}}
 
 	function getDetails(id) {
 		{{{ .ModuleName }}}_detail(id).then((res) => {

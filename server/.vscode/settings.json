@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
+        "daterange",
+        "datetime",
         "dcloudio",
         "endregion",
         "excelize",
@@ -14,9 +16,12 @@
         "jinzhu",
         "mapstructure",
         "oneof",
+        "qrtz",
         "rmvb",
+        "singleflight",
         "strconv",
         "struct",
+        "typeof",
         "uniapp",
         "Warnf",
         "webp",

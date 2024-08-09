@@ -69,44 +69,6 @@ func (tu toolsUtil) Contains(src interface{}, elem interface{}) bool {
 	return false
 }
 
-/**
- * @description: Go类型转TS类型
- */
-func (tu toolsUtil) GoToTsType(s string) string {
-	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
-		return "number"
-	} else if s == "float" || s == "float32" || s == "float64" {
-		return "number"
-	} else if s == "string" {
-		return "string"
-	} else if s == "bool" {
-		return "boolean"
-	} else if s == "time.Time" {
-		return "Date"
-	} else if s == "[]byte" {
-		return "string"
-	} else if s == "[]string" {
-		return "string[]"
-	} else if s == "[]int" {
-		return "number[]"
-	} else if s == "[]float" {
-		return "number[]"
-	} else if s == "core.TsTime" {
-		return "string"
-	}
-	return "string"
-}
-
-// 拼接字符串
-func (tu toolsUtil) GetPageResp(s string) string {
-	return `response.Response{ data=response.PageResp{ lists= []` + s + `Resp}}`
-}
-
-// NameToPath 下划线文件路径
-func (tu toolsUtil) NameToPath(s string) string {
-	return strings.ReplaceAll(s, "_", "/")
-}
-
 // Round float四舍五入
 func (tu toolsUtil) Round(val float64, n int) float64 {
 	base := math.Pow(10, float64(n))

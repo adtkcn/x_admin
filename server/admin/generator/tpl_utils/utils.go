@@ -211,3 +211,74 @@ func (gu genUtil) GetTablePriCol(columns []gen_model.GenTableColumn) (res gen_mo
 	}
 	return
 }
+
+/**
+ * @description: Go类型转TS类型
+ */
+func (gu genUtil) GoToTsType(s string) string {
+	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+		return "number"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "number"
+	} else if s == "string" {
+		return "string"
+	} else if s == "bool" {
+		return "boolean"
+	} else if s == "time.Time" {
+		return "Date"
+	} else if s == "[]byte" {
+		return "string"
+	} else if s == "[]string" {
+		return "string[]"
+	} else if s == "[]int" {
+		return "number[]"
+	} else if s == "[]float" {
+		return "number[]"
+	} else if s == "core.TsTime" {
+		return "string"
+	}
+	return "string"
+}
+
+/**
+ * @description: Go类型转可为null类型，转换后还能解决前端对int传了string类型错误问题
+ */
+func (gu genUtil) GoToNullType(s string) string {
+	if s == "int64" {
+		return "null.Int"
+	} else if s == "int32" || s == "int" {
+		return "null.Int32"
+	} else if s == "int8" || s == "int16" {
+		return "null.Int16"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "null.Float"
+	} else if s == "string" {
+		return "null.String"
+	} else if s == "bool" {
+		return "null.Bool"
+	} else if s == "time.Time" {
+		return "null.Time"
+	}
+	return s
+}
+
+// 拼接字符串
+func (gu genUtil) GetPageResp(s string) string {
+	return `response.Response{ data=response.PageResp{ lists= []` + s + `Resp}}`
+}
+
+// NameToPath 下划线文件路径
+func (gu genUtil) NameToPath(s string) string {
+	return strings.ReplaceAll(s, "_", "/")
+}
+func (gu genUtil) PathToName(s string) string {
+	// 去掉前缀urlPrefix
+	s = strings.Replace(s, "/api/admin/", "", 1)
+
+	return strings.ReplaceAll(s, "/", "_")
+}
+func (gu genUtil) DeletePathPrefix(s string) string {
+	// 去掉前缀urlPrefix
+	s = strings.Replace(s, "/api/admin", "", 1)
+	return s
+}

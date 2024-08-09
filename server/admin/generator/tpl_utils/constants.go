@@ -35,7 +35,7 @@ var SqlConstants = sqlConstants{
 	//页面不需要编辑字段
 	ColumnNameNotEdit: []string{"is_delete", "create_time", "update_time", "delete_time"},
 	//页面不需要列表字段
-	ColumnNameNotList: []string{"id", "intro", "content", "is_delete", "delete_time"},
+	ColumnNameNotList: []string{"id", "is_delete", "delete_time"},
 	//页面不需要查询字段
 	ColumnNameNotQuery: []string{"is_delete", "delete_time"}, //"create_time", "update_time",
 }

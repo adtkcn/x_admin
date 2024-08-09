@@ -60,4 +60,5 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	MonitorProjectRoute(rg)
 	MonitorClientRoute(rg)
 	MonitorWebRoute(rg)
+	SystemLogSmsRoute(rg)
 }

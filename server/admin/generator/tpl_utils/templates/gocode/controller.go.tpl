@@ -13,7 +13,7 @@ import (
 )
 
  
-type {{{ title (toCamelCase .ModuleName) }}}Handler struct {
+type {{{ toUpperCamelCase .ModuleName }}}Handler struct {
 	requestGroup singleflight.Group
 }
 
@@ -33,18 +33,18 @@ type {{{ title (toCamelCase .ModuleName) }}}Handler struct {
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
-//@Success 200	{object} {{{getPageResp (title (toCamelCase .EntityName))  }}}	"成功"
+//@Success 200	{object} {{{getPageResp (toUpperCamelCase .EntityName)  }}}	"成功"
 //@Router	/api/admin/{{{ .ModuleName }}}/list [get]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) {
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
+	var listReq {{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := {{{ title (toCamelCase .EntityName) }}}Service.List(page, listReq)
+	res, err := {{{ toUpperCamelCase .EntityName }}}Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -61,14 +61,14 @@ func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) List(c *gin.Context) 
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{ data=[]{{{ title (toCamelCase .EntityName) }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{ data=[]{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Context) {
-	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) {
+	var listReq {{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := {{{ title (toCamelCase .EntityName) }}}Service.ListAll(listReq)
+	res, err := {{{ toUpperCamelCase .EntityName }}}Service.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -81,15 +81,15 @@ func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ListAll(c *gin.Contex
 //	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{ data={{{ title (toCamelCase .EntityName) }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{ data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context) {
-	var detailReq {{{ title (toCamelCase .EntityName) }}}DetailReq
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
+	var detailReq {{{ toUpperCamelCase .EntityName }}}DetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err, _ := hd.requestGroup.Do("{{{ title (toCamelCase .EntityName) }}}:Detail:"+strconv.Itoa(detailReq.{{{ title (toCamelCase .PrimaryKey) }}}), func() (any, error) {
-		v, err := {{{ title (toCamelCase .EntityName) }}}Service.Detail(detailReq.{{{ title (toCamelCase .PrimaryKey) }}})
+	res, err, _ := hd.requestGroup.Do("{{{ toUpperCamelCase .EntityName }}}:Detail:"+strconv.Itoa(detailReq.{{{ toUpperCamelCase .PrimaryKey }}}), func() (any, error) {
+		v, err := {{{ toUpperCamelCase .EntityName }}}Service.Detail(detailReq.{{{ toUpperCamelCase .PrimaryKey }}})
 		return v, err
 	})
 
@@ -108,12 +108,12 @@ func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Detail(c *gin.Context
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/add [post]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
-	var addReq {{{ title (toCamelCase .EntityName) }}}AddReq
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
+	var addReq {{{ toUpperCamelCase .EntityName }}}AddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	createId, e := {{{ title (toCamelCase .EntityName) }}}Service.Add(addReq)
+	createId, e := {{{ toUpperCamelCase .EntityName }}}Service.Add(addReq)
 	response.CheckAndRespWithData(c,createId, e)
 }
 //	@Summary	{{{ .FunctionName }}}编辑
@@ -127,12 +127,12 @@ func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Add(c *gin.Context) {
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/edit [post]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) {
-	var editReq {{{ title (toCamelCase .EntityName) }}}EditReq
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
+	var editReq {{{ toUpperCamelCase .EntityName }}}EditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c,editReq.{{{ title (toCamelCase .PrimaryKey) }}}, {{{ title (toCamelCase .EntityName) }}}Service.Edit(editReq))
+	response.CheckAndRespWithData(c,editReq.{{{ toUpperCamelCase .PrimaryKey }}}, {{{ toUpperCamelCase .EntityName }}}Service.Edit(editReq))
 }
 //	@Summary	{{{ .FunctionName }}}删除
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -145,12 +145,12 @@ func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Edit(c *gin.Context) 
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
-	var delReq {{{ title (toCamelCase .EntityName) }}}DelReq
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
+	var delReq {{{ toUpperCamelCase .EntityName }}}DelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, {{{ title (toCamelCase .EntityName) }}}Service.Del(delReq.{{{ title (toCamelCase .PrimaryKey) }}}))
+	response.CheckAndResp(c, {{{ toUpperCamelCase .EntityName }}}Service.Del(delReq.{{{ toUpperCamelCase .PrimaryKey }}}))
 }
 
 
@@ -170,12 +170,12 @@ func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) Del(c *gin.Context) {
 {{{- end }}}
 {{{- end }}}
 //	@Router		/api/admin/{{{ .ModuleName }}}/ExportFile [get]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Context) {
-	var listReq {{{ title (toCamelCase .EntityName) }}}ListReq
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Context) {
+	var listReq {{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := {{{ title (toCamelCase .EntityName) }}}Service.ExportFile(listReq)
+	res, err := {{{ toUpperCamelCase .EntityName }}}Service.ExportFile(listReq)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
@@ -192,22 +192,20 @@ func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ExportFile(c *gin.Con
 //  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
 //	@Router		/api/admin/{{{ .ModuleName }}}/ImportFile [post]
-func (hd *{{{  title (toCamelCase .ModuleName) }}}Handler) ImportFile(c *gin.Context) {
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
 		c.String(http.StatusInternalServerError, "文件不存在")
 		return
 	}
 	defer file.Close()
-	importList := []{{{ title (toCamelCase .EntityName) }}}Resp{}
+	importList := []{{{ toUpperCamelCase .EntityName }}}Resp{}
 	err = excel.GetExcelData(file, &importList)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-//	for _, t := range importList {
-//		fmt.Printf("%#v", t)
-//	}
-	err = {{{ title (toCamelCase .EntityName) }}}Service.ImportFile(importList)
+
+	err = {{{ toUpperCamelCase .EntityName }}}Service.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }

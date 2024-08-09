@@ -7,7 +7,7 @@
             :mode="mode"
         />
         <w-editor
-            class="overflow-y-auto flex-1"
+            class="overflow-y-auto flex-1 border-solid border rounded-s"
             v-model="valueHtml"
             :defaultConfig="editorConfig"
             :mode="mode"

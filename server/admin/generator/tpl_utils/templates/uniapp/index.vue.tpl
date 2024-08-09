@@ -110,13 +110,13 @@ onReachBottom(() => {
 });
 
 function toDetails(item) {
-  toPath("/pages/{{{ .ModuleName }}}/details", { id: item.id });
+  toPath("/pages/{{{nameToPath .ModuleName }}}/details", { id: item.id });
 }
 function moreSearch() {
-  toPath("/pages/{{{ .ModuleName }}}/search");
+  toPath("/pages/{{{nameToPath .ModuleName }}}/search");
 }
 function add() {
-  toPath("/pages/{{{ .ModuleName }}}/edit");
+  toPath("/pages/{{{nameToPath .ModuleName }}}/edit");
 }
 </script>
 

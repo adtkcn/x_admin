@@ -12,6 +12,7 @@
             :width="width"
             draggable
             :close-on-click-modal="clickModalClose"
+            top="0"
             @closed="close"
         >
             <!-- 弹窗内容 -->
@@ -127,8 +128,12 @@ export default defineComponent({
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .dialog-body {
     white-space: pre-line;
+}
+.el-dialog__body {
+    max-height: calc(100vh - 200px);
+    overflow: auto;
 }
 </style>

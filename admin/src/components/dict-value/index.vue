@@ -1,7 +1,9 @@
 <template>
     <div>
         <template v-for="(item, index) in getOptions" :key="index">
-            <span :style="{ color: item.color }">{{ index != 0 ? '、' : '' }}{{ item.name }}</span>
+            <span :style="{ color: item.color }"
+                >{{ index != 0 ? '、' : '' }}{{ item[props.valueKey] }}</span
+            >
         </template>
     </div>
 </template>
@@ -10,9 +12,14 @@ const props = withDefaults(
     defineProps<{
         options: any[]
         value: any
+        labelKey?: string
+        valueKey?: string
     }>(),
     {
-        options: () => []
+        options: () => [],
+        value: null,
+        labelKey: 'name',
+        valueKey: 'value'
     }
 )
 
@@ -25,6 +32,6 @@ const values = computed(() => {
 })
 
 const getOptions = computed(() => {
-    return props.options.filter((item) => values.value.includes(item.value))
+    return props.options.filter((item) => values.value.includes(item[props.valueKey]))
 })
 </script>

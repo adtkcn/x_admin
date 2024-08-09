@@ -43,6 +43,7 @@ type GenTableColumn struct {
 	QueryType     string      `gorm:"not null;default:'=';comment:'查询方式: [等于、不等于、大于、小于、范围]'"`
 	HtmlType      string      `gorm:"not null;default:'';comment:'显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]'"`
 	DictType      string      `gorm:"not null;default:'';comment:'字典类型'"`
+	ListAllApi    string      `gorm:"not null;default:'';comment:'列表数据来源'"`
 	Sort          int         `gorm:"not null;default:0;comment:'排序编号'"`
 	CreateTime    core.TsTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 	UpdateTime    core.TsTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`

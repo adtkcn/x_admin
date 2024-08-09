@@ -73,7 +73,7 @@
                                 </template>
                             </el-table-column>
                             <el-table-column label="sql类型" prop="columnType" min-width="100" />
-                            <el-table-column label="go类型" min-width="100">
+                            <el-table-column label="go类型" min-width="120">
                                 <template v-slot="{ row }">
                                     <el-select v-model="row.goType">
                                         <el-option label="int" value="int" />
@@ -136,7 +136,7 @@
                                     />
                                 </template>
                             </el-table-column>
-                            <el-table-column label="查询方式">
+                            <el-table-column label="查询方式" min-width="140">
                                 <template v-slot="{ row }">
                                     <el-select v-model="row.queryType">
                                         <el-option label="=" value="EQ" />
@@ -165,19 +165,19 @@
                                     </el-select>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="字典类型" min-width="120">
+                            <el-table-column label="字典类型" min-width="140">
                                 <template v-slot="{ row }">
                                     <el-select
                                         v-model="row.dictType"
                                         clearable
-                                        :disabled="
-                                            !(
-                                                row.htmlType == 'select' ||
+                                        v-if="
+                                            (row.htmlType == 'select' ||
                                                 row.htmlType == 'radio' ||
-                                                row.htmlType == 'checkbox'
-                                            )
+                                                row.htmlType == 'checkbox') &&
+                                            !row.listAllApi
                                         "
                                         placeholder="字典类型"
+                                        @change="row.listAllApi = null"
                                     >
                                         <el-option
                                             v-for="(item, index) in optionsData.dictType"
@@ -185,6 +185,31 @@
                                             :label="item.dictName"
                                             :value="item.dictType"
                                             :disabled="!item.dictStatus"
+                                        />
+                                    </el-select>
+                                </template>
+                            </el-table-column>
+
+                            <el-table-column label="数据来源（字典类型优先）" min-width="280">
+                                <template v-slot="{ row }">
+                                    <el-select
+                                        v-model="row.listAllApi"
+                                        clearable
+                                        filterable
+                                        v-if="
+                                            (row.htmlType == 'select' ||
+                                                row.htmlType == 'radio' ||
+                                                row.htmlType == 'checkbox') &&
+                                            !row.dictType
+                                        "
+                                        placeholder="字典类型"
+                                        @change="row.dictType = null"
+                                    >
+                                        <el-option
+                                            v-for="(item, index) in optionsData.ApiList"
+                                            :key="index"
+                                            :label="item"
+                                            :value="item"
                                         />
                                     </el-select>
                                 </template>
@@ -270,6 +295,7 @@ import { dictTypeAll } from '@/api/setting/dict'
 import type { FormInstance } from 'element-plus'
 import feedback from '@/utils/feedback'
 import { menuLists } from '@/api/perms/menu'
+import { getApiList } from '@/api/setting/website'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import useMultipleTabs from '@/hooks/useMultipleTabs'
 enum GenTpl {
@@ -332,6 +358,7 @@ const getDetails = async () => {
 const { optionsData } = useDictOptions<{
     dictType: any[]
     menu: any[]
+    ApiList: string[]
 }>({
     dictType: {
         api: dictTypeAll
@@ -342,6 +369,14 @@ const { optionsData } = useDictOptions<{
             const menu = { id: 0, name: '顶级', children: [] }
             menu.children = data
             return menu
+        }
+    },
+    ApiList: {
+        api: getApiList,
+        transformData(data: any) {
+            return data.filter((item: any) => {
+                return item.endsWith('listAll')
+            })
         }
     }
 })

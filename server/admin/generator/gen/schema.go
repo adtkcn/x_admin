@@ -58,6 +58,7 @@ type EditColumn struct {
 	QueryType   string `form:"queryType" binding:"required,max=30"` // 查询方式
 	HtmlType    string `form:"htmlType" binding:"required,max=30"`  // 表单类型
 	DictType    string `form:"dictType" binding:"required,max=200"` // 字典类型
+	ListAllApi  string `form:"listAllApi" binding:"max=200"`        // 下拉框数据来源listAll
 
 	CreateTime core.TsTime `form:"createTime"` // 创建时间
 	UpdateTime core.TsTime `form:"updateTime"` // 更新时间
@@ -169,6 +170,7 @@ type GenColumnResp struct {
 	QueryType   string      `json:"queryType" structs:"queryType"`   // 查询方式: [等于、不等于、大于、小于、范围]
 	HtmlType    string      `json:"htmlType" structs:"htmlType"`     // 显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]
 	DictType    string      `json:"dictType" structs:"dictType"`     // 字典类型
+	ListAllApi  string      `json:"listAllApi" structs:"listAllApi"` // 下拉框数据来源listAll
 	CreateTime  core.TsTime `json:"createTime" structs:"createTime"` // 创建时间
 	UpdateTime  core.TsTime `json:"updateTime" structs:"updateTime"` // 更新时间
 }

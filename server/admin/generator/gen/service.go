@@ -220,7 +220,9 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 				col.ID = prevCol.ID
 				if col.IsList == 0 {
 					col.DictType = prevCol.DictType
+					col.ListAllApi = prevCol.ListAllApi
 					col.QueryType = prevCol.QueryType
+
 				}
 				if prevCol.IsRequired == 1 && prevCol.IsPk == 0 && prevCol.IsInsert == 1 || prevCol.IsEdit == 1 {
 					col.HtmlType = prevCol.HtmlType

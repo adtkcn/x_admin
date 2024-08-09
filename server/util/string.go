@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"strings"
 	"unicode"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var StringUtil = stringUtil{}
 
-//arrayUtil 数组工具类
+// arrayUtil 数组工具类
 type stringUtil struct{}
 
 func (su stringUtil) ToSnakeCase(s string) string {
@@ -25,10 +28,23 @@ func (su stringUtil) ToSnakeCase(s string) string {
 	}
 	return buf.String()
 }
+
+// 转换为小驼峰命名
 func (su stringUtil) ToCamelCase(s string) string {
 	words := strings.Split(s, "_")
+	c := cases.Title(language.Und, cases.NoLower)
 	for i := 1; i < len(words); i++ {
-		words[i] = strings.Title(words[i])
+		words[i] = c.String(words[i])
+	}
+	return strings.Join(words, "")
+}
+
+// 转换为大驼峰命名
+func (su stringUtil) ToUpperCamelCase(s string) string {
+	words := strings.Split(s, "_")
+	c := cases.Title(language.Und, cases.NoLower)
+	for i := 0; i < len(words); i++ {
+		words[i] = c.String(words[i])
 	}
 	return strings.Join(words, "")
 }
