@@ -23,7 +23,7 @@
 				"navigationBarTitleText": "项目监控",
 				"enablePullDownRefresh": true,
 				"onReachBottomDistance": 100
-				
+
 			}
 		},
 
@@ -72,6 +72,34 @@
 			"path": "pages/monitor_client/search",
 			"style": {
 				"navigationBarTitleText": "搜索监控-客户端信息"
+			}
+		},
+
+		{
+			"path": "pages/system/log/sms/index",
+			"style": {
+				"navigationBarTitleText": "系统短信日志",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 100
+			}
+		},
+		{
+			"path": "pages/system/log/sms/details",
+			"style": {
+				"navigationBarTitleText": "系统短信日志详情",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/system/log/sms/edit",
+			"style": {
+				"navigationBarTitleText": "编辑系统短信日志"
+			}
+		},
+		{
+			"path": "pages/system/log/sms/search",
+			"style": {
+				"navigationBarTitleText": "搜索系统短信日志"
 			}
 		}
 

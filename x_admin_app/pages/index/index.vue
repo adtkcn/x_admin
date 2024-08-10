@@ -34,39 +34,43 @@
 
 
 	let baseList = [{
-			icon: "/static/index/equipment.png",
-			path: "/pages/monitor_project/index",
-			title: "项目监控",
-		},
-		{
-			icon: "/static/index/equipment.png",
-			path: "/pages/monitor_client/index",
-			title: "项目用户",
-		},
+		icon: "/static/index/equipment.png",
+		path: "/pages/monitor_project/index",
+		title: "项目监控",
+	},
+	{
+		icon: "/static/index/equipment.png",
+		path: "/pages/monitor_client/index",
+		title: "项目用户",
+	}, {
+		icon: "/static/index/equipment.png",
+		path: "/pages/system/log/sms/index",
+		title: "Log",
+	},
 
 
-		{
-			icon: "scan",
-			// path: "/pages/equipment/equipment",
-			title: "扫码维护",
-			fn: function() {
-				// console.log('this', this);
-				scanCode().then((path) => {
-					// toPath(path);
-					if (!path) {
-						return
-					}
-					var query = queryToObj(path);
-					if (!query.state) {
-						toast("请扫描设备二维码");
-						return;
-					}
-					toPath("/pages/equipment/details", {
-						number: query.state,
-					});
+	{
+		icon: "scan",
+		// path: "/pages/equipment/equipment",
+		title: "扫码维护",
+		fn: function () {
+			// console.log('this', this);
+			scanCode().then((path) => {
+				// toPath(path);
+				if (!path) {
+					return
+				}
+				var query = queryToObj(path);
+				if (!query.state) {
+					toast("请扫描设备二维码");
+					return;
+				}
+				toPath("/pages/equipment/details", {
+					number: query.state,
 				});
-			},
+			});
 		},
+	},
 
 
 	];

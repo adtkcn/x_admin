@@ -7,6 +7,7 @@ import (
 	"x_admin/model"
 	"gorm.io/gorm"
 	"x_admin/util"
+	"github.com/duke-git/lancet/v2/convertor"
 )
 
 var {{{ toUpperCamelCase .EntityName }}}Service=New{{{ toUpperCamelCase .EntityName }}}Service()
@@ -38,20 +39,20 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq {{{ toUpp
 	{{{- if .IsQuery }}}
 	{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
 		{{{- if eq .HtmlType "datetime" }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.Valid {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} >= ?", listReq.{{{ toUpperCamelCase .ColumnName }}}Start.ValueOrZero())
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}Start!= nil {
+				dbModel = dbModel.Where("{{{ .ColumnName }}} >= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}Start)
 			}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}End.Valid {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} <= ?", listReq.{{{ toUpperCamelCase .ColumnName }}}End.ValueOrZero())
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}End!= nil {
+				dbModel = dbModel.Where("{{{ .ColumnName }}} <= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}End)
 			}
 		{{{- else }}}
 			{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}.Valid {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} like ?", "%"+listReq.{{{ toUpperCamelCase .ColumnName }}}.ValueOrZero()+"%")
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}!= nil {
+				dbModel = dbModel.Where("{{{ .ColumnName }}} like ?", "%"+*listReq.{{{ toUpperCamelCase .ColumnName }}}+"%")
 			}
 			{{{- else }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}.Valid {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} = ?", listReq.{{{ toUpperCamelCase .ColumnName }}}.ValueOrZero())
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}!= nil {
+				dbModel = dbModel.Where("{{{ .ColumnName }}} = ?", *listReq.{{{ toUpperCamelCase .ColumnName }}})
 			}
 			{{{- end }}}
 		{{{- end }}}
@@ -155,12 +156,19 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ toUpperCa
 		return
 	}
 	// 更新
-	response.Copy(&obj, editReq)
-	err = service.db.Model(&obj).Select("*").Updates(obj).Error
+	// response.Copy(&obj, editReq)
+	//
+	editInfo, err := convertor.StructToMap(editReq)
+	if err != nil {
+		return err
+	}
+
+	err = service.db.Model(&obj).Updates(editInfo).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
-	cacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
+	cacheUtil.RemoveCache(obj.Id)
+	service.Detail(obj.Id)
 	return
 }
 

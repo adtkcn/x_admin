@@ -12,12 +12,12 @@
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
             {{{- range .Columns }}}
                 {{{- if .IsEdit }}}
-                {{{- if ne (toCamelCase .GoField) "id" }}}
-                    {{{- if and (ne $.Table.TreeParent "") (eq (toCamelCase .GoField) $.Table.TreeParent) }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
+                {{{- if ne (.GoField) "id" }}}
+                    {{{- if and (ne $.Table.TreeParent "") (eq (.GoField) $.Table.TreeParent) }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
                             <el-tree-select
                                 class="flex-1"
-                                v-model="formData.{{{ (toCamelCase .GoField) }}}"
+                                v-model="formData.{{{ (.GoField) }}}"
                                 :data="treeList"
                                 clearable
                                 node-key="{{{ .Table.TreePrimary }}}"
@@ -28,25 +28,25 @@
                             />
                         </el-form-item>
                     {{{- else if eq .HtmlType "input" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <el-input v-model="formData.{{{ (toCamelCase .GoField) }}}" placeholder="请输入{{{ .ColumnComment }}}" />
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                            <el-input v-model.number="formData.{{{ (.GoField) }}}" placeholder="请输入{{{ .ColumnComment }}}" />
                         </el-form-item>
                     {{{- else if eq .HtmlType "number" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <el-input-number v-model="formData.{{{ (toCamelCase .GoField) }}}" />
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                            <el-input v-model="formData.{{{ (.GoField) }}}" type="number" placeholder="请输入{{{ .ColumnComment }}}" />
                         </el-form-item>
                     {{{- else if eq .HtmlType "textarea" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
                             <el-input
-                                v-model="formData.{{{ (toCamelCase .GoField) }}}"
+                                v-model="formData.{{{ (.GoField) }}}"
                                 placeholder="请输入{{{ .ColumnComment }}}"
                                 type="textarea"
                                 :autosize="{ minRows: 4, maxRows: 6 }"
                             />
                         </el-form-item>
                     {{{- else if eq .HtmlType "checkbox" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <el-checkbox-group v-model="formData.{{{ (toCamelCase .GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}">
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                            <el-checkbox-group v-model="formData.{{{ (.GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}">
                                 {{{- if ne .DictType "" }}}
                                 <el-checkbox
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
@@ -68,8 +68,8 @@
                             </el-checkbox-group>
                         </el-form-item>
                     {{{- else if eq .HtmlType "select" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <el-select class="flex-1" v-model="formData.{{{ (toCamelCase .GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}">
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                            <el-select class="flex-1" v-model="formData.{{{ (.GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}">
                                 {{{- if ne .DictType "" }}}
                                 <el-option
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
@@ -101,8 +101,8 @@
                             </el-select>
                         </el-form-item>
                     {{{- else if eq .HtmlType "radio" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <el-radio-group v-model="formData.{{{ (toCamelCase .GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}">
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                            <el-radio-group v-model="formData.{{{ (.GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}">
                                 {{{- if ne .DictType "" }}}
                                 <el-radio
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
@@ -134,10 +134,10 @@
                             </el-radio-group>
                         </el-form-item>
                     {{{- else if eq .HtmlType "datetime" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
                             <el-date-picker
                                 class="flex-1 !flex"
-                                v-model="formData.{{{ (toCamelCase .GoField) }}}"
+                                v-model="formData.{{{ (.GoField) }}}"
                                 type="datetime"
                                 clearable
                                 value-format="YYYY-MM-DD hh:mm:ss"
@@ -145,12 +145,12 @@
                             />
                         </el-form-item>
                     {{{- else if eq .HtmlType "editor" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <editor v-model="formData.{{{ (toCamelCase .GoField) }}}" :height="500" />
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                            <editor v-model="formData.{{{ (.GoField) }}}" :height="500" />
                         </el-form-item>
                     {{{- else if eq .HtmlType "imageUpload" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
-                            <material-picker v-model="formData.{{{ (toCamelCase .GoField) }}}" />
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                            <material-picker v-model="formData.{{{ (.GoField) }}}" />
                         </el-form-item>
                     {{{- end }}}
                 {{{- end }}}
@@ -190,15 +190,15 @@ const popupTitle = computed(() => {
 
 const formData = reactive({
     {{{- range .Columns }}}
-    {{{- if eq (toCamelCase .GoField) $.PrimaryKey }}}
+    {{{- if eq (.GoField) $.PrimaryKey }}}
     {{{ $.PrimaryKey }}}: '',
     {{{- else if .IsEdit }}}
     {{{- if eq .HtmlType "checkbox" }}}
-    {{{ (toCamelCase .GoField) }}}: [],
+    {{{ (.GoField) }}}: [],
     {{{- else if eq .HtmlType "number" }}}
-    {{{ (toCamelCase .GoField) }}}: 0,
+    {{{ (.GoField) }}}: 0,
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (.GoField) }}}: '',
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -207,7 +207,7 @@ const formData = reactive({
 const formRules = {
     {{{- range .Columns }}}
     {{{- if and .IsEdit .IsRequired }}}
-    {{{ (toCamelCase .GoField) }}}: [
+    {{{ (.GoField) }}}: [
         {
             required: true,
             {{{- if or (eq .HtmlType "checkbox") (eq .HtmlType "datetime") (eq .HtmlType "radio") (eq .HtmlType "select") (eq .HtmlType "imageUpload") }}}
@@ -228,7 +228,7 @@ const handleSubmit = async () => {
         const data: any = { ...formData }
         {{{- range .Columns }}}
         {{{- if eq .HtmlType "checkbox" }}}
-        data.{{{ (toCamelCase .GoField) }}} = data.{{{ (toCamelCase .GoField) }}}.join(',')
+        data.{{{ (.GoField) }}} = data.{{{ (.GoField) }}}.join(',')
         {{{- end }}}
         {{{- end }}}
         mode.value == 'edit' ? await {{{ .ModuleName }}}_edit(data) : await {{{ .ModuleName }}}_add(data)
@@ -251,7 +251,7 @@ const setFormData = async (data: Record<string, any>) => {
             {{{- range .Columns }}}
             {{{- if eq .HtmlType "checkbox" }}}
             //@ts-ignore
-            formData.{{{ (toCamelCase .GoField) }}} = String(data.{{{ (toCamelCase .GoField) }}}).split(',')
+            formData.{{{ (.GoField) }}} = String(data.{{{ (.GoField) }}}).split(',')
             {{{- end }}}
             {{{- end }}}
         }

@@ -5,16 +5,16 @@
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ (toCamelCase .GoField) }}}Start"
-                        v-model:endTime="queryParams.{{{ (toCamelCase .GoField) }}}End"
+                        v-model:startTime="queryParams.{{{ (.GoField) }}}_start"
+                        v-model:endTime="queryParams.{{{ (.GoField) }}}_end"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" class="w-[280px]">
                     <el-select
-                        v-model="queryParams.{{{ (toCamelCase .GoField) }}}"
+                        v-model="queryParams.{{{ (.GoField) }}}"
                         
                         clearable
                     >
@@ -40,8 +40,8 @@
                     </el-select>
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
-                    <el-input v-model="queryParams.{{{ (toCamelCase .GoField) }}}" />
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" class="w-[280px]">
+                    <el-input v-model="queryParams.{{{ (.GoField) }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
@@ -74,32 +74,32 @@
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toCamelCase .GoField) }}}" />
+                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (.GoField) }}}" />
                     </template>
                 </el-table-column>
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toCamelCase .GoField) }}}" labelKey='id' valueKey='id' />
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (.GoField) }}}" labelKey='id' valueKey='id' />
                     </template>
                 </el-table-column>
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
                             :height="40"
-                            :src="row.{{{ (toCamelCase .GoField) }}}"
-                            :preview-src-list="[row.{{{ (toCamelCase .GoField) }}}]"
+                            :src="row.{{{ (.GoField) }}}"
+                            :preview-src-list="[row.{{{ (.GoField) }}}]"
                             preview-teleported
                             hide-on-click-modal
                         />
                     </template>
                 </el-table-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100" />
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
@@ -172,10 +172,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toCamelCase .GoField) }}}Start: '',
-    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{ (.GoField) }}}_start: '',
+    {{{ (.GoField) }}}_end: '',
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (.GoField) }}}: '',
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}

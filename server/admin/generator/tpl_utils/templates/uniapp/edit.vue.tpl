@@ -3,20 +3,20 @@
 		<uv-form labelPosition="left" :model="form" :rules="formRules" ref="formRef">
 			{{{- range .Columns }}}
             {{{- if .IsEdit }}}			
-			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" borderBottom>
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" borderBottom>
                 {{{- if eq .HtmlType "input" }}}
-					<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-input>
+					<uv-input v-model="form.{{{ (.GoField) }}}" border="surround"></uv-input>
 				{{{- else if eq .HtmlType "number" }}}
-					<uv-number-box v-model="form.{{{ (toCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+					<uv-number-box v-model="form.{{{ (.GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 				{{{- else if eq .HtmlType "textarea" }}}
-					<uv-textarea v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-textarea>
+					<uv-textarea v-model="form.{{{ (.GoField) }}}" border="surround"></uv-textarea>
 				{{{- else if eq .HtmlType "datetime" }}}
-					<x-date v-model:time="form.{{{ (toCamelCase .GoField) }}}"></x-date>
+					<x-date v-model:time="form.{{{ (.GoField) }}}"></x-date>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
 					{{{- if ne .DictType "" }}}
-						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+						<x-picker v-model="form.{{{ (.GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
 					{{{- else if ne .ListAllApi "" }}}
-						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="id" labelKey="id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+						<x-picker v-model="form.{{{ (.GoField) }}}" valueKey="id" labelKey="id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- else }}}
 						请选择字典生成代码
 					{{{- end }}}
@@ -55,15 +55,15 @@
 	let formRef = ref();
 	let form = ref<type_{{{ .ModuleName }}}_edit>({
 	{{{- range .Columns }}}
-    {{{- if eq (toCamelCase .GoField) $.PrimaryKey }}}
+    {{{- if eq (.GoField) $.PrimaryKey }}}
     {{{ $.PrimaryKey }}}: '',
     {{{- else if .IsEdit }}}
     {{{- if eq .HtmlType "checkbox" }}}
-    {{{ (toCamelCase .GoField) }}}: [],
+    {{{ (.GoField) }}}: [],
     {{{- else if eq .HtmlType "number" }}}
-    {{{ (toCamelCase .GoField) }}}: 0,
+    {{{ (.GoField) }}}: 0,
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (.GoField) }}}: '',
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -71,7 +71,7 @@
 	const formRules = {
 		{{{- range .Columns }}}
 		{{{- if and .IsEdit .IsRequired }}}
-		{{{ (toCamelCase .GoField) }}}: [
+		{{{ (.GoField) }}}: [
 			{
 				required: true,
 				{{{- if or (eq .HtmlType "checkbox") (eq .HtmlType "datetime") (eq .HtmlType "radio") (eq .HtmlType "select") (eq .HtmlType "imageUpload") }}}

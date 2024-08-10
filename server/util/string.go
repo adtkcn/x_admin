@@ -36,6 +36,7 @@ func (su stringUtil) ToCamelCase(s string) string {
 	for i := 1; i < len(words); i++ {
 		words[i] = c.String(words[i])
 	}
+	// return s
 	return strings.Join(words, "")
 }
 

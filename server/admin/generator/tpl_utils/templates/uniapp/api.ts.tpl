@@ -2,7 +2,7 @@ import { request } from '@/utils/request'
 import type { Pages } from '@/utils/request'
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
-    {{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{ .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 }
 // 查询
@@ -10,10 +10,10 @@ export type type_{{{.ModuleName}}}_query = {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-    {{{ toCamelCase .GoField }}}Start?: string;
-    {{{ toCamelCase .GoField }}}End?: string;
+    {{{ .GoField }}}_start?: string;
+    {{{ .GoField }}}_end?: string;
 {{{- else }}}
-    {{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{ .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -22,7 +22,7 @@ export type type_{{{.ModuleName}}}_query = {
 export type type_{{{.ModuleName}}}_edit = {
 {{{- range .Columns }}}
 {{{- if or .IsEdit .IsInsert }}}
-    {{{ toCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{ .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 {{{- end }}}
 }

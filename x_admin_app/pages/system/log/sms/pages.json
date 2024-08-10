@@ -1,0 +1,32 @@
+// 请将pages里的数据手动合并到根目录下pages.json中
+{
+	"pages": [
+        {
+			"path": "pages/system/log/sms/index",
+			"style": {
+				"navigationBarTitleText": "系统短信日志",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 100
+			}
+		},
+		{
+			"path": "pages/system/log/sms/details",
+			"style": {
+				"navigationBarTitleText": "系统短信日志详情",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/system/log/sms/edit",
+			"style": {
+				"navigationBarTitleText": "编辑系统短信日志"
+			}
+		},
+		{
+			"path": "pages/system/log/sms/search",
+			"style": {
+				"navigationBarTitleText": "搜索系统短信日志"
+			}
+		}
+    ]
+}

@@ -56,10 +56,7 @@ func (service systemAuthDeptService) List(listReq SystemAuthDeptListReq) (deptRe
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	// deptResps = []SystemAuthDeptResp{}
 	response.Copy(&deptResps, depts)
-	// mapList = util.ArrayUtil.ListToTree(
-	// util.ConvertUtil.StructsToMaps(deptResps), "id", "pid", "children")
 	return
 }
 

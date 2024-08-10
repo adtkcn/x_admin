@@ -112,7 +112,7 @@ func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_
 		col.HtmlType = HtmlConstants.HtmlDatetime
 	} else if util.ToolsUtil.Contains(SqlConstants.ColumnTypeNumber, columnType) {
 		//数字字段
-		col.HtmlType = HtmlConstants.HtmlInput
+		col.HtmlType = HtmlConstants.HtmlInputNumber
 		if strings.Contains(columnType, ",") {
 			col.GoType = GoConstants.TypeFloat
 		} else {
@@ -244,22 +244,22 @@ func (gu genUtil) GoToTsType(s string) string {
  * @description: Go类型转可为null类型，转换后还能解决前端对int传了string类型错误问题
  */
 func (gu genUtil) GoToNullType(s string) string {
-	if s == "int64" {
-		return "null.Int"
-	} else if s == "int32" || s == "int" {
-		return "null.Int32"
-	} else if s == "int8" || s == "int16" {
-		return "null.Int16"
-	} else if s == "float" || s == "float32" || s == "float64" {
-		return "null.Float"
-	} else if s == "string" {
-		return "null.String"
-	} else if s == "bool" {
-		return "null.Bool"
-	} else if s == "time.Time" {
-		return "null.Time"
-	}
-	return s
+	// if s == "int64" {
+	// 	return "null.Int"
+	// } else if s == "int32" || s == "int" {
+	// 	return "null.Int32"
+	// } else if s == "int8" || s == "int16" {
+	// 	return "null.Int16"
+	// } else if s == "float" || s == "float32" || s == "float64" {
+	// 	return "null.Float"
+	// } else if s == "string" {
+	// 	return "null.String"
+	// } else if s == "bool" {
+	// 	return "null.Bool"
+	// } else if s == "time.Time" {
+	// 	return "null.Time"
+	// }
+	return "*" + s
 }
 
 // 拼接字符串

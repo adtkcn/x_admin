@@ -42,7 +42,8 @@ var SqlConstants = sqlConstants{
 
 //HtmlConstants HTML相关常量
 var HtmlConstants = htmlConstants{
-	HtmlInput:       "input",       //文本框
+	HtmlInput:       "input", //文本框
+	HtmlInputNumber: "number",
 	HtmlTextarea:    "textarea",    //文本域
 	HtmlSelect:      "select",      //下拉框
 	HtmlRadio:       "radio",       //单选框
@@ -82,6 +83,7 @@ type sqlConstants struct {
 
 type htmlConstants struct {
 	HtmlInput       string
+	HtmlInputNumber string
 	HtmlTextarea    string
 	HtmlSelect      string
 	HtmlRadio       string

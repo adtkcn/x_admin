@@ -26,10 +26,10 @@ type {{{ toUpperCamelCase .ModuleName }}}Handler struct {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
-//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
+//	@Param {{{ .GoField }}}_start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .GoField }}}_end  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -54,10 +54,10 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
-//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
+//	@Param {{{ .GoField }}}_start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .GoField }}}_end  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -78,7 +78,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ toCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response{ data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
@@ -103,7 +103,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsInsert }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
@@ -122,7 +122,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsEdit }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
@@ -140,7 +140,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ toCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
@@ -162,10 +162,10 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ toCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
-//	@Param {{{ toCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
+//	@Param {{{ .GoField }}}_start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .GoField }}}_end  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ toCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
