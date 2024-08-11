@@ -11,7 +11,7 @@
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
                 <el-form-item label="场景编号" prop="scene">
-                    <el-input v-model="formData.scene" type="number" placeholder="请输入场景编号" />
+                    <el-input v-model="formData.scene" placeholder="请输入场景编号" />
                 </el-form-item>
                 <el-form-item label="手机号码" prop="mobile">
                     <el-input v-model="formData.mobile" placeholder="请输入手机号码" />
@@ -84,12 +84,12 @@ const popupTitle = computed(() => {
 
 const formData = reactive({
     id: '',
-    scene: 0,
+    scene: '',
     mobile: '',
     content: '',
     status: '',
     results: '',
-    send_time: 0
+    send_time: ''
 })
 
 const formRules = {

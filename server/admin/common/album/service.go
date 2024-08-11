@@ -18,7 +18,7 @@ type IAlbumService interface {
 	AlbumMove(ids []uint, cid int) (e error)
 	AlbumAdd(addReq CommonAlbumAddReq) (res uint, e error)
 	AlbumDel(ids []uint) (e error)
-	CateList(listReq CommonCateListReq) (mapList []interface{}, e error)
+	CateList(listReq CommonCateListReq) (mapList []CommonCateListResp, e error)
 	CateAdd(addReq CommonCateAddReq) (e error)
 	CateRename(id uint, name string) (e error)
 	CateDel(id uint) (e error)
@@ -159,7 +159,7 @@ func (albSrv albumService) AlbumDel(ids []uint) (e error) {
 }
 
 // CateList 相册分类列表
-func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []interface{}, e error) {
+func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []CommonCateListResp, e error) {
 	var cates []common_model.AlbumCate
 	cateModel := albSrv.db.Where("is_delete = ?", 0).Order("id desc")
 	if listReq.Type > 0 {
@@ -174,8 +174,7 @@ func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []interf
 	}
 	cateResps := []CommonCateListResp{}
 	response.Copy(&cateResps, cates)
-	return util.ArrayUtil.ListToTree(
-		util.ConvertUtil.StructsToMaps(cateResps), "id", "pid", "children"), nil
+	return cateResps, nil
 }
 
 // CateAdd 分类新增

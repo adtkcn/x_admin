@@ -96,8 +96,8 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				err := core.GetDB().Create(&system_model.SystemLogOperate{
 					AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
 					Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
-					StartTime: core.TsTime(startTime),
-					EndTime:   core.TsTime(endTime),
+					StartTime: core.ParseTimeToTsTime(startTime),
+					EndTime:   core.ParseTimeToTsTime(endTime),
 					TaskTime:  taskTime,
 				}).Error
 				response.CheckErr(err, "RecordLog recover Create err")
@@ -124,8 +124,8 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		err := core.GetDB().Create(&system_model.SystemLogOperate{
 			AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
 			Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
-			StartTime: core.TsTime(startTime),
-			EndTime:   core.TsTime(endTime),
+			StartTime: core.ParseTimeToTsTime(startTime),
+			EndTime:   core.ParseTimeToTsTime(endTime),
 			TaskTime:  taskTime,
 		}).Error
 		response.CheckErr(err, "RecordLog Create err")

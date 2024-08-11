@@ -14,14 +14,15 @@ var ConvertUtil = convertUtil{}
 type convertUtil struct{}
 
 // StructsToMaps 将结构体转换成Map列表
-func (c convertUtil) StructsToMaps(obj interface{}) (data []map[string]interface{}) {
+func (c convertUtil) StructsToMaps(from interface{}) (data []map[string]interface{}) {
 	var objList []interface{}
-	err := copier.Copy(&objList, obj)
+	err := copier.Copy(&objList, from)
 	if err != nil {
 		core.Logger.Errorf("convertUtil.StructsToMaps err: err=[%+v]", err)
 		return nil
 	}
 	for _, v := range objList {
+		// data = append(data, structs.Map(v))
 		data = append(data, c.StructToMap(v))
 	}
 	return data
@@ -29,15 +30,11 @@ func (c convertUtil) StructsToMaps(obj interface{}) (data []map[string]interface
 
 // StructToMap 结构体转换成map
 func (c convertUtil) StructToMap(from interface{}) map[string]interface{} {
-	// var y = map[string]interface{}{}
-	// mapstructure.Decode(from, &y) //mapstructure
+	// var m = map[string]interface{}{}
+	// mapstructure.Decode(from, &m) //mapstructure
 
-	// copier.Copy(&m, from)
 	m, _ := convertor.StructToMap(from) // 需要tag:json
 
-	// if e != nil {
-	// 	return nil, err
-	// }
 	return m
 }
 

@@ -55,7 +55,7 @@ type SystemLogSmsResp struct {
 	Scene      int         `mapstructure:"scene" json:"scene" excel:"name:场景编号;"`             // 场景编号
 	Mobile     string      `mapstructure:"mobile" json:"mobile" excel:"name:手机号码;"`           // 手机号码
 	Content    string      `mapstructure:"content" json:"content" excel:"name:发送内容;"`         // 发送内容
-	Status     int         `mapstructure:"status" json:"status" excel:"name:发送状态"`            // 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+	Status     int         `mapstructure:"status" json:"status" excel:"name:发送状态;"`           // 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
 	Results    string      `mapstructure:"results" json:"results" excel:"name:短信结果;"`         // 短信结果
 	SendTime   int         `mapstructure:"send_time" json:"send_time" excel:"name:发送时间;"`     // 发送时间
 	CreateTime core.TsTime `mapstructure:"create_time" json:"create_time" excel:"name:创建时间;"` // 创建时间

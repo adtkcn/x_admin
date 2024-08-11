@@ -466,7 +466,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 	if id == config.AdminConfig.GetAdminId(c) {
 		return response.AssertArgumentError.SetMessage("不能删除自己!")
 	}
-	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: core.TsTime(time.Now())}).Error
+	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: core.NowTime()}).Error
 	e = response.CheckErr(err, "Del Updates err")
 	return
 }

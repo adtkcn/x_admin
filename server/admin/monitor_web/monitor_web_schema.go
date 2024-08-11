@@ -51,13 +51,13 @@ type MonitorWebDelReq struct {
 
 //MonitorWebResp 错误收集error返回信息
 type MonitorWebResp struct {
-	Id         int         `json:"id" structs:"id"`                                       // uuid
-	ProjectKey string      `json:"projectKey" structs:"projectKey" excel:"name:项目key;"`   // 项目key
-	ClientId   string      `json:"clientId" structs:"clientId" excel:"name:sdk生成的客户端id;"` // sdk生成的客户端id
-	EventType  string      `json:"eventType" structs:"eventType" excel:"name:事件类型;"`      // 事件类型
-	Page       string      `json:"page" structs:"page" excel:"name:URL地址;"`               // URL地址
-	Message    string      `json:"message" structs:"message" excel:"name:错误消息;"`          // 错误消息
-	Stack      string      `json:"stack" structs:"stack" excel:"name:错误堆栈;"`              // 错误堆栈
-	ClientTime core.TsTime `json:"clientTime" structs:"clientTime" excel:"name:客户端时间;"`   // 客户端时间
-	CreateTime core.TsTime `json:"createTime" structs:"createTime" excel:"name:创建时间;"`    // 创建时间
+	Id         int         `json:"id"`                                 // uuid
+	ProjectKey string      `json:"projectKey" excel:"name:项目key;"`     // 项目key
+	ClientId   string      `json:"clientId" excel:"name:sdk生成的客户端id;"` // sdk生成的客户端id
+	EventType  string      `json:"eventType" excel:"name:事件类型;"`       // 事件类型
+	Page       string      `json:"page" excel:"name:URL地址;"`           // URL地址
+	Message    string      `json:"message" excel:"name:错误消息;"`         // 错误消息
+	Stack      string      `json:"stack" excel:"name:错误堆栈;"`           // 错误堆栈
+	ClientTime core.TsTime `json:"clientTime" excel:"name:客户端时间;"`     // 客户端时间
+	CreateTime core.TsTime `json:"createTime" excel:"name:创建时间;"`      // 创建时间
 }

@@ -2,10 +2,10 @@ package util
 
 var ArrayUtil = arrayUtil{}
 
-//arrayUtil 数组工具类
+// arrayUtil 数组工具类
 type arrayUtil struct{}
 
-//ListToTree 字典列表转树形结构
+// ListToTree 字典列表转树形结构
 func (au arrayUtil) ListToTree(arr []map[string]interface{}, id string, pid string, child string) (mapList []interface{}) {
 	mapList = []interface{}{}
 	// 遍历以id_为key生成map
@@ -27,6 +27,10 @@ func (au arrayUtil) ListToTree(arr []map[string]interface{}, id string, pid stri
 					} else {
 						cVal = append(cVal.([]interface{}), m)
 					}
+					pNode.(map[string]interface{})[child] = cVal
+					continue
+				} else {
+					cVal := []interface{}{m}
 					pNode.(map[string]interface{})[child] = cVal
 					continue
 				}
