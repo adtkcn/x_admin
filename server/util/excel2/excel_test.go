@@ -58,7 +58,7 @@ func TestImports(t *testing.T) {
 		fmt.Println("文件打开失败")
 	}
 	importList := []Test{}
-	err = ImportExcel(f, &importList, 1, 2)
+	err = ImportExcel(f, &importList, 2, []Col{})
 	if err != nil {
 		fmt.Println(err)
 	}

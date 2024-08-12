@@ -8,9 +8,11 @@ import (
 )
 
 type Col struct {
-	Name  string
-	Key   string
-	Width int
+	Name    string
+	Key     string
+	Width   int
+	Replace map[string]any
+	Decode  func(value any) any
 }
 
 // GetExcelColumnName2 根据列数生成 Excel 列名
@@ -106,41 +108,20 @@ func normalBuildDataRow2(e *Excel, sheet, endColName string, startDataRow int, l
 		list := lists[i]
 		for j := 0; j < len(cols); j++ {
 			col := cols[j]
-			val := list[col.Key]
-			// switch val.(type) {
+			replace := col.Replace
 
-			// default:
-			// 	v, _ := json.Marshal(list[col.Key])
-			// 	rowData = append(rowData, v)
-			// }
+			val := list[col.Key]
+
+			for replaceKey, v := range replace {
+
+				if replaceKey == fmt.Sprintf("%v", val) {
+					val = fmt.Sprintf("%v", v)
+					break
+				}
+			}
+
 			rowData = append(rowData, val)
 		}
-
-		// 	// 替换
-		// 	if dataCol.Replace != "" {
-		// 		split := strings.Split(dataCol.Replace, ",")
-		// 		for j := range split {
-		// 			s := strings.Split(split[j], "_") // 根据下划线进行分割，格式：需要替换的内容_替换后的内容
-		// 			value := fieldData.String()
-		// 			if strings.Contains(fieldData.Type().String(), "int") {
-		// 				value = strconv.Itoa(int(fieldData.Int()))
-		// 			} else if fieldData.Type().String() == "bool" {
-		// 				value = strconv.FormatBool(fieldData.Bool())
-		// 			} else if strings.Contains(fieldData.Type().String(), "float") {
-		// 				value = strconv.FormatFloat(fieldData.Float(), 'f', -1, 64)
-		// 			}
-		// 			if s[0] == value {
-		// 				dataCol.Value = s[1]
-		// 			}
-		// 		}
-		// 	} else {
-		// 		dataCol.Value = fieldData
-		// 	}
-		// 	if err != nil {
-		// 		return
-		// 	}
-		// 	exportRow = append(exportRow, dataCol)
-		// }
 
 		if startDataRow%2 == 0 {
 			_ = e.F.SetCellStyle(sheet, startCol, endCol, e.ContentStyle2)

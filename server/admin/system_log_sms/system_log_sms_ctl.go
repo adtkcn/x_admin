@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -151,6 +152,29 @@ func (hd *SystemLogSmsHandler) Del(c *gin.Context) {
 	response.CheckAndResp(c, SystemLogSmsService.Del(delReq.Id))
 }
 
+func DecodeTime(value any) any {
+	t, e := core.ParseStringToTsTime(value.(string))
+	if e != nil {
+		return nil
+	}
+
+	return t
+}
+
+var cols = []excel2.Col{
+	{Name: "场景编号", Key: "Scene", Width: 15, Replace: map[string]interface{}{
+		"1": "a",
+		"2": "b",
+	}},
+	{Name: "手机号码", Key: "Mobile", Width: 15},
+	{Name: "发送内容", Key: "Content", Width: 15},
+	{Name: "发送状态", Key: "Status", Width: 20},
+	{Name: "短信结果", Key: "Results", Width: 21},
+	{Name: "发送时间", Key: "SendTime", Width: 20},
+	{Name: "创建时间", Key: "CreateTime", Width: 25},
+	{Name: "更新时间", Key: "UpdateTime", Width: 30, Decode: DecodeTime},
+}
+
 // @Summary	系统短信日志导出
 // @Tags		system_log_sms-系统短信日志
 // @Produce	json
@@ -182,16 +206,6 @@ func (hd *SystemLogSmsHandler) ExportFile(c *gin.Context) {
 	// 	return
 	// }
 
-	var cols = []excel2.Col{
-		{Name: "场景编号", Key: "Scene", Width: 15},
-		{Name: "手机号码", Key: "Mobile", Width: 15},
-		{Name: "发送内容", Key: "Content", Width: 15},
-		{Name: "发送状态", Key: "Status", Width: 20},
-		{Name: "短信结果", Key: "Results", Width: 21},
-		{Name: "发送时间", Key: "SendTime", Width: 20},
-		{Name: "创建时间", Key: "CreateTime", Width: 25},
-		{Name: "更新时间", Key: "UpdateTime", Width: 30},
-	}
 	list := util.ConvertUtil.StructsToMaps(res)
 	f, err := excel2.NormalDynamicExport2(list, cols, "Sheet1", "系统短信日志")
 	if err != nil {
@@ -214,7 +228,7 @@ func (hd *SystemLogSmsHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []SystemLogSmsResp{}
-	err = excel.GetExcelData(file, &importList)
+	err = excel2.GetExcelData(file, &importList, cols)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
