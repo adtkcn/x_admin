@@ -116,7 +116,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		response.Copy(&res, obj)
+	
 		{{{- range .Columns }}}
 		{{{- if and .IsEdit (contains (slice "image" "avatar" "logo" "img") .GoField) }}}
 		res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
@@ -125,7 +125,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 		cacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
 	}
 
-
+	response.Copy(&res, obj)
 	return
 }
 

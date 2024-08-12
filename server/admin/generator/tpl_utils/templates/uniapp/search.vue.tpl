@@ -44,7 +44,7 @@
 		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
 	import xDateRange from "@/components/x-date-range/x-date-range.vue";
-	import type {type_{{{.ModuleName}}}_query} from "@/api/monitor_project";
+	import type {type_{{{.ModuleName}}}_query} from "@/api/{{{.ModuleName}}}";
 {{{- if ge (len .DictFields) 1 }}}
 {{{- $dictSize := sub (len .DictFields) 1 }}}
 const { dictData } = useDictData<{

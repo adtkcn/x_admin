@@ -48,7 +48,7 @@
 		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
 	import xDateRange from "@/components/x-date-range/x-date-range.vue";
-	import type {type_system_log_sms_query} from "@/api/monitor_project";
+	import type {type_system_log_sms_query} from "@/api/system_log_sms";
 const { dictData } = useDictData<{
     flow_apply_status: any[]
 }>(['flow_apply_status'])

@@ -51,13 +51,13 @@ type SystemLogSmsDelReq struct {
 
 // SystemLogSmsResp 系统短信日志返回信息
 type SystemLogSmsResp struct {
-	Id         int         `mapstructure:"id" json:"id"`                                      // id
-	Scene      int         `mapstructure:"scene" json:"scene" excel:"name:场景编号;"`             // 场景编号
-	Mobile     string      `mapstructure:"mobile" json:"mobile" excel:"name:手机号码;"`           // 手机号码
-	Content    string      `mapstructure:"content" json:"content" excel:"name:发送内容;"`         // 发送内容
-	Status     int         `mapstructure:"status" json:"status" excel:"name:发送状态;"`           // 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
-	Results    string      `mapstructure:"results" json:"results" excel:"name:短信结果;"`         // 短信结果
-	SendTime   int         `mapstructure:"send_time" json:"send_time" excel:"name:发送时间;"`     // 发送时间
-	CreateTime core.TsTime `mapstructure:"create_time" json:"create_time" excel:"name:创建时间;"` // 创建时间
-	UpdateTime core.TsTime `mapstructure:"update_time" json:"update_time" excel:"name:更新时间;"` // 更新时间
+	Id         int         `json:"id"`                             // id
+	Scene      int         `json:"scene" excel:"name:场景编号;"`       // 场景编号
+	Mobile     string      `json:"mobile" excel:"name:手机号码;"`      // 手机号码
+	Content    string      `json:"content" excel:"name:发送内容;"`     // 发送内容
+	Status     int         `json:"status" excel:"name:发送状态;"`      // 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+	Results    string      `json:"results" excel:"name:短信结果;"`     // 短信结果
+	SendTime   int         `json:"send_time" excel:"name:发送时间;"`   // 发送时间
+	CreateTime core.TsTime `json:"create_time" excel:"name:创建时间;"` // 创建时间
+	UpdateTime core.TsTime `json:"update_time" excel:"name:更新时间;"` // 更新时间
 }

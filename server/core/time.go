@@ -3,6 +3,7 @@ package core
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -12,25 +13,22 @@ import (
 const DateFormat = "2006-01-02"
 const TimeFormat = "2006-01-02 15:04:05"
 
-// 注解:时间类型从time.Time改为string的原因是struct转interface{}时，丢弃了部分信息，导致导出excel时，时间格式不对
 // TsTime 自定义时间格式
-type TsTime string
+type TsTime time.Time
 
 // 通过时间字符串生成时间戳
-//
-//	func ToUnix(date string) int64 {
-//		if date == "" {
-//			return 0
-//		}
-//		tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
-//		return tt.Unix()
-//	}
-func ParseTimeToTsTime(date time.Time) TsTime {
-	return TsTime(date.Format(TimeFormat))
+func ToUnix(date string) int64 {
+	if date == "" {
+		return 0
+	}
+	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
+	return tt.Unix()
 }
-
+func ParseTimeToTsTime(date time.Time) TsTime {
+	return TsTime(date)
+}
 func NowTime() TsTime {
-	return TsTime(time.Now().Format(TimeFormat))
+	return TsTime(time.Now())
 }
 
 func (tst *TsTime) UnmarshalJSON(bs []byte) error {
@@ -40,45 +38,38 @@ func (tst *TsTime) UnmarshalJSON(bs []byte) error {
 		return err
 	}
 	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
-	*tst = TsTime(
-		tt.Format(TimeFormat),
-	)
+	*tst = TsTime(tt)
 	return nil
 }
 
 // MarshalJSON 将TsTime类型的时间转化为JSON字符串格式
 // 返回转化后的JSON字符串和错误信息
 func (tst TsTime) MarshalJSON() ([]byte, error) {
-	// tt := time.Time(tst.Str).Format(TimeFormat)
-	tt, _ := time.Parse(TimeFormat, tst.String())
-	str := tt.Format(TimeFormat)
-
-	return json.Marshal(str)
+	tt := time.Time(tst).Format(TimeFormat)
+	return json.Marshal(tt)
 }
 
 // 写入数据库gorm调用
 func (t TsTime) Value() (driver.Value, error) {
-	// timeStr := t.String()
-	// if timeStr == "0001-01-01 00:00:00" {
-	// 	return nil, nil
-	// }
-	return t.String(), nil
+	timeStr := t.String()
+	if timeStr == "0001-01-01 00:00:00" {
+		return nil, nil
+	}
+	return timeStr, nil
 }
 
 // 读取数据gorm调用
 func (t *TsTime) Scan(v any) error {
 	// pt, err := time.ParseInLocation("2006-01-02 15:04:05", v.(time.Time).String(), time.Local)
-	if _, ok := v.(time.Time); ok {
-		*t = TsTime(v.(time.Time).Format(TimeFormat))
-		return nil
-	} else {
-		*t = "0001-01-01 00:00:00"
+	if pt, ok := v.(time.Time); ok {
+		*t = TsTime(pt)
 		return nil
 	}
+	return fmt.Errorf("cant convert %s to time", v)
 }
 
 func (t TsTime) String() string {
-	return string(t)
+	return time.Time(t).Format(TimeFormat)
 }
 
 func (TsTime) GormDBDataType(db *gorm.DB, field *schema.Field) string {

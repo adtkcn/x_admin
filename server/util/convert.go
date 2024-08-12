@@ -3,7 +3,7 @@ package util
 import (
 	"x_admin/core"
 
-	"github.com/duke-git/lancet/v2/convertor"
+	"github.com/fatih/structs"
 	"github.com/jinzhu/copier"
 	"github.com/mitchellh/mapstructure"
 )
@@ -12,6 +12,16 @@ var ConvertUtil = convertUtil{}
 
 // convertUtil 转换工具
 type convertUtil struct{}
+
+// StructToMap 结构体转换成map
+func (c convertUtil) StructToMap(from interface{}) map[string]interface{} {
+	// var m = map[string]interface{}{}
+	// mapstructure.Decode(from, &m) //mapstructure
+
+	// m, _ := convertor.StructToMap(from) // 需要tag:json
+	m := structs.Map(from) // 需要tag:structs
+	return m
+}
 
 // StructsToMaps 将结构体转换成Map列表
 func (c convertUtil) StructsToMaps(from interface{}) (data []map[string]interface{}) {
@@ -26,16 +36,6 @@ func (c convertUtil) StructsToMaps(from interface{}) (data []map[string]interfac
 		data = append(data, c.StructToMap(v))
 	}
 	return data
-}
-
-// StructToMap 结构体转换成map
-func (c convertUtil) StructToMap(from interface{}) map[string]interface{} {
-	// var m = map[string]interface{}{}
-	// mapstructure.Decode(from, &m) //mapstructure
-
-	m, _ := convertor.StructToMap(from) // 需要tag:json
-
-	return m
 }
 
 // MapToStruct 将map弱类型转换成结构体

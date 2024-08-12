@@ -183,14 +183,14 @@ func (hd *SystemLogSmsHandler) ExportFile(c *gin.Context) {
 	// }
 
 	var cols = []excel2.Col{
-		{Name: "场景编号", Key: "scene", Width: 15},
-		{Name: "手机号码", Key: "mobile", Width: 15},
-		{Name: "发送内容", Key: "content", Width: 15},
-		{Name: "发送状态", Key: "status", Width: 20},
-		{Name: "短信结果", Key: "results", Width: 21},
-		{Name: "发送时间", Key: "send_time", Width: 20},
-		{Name: "创建时间", Key: "create_time", Width: 25},
-		{Name: "更新时间", Key: "update_time", Width: 30},
+		{Name: "场景编号", Key: "Scene", Width: 15},
+		{Name: "手机号码", Key: "Mobile", Width: 15},
+		{Name: "发送内容", Key: "Content", Width: 15},
+		{Name: "发送状态", Key: "Status", Width: 20},
+		{Name: "短信结果", Key: "Results", Width: 21},
+		{Name: "发送时间", Key: "SendTime", Width: 20},
+		{Name: "创建时间", Key: "CreateTime", Width: 25},
+		{Name: "更新时间", Key: "UpdateTime", Width: 30},
 	}
 	list := util.ConvertUtil.StructsToMaps(res)
 	f, err := excel2.NormalDynamicExport2(list, cols, "Sheet1", "系统短信日志")

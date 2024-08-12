@@ -121,10 +121,9 @@ func (service systemLogSmsService) Detail(Id int) (res SystemLogSmsResp, e error
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		response.Copy(&res, obj)
 		cacheUtil.SetCache(obj.Id, obj)
 	}
-
+	response.Copy(&res, obj)
 	return
 }
 

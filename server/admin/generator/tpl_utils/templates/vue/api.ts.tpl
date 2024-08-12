@@ -4,6 +4,7 @@ import type { Pages } from '@/utils/request'
 import config from '@/config'
 import queryString from 'query-string'
 import { getToken } from '@/utils/auth'
+import { clearEmpty } from '@/utils/util'
 
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
@@ -34,11 +35,11 @@ export type type_{{{.ModuleName}}}_edit = {
 
 // {{{.FunctionName}}}列表
 export function {{{.ModuleName}}}_list(params?: type_{{{.ModuleName}}}_query) {
-    return request.get<Pages<type_{{{.ModuleName}}}>>({ url: '/{{{.ModuleName}}}/list', params })
+    return request.get<Pages<type_{{{.ModuleName}}}>>({ url: '/{{{.ModuleName}}}/list', params: clearEmpty(params) })
 }
 // {{{.FunctionName}}}列表-所有
 export function {{{.ModuleName}}}_list_all(params?: type_{{{.ModuleName}}}_query) {
-    return request.get<type_{{{.ModuleName}}}[]>({ url: '/{{{.ModuleName}}}/listAll', params })
+    return request.get<type_{{{.ModuleName}}}[]>({ url: '/{{{.ModuleName}}}/listAll', params: clearEmpty(params) })
 }
 
 // {{{.FunctionName}}}详情
@@ -66,5 +67,5 @@ export const {{{.ModuleName}}}_import_file = '/{{{.ModuleName}}}/ImportFile'
 
 // {{{.FunctionName}}}导出
 export function {{{.ModuleName}}}_export_file(params: any) {
-    return (window.location.href =`${config.baseUrl}${config.urlPrefix}/{{{.ModuleName}}}/ExportFile?token=${getToken()}&` + queryString.stringify(params))
+    return (window.location.href =`${config.baseUrl}${config.urlPrefix}/{{{.ModuleName}}}/ExportFile?token=${getToken()}&` + queryString.stringify(clearEmpty(params)))
 }
