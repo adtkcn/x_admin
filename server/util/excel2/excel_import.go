@@ -26,15 +26,11 @@ func GetExcelData(file multipart.File, dst interface{}, cols []Col) (err error) 
 	// 创建Excel文件对象
 	f, err := excelize.OpenReader(bytes.NewReader(buf.Bytes()))
 	if err != nil {
-		fmt.Println(err)
-		// c.String(http.StatusInternalServerError, "Excel读取失败")
 		err = errors.New("Excel读取失败")
 		return
 	}
 	err = ImportExcel(f, dst, 2, cols)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+
 	return err
 }
 
@@ -58,16 +54,6 @@ func ImportBySheet(f *excelize.File, dst interface{}, sheetName string, startRow
 	//}
 	err = importData(f, dst, sheetName, startRow, cols)
 	return
-}
-
-// 获取在数组中得下标
-func GetIndex(items []string, item string) int {
-	for i, v := range items {
-		if v == item {
-			return i
-		}
-	}
-	return -1
 }
 
 // 解析数据

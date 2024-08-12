@@ -8,7 +8,6 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
-	"x_admin/util/excel"
 	"x_admin/util/excel2"
 
 	"github.com/gin-gonic/gin"
@@ -200,20 +199,14 @@ func (hd *SystemLogSmsHandler) ExportFile(c *gin.Context) {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	// f, err := excel.NormalDynamicExport(res, "Sheet1", "系统短信日志", nil)
-	// if err != nil {
-	// 	response.FailWithMsg(c, response.SystemError, "导出失败")
-	// 	return
-	// }
 
-	list := util.ConvertUtil.StructsToMaps(res)
-	f, err := excel2.NormalDynamicExport2(list, cols, "Sheet1", "系统短信日志")
+	f, err := excel2.NormalDynamicExport(res, cols, "Sheet1", "系统短信日志")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
 	}
 
-	excel.DownLoadExcel("系统短信日志"+time.Now().Format("20060102-150405"), c.Writer, f)
+	excel2.DownLoadExcel("系统短信日志"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 //	 @Summary	系统短信日志导入
