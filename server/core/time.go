@@ -27,6 +27,13 @@ func ToUnix(date string) int64 {
 func ParseTimeToTsTime(date time.Time) TsTime {
 	return TsTime(date)
 }
+func ParseStringToTsTime(date string) (TsTime, error) {
+	t, e := time.Parse(TimeFormat, date)
+	if e != nil {
+		return NowTime(), e
+	}
+	return TsTime(t), nil
+}
 func NowTime() TsTime {
 	return TsTime(time.Now())
 }
