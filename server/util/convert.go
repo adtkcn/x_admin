@@ -39,7 +39,7 @@ func (c convertUtil) StructsToMaps(from interface{}) (data []map[string]interfac
 }
 
 // MapToStruct 将map弱类型转换成结构体
-func (c convertUtil) MapToStruct(from map[string]interface{}, to interface{}) (err error) {
+func (c convertUtil) MapToStruct(from interface{}, to interface{}) (err error) {
 	err = mapstructure.WeakDecode(from, to) // 需要tag:mapstructure
 	return err
 }
