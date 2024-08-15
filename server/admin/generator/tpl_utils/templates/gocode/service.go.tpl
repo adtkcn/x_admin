@@ -8,7 +8,6 @@ import (
 	"gorm.io/gorm"
 	"x_admin/util"
 	"x_admin/util/excel2"
-	"github.com/duke-git/lancet/v2/convertor"
 )
 
 var {{{ toUpperCamelCase .EntityName }}}Service=New{{{ toUpperCamelCase .EntityName }}}Service()

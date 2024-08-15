@@ -29,7 +29,7 @@
                         </el-form-item>
                     {{{- else if eq .HtmlType "input" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <el-input v-model.number="formData.{{{ (toUpperCamelCase .GoField) }}}" placeholder="请输入{{{ .ColumnComment }}}" />
+                            <el-input v-model="formData.{{{ (toUpperCamelCase .GoField) }}}" placeholder="请输入{{{ .ColumnComment }}}" />
                         </el-form-item>
                     {{{- else if eq .HtmlType "number" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">

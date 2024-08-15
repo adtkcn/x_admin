@@ -14,9 +14,9 @@ type {{{ toUpperCamelCase .EntityName }}} struct {
             {{{- if eq .GoType "core.NullTime" }}}
                 {{{ toUpperCamelCase .GoField }}} core.NullTime `gorm:"{{{ if eq .GoField "create_time" }}}autoCreateTime;{{{ else }}}{{{if eq .GoField "update_time"}}}autoUpdateTime;{{{ end }}}{{{ end }}}comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
             {{{- else if .IsPk }}}
-                {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `gorm:"primarykey;comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
+                {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `gorm:"primarykey;comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
             {{{- else }}}
-                {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `gorm:"comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
+                {{{ toUpperCamelCase .GoField }}} {{{goWithRespType .GoType }}} `gorm:"comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
             {{{- end }}}
         {{{- end }}}
 
