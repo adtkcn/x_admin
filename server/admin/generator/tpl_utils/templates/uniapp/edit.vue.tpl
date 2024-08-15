@@ -3,20 +3,20 @@
 		<uv-form labelPosition="left" :model="form" :rules="formRules" ref="formRef">
 			{{{- range .Columns }}}
             {{{- if .IsEdit }}}			
-			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" borderBottom>
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" borderBottom>
                 {{{- if eq .HtmlType "input" }}}
-					<uv-input v-model="form.{{{ (.GoField) }}}" border="surround"></uv-input>
+					<uv-input v-model="form.{{{ (toUpperCamelCase .GoField) }}}" border="surround"></uv-input>
 				{{{- else if eq .HtmlType "number" }}}
-					<uv-number-box v-model="form.{{{ (.GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+					<uv-number-box v-model="form.{{{ (toUpperCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 				{{{- else if eq .HtmlType "textarea" }}}
-					<uv-textarea v-model="form.{{{ (.GoField) }}}" border="surround"></uv-textarea>
+					<uv-textarea v-model="form.{{{ (toUpperCamelCase .GoField) }}}" border="surround"></uv-textarea>
 				{{{- else if eq .HtmlType "datetime" }}}
-					<x-date v-model:time="form.{{{ (.GoField) }}}"></x-date>
+					<x-date v-model:time="form.{{{ (toUpperCamelCase .GoField) }}}"></x-date>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
 					{{{- if ne .DictType "" }}}
-						<x-picker v-model="form.{{{ (.GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+						<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
 					{{{- else if ne .ListAllApi "" }}}
-						<x-picker v-model="form.{{{ (.GoField) }}}" valueKey="id" labelKey="id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+						<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="{{{toUpperCamelCase .PrimaryKey}}}" labelKey="{{{toUpperCamelCase .PrimaryKey}}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- else }}}
 						请选择字典生成代码
 					{{{- end }}}
@@ -55,15 +55,15 @@
 	let formRef = ref();
 	let form = ref<type_{{{ .ModuleName }}}_edit>({
 	{{{- range .Columns }}}
-    {{{- if eq (.GoField) $.PrimaryKey }}}
+    {{{- if eq (toUpperCamelCase .GoField) $.PrimaryKey }}}
     {{{ $.PrimaryKey }}}: '',
     {{{- else if .IsEdit }}}
     {{{- if eq .HtmlType "checkbox" }}}
-    {{{ (.GoField) }}}: [],
+    {{{ (toUpperCamelCase .GoField) }}}: [],
     {{{- else if eq .HtmlType "number" }}}
-    {{{ (.GoField) }}}: 0,
+    {{{ (toUpperCamelCase .GoField) }}}: 0,
     {{{- else }}}
-    {{{ (.GoField) }}}: '',
+    {{{ (toUpperCamelCase .GoField) }}}: '',
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -71,7 +71,7 @@
 	const formRules = {
 		{{{- range .Columns }}}
 		{{{- if and .IsEdit .IsRequired }}}
-		{{{ (.GoField) }}}: [
+		{{{ (toUpperCamelCase .GoField) }}}: [
 			{
 				required: true,
 				{{{- if or (eq .HtmlType "checkbox") (eq .HtmlType "datetime") (eq .HtmlType "radio") (eq .HtmlType "select") (eq .HtmlType "imageUpload") }}}
@@ -87,8 +87,8 @@
 	}
 	onLoad((e) => {
 		console.log("onLoad", e);
-		if (e.id) {
-			getDetails(e.id);
+		if (e.{{{toUpperCamelCase .PrimaryKey}}}) {
+			getDetails(e.{{{toUpperCamelCase .PrimaryKey}}});
 		}
 	});
 
@@ -115,8 +115,8 @@ const { listAllData } = useListAllData<{
 })
 {{{- end }}}
 
-	function getDetails(id) {
-		{{{ .ModuleName }}}_detail(id).then((res) => {
+	function getDetails({{{toUpperCamelCase .PrimaryKey}}}) {
+		{{{ .ModuleName }}}_detail({{{toUpperCamelCase .PrimaryKey}}}).then((res) => {
             if (res.code == 200) {
                 if (res?.data) {
                     form.value = res?.data
@@ -133,11 +133,11 @@ const { listAllData } = useListAllData<{
 	function submit() {
 		console.log("submit", form.value);
 		formRef.value.validate().then(() => {
-			if (form.value.id) {
+			if (form.value.{{{toUpperCamelCase .PrimaryKey}}}) {
 				{{{ .ModuleName }}}_edit(form.value).then((res) => {
 					if (res.code == 200) {
 						toast("编辑成功");				
-						getDetails(form.value?.id);
+						getDetails(form.value?.{{{toUpperCamelCase .PrimaryKey}}});
 					} else {
 						toast(res.message);
 					}

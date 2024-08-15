@@ -9,10 +9,10 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
     {{{- range .Columns }}}
     {{{- if .IsQuery }}}
         {{{- if eq .HtmlType "datetime" }}}
-            {{{ toUpperCamelCase .GoField }}}Start *string `form:"{{{ .GoField }}}Start"` // 开始{{{ .ColumnComment }}}
-            {{{ toUpperCamelCase .GoField }}}End *string `GoField }}}End" form:"{{{ .GoField }}}End"` // 结束{{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}}Start *string `` // 开始{{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}}End *string `` // 结束{{{ .ColumnComment }}}
         {{{- else }}}
-            {{{ toUpperCamelCase .GoField }}} *{{{.GoType }}} ` form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}} *{{{.GoType }}} `` // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -24,7 +24,7 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
 type {{{ toUpperCamelCase .EntityName }}}AddReq struct {
     {{{- range .Columns }}}
     {{{- if .IsInsert }}}
-    {{{ toUpperCamelCase .GoField }}} interface{} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}" form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  `` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -34,9 +34,9 @@ type {{{ toUpperCamelCase .EntityName }}}EditReq struct {
     {{{- range .Columns }}}
     {{{- if .IsEdit }}}
         {{{- if .IsPk }}}
-        {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}" form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+        {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `` // {{{ .ColumnComment }}}
         {{{- else }}}
-        {{{ toUpperCamelCase .GoField }}} interface{} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}" form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+        {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  `` // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -46,7 +46,7 @@ type {{{ toUpperCamelCase .EntityName }}}EditReq struct {
 type {{{ toUpperCamelCase .EntityName }}}DetailReq struct {
     {{{- range .Columns }}}
     {{{- if .IsPk }}}
-    {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -55,7 +55,7 @@ type {{{ toUpperCamelCase .EntityName }}}DetailReq struct {
 type {{{ toUpperCamelCase .EntityName }}}DelReq struct {
     {{{- range .Columns }}}
     {{{- if .IsPk }}}
-    {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -65,9 +65,9 @@ type {{{ toUpperCamelCase .EntityName }}}Resp struct {
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
     {{{- if .IsPk }}}
-        {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+        {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `` // {{{ .ColumnComment }}}
     {{{- else }}}
-        {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+        {{{ toUpperCamelCase .GoField }}} {{{goWithRespType .GoType }}} `` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}

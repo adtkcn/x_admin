@@ -10,8 +10,8 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-// const DateFormat = "2006-01-02"
-// const TimeFormat = "2006-01-02 15:04:05"
+const DateFormat = "2006-01-02"
+const TimeFormat = "2006-01-02 15:04:05"
 
 // NullTime 自定义时间格式
 type NullTime struct {

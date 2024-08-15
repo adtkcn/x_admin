@@ -17,18 +17,20 @@ var TemplateUtil = templateUtil{
 
 	tpl: template.New("").Delims("{{{", "}}}").Funcs(
 		template.FuncMap{
-			"sub":              sub,
-			"slice":            slice,
-			"toSnakeCase":      util.StringUtil.ToSnakeCase,
-			"toCamelCase":      util.StringUtil.ToCamelCase,
-			"toUpperCamelCase": util.StringUtil.ToUpperCamelCase,
-			"contains":         util.ToolsUtil.Contains,
-			"goToTsType":       GenUtil.GoToTsType,
-			"goToNullType":     GenUtil.GoToNullType,
-			"getPageResp":      GenUtil.GetPageResp,
-			"nameToPath":       GenUtil.NameToPath,
-			"pathToName":       GenUtil.PathToName,
-			"deletePathPrefix": GenUtil.DeletePathPrefix,
+			"sub":               sub,
+			"slice":             slice,
+			"toSnakeCase":       util.StringUtil.ToSnakeCase,
+			"toCamelCase":       util.StringUtil.ToCamelCase,
+			"toUpperCamelCase":  util.StringUtil.ToUpperCamelCase,
+			"contains":          util.ToolsUtil.Contains,
+			"goToTsType":        GenUtil.GoToTsType,
+			"goToParamType":     GenUtil.GoToParamType,
+			"goWithAddEditType": GenUtil.GoWithAddEditType,
+			"goWithRespType":    GenUtil.GoWithRespType,
+			"getPageResp":       GenUtil.GetPageResp,
+			"nameToPath":        GenUtil.NameToPath,
+			"pathToName":        GenUtil.PathToName,
+			"deletePathPrefix":  GenUtil.DeletePathPrefix,
 		}),
 }
 

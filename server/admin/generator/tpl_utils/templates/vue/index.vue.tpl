@@ -32,8 +32,8 @@
                         <el-option
                             v-for="(item, index) in listAllData.{{{pathToName .ListAllApi}}}"
                             :key="index"
-                            :label="item.id"
-                            :value="item.id"
+                            :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                            :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
                         />
                         {{{- else }}}
                         <el-option label="请选择字典生成" value="" />
@@ -100,7 +100,7 @@
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
                 <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='id' valueKey='id' />
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='{{{toUpperCamelCase .PrimaryKey }}}' valueKey='{{{toUpperCamelCase .PrimaryKey }}}' />
                     </template>
                 </el-table-column>
 
@@ -136,7 +136,7 @@
                             v-perms="['admin:{{{ .ModuleName }}}:del']"
                             type="danger"
                             link
-                            @click="handleDelete(row.{{{ .PrimaryKey }}})"
+                            @click="handleDelete(row.{{{toUpperCamelCase .PrimaryKey }}})"
                         >
                             删除
                         </el-button>
@@ -231,10 +231,10 @@ const handleEdit = async (data: any) => {
     editRef.value?.getDetail(data)
 }
 
-const handleDelete = async ({{{ .PrimaryKey }}}: number) => {
+const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
     try {
         await feedback.confirm('确定要删除？')
-        await {{{ .ModuleName }}}_delete( {{{ .PrimaryKey }}} )
+        await {{{ .ModuleName }}}_delete( {{{toUpperCamelCase .PrimaryKey }}} )
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {}

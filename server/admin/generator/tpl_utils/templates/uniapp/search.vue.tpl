@@ -3,18 +3,18 @@
 		<uv-form labelPosition="left" labelWidth="80" :model="form">
 			{{{- range .Columns }}}
 			{{{- if eq .IsQuery 1 }}}
-			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" borderBottom>
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" borderBottom>
 				{{{- if eq .HtmlType "datetime" }}}
-					<x-date-range v-model:startTime="form.{{{ (.GoField) }}}Start"
-							v-model:endTime="form.{{{ (.GoField) }}}End"></x-date-range>
+					<x-date-range v-model:startTime="form.{{{ (toUpperCamelCase .GoField) }}}Start"
+							v-model:endTime="form.{{{ (toUpperCamelCase .GoField) }}}End"></x-date-range>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select") }}}
 					{{{- if ne .DictType "" }}}
-						<x-picker v-model="form.{{{ (.GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+						<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
 					{{{- else if ne .ListAllApi "" }}}
-							<x-picker v-model="form.{{{ (.GoField) }}}" valueKey="id" labelKey="id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+							<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="{{{toUpperCamelCase .PrimaryKey}}}" labelKey="{{{toUpperCamelCase .PrimaryKey}}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- end }}}
 				{{{- else if eq .HtmlType "input" }}}
-					<uv-input v-model="form.{{{ (.GoField) }}}"> </uv-input>
+					<uv-input v-model="form.{{{ (toUpperCamelCase .GoField) }}}"> </uv-input>
 				{{{- end }}}
 			</uv-form-item>
 			{{{- end }}}
@@ -71,10 +71,10 @@ const { listAllData } = useListAllData<{
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (.GoField) }}}Start: null,
-    {{{ (.GoField) }}}End: null,
+    {{{ (toUpperCamelCase .GoField) }}}Start: null,
+    {{{ (toUpperCamelCase .GoField) }}}End: null,
     {{{- else }}}
-    {{{ (.GoField) }}}: null,
+    {{{ (toUpperCamelCase .GoField) }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}

@@ -12,7 +12,7 @@
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
             {{{- range .Columns }}}
                 {{{- if .IsEdit }}}
-                {{{- if ne (toUpperCamelCase .GoField) "id" }}}
+                {{{- if ne (toUpperCamelCase .GoField) "Id" }}}
                     {{{- if and (ne $.Table.TreeParent "") (eq (toUpperCamelCase .GoField) $.Table.TreeParent) }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
                             <el-tree-select
@@ -59,8 +59,8 @@
                                 <el-checkbox
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
-                                    :label="item.id"
-                                    :value="item.id"
+                                    :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                                    :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
                                 ></el-checkbox>
                                 {{{- else }}}
                                 <el-checkbox>请选择字典生成</el-checkbox>
@@ -87,11 +87,11 @@
                                  <el-option
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
-                                    :label="item.id"
+                                    :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
                                     {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.id)"
+                                    :value="parseInt(item.{{{toUpperCamelCase .PrimaryKey }}})"
                                     {{{- else }}}
-                                    :value="String(item.id)"
+                                    :value="String(item.{{{toUpperCamelCase .PrimaryKey }}})"
                                     {{{- end }}}
                                     clearable
                                 />
@@ -121,12 +121,12 @@
                                     :key="index"
                                     :label="item.name"
                                     {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.id)"
+                                    :value="parseInt(item.{{{toUpperCamelCase .PrimaryKey }}})"
                                     {{{- else }}}
-                                    :value="item.id"
+                                    :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
                                     {{{- end }}}
                                 >
-                                    {{ item.id }}
+                                    {{ item.{{{toUpperCamelCase .PrimaryKey }}} }}
                                 </el-radio>
                                 {{{- else }}}
                                 <el-radio label="0">请选择字典生成</el-radio>
@@ -260,7 +260,7 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
      try {
-        const data = await {{{ .ModuleName }}}_detail(row.{{{ .PrimaryKey }}})
+        const data = await {{{ .ModuleName }}}_detail(row.{{{toUpperCamelCase .PrimaryKey }}})
         setFormData(data)
      } catch (error) {}
 }

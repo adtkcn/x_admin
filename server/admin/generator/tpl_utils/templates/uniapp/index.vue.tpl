@@ -20,11 +20,11 @@
   <uv-list>
     <uv-list-item
       v-for="item of pager.lists"
-      :key="item.id"
+      :key="item.{{{toUpperCamelCase .PrimaryKey}}}"
       clickable
       show-arrow
-      :title="item.id"
-      :right-text="item.id"
+      :title="item.{{{toUpperCamelCase .PrimaryKey}}}"
+      :right-text="item.{{{toUpperCamelCase .PrimaryKey}}}"
       @click="toDetails(item)"
     ></uv-list-item>
   </uv-list>
@@ -72,10 +72,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (.GoField) }}}Start: '',
-    {{{ (.GoField) }}}End: '',
+    {{{ (toUpperCamelCase .GoField) }}}Start: '',
+    {{{ (toUpperCamelCase .GoField) }}}End: '',
     {{{- else }}}
-    {{{ (.GoField) }}}: '',
+    {{{ (toUpperCamelCase .GoField) }}}: '',
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -110,7 +110,7 @@ onReachBottom(() => {
 });
 
 function toDetails(item) {
-  toPath("/pages/{{{nameToPath .ModuleName }}}/details", { id: item.id });
+  toPath("/pages/{{{nameToPath .ModuleName }}}/details", { {{{toUpperCamelCase .PrimaryKey}}}: item.{{{toUpperCamelCase .PrimaryKey}}} });
 }
 function moreSearch() {
   toPath("/pages/{{{nameToPath .ModuleName }}}/search");

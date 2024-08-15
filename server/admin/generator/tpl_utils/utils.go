@@ -240,25 +240,61 @@ func (gu genUtil) GoToTsType(s string) string {
 }
 
 /**
- * @description: Go类型转可为null类型，转换后还能解决前端对int传了string类型错误问题
+ * @description: Go类型转 添加编辑 类型
  */
-func (gu genUtil) GoToNullType(s string) string {
-	// if s == "int64" {
-	// 	return "null.Int"
-	// } else if s == "int32" || s == "int" {
-	// 	return "null.Int32"
-	// } else if s == "int8" || s == "int16" {
-	// 	return "null.Int16"
-	// } else if s == "float" || s == "float32" || s == "float64" {
-	// 	return "null.Float"
-	// } else if s == "string" {
-	// 	return "null.String"
-	// } else if s == "bool" {
-	// 	return "null.Bool"
-	// } else if s == "time.Time" {
-	// 	return "null.Time"
-	// }
-	return "*" + s
+func (gu genUtil) GoWithAddEditType(s string) string {
+	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+		return "core.NullInt"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "core.NullFloat"
+	} else if s == "string" {
+		return "*string"
+	} else if s == "bool" {
+		return "*int"
+	} else if s == "time.Time" {
+		return "core.NullTime"
+	} else if s == "core.NullTime" {
+		return "core.NullTime"
+	}
+	return "string"
+}
+
+/**
+ * @description: Go类型转 添加编辑 类型
+ */
+func (gu genUtil) GoWithRespType(s string) string {
+	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+		return "core.NullInt"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "core.NullFloat"
+	} else if s == "string" {
+		return "string"
+	} else if s == "bool" {
+		return "int"
+	} else if s == "time.Time" {
+		return "core.NullTime"
+	} else if s == "core.NullTime" {
+		return "core.NullTime"
+	}
+	return "string"
+}
+
+/**
+ * @description: Go类型转可为Param类型
+ */
+func (gu genUtil) GoToParamType(s string) string {
+	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+		return "int"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "float"
+	} else if s == "string" {
+		return "string"
+	} else if s == "bool" {
+		return "bool"
+	} else if s == "core.NullTime" {
+		return "string"
+	}
+	return "string"
 }
 
 // 拼接字符串

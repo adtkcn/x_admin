@@ -43,8 +43,8 @@ export function {{{.ModuleName}}}_list_all(params?: type_{{{.ModuleName}}}_query
 }
 
 // {{{.FunctionName}}}详情
-export function {{{.ModuleName}}}_detail({{{ .PrimaryKey }}}: number | string) {
-    return request.get<type_{{{.ModuleName}}}>({ url: '/{{{.ModuleName}}}/detail', params: { {{{ .PrimaryKey }}} } })
+export function {{{.ModuleName}}}_detail({{{toUpperCamelCase .PrimaryKey }}}: number | string) {
+    return request.get<type_{{{.ModuleName}}}>({ url: '/{{{.ModuleName}}}/detail', params: { {{{toUpperCamelCase .PrimaryKey }}} } })
 }
 
 // {{{.FunctionName}}}新增
@@ -58,8 +58,8 @@ export function {{{.ModuleName}}}_edit(data: type_{{{.ModuleName}}}_edit) {
 }
 
 // {{{.FunctionName}}}删除
-export function {{{.ModuleName}}}_delete({{{ .PrimaryKey }}}: number | string) {
-    return request.post<null>({ url: '/{{{.ModuleName}}}/del', data: { {{{ .PrimaryKey }}} } })
+export function {{{.ModuleName}}}_delete({{{toUpperCamelCase .PrimaryKey }}}: number | string) {
+    return request.post<null>({ url: '/{{{.ModuleName}}}/del', data: { {{{toUpperCamelCase .PrimaryKey }}} } })
 }
 
 // {{{.FunctionName}}}导入

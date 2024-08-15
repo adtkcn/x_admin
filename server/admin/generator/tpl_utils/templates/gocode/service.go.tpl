@@ -133,7 +133,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 // Add {{{ .FunctionName }}}新增
 func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ toUpperCamelCase .EntityName }}}AddReq) (createId int,e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
-	util.ConvertUtil.Copy(&obj, addReq)
+	util.ConvertUtil.StructToStruct(addReq,&obj)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -141,7 +141,6 @@ func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ toUpperCame
 	}
 	cacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
 	createId = obj.{{{ toUpperCamelCase .PrimaryKey }}}
-	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -156,15 +155,9 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ toUpperCa
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	// 更新
-	// util.ConvertUtil.Copy(&obj, editReq)
-	//
-	editInfo, err := convertor.StructToMap(editReq)
-	if err != nil {
-		return err
-	}
+	util.ConvertUtil.Copy(&obj, editReq)
 
-	err = service.db.Model(&obj).Updates(editInfo).Error
+	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
@@ -205,9 +198,12 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetExcelCol() []excel2.Col
 	var cols = []excel2.Col{
 	{{{- range .Columns }}}
 		{{{- if eq .HtmlType "datetime" }}}
-		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: excel2.DecodeTime },
+		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15,Encode: util.NullTimeUtil.EncodeTime, Decode: util.NullTimeUtil.DecodeTime },
+		{{{- else if eq .GoType "int" }}}
+			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15,Encode: core.EncodeInt, Decode: core.DecodeInt},
 		{{{- else }}}
 		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15},
+
 		{{{- end }}}
 	{{{- end }}}
 	}
