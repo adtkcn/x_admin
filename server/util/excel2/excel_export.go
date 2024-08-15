@@ -18,17 +18,17 @@ func GetExcelColumnName(columnNumber int) string {
 	return columnName
 }
 
-// NormalDynamicExport 导出excel
+// Export 导出excel
 // lists		要导出的数据
 // cols 		列
 // sheet		文档
 // title		标题
-func NormalDynamicExport(lists any, cols []Col, sheet string, title string) (file *excelize.File, err error) {
+func Export(lists any, cols []Col, sheet string, title string) (file *excelize.File, err error) {
 	e := ExcelInit()
 
-	listsAny := util.ConvertUtil.StructsToMaps(lists)
+	data := util.ConvertUtil.StructsToMaps(lists)
 
-	err = ExportExcel(sheet, title, listsAny, cols, e)
+	err = ExportExcel(sheet, title, data, cols, e)
 	if err != nil {
 		return
 	}
@@ -42,17 +42,17 @@ func ExportExcel(sheet, title string, lists []map[string]interface{}, cols []Col
 		e.F.NewSheet(sheet)
 	}
 	// 构造表头
-	endColName, startDataRow, err := normalBuildTitle(e, sheet, title, cols)
+	endColName, startDataRow, err := buildTitle(e, sheet, title, cols)
 	if err != nil {
 		return
 	}
 	// 构造数据行
-	err = normalBuildDataRow(e, sheet, endColName, startDataRow, lists, cols)
+	err = buildDataRow(e, sheet, endColName, startDataRow, lists, cols)
 	return
 }
 
 // 构造表头（endColName 最后一列的列名 startDataRow 数据行开始的行号）
-func normalBuildTitle(e *Excel, sheet, title string, cols []Col) (endColName string, startDataRow int, err error) {
+func buildTitle(e *Excel, sheet, title string, cols []Col) (endColName string, startDataRow int, err error) {
 	var titleRowData []interface{} // 列头行
 	for i, colTitle := range cols {
 		endColName := GetExcelColumnName(i + 1)
@@ -87,7 +87,7 @@ func normalBuildTitle(e *Excel, sheet, title string, cols []Col) (endColName str
 }
 
 // 构造数据行
-func normalBuildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []map[string]interface{}, cols []Col) (err error) {
+func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []map[string]interface{}, cols []Col) (err error) {
 	//实时写入数据
 	for i := 0; i < len(lists); i++ {
 		startCol := fmt.Sprintf("A%d", startDataRow)
@@ -102,6 +102,11 @@ func normalBuildDataRow(e *Excel, sheet, endColName string, startDataRow int, li
 
 			val := list[col.Key]
 
+			// 先编码
+			if col.Encode != nil {
+				val = col.Encode(val)
+			}
+			// 再替换
 			for replaceKey, v := range replace {
 
 				if replaceKey == fmt.Sprintf("%v", val) {

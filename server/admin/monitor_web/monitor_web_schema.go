@@ -23,25 +23,25 @@ type MonitorWebDetailReq struct {
 
 //MonitorWebAddReq 错误收集error新增参数
 type MonitorWebAddReq struct {
-	ProjectKey string      `form:"projectKey"` // 项目key
-	ClientId   string      `form:"clientId"`   // sdk生成的客户端id
-	EventType  string      `form:"eventType"`  // 事件类型
-	Page       string      `form:"page"`       // URL地址
-	Message    string      `form:"message"`    // 错误消息
-	Stack      string      `form:"stack"`      // 错误堆栈
-	ClientTime core.TsTime `form:"clientTime"` // 客户端时间
+	ProjectKey string        `form:"projectKey"` // 项目key
+	ClientId   string        `form:"clientId"`   // sdk生成的客户端id
+	EventType  string        `form:"eventType"`  // 事件类型
+	Page       string        `form:"page"`       // URL地址
+	Message    string        `form:"message"`    // 错误消息
+	Stack      string        `form:"stack"`      // 错误堆栈
+	ClientTime core.NullTime `form:"clientTime"` // 客户端时间
 }
 
 //MonitorWebEditReq 错误收集error编辑参数
 type MonitorWebEditReq struct {
-	Id         int         `form:"id"`         // uuid
-	ProjectKey string      `form:"projectKey"` // 项目key
-	ClientId   string      `form:"clientId"`   // sdk生成的客户端id
-	EventType  string      `form:"eventType"`  // 事件类型
-	Page       string      `form:"page"`       // URL地址
-	Message    string      `form:"message"`    // 错误消息
-	Stack      string      `form:"stack"`      // 错误堆栈
-	ClientTime core.TsTime `form:"clientTime"` // 客户端时间
+	Id         int           `form:"id"`         // uuid
+	ProjectKey string        `form:"projectKey"` // 项目key
+	ClientId   string        `form:"clientId"`   // sdk生成的客户端id
+	EventType  string        `form:"eventType"`  // 事件类型
+	Page       string        `form:"page"`       // URL地址
+	Message    string        `form:"message"`    // 错误消息
+	Stack      string        `form:"stack"`      // 错误堆栈
+	ClientTime core.NullTime `form:"clientTime"` // 客户端时间
 }
 
 //MonitorWebDelReq 错误收集error新增参数
@@ -51,13 +51,13 @@ type MonitorWebDelReq struct {
 
 //MonitorWebResp 错误收集error返回信息
 type MonitorWebResp struct {
-	Id         int         `json:"id"`                                 // uuid
-	ProjectKey string      `json:"projectKey" excel:"name:项目key;"`     // 项目key
-	ClientId   string      `json:"clientId" excel:"name:sdk生成的客户端id;"` // sdk生成的客户端id
-	EventType  string      `json:"eventType" excel:"name:事件类型;"`       // 事件类型
-	Page       string      `json:"page" excel:"name:URL地址;"`           // URL地址
-	Message    string      `json:"message" excel:"name:错误消息;"`         // 错误消息
-	Stack      string      `json:"stack" excel:"name:错误堆栈;"`           // 错误堆栈
-	ClientTime core.TsTime `json:"clientTime" excel:"name:客户端时间;"`     // 客户端时间
-	CreateTime core.TsTime `json:"createTime" excel:"name:创建时间;"`      // 创建时间
+	Id         int           `json:"id"`                                 // uuid
+	ProjectKey string        `json:"projectKey" excel:"name:项目key;"`     // 项目key
+	ClientId   string        `json:"clientId" excel:"name:sdk生成的客户端id;"` // sdk生成的客户端id
+	EventType  string        `json:"eventType" excel:"name:事件类型;"`       // 事件类型
+	Page       string        `json:"page" excel:"name:URL地址;"`           // URL地址
+	Message    string        `json:"message" excel:"name:错误消息;"`         // 错误消息
+	Stack      string        `json:"stack" excel:"name:错误堆栈;"`           // 错误堆栈
+	ClientTime core.NullTime `json:"clientTime" excel:"name:客户端时间;"`     // 客户端时间
+	CreateTime core.NullTime `json:"createTime" excel:"name:创建时间;"`      // 创建时间
 }

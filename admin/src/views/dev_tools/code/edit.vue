@@ -82,7 +82,7 @@
                                         <el-option label="float64" value="float64" />
                                         <el-option label="rune" value="rune" />
                                         <el-option label="bool" value="bool" />
-                                        <el-option label="TsTime" value="core.TsTime" />
+                                        <el-option label="NullTime" value="core.NullTime" />
                                     </el-select>
                                 </template>
                             </el-table-column>

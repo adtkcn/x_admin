@@ -123,11 +123,11 @@ func (genSrv generateService) Detail(id uint) (res GenTableDetailResp, e error) 
 		return
 	}
 	var base GenTableBaseResp
-	response.Copy(&base, genTb)
+	util.ConvertUtil.Copy(&base, genTb)
 	var gen GenTableGenResp
-	response.Copy(&gen, genTb)
+	util.ConvertUtil.Copy(&gen, genTb)
 	var colResp []GenColumnResp
-	response.Copy(&colResp, columns)
+	util.ConvertUtil.Copy(&colResp, columns)
 	return GenTableDetailResp{
 		Base:   base,
 		Gen:    gen,
@@ -143,7 +143,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 		return
 	}
 	var tables []gen_model.GenTable
-	response.Copy(&tables, dbTbs)
+	util.ConvertUtil.Copy(&tables, dbTbs)
 	if len(tables) == 0 {
 		e = response.AssertArgumentError.SetMessage("表不存在!")
 		return
@@ -281,7 +281,7 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 	if e = response.CheckErr(err, "查找数据失败"); e != nil {
 		return
 	}
-	response.Copy(&genTable, editReq)
+	util.ConvertUtil.Copy(&genTable, editReq)
 	err = genSrv.db.Transaction(func(tx *gorm.DB) error {
 		genTable.SubTableName = strings.Replace(editReq.SubTableName, config.Config.DbTablePrefix, "", 1)
 		txErr := tx.Save(&genTable).Error
@@ -290,7 +290,7 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 		}
 		for i := 0; i < len(editReq.Columns); i++ {
 			var col gen_model.GenTableColumn
-			response.Copy(&col, editReq.Columns[i])
+			util.ConvertUtil.Copy(&col, editReq.Columns[i])
 			txErr = tx.Save(&col).Error
 			if te := response.CheckErr(txErr, "更新失败"); te != nil {
 				return te

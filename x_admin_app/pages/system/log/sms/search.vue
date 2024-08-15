@@ -14,14 +14,16 @@
 			<uv-form-item label="短信结果" prop="results" borderBottom>
 			</uv-form-item>
 			<uv-form-item label="发送时间" prop="send_time" borderBottom>
+					<x-date-range v-model:startTime="form.send_time_start"
+							v-model:endTime="form.send_time_end"></x-date-range>
 			</uv-form-item>
 			<uv-form-item label="创建时间" prop="create_time" borderBottom>
-					<x-date-range v-model:startTime="form.create_timeStart"
-							v-model:endTime="form.create_timeEnd"></x-date-range>
+					<x-date-range v-model:startTime="form.create_time_start"
+							v-model:endTime="form.create_time_end"></x-date-range>
 			</uv-form-item>
 			<uv-form-item label="更新时间" prop="update_time" borderBottom>
-					<x-date-range v-model:startTime="form.update_timeStart"
-							v-model:endTime="form.update_timeEnd"></x-date-range>
+					<x-date-range v-model:startTime="form.update_time_start"
+							v-model:endTime="form.update_time_end"></x-date-range>
 			</uv-form-item>
 
 			<uv-button type="primary" text="搜索" customStyle="margin-top: 20rpx" @click="submit"></uv-button>
@@ -59,11 +61,12 @@ const { dictData } = useDictData<{
     content: null,
     status: null,
     results: null,
-    send_time: null,
-    create_timeStart: null,
-    create_timeEnd: null,
-    update_timeStart: null,
-    update_timeEnd: null,
+    send_time_start: null,
+    send_time_end: null,
+    create_time_start: null,
+    create_time_end: null,
+    update_time_start: null,
+    update_time_end: null,
 	});
 
 	function submit() {

@@ -5,6 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -57,7 +58,7 @@ func (service ArticleCollectService) List(page request.PageReq, listReq ArticleC
 		return
 	}
 	result := []ArticleCollectResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,

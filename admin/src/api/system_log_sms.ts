@@ -7,38 +7,39 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_system_log_sms = {
-    id?: number
-    scene?: number
-    mobile?: string
-    content?: string
-    status?: number
-    results?: string
-    send_time?: number
-    create_time?: string
-    update_time?: string
+    Id?: number
+    Scene?: number
+    Mobile?: string
+    Content?: string
+    Status?: number
+    Results?: string
+    SendTime?: string
+    CreateTime?: string
+    UpdateTime?: string
 }
 // 查询
 export type type_system_log_sms_query = {
-    scene?: number
-    mobile?: string
-    content?: string
-    status?: number
-    results?: string
-    send_time?: number
-    create_timeStart?: string
-    create_timeEnd?: string
-    update_timeStart?: string
-    update_timeEnd?: string
+    Scene?: number
+    Mobile?: string
+    Content?: string
+    Status?: number
+    Results?: string
+    SendTime_start?: string
+    SendTime_end?: string
+    CreateTime_start?: string
+    CreateTime_end?: string
+    UpdateTime_start?: string
+    UpdateTime_end?: string
 }
 // 添加编辑
 export type type_system_log_sms_edit = {
-    id?: number
-    scene?: number
-    mobile?: string
-    content?: string
-    status?: number
-    results?: string
-    send_time?: number
+    Id?: number
+    Scene?: number
+    Mobile?: string
+    Content?: string
+    Status?: number
+    Results?: string
+    SendTime?: string
 }
 
 // 系统短信日志列表
@@ -68,7 +69,11 @@ export function system_log_sms_add(data: type_system_log_sms_edit) {
 
 // 系统短信日志编辑
 export function system_log_sms_edit(data: type_system_log_sms_edit) {
-    return request.post<null>({ url: '/system_log_sms/edit', data })
+    return request.post<null>({
+        url: '/system_log_sms/edit',
+        data: data
+        // data: clearEmpty(data)
+    })
 }
 
 // 系统短信日志删除

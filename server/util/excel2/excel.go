@@ -16,16 +16,16 @@ type Excel struct {
 type Col struct {
 	Name    string
 	Key     string
-	Width   int
-	Replace map[string]any
-	Encode  func(value any) any //暂未使用
-	Decode  func(value any) any
+	Width   int                          // 宽度
+	Replace map[string]any               //实现值的替换
+	Encode  func(value any) any          //暂未使用
+	Decode  func(value any) (any, error) //实现类型、值的替换
 }
 
 // 下载
 func DownLoadExcel(fileName string, res http.ResponseWriter, file *excelize.File) {
 	// 设置响应头
-	res.Header().Set("Content-Type", "text/html; charset=UTF-8")
+	// res.Header().Set("Content-Type", "text/html; charset=UTF-8")
 	res.Header().Set("Content-Type", "application/octet-stream")
 	res.Header().Set("Content-Disposition", "attachment; filename="+fileName+".xlsx")
 	res.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")

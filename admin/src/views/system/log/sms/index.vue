@@ -1,17 +1,23 @@
 <template>
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true" label-width="70px"
-                label-position="left">
-                <el-form-item label="手机号码" prop="mobile" class="w-[280px]">
-                    <el-input  v-model="queryParams.mobile" />
+            <el-form
+                ref="formRef"
+                class="mb-[-16px]"
+                :model="queryParams"
+                :inline="true"
+                label-width="70px"
+                label-position="left"
+            >
+                <el-form-item label="手机号码" prop="Mobile" class="w-[280px]">
+                    <el-input v-model="queryParams.Mobile" />
                 </el-form-item>
-                <el-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="status"  class="w-[280px]">
-                    <el-select
-                        v-model="queryParams.status"
-                        clearable
-                    >
-                      
+                <el-form-item
+                    label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
+                    prop="Status"
+                    class="w-[280px]"
+                >
+                    <el-select v-model="queryParams.Status" clearable>
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.flow_apply_status"
@@ -21,16 +27,22 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="创建时间" prop="create_time" class="w-[280px]">
+                <el-form-item label="发送时间" prop="SendTime" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.create_timeStart"
-                        v-model:endTime="queryParams.create_timeEnd"
+                        v-model:startTime="queryParams.SendTime_start"
+                        v-model:endTime="queryParams.SendTime_end"
                     />
                 </el-form-item>
-                <el-form-item label="更新时间" prop="update_time" class="w-[280px]">
+                <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.update_timeStart"
-                        v-model:endTime="queryParams.update_timeEnd"
+                        v-model:startTime="queryParams.CreateTime_start"
+                        v-model:endTime="queryParams.CreateTime_end"
+                    />
+                </el-form-item>
+                <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
+                    <daterange-picker
+                        v-model:startTime="queryParams.UpdateTime_start"
+                        v-model:endTime="queryParams.UpdateTime_end"
                     />
                 </el-form-item>
                 <el-form-item>
@@ -41,13 +53,17 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div>
-                <el-button v-perms="['admin:system_log_sms:add']" type="primary" @click="handleAdd()">
+                <el-button
+                    v-perms="['admin:system_log_sms:add']"
+                    type="primary"
+                    @click="handleAdd()"
+                >
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
                     新增
                 </el-button>
-                    <upload
+                <upload
                     class="ml-3 mr-3"
                     :url="system_log_sms_import_file"
                     :data="{ cid: 0 }"
@@ -69,24 +85,23 @@
                     导出
                 </el-button>
             </div>
-            <el-table
-                class="mt-4"
-                size="large"
-                v-loading="pager.loading"
-                :data="pager.lists"
-            >
-                <el-table-column label="场景编号" prop="scene" min-width="130" />
-                <el-table-column label="手机号码" prop="mobile" min-width="130" />
-                <el-table-column label="发送内容" prop="content" min-width="130" />
-                <el-table-column label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="status" min-width="100">
+            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
+                <el-table-column label="场景编号" prop="Scene" min-width="130" />
+                <el-table-column label="手机号码" prop="Mobile" min-width="130" />
+                <el-table-column label="发送内容" prop="Content" min-width="130" />
+                <el-table-column
+                    label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
+                    prop="Status"
+                    min-width="100"
+                >
                     <template #default="{ row }">
-                       <dict-value :options="dictData.flow_apply_status" :value="row.status" />
+                        <dict-value :options="dictData.flow_apply_status" :value="row.Status" />
                     </template>
                 </el-table-column>
-                <el-table-column label="短信结果" prop="results" min-width="130" />
-                <el-table-column label="发送时间" prop="send_time" min-width="130" />
-                <el-table-column label="创建时间" prop="create_time" min-width="130" />
-                <el-table-column label="更新时间" prop="update_time" min-width="130" />
+                <el-table-column label="短信结果" prop="Results" min-width="130" />
+                <el-table-column label="发送时间" prop="SendTime" min-width="130" />
+                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
+                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
@@ -101,7 +116,7 @@
                             v-perms="['admin:system_log_sms:del']"
                             type="danger"
                             link
-                            @click="handleDelete(row.id)"
+                            @click="handleDelete(row.Id)"
                         >
                             删除
                         </el-button>
@@ -122,32 +137,37 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { system_log_sms_delete, system_log_sms_list,system_log_sms_import_file, system_log_sms_export_file } from '@/api/system_log_sms'
-import type { type_system_log_sms,type_system_log_sms_query	} from "@/api/system_log_sms";
+import {
+    system_log_sms_delete,
+    system_log_sms_list,
+    system_log_sms_import_file,
+    system_log_sms_export_file
+} from '@/api/system_log_sms'
+import type { type_system_log_sms, type_system_log_sms_query } from '@/api/system_log_sms'
 
-
-import { useDictData,useListAllData } from '@/hooks/useDictOptions'
+import { useDictData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'
 
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 defineOptions({
-    name:"system_log_sms"
+    name: 'system_log_sms'
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_system_log_sms_query>({
-    scene: null,
-    mobile: null,
-    content: null,
-    status: null,
-    results: null,
-    send_time: null,
-    create_timeStart: null,
-    create_timeEnd: null,
-    update_timeStart: null,
-    update_timeEnd: null,
+    Scene: null,
+    Mobile: null,
+    Content: null,
+    Status: null,
+    Results: null,
+    SendTime_start: null,
+    SendTime_end: null,
+    CreateTime_start: null,
+    CreateTime_end: null,
+    UpdateTime_start: null,
+    UpdateTime_end: null
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_system_log_sms>({
@@ -157,7 +177,6 @@ const { pager, getLists, resetPage, resetParams } = usePaging<type_system_log_sm
 const { dictData } = useDictData<{
     flow_apply_status: type_dict[]
 }>(['flow_apply_status'])
-
 
 const handleAdd = async () => {
     showEdit.value = true
@@ -175,7 +194,7 @@ const handleEdit = async (data: any) => {
 const handleDelete = async (id: number) => {
     try {
         await feedback.confirm('确定要删除？')
-        await system_log_sms_delete( id )
+        await system_log_sms_delete(id)
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {}

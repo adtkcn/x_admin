@@ -93,7 +93,7 @@ func (service flowHistoryService) List(page request.PageReq, listReq FlowHistory
 		return
 	}
 	list := []FlowHistoryResp{}
-	response.Copy(&list, modelList)
+	util.ConvertUtil.Copy(&list, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -122,7 +122,7 @@ func (service flowHistoryService) ListAll(listReq FlowHistoryListReq) (res []Flo
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	response.Copy(&res, modelList)
+	util.ConvertUtil.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -136,14 +136,14 @@ func (service flowHistoryService) Detail(id int) (res FlowHistoryResp, e error) 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, obj)
+	util.ConvertUtil.Copy(&res, obj)
 	return
 }
 
 // Add 流程历史新增
 func (service flowHistoryService) Add(addReq FlowHistoryAddReq) (e error) {
 	var obj model.FlowHistory
-	response.Copy(&obj, addReq)
+	util.ConvertUtil.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -161,7 +161,7 @@ func (service flowHistoryService) Edit(editReq FlowHistoryEditReq) (e error) {
 		return
 	}
 	// 更新
-	response.Copy(&obj, editReq)
+	util.ConvertUtil.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Updates(obj).Error
 	e = response.CheckErr(err, "编辑失败")
 	return
@@ -422,7 +422,7 @@ func (service flowHistoryService) Back(back BackReq) (e error) {
 			}
 
 			var obj model.FlowApply
-			response.Copy(&obj, applyDetail)
+			util.ConvertUtil.Copy(&obj, applyDetail)
 			obj.Status = 4
 			err = tx.Save(&obj).Error
 			if err != nil {

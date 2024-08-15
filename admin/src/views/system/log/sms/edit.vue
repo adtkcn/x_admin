@@ -10,19 +10,22 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="场景编号" prop="scene">
-                    <el-input v-model="formData.scene" placeholder="请输入场景编号" />
+                <el-form-item label="id" prop="Id">
+                    <el-input v-model="formData.Id" type="number" placeholder="请输入id" />
                 </el-form-item>
-                <el-form-item label="手机号码" prop="mobile">
-                    <el-input v-model="formData.mobile" placeholder="请输入手机号码" />
+                <el-form-item label="场景编号" prop="Scene">
+                    <el-input v-model="formData.Scene" placeholder="请输入场景编号" />
                 </el-form-item>
-                <el-form-item label="发送内容" prop="content">
-                    <editor v-model="formData.content" :height="500" />
+                <el-form-item label="手机号码" prop="Mobile">
+                    <el-input v-model="formData.Mobile" placeholder="请输入手机号码" />
                 </el-form-item>
-                <el-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="status">
+                <el-form-item label="发送内容" prop="Content">
+                    <editor v-model="formData.Content" :height="500" />
+                </el-form-item>
+                <el-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="Status">
                     <el-select
                         class="flex-1"
-                        v-model="formData.status"
+                        v-model="formData.Status"
                         placeholder="请选择发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
                     >
                         <el-option
@@ -35,19 +38,22 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="短信结果" prop="results">
+                <el-form-item label="短信结果" prop="Results">
                     <el-input
-                        v-model="formData.results"
+                        v-model="formData.Results"
                         placeholder="请输入短信结果"
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
                     />
                 </el-form-item>
-                <el-form-item label="发送时间" prop="send_time">
-                    <el-input
-                        v-model.number="formData.send_time"
-                        type="number"
-                        placeholder="请输入发送时间"
+                <el-form-item label="发送时间" prop="SendTime">
+                    <el-date-picker
+                        class="flex-1 !flex"
+                        v-model="formData.SendTime"
+                        type="datetime"
+                        clearable
+                        value-format="YYYY-MM-DD hh:mm:ss"
+                        placeholder="请选择发送时间"
                     />
                 </el-form-item>
             </el-form>
@@ -83,62 +89,62 @@ const popupTitle = computed(() => {
 })
 
 const formData = reactive({
-    id: '',
-    scene: '',
-    mobile: '',
-    content: '',
-    status: '',
-    results: '',
-    send_time: ''
+    Id: null,
+    Scene: null,
+    Mobile: null,
+    Content: null,
+    Status: null,
+    Results: null,
+    SendTime: null
 })
 
 const formRules = {
-    id: [
-        {
-            required: true,
-            message: '请输入id',
-            trigger: ['blur']
-        }
-    ]
-    // scene: [
+    // Id: [
+    //     {
+    //         required: true,
+    //         message: '请输入id',
+    //         trigger: ['blur']
+    //     }
+    // ],
+    // Scene: [
     //     {
     //         required: true,
     //         message: '请输入场景编号',
     //         trigger: ['blur']
     //     }
     // ],
-    // mobile: [
+    // Mobile: [
     //     {
     //         required: true,
     //         message: '请输入手机号码',
     //         trigger: ['blur']
     //     }
     // ],
-    // content: [
+    // Content: [
     //     {
     //         required: true,
     //         message: '请输入发送内容',
     //         trigger: ['blur']
     //     }
     // ],
-    // status: [
+    // Status: [
     //     {
     //         required: true,
     //         message: '请选择发送状态：[0=发送中, 1=发送成功, 2=发送失败]',
     //         trigger: ['blur']
     //     }
     // ],
-    // results: [
+    // Results: [
     //     {
     //         required: true,
     //         message: '请输入短信结果',
     //         trigger: ['blur']
     //     }
     // ],
-    // send_time: [
+    // SendTime: [
     //     {
     //         required: true,
-    //         message: '请输入发送时间',
+    //         message: '请选择发送时间',
     //         trigger: ['blur']
     //     }
     // ]
@@ -171,7 +177,7 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
     try {
-        const data = await system_log_sms_detail(row.id)
+        const data = await system_log_sms_detail(row.Id)
         setFormData(data)
     } catch (error) {}
 }

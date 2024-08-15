@@ -6,8 +6,8 @@ import (
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/util"
+	"x_admin/util/excel2"
 
-	"github.com/duke-git/lancet/v2/convertor"
 	"gorm.io/gorm"
 )
 
@@ -49,8 +49,11 @@ func (service systemLogSmsService) GetModel(listReq SystemLogSmsListReq) *gorm.D
 	if listReq.Results != nil {
 		dbModel = dbModel.Where("results = ?", *listReq.Results)
 	}
-	if listReq.SendTime != nil {
-		dbModel = dbModel.Where("send_time = ?", *listReq.SendTime)
+	if listReq.SendTimeStart != nil {
+		dbModel = dbModel.Where("send_time >= ?", *listReq.SendTimeStart)
+	}
+	if listReq.SendTimeEnd != nil {
+		dbModel = dbModel.Where("send_time <= ?", *listReq.SendTimeEnd)
 	}
 	if listReq.CreateTimeStart != nil {
 		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart)
@@ -86,7 +89,7 @@ func (service systemLogSmsService) List(page request.PageReq, listReq SystemLogS
 		return
 	}
 	result := []SystemLogSmsResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -105,7 +108,7 @@ func (service systemLogSmsService) ListAll(listReq SystemLogSmsListReq) (res []S
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	response.Copy(&res, modelList)
+	util.ConvertUtil.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -123,29 +126,18 @@ func (service systemLogSmsService) Detail(Id int) (res SystemLogSmsResp, e error
 		}
 		cacheUtil.SetCache(obj.Id, obj)
 	}
-	response.Copy(&res, obj)
+
+	util.ConvertUtil.Copy(&res, obj)
 	return
 }
 
 // Add 系统短信日志新增
 func (service systemLogSmsService) Add(addReq SystemLogSmsAddReq) (createId int, e error) {
 	var obj model.SystemLogSms
+	// util.ConvertUtil.Copy(&obj, addReq)
 
-	// 无法自动转换不同类型
-	// response.Copy(&obj, addReq)
-
-	// addInfo, err := convertor.StructToMap(addReq)
-	// if err != nil {
-	// 	return 0, err
-	// }
-	// // map弱类型转换到结构体
-	// err = mapstructure.WeakDecode(addInfo, &obj)
-	err := util.ConvertUtil.StructToStruct(&addReq, &obj)
-
-	if err != nil {
-		return 0, err
-	}
-	err = service.db.Create(&obj).Error
+	util.ConvertUtil.StructToStruct(addReq, &obj)
+	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
 		return 0, e
@@ -167,15 +159,10 @@ func (service systemLogSmsService) Edit(editReq SystemLogSmsEditReq) (e error) {
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	// 更新
-	// response.Copy(&obj, editReq)
-	//
-	editInfo, err := convertor.StructToMap(editReq)
-	if err != nil {
-		return err
-	}
 
-	err = service.db.Model(&obj).Updates(editInfo).Error
+	util.ConvertUtil.Copy(&obj, editReq)
+
+	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
@@ -202,6 +189,23 @@ func (service systemLogSmsService) Del(Id int) (e error) {
 	return
 }
 
+// 获取Excel的列
+func (service systemLogSmsService) GetExcelCol() []excel2.Col {
+	var cols = []excel2.Col{
+
+		{Name: "场景编号", Key: "Scene", Width: 15, Encode: core.EncodeInt, Decode: core.DecodeInt},
+		{Name: "手机号码", Key: "Mobile", Width: 15},
+		{Name: "发送内容", Key: "Content", Width: 15},
+		{Name: "发送状态：[0=发送中, 1=发送成功, 2=发送失败]", Key: "Status", Width: 15, Encode: core.EncodeInt, Decode: core.DecodeInt},
+		{Name: "短信结果", Key: "Results", Width: 15},
+		{Name: "发送时间", Key: "SendTime", Width: 15, Encode: util.NullTimeUtil.EncodeTime, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Encode: util.NullTimeUtil.EncodeTime, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "更新时间", Key: "UpdateTime", Width: 15, Encode: util.NullTimeUtil.EncodeTime, Decode: util.NullTimeUtil.DecodeTime},
+	}
+	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
+	return cols
+}
+
 // ExportFile 系统短信日志导出
 func (service systemLogSmsService) ExportFile(listReq SystemLogSmsListReq) (res []SystemLogSmsResp, e error) {
 	// 查询
@@ -214,14 +218,14 @@ func (service systemLogSmsService) ExportFile(listReq SystemLogSmsListReq) (res 
 		return
 	}
 	result := []SystemLogSmsResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service systemLogSmsService) ImportFile(importReq []SystemLogSmsResp) (e error) {
 	var importData []model.SystemLogSms
-	response.Copy(&importData, importReq)
+	util.ConvertUtil.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

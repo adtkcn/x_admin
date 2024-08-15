@@ -16,33 +16,18 @@ const TimeFormat = "2006-01-02 15:04:05"
 // TsTime 自定义时间格式
 type TsTime time.Time
 
-// 通过时间字符串生成时间戳
-func ToUnix(date string) int64 {
-	if date == "" {
-		return 0
-	}
-	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
-	return tt.Unix()
+func (tst *TsTime) IsZero() bool {
+	return tst.String() == "0001-01-01 00:00:00"
 }
-func ParseTimeToTsTime(date time.Time) TsTime {
-	return TsTime(date)
-}
-func ParseStringToTsTime(date string) (TsTime, error) {
-	t, e := time.Parse(TimeFormat, date)
-	if e != nil {
-		return NowTime(), e
-	}
-	return TsTime(t), nil
-}
-func NowTime() TsTime {
-	return TsTime(time.Now())
-}
-
 func (tst *TsTime) UnmarshalJSON(bs []byte) error {
 	var date string
 	err := json.Unmarshal(bs, &date)
 	if err != nil {
 		return err
+	}
+	if date == "" {
+		*tst = TsTime(time.Time{})
+		return nil
 	}
 	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
 	*tst = TsTime(tt)
@@ -53,7 +38,11 @@ func (tst *TsTime) UnmarshalJSON(bs []byte) error {
 // 返回转化后的JSON字符串和错误信息
 func (tst TsTime) MarshalJSON() ([]byte, error) {
 	tt := time.Time(tst).Format(TimeFormat)
-	return json.Marshal(tt)
+	if tt == "0001-01-01 00:00:00" {
+		return json.Marshal(nil)
+	} else {
+		return json.Marshal(tt)
+	}
 }
 
 // 写入数据库gorm调用

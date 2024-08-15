@@ -19,7 +19,7 @@
 					<uv-textarea v-model="form.results" border="surround"></uv-textarea>
 			</uv-form-item>			
 			<uv-form-item label="发送时间" prop="send_time" borderBottom>
-					<uv-number-box v-model="form.send_time" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+					<x-date v-model:time="form.send_time"></x-date>
 			</uv-form-item>
 
 			<uv-button   type="primary" text="提交" customStyle="margin: 40rpx 0"
@@ -57,7 +57,7 @@
     content: '',
     status: '',
     results: '',
-    send_time: 0,
+    send_time: '',
 	});
 	const formRules = {
 		id: [
@@ -105,7 +105,7 @@
 		send_time: [
 			{
 				required: true,
-				message: '请输入发送时间',
+				message: '请选择发送时间',
 				trigger: ['blur']
 			}
 		],

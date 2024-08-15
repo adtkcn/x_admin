@@ -12,8 +12,8 @@ export type type_{{{.ModuleName}}}_query = {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-    {{{ .GoField }}}_start?: string;
-    {{{ .GoField }}}_end?: string;
+    {{{ .GoField }}}Start?: string;
+    {{{ .GoField }}}End?: string;
 {{{- else }}}
     {{{ .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}

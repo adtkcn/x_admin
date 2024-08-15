@@ -5,6 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -82,7 +83,7 @@ func (service monitorWebService) List(page request.PageReq, listReq MonitorWebLi
 		return
 	}
 	result := []MonitorWebResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -99,7 +100,7 @@ func (service monitorWebService) ListAll() (res []MonitorWebResp, e error) {
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	response.Copy(&res, modelList)
+	util.ConvertUtil.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -113,14 +114,14 @@ func (service monitorWebService) Detail(id int) (res MonitorWebResp, e error) {
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, obj)
+	util.ConvertUtil.Copy(&res, obj)
 	return
 }
 
 // Add 错误收集error新增
 func (service monitorWebService) Add(addReq MonitorWebAddReq) (e error) {
 	var obj model.MonitorWeb
-	response.Copy(&obj, addReq)
+	util.ConvertUtil.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -142,7 +143,7 @@ func (service monitorWebService) Edit(editReq MonitorWebEditReq) (e error) {
 		return
 	}
 	// 更新
-	response.Copy(&obj, editReq)
+	util.ConvertUtil.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Updates(obj).Error
 	e = response.CheckErr(err, "编辑失败")
 	return
@@ -201,14 +202,14 @@ func (service monitorWebService) ExportFile(listReq MonitorWebListReq) (res []Mo
 		return
 	}
 	result := []MonitorWebResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service monitorWebService) ImportFile(importReq []MonitorWebResp) (e error) {
 	var importData []model.MonitorWeb
-	response.Copy(&importData, importReq)
+	util.ConvertUtil.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

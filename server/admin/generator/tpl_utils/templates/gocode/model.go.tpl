@@ -11,8 +11,8 @@ type {{{ toUpperCamelCase .EntityName }}} struct {
         {{{- if eq .GoField "is_delete" }}}
                 IsDelete soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
         {{{- else }}}
-            {{{- if eq .GoType "core.TsTime" }}}
-                {{{ toUpperCamelCase .GoField }}} core.TsTime `gorm:"{{{ if eq .GoField "create_time" }}}autoCreateTime;{{{ else }}}{{{if eq .GoField "update_time"}}}autoUpdateTime;{{{ end }}}{{{ end }}}comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
+            {{{- if eq .GoType "core.NullTime" }}}
+                {{{ toUpperCamelCase .GoField }}} core.NullTime `gorm:"{{{ if eq .GoField "create_time" }}}autoCreateTime;{{{ else }}}{{{if eq .GoField "update_time"}}}autoUpdateTime;{{{ end }}}{{{ end }}}comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
             {{{- else if .IsPk }}}
                 {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `gorm:"primarykey;comment:'{{{ .ColumnComment }}}'"` // {{{ .ColumnComment }}}
             {{{- else }}}

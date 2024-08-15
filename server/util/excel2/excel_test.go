@@ -56,7 +56,7 @@ func TestExport(t *testing.T) {
 			"备注备注备注备注com哈哈哈哈哈哈哈哈这里是最大行高测试哈哈哈哈哈哈哈哈这里是最大行高测试哈哈哈哈哈哈哈哈这里是最大行高测里是最大行高测试哈哈哈哈哈哈哈哈这里是最大行高测试"},
 	}
 
-	f, err := NormalDynamicExport(testList, cols, "Sheet1", "用户信息")
+	f, err := Export(testList, cols, "Sheet1", "用户信息")
 	if err != nil {
 		fmt.Println(err)
 		return

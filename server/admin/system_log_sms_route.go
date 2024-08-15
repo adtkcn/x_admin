@@ -1,10 +1,9 @@
 package admin
 
 import (
-	"x_admin/admin/system_log_sms"
-	"x_admin/middleware"
-
 	"github.com/gin-gonic/gin"
+	"x_admin/middleware" 
+	"x_admin/admin/system_log_sms"
 )
 
 /**
@@ -40,6 +39,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '系统短信日志导入excel','admin:system_log_sms:ImportFile', 0, 1, 0, now(), now());
 */
 
+
 // SystemLogSmsRoute(rg)
 func SystemLogSmsRoute(rg *gin.RouterGroup) {
 	handle := system_log_sms.SystemLogSmsHandler{}
@@ -48,9 +48,9 @@ func SystemLogSmsRoute(rg *gin.RouterGroup) {
 	r.GET("/system_log_sms/list", handle.List)
 	r.GET("/system_log_sms/listAll", handle.ListAll)
 	r.GET("/system_log_sms/detail", handle.Detail)
-	r.POST("/system_log_sms/add", middleware.RecordLog("系统短信日志新增"), handle.Add)
-	r.POST("/system_log_sms/edit", middleware.RecordLog("系统短信日志编辑"), handle.Edit)
+	r.POST("/system_log_sms/add",middleware.RecordLog("系统短信日志新增"), handle.Add)
+	r.POST("/system_log_sms/edit",middleware.RecordLog("系统短信日志编辑"), handle.Edit)
 	r.POST("/system_log_sms/del", middleware.RecordLog("系统短信日志删除"), handle.Del)
 	r.GET("/system_log_sms/ExportFile", middleware.RecordLog("系统短信日志导出"), handle.ExportFile)
-	r.POST("/system_log_sms/ImportFile", handle.ImportFile)
+	r.POST("/system_log_sms/ImportFile",  handle.ImportFile)
 }

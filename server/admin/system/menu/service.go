@@ -58,7 +58,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 		return
 	}
 	var menuResps []SystemAuthMenuResp
-	response.Copy(&menuResps, menus)
+	util.ConvertUtil.Copy(&menuResps, menus)
 	mapList = util.ArrayUtil.ListToTree(
 		util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children")
 	return
@@ -72,7 +72,7 @@ func (menuSrv systemAuthMenuService) List() (res []interface{}, e error) {
 		return
 	}
 	var menuResps []SystemAuthMenuResp
-	response.Copy(&menuResps, menus)
+	util.ConvertUtil.Copy(&menuResps, menus)
 	return util.ArrayUtil.ListToTree(
 		util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children"), nil
 }
@@ -87,13 +87,13 @@ func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, menu)
+	util.ConvertUtil.Copy(&res, menu)
 	return
 }
 
 func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) {
 	var menu system_model.SystemAuthMenu
-	response.Copy(&menu, addReq)
+	util.ConvertUtil.Copy(&menu, addReq)
 	err := menuSrv.db.Create(&menu).Error
 	if e = response.CheckErr(err, "添加失败"); e != nil {
 		return
@@ -111,7 +111,7 @@ func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e erro
 	if e = response.CheckErr(err, "Edit Find err"); e != nil {
 		return
 	}
-	response.Copy(&menu, editReq)
+	util.ConvertUtil.Copy(&menu, editReq)
 	err = menuSrv.db.Model(&menu).Updates(structs.Map(menu)).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return

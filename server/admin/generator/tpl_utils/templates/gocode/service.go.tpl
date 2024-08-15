@@ -7,6 +7,7 @@ import (
 	"x_admin/model"
 	"gorm.io/gorm"
 	"x_admin/util"
+	"x_admin/util/excel2"
 	"github.com/duke-git/lancet/v2/convertor"
 )
 
@@ -82,7 +83,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 		return
 	}
 	result := []{{{ toUpperCamelCase .EntityName }}}Resp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -100,7 +101,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ toUppe
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	response.Copy(&res, modelList)
+	util.ConvertUtil.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -125,14 +126,14 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 		cacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
 	}
 
-	response.Copy(&res, obj)
+	util.ConvertUtil.Copy(&res, obj)
 	return
 }
 
 // Add {{{ .FunctionName }}}新增
 func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ toUpperCamelCase .EntityName }}}AddReq) (createId int,e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
-	response.Copy(&obj, addReq)
+	util.ConvertUtil.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -156,7 +157,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ toUpperCa
 		return
 	}
 	// 更新
-	// response.Copy(&obj, editReq)
+	// util.ConvertUtil.Copy(&obj, editReq)
 	//
 	editInfo, err := convertor.StructToMap(editReq)
 	if err != nil {
@@ -199,6 +200,21 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
 	return
 }
 
+// 获取Excel的列
+func (service {{{ toCamelCase .EntityName }}}Service) GetExcelCol() []excel2.Col {
+	var cols = []excel2.Col{
+	{{{- range .Columns }}}
+		{{{- if eq .HtmlType "datetime" }}}
+		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: excel2.DecodeTime },
+		{{{- else }}}
+		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15},
+		{{{- end }}}
+	{{{- end }}}
+	}
+	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
+	return cols
+}
+
 // ExportFile {{{ .FunctionName }}}导出
 func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ toUpperCamelCase .EntityName }}}ListReq) (res []{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
 	// 查询
@@ -211,14 +227,14 @@ func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ toU
 		return
 	}
 	result := []{{{ toUpperCamelCase .EntityName }}}Resp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service {{{ toCamelCase .EntityName }}}Service) ImportFile(importReq []{{{ toUpperCamelCase .EntityName }}}Resp) (e error) {
 	var importData []model.{{{ toUpperCamelCase .EntityName }}}
-	response.Copy(&importData, importReq)
+	util.ConvertUtil.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

@@ -38,7 +38,7 @@ var (
 	LoginAccountError = RespType{code: 330, message: "登录账号或密码错误"}
 	LoginDisableError = RespType{code: 331, message: "登录账号已被禁用了"}
 	TokenEmpty        = RespType{code: 332, message: "token参数为空"}
-	TokenInvalid      = RespType{code: 333, message: "token参数无效"}
+	TokenInvalid      = RespType{code: 333, message: "登录失效"}
 
 	NoPermission    = RespType{code: 403, message: "无相关权限"}
 	Request404Error = RespType{code: 404, message: "请求接口不存在"}

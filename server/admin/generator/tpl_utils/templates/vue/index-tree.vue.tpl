@@ -7,8 +7,8 @@
                 {{{- if eq .HtmlType "datetime" }}}
                 <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ (.GoField) }}}_start"
-                        v-model:endTime="queryParams.{{{ (.GoField) }}}_end"
+                        v-model:startTime="queryParams.{{{ (.GoField) }}}Start"
+                        v-model:endTime="queryParams.{{{ (.GoField) }}}End"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
@@ -172,8 +172,8 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (.GoField) }}}_start: '',
-    {{{ (.GoField) }}}_end: '',
+    {{{ (.GoField) }}}Start: '',
+    {{{ (.GoField) }}}End: '',
     {{{- else }}}
     {{{ (.GoField) }}}: '',
     {{{- end }}}

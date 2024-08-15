@@ -8,7 +8,7 @@ import { clearEmpty } from '@/utils/util'
 
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
-    {{{ .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{toUpperCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 }
 // 查询
@@ -16,10 +16,10 @@ export type type_{{{.ModuleName}}}_query = {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-    {{{ .GoField }}}_start?: string;
-    {{{ .GoField }}}_end?: string;
+    {{{toUpperCamelCase .GoField }}}Start?: string;
+    {{{toUpperCamelCase .GoField }}}End?: string;
 {{{- else }}}
-    {{{ .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{toUpperCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -28,7 +28,7 @@ export type type_{{{.ModuleName}}}_query = {
 export type type_{{{.ModuleName}}}_edit = {
 {{{- range .Columns }}}
 {{{- if or .IsEdit .IsInsert }}}
-    {{{ .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{toUpperCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
 {{{- end }}}
 {{{- end }}}
 }

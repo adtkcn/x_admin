@@ -79,16 +79,19 @@ func importData(f *excelize.File, dst interface{}, sheetName string, startRow in
 			replace := col.Replace
 
 			val := rows[i][j]
-			// 将val替换为key
+			// 先替换，将val替换为key
 			for replaceKey, v := range replace {
 				if fmt.Sprintf("%v", v) == fmt.Sprintf("%v", val) {
 					val = fmt.Sprintf("%v", replaceKey)
 					break
 				}
 			}
-
+			// 再解码
 			if col.Decode != nil {
-				rowMap[key] = col.Decode(val)
+				v, e := col.Decode(val)
+				if e == nil {
+					rowMap[key] = v
+				}
 			} else {
 				rowMap[key] = val
 			}

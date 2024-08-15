@@ -12,10 +12,10 @@ var GenConstants = genConstants{
 
 //GoConstants Go相关常量
 var GoConstants = goConstants{
-	TypeString: "string",      //字符串类型
-	TypeFloat:  "float64",     //浮点型
-	TypeInt:    "int",         //整型
-	TypeDate:   "core.TsTime", //时间类型
+	TypeString: "string",        //字符串类型
+	TypeFloat:  "float64",       //浮点型
+	TypeInt:    "int",           //整型
+	TypeDate:   "core.NullTime", //时间类型
 }
 
 //SqlConstants 数据库相关常量

@@ -7,6 +7,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -80,7 +81,7 @@ func (service flowApplyService) List(page request.PageReq, listReq FlowApplyList
 		return
 	}
 	result := []FlowApplyResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -99,7 +100,7 @@ func (service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, obj)
+	util.ConvertUtil.Copy(&res, obj)
 	return
 }
 
@@ -110,7 +111,7 @@ func (service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "模板不存在!"); e != nil {
 		return
 	}
-	response.Copy(&obj, addReq)
+	util.ConvertUtil.Copy(&obj, addReq)
 	// obj.FlowName = flow_template_resp.FlowName
 	obj.FlowGroup = flow_template_resp.FlowGroup
 	obj.FlowRemark = flow_template_resp.FlowRemark
@@ -135,7 +136,7 @@ func (service flowApplyService) Edit(editReq FlowApplyEditReq) (e error) {
 		return
 	}
 	// 更新
-	response.Copy(&obj, editReq)
+	util.ConvertUtil.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Updates(obj).Error
 	e = response.CheckErr(err, "编辑失败")
 	return
@@ -159,7 +160,7 @@ func (service flowApplyService) Del(id int) (e error) {
 	}
 	// 删除
 	obj.IsDelete = 1
-	obj.DeleteTime = core.NowTime()
+	obj.DeleteTime = util.NullTimeUtil.Now()
 	err = service.db.Save(&obj).Error
 	e = response.CheckErr(err, "Del Save err")
 	return

@@ -72,8 +72,8 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (.GoField) }}}_start: '',
-    {{{ (.GoField) }}}_end: '',
+    {{{ (.GoField) }}}Start: '',
+    {{{ (.GoField) }}}End: '',
     {{{- else }}}
     {{{ (.GoField) }}}: '',
     {{{- end }}}

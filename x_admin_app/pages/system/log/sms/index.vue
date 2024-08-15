@@ -74,11 +74,12 @@ const queryParams = reactive<type_system_log_sms_query>({
     content: '',
     status: '',
     results: '',
-    send_time: '',
-    create_timeStart: '',
-    create_timeEnd: '',
-    update_timeStart: '',
-    update_timeEnd: '',
+    send_time_start: '',
+    send_time_end: '',
+    create_time_start: '',
+    create_time_end: '',
+    update_time_start: '',
+    update_time_end: '',
 });
 let activeFab = ref(false);
 let fromSearch=ref(false);

@@ -5,8 +5,8 @@
 			{{{- if eq .IsQuery 1 }}}
 			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" borderBottom>
 				{{{- if eq .HtmlType "datetime" }}}
-					<x-date-range v-model:startTime="form.{{{ (.GoField) }}}_start"
-							v-model:endTime="form.{{{ (.GoField) }}}_end"></x-date-range>
+					<x-date-range v-model:startTime="form.{{{ (.GoField) }}}Start"
+							v-model:endTime="form.{{{ (.GoField) }}}End"></x-date-range>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select") }}}
 					{{{- if ne .DictType "" }}}
 						<x-picker v-model="form.{{{ (.GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
@@ -71,8 +71,8 @@ const { listAllData } = useListAllData<{
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (.GoField) }}}_start: null,
-    {{{ (.GoField) }}}_end: null,
+    {{{ (.GoField) }}}Start: null,
+    {{{ (.GoField) }}}End: null,
     {{{- else }}}
     {{{ (.GoField) }}}: null,
     {{{- end }}}

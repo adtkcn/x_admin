@@ -9,10 +9,10 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
     {{{- range .Columns }}}
     {{{- if .IsQuery }}}
         {{{- if eq .HtmlType "datetime" }}}
-            {{{ toUpperCamelCase .GoField }}}Start *string `mapstructure:"{{{ .GoField }}}_start" json:"{{{ .GoField }}}_start" form:"{{{ .GoField }}}_start"` // 开始{{{ .ColumnComment }}}
-            {{{ toUpperCamelCase .GoField }}}End *string `mapstructure:"{{{ .GoField }}}_end" json:"{{{ .GoField }}}_end" form:"{{{ .GoField }}}_end"` // 结束{{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}}Start *string `form:"{{{ .GoField }}}Start"` // 开始{{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}}End *string `GoField }}}End" form:"{{{ .GoField }}}End"` // 结束{{{ .ColumnComment }}}
         {{{- else }}}
-            {{{ toUpperCamelCase .GoField }}} *{{{.GoType }}} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}" form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}} *{{{.GoType }}} ` form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -24,7 +24,7 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
 type {{{ toUpperCamelCase .EntityName }}}AddReq struct {
     {{{- range .Columns }}}
     {{{- if .IsInsert }}}
-    {{{ toUpperCamelCase .GoField }}} interface{} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}} form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
+    {{{ toUpperCamelCase .GoField }}} interface{} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}" form:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -67,7 +67,7 @@ type {{{ toUpperCamelCase .EntityName }}}Resp struct {
     {{{- if .IsPk }}}
         {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
     {{{- else }}}
-        {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}" excel:"name:{{{ .ColumnComment }}};"` // {{{ .ColumnComment }}}
+        {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} `mapstructure:"{{{ .GoField }}}" json:"{{{ .GoField }}}"` // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}

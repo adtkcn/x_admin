@@ -5,6 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -87,7 +88,7 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 		return
 	}
 	result := []MonitorClientResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -106,7 +107,7 @@ func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res [
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	response.Copy(&res, modelList)
+	util.ConvertUtil.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -120,14 +121,14 @@ func (service monitorClientService) Detail(id int) (res MonitorClientResp, e err
 	if e = response.CheckErr(err, "获取详情失败"); e != nil {
 		return
 	}
-	response.Copy(&res, obj)
+	util.ConvertUtil.Copy(&res, obj)
 	return
 }
 
 // Add 监控-客户端信息新增
 func (service monitorClientService) Add(addReq MonitorClientAddReq) (e error) {
 	var obj model.MonitorClient
-	response.Copy(&obj, addReq)
+	util.ConvertUtil.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -149,7 +150,7 @@ func (service monitorClientService) Edit(editReq MonitorClientEditReq) (e error)
 		return
 	}
 	// 更新
-	response.Copy(&obj, editReq)
+	util.ConvertUtil.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	e = response.CheckErr(err, "更新失败")
 	return
@@ -184,14 +185,14 @@ func (service monitorClientService) ExportFile(listReq MonitorClientListReq) (re
 		return
 	}
 	result := []MonitorClientResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service monitorClientService) ImportFile(importReq []MonitorClientResp) (e error) {
 	var importData []model.MonitorClient
-	response.Copy(&importData, importReq)
+	util.ConvertUtil.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

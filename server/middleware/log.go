@@ -96,8 +96,8 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				err := core.GetDB().Create(&system_model.SystemLogOperate{
 					AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
 					Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
-					StartTime: core.ParseTimeToTsTime(startTime),
-					EndTime:   core.ParseTimeToTsTime(endTime),
+					StartTime: util.NullTimeUtil.ParseTime(startTime),
+					EndTime:   util.NullTimeUtil.ParseTime(endTime),
 					TaskTime:  taskTime,
 				}).Error
 				response.CheckErr(err, "RecordLog recover Create err")
@@ -108,6 +108,9 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		}()
 		// 执行方法
 		c.Next()
+		if config.Config.GinMode != "release" {
+			return
+		}
 		if len(c.Errors) > 0 {
 			errStr = c.Errors.String()
 			status = 2
@@ -122,10 +125,17 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		ip := c.ClientIP()
 		method := c.HandlerName()
 		err := core.GetDB().Create(&system_model.SystemLogOperate{
-			AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
-			Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
-			StartTime: core.ParseTimeToTsTime(startTime),
-			EndTime:   core.ParseTimeToTsTime(endTime),
+			AdminId:   adminId,
+			Type:      reqMethod,
+			Title:     title,
+			Ip:        ip,
+			Url:       urlPath,
+			Method:    method,
+			Args:      args,
+			Error:     errStr,
+			Status:    status,
+			StartTime: util.NullTimeUtil.ParseTime(startTime),
+			EndTime:   util.NullTimeUtil.ParseTime(endTime),
 			TaskTime:  taskTime,
 		}).Error
 		response.CheckErr(err, "RecordLog Create err")

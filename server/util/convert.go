@@ -32,7 +32,6 @@ func (c convertUtil) StructsToMaps(from interface{}) (data []map[string]interfac
 		return nil
 	}
 	for _, v := range objList {
-		// data = append(data, structs.Map(v))
 		data = append(data, c.StructToMap(v))
 	}
 	return data
@@ -44,10 +43,18 @@ func (c convertUtil) MapToStruct(from interface{}, to interface{}) (err error) {
 	return err
 }
 
-// StructToStruct 将结构体from弱类型转换成结构体to,需要tag:json,mapstructure
+// StructToStruct 将结构体from弱类型转换成结构体to
 func (c convertUtil) StructToStruct(from interface{}, to interface{}) (err error) {
 	m := c.StructToMap(from)
 	err = c.MapToStruct(m, to)
 
 	return err
+}
+
+func (c convertUtil) Copy(toValue interface{}, fromValue interface{}) interface{} {
+	if err := copier.Copy(toValue, fromValue); err != nil {
+		core.Logger.Errorf("Copy err: err=[%+v]", err)
+		panic("SystemError")
+	}
+	return toValue
 }

@@ -21,7 +21,7 @@ type FlowApply struct {
 	FormValue           string                `gorm:"comment:'表单值'"`                      // 表单值
 	Status              int                   `gorm:"comment:'状态：1待提交，2审批中，3审批完成，4审批失败'"` // 状态：0待提交，1审批中，2审批完成，3审批失败
 	IsDelete            soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
-	UpdateTime          core.TsTime           `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
-	CreateTime          core.TsTime           `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
-	DeleteTime          core.TsTime           `gorm:"default:null;comment:'删除时间'"`   // 删除时间
+	UpdateTime          core.NullTime         `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
+	CreateTime          core.NullTime         `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
+	DeleteTime          core.NullTime         `gorm:"default:null;comment:'删除时间'"`   // 删除时间
 }

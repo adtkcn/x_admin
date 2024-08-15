@@ -1,5 +1,7 @@
 import { request } from '@/utils/request' 
 import type { Pages } from '@/utils/request'
+import { clearObjEmpty } from "@/utils/utils";
+
 export type type_system_log_sms = {
     id?: number;
     scene?: number;
@@ -7,7 +9,7 @@ export type type_system_log_sms = {
     content?: string;
     status?: number;
     results?: string;
-    send_time?: number;
+    send_time?: string;
     create_time?: string;
     update_time?: string;
 }
@@ -18,10 +20,11 @@ export type type_system_log_sms_query = {
     content?: string;
     status?: number;
     results?: string;
-    send_time?: number;
-    create_timeStart?: string;
+    send_time_start?: string;
+    send_timeEnd?: string;
+    create_time_start?: string;
     create_timeEnd?: string;
-    update_timeStart?: string;
+    update_time_start?: string;
     update_timeEnd?: string;
 }
 // 添加编辑
@@ -32,7 +35,7 @@ export type type_system_log_sms_edit = {
     content?: string;
     status?: number;
     results?: string;
-    send_time?: number;
+    send_time?: string;
 }
 
 
@@ -41,7 +44,7 @@ export function system_log_sms_list(params?: type_system_log_sms_query) {
     return request<Pages<type_system_log_sms>>({
 		url: '/system_log_sms/list',
 		method: 'GET',
-		data: params
+		data: clearObjEmpty(params)
 	})
 }
 // 系统短信日志列表-所有
@@ -49,7 +52,7 @@ export function system_log_sms_list_all(params?: type_system_log_sms_query) {
     return request<type_system_log_sms[]>({
 		url: '/system_log_sms/listAll',
 		method: 'GET',
-		data: params
+		data: clearObjEmpty(params)
 	})
 }
 

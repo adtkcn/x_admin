@@ -106,7 +106,7 @@ func (service monitorProjectService) List(page request.PageReq, listReq MonitorP
 		return
 	}
 	result := []MonitorProjectResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -123,7 +123,7 @@ func (service monitorProjectService) ListAll() (res []MonitorProjectResp, e erro
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	response.Copy(&res, modelList)
+	util.ConvertUtil.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -142,14 +142,14 @@ func (service monitorProjectService) Detail(id int) (res MonitorProjectResp, e e
 		service.SetCache(obj)
 	}
 
-	response.Copy(&res, obj)
+	util.ConvertUtil.Copy(&res, obj)
 	return
 }
 
 // Add 错误项目新增
 func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (createId int, e error) {
 	var obj model.MonitorProject
-	response.Copy(&obj, addReq)
+	util.ConvertUtil.Copy(&obj, addReq)
 	obj.ProjectKey = util.ToolsUtil.MakeUuid()
 	err := service.db.Create(&obj).Error
 
@@ -174,7 +174,7 @@ func (service monitorProjectService) Edit(editReq MonitorProjectEditReq) (e erro
 		return
 	}
 	// 更新
-	response.Copy(&obj, editReq)
+	util.ConvertUtil.Copy(&obj, editReq)
 
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
@@ -225,14 +225,14 @@ func (service monitorProjectService) ExportFile(listReq MonitorProjectListReq) (
 		return
 	}
 	result := []MonitorProjectResp{}
-	response.Copy(&result, modelList)
+	util.ConvertUtil.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service monitorProjectService) ImportFile(importReq []MonitorProjectResp) (e error) {
 	var importData []model.MonitorProject
-	response.Copy(&importData, importReq)
+	util.ConvertUtil.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

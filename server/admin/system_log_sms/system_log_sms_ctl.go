@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -24,18 +23,19 @@ type SystemLogSmsHandler struct {
 //	 @Param		Token		header		string				true	"token"
 //	 @Param		PageNo		query		int					true	"页码"
 //	 @Param		PageSize	query		int					true	"每页数量"
-//		@Param scene query int false "场景编号"
-//		@Param mobile query string false "手机号码"
-//		@Param content query string false "发送内容"
-//		@Param status query int false "发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
-//		@Param results query string false "短信结果"
-//		@Param send_time query int false "发送时间"
-//		@Param create_timeStart  query core.TsTime false "创建时间"
-//		@Param create_timeEnd  query core.TsTime false "创建时间"
-//		@Param update_timeStart  query core.TsTime false "更新时间"
-//		@Param update_timeEnd  query core.TsTime false "更新时间"
+//		@Param Scene query int false "场景编号"
+//		@Param Mobile query string false "手机号码"
+//		@Param Content query string false "发送内容"
+//		@Param Status query int false "发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
+//		@Param Results query string false "短信结果"
+//		@Param SendTimeStart  query core.NullTime false "发送时间"
+//		@Param SendTimeEnd  query core.NullTime false "发送时间"
+//		@Param CreateTimeStart  query core.NullTime false "创建时间"
+//		@Param CreateTimeEnd  query core.NullTime false "创建时间"
+//		@Param UpdateTimeStart  query core.NullTime false "更新时间"
+//		@Param UpdateTimeEnd  query core.NullTime false "更新时间"
 //
-// @Success 200	{object} response.Response{ data=response.PageResp{ lists= []SystemLogSmsResp}}	"成功"
+// @Success 200	{object} response.Response{ data=response.PageResp{ lists=[]SystemLogSmsResp}}	"成功"
 // @Router	/api/admin/system_log_sms/list [get]
 func (hd *SystemLogSmsHandler) List(c *gin.Context) {
 	var page request.PageReq
@@ -53,16 +53,17 @@ func (hd *SystemLogSmsHandler) List(c *gin.Context) {
 //		@Summary	系统短信日志列表-所有
 //		@Tags		system_log_sms-系统短信日志
 //	 @Produce	json
-//		@Param scene query int false "场景编号"
-//		@Param mobile query string false "手机号码"
-//		@Param content query string false "发送内容"
-//		@Param status query int false "发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
-//		@Param results query string false "短信结果"
-//		@Param send_time query int false "发送时间"
-//		@Param create_timeStart  query core.TsTime false "创建时间"
-//		@Param create_timeEnd  query core.TsTime false "创建时间"
-//		@Param update_timeStart  query core.TsTime false "更新时间"
-//		@Param update_timeEnd  query core.TsTime false "更新时间"
+//		@Param Scene query int false "场景编号"
+//		@Param Mobile query string false "手机号码"
+//		@Param Content query string false "发送内容"
+//		@Param Status query int false "发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
+//		@Param Results query string false "短信结果"
+//		@Param SendTimeStart  query core.NullTime false "发送时间"
+//		@Param SendTimeEnd  query core.NullTime false "发送时间"
+//		@Param CreateTimeStart  query core.NullTime false "创建时间"
+//		@Param CreateTimeEnd  query core.NullTime false "创建时间"
+//		@Param UpdateTimeStart  query core.NullTime false "更新时间"
+//		@Param UpdateTimeEnd  query core.NullTime false "更新时间"
 //		@Success	200			{object}	response.Response{ data=[]SystemLogSmsResp}	"成功"
 //		@Router		/api/admin/system_log_sms/listAll [get]
 func (hd *SystemLogSmsHandler) ListAll(c *gin.Context) {
@@ -78,7 +79,7 @@ func (hd *SystemLogSmsHandler) ListAll(c *gin.Context) {
 // @Tags		system_log_sms-系统短信日志
 // @Produce	json
 // @Param		Token		header		string				true	"token"
-// @Param		id		query		int				false	"id"
+// @Param		Id		query		int				false	"id"
 // @Success	200			{object}	response.Response{ data=SystemLogSmsResp}	"成功"
 // @Router		/api/admin/system_log_sms/detail [get]
 func (hd *SystemLogSmsHandler) Detail(c *gin.Context) {
@@ -98,12 +99,12 @@ func (hd *SystemLogSmsHandler) Detail(c *gin.Context) {
 // @Tags		system_log_sms-系统短信日志
 // @Produce	json
 // @Param		Token		header		string				true	"token"
-// @Param		scene		body		int				false	"场景编号"
-// @Param		mobile		body		string				false	"手机号码"
-// @Param		content		body		string				false	"发送内容"
-// @Param		status		body		int				false	"发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
-// @Param		results		body		string				false	"短信结果"
-// @Param		send_time		body		int				false	"发送时间"
+// @Param		Scene		formData		int				false	"场景编号"
+// @Param		Mobile		formData		string				false	"手机号码"
+// @Param		Content		formData		string				false	"发送内容"
+// @Param		Status		formData		int				false	"发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
+// @Param		Results		formData		string				false	"短信结果"
+// @Param		SendTime		formData		core.NullTime				false	"发送时间"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_log_sms/add [post]
 func (hd *SystemLogSmsHandler) Add(c *gin.Context) {
@@ -119,20 +120,26 @@ func (hd *SystemLogSmsHandler) Add(c *gin.Context) {
 // @Tags		system_log_sms-系统短信日志
 // @Produce	json
 // @Param		Token		header		string				true	"token"
-// @Param		id		body		int				false	"id"
-// @Param		scene		body		int				false	"场景编号"
-// @Param		mobile		body		string				false	"手机号码"
-// @Param		content		body		string				false	"发送内容"
-// @Param		status		body		int				false	"发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
-// @Param		results		body		string				false	"短信结果"
-// @Param		send_time		body		int				false	"发送时间"
+// @Param		Id		body		int				false	"id"
+// @Param		Scene		body		int				false	"场景编号"
+// @Param		Mobile		body		string				false	"手机号码"
+// @Param		Content		body		string				false	"发送内容"
+// @Param		Status		body		int				false	"发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
+// @Param		Results		body		string				false	"短信结果"
+// @Param		SendTime		body		core.NullTime				false	"发送时间"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_log_sms/edit [post]
 func (hd *SystemLogSmsHandler) Edit(c *gin.Context) {
 	var editReq SystemLogSmsEditReq
+	// jsonObj := make(map[string]interface{}) //注意该结构接受的内容
+	// c.BindJSON(&jsonObj)
+	// c.ShouldBindBodyWith(&jsonObj, binding.JSON)
+	// fmt.Println(jsonObj)
+	// util.ConvertUtil.MapToStruct(jsonObj, &editReq)
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
+	// response.CheckAndRespWithData(c, editReq.Id, SystemLogSmsService.Edit2(jsonObj))
 	response.CheckAndRespWithData(c, editReq.Id, SystemLogSmsService.Edit(editReq))
 }
 
@@ -140,7 +147,7 @@ func (hd *SystemLogSmsHandler) Edit(c *gin.Context) {
 // @Tags		system_log_sms-系统短信日志
 // @Produce	json
 // @Param		Token		header		string				true	"token"
-// @Param		id		body		int				false	"id"
+// @Param		Id		body		int				false	"id"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_log_sms/del [post]
 func (hd *SystemLogSmsHandler) Del(c *gin.Context) {
@@ -151,43 +158,21 @@ func (hd *SystemLogSmsHandler) Del(c *gin.Context) {
 	response.CheckAndResp(c, SystemLogSmsService.Del(delReq.Id))
 }
 
-func DecodeTime(value any) any {
-	t, e := core.ParseStringToTsTime(value.(string))
-	if e != nil {
-		return nil
-	}
-
-	return t
-}
-
-var cols = []excel2.Col{
-	{Name: "场景编号", Key: "Scene", Width: 15, Replace: map[string]interface{}{
-		"1": "a",
-		"2": "b",
-	}},
-	{Name: "手机号码", Key: "Mobile", Width: 15},
-	{Name: "发送内容", Key: "Content", Width: 15},
-	{Name: "发送状态", Key: "Status", Width: 20},
-	{Name: "短信结果", Key: "Results", Width: 21},
-	{Name: "发送时间", Key: "SendTime", Width: 20},
-	{Name: "创建时间", Key: "CreateTime", Width: 25},
-	{Name: "更新时间", Key: "UpdateTime", Width: 30, Decode: DecodeTime},
-}
-
 // @Summary	系统短信日志导出
 // @Tags		system_log_sms-系统短信日志
 // @Produce	json
 // @Param		Token		header		string				true	"token"
-// @Param scene query int false "场景编号"
-// @Param mobile query string false "手机号码"
-// @Param content query string false "发送内容"
-// @Param status query int false "发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
-// @Param results query string false "短信结果"
-// @Param send_time query int false "发送时间"
-// @Param create_timeStart  query core.TsTime false "创建时间"
-// @Param create_timeEnd  query core.TsTime false "创建时间"
-// @Param update_timeStart  query core.TsTime false "更新时间"
-// @Param update_timeEnd  query core.TsTime false "更新时间"
+// @Param Scene query int false "场景编号"
+// @Param Mobile query string false "手机号码"
+// @Param Content query string false "发送内容"
+// @Param Status query int false "发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
+// @Param Results query string false "短信结果"
+// @Param SendTimeStart  query core.NullTime false "发送时间"
+// @Param SendTimeEnd  query core.NullTime false "发送时间"
+// @Param CreateTimeStart  query core.NullTime false "创建时间"
+// @Param CreateTimeEnd  query core.NullTime false "创建时间"
+// @Param UpdateTimeStart  query core.NullTime false "更新时间"
+// @Param UpdateTimeEnd  query core.NullTime false "更新时间"
 // @Router		/api/admin/system_log_sms/ExportFile [get]
 func (hd *SystemLogSmsHandler) ExportFile(c *gin.Context) {
 	var listReq SystemLogSmsListReq
@@ -199,13 +184,11 @@ func (hd *SystemLogSmsHandler) ExportFile(c *gin.Context) {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-
-	f, err := excel2.NormalDynamicExport(res, cols, "Sheet1", "系统短信日志")
+	f, err := excel2.Export(res, SystemLogSmsService.GetExcelCol(), "Sheet1", "系统短信日志")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
 	}
-
 	excel2.DownLoadExcel("系统短信日志"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
@@ -221,7 +204,7 @@ func (hd *SystemLogSmsHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []SystemLogSmsResp{}
-	err = excel2.GetExcelData(file, &importList, cols)
+	err = excel2.GetExcelData(file, &importList, SystemLogSmsService.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return

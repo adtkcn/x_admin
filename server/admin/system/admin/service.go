@@ -78,7 +78,7 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 		auths = append(auths, "*")
 	}
 	var admin SystemAuthAdminSelfOneResp
-	response.Copy(&admin, sysAdmin)
+	util.ConvertUtil.Copy(&admin, sysAdmin)
 	admin.Dept = strconv.FormatUint(uint64(sysAdmin.DeptId), 10)
 	admin.Avatar = util.UrlUtil.ToAbsoluteUrl(sysAdmin.Avatar)
 	return SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
@@ -151,7 +151,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq SystemAuthAdminListReq
 // 导入
 func (adminSrv systemAuthAdminService) ImportFile(importReq []SystemAuthAdminResp) (e error) {
 	var sysAdmin []system_model.SystemAuthAdmin
-	response.Copy(&sysAdmin, importReq)
+	util.ConvertUtil.Copy(&sysAdmin, importReq)
 	err := adminSrv.db.Create(&sysAdmin).Error
 	e = response.CheckErr(err, "添加失败")
 	return e
@@ -254,7 +254,7 @@ func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp,
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, sysAdmin)
+	util.ConvertUtil.Copy(&res, sysAdmin)
 	res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 	if res.Dept == "" {
 		res.Dept = strconv.FormatUint(uint64(res.DeptId), 10)
@@ -295,7 +295,7 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 		return response.Failed.SetMessage("密码格式不正确")
 	}
 	salt := util.ToolsUtil.RandomString(5)
-	response.Copy(&sysAdmin, addReq)
+	util.ConvertUtil.Copy(&sysAdmin, addReq)
 	sysAdmin.Role = strconv.FormatUint(uint64(addReq.Role), 10)
 	sysAdmin.Salt = salt
 	sysAdmin.Password = util.ToolsUtil.MakeMd5(strings.Trim(addReq.Password, " ") + salt)
@@ -466,7 +466,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 	if id == config.AdminConfig.GetAdminId(c) {
 		return response.AssertArgumentError.SetMessage("不能删除自己!")
 	}
-	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: core.NowTime()}).Error
+	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
 	e = response.CheckErr(err, "Del Updates err")
 	return
 }

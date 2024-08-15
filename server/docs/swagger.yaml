@@ -1,5 +1,19 @@
 basePath: /
 definitions:
+  core.NullInt:
+    properties:
+      int:
+        type: integer
+      valid:
+        type: boolean
+    type: object
+  core.NullTime:
+    properties:
+      time:
+        type: string
+      valid:
+        type: boolean
+    type: object
   flow_apply.FlowApplyResp:
     properties:
       applyUserId:
@@ -226,6 +240,41 @@ definitions:
       data: {}
       message:
         type: string
+    type: object
+  system_log_sms.SystemLogSmsResp:
+    properties:
+      content:
+        description: 发送内容
+        type: string
+      createTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
+        description: 创建时间
+      id:
+        description: id
+        type: integer
+      mobile:
+        description: 手机号码
+        type: string
+      results:
+        description: 短信结果
+        type: string
+      scene:
+        allOf:
+        - $ref: '#/definitions/core.NullInt'
+        description: 场景编号
+      sendTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
+        description: 发送时间
+      status:
+        allOf:
+        - $ref: '#/definitions/core.NullInt'
+        description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+      updateTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
+        description: 更新时间
     type: object
 externalDocs:
   description: OpenAPI
@@ -1566,25 +1615,6 @@ paths:
       summary: 错误项目列表
       tags:
       - monitor_project-错误项目
-  /api/admin/monitor_project/listAll:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/monitor_project.MonitorProjectResp'
-                  type: array
-              type: object
-      summary: 错误项目列表-所有
-      tags:
-      - monitor_project-错误项目
   /api/admin/monitor_web/ExportFile:
     get:
       parameters:
@@ -1859,6 +1889,289 @@ paths:
       summary: 错误收集error列表-所有
       tags:
       - monitor_web-错误收集error
+  /api/admin/system_log_sms/ExportFile:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 场景编号
+        in: query
+        name: Scene
+        type: integer
+      - description: 手机号码
+        in: query
+        name: Mobile
+        type: string
+      - description: 发送内容
+        in: query
+        name: Content
+        type: string
+      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+        in: query
+        name: Status
+        type: integer
+      - description: 短信结果
+        in: query
+        name: Results
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: 系统短信日志导出
+      tags:
+      - system_log_sms-系统短信日志
+  /api/admin/system_log_sms/ImportFile:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      summary: 系统短信日志导入
+      tags:
+      - system_log_sms-系统短信日志
+  /api/admin/system_log_sms/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 场景编号
+        in: formData
+        name: Scene
+        type: integer
+      - description: 手机号码
+        in: formData
+        name: Mobile
+        type: string
+      - description: 发送内容
+        in: formData
+        name: Content
+        type: string
+      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+        in: formData
+        name: Status
+        type: integer
+      - description: 短信结果
+        in: formData
+        name: Results
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 系统短信日志新增
+      tags:
+      - system_log_sms-系统短信日志
+  /api/admin/system_log_sms/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: id
+        in: body
+        name: Id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 系统短信日志删除
+      tags:
+      - system_log_sms-系统短信日志
+  /api/admin/system_log_sms/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: id
+        in: query
+        name: Id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/system_log_sms.SystemLogSmsResp'
+              type: object
+      summary: 系统短信日志详情
+      tags:
+      - system_log_sms-系统短信日志
+  /api/admin/system_log_sms/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: id
+        in: body
+        name: Id
+        schema:
+          type: integer
+      - description: 场景编号
+        in: body
+        name: Scene
+        schema:
+          type: integer
+      - description: 手机号码
+        in: body
+        name: Mobile
+        schema:
+          type: string
+      - description: 发送内容
+        in: body
+        name: Content
+        schema:
+          type: string
+      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+        in: body
+        name: Status
+        schema:
+          type: integer
+      - description: 短信结果
+        in: body
+        name: Results
+        schema:
+          type: string
+      - description: 发送时间
+        in: body
+        name: SendTime
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 系统短信日志编辑
+      tags:
+      - system_log_sms-系统短信日志
+  /api/admin/system_log_sms/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 场景编号
+        in: query
+        name: Scene
+        type: integer
+      - description: 手机号码
+        in: query
+        name: Mobile
+        type: string
+      - description: 发送内容
+        in: query
+        name: Content
+        type: string
+      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+        in: query
+        name: Status
+        type: integer
+      - description: 短信结果
+        in: query
+        name: Results
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      ' lists':
+                        items:
+                          $ref: '#/definitions/system_log_sms.SystemLogSmsResp'
+                        type: array
+                    type: object
+              type: object
+      summary: 系统短信日志列表
+      tags:
+      - system_log_sms-系统短信日志
+  /api/admin/system_log_sms/listAll:
+    get:
+      parameters:
+      - description: 场景编号
+        in: query
+        name: Scene
+        type: integer
+      - description: 手机号码
+        in: query
+        name: Mobile
+        type: string
+      - description: 发送内容
+        in: query
+        name: Content
+        type: string
+      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+        in: query
+        name: Status
+        type: integer
+      - description: 短信结果
+        in: query
+        name: Results
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/system_log_sms.SystemLogSmsResp'
+                  type: array
+              type: object
+      summary: 系统短信日志列表-所有
+      tags:
+      - system_log_sms-系统短信日志
   /api/article_collect/list:
     get:
       parameters:

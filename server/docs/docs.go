@@ -2143,40 +2143,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_project/listAll": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目列表-所有",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/monitor_web/ExportFile": {
             "get": {
                 "produces": [
@@ -2601,6 +2567,458 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/system_log_sms/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/system_log_sms/ImportFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志导入",
+                "responses": {}
+            }
+        },
+        "/api/admin/system_log_sms/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "Id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "发送时间",
+                        "name": "SendTime",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        " lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志列表-所有",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/article_collect/list": {
             "get": {
                 "produces": [
@@ -2695,6 +3113,28 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "core.NullInt": {
+            "type": "object",
+            "properties": {
+                "int": {
+                    "type": "integer"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "core.NullTime": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "flow_apply.FlowApplyResp": {
             "type": "object",
             "properties": {
@@ -3004,6 +3444,67 @@ const docTemplate = `{
                 "data": {},
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "system_log_sms.SystemLogSmsResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "发送内容",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "id",
+                    "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "results": {
+                    "description": "短信结果",
+                    "type": "string"
+                },
+                "scene": {
+                    "description": "场景编号",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
+                },
+                "sendTime": {
+                    "description": "发送时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
+                },
+                "status": {
+                    "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 }
             }
         }

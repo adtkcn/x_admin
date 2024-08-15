@@ -8,7 +8,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
-	"x_admin/util/excel"
+	"x_admin/util/excel2"
 	"golang.org/x/sync/singleflight"
 )
 
@@ -26,10 +26,10 @@ type {{{ toUpperCamelCase .ModuleName }}}Handler struct {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ .GoField }}}_start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
-//	@Param {{{ .GoField }}}_end  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
+//	@Param {{{toUpperCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{toUpperCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{toUpperCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -54,10 +54,10 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ .GoField }}}_start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
-//	@Param {{{ .GoField }}}_end  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
+//	@Param {{{toUpperCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{toUpperCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{toUpperCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -78,7 +78,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{toUpperCamelCase .GoField }}}		query		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response{ data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
@@ -103,7 +103,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsInsert }}}
-//	@Param		{{{ .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{toUpperCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
@@ -122,7 +122,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsEdit }}}
-//	@Param		{{{ .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{toUpperCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
@@ -140,7 +140,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
 //	@Param		Token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{toUpperCamelCase .GoField }}}		body		{{{ .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
@@ -155,6 +155,8 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 
 
 
+
+
 //	@Summary	{{{ .FunctionName }}}导出
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //	@Produce	json
@@ -162,10 +164,10 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ .GoField }}}_start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
-//	@Param {{{ .GoField }}}_end  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
+//	@Param {{{toUpperCamelCase .GoField }}}Start  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{toUpperCamelCase .GoField }}}End  query {{{ .GoType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{toUpperCamelCase .GoField }}} query {{{ .GoType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -180,12 +182,12 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Contex
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel.NormalDynamicExport(res, "Sheet1", "{{{ .FunctionName }}}", nil)
+	f, err := excel2.Export(res,{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
 	}
-	excel.DownLoadExcel("{{{ .FunctionName }}}" + time.Now().Format("20060102-150405"), c.Writer, f)
+	excel2.DownLoadExcel("{{{ .FunctionName }}}" + time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 //  @Summary	{{{ .FunctionName }}}导入
@@ -200,7 +202,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Contex
 	}
 	defer file.Close()
 	importList := []{{{ toUpperCamelCase .EntityName }}}Resp{}
-	err = excel.GetExcelData(file, &importList)
+	err = excel2.GetExcelData(file, &importList,{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return

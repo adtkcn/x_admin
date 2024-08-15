@@ -2,12 +2,15 @@
     <div>
         <template v-for="(item, index) in getOptions" :key="index">
             <span :style="{ color: item.color }"
-                >{{ index != 0 ? '、' : '' }}{{ item[props.valueKey] }}</span
+                >{{ index != 0 ? '、' : '' }}{{ item[props.labelKey] }}</span
             >
         </template>
     </div>
 </template>
 <script lang="ts" setup>
+defineOptions({
+    name: 'dict-value'
+})
 const props = withDefaults(
     defineProps<{
         options: any[]

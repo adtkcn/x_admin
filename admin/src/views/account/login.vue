@@ -190,7 +190,8 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .login {
-    background-image: url('./images/login_bg.png');
+    // background-image: url('./images/login_bg.png');
+    background-color: #f8f8f8;
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;

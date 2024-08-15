@@ -18,8 +18,8 @@ type MonitorWeb struct {
 
 	Stack string `gorm:"comment:'错误堆栈'"` // 错误堆栈
 
-	ClientTime core.TsTime `gorm:"comment:'客户端时间'"` // 客户端时间
+	ClientTime core.NullTime `gorm:"comment:'客户端时间'"` // 客户端时间
 
-	CreateTime core.TsTime `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
+	CreateTime core.NullTime `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
 
 }

@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"strings"
 	"x_admin/config"
-	"x_admin/core"
 	"x_admin/model/gen_model"
 	"x_admin/util"
 
@@ -70,8 +69,8 @@ func (gu genUtil) InitTable(table gen_model.GenTable) gen_model.GenTable {
 		EntityName:   gu.ToClassName(table.TableName),
 		ModuleName:   gu.ToModuleName(table.TableName),
 		FunctionName: strings.Replace(table.TableComment, "表", "", -1),
-		CreateTime:   core.NowTime(),
-		UpdateTime:   core.NowTime(),
+		CreateTime:   util.NullTimeUtil.Now(),
+		UpdateTime:   util.NullTimeUtil.Now(),
 	}
 }
 
@@ -92,8 +91,8 @@ func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_
 		IsPk:          column.IsPk,
 		IsIncrement:   column.IsIncrement,
 		IsRequired:    column.IsRequired,
-		CreateTime:    core.NowTime(),
-		UpdateTime:    core.NowTime(),
+		CreateTime:    util.NullTimeUtil.Now(),
+		UpdateTime:    util.NullTimeUtil.Now(),
 	}
 	if util.ToolsUtil.Contains(append(SqlConstants.ColumnTypeStr, SqlConstants.ColumnTypeText...), columnType) {
 		//文本域组
@@ -234,7 +233,7 @@ func (gu genUtil) GoToTsType(s string) string {
 		return "number[]"
 	} else if s == "[]float" {
 		return "number[]"
-	} else if s == "core.TsTime" {
+	} else if s == "core.NullTime" {
 		return "string"
 	}
 	return "string"
@@ -264,7 +263,7 @@ func (gu genUtil) GoToNullType(s string) string {
 
 // 拼接字符串
 func (gu genUtil) GetPageResp(s string) string {
-	return `response.Response{ data=response.PageResp{ lists= []` + s + `Resp}}`
+	return `response.Response{ data=response.PageResp{ lists=[]` + s + `Resp}}`
 }
 
 // NameToPath 下划线文件路径

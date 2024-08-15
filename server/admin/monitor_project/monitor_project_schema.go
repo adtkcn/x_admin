@@ -40,10 +40,10 @@ type MonitorProjectDelReq struct {
 
 //MonitorProjectResp 错误项目返回信息
 type MonitorProjectResp struct {
-	Id          int         `json:"id" structs:"id" excel:"name:项目id;"`                                         // 项目id
-	ProjectKey  string      `json:"projectKey" structs:"projectKey" excel:"name:项目uuid;"`                       // 项目uuid
-	ProjectName string      `json:"projectName" structs:"projectName" excel:"name:项目名称;"`                       // 项目名称
-	ProjectType string      `json:"projectType" structs:"projectType" excel:"name:项目类型go java web node php 等;"` // 项目类型go java web node php 等
-	UpdateTime  core.TsTime `json:"updateTime" structs:"updateTime" excel:"name:更新时间;"`                         // 更新时间
-	CreateTime  core.TsTime `json:"createTime" structs:"createTime" excel:"name:创建时间;"`                         // 创建时间
+	Id          int           `json:"id" structs:"id" excel:"name:项目id;"`                                         // 项目id
+	ProjectKey  string        `json:"projectKey" structs:"projectKey" excel:"name:项目uuid;"`                       // 项目uuid
+	ProjectName string        `json:"projectName" structs:"projectName" excel:"name:项目名称;"`                       // 项目名称
+	ProjectType string        `json:"projectType" structs:"projectType" excel:"name:项目类型go java web node php 等;"` // 项目类型go java web node php 等
+	UpdateTime  core.NullTime `json:"updateTime" structs:"updateTime" excel:"name:更新时间;"`                         // 更新时间
+	CreateTime  core.NullTime `json:"createTime" structs:"createTime" excel:"name:创建时间;"`                         // 创建时间
 }
