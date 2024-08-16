@@ -27,10 +27,20 @@ func (t nullTimeUtil) EncodeTime(value any) any {
 	var str = ""
 	switch v := value.(type) {
 	case map[string]interface{}:
-		tt := v["Time"]
+		val := v["Time"]
+		switch tt := val.(type) {
+		case *string:
+			ttt, _ := t.Parse(*tt)
+			str = ttt.String()
+		case *time.Time:
+			if tt != nil {
+				ttt, _ := t.Parse(*tt)
+				str = ttt.String()
+			} else {
+				str = ""
+			}
+		}
 
-		ttt, _ := t.Parse(tt)
-		str = ttt.String()
 	}
 	return str
 }

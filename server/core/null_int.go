@@ -17,7 +17,18 @@ func EncodeInt(value any) any {
 	switch v := value.(type) {
 	case map[string]any:
 		if v["Int"] != nil {
-			return v["Int"]
+			val := v["Int"]
+			switch i := val.(type) {
+			case *int:
+				return *i
+			case *int64:
+				return *i
+			case *string:
+				return *i
+			default:
+				return ""
+			}
+			// return val
 		}
 	}
 	return ""
