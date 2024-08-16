@@ -3,39 +3,39 @@ import type { Pages } from '@/utils/request'
 import { clearObjEmpty } from "@/utils/utils";
 
 export type type_system_log_sms = {
-    id?: number;
-    scene?: number;
-    mobile?: string;
-    content?: string;
-    status?: number;
-    results?: string;
-    send_time?: string;
-    create_time?: string;
-    update_time?: string;
+    Id?: number;
+    Scene?: number;
+    Mobile?: string;
+    Content?: string;
+    Status?: number;
+    Results?: string;
+    SendTime?: string;
+    CreateTime?: string;
+    UpdateTime?: string;
 }
 // 查询
 export type type_system_log_sms_query = {
-    scene?: number;
-    mobile?: string;
-    content?: string;
-    status?: number;
-    results?: string;
-    send_time_start?: string;
-    send_timeEnd?: string;
-    create_time_start?: string;
-    create_timeEnd?: string;
-    update_time_start?: string;
-    update_timeEnd?: string;
+    Scene?: number;
+    Mobile?: string;
+    Content?: string;
+    Status?: number;
+    Results?: string;
+    SendTimeStart?: string;
+    SendTimeEnd?: string;
+    CreateTimeStart?: string;
+    CreateTimeEnd?: string;
+    UpdateTimeStart?: string;
+    UpdateTimeEnd?: string;
 }
 // 添加编辑
 export type type_system_log_sms_edit = {
-    id?: number;
-    scene?: number;
-    mobile?: string;
-    content?: string;
-    status?: number;
-    results?: string;
-    send_time?: string;
+    Id?: number;
+    Scene?: number;
+    Mobile?: string;
+    Content?: string;
+    Status?: number;
+    Results?: string;
+    SendTime?: string;
 }
 
 
@@ -57,11 +57,11 @@ export function system_log_sms_list_all(params?: type_system_log_sms_query) {
 }
 
 // 系统短信日志详情
-export function system_log_sms_detail(id: number | string) {
+export function system_log_sms_detail(Id: number | string) {
     return request<type_system_log_sms>({
 		url: '/system_log_sms/detail',
 		method: 'GET',
-		data:  { id }
+		data:  { Id }
 	})
 }
 
@@ -84,12 +84,12 @@ export function system_log_sms_edit(data: type_system_log_sms_edit) {
 }
 
 // 系统短信日志删除
-export function system_log_sms_delete(id: number | string) {
+export function system_log_sms_delete(Id: number | string) {
     return request<null>({
         url: '/system_log_sms/del',
         method: "POST",
         data:{
-             id 
+             Id 
         },
     });
 }

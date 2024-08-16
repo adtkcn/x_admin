@@ -196,14 +196,15 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
 func (service {{{ toCamelCase .EntityName }}}Service) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
 	{{{- range .Columns }}}
+	{{{- if and (.IsList) (not .IsPk) }}}
 		{{{- if eq .HtmlType "datetime" }}}
 		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15,Encode: util.NullTimeUtil.EncodeTime, Decode: util.NullTimeUtil.DecodeTime },
 		{{{- else if eq .GoType "int" }}}
 			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15,Encode: core.EncodeInt, Decode: core.DecodeInt},
 		{{{- else }}}
 		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15},
-
 		{{{- end }}}
+	{{{- end }}}
 	{{{- end }}}
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出

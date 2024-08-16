@@ -10,11 +10,8 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="id" prop="Id">
-                    <el-input v-model="formData.Id" type="number" placeholder="请输入id" />
-                </el-form-item>
                 <el-form-item label="场景编号" prop="Scene">
-                    <el-input v-model="formData.Scene" placeholder="请输入场景编号" />
+                    <el-input v-model="formData.Scene" type="number" placeholder="请输入场景编号" />
                 </el-form-item>
                 <el-form-item label="手机号码" prop="Mobile">
                     <el-input v-model="formData.Mobile" placeholder="请输入手机号码" />
@@ -23,20 +20,12 @@
                     <editor v-model="formData.Content" :height="500" />
                 </el-form-item>
                 <el-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="Status">
-                    <el-select
-                        class="flex-1"
+                    <el-radio-group
                         v-model="formData.Status"
                         placeholder="请选择发送状态：[0=发送中, 1=发送成功, 2=发送失败]"
                     >
-                        <el-option
-                            v-for="(item, index) in dictData.flow_apply_status"
-                            :key="index"
-                            :label="item.name"
-                            :value="parseInt(item.value)"
-                            clearable
-                            :disabled="!item.status"
-                        />
-                    </el-select>
+                        <el-radio label="0">请选择字典生成</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="短信结果" prop="Results">
                     <el-input
@@ -99,55 +88,55 @@ const formData = reactive({
 })
 
 const formRules = {
-    // Id: [
-    //     {
-    //         required: true,
-    //         message: '请输入id',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // Scene: [
-    //     {
-    //         required: true,
-    //         message: '请输入场景编号',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // Mobile: [
-    //     {
-    //         required: true,
-    //         message: '请输入手机号码',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // Content: [
-    //     {
-    //         required: true,
-    //         message: '请输入发送内容',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // Status: [
-    //     {
-    //         required: true,
-    //         message: '请选择发送状态：[0=发送中, 1=发送成功, 2=发送失败]',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // Results: [
-    //     {
-    //         required: true,
-    //         message: '请输入短信结果',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // SendTime: [
-    //     {
-    //         required: true,
-    //         message: '请选择发送时间',
-    //         trigger: ['blur']
-    //     }
-    // ]
+    Id: [
+        {
+            required: true,
+            message: '请输入id',
+            trigger: ['blur']
+        }
+    ],
+    Scene: [
+        {
+            required: true,
+            message: '请输入场景编号',
+            trigger: ['blur']
+        }
+    ],
+    Mobile: [
+        {
+            required: true,
+            message: '请输入手机号码',
+            trigger: ['blur']
+        }
+    ],
+    Content: [
+        {
+            required: true,
+            message: '请输入发送内容',
+            trigger: ['blur']
+        }
+    ],
+    Status: [
+        {
+            required: true,
+            message: '请选择发送状态：[0=发送中, 1=发送成功, 2=发送失败]',
+            trigger: ['blur']
+        }
+    ],
+    Results: [
+        {
+            required: true,
+            message: '请输入短信结果',
+            trigger: ['blur']
+        }
+    ],
+    SendTime: [
+        {
+            required: true,
+            message: '请选择发送时间',
+            trigger: ['blur']
+        }
+    ]
 }
 
 const handleSubmit = async () => {

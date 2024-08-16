@@ -24,12 +24,12 @@ export type type_system_log_sms_query = {
     Content?: string
     Status?: number
     Results?: string
-    SendTime_start?: string
-    SendTime_end?: string
-    CreateTime_start?: string
-    CreateTime_end?: string
-    UpdateTime_start?: string
-    UpdateTime_end?: string
+    SendTimeStart?: string
+    SendTimeEnd?: string
+    CreateTimeStart?: string
+    CreateTimeEnd?: string
+    UpdateTimeStart?: string
+    UpdateTimeEnd?: string
 }
 // 添加编辑
 export type type_system_log_sms_edit = {
@@ -58,8 +58,8 @@ export function system_log_sms_list_all(params?: type_system_log_sms_query) {
 }
 
 // 系统短信日志详情
-export function system_log_sms_detail(id: number | string) {
-    return request.get<type_system_log_sms>({ url: '/system_log_sms/detail', params: { id } })
+export function system_log_sms_detail(Id: number | string) {
+    return request.get<type_system_log_sms>({ url: '/system_log_sms/detail', params: { Id } })
 }
 
 // 系统短信日志新增
@@ -69,16 +69,12 @@ export function system_log_sms_add(data: type_system_log_sms_edit) {
 
 // 系统短信日志编辑
 export function system_log_sms_edit(data: type_system_log_sms_edit) {
-    return request.post<null>({
-        url: '/system_log_sms/edit',
-        data: data
-        // data: clearEmpty(data)
-    })
+    return request.post<null>({ url: '/system_log_sms/edit', data })
 }
 
 // 系统短信日志删除
-export function system_log_sms_delete(id: number | string) {
-    return request.post<null>({ url: '/system_log_sms/del', data: { id } })
+export function system_log_sms_delete(Id: number | string) {
+    return request.post<null>({ url: '/system_log_sms/del', data: { Id } })
 }
 
 // 系统短信日志导入

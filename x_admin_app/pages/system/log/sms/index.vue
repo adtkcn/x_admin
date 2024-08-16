@@ -20,11 +20,11 @@
   <uv-list>
     <uv-list-item
       v-for="item of pager.lists"
-      :key="item.id"
+      :key="item.Id"
       clickable
       show-arrow
-      :title="item.id"
-      :right-text="item.id"
+      :title="item.Id"
+      :right-text="item.Id"
       @click="toDetails(item)"
     ></uv-list-item>
   </uv-list>
@@ -69,17 +69,17 @@ import type { type_system_log_sms,type_system_log_sms_query	} from "@/api/system
 import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";
 const queryParams = reactive<type_system_log_sms_query>({
-    scene: '',
-    mobile: '',
-    content: '',
-    status: '',
-    results: '',
-    send_time_start: '',
-    send_time_end: '',
-    create_time_start: '',
-    create_time_end: '',
-    update_time_start: '',
-    update_time_end: '',
+    Scene: '',
+    Mobile: '',
+    Content: '',
+    Status: '',
+    Results: '',
+    SendTimeStart: '',
+    SendTimeEnd: '',
+    CreateTimeStart: '',
+    CreateTimeEnd: '',
+    UpdateTimeStart: '',
+    UpdateTimeEnd: '',
 });
 let activeFab = ref(false);
 let fromSearch=ref(false);
@@ -111,7 +111,7 @@ onReachBottom(() => {
 });
 
 function toDetails(item) {
-  toPath("/pages/system/log/sms/details", { id: item.id });
+  toPath("/pages/system/log/sms/details", { Id: item.Id });
 }
 function moreSearch() {
   toPath("/pages/system/log/sms/search");

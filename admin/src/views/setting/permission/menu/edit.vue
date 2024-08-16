@@ -200,7 +200,7 @@ import { getModulesKey } from '@/router'
 import { MenuEnum } from '@/enums/appEnums'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
-import { arrayToTree, treeToArray } from '@/utils/util'
+import { arrayToTree } from '@/utils/util'
 
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
@@ -287,9 +287,7 @@ const menuOptions = ref<any[]>([])
 const getMenu = async () => {
     const data: any = await menuLists()
     const menu: any = { id: 0, menuName: '顶级', children: [] }
-    menu.children = arrayToTree(
-        treeToArray(data).filter((item) => item.menuType != MenuEnum.BUTTON)
-    )
+    menu.children = arrayToTree(data.filter((item) => item.menuType != MenuEnum.BUTTON))
     menuOptions.value.push(menu)
 }
 function getApiListFn() {

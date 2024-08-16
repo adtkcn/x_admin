@@ -26,12 +26,12 @@ func EncodeInt(value any) any {
 			case *string:
 				return *i
 			default:
-				return ""
+				return nil
 			}
 			// return val
 		}
 	}
-	return ""
+	return nil
 }
 func DecodeInt(value any) (any, error) {
 	switch v := value.(type) {

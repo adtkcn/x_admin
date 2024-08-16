@@ -42,23 +42,23 @@ type SystemLogSmsEditReq struct {
 
 // SystemLogSmsDetailReq 系统短信日志详情参数
 type SystemLogSmsDetailReq struct {
-	Id int `form:"id"` // id
+	Id int `` // id
 }
 
 // SystemLogSmsDelReq 系统短信日志删除参数
 type SystemLogSmsDelReq struct {
-	Id int `form:"id"` // id
+	Id int `` // id
 }
 
 // SystemLogSmsResp 系统短信日志返回信息
 type SystemLogSmsResp struct {
-	Id         int           // id
-	Scene      core.NullInt  // 场景编号
-	Mobile     string        // 手机号码
-	Content    string        // 发送内容
-	Status     core.NullInt  // 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
-	Results    string        // 短信结果
-	SendTime   core.NullTime // 发送时间
-	CreateTime core.NullTime // 创建时间
-	UpdateTime core.NullTime // 更新时间
+	Id         int           `` // id
+	Scene      core.NullInt  `` // 场景编号
+	Mobile     string        `` // 手机号码
+	Content    string        `` // 发送内容
+	Status     core.NullInt  `` // 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+	Results    string        `` // 短信结果
+	SendTime   core.NullTime `` // 发送时间
+	CreateTime core.NullTime `` // 创建时间
+	UpdateTime core.NullTime `` // 更新时间
 }

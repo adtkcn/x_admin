@@ -8,24 +8,23 @@ import (
 	"x_admin/model/system_model"
 	"x_admin/util"
 
-	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-type ISystemAuthMenuService interface {
-	SelectMenuByRoleId(c *gin.Context, roleId uint) (mapList []interface{}, e error)
-	List() (res []interface{}, e error)
-	Detail(id uint) (res SystemAuthMenuResp, e error)
-	Add(addReq SystemAuthMenuAddReq) (e error)
-	Edit(editReq SystemAuthMenuEditReq) (e error)
-	Del(id uint) (e error)
-}
+// type ISystemAuthMenuService interface {
+// 	SelectMenuByRoleId(c *gin.Context, roleId uint) (mapList []interface{}, e error)
+// 	List() (res []interface{}, e error)
+// 	Detail(id uint) (res SystemAuthMenuResp, e error)
+// 	Add(addReq SystemAuthMenuAddReq) (e error)
+// 	Edit(editReq SystemAuthMenuEditReq) (e error)
+// 	Del(id uint) (e error)
+// }
 
 var Service = NewSystemAuthMenuService()
 
 // NewSystemAuthMenuService 初始化
-func NewSystemAuthMenuService() ISystemAuthMenuService {
+func NewSystemAuthMenuService() *systemAuthMenuService {
 	db := core.GetDB()
 	return &systemAuthMenuService{db: db}
 }
@@ -65,7 +64,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 }
 
 // List 菜单列表
-func (menuSrv systemAuthMenuService) List() (res []interface{}, e error) {
+func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 	var menus []system_model.SystemAuthMenu
 	err := menuSrv.db.Order("menu_sort desc, id").Find(&menus).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
@@ -73,8 +72,9 @@ func (menuSrv systemAuthMenuService) List() (res []interface{}, e error) {
 	}
 	var menuResps []SystemAuthMenuResp
 	util.ConvertUtil.Copy(&menuResps, menus)
-	return util.ArrayUtil.ListToTree(
-		util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children"), nil
+	return menuResps, nil
+	// return util.ArrayUtil.ListToTree(
+	// 	util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children"), nil
 }
 
 // Detail 菜单详情
@@ -112,7 +112,8 @@ func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e erro
 		return
 	}
 	util.ConvertUtil.Copy(&menu, editReq)
-	err = menuSrv.db.Model(&menu).Updates(structs.Map(menu)).Error
+	// info := structs.Map(menu)
+	err = menuSrv.db.Model(&menu).Select("*").Updates(menu).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}

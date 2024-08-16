@@ -134,8 +134,6 @@ func (service systemLogSmsService) Detail(Id int) (res SystemLogSmsResp, e error
 // Add 系统短信日志新增
 func (service systemLogSmsService) Add(addReq SystemLogSmsAddReq) (createId int, e error) {
 	var obj model.SystemLogSms
-	// util.ConvertUtil.Copy(&obj, addReq)
-
 	util.ConvertUtil.StructToStruct(addReq, &obj)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
@@ -144,7 +142,6 @@ func (service systemLogSmsService) Add(addReq SystemLogSmsAddReq) (createId int,
 	}
 	cacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
-	e = response.CheckErr(err, "添加失败")
 	return
 }
 
@@ -159,7 +156,6 @@ func (service systemLogSmsService) Edit(editReq SystemLogSmsEditReq) (e error) {
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-
 	util.ConvertUtil.Copy(&obj, editReq)
 
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
@@ -192,7 +188,6 @@ func (service systemLogSmsService) Del(Id int) (e error) {
 // 获取Excel的列
 func (service systemLogSmsService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-
 		{Name: "场景编号", Key: "Scene", Width: 15, Encode: core.EncodeInt, Decode: core.DecodeInt},
 		{Name: "手机号码", Key: "Mobile", Width: 15},
 		{Name: "发送内容", Key: "Content", Width: 15},

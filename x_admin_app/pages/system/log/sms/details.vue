@@ -1,29 +1,29 @@
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" :model="form">
-            <uv-form-item label="场景编号" prop="scene" borderBottom>
-                    {{form.scene}}
+            <uv-form-item label="场景编号" prop="Scene" borderBottom>
+                    {{form.Scene}}
             </uv-form-item>
-            <uv-form-item label="手机号码" prop="mobile" borderBottom>
-                    {{form.mobile}}
+            <uv-form-item label="手机号码" prop="Mobile" borderBottom>
+                    {{form.Mobile}}
             </uv-form-item>
-            <uv-form-item label="发送内容" prop="content" borderBottom>
-                    {{form.content}}
+            <uv-form-item label="发送内容" prop="Content" borderBottom>
+                    {{form.Content}}
             </uv-form-item>
-            <uv-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="status" borderBottom>
-                    <dict-value :options="dictData.flow_apply_status" :value="row.status" />
+            <uv-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="Status" borderBottom>
+                    {{form.Status}}
             </uv-form-item>
-            <uv-form-item label="短信结果" prop="results" borderBottom>
-                    {{form.results}}
+            <uv-form-item label="短信结果" prop="Results" borderBottom>
+                    {{form.Results}}
             </uv-form-item>
-            <uv-form-item label="发送时间" prop="send_time" borderBottom>
-                    {{form.send_time}}
+            <uv-form-item label="发送时间" prop="SendTime" borderBottom>
+                    {{form.SendTime}}
             </uv-form-item>
-            <uv-form-item label="创建时间" prop="create_time" borderBottom>
-                    {{form.create_time}}
+            <uv-form-item label="创建时间" prop="CreateTime" borderBottom>
+                    {{form.CreateTime}}
             </uv-form-item>
-            <uv-form-item label="更新时间" prop="update_time" borderBottom>
-                    {{form.update_time}}
+            <uv-form-item label="更新时间" prop="UpdateTime" borderBottom>
+                    {{form.UpdateTime}}
             </uv-form-item>
 		</uv-form>
         <uv-button
@@ -51,20 +51,16 @@
 	} from "@/utils/utils";
 
 	let form = ref({
-		id: "",
-		scene: "",
-		mobile: "",
-		content: "",
-		status: "",
-		results: "",
-		send_time: "",
-		create_time: "",
-		update_time: "",
+		Id: "",
+		Scene: "",
+		Mobile: "",
+		Content: "",
+		Status: "",
+		Results: "",
+		SendTime: "",
+		CreateTime: "",
+		UpdateTime: "",
 	});
-const { dictData } = useDictData<
-{
-    flow_apply_status: any[]
-}>(['flow_apply_status'])
 
 	onLoad((e) => {
 		console.log("onLoad", e);

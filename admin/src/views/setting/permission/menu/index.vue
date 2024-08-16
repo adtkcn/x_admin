@@ -99,6 +99,7 @@
 </template>
 <script lang="ts" setup>
 import { menuDelete, menuLists } from '@/api/perms/menu'
+import { arrayToTree } from '@/utils/util'
 import type { ElTable } from 'element-plus'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
@@ -119,9 +120,10 @@ const getLists = async () => {
     try {
         const data = await menuLists()
 
-        lists.value = data.map((item: any) => {
-            return item
-        })
+        lists.value = arrayToTree(data)
+        //  .map((item: any) => {
+        // return item
+        // })
         loading.value = false
     } catch (error) {
         loading.value = false

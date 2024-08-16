@@ -1,25 +1,25 @@
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" :model="form" :rules="formRules" ref="formRef">			
-			<uv-form-item label="id" prop="id" borderBottom>
-					<uv-number-box v-model="form.id" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+			<uv-form-item label="id" prop="Id" borderBottom>
+					<uv-number-box v-model="form.Id" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 			</uv-form-item>			
-			<uv-form-item label="场景编号" prop="scene" borderBottom>
-					<uv-number-box v-model="form.scene" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+			<uv-form-item label="场景编号" prop="Scene" borderBottom>
+					<uv-number-box v-model="form.Scene" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 			</uv-form-item>			
-			<uv-form-item label="手机号码" prop="mobile" borderBottom>
-					<uv-input v-model="form.mobile" border="surround"></uv-input>
+			<uv-form-item label="手机号码" prop="Mobile" borderBottom>
+					<uv-input v-model="form.Mobile" border="surround"></uv-input>
 			</uv-form-item>			
-			<uv-form-item label="发送内容" prop="content" borderBottom>
+			<uv-form-item label="发送内容" prop="Content" borderBottom>
 			</uv-form-item>			
-			<uv-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="status" borderBottom>
-						<x-picker v-model="form.status" valueKey="value" labelKey="name" :columns="dictData.flow_apply_status"></x-picker>
+			<uv-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="Status" borderBottom>
+						请选择字典生成代码
 			</uv-form-item>			
-			<uv-form-item label="短信结果" prop="results" borderBottom>
-					<uv-textarea v-model="form.results" border="surround"></uv-textarea>
+			<uv-form-item label="短信结果" prop="Results" borderBottom>
+					<uv-textarea v-model="form.Results" border="surround"></uv-textarea>
 			</uv-form-item>			
-			<uv-form-item label="发送时间" prop="send_time" borderBottom>
-					<x-date v-model:time="form.send_time"></x-date>
+			<uv-form-item label="发送时间" prop="SendTime" borderBottom>
+					<x-date v-model:time="form.SendTime"></x-date>
 			</uv-form-item>
 
 			<uv-button   type="primary" text="提交" customStyle="margin: 40rpx 0"
@@ -51,58 +51,58 @@
 
 	let formRef = ref();
 	let form = ref<type_system_log_sms_edit>({
-    id: '',
-    scene: 0,
-    mobile: '',
-    content: '',
-    status: '',
-    results: '',
-    send_time: '',
+    Id: 0,
+    Scene: 0,
+    Mobile: '',
+    Content: '',
+    Status: '',
+    Results: '',
+    SendTime: '',
 	});
 	const formRules = {
-		id: [
+		Id: [
 			{
 				required: true,
 				message: '请输入id',
 				trigger: ['blur']
 			}
 		],
-		scene: [
+		Scene: [
 			{
 				required: true,
 				message: '请输入场景编号',
 				trigger: ['blur']
 			}
 		],
-		mobile: [
+		Mobile: [
 			{
 				required: true,
 				message: '请输入手机号码',
 				trigger: ['blur']
 			}
 		],
-		content: [
+		Content: [
 			{
 				required: true,
 				message: '请输入发送内容',
 				trigger: ['blur']
 			}
 		],
-		status: [
+		Status: [
 			{
 				required: true,
 				message: '请选择发送状态：[0=发送中, 1=发送成功, 2=发送失败]',
 				trigger: ['blur']
 			}
 		],
-		results: [
+		Results: [
 			{
 				required: true,
 				message: '请输入短信结果',
 				trigger: ['blur']
 			}
 		],
-		send_time: [
+		SendTime: [
 			{
 				required: true,
 				message: '请选择发送时间',
@@ -112,16 +112,13 @@
 	}
 	onLoad((e) => {
 		console.log("onLoad", e);
-		if (e.id) {
-			getDetails(e.id);
+		if (e.Id) {
+			getDetails(e.Id);
 		}
 	});
-	const { dictData } = useDictData<{
-    flow_apply_status: type_dict[]
-}>(['flow_apply_status'])
 
-	function getDetails(id) {
-		system_log_sms_detail(id).then((res) => {
+	function getDetails(Id) {
+		system_log_sms_detail(Id).then((res) => {
             if (res.code == 200) {
                 if (res?.data) {
                     form.value = res?.data
@@ -138,11 +135,11 @@
 	function submit() {
 		console.log("submit", form.value);
 		formRef.value.validate().then(() => {
-			if (form.value.id) {
+			if (form.value.Id) {
 				system_log_sms_edit(form.value).then((res) => {
 					if (res.code == 200) {
 						toast("编辑成功");				
-						getDetails(form.value?.id);
+						getDetails(form.value?.Id);
 					} else {
 						toast(res.message);
 					}
