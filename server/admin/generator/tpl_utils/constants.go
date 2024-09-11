@@ -28,6 +28,11 @@ var SqlConstants = sqlConstants{
 	ColumnTypeTime: []string{"datetime", "time", "date", "timestamp"},
 	//数据库数字类型
 	ColumnTypeNumber: []string{"tinyint", "smallint", "mediumint", "int", "integer", "bit", "bigint", "float", "double", "decimal"},
+	// int类型
+	ColumnTypeInt: []string{"tinyint", "smallint", "mediumint", "int", "integer", "bit", "bigint"},
+	// float类型
+	ColumnTypeFloat: []string{"float", "double", "decimal"},
+
 	//时间日期字段名
 	ColumnTimeName: []string{"create_time", "update_time", "delete_time", "start_time", "end_time", "client_time"},
 	//页面不需要插入字段
@@ -70,10 +75,14 @@ type goConstants struct {
 }
 
 type sqlConstants struct {
-	ColumnTypeStr      []string
-	ColumnTypeText     []string
-	ColumnTypeTime     []string
-	ColumnTypeNumber   []string
+	ColumnTypeStr    []string
+	ColumnTypeText   []string
+	ColumnTypeTime   []string
+	ColumnTypeNumber []string
+
+	ColumnTypeInt   []string
+	ColumnTypeFloat []string
+
 	ColumnTimeName     []string
 	ColumnNameNotAdd   []string
 	ColumnNameNotEdit  []string

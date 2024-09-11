@@ -148,8 +148,8 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{ .ModuleName }}}'
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{ .ModuleName }}}";
+import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{nameToPath .ModuleName }}}'
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'

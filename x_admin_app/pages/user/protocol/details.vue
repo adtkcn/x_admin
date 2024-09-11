@@ -1,23 +1,14 @@
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" :model="form">
-            <uv-form-item label="场景编号" prop="Scene" borderBottom>
-                    {{form.Scene}}
+            <uv-form-item label="标题" prop="Title" borderBottom>
+                    {{form.Title}}
             </uv-form-item>
-            <uv-form-item label="手机号码" prop="Mobile" borderBottom>
-                    {{form.Mobile}}
-            </uv-form-item>
-            <uv-form-item label="发送内容" prop="Content" borderBottom>
+            <uv-form-item label="协议内容" prop="Content" borderBottom>
                     {{form.Content}}
             </uv-form-item>
-            <uv-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="Status" borderBottom>
-                    {{form.Status}}
-            </uv-form-item>
-            <uv-form-item label="短信结果" prop="Results" borderBottom>
-                    {{form.Results}}
-            </uv-form-item>
-            <uv-form-item label="发送时间" prop="SendTime" borderBottom>
-                    {{form.SendTime}}
+            <uv-form-item label="排序" prop="Sort" borderBottom>
+                    {{form.Sort}}
             </uv-form-item>
             <uv-form-item label="创建时间" prop="CreateTime" borderBottom>
                     {{form.CreateTime}}
@@ -27,7 +18,7 @@
             </uv-form-item>
 		</uv-form>
         <uv-button
-            v-if="$perms('admin:system_log_sms:edit')"
+            v-if="$perms('admin:user_protocol:edit')"
             type="primary"
             text="编辑"
             customStyle="margin: 40rpx 0"
@@ -41,7 +32,7 @@
 	import {ref} from "vue";
 	import { onLoad,onShow } from "@dcloudio/uni-app";
 	import { useDictData,useListAllData } from "@/hooks/useDictOptions";
-	import { system_log_sms_detail } from "@/api/system_log_sms";
+	import { user_protocol_detail } from "@/api/user/protocol";
 
 
 	import {
@@ -52,12 +43,9 @@
 
 	let form = ref({
 		Id: "",
-		Scene: "",
-		Mobile: "",
+		Title: "",
 		Content: "",
-		Status: "",
-		Results: "",
-		SendTime: "",
+		Sort: "",
 		CreateTime: "",
 		UpdateTime: "",
 	});
@@ -75,7 +63,7 @@
 		getDetails(form.value.id);
 	});
 	function getDetails(id: number | string) {
-		system_log_sms_detail(id).then((res) => {
+		user_protocol_detail(id).then((res) => {
 			uni.stopPullDownRefresh();
             if (res.code == 200) {
                 if (res?.data) {
@@ -92,7 +80,7 @@
 	}
 
 	function edit() {
-		toPath("/pages/system/log/sms/edit", { id: form.value.id });
+		toPath("/pages/user/protocol/edit", { id: form.value.id });
 	}
 </script>
 

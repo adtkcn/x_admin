@@ -13,26 +13,32 @@ type NullInt struct {
 	Valid bool
 }
 
-func EncodeInt(value any) any {
-	switch v := value.(type) {
-	case map[string]any:
-		if v["Int"] != nil {
-			val := v["Int"]
-			switch i := val.(type) {
-			case *int:
-				return *i
-			case *int64:
-				return *i
-			case *string:
-				return *i
-			default:
-				return nil
-			}
-			// return val
-		}
-	}
-	return nil
-}
+//	func EncodeInt(value any) any {
+//		switch v := value.(type) {
+//		case NullInt:
+//			if v.Valid {
+//				return *v.Int
+//			} else {
+//				return nil
+//			}
+//		case map[string]any:
+//			if v["Int"] != nil {
+//				val := v["Int"]
+//				switch i := val.(type) {
+//				case *int:
+//					return *i
+//				case *int64:
+//					return *i
+//				case *string:
+//					return *i
+//				default:
+//					return nil
+//				}
+//				// return val
+//			}
+//		}
+//		return nil
+//	}
 func DecodeInt(value any) (any, error) {
 	switch v := value.(type) {
 	case int:

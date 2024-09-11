@@ -13,29 +13,29 @@ type NullFloat struct {
 	Valid bool
 }
 
-func EncodeFloat(value any) any {
-	switch v := value.(type) {
-	case map[string]any:
-		if v["Float"] != nil {
-			val := v["Float"]
-			switch f := val.(type) {
-			case *float32:
-				return float64(*f)
-			case *float64:
-				return *f
-			case *int:
-				return float64(*f)
-			case *int64:
-				return float64(*f)
-			case *string:
-				return *f
-			default:
-				return nil
-			}
-		}
-	}
-	return nil
-}
+// func EncodeFloat(value any) any {
+// 	switch v := value.(type) {
+// 	case map[string]any:
+// 		if v["Float"] != nil {
+// 			val := v["Float"]
+// 			switch f := val.(type) {
+// 			case *float32:
+// 				return float64(*f)
+// 			case *float64:
+// 				return *f
+// 			case *int:
+// 				return float64(*f)
+// 			case *int64:
+// 				return float64(*f)
+// 			case *string:
+// 				return *f
+// 			default:
+// 				return nil
+// 			}
+// 		}
+// 	}
+// 	return nil
+// }
 
 func DecodeFloat(value any) (any, error) {
 	switch v := value.(type) {

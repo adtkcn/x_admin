@@ -15,13 +15,14 @@ const TimeFormat = "2006-01-02 15:04:05"
 
 // NullTime 自定义时间格式
 type NullTime struct {
-	Time  *time.Time
-	Valid bool
+	Time   *time.Time
+	Valid  bool
+	Format string
 }
 
-func (t *NullTime) IsZero() bool {
-	return t.Valid
-}
+//	func (t *NullTime) IsZero() bool {
+//		return t.Valid
+//	}
 func (t *NullTime) UnmarshalJSON(bs []byte) error {
 	var date string
 	err := json.Unmarshal(bs, &date)

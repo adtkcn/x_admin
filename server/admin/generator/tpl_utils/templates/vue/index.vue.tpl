@@ -162,8 +162,8 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{ .ModuleName }}}'
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{ .ModuleName }}}";
+import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{nameToPath .ModuleName }}}'
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 
 import { useDictData,useListAllData } from '@/hooks/useDictOptions'

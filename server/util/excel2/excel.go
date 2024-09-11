@@ -22,6 +22,16 @@ type Col struct {
 	Decode  func(value any) (any, error) //实现类型、值的替换
 }
 
+// 定义编码接口
+type Encode interface {
+	String() string
+}
+
+// // 定义解码接口
+// type Decode interface {
+// 	MarshalJSON() ([]byte, error)
+// }
+
 // 下载
 func DownLoadExcel(fileName string, res http.ResponseWriter, file *excelize.File) {
 	// 设置响应头

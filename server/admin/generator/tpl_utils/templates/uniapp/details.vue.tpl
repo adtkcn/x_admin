@@ -32,7 +32,7 @@
 	import {ref} from "vue";
 	import { onLoad,onShow } from "@dcloudio/uni-app";
 	import { useDictData,useListAllData } from "@/hooks/useDictOptions";
-	import { {{{ .ModuleName }}}_detail } from "@/api/{{{ .ModuleName }}}";
+	import { {{{ .ModuleName }}}_detail } from "@/api/{{{nameToPath .ModuleName }}}";
 
 
 	import {

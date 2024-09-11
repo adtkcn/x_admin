@@ -41,7 +41,7 @@
 		{{{ .ModuleName }}}_edit,
 		{{{ .ModuleName }}}_add
 	} from "@/api/{{{ .ModuleName }}}";
-	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{ .ModuleName }}}";
+	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 	import {
 		toast,

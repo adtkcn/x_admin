@@ -163,7 +163,7 @@
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_lists,{{{ end }}} {{{ .ModuleName }}}_edit, {{{ .ModuleName }}}_add, {{{ .ModuleName }}}_detail } from '@/api/{{{ .ModuleName }}}'
+import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_lists,{{{ end }}} {{{ .ModuleName }}}_edit, {{{ .ModuleName }}}_add, {{{ .ModuleName }}}_detail } from '@/api/{{{nameToPath .ModuleName }}}'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import type { PropType } from 'vue'

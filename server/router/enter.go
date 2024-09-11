@@ -1,8 +1,8 @@
-package routers
+package router
 
 import (
-	"x_admin/admin"
 	"x_admin/admin/common/captcha"
+	"x_admin/router/admin"
 
 	"github.com/gin-gonic/gin"
 )

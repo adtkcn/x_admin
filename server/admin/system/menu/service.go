@@ -73,8 +73,6 @@ func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 	var menuResps []SystemAuthMenuResp
 	util.ConvertUtil.Copy(&menuResps, menus)
 	return menuResps, nil
-	// return util.ArrayUtil.ListToTree(
-	// 	util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children"), nil
 }
 
 // Detail 菜单详情
@@ -112,7 +110,7 @@ func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e erro
 		return
 	}
 	util.ConvertUtil.Copy(&menu, editReq)
-	// info := structs.Map(menu)
+
 	err = menuSrv.db.Model(&menu).Select("*").Updates(menu).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
@@ -128,18 +126,18 @@ func (menuSrv systemAuthMenuService) Del(id uint) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Delete First err"); e != nil {
+	if e = response.CheckErr(err, "查找失败"); e != nil {
 		return
 	}
 	r := menuSrv.db.Where("pid = ?", id).Limit(1).Find(&system_model.SystemAuthMenu{})
 	err = r.Error
-	if e = response.CheckErr(err, "Delete Find by pid err"); e != nil {
+	if e = response.CheckErr(err, "查找子菜单失败"); e != nil {
 		return
 	}
 	if r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("请先删除子菜单再操作！")
 	}
 	err = menuSrv.db.Delete(&menu).Error
-	e = response.CheckErr(err, "Delete Delete err")
+	e = response.CheckErr(err, "删除失败")
 	return
 }

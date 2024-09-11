@@ -63,8 +63,8 @@ import {
   onReachBottom,
   onPageScroll,
 } from "@dcloudio/uni-app";
-import { {{{ .ModuleName }}}_list } from "@/api/{{{ .ModuleName }}}";
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{ .ModuleName }}}";
+import { {{{ .ModuleName }}}_list } from "@/api/{{{nameToPath .ModuleName }}}";
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";

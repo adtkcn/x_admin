@@ -109,14 +109,18 @@ func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_
 		//时间字段
 		col.GoType = GoConstants.TypeDate
 		col.HtmlType = HtmlConstants.HtmlDatetime
-	} else if util.ToolsUtil.Contains(SqlConstants.ColumnTypeNumber, columnType) {
-		//数字字段
+	} else if util.ToolsUtil.Contains(SqlConstants.ColumnTypeInt, columnType) {
+		//int数字字段
 		col.HtmlType = HtmlConstants.HtmlInputNumber
-		if strings.Contains(columnType, ",") {
-			col.GoType = GoConstants.TypeFloat
-		} else {
-			col.GoType = GoConstants.TypeInt
-		}
+
+		col.GoType = GoConstants.TypeInt
+
+	} else if util.ToolsUtil.Contains(SqlConstants.ColumnTypeFloat, columnType) {
+		// float数字字段
+		col.HtmlType = HtmlConstants.HtmlInputNumber
+
+		col.GoType = GoConstants.TypeFloat
+
 	}
 	//非必填字段
 	if util.ToolsUtil.Contains(SqlConstants.ColumnNameNotEdit, col.ColumnName) {
@@ -280,22 +284,22 @@ func (gu genUtil) GoWithRespType(s string) string {
 }
 
 /**
- * @description: Go类型转可为Param类型
+ * @description: Go类型转为Param类型
  */
-func (gu genUtil) GoToParamType(s string) string {
-	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
-		return "int"
-	} else if s == "float" || s == "float32" || s == "float64" {
-		return "float"
-	} else if s == "string" {
-		return "string"
-	} else if s == "bool" {
-		return "bool"
-	} else if s == "core.NullTime" {
-		return "string"
-	}
-	return "string"
-}
+// func (gu genUtil) GoToParamType(s string) string {
+// 	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+// 		return "int"
+// 	} else if s == "float" || s == "float32" || s == "float64" {
+// 		return "float"
+// 	} else if s == "string" {
+// 		return "string"
+// 	} else if s == "bool" {
+// 		return "bool"
+// 	} else if s == "core.NullTime" {
+// 		return "string"
+// 	}
+// 	return "string"
+// }
 
 // 拼接字符串
 func (gu genUtil) GetPageResp(s string) string {

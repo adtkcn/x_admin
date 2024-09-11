@@ -13,7 +13,7 @@ import (
 - 下载并解压压缩包后，直接复制server、admin文件夹到项目根目录即可
 
 2. 注册路由
-请在 admin/entry.go 文件引入{{{ toUpperCamelCase .ModuleName }}}Route注册路由
+请在 router/admin/entry.go 文件引入 {{{ toUpperCamelCase .ModuleName }}}Route 注册路由
 
 3. 后台手动添加菜单和按钮
 admin:{{{ .ModuleName }}}:add
@@ -26,7 +26,7 @@ admin:{{{.ModuleName }}}:ExportFile
 admin:{{{.ModuleName }}}:ImportFile
 
 // 列表-先添加菜单获取菜单id
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'C', '{{{nameToPath .FunctionName }}}', '{{{nameToPath .ModuleName }}}/index', '{{{ .ModuleName }}}/index', 0, 1, 0, now(), now());
+INSERT INTO x_system_auth_menu (pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'C', '{{{ .FunctionName }}}', '{{{nameToPath .ModuleName }}}/index', '{{{nameToPath .ModuleName }}}/index', 0, 1, 0, now(), now());
 按钮-替换pid参数为菜单id
 
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '{{{ .FunctionName }}}添加','admin:{{{ .ModuleName }}}:add', 0, 1, 0, now(), now());

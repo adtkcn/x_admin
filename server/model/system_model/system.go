@@ -39,22 +39,22 @@ type SystemAuthAdmin struct {
 
 // SystemAuthMenu 系统菜单实体
 type SystemAuthMenu struct {
-	ID         uint                  `gorm:"primarykey;comment:'主键'"`
-	Pid        uint                  `gorm:"not null;default:0;comment:'上级菜单'"`
-	MenuType   string                `gorm:"not null;default:'';comment:'权限类型: M=目录，C=菜单，A=按钮''"`
-	MenuName   string                `gorm:"not null;default:'';comment:'菜单名称'"`
-	MenuIcon   string                `gorm:"not null;default:'';comment:'菜单图标'"`
-	MenuSort   uint16                `gorm:"not null;default:0;comment:'菜单排序'"`
-	Perms      string                `gorm:"not null;default:'';comment:'权限标识'"`
-	Paths      string                `gorm:"not null;default:'';comment:'路由地址'"`
-	Component  string                `gorm:"not null;default:'';comment:'前端组件'"`
-	Selected   string                `gorm:"not null;default:'';comment:'选中路径'"`
-	Params     string                `gorm:"not null;default:'';comment:'路由参数'"`
-	IsCache    uint8                 `gorm:"not null;default:0;comment:'是否缓存: 0=否, 1=是''"`
-	IsShow     uint8                 `gorm:"not null;default:1;comment:'是否显示: 0=否, 1=是'"`
-	IsDisable  soft_delete.DeletedAt `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
-	CreateTime core.NullTime         `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime core.NullTime         `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+	ID         uint          `gorm:"primarykey;comment:'主键'"`
+	Pid        uint          `gorm:"not null;default:0;comment:'上级菜单'"`
+	MenuType   string        `gorm:"not null;default:'';comment:'权限类型: M=目录，C=菜单，A=按钮''"`
+	MenuName   string        `gorm:"not null;default:'';comment:'菜单名称'"`
+	MenuIcon   string        `gorm:"not null;default:'';comment:'菜单图标'"`
+	MenuSort   uint16        `gorm:"not null;default:0;comment:'菜单排序'"`
+	Perms      string        `gorm:"not null;default:'';comment:'权限标识'"`
+	Paths      string        `gorm:"not null;default:'';comment:'路由地址'"`
+	Component  string        `gorm:"not null;default:'';comment:'前端组件'"`
+	Selected   string        `gorm:"not null;default:'';comment:'选中路径'"`
+	Params     string        `gorm:"not null;default:'';comment:'路由参数'"`
+	IsCache    uint8         `gorm:"not null;default:0;comment:'是否缓存: 0=否, 1=是''"`
+	IsShow     uint8         `gorm:"not null;default:1;comment:'是否显示: 0=否, 1=是'"`
+	IsDisable  uint8         `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
+	CreateTime core.NullTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime core.NullTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 }
 
 // SystemAuthPerm 系统角色菜单实体

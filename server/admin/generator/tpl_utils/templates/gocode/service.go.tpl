@@ -106,7 +106,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ toUppe
 
 // Detail {{{ .FunctionName }}}详情
 func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKey }}} int) (res {{{ toUpperCamelCase .EntityName }}}Resp, e error) {
-	var obj = model.SystemLogSms{}
+	var obj = model.{{{ toUpperCamelCase .EntityName }}}{}
 	err := cacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
 		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
@@ -180,7 +180,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
     {{{- if contains .AllFields "is_delete" }}}
     obj.IsDelete = 1
 	{{{- if contains .AllFields "delete_time" }}}
-	obj.DeleteTime = core.NowTime()
+	obj.DeleteTime = util.NullTimeUtil.Now()
 	{{{- end }}}
     err = service.db.Save(&obj).Error
     e = response.CheckErr(err, "删除失败")
@@ -198,9 +198,9 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetExcelCol() []excel2.Col
 	{{{- range .Columns }}}
 	{{{- if and (.IsList) (not .IsPk) }}}
 		{{{- if eq .HtmlType "datetime" }}}
-		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15,Encode: util.NullTimeUtil.EncodeTime, Decode: util.NullTimeUtil.DecodeTime },
+		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: util.NullTimeUtil.DecodeTime },
 		{{{- else if eq .GoType "int" }}}
-			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15,Encode: core.EncodeInt, Decode: core.DecodeInt},
+			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeInt},
 		{{{- else }}}
 		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15},
 		{{{- end }}}

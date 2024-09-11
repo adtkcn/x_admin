@@ -1,20 +1,12 @@
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" labelWidth="80" :model="form">
-			<uv-form-item label="场景编号" prop="Scene" borderBottom>
+			<uv-form-item label="标题" prop="Title" borderBottom>
+					<uv-input v-model="form.Title"> </uv-input>
 			</uv-form-item>
-			<uv-form-item label="手机号码" prop="Mobile" borderBottom>
-					<uv-input v-model="form.Mobile"> </uv-input>
+			<uv-form-item label="协议内容" prop="Content" borderBottom>
 			</uv-form-item>
-			<uv-form-item label="发送内容" prop="Content" borderBottom>
-			</uv-form-item>
-			<uv-form-item label="发送状态：[0=发送中, 1=发送成功, 2=发送失败]" prop="Status" borderBottom>
-			</uv-form-item>
-			<uv-form-item label="短信结果" prop="Results" borderBottom>
-			</uv-form-item>
-			<uv-form-item label="发送时间" prop="SendTime" borderBottom>
-					<x-date-range v-model:startTime="form.SendTimeStart"
-							v-model:endTime="form.SendTimeEnd"></x-date-range>
+			<uv-form-item label="排序" prop="Sort" borderBottom>
 			</uv-form-item>
 			<uv-form-item label="创建时间" prop="CreateTime" borderBottom>
 					<x-date-range v-model:startTime="form.CreateTimeStart"
@@ -49,16 +41,12 @@
 		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
 	import xDateRange from "@/components/x-date-range/x-date-range.vue";
-	import type {type_system_log_sms_query} from "@/api/system_log_sms";
+	import type {type_user_protocol_query} from "@/api/user/protocol";
 
-	let form = ref<type_system_log_sms_query>({
-    Scene: null,
-    Mobile: null,
+	let form = ref<type_user_protocol_query>({
+    Title: null,
     Content: null,
-    Status: null,
-    Results: null,
-    SendTimeStart: null,
-    SendTimeEnd: null,
+    Sort: null,
     CreateTimeStart: null,
     CreateTimeEnd: null,
     UpdateTimeStart: null,
@@ -74,7 +62,7 @@
 			return toast("请输入查询条件");
 		}
 
-		toPath("/pages/system/log/sms/index", search);
+		toPath("/pages/user/protocol/index", search);
 	}
 </script>
 

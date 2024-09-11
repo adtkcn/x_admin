@@ -1,6 +1,7 @@
 package util
 
 import (
+	"reflect"
 	"x_admin/core"
 
 	"github.com/fatih/structs"
@@ -13,13 +14,12 @@ var ConvertUtil = convertUtil{}
 // convertUtil 转换工具
 type convertUtil struct{}
 
-// StructToMap 结构体转换成map
+// StructToMap 结构体转换成map,深度转换
 func (c convertUtil) StructToMap(from interface{}) map[string]interface{} {
 	// var m = map[string]interface{}{}
-	// mapstructure.Decode(from, &m) //mapstructure
+	// mapstructure.Decode(from, &m) //深度转换所有结构体
 
-	// m, _ := convertor.StructToMap(from) // 需要tag:json
-	m := structs.Map(from) // 需要tag:structs
+	m := structs.Map(from) // 需要tag:structs，深度转换
 	return m
 }
 
@@ -33,6 +33,35 @@ func (c convertUtil) StructsToMaps(from interface{}) (data []map[string]interfac
 	}
 	for _, v := range objList {
 		data = append(data, c.StructToMap(v))
+	}
+	return data
+}
+
+// ShallowStructToMap 将结构体转换成map,浅转换
+func (c convertUtil) ShallowStructToMap(from interface{}) map[string]interface{} {
+	m := make(map[string]interface{})
+	v := reflect.ValueOf(from)
+	t := v.Type()
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		value := v.Field(i).Interface()
+		m[field.Name] = value
+	}
+
+	return m
+}
+
+// ShallowStructsToMaps 将结构体列表转换成Map列表,浅转换
+func (c convertUtil) ShallowStructsToMaps(from interface{}) (data []map[string]interface{}) {
+	var objList []interface{}
+	err := copier.Copy(&objList, from)
+	if err != nil {
+		core.Logger.Errorf("convertUtil.StructsToMaps err: err=[%+v]", err)
+		return nil
+	}
+	for _, v := range objList {
+		data = append(data, c.ShallowStructToMap(v))
 	}
 	return data
 }

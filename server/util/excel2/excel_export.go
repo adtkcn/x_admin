@@ -26,7 +26,7 @@ func GetExcelColumnName(columnNumber int) string {
 func Export(lists any, cols []Col, sheet string, title string) (file *excelize.File, err error) {
 	e := ExcelInit()
 
-	data := util.ConvertUtil.StructsToMaps(lists)
+	data := util.ConvertUtil.ShallowStructsToMaps(lists)
 
 	err = ExportExcel(sheet, title, data, cols, e)
 	if err != nil {
@@ -87,7 +87,7 @@ func buildTitle(e *Excel, sheet, title string, cols []Col) (endColName string, s
 }
 
 // 构造数据行
-func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []map[string]interface{}, cols []Col) (err error) {
+func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []map[string]any, cols []Col) (err error) {
 	//实时写入数据
 	for i := 0; i < len(lists); i++ {
 		startCol := fmt.Sprintf("A%d", startDataRow)
@@ -105,7 +105,10 @@ func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []
 			// 先编码
 			if col.Encode != nil {
 				val = col.Encode(val)
+			} else if v, ok := val.(Encode); ok {
+				val = v.String()
 			}
+
 			// 再替换
 			for replaceKey, v := range replace {
 
@@ -132,4 +135,5 @@ func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []
 		startDataRow++
 	}
 	return
+
 }

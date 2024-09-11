@@ -7,7 +7,7 @@
       leftText=""
       :safeAreaInsetTop="false"
       :fixed="false"
-      title="系统短信日志"
+      title="用户协议"
       autoBack
     >
       <template v-slot:right>
@@ -32,7 +32,7 @@
       <wd-button v-if="!fromSearch" custom-class="fab-button" type="primary" round @click="moreSearch" >
         <wd-icon name="search" size="20px"></wd-icon>
       </wd-button>
-      <wd-button v-if="$perms('admin:system_log_sms:add')"  custom-class="fab-button" type="primary" round @click="add">
+      <wd-button v-if="$perms('admin:user_protocol:add')"  custom-class="fab-button" type="primary" round @click="add">
         <wd-icon name="add" size="20px"></wd-icon>
       </wd-button>
   </wd-fab>
@@ -63,19 +63,15 @@ import {
   onReachBottom,
   onPageScroll,
 } from "@dcloudio/uni-app";
-import { system_log_sms_list } from "@/api/system_log_sms";
-import type { type_system_log_sms,type_system_log_sms_query	} from "@/api/system_log_sms";
+import { user_protocol_list } from "@/api/user/protocol";
+import type { type_user_protocol,type_user_protocol_query	} from "@/api/user/protocol";
 
 import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";
-const queryParams = reactive<type_system_log_sms_query>({
-    Scene: '',
-    Mobile: '',
+const queryParams = reactive<type_user_protocol_query>({
+    Title: '',
     Content: '',
-    Status: '',
-    Results: '',
-    SendTimeStart: '',
-    SendTimeEnd: '',
+    Sort: '',
     CreateTimeStart: '',
     CreateTimeEnd: '',
     UpdateTimeStart: '',
@@ -84,7 +80,7 @@ const queryParams = reactive<type_system_log_sms_query>({
 let activeFab = ref(false);
 let fromSearch=ref(false);
 onLoad((e) => {
-  console.log("system_log_sms onLoad", e);
+  console.log("user_protocol onLoad", e);
   if (e) {
     for (const key in e) {
       if (Object.hasOwnProperty.call(e, key)) {
@@ -95,8 +91,8 @@ onLoad((e) => {
   }
   getLists();
 });
-const { pager, getLists, NextPage, resetPage, resetParams } = usePaging<type_system_log_sms>({
-  fetchFun: system_log_sms_list,
+const { pager, getLists, NextPage, resetPage, resetParams } = usePaging<type_user_protocol>({
+  fetchFun: user_protocol_list,
   params: queryParams,
 });
 let scrollTop = ref(0);
@@ -111,13 +107,13 @@ onReachBottom(() => {
 });
 
 function toDetails(item) {
-  toPath("/pages/system/log/sms/details", { Id: item.Id });
+  toPath("/pages/user/protocol/details", { Id: item.Id });
 }
 function moreSearch() {
-  toPath("/pages/system/log/sms/search");
+  toPath("/pages/user/protocol/search");
 }
 function add() {
-  toPath("/pages/system/log/sms/edit");
+  toPath("/pages/user/protocol/edit");
 }
 </script>
 
