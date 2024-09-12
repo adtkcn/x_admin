@@ -61,6 +61,10 @@ export function {{{.ModuleName}}}_edit(data: type_{{{.ModuleName}}}_edit) {
 export function {{{.ModuleName}}}_delete({{{toUpperCamelCase .PrimaryKey }}}: number | string) {
     return request.post<null>({ url: '/{{{.ModuleName}}}/del', data: { {{{toUpperCamelCase .PrimaryKey }}} } })
 }
+// {{{.FunctionName}}}删除-批量
+export function {{{.ModuleName}}}_delete_batch(data: { Ids: string }) {
+    return request.post<null>({ url: '/{{{.ModuleName}}}/delBatch', data })
+}
 
 // {{{.FunctionName}}}导入
 export const {{{.ModuleName}}}_import_file = '/{{{.ModuleName}}}/ImportFile'

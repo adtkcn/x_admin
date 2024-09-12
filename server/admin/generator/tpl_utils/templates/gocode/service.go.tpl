@@ -179,9 +179,9 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
     // 删除
     {{{- if contains .AllFields "is_delete" }}}
     obj.IsDelete = 1
-	{{{- if contains .AllFields "delete_time" }}}
-	obj.DeleteTime = util.NullTimeUtil.Now()
-	{{{- end }}}
+		{{{- if contains .AllFields "delete_time" }}}
+		obj.DeleteTime = util.NullTimeUtil.Now()
+		{{{- end }}}
     err = service.db.Save(&obj).Error
     e = response.CheckErr(err, "删除失败")
     {{{- else }}}
@@ -190,6 +190,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
     {{{- end }}}
 	cacheUtil.RemoveCache(obj.{{{ toUpperCamelCase .PrimaryKey }}})
 	return
+}
+
+// DelBatch 用户协议-批量删除
+func (service {{{ toCamelCase .EntityName }}}Service) DelBatch(Ids []string) (e error) {
+	var obj model.{{{ toUpperCamelCase .EntityName }}}
+	err := service.db.Where("{{{ $.PrimaryKey }}} in (?)", Ids).Delete(&obj).Error
+	return err
 }
 
 // 获取Excel的列

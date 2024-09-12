@@ -18,8 +18,8 @@ type Col struct {
 	Key     string
 	Width   int                          // 宽度
 	Replace map[string]any               //实现值的替换
-	Encode  func(value any) any          //暂未使用
-	Decode  func(value any) (any, error) //实现类型、值的替换
+	Encode  func(value any) any          //编码函数-导出，（先Encode后Replace）
+	Decode  func(value any) (any, error) //解码函数-导入，（先Replace后Decode）
 }
 
 // 定义编码接口

@@ -62,6 +62,7 @@
                     新增
                 </el-button>
                     <upload
+                    v-perms="['admin:{{{ .ModuleName }}}:ImportFile']"
                     class="ml-3 mr-3"
                     :url="{{{.ModuleName}}}_import_file"
                     :data="{ cid: 0 }"
@@ -76,11 +77,18 @@
                         导入
                     </el-button>
                 </upload>
-                <el-button type="primary" @click="exportFile">
+                <el-button v-perms="['admin:{{{ .ModuleName }}}:ExportFile']" type="primary" @click="exportFile">
                     <template #icon>
                         <icon name="el-icon-Download" />
                     </template>
                     导出
+                </el-button>
+                <el-button
+                    v-perms="['admin:{{{ .ModuleName }}}:delBatch']"
+                    type="danger"
+                    @click="deleteBatch"
+                >
+                    批量删除
                 </el-button>
             </div>
             <el-table
@@ -88,7 +96,9 @@
                 size="large"
                 v-loading="pager.loading"
                 :data="pager.lists"
+                @selection-change="handleSelectionChange"
             >
+                <el-table-column type="selection" width="55" />
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
@@ -162,7 +172,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{nameToPath .ModuleName }}}'
+import { {{{ .ModuleName }}}_delete,{{{ .ModuleName }}}_delete_batch, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{nameToPath .ModuleName }}}'
 import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 
@@ -230,6 +240,11 @@ const handleEdit = async (data: any) => {
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
+const multipleSelection = ref<type_{{{ .ModuleName }}}[]>([])
+const handleSelectionChange = (val: type_{{{ .ModuleName }}}[]) => {
+    console.log(val)
+    multipleSelection.value = val
+}
 
 const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
     try {
@@ -239,6 +254,22 @@ const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
         getLists()
     } catch (error) {}
 }
+// 批量删除
+const deleteBatch = async () => {
+    if (multipleSelection.value.length === 0) {
+        feedback.msgError('请选择要删除的数据')
+        return
+    }
+    try {
+        await feedback.confirm('确定要删除？')
+        await {{{ .ModuleName }}}_delete_batch({
+            Ids: multipleSelection.value.map((item) => item.{{{toUpperCamelCase .PrimaryKey }}}).join(',')
+        })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {}
+}
+
 const exportFile = async () => {
     try {
         await feedback.confirm('确定要导出？')

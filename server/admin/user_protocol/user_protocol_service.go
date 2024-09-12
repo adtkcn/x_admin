@@ -5,12 +5,13 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	"gorm.io/gorm"
 	"x_admin/util"
 	"x_admin/util/excel2"
+
+	"gorm.io/gorm"
 )
 
-var UserProtocolService=NewUserProtocolService()
+var UserProtocolService = NewUserProtocolService()
 var cacheUtil = util.CacheUtil{
 	Name: UserProtocolService.Name,
 }
@@ -23,42 +24,41 @@ func NewUserProtocolService() *userProtocolService {
 	}
 }
 
-//userProtocolService 用户协议服务实现类
+// userProtocolService 用户协议服务实现类
 type userProtocolService struct {
-	db *gorm.DB
+	db   *gorm.DB
 	Name string
 }
-
-
 
 // List 用户协议列表
 func (service userProtocolService) GetModel(listReq UserProtocolListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.UserProtocol{})
-			if listReq.Title!= nil {
-				dbModel = dbModel.Where("title like ?", "%"+*listReq.Title+"%")
-			}
-			if listReq.Content!= nil {
-				dbModel = dbModel.Where("content = ?", *listReq.Content)
-			}
-			if listReq.Sort!= nil {
-				dbModel = dbModel.Where("sort = ?", *listReq.Sort)
-			}
-			if listReq.CreateTimeStart!= nil {
-				dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart)
-			}
-			if listReq.CreateTimeEnd!= nil {
-				dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd)
-			}
-			if listReq.UpdateTimeStart!= nil {
-				dbModel = dbModel.Where("update_time >= ?", *listReq.UpdateTimeStart)
-			}
-			if listReq.UpdateTimeEnd!= nil {
-				dbModel = dbModel.Where("update_time <= ?", *listReq.UpdateTimeEnd)
-			}
+	if listReq.Title != nil {
+		dbModel = dbModel.Where("title like ?", "%"+*listReq.Title+"%")
+	}
+	if listReq.Content != nil {
+		dbModel = dbModel.Where("content = ?", *listReq.Content)
+	}
+	if listReq.Sort != nil {
+		dbModel = dbModel.Where("sort = ?", *listReq.Sort)
+	}
+	if listReq.CreateTimeStart != nil {
+		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart)
+	}
+	if listReq.CreateTimeEnd != nil {
+		dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd)
+	}
+	if listReq.UpdateTimeStart != nil {
+		dbModel = dbModel.Where("update_time >= ?", *listReq.UpdateTimeStart)
+	}
+	if listReq.UpdateTimeEnd != nil {
+		dbModel = dbModel.Where("update_time <= ?", *listReq.UpdateTimeEnd)
+	}
 	dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel
 }
+
 // List 用户协议列表
 func (service userProtocolService) List(page request.PageReq, listReq UserProtocolListReq) (res response.PageResp, e error) {
 	// 分页信息
@@ -86,6 +86,7 @@ func (service userProtocolService) List(page request.PageReq, listReq UserProtoc
 		Lists:    result,
 	}, nil
 }
+
 // ListAll 用户协议列表
 func (service userProtocolService) ListAll(listReq UserProtocolListReq) (res []UserProtocolResp, e error) {
 	dbModel := service.GetModel(listReq)
@@ -120,13 +121,13 @@ func (service userProtocolService) Detail(Id int) (res UserProtocolResp, e error
 }
 
 // Add 用户协议新增
-func (service userProtocolService) Add(addReq UserProtocolAddReq) (createId int,e error) {
+func (service userProtocolService) Add(addReq UserProtocolAddReq) (createId int, e error) {
 	var obj model.UserProtocol
-	util.ConvertUtil.StructToStruct(addReq,&obj)
+	util.ConvertUtil.StructToStruct(addReq, &obj)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
-		return 0,e
+		return 0, e
 	}
 	cacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
@@ -166,13 +167,20 @@ func (service userProtocolService) Del(Id int) (e error) {
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {
 		return
 	}
-    // 删除
-    obj.IsDelete = 1
+	// 删除
+	obj.IsDelete = 1
 	obj.DeleteTime = util.NullTimeUtil.Now()
-    err = service.db.Save(&obj).Error
-    e = response.CheckErr(err, "删除失败")
+	err = service.db.Save(&obj).Error
+	e = response.CheckErr(err, "删除失败")
 	cacheUtil.RemoveCache(obj.Id)
 	return
+}
+
+// DelBatch 用户协议-批量删除
+func (service userProtocolService) DelBatch(IdsArr []string) (e error) {
+	var obj model.UserProtocol
+	err := service.db.Where("id in (?)", IdsArr).Delete(&obj).Error
+	return err
 }
 
 // 获取Excel的列
@@ -181,8 +189,8 @@ func (service userProtocolService) GetExcelCol() []excel2.Col {
 		{Name: "标题", Key: "Title", Width: 15},
 		{Name: "协议内容", Key: "Content", Width: 15},
 		{Name: "排序", Key: "Sort", Width: 15},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime },
-		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime },
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols
