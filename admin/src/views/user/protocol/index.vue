@@ -31,7 +31,7 @@
             </el-form>
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
-            <div>
+            <div class="text-right">
                 <el-button
                     v-perms="['admin:user_protocol:add']"
                     type="primary"
@@ -43,6 +43,7 @@
                     新增
                 </el-button>
                 <upload
+                    v-perms="['admin:user_protocol:ImportFile']"
                     class="ml-3 mr-3"
                     :url="user_protocol_import_file"
                     :data="{ cid: 0 }"
@@ -57,13 +58,16 @@
                         导入
                     </el-button>
                 </upload>
-                <el-button type="primary" @click="exportFile">
+                <el-button
+                    v-perms="['admin:user_protocol:ExportFile']"
+                    type="primary"
+                    @click="exportFile"
+                >
                     <template #icon>
                         <icon name="el-icon-Download" />
                     </template>
                     导出
                 </el-button>
-
                 <el-button
                     v-perms="['admin:user_protocol:delBatch']"
                     type="danger"
@@ -123,9 +127,6 @@ import {
 } from '@/api/user/protocol'
 import type { type_user_protocol, type_user_protocol_query } from '@/api/user/protocol'
 
-import { useDictData, useListAllData } from '@/hooks/useDictOptions'
-import type { type_dict } from '@/hooks/useDictOptions'
-
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -166,6 +167,7 @@ const handleSelectionChange = (val: type_user_protocol[]) => {
     console.log(val)
     multipleSelection.value = val
 }
+
 const handleDelete = async (Id: number) => {
     try {
         await feedback.confirm('确定要删除？')
@@ -189,6 +191,7 @@ const deleteBatch = async () => {
         getLists()
     } catch (error) {}
 }
+
 const exportFile = async () => {
     try {
         await feedback.confirm('确定要导出？')

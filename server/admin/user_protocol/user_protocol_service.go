@@ -177,10 +177,17 @@ func (service userProtocolService) Del(Id int) (e error) {
 }
 
 // DelBatch 用户协议-批量删除
-func (service userProtocolService) DelBatch(IdsArr []string) (e error) {
+func (service userProtocolService) DelBatch(Ids []string) (e error) {
 	var obj model.UserProtocol
-	err := service.db.Where("id in (?)", IdsArr).Delete(&obj).Error
-	return err
+	err := service.db.Where("id in (?)", Ids).Delete(&obj).Error
+	if err != nil {
+		return err
+	}
+	// 删除缓存
+	for _, v := range Ids {
+		cacheUtil.RemoveCache(v)
+	}
+	return nil
 }
 
 // 获取Excel的列

@@ -75,14 +75,14 @@ const formRules = {
             message: '请输入协议内容',
             trigger: ['blur']
         }
+    ],
+    Sort: [
+        {
+            required: true,
+            message: '请输入排序',
+            trigger: ['blur']
+        }
     ]
-    // Sort: [
-    //     {
-    //         required: true,
-    //         message: '请输入排序',
-    //         trigger: ['blur']
-    //     }
-    // ],
 }
 
 const handleSubmit = async () => {

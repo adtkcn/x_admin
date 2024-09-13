@@ -3,6 +3,7 @@ package {{{ .ModuleName }}}
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 	"github.com/gin-gonic/gin" 
 	"x_admin/core/request"

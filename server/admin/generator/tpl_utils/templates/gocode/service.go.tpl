@@ -196,7 +196,14 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
 func (service {{{ toCamelCase .EntityName }}}Service) DelBatch(Ids []string) (e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	err := service.db.Where("{{{ $.PrimaryKey }}} in (?)", Ids).Delete(&obj).Error
-	return err
+	if err != nil {
+		return err
+	}
+	// 删除缓存
+	for _, v := range Ids {
+		cacheUtil.RemoveCache(v)
+	}
+	return nil
 }
 
 // 获取Excel的列

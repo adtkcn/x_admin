@@ -19,7 +19,6 @@ import (
 admin:user_protocol:add
 admin:user_protocol:edit
 admin:user_protocol:del
-admin:user_protocol:delBatch
 admin:user_protocol:list
 admin:user_protocol:listAll
 admin:user_protocol:detail
@@ -33,7 +32,6 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name,  paths, component, is
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '用户协议添加','admin:user_protocol:add', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '用户协议编辑','admin:user_protocol:edit', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '用户协议删除','admin:user_protocol:del', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '用户协议删除-批量','admin:user_protocol:delBatch', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '用户协议列表','admin:user_protocol:list', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '用户协议全部列表','admin:user_protocol:listAll', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '用户协议详情','admin:user_protocol:detail', 0, 1, 0, now(), now());
@@ -50,13 +48,9 @@ func UserProtocolRoute(rg *gin.RouterGroup) {
 	r.GET("/user_protocol/list", handle.List)
 	r.GET("/user_protocol/listAll", handle.ListAll)
 	r.GET("/user_protocol/detail", handle.Detail)
-	
 	r.POST("/user_protocol/add",middleware.RecordLog("用户协议新增"), handle.Add)
 	r.POST("/user_protocol/edit",middleware.RecordLog("用户协议编辑"), handle.Edit)
-	
 	r.POST("/user_protocol/del", middleware.RecordLog("用户协议删除"), handle.Del)
-	r.POST("/user_protocol/delBatch", middleware.RecordLog("用户协议删除-批量"), handle.DelBatch)
-
 	r.GET("/user_protocol/ExportFile", middleware.RecordLog("用户协议导出"), handle.ExportFile)
 	r.POST("/user_protocol/ImportFile",  handle.ImportFile)
 }

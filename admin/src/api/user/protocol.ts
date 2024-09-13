@@ -68,7 +68,7 @@ export function user_protocol_edit(data: type_user_protocol_edit) {
 export function user_protocol_delete(Id: number | string) {
     return request.post<null>({ url: '/user_protocol/del', data: { Id } })
 }
-// 用户协议批量删除
+// 用户协议删除-批量
 export function user_protocol_delete_batch(data: { Ids: string }) {
     return request.post<null>({ url: '/user_protocol/delBatch', data })
 }

@@ -139,8 +139,9 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 	response.CheckAndResp(c, UserProtocolService.Del(delReq.Id))
 }
 
-// @Summary	用户协议批量删除
-// @Tags		user_protocol-用户协议
+//	@Summary	用户协议删除-批量
+//	@Tags		user_protocol-用户协议
+//
 // @Produce	json
 // @Param		Token		header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
@@ -156,9 +157,7 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
-	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
-	// 	return
-	// }
+
 	response.CheckAndResp(c, UserProtocolService.DelBatch(Ids))
 }
 
