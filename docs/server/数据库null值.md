@@ -40,3 +40,12 @@ func (i Int) MarshalJSON() ([]byte, error) {
 }
 
 ```
+
+### 自带了三个可为null类型：
+1. 相对于guregu/null的优点
+2. NullFloat、NullInt：支持前端传递null、字符串数字、数字
+```go
+core.NullFloat
+core.NullInt
+core.NullTime
+```
