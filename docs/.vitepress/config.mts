@@ -34,6 +34,7 @@ export default defineConfig({
           { text: '注意事项', link: '/server/注意事项.md' },
           { text: '数据库null值', link: '/server/数据库null值.md' },
           { text: 'swaggo', link: '/server/swaggo.md' },
+          { text: '导入导出excel', link: '/server/导入导出excel.md' },
         ]
       },
       {

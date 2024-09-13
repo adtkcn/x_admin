@@ -1,9 +1,3 @@
-// 测试源码的文件名以 _test.go 结尾。
-// 测试函数的函数名以 Test 开头。
-// 函数签名为 func (t *testing.T)。
-
-// https://blog.csdn.net/weixin_43165220/article/details/132939884
-
 package excel2
 
 import (
@@ -14,24 +8,15 @@ import (
 )
 
 type Test struct {
-	Id       string `excel:"name:用户账号;"`
-	Name     string `excel:"name:用户姓名;index:1;"`
-	Email    string `excel:"name:用户邮箱;width:25;"`
-	Com      string `excel:"name:所属公司;"`
-	Dept     string `excel:"name:所在部门;"`
-	RoleKey  string `excel:"name:角色代码;"`
-	RoleName string `excel:"name:角色名称;replace:1_超级管理员,2_普通用户;"`
-	Remark   string `excel:"name:备注;width:40;"`
+	Id       string
+	Name     string
+	Email    string
+	Com      string
+	Dept     string
+	RoleKey  string
+	RoleName string
+	Remark   string
 }
-
-// func decodeTime(value any) any {
-// 	t, e := core.ParseStringToTsTime(value.(string))
-// 	if e != nil {
-// 		return nil
-// 	}
-
-// 	return t
-// }
 
 var cols = []Col{
 	{Name: "用户账号", Key: "Id", Width: 15},
