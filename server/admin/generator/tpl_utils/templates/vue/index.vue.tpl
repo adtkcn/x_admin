@@ -86,6 +86,7 @@
                 <el-button
                     v-perms="['admin:{{{ .ModuleName }}}:delBatch']"
                     type="danger"
+                    :disabled="!multipleSelection.length"
                     @click="deleteBatch"
                 >
                     批量删除
