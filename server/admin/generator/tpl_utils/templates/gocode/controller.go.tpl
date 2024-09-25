@@ -161,7 +161,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/{{{ .ModuleName }}}/delBatch [post]
-func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
+func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context) {
 	var delReq {{{ toUpperCamelCase .EntityName }}}DelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
