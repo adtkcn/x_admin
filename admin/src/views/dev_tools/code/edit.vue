@@ -66,14 +66,14 @@
                     </el-tab-pane>
                     <el-tab-pane label="字段管理" name="column">
                         <el-table :data="formData.column">
-                            <el-table-column label="字段列名" prop="columnName" />
+                            <el-table-column label="字段列名" prop="columnName" min-width="120" />
                             <el-table-column label="字段描述" prop="columnComment" min-width="120">
                                 <template v-slot="{ row }">
                                     <el-input v-model="row.columnComment"></el-input>
                                 </template>
                             </el-table-column>
                             <el-table-column label="sql类型" prop="columnType" min-width="100" />
-                            <el-table-column label="go类型" min-width="120">
+                            <el-table-column label="go类型" min-width="140">
                                 <template v-slot="{ row }">
                                     <el-select v-model="row.goType">
                                         <el-option label="int" value="int" />
@@ -150,7 +150,7 @@
                                     </el-select>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="显示类型" min-width="120">
+                            <el-table-column label="显示类型" min-width="140">
                                 <template v-slot="{ row }">
                                     <el-select v-model="row.htmlType">
                                         <el-option label="文本框" value="input" />

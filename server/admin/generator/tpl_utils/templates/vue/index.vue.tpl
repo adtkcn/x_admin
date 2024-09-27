@@ -32,8 +32,8 @@
                         <el-option
                             v-for="(item, index) in listAllData.{{{pathToName .ListAllApi}}}"
                             :key="index"
-                            :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
-                            :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                            :label="item.Id"
+                            :value="item.Id"
                         />
                         {{{- else }}}
                         <el-option label="请选择字典生成" value="" />
@@ -111,7 +111,7 @@
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
                 <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='{{{toUpperCamelCase .PrimaryKey }}}' valueKey='{{{toUpperCamelCase .PrimaryKey }}}' />
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='Id' valueKey='Id' />
                     </template>
                 </el-table-column>
 

@@ -9,8 +9,34 @@
                 label-width="70px"
                 label-position="left"
             >
-                <el-form-item label="标题" prop="Title" class="w-[280px]">
-                    <el-input v-model="queryParams.Title" />
+                <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
+                    <el-select v-model="queryParams.ProjectKey" clearable>
+                        <el-option label="全部" value="" />
+                        <el-option
+                            v-for="(item, index) in listAllData.monitor_project_listAll"
+                            :key="index"
+                            :label="item.ProjectName"
+                            :value="item.ProjectKey"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="客户端id" prop="ClientId" class="w-[280px]">
+                    <el-input v-model="queryParams.ClientId" />
+                </el-form-item>
+                <el-form-item label="用户id" prop="UserId" class="w-[280px]">
+                    <el-input v-model="queryParams.UserId" />
+                </el-form-item>
+                <el-form-item label="系统" prop="Os" class="w-[280px]">
+                    <el-input v-model="queryParams.Os" />
+                </el-form-item>
+                <el-form-item label="浏览器" prop="Browser" class="w-[280px]">
+                    <el-input v-model="queryParams.Browser" />
+                </el-form-item>
+                <el-form-item label="城市" prop="City" class="w-[280px]">
+                    <el-input v-model="queryParams.City" />
+                </el-form-item>
+                <el-form-item label="ua记录" prop="Ua" class="w-[280px]">
+                    <el-input v-model="queryParams.Ua" />
                 </el-form-item>
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
                     <daterange-picker
@@ -18,12 +44,7 @@
                         v-model:endTime="queryParams.CreateTimeEnd"
                     />
                 </el-form-item>
-                <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
-                    <daterange-picker
-                        v-model:startTime="queryParams.UpdateTimeStart"
-                        v-model:endTime="queryParams.UpdateTimeEnd"
-                    />
-                </el-form-item>
+
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>
@@ -33,7 +54,7 @@
         <el-card class="!border-none mt-4" shadow="never">
             <div class="text-right">
                 <el-button
-                    v-perms="['admin:user_protocol:add']"
+                    v-perms="['admin:monitor_client:add']"
                     type="primary"
                     @click="handleAdd()"
                 >
@@ -43,9 +64,9 @@
                     新增
                 </el-button>
                 <upload
-                    v-perms="['admin:user_protocol:ImportFile']"
+                    v-perms="['admin:monitor_client:ImportFile']"
                     class="ml-3 mr-3"
-                    :url="user_protocol_import_file"
+                    :url="monitor_client_import_file"
                     :data="{ cid: 0 }"
                     type="file"
                     :show-progress="true"
@@ -59,7 +80,7 @@
                     </el-button>
                 </upload>
                 <el-button
-                    v-perms="['admin:user_protocol:ExportFile']"
+                    v-perms="['admin:monitor_client:ExportFile']"
                     type="primary"
                     @click="exportFile"
                 >
@@ -69,7 +90,7 @@
                     导出
                 </el-button>
                 <el-button
-                    v-perms="['admin:user_protocol:delBatch']"
+                    v-perms="['admin:monitor_client:delBatch']"
                     type="danger"
                     :disabled="!multipleSelection.length"
                     @click="deleteBatch"
@@ -85,15 +106,30 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
-                <el-table-column label="标题" prop="Title" min-width="130" />
-                <el-table-column label="协议内容" prop="Content" min-width="130" />
-                <el-table-column label="排序" prop="Sort" min-width="130" />
+                <el-table-column label="项目" prop="ProjectKey" min-width="100">
+                    <template #default="{ row }">
+                        <dict-value
+                            :options="listAllData.monitor_project_listAll"
+                            :value="row.ProjectKey"
+                            labelKey="ProjectName"
+                            valueKey="ProjectKey"
+                        />
+                    </template>
+                </el-table-column>
+                <el-table-column label="客户端id" prop="ClientId" min-width="130" />
+                <el-table-column label="用户id" prop="UserId" min-width="130" />
+                <el-table-column label="系统" prop="Os" min-width="130" />
+                <el-table-column label="浏览器" prop="Browser" min-width="130" />
+                <el-table-column label="城市" prop="City" min-width="130" />
+                <el-table-column label="屏幕" prop="Width" min-width="130" />
+                <el-table-column label="屏幕高度" prop="Height" min-width="130" />
+                <el-table-column label="ua记录" prop="Ua" min-width="130" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
+
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['admin:user_protocol:edit']"
+                            v-perms="['admin:monitor_client:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -101,7 +137,7 @@
                             编辑
                         </el-button>
                         <el-button
-                            v-perms="['admin:user_protocol:del']"
+                            v-perms="['admin:monitor_client:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.Id)"
@@ -120,37 +156,50 @@
 </template>
 <script lang="ts" setup>
 import {
-    user_protocol_delete,
-    user_protocol_delete_batch,
-    user_protocol_list,
-    user_protocol_import_file,
-    user_protocol_export_file
-} from '@/api/user/protocol'
-import type { type_user_protocol, type_user_protocol_query } from '@/api/user/protocol'
+    monitor_client_delete,
+    monitor_client_delete_batch,
+    monitor_client_list,
+    monitor_client_import_file,
+    monitor_client_export_file
+} from '@/api/monitor/client'
+import type { type_monitor_client, type_monitor_client_query } from '@/api/monitor/client'
+
+import { useListAllData } from '@/hooks/useDictOptions'
+// import type { type_dict } from '@/hooks/useDictOptions'
 
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 defineOptions({
-    name: 'user_protocol'
+    name: 'monitor_client'
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
-const queryParams = reactive<type_user_protocol_query>({
-    Title: null,
-    Content: null,
-    Sort: null,
+const queryParams = reactive<type_monitor_client_query>({
+    ProjectKey: null,
+    ClientId: null,
+    UserId: null,
+    Os: null,
+    Browser: null,
+    City: null,
+    Width: null,
+    Height: null,
+    Ua: null,
     CreateTimeStart: null,
     CreateTimeEnd: null,
-    UpdateTimeStart: null,
-    UpdateTimeEnd: null
+    ClientTimeStart: null,
+    ClientTimeEnd: null
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging<type_user_protocol>({
-    fetchFun: user_protocol_list,
+const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_client>({
+    fetchFun: monitor_client_list,
     params: queryParams
 })
-
+const { listAllData } = useListAllData<{
+    monitor_project_listAll: any[]
+}>({
+    monitor_project_listAll: '/monitor_project/listAll'
+})
 const handleAdd = async () => {
     showEdit.value = true
     await nextTick()
@@ -163,8 +212,8 @@ const handleEdit = async (data: any) => {
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
-const multipleSelection = ref<type_user_protocol[]>([])
-const handleSelectionChange = (val: type_user_protocol[]) => {
+const multipleSelection = ref<type_monitor_client[]>([])
+const handleSelectionChange = (val: type_monitor_client[]) => {
     console.log(val)
     multipleSelection.value = val
 }
@@ -172,7 +221,7 @@ const handleSelectionChange = (val: type_user_protocol[]) => {
 const handleDelete = async (Id: number) => {
     try {
         await feedback.confirm('确定要删除？')
-        await user_protocol_delete(Id)
+        await monitor_client_delete(Id)
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {}
@@ -185,7 +234,7 @@ const deleteBatch = async () => {
     }
     try {
         await feedback.confirm('确定要删除？')
-        await user_protocol_delete_batch({
+        await monitor_client_delete_batch({
             Ids: multipleSelection.value.map((item) => item.Id).join(',')
         })
         feedback.msgSuccess('删除成功')
@@ -196,7 +245,7 @@ const deleteBatch = async () => {
 const exportFile = async () => {
     try {
         await feedback.confirm('确定要导出？')
-        await user_protocol_export_file(queryParams)
+        await monitor_client_export_file(queryParams)
     } catch (error) {}
 }
 getLists()

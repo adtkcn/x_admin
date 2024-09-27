@@ -11,7 +11,7 @@
 					{{{- if ne .DictType "" }}}
 						<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
 					{{{- else if ne .ListAllApi "" }}}
-							<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="{{{toUpperCamelCase .PrimaryKey}}}" labelKey="{{{toUpperCamelCase .PrimaryKey}}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+							<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="Id" labelKey="Id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- end }}}
 				{{{- else if eq .HtmlType "input" }}}
 					<uv-input v-model="form.{{{ (toUpperCamelCase .GoField) }}}"> </uv-input>

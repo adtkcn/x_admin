@@ -10,39 +10,36 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="客户端id" prop="clientId">
-                    <el-input v-model="formData.clientId" placeholder="请输入客户端id" />
+                <el-form-item label="项目key" prop="ProjectKey">
+                    <el-input v-model="formData.ProjectKey" placeholder="请输入项目key" />
                 </el-form-item>
-                <el-form-item label="用户id" prop="userId">
-                    <el-input v-model="formData.userId" placeholder="请输入用户id" />
+                <el-form-item label="客户端id" prop="ClientId">
+                    <el-input v-model="formData.ClientId" placeholder="请输入客户端id" />
                 </el-form-item>
-                <el-form-item label="系统" prop="os">
-                    <el-input v-model="formData.os" placeholder="请输入系统" />
+                <el-form-item label="用户id" prop="UserId">
+                    <el-input v-model="formData.UserId" placeholder="请输入用户id" />
                 </el-form-item>
-                <el-form-item label="浏览器" prop="browser">
-                    <el-input v-model="formData.browser" placeholder="请输入浏览器" />
+                <el-form-item label="系统" prop="Os">
+                    <el-input v-model="formData.Os" placeholder="请输入系统" />
                 </el-form-item>
-                <el-form-item label="城市" prop="city">
-                    <el-input v-model="formData.city" placeholder="请输入城市" />
+                <el-form-item label="浏览器" prop="Browser">
+                    <el-input v-model="formData.Browser" placeholder="请输入浏览器" />
                 </el-form-item>
-                <el-form-item label="屏幕" prop="width">
-                    <el-input v-model="formData.width" placeholder="请输入屏幕" />
+                <el-form-item label="城市" prop="City">
+                    <el-input v-model="formData.City" placeholder="请输入城市" />
                 </el-form-item>
-                <el-form-item label="屏幕高度" prop="height">
-                    <el-input v-model="formData.height" placeholder="请输入屏幕高度" />
+                <el-form-item label="屏幕" prop="Width">
+                    <el-input v-model="formData.Width" type="number" placeholder="请输入屏幕" />
                 </el-form-item>
-                <el-form-item label="ua记录" prop="ua">
-                    <el-input v-model="formData.ua" placeholder="请输入ua记录" />
-                </el-form-item>
-                <el-form-item label="更新时间" prop="clientTime">
-                    <el-date-picker
-                        class="flex-1 !flex"
-                        v-model="formData.clientTime"
-                        type="datetime"
-                        clearable
-                        value-format="YYYY-MM-DD hh:mm:ss"
-                        placeholder="请选择更新时间"
+                <el-form-item label="屏幕高度" prop="Height">
+                    <el-input
+                        v-model="formData.Height"
+                        type="number"
+                        placeholder="请输入屏幕高度"
                     />
+                </el-form-item>
+                <el-form-item label="ua记录" prop="Ua">
+                    <el-input v-model="formData.Ua" placeholder="请输入ua记录" />
                 </el-form-item>
             </el-form>
         </popup>
@@ -54,12 +51,16 @@ import {
     monitor_client_edit,
     monitor_client_add,
     monitor_client_detail
-} from '@/api/monitor_client'
+} from '@/api/monitor/client'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {
+        type: Object as PropType<Record<string, any[]>>,
+        default: () => ({})
+    },
+    listAllData: {
         type: Object as PropType<Record<string, any[]>>,
         default: () => ({})
     }
@@ -73,76 +74,91 @@ const popupTitle = computed(() => {
 })
 
 const formData = reactive({
-    id: '',
-    clientId: '',
-    userId: '',
-    os: '',
-    browser: '',
-    city: '',
-    width: '',
-    height: '',
-    ua: '',
-    clientTime: ''
+    Id: null,
+    ProjectKey: null,
+    ClientId: null,
+    UserId: null,
+    Os: null,
+    Browser: null,
+    City: null,
+    Width: null,
+    Height: null,
+    Ua: null,
+    ClientTime: null
 })
 
 const formRules = {
-    clientId: [
+    Id: [
+        {
+            required: true,
+            message: '请输入uuid',
+            trigger: ['blur']
+        }
+    ],
+    ProjectKey: [
+        {
+            required: true,
+            message: '请输入项目key',
+            trigger: ['blur']
+        }
+    ],
+    ClientId: [
         {
             required: true,
             message: '请输入客户端id',
             trigger: ['blur']
         }
     ],
-    userId: [
+    UserId: [
         {
             required: true,
             message: '请输入用户id',
             trigger: ['blur']
         }
     ],
-    os: [
+    Os: [
         {
             required: true,
             message: '请输入系统',
             trigger: ['blur']
         }
     ],
-    browser: [
+    Browser: [
         {
             required: true,
             message: '请输入浏览器',
             trigger: ['blur']
         }
     ],
-    city: [
+    City: [
         {
             required: true,
             message: '请输入城市',
             trigger: ['blur']
         }
     ],
-    width: [
+    Width: [
         {
             required: true,
             message: '请输入屏幕',
             trigger: ['blur']
         }
     ],
-    height: [
+    Height: [
         {
             required: true,
             message: '请输入屏幕高度',
             trigger: ['blur']
         }
     ],
-    ua: [
+    Ua: [
         {
             required: true,
             message: '请输入ua记录',
             trigger: ['blur']
         }
     ],
-    clientTime: [
+    ClientTime: [
         {
             required: true,
             message: '请选择更新时间',
@@ -178,7 +194,7 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
     try {
-        const data = await monitor_client_detail(row.id)
+        const data = await monitor_client_detail(row.Id)
         setFormData(data)
     } catch (error) {}
 }

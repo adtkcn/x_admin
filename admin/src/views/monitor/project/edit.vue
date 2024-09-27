@@ -10,16 +10,16 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <!-- <el-form-item label="项目Key" prop="projectKey">
-                    <el-input v-model="formData.projectKey" placeholder="请输入项目uuid" />
-                </el-form-item> -->
-                <el-form-item label="项目名称" prop="projectName">
-                    <el-input v-model="formData.projectName" placeholder="请输入项目名称" />
+                <el-form-item label="项目uuid" prop="ProjectKey">
+                    <el-input v-model="formData.ProjectKey" placeholder="请输入项目uuid" />
                 </el-form-item>
-                <el-form-item label="项目类型" prop="projectType">
+                <el-form-item label="项目名称" prop="ProjectName">
+                    <el-input v-model="formData.ProjectName" placeholder="请输入项目名称" />
+                </el-form-item>
+                <el-form-item label="项目类型" prop="ProjectType">
                     <el-select
                         class="flex-1"
-                        v-model="formData.projectType"
+                        v-model="formData.ProjectType"
                         placeholder="请选择项目类型"
                     >
                         <el-option
@@ -27,6 +27,22 @@
                             :key="index"
                             :label="item.name"
                             :value="item.value"
+                            clearable
+                            :disabled="!item.status"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="是否启用" prop="Status">
+                    <el-select
+                        class="flex-1"
+                        v-model="formData.Status"
+                        placeholder="请选择是否启用"
+                    >
+                        <el-option
+                            v-for="(item, index) in dictData.status"
+                            :key="index"
+                            :label="item.name"
+                            :value="parseInt(item.value)"
                             clearable
                             :disabled="!item.status"
                         />
@@ -42,12 +58,16 @@ import {
     monitor_project_edit,
     monitor_project_add,
     monitor_project_detail
-} from '@/api/monitor_project'
+} from '@/api/monitor/project'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {
+        type: Object as PropType<Record<string, any[]>>,
+        default: () => ({})
+    },
+    listAllData: {
         type: Object as PropType<Record<string, any[]>>,
         default: () => ({})
     }
@@ -57,42 +77,50 @@ const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
 const mode = ref('add')
 const popupTitle = computed(() => {
-    return mode.value == 'edit' ? '编辑错误项目' : '新增错误项目'
+    return mode.value == 'edit' ? '编辑监控项目' : '新增监控项目'
 })
 
 const formData = reactive({
-    id: '',
-    // projectKey: '',
-    projectName: null,
-    projectType: ''
+    Id: null,
+    ProjectKey: null,
+    ProjectName: null,
+    ProjectType: null,
+    Status: null
 })
 
 const formRules = {
-    id: [
+    Id: [
         {
             required: true,
             message: '请输入项目id',
             trigger: ['blur']
         }
     ],
-    // projectKey: [
-    //     {
-    //         required: true,
-    //         message: '请输入项目Key',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    projectName: [
+    ProjectKey: [
+        {
+            required: true,
+            message: '请输入项目uuid',
+            trigger: ['blur']
+        }
+    ],
+    ProjectName: [
         {
             required: true,
             message: '请输入项目名称',
             trigger: ['blur']
         }
     ],
-    projectType: [
+    ProjectType: [
         {
             required: true,
-            message: '请选择项目类型go java web node php 等',
+            message: '请选择项目类型',
+            trigger: ['blur']
+        }
+    ],
+    Status: [
+        {
+            required: true,
+            message: '请选择是否启用',
             trigger: ['blur']
         }
     ]
@@ -125,9 +153,7 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
     try {
-        const data = await monitor_project_detail({
-            id: row.id
-        })
+        const data = await monitor_project_detail(row.Id)
         setFormData(data)
     } catch (error) {}
 }

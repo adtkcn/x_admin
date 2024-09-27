@@ -59,8 +59,8 @@
                                 <el-checkbox
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
-                                    :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
-                                    :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                                    :label="item.Id"
+                                    :value="item.Id"
                                 ></el-checkbox>
                                 {{{- else }}}
                                 <el-checkbox>请选择字典生成</el-checkbox>
@@ -87,11 +87,11 @@
                                  <el-option
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
-                                    :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                                    :label="item.Id"
                                     {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.{{{toUpperCamelCase .PrimaryKey }}})"
+                                    :value="parseInt(item.Id)"
                                     {{{- else }}}
-                                    :value="String(item.{{{toUpperCamelCase .PrimaryKey }}})"
+                                    :value="String(item.Id)"
                                     {{{- end }}}
                                     clearable
                                 />
@@ -121,12 +121,12 @@
                                     :key="index"
                                     :label="item.name"
                                     {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.{{{toUpperCamelCase .PrimaryKey }}})"
+                                    :value="parseInt(item.Id)"
                                     {{{- else }}}
-                                    :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                                    :value="item.Id"
                                     {{{- end }}}
                                 >
-                                    {{ item.{{{toUpperCamelCase .PrimaryKey }}} }}
+                                    {{ item.Id }}
                                 </el-radio>
                                 {{{- else }}}
                                 <el-radio label="0">请选择字典生成</el-radio>

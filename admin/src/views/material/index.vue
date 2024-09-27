@@ -1,7 +1,7 @@
 <template>
     <div class="material-index">
         <el-card class="!border-none" shadow="never">
-            <el-tabs v-model="activeTab">
+            <el-tabs v-model="activeTab" tab-position="bottom">
                 <el-tab-pane
                     v-for="item in tabsMap"
                     :label="item.name"
@@ -48,16 +48,16 @@ const activeTab = ref('image')
         height: calc(100vh - 180px);
         display: flex;
         flex-direction: column;
-        .el-tabs__header {
-            margin-bottom: 0 !important;
-        }
-        .el-tabs__content,
-        .el-tab-pane {
-            min-height: 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+        // .el-tabs__header {
+        //     margin-bottom: 0 !important;
+        // }
+        // .el-tabs__content,
+        // .el-tab-pane {
+        //     min-height: 0;
+        //     flex: 1;
+        //     display: flex;
+        //     flex-direction: column;
+        // }
     }
 }
 </style>

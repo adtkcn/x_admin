@@ -9,8 +9,19 @@
                 label-width="70px"
                 label-position="left"
             >
-                <el-form-item label="标题" prop="Title" class="w-[280px]">
-                    <el-input v-model="queryParams.Title" />
+                <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
+                    <el-select v-model="queryParams.ProjectKey" clearable>
+                        <el-option label="全部" value="" />
+                        <el-option
+                            v-for="(item, index) in listAllData.monitor_project_listAll"
+                            :key="index"
+                            :label="item.ProjectName"
+                            :value="item.ProjectKey"
+                        />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="md5" prop="Md5" class="w-[280px]">
+                    <el-input v-model="queryParams.Md5" />
                 </el-form-item>
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
                     <daterange-picker
@@ -18,12 +29,7 @@
                         v-model:endTime="queryParams.CreateTimeEnd"
                     />
                 </el-form-item>
-                <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
-                    <daterange-picker
-                        v-model:startTime="queryParams.UpdateTimeStart"
-                        v-model:endTime="queryParams.UpdateTimeEnd"
-                    />
-                </el-form-item>
+
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>
@@ -33,7 +39,7 @@
         <el-card class="!border-none mt-4" shadow="never">
             <div class="text-right">
                 <el-button
-                    v-perms="['admin:user_protocol:add']"
+                    v-perms="['admin:monitor_error:add']"
                     type="primary"
                     @click="handleAdd()"
                 >
@@ -43,9 +49,9 @@
                     新增
                 </el-button>
                 <upload
-                    v-perms="['admin:user_protocol:ImportFile']"
+                    v-perms="['admin:monitor_error:ImportFile']"
                     class="ml-3 mr-3"
-                    :url="user_protocol_import_file"
+                    :url="monitor_error_import_file"
                     :data="{ cid: 0 }"
                     type="file"
                     :show-progress="true"
@@ -59,7 +65,7 @@
                     </el-button>
                 </upload>
                 <el-button
-                    v-perms="['admin:user_protocol:ExportFile']"
+                    v-perms="['admin:monitor_error:ExportFile']"
                     type="primary"
                     @click="exportFile"
                 >
@@ -69,7 +75,7 @@
                     导出
                 </el-button>
                 <el-button
-                    v-perms="['admin:user_protocol:delBatch']"
+                    v-perms="['admin:monitor_error:delBatch']"
                     type="danger"
                     :disabled="!multipleSelection.length"
                     @click="deleteBatch"
@@ -77,6 +83,7 @@
                     批量删除
                 </el-button>
             </div>
+
             <el-table
                 class="mt-4"
                 size="large"
@@ -85,23 +92,35 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
-                <el-table-column label="标题" prop="Title" min-width="130" />
-                <el-table-column label="协议内容" prop="Content" min-width="130" />
-                <el-table-column label="排序" prop="Sort" min-width="130" />
+                <el-table-column label="项目" prop="ProjectKey" min-width="100">
+                    <template #default="{ row }">
+                        <dict-value
+                            :options="listAllData.monitor_project_listAll"
+                            :value="row.ProjectKey"
+                            labelKey="ProjectName"
+                            valueKey="ProjectKey"
+                        />
+                    </template>
+                </el-table-column>
+                <el-table-column label="事件类型" prop="EventType" min-width="130" />
+                <el-table-column label="URL地址" prop="Path" min-width="130" />
+                <el-table-column label="错误消息" prop="Message" min-width="130" />
+                <el-table-column label="错误堆栈" prop="Stack" min-width="130" />
+                <el-table-column label="md5" prop="Md5" min-width="130" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
+                <el-table-column label="更新时间" prop="ClientTime" min-width="130" />
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['admin:user_protocol:edit']"
+                            v-perms="['admin:monitor_error:detail']"
                             type="primary"
                             link
-                            @click="handleEdit(row)"
+                            @click="handleDetails(row)"
                         >
-                            编辑
+                            详情
                         </el-button>
                         <el-button
-                            v-perms="['admin:user_protocol:del']"
+                            v-perms="['admin:monitor_error:del']"
                             type="danger"
                             link
                             @click="handleDelete(row.Id)"
@@ -115,64 +134,91 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <edit-popup
+            v-if="showEdit"
+            ref="editRef"
+            :list-all-data="listAllData"
+            @success="getLists"
+            @close="showEdit = false"
+        />
+        <DetailsPopup
+            v-if="showDetails"
+            ref="detailsRef"
+            :list-all-data="listAllData"
+            @close="showDetails = false"
+        />
     </div>
 </template>
 <script lang="ts" setup>
 import {
-    user_protocol_delete,
-    user_protocol_delete_batch,
-    user_protocol_list,
-    user_protocol_import_file,
-    user_protocol_export_file
-} from '@/api/user/protocol'
-import type { type_user_protocol, type_user_protocol_query } from '@/api/user/protocol'
+    monitor_error_delete,
+    monitor_error_delete_batch,
+    monitor_error_list,
+    monitor_error_import_file,
+    monitor_error_export_file
+} from '@/api/monitor/error'
+import type { type_monitor_error, type_monitor_error_query } from '@/api/monitor/error'
+
+import { useListAllData } from '@/hooks/useDictOptions'
+// import type { type_dict } from '@/hooks/useDictOptions'
 
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+import DetailsPopup from './details.vue'
+
 defineOptions({
-    name: 'user_protocol'
-})
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-const showEdit = ref(false)
-const queryParams = reactive<type_user_protocol_query>({
-    Title: null,
-    Content: null,
-    Sort: null,
-    CreateTimeStart: null,
-    CreateTimeEnd: null,
-    UpdateTimeStart: null,
-    UpdateTimeEnd: null
+    name: 'monitor_error'
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging<type_user_protocol>({
-    fetchFun: user_protocol_list,
+const showEdit = ref(false)
+const showDetails = ref(false)
+
+const queryParams = reactive<type_monitor_error_query>({
+    ProjectKey: null,
+    EventType: null,
+    Path: null,
+    Message: null,
+    Stack: null,
+    Md5: null,
+    CreateTimeStart: null,
+    CreateTimeEnd: null
+})
+
+const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_error>({
+    fetchFun: monitor_error_list,
     params: queryParams
 })
+const { listAllData } = useListAllData<{
+    monitor_project_listAll: any[]
+}>({
+    monitor_project_listAll: '/monitor_project/listAll'
+})
 
+const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const handleAdd = async () => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('edit')
-    editRef.value?.getDetail(data)
-}
-const multipleSelection = ref<type_user_protocol[]>([])
-const handleSelectionChange = (val: type_user_protocol[]) => {
+const multipleSelection = ref<type_monitor_error[]>([])
+const handleSelectionChange = (val: type_monitor_error[]) => {
     console.log(val)
     multipleSelection.value = val
 }
 
+const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
+const handleDetails = async (row: type_monitor_error) => {
+    showDetails.value = true
+    await nextTick()
+    detailsRef.value?.open('details')
+    detailsRef.value?.getDetail(row)
+}
 const handleDelete = async (Id: number) => {
     try {
         await feedback.confirm('确定要删除？')
-        await user_protocol_delete(Id)
+        await monitor_error_delete(Id)
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {}
@@ -185,7 +231,7 @@ const deleteBatch = async () => {
     }
     try {
         await feedback.confirm('确定要删除？')
-        await user_protocol_delete_batch({
+        await monitor_error_delete_batch({
             Ids: multipleSelection.value.map((item) => item.Id).join(',')
         })
         feedback.msgSuccess('删除成功')
@@ -196,7 +242,7 @@ const deleteBatch = async () => {
 const exportFile = async () => {
     try {
         await feedback.confirm('确定要导出？')
-        await user_protocol_export_file(queryParams)
+        await monitor_error_export_file(queryParams)
     } catch (error) {}
 }
 getLists()
