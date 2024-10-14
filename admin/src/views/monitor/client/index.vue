@@ -126,16 +126,16 @@
                 <el-table-column label="ua记录" prop="Ua" min-width="130" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
 
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column label="操作" width="80" fixed="right">
                     <template #default="{ row }">
-                        <el-button
+                        <!-- <el-button
                             v-perms="['admin:monitor_client:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
                         >
                             编辑
-                        </el-button>
+                        </el-button> -->
                         <el-button
                             v-perms="['admin:monitor_client:del']"
                             type="danger"

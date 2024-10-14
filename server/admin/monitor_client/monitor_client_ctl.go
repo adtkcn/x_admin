@@ -76,6 +76,15 @@ func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
+func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
+	var Req MonitorClientDetailReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &Req)) {
+		return
+	}
+	res, err := MonitorClientService.ErrorUsers(Req.Id)
+	response.CheckAndRespWithData(c, res, err)
+}
+
 // @Summary	监控-客户端信息详情
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
@@ -136,13 +145,13 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 // @Param		Ua		body		string				false	"ua记录"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_client/edit [post]
-func (hd *MonitorClientHandler) Edit(c *gin.Context) {
-	var editReq MonitorClientEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
-		return
-	}
-	response.CheckAndRespWithData(c, editReq.Id, MonitorClientService.Edit(editReq))
-}
+// func (hd *MonitorClientHandler) Edit(c *gin.Context) {
+// 	var editReq MonitorClientEditReq
+// 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+// 		return
+// 	}
+// 	response.CheckAndRespWithData(c, editReq.Id, MonitorClientService.Edit(editReq))
+// }
 
 // @Summary	监控-客户端信息删除
 // @Tags		monitor_client-监控-客户端信息

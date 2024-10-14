@@ -52,9 +52,40 @@
                             </div>
                         </template>
                         <el-scrollbar height="400px">
-                            <p v-for="item in 120" :key="item" class="scrollbar-demo-item">
-                                {{ item }}
-                            </p>
+                            <el-collapse v-model="activeNames">
+                                <el-collapse-item
+                                    v-for="(user, index) in users"
+                                    :key="user.Id"
+                                    :title="user.CreateTime"
+                                    :name="index"
+                                >
+                                    <template #title>
+                                        <div class="flex-1 text-left">
+                                            {{ user.UserId }}
+                                        </div>
+                                        <span class="">
+                                            {{ user.CreateTime }}
+                                        </span>
+                                    </template>
+                                    <el-descriptions border>
+                                        <el-descriptions-item label="城市：">{{
+                                            user.City
+                                        }}</el-descriptions-item>
+
+                                        <el-descriptions-item label="OS：">{{
+                                            user.Os
+                                        }}</el-descriptions-item>
+                                        <el-descriptions-item label="屏幕尺寸：">
+                                            <el-tag size="small"
+                                                >{{ user.Width }}*{{ user.Height }}</el-tag
+                                            >
+                                        </el-descriptions-item>
+                                        <el-descriptions-item label="userAgent">
+                                            {{ user.Ua }}
+                                        </el-descriptions-item>
+                                    </el-descriptions>
+                                </el-collapse-item>
+                            </el-collapse>
                         </el-scrollbar>
                     </el-card>
                 </el-col>
@@ -65,6 +96,9 @@
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
 import { monitor_error_add, monitor_error_detail } from '@/api/monitor/error'
+import { monitor_client_errorUsers } from '@/api/monitor/client'
+import type { type_monitor_client } from '@/api/monitor/client'
+
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import type { PropType } from 'vue'
@@ -86,6 +120,8 @@ const popupTitle = computed(() => {
     return '监控详情'
 })
 
+const activeNames = ref<string[]>(['1'])
+
 const formData = reactive({
     Id: null,
     ProjectKey: null,
@@ -97,6 +133,7 @@ const formData = reactive({
     Md5: null,
     ClientTime: null
 })
+const users = ref<type_monitor_client[]>([])
 
 const handleSubmit = async () => {
     try {
@@ -126,6 +163,10 @@ const setFormData = async (data: Record<string, any>) => {
 const getDetail = async (row: Record<string, any>) => {
     try {
         const data = await monitor_error_detail(row.Id)
+
+        users.value = await monitor_client_errorUsers(row.Id)
+        console.log('user', users.value)
+
         setFormData(data)
     } catch (error) {}
 }

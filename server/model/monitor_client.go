@@ -17,5 +17,5 @@ type MonitorClient struct {
 	Height     core.NullInt  `gorm:"comment:'屏幕高度'"`                // 屏幕高度
 	Ua         string        `gorm:"comment:'ua记录'"`                // ua记录
 	CreateTime core.NullTime `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
-	ClientTime core.NullTime `gorm:"comment:'更新时间'"`                // 更新时间
+	// ClientTime core.NullTime `gorm:"comment:'更新时间'"`                // 更新时间
 }

@@ -1,9 +1,10 @@
 package admin
 
 import (
-	"github.com/gin-gonic/gin"
-	"x_admin/middleware" 
 	"x_admin/admin/monitor_client"
+	"x_admin/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 /**
@@ -41,7 +42,6 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '监控-客户端信息导入excel','admin:monitor_client:ImportFile', 0, 1, 0, now(), now());
 */
 
-
 // MonitorClientRoute(rg)
 func MonitorClientRoute(rg *gin.RouterGroup) {
 	handle := monitor_client.MonitorClientHandler{}
@@ -50,13 +50,14 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 	r.GET("/monitor_client/list", handle.List)
 	r.GET("/monitor_client/listAll", handle.ListAll)
 	r.GET("/monitor_client/detail", handle.Detail)
-	
-	r.POST("/monitor_client/add",middleware.RecordLog("监控-客户端信息新增"), handle.Add)
-	r.POST("/monitor_client/edit",middleware.RecordLog("监控-客户端信息编辑"), handle.Edit)
-	
+	r.GET("/monitor_client/errorUsers", handle.ErrorUsers)
+
+	r.POST("/monitor_client/add", middleware.RecordLog("监控-客户端信息新增"), handle.Add)
+	// r.POST("/monitor_client/edit",middleware.RecordLog("监控-客户端信息编辑"), handle.Edit)
+
 	r.POST("/monitor_client/del", middleware.RecordLog("监控-客户端信息删除"), handle.Del)
 	r.POST("/monitor_client/delBatch", middleware.RecordLog("监控-客户端信息删除-批量"), handle.DelBatch)
 
 	r.GET("/monitor_client/ExportFile", middleware.RecordLog("监控-客户端信息导出"), handle.ExportFile)
-	r.POST("/monitor_client/ImportFile",  handle.ImportFile)
+	r.POST("/monitor_client/ImportFile", handle.ImportFile)
 }

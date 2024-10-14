@@ -202,6 +202,7 @@ func CheckMysqlErr(err error) (e error) {
 		default:
 			// 处理其他错误
 			core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf("未知错误: err=[%+v]", err)
+			return err
 		}
 	}
 	return
