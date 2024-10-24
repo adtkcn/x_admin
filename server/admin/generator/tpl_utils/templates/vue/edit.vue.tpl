@@ -166,6 +166,7 @@ import type { FormInstance } from 'element-plus'
 import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_lists,{{{ end }}} {{{ .ModuleName }}}_edit, {{{ .ModuleName }}}_add, {{{ .ModuleName }}}_detail } from '@/api/{{{nameToPath .ModuleName }}}'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
+import { ref, shallowRef, computed, reactive } from 'vue'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {

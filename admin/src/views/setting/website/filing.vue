@@ -51,6 +51,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
 import { getCopyright, setCopyright } from '@/api/setting/website'
 import feedback from '@/utils/feedback'
 defineOptions({

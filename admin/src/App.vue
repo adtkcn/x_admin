@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, watch } from 'vue'
 import { useDark, useWindowSize, useThrottleFn } from '@vueuse/core'
 // import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'

@@ -148,6 +148,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref,shallowRef,reactive,onMounted,watch } from 'vue'
 import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{nameToPath .ModuleName }}}'
 import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 

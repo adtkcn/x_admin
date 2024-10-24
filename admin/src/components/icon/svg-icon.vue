@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts">
+import { computed, defineComponent } from 'vue'
 import { addUnit } from '@/utils/util'
 import type { CSSProperties } from 'vue'
 

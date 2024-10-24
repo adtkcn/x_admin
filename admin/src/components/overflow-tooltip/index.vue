@@ -13,6 +13,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, shallowRef } from 'vue'
 import { useEventListener } from '@vueuse/core'
 import { useTooltipContentProps, type Placement } from 'element-plus'
 import type { PropType } from 'vue'

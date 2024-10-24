@@ -25,6 +25,7 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
 import { getNormalPath, objectToQuery } from '@/utils/util'
 import { isExternal } from '@/utils/validate'
 import type { RouteRecordRaw } from 'vue-router'

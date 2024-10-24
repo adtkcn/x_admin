@@ -68,6 +68,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, computed, shallowRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { deptLists, deptEdit, deptAdd, deptDetail } from '@/api/org/department'
 import { adminListByDeptId } from '@/api/perms/admin'

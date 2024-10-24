@@ -40,6 +40,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { reactive, shallowRef } from 'vue'
 import { setSmsConfig, smsDetail } from '@/api/message'
 import type { FormInstance } from 'element-plus'
 import Popup from '@/components/popup/index.vue'

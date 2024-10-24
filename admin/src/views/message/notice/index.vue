@@ -32,6 +32,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, reactive, onActivated } from 'vue'
 import { noticeLists } from '@/api/message'
 
 defineOptions({

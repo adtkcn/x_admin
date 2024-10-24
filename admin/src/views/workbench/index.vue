@@ -92,6 +92,7 @@
 </template>
 
 <script lang="ts" setup>
+import { reactive } from 'vue'
 import { getWorkbench } from '@/api/app'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'

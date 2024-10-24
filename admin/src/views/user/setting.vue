@@ -78,6 +78,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, reactive } from 'vue'
 import { setUserInfo } from '@/api/user'
 import useUserStore from '@/stores/modules/user'
 import feedback from '@/utils/feedback'

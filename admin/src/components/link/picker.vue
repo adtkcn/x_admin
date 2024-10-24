@@ -17,6 +17,7 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, shallowRef, ref, watch } from 'vue'
 import { LinkTypeEnum, type Link } from '.'
 import LinkContent from './index.vue'
 import Popup from '@/components/popup/index.vue'

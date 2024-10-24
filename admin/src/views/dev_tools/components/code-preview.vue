@@ -62,6 +62,7 @@
 </template>
 
 <script lang="ts" setup>
+import { onMounted, ref, computed } from 'vue'
 import feedback from '@/utils/feedback'
 import useClipboard from 'vue-clipboard3'
 

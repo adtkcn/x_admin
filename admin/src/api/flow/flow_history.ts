@@ -61,7 +61,7 @@ export function flow_history_list(params?: type_flow_history_query) {
 }
 // 流程历史列表-所有
 export function flow_history_list_all(params?: type_flow_history_query) {
-    return request.get<Pages<type_flow_history>>({ url: '/flow/flow_history/listAll', params })
+    return request.get<type_flow_history[]>({ url: '/flow/flow_history/listAll', params })
 }
 
 // 流程历史详情

@@ -64,13 +64,11 @@
             </div>
         </el-card>
 
-        <!-- <Approve ref="ApproveRef"></Approve> -->
-
         <ViewForm ref="viewFormRef"></ViewForm>
-        <!-- <ApplySubmit ref="ApplySubmitRef" title="审批" @close="getLists"></ApplySubmit> -->
     </div>
 </template>
 <script lang="ts" setup>
+import { shallowRef, reactive } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list } from '@/api/flow/flow_history'
 import type { type_flow_apply } from '@/api/flow/flow_apply'

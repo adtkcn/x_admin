@@ -26,6 +26,7 @@
 </template>
 
 <script lang="ts" setup>
+import { reactive } from 'vue'
 import { getUserSetup, setUserSetup } from '@/api/setting/user'
 import feedback from '@/utils/feedback'
 // import type { FormInstance } from 'element-plus'

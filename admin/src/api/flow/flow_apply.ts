@@ -59,7 +59,7 @@ export function flow_apply_lists(params?: type_flow_apply_query) {
 }
 // 申请流程列表-所有
 export function flow_apply_list_all(params?: type_flow_apply_query) {
-    return request.get<Pages<type_flow_apply>>({ url: '/flow/flow_apply/listAll', params })
+    return request.get<type_flow_apply[]>({ url: '/flow/flow_apply/listAll', params })
 }
 
 // 申请流程详情

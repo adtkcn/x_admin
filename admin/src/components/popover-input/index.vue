@@ -53,6 +53,7 @@
 
 <script lang="ts" setup>
 import { useEventListener } from '@vueuse/core'
+import { ref, watch } from 'vue'
 import type { PropType } from 'vue'
 
 const props = defineProps({

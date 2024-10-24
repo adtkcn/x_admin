@@ -28,6 +28,8 @@ import { Editor as WEditor, Toolbar } from '@wangeditor/editor-for-vue'
 import type { IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import MaterialPicker from '@/components/material/picker.vue'
 import { addUnit } from '@/utils/util'
+
+import { withDefaults, computed, shallowRef, ref, onBeforeUnmount } from 'vue'
 import type { CSSProperties } from 'vue'
 
 const props = withDefaults(

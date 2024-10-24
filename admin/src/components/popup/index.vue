@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { ref, provide } from 'vue'
+import { ref, provide, defineComponent, nextTick } from 'vue'
 export default defineComponent({
     props: {
         title: {

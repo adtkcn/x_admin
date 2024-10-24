@@ -77,6 +77,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, shallowRef, reactive, nextTick } from 'vue'
 import { postDelete, postLists } from '@/api/org/post'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'

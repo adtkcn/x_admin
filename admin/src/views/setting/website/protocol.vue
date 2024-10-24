@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { getProtocol, setProtocol } from '@/api/setting/website'
 import feedback from '@/utils/feedback'
 defineOptions({

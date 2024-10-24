@@ -87,6 +87,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, shallowRef, reactive } from 'vue'
 import {
     flow_template_delete,
     flow_template_lists,
@@ -185,8 +186,6 @@ function save(info) {
 }
 const approverRef = shallowRef<InstanceType<typeof EditPopup>>()
 const handleConfig = async (data: any) => {
-    console.log('toRaw(data)', toRaw(data))
-
     approverRef.value?.open({
         id: data.id,
         basicSetting: {

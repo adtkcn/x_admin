@@ -21,14 +21,7 @@ const color = defineModel({
         return props.defaultColor
     }
 })
-// const color = computed({
-//     get() {
-//         return props.modelValue
-//     },
-//     set(value) {
-//         emit('update:modelValue', value)
-//     }
-// })
+
 const predefineColors = ['#409EFF', '#28C76F', '#EA5455', '#FF9F43', '#01CFE8', '#4A5DFF']
 const reset = () => {
     color.value = props.defaultColor

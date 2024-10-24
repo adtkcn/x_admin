@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
 /**
  * @description 兼容第三方页面的跳转
  */

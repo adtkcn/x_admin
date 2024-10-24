@@ -14,6 +14,7 @@
     </div>
 </template>
 <script lang="ts">
+import { computed, defineComponent } from 'vue'
 // import { ElIcon } from 'element-plus'
 import { EL_ICON_PREFIX, LOCAL_ICON_PREFIX } from './index'
 import ISvgIcon from './svg-icon.vue'

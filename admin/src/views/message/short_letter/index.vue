@@ -22,6 +22,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { reactive, shallowRef } from 'vue'
 import { smsLists } from '@/api/message'
 import EditPopup from './edit.vue'
 defineOptions({

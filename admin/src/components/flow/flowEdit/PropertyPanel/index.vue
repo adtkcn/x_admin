@@ -29,7 +29,7 @@
     </el-drawer>
 </template>
 <script setup lang="ts">
-import { ref, toRaw } from 'vue'
+import { ref, toRaw, reactive } from 'vue'
 import UserTask from './UserTask.vue'
 import FieldAuth from './FieldAuth.vue'
 import Gateway from './Gateway.vue'

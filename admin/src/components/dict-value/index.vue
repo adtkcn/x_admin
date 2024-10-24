@@ -8,6 +8,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { computed, withDefaults } from 'vue'
 defineOptions({
     name: 'dict-value'
 })

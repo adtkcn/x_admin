@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import useAppStore from '@/stores/modules/app'
 import Fold from './fold.vue'
 import Refresh from './refresh.vue'

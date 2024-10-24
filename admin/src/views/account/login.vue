@@ -114,7 +114,7 @@ import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
 import { encryptPassword } from '@/utils/util'
 import Verify from '@/components/verify/Verify.vue'
-
+import ImageContain from '@/components/image-contain/index.vue'
 // const verifyRef = ref(null)
 const verifyRef = shallowRef<InstanceType<typeof Verify>>()
 const onShowCaptcha = () => {

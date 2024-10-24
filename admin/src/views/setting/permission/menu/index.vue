@@ -98,6 +98,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, shallowRef, nextTick } from 'vue'
 import { menuDelete, menuLists } from '@/api/perms/menu'
 import { arrayToTree } from '@/utils/util'
 import type { ElTable } from 'element-plus'

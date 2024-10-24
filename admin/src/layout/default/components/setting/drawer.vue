@@ -83,6 +83,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import useSettingStore from '@/stores/modules/setting'
 import { useDark, useToggle } from '@vueuse/core'
 import theme_light from '@/assets/images/theme_white.png'

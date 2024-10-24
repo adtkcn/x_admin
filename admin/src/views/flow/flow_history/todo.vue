@@ -69,6 +69,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { shallowRef, reactive, defineOptions } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
 import type { type_flow_history } from '@/api/flow/flow_history'

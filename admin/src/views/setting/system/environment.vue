@@ -114,6 +114,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onBeforeUnmount } from 'vue'
 import { systemInfo } from '@/api/setting/system'
 defineOptions({
     name: 'environment'

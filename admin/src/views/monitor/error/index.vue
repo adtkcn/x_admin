@@ -150,6 +150,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, reactive, shallowRef, nextTick } from 'vue'
 import {
     monitor_error_delete,
     monitor_error_delete_batch,
