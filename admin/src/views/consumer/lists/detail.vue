@@ -84,6 +84,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useRoute } from 'vue-router'
+import { shallowRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { getUserDetail, userEdit } from '@/api/consumer'
 import feedback from '@/utils/feedback'

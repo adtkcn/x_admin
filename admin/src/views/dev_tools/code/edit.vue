@@ -290,6 +290,9 @@
 </template>
 
 <script lang="ts" setup>
+import { useRoute, useRouter } from 'vue-router'
+import { ref, reactive, shallowRef } from 'vue'
+
 import { generateEdit, tableDetail } from '@/api/tools/code'
 import { dictTypeAll } from '@/api/setting/dict'
 import type { FormInstance } from 'element-plus'

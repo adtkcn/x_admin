@@ -39,11 +39,17 @@ export type type_monitor_project_edit = {
 
 // 监控项目列表
 export function monitor_project_list(params?: type_monitor_project_query) {
-    return request.get<Pages<type_monitor_project>>({ url: '/monitor_project/list', params: clearEmpty(params) })
+    return request.get<Pages<type_monitor_project>>({
+        url: '/monitor_project/list',
+        params: clearEmpty(params)
+    })
 }
 // 监控项目列表-所有
 export function monitor_project_list_all(params?: type_monitor_project_query) {
-    return request.get<type_monitor_project[]>({ url: '/monitor_project/listAll', params: clearEmpty(params) })
+    return request.get<type_monitor_project[]>({
+        url: '/monitor_project/listAll',
+        params: clearEmpty(params)
+    })
 }
 
 // 监控项目详情
@@ -75,5 +81,7 @@ export const monitor_project_import_file = '/monitor_project/ImportFile'
 
 // 监控项目导出
 export function monitor_project_export_file(params: any) {
-    return (window.location.href =`${config.baseUrl}${config.urlPrefix}/monitor_project/ExportFile?token=${getToken()}&` + queryString.stringify(clearEmpty(params)))
+    return (window.location.href =
+        `${config.baseUrl}${config.urlPrefix}/monitor_project/ExportFile?token=${getToken()}&` +
+        queryString.stringify(clearEmpty(params)))
 }

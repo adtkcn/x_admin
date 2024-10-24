@@ -103,6 +103,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, shallowRef } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import type { InputInstance, FormInstance } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
 import useAppStore from '@/stores/modules/app'

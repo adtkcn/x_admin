@@ -18,23 +18,23 @@ type MonitorProjectHandler struct {
 	requestGroup singleflight.Group
 }
 
-//	 @Summary	监控项目列表
-//	 @Tags		monitor_project-监控项目
-//	 @Produce	json
-//	 @Param		Token		header		string				true	"token"
-//	 @Param		PageNo		query		int					true	"页码"
-//	 @Param		PageSize	query		int					true	"每页数量"
-//		@Param ProjectKey query string false "项目uuid"
-//		@Param ProjectName query string false "项目名称"
-//		@Param ProjectType query string false "项目类型go java web node php 等"
-//		@Param Status query number false "是否启用: 0=否, 1=是"
-//		@Param CreateTimeStart  query string false "创建时间"
-//		@Param CreateTimeEnd  query string false "创建时间"
-//		@Param UpdateTimeStart  query string false "更新时间"
-//		@Param UpdateTimeEnd  query string false "更新时间"
+//	@Summary	监控项目列表
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Param		Token			header		string																	true	"token"
+//	@Param		PageNo			query		int																		true	"页码"
+//	@Param		PageSize		query		int																		true	"每页数量"
+//	@Param		ProjectKey		query		string																	false	"项目uuid"
+//	@Param		ProjectName		query		string																	false	"项目名称"
+//	@Param		ProjectType		query		string																	false	"项目类型go java web node php 等"
+//	@Param		Status			query		number																	false	"是否启用: 0=否, 1=是"
+//	@Param		CreateTimeStart	query		string																	false	"创建时间"
+//	@Param		CreateTimeEnd	query		string																	false	"创建时间"
+//	@Param		UpdateTimeStart	query		string																	false	"更新时间"
+//	@Param		UpdateTimeEnd	query		string																	false	"更新时间"
 //
-// @Success 200	{object} response.Response{ data=response.PageResp{ lists=[]MonitorProjectResp}}	"成功"
-// @Router	/api/admin/monitor_project/list [get]
+//	@Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]MonitorProjectResp}}	"成功"
+//	@Router		/api/admin/monitor_project/list [get]
 func (hd *MonitorProjectHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq MonitorProjectListReq
@@ -48,19 +48,19 @@ func (hd *MonitorProjectHandler) List(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-//		@Summary	监控项目列表-所有
-//		@Tags		monitor_project-监控项目
-//	 @Produce	json
-//		@Param ProjectKey query string false "项目uuid"
-//		@Param ProjectName query string false "项目名称"
-//		@Param ProjectType query string false "项目类型go java web node php 等"
-//		@Param Status query number false "是否启用: 0=否, 1=是"
-//		@Param CreateTimeStart  query string false "创建时间"
-//		@Param CreateTimeEnd  query string false "创建时间"
-//		@Param UpdateTimeStart  query string false "更新时间"
-//		@Param UpdateTimeEnd  query string false "更新时间"
-//		@Success	200			{object}	response.Response{ data=[]MonitorProjectResp}	"成功"
-//		@Router		/api/admin/monitor_project/listAll [get]
+//	@Summary	监控项目列表-所有
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Param		ProjectKey		query		string											false	"项目uuid"
+//	@Param		ProjectName		query		string											false	"项目名称"
+//	@Param		ProjectType		query		string											false	"项目类型go java web node php 等"
+//	@Param		Status			query		number											false	"是否启用: 0=否, 1=是"
+//	@Param		CreateTimeStart	query		string											false	"创建时间"
+//	@Param		CreateTimeEnd	query		string											false	"创建时间"
+//	@Param		UpdateTimeStart	query		string											false	"更新时间"
+//	@Param		UpdateTimeEnd	query		string											false	"更新时间"
+//	@Success	200				{object}	response.Response{ data=[]MonitorProjectResp}	"成功"
+//	@Router		/api/admin/monitor_project/listAll [get]
 func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 	var listReq MonitorProjectListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -70,13 +70,13 @@ func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// @Summary	监控项目详情
-// @Tags		monitor_project-监控项目
-// @Produce	json
-// @Param		Token		header		string				true	"token"
-// @Param		Id		query		number				false	"项目id"
-// @Success	200			{object}	response.Response{ data=MonitorProjectResp}	"成功"
-// @Router		/api/admin/monitor_project/detail [get]
+//	@Summary	监控项目详情
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Param		Token	header		string										true	"token"
+//	@Param		Id		query		number										false	"项目id"
+//	@Success	200		{object}	response.Response{ data=MonitorProjectResp}	"成功"
+//	@Router		/api/admin/monitor_project/detail [get]
 func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 	var detailReq MonitorProjectDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
@@ -90,16 +90,16 @@ func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// @Summary	监控项目新增
-// @Tags		monitor_project-监控项目
-// @Produce	json
-// @Param		Token		header		string				true	"token"
-// @Param		ProjectKey		body		string				false	"项目uuid"
-// @Param		ProjectName		body		string				false	"项目名称"
-// @Param		ProjectType		body		string				false	"项目类型go java web node php 等"
-// @Param		Status		body		number				false	"是否启用: 0=否, 1=是"
-// @Success	200			{object}	response.Response	"成功"
-// @Router		/api/admin/monitor_project/add [post]
+//	@Summary	监控项目新增
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Param		Token		header		string				true	"token"
+//	@Param		ProjectKey	body		string				false	"项目uuid"
+//	@Param		ProjectName	body		string				false	"项目名称"
+//	@Param		ProjectType	body		string				false	"项目类型go java web node php 等"
+//	@Param		Status		body		number				false	"是否启用: 0=否, 1=是"
+//	@Success	200			{object}	response.Response	"成功"
+//	@Router		/api/admin/monitor_project/add [post]
 func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 	var addReq MonitorProjectAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
@@ -109,17 +109,17 @@ func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 	response.CheckAndRespWithData(c, createId, e)
 }
 
-// @Summary	监控项目编辑
-// @Tags		monitor_project-监控项目
-// @Produce	json
-// @Param		Token		header		string				true	"token"
-// @Param		Id		body		number				false	"项目id"
-// @Param		ProjectKey		body		string				false	"项目uuid"
-// @Param		ProjectName		body		string				false	"项目名称"
-// @Param		ProjectType		body		string				false	"项目类型go java web node php 等"
-// @Param		Status		body		number				false	"是否启用: 0=否, 1=是"
-// @Success	200			{object}	response.Response	"成功"
-// @Router		/api/admin/monitor_project/edit [post]
+//	@Summary	监控项目编辑
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Param		Token		header		string				true	"token"
+//	@Param		Id			body		number				false	"项目id"
+//	@Param		ProjectKey	body		string				false	"项目uuid"
+//	@Param		ProjectName	body		string				false	"项目名称"
+//	@Param		ProjectType	body		string				false	"项目类型go java web node php 等"
+//	@Param		Status		body		number				false	"是否启用: 0=否, 1=是"
+//	@Success	200			{object}	response.Response	"成功"
+//	@Router		/api/admin/monitor_project/edit [post]
 func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 	var editReq MonitorProjectEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
@@ -128,13 +128,13 @@ func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 	response.CheckAndRespWithData(c, editReq.Id, MonitorProjectService.Edit(editReq))
 }
 
-// @Summary	监控项目删除
-// @Tags		monitor_project-监控项目
-// @Produce	json
-// @Param		Token		header		string				true	"token"
-// @Param		Id		body		number				false	"项目id"
-// @Success	200			{object}	response.Response	"成功"
-// @Router		/api/admin/monitor_project/del [post]
+//	@Summary	监控项目删除
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Param		Token	header		string				true	"token"
+//	@Param		Id		body		number				false	"项目id"
+//	@Success	200		{object}	response.Response	"成功"
+//	@Router		/api/admin/monitor_project/del [post]
 func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 	var delReq MonitorProjectDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
@@ -146,11 +146,11 @@ func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 //	@Summary	监控项目删除-批量
 //	@Tags		monitor_project-监控项目
 //
-// @Produce	json
-// @Param		Token		header		string				true	"token"
-// @Param		Ids		body		string				false	"逗号分割的id"
-// @Success	200			{object}	response.Response	"成功"
-// @Router		/api/admin/monitor_project/delBatch [post]
+//	@Produce	json
+//	@Param		Token	header		string				true	"token"
+//	@Param		Ids		body		string				false	"逗号分割的id"
+//	@Success	200		{object}	response.Response	"成功"
+//	@Router		/api/admin/monitor_project/delBatch [post]
 func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 	var delReq MonitorProjectDelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
@@ -165,19 +165,19 @@ func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 	response.CheckAndResp(c, MonitorProjectService.DelBatch(Ids))
 }
 
-// @Summary	监控项目导出
-// @Tags		monitor_project-监控项目
-// @Produce	json
-// @Param		Token		header		string				true	"token"
-// @Param ProjectKey query string false "项目uuid"
-// @Param ProjectName query string false "项目名称"
-// @Param ProjectType query string false "项目类型go java web node php 等"
-// @Param Status query number false "是否启用: 0=否, 1=是"
-// @Param CreateTimeStart  query string false "创建时间"
-// @Param CreateTimeEnd  query string false "创建时间"
-// @Param UpdateTimeStart  query string false "更新时间"
-// @Param UpdateTimeEnd  query string false "更新时间"
-// @Router		/api/admin/monitor_project/ExportFile [get]
+//	@Summary	监控项目导出
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Param		Token			header	string	true	"token"
+//	@Param		ProjectKey		query	string	false	"项目uuid"
+//	@Param		ProjectName		query	string	false	"项目名称"
+//	@Param		ProjectType		query	string	false	"项目类型go java web node php 等"
+//	@Param		Status			query	number	false	"是否启用: 0=否, 1=是"
+//	@Param		CreateTimeStart	query	string	false	"创建时间"
+//	@Param		CreateTimeEnd	query	string	false	"创建时间"
+//	@Param		UpdateTimeStart	query	string	false	"更新时间"
+//	@Param		UpdateTimeEnd	query	string	false	"更新时间"
+//	@Router		/api/admin/monitor_project/ExportFile [get]
 func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorProjectListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -196,10 +196,10 @@ func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	excel2.DownLoadExcel("监控项目"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
-//	 @Summary	监控项目导入
-//	 @Tags		monitor_project-监控项目
-//	 @Produce	json
-//		@Router		/api/admin/monitor_project/ImportFile [post]
+//	@Summary	监控项目导入
+//	@Tags		monitor_project-监控项目
+//	@Produce	json
+//	@Router		/api/admin/monitor_project/ImportFile [post]
 func (hd *MonitorProjectHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

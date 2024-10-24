@@ -3,13 +3,14 @@ import { fileURLToPath, URL } from 'url'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
+// import AutoImport from 'unplugin-auto-import/vite'
+// import Components from 'unplugin-vue-components/vite'
+
 // import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
-import viteCompression from 'vite-plugin-compression'
+// import viteCompression from 'vite-plugin-compression'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
@@ -22,8 +23,8 @@ export default ({ mode }) => {
             // 依赖预构建，避免开发刷新
             include: ['@wangeditor/editor-for-vue', 'vuedraggable', 'vue-echarts', 'crypto-js']
         },
+        base: './',
         build: {
-            // 打包后文件名
             sourcemap: true
         },
         server: {
@@ -41,17 +42,17 @@ export default ({ mode }) => {
         plugins: [
             vue(),
             vueJsx(),
-            AutoImport({
-                imports: ['vue', 'vue-router'],
-                // resolvers: [ElementPlusResolver()],
-                eslintrc: {
-                    enabled: true
-                }
-            }),
-            Components({
-                directoryAsNamespace: true
-                // resolvers: [ElementPlusResolver()]
-            }),
+            // AutoImport({
+            //     imports: ['vue', 'vue-router'],
+            //     // resolvers: [ElementPlusResolver()],
+            //     eslintrc: {
+            //         enabled: true
+            //     }
+            // }),
+            // Components({
+            //     directoryAsNamespace: true
+            //     // resolvers: [ElementPlusResolver()]
+            // }),
             // createStyleImportPlugin({
             //     resolves: [ElementPlusResolve()]
             // }),
@@ -60,9 +61,9 @@ export default ({ mode }) => {
                 iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
                 symbolId: 'local-icon-[dir]-[name]'
             }),
-            viteCompression({
-                algorithm: 'gzip'
-            }),
+            // viteCompression({
+            //     algorithm: 'gzip'
+            // })
             // viteCompression({
             //     algorithm: 'brotliCompress'
             // })

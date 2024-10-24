@@ -206,12 +206,6 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('edit')
-    editRef.value?.getDetail(data)
-}
 const multipleSelection = ref<type_monitor_client[]>([])
 const handleSelectionChange = (val: type_monitor_client[]) => {
     console.log(val)

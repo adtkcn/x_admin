@@ -1,4 +1,4 @@
-import { isObject } from '@vue/shared'
+// import { isObject } from '@vue/shared'
 import { cloneDeep } from 'lodash-es'
 // import { md5 } from 'js-md5'
 import MD5 from 'crypto-js/md5'
@@ -28,7 +28,12 @@ export const addUnit = (value: string | number, unit = 'px') => {
 export const isEmpty = (value: any) => {
     return value === '' || value === null || value === undefined
 }
-
+/**
+ * 判读是否为对象
+ */
+export const isObject = (val: any): boolean => {
+    return val !== null && typeof val === 'object'
+}
 /**
  * @description 树转数组，队列实现广度优先遍历
  * @param {Array} data  数据
