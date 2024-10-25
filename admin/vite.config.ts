@@ -30,16 +30,17 @@ export default ({ mode }) => {
                 output: {
                     manualChunks: {
                         vue: ['vue'],
+                        'vue-router': ['vue-router'],
                         pinia: ['pinia'],
                         axios: ['axios'],
                         dayjs: ['dayjs'],
-                        echarts: ['echarts'],
-                        'highlight.js': ['highlight.js'],
-                        'element-plus': ['element-plus'],
-                        'vue-router': ['vue-router'],
-                        'lodash-es': ['lodash-es'],
-                        vuedraggable: ['vuedraggable'],
-                        'vform3-builds': ['vform3-builds']
+                        // echarts: ['echarts'],
+                        // 'highlight.js': ['highlight.js'],
+                        'element-plus': ['element-plus']
+
+                        // 'lodash-es': ['lodash-es'],
+                        // vuedraggable: ['vuedraggable'],
+                        // 'vform3-builds': ['vform3-builds']
                     }
                 }
             }
