@@ -25,8 +25,26 @@ export default ({ mode }) => {
         },
         base: './',
         build: {
-            sourcemap: true
+            sourcemap: true,
+            rollupOptions: {
+                output: {
+                    manualChunks: {
+                        vue: ['vue'],
+                        pinia: ['pinia'],
+                        axios: ['axios'],
+                        dayjs: ['dayjs'],
+                        echarts: ['echarts'],
+                        'highlight.js': ['highlight.js'],
+                        'element-plus': ['element-plus'],
+                        'vue-router': ['vue-router'],
+                        'lodash-es': ['lodash-es'],
+                        vuedraggable: ['vuedraggable'],
+                        'vform3-builds': ['vform3-builds']
+                    }
+                }
+            }
         },
+
         server: {
             open: true,
             host: '0.0.0.0',
@@ -68,8 +86,8 @@ export default ({ mode }) => {
             //     algorithm: 'brotliCompress'
             // })
             visualizer({
-                gzipSize: true,
-                brotliSize: true,
+                gzipSize: false,
+                brotliSize: false,
                 emitFile: false,
                 filename: 'test.html', //分析图生成的文件名
                 open: true
