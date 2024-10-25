@@ -63,21 +63,21 @@ type FlowHistoryDelReq struct {
 
 //FlowHistoryResp 流程历史返回信息
 type FlowHistoryResp struct {
-	Id                int         `json:"id" structs:"id"`                               // 历史id
-	ApplyId           int         `json:"applyId" structs:"applyId"`                     // 申请id
-	TemplateId        int         `json:"templateId" structs:"templateId"`               // 模板id
-	ApplyUserId       int         `json:"applyUserId" structs:"applyUserId"`             // 申请人id
-	ApplyUserNickname string      `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
-	ApproverId        int         `json:"approverId" structs:"approverId"`               // 审批人id
-	ApproverNickname  string      `json:"approverNickname" structs:"approverNickname"`   // 审批用户昵称
-	NodeId            string      `json:"nodeId" structs:"nodeId"`                       // 节点
-	NodeType          string      `json:"nodeType" structs:"nodeType"`                   // 节点类型
-	NodeLabel         string      `json:"nodeLabel" structs:"nodeLabel"`                 // 节点名称
-	FormValue         string      `json:"formValue" structs:"formValue"`                 // 表单值
-	PassStatus        int         `json:"passStatus" structs:"passStatus"`               // 通过状态：1待处理，2通过，3拒绝
-	PassRemark        string      `json:"passRemark" structs:"passRemark"`               // 通过备注
-	UpdateTime        core.TsTime `json:"updateTime" structs:"updateTime"`               // 更新时间
-	CreateTime        core.TsTime `json:"createTime" structs:"createTime"`               // 创建时间
+	Id                int           `json:"id" structs:"id"`                               // 历史id
+	ApplyId           int           `json:"applyId" structs:"applyId"`                     // 申请id
+	TemplateId        int           `json:"templateId" structs:"templateId"`               // 模板id
+	ApplyUserId       int           `json:"applyUserId" structs:"applyUserId"`             // 申请人id
+	ApplyUserNickname string        `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
+	ApproverId        int           `json:"approverId" structs:"approverId"`               // 审批人id
+	ApproverNickname  string        `json:"approverNickname" structs:"approverNickname"`   // 审批用户昵称
+	NodeId            string        `json:"nodeId" structs:"nodeId"`                       // 节点
+	NodeType          string        `json:"nodeType" structs:"nodeType"`                   // 节点类型
+	NodeLabel         string        `json:"nodeLabel" structs:"nodeLabel"`                 // 节点名称
+	FormValue         string        `json:"formValue" structs:"formValue"`                 // 表单值
+	PassStatus        int           `json:"passStatus" structs:"passStatus"`               // 通过状态：1待处理，2通过，3拒绝
+	PassRemark        string        `json:"passRemark" structs:"passRemark"`               // 通过备注
+	UpdateTime        core.NullTime `json:"updateTime" structs:"updateTime"`               // 更新时间
+	CreateTime        core.NullTime `json:"createTime" structs:"createTime"`               // 创建时间
 }
 
 type gateway struct {

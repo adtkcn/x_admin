@@ -4,7 +4,7 @@
             <div
                 ref="textRef"
                 class="overflow-text truncate"
-                :style="{ textOverflow: overfloType }"
+                :style="{ textOverflow: overflowType }"
             >
                 {{ content }}
             </div>
@@ -13,6 +13,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, shallowRef } from 'vue'
 import { useEventListener } from '@vueuse/core'
 import { useTooltipContentProps, type Placement } from 'element-plus'
 import type { PropType } from 'vue'
@@ -27,7 +28,7 @@ const props = defineProps({
         type: String as PropType<Placement>,
         default: 'top'
     },
-    overfloType: {
+    overflowType: {
         type: String as PropType<'ellipsis' | 'unset' | 'clip'>,
         default: 'ellipsis'
     }

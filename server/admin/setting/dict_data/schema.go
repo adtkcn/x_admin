@@ -4,16 +4,16 @@ import "x_admin/core"
 
 //SettingDictDataResp 字典数据返回信息
 type SettingDictDataResp struct {
-	ID         uint        `json:"id" structs:"id"`                 // 主键
-	TypeId     uint        `json:"typeId" structs:"typeId"`         // 类型
-	Name       string      `json:"name" structs:"name"`             // 键
-	Value      string      `json:"value" structs:"value"`           // 值
-	Color      string      `json:"color" structs:"color"`           // 颜色
-	Remark     string      `json:"remark" structs:"remark"`         // 备注
-	Sort       uint16      `json:"sort" structs:"sort"`             // 排序
-	Status     uint8       `json:"status" structs:"status"`         // 状态: [0=停用, 1=禁用]
-	CreateTime core.TsTime `json:"createTime" structs:"createTime"` // 创建时间
-	UpdateTime core.TsTime `json:"updateTime" structs:"updateTime"` // 更新时间
+	ID         uint          `json:"id" structs:"id"`                 // 主键
+	TypeId     uint          `json:"typeId" structs:"typeId"`         // 类型
+	Name       string        `json:"name" structs:"name"`             // 键
+	Value      string        `json:"value" structs:"value"`           // 值
+	Color      string        `json:"color" structs:"color"`           // 颜色
+	Remark     string        `json:"remark" structs:"remark"`         // 备注
+	Sort       uint16        `json:"sort" structs:"sort"`             // 排序
+	Status     uint8         `json:"status" structs:"status"`         // 状态: [0=停用, 1=禁用]
+	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
 }
 
 //SettingDictDataListReq 字典数据列表参数

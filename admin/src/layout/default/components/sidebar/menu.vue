@@ -27,6 +27,8 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import MenuItem from './menu-item.vue'
 import type { RouteRecordRaw } from 'vue-router'
 defineOptions({

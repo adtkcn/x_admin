@@ -20,11 +20,11 @@
   <uv-list>
     <uv-list-item
       v-for="item of pager.lists"
-      :key="item.id"
+      :key="item.{{{toUpperCamelCase .PrimaryKey}}}"
       clickable
       show-arrow
-      :title="item.id"
-      :right-text="item.id"
+      :title="item.{{{toUpperCamelCase .PrimaryKey}}}"
+      :right-text="item.{{{toUpperCamelCase .PrimaryKey}}}"
       @click="toDetails(item)"
     ></uv-list-item>
   </uv-list>
@@ -63,8 +63,8 @@ import {
   onReachBottom,
   onPageScroll,
 } from "@dcloudio/uni-app";
-import { {{{ .ModuleName }}}_list } from "@/api/{{{ .ModuleName }}}";
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{ .ModuleName }}}";
+import { {{{ .ModuleName }}}_list } from "@/api/{{{nameToPath .ModuleName }}}";
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";
@@ -72,10 +72,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toCamelCase .GoField) }}}Start: '',
-    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{ (toUpperCamelCase .GoField) }}}Start: '',
+    {{{ (toUpperCamelCase .GoField) }}}End: '',
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (toUpperCamelCase .GoField) }}}: '',
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -110,13 +110,13 @@ onReachBottom(() => {
 });
 
 function toDetails(item) {
-  toPath("/pages/{{{ .ModuleName }}}/details", { id: item.id });
+  toPath("/pages/{{{nameToPath .ModuleName }}}/details", { {{{toUpperCamelCase .PrimaryKey}}}: item.{{{toUpperCamelCase .PrimaryKey}}} });
 }
 function moreSearch() {
-  toPath("/pages/{{{ .ModuleName }}}/search");
+  toPath("/pages/{{{nameToPath .ModuleName }}}/search");
 }
 function add() {
-  toPath("/pages/{{{ .ModuleName }}}/edit");
+  toPath("/pages/{{{nameToPath .ModuleName }}}/edit");
 }
 </script>
 

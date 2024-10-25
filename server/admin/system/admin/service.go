@@ -78,7 +78,7 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 		auths = append(auths, "*")
 	}
 	var admin SystemAuthAdminSelfOneResp
-	response.Copy(&admin, sysAdmin)
+	util.ConvertUtil.Copy(&admin, sysAdmin)
 	admin.Dept = strconv.FormatUint(uint64(sysAdmin.DeptId), 10)
 	admin.Avatar = util.UrlUtil.ToAbsoluteUrl(sysAdmin.Avatar)
 	return SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
@@ -151,7 +151,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq SystemAuthAdminListReq
 // 导入
 func (adminSrv systemAuthAdminService) ImportFile(importReq []SystemAuthAdminResp) (e error) {
 	var sysAdmin []system_model.SystemAuthAdmin
-	response.Copy(&sysAdmin, importReq)
+	util.ConvertUtil.Copy(&sysAdmin, importReq)
 	err := adminSrv.db.Create(&sysAdmin).Error
 	e = response.CheckErr(err, "添加失败")
 	return e
@@ -206,6 +206,44 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq System
 	}, nil
 }
 
+// List 管理员列表
+func (adminSrv systemAuthAdminService) ListAll(listReq SystemAuthAdminListReq) (res []SystemAuthAdminResp, e error) {
+	// 分页信息
+
+	// 查询
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
+	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
+	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
+	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.role = %s.id", roleTbName, roleTbName)).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
+		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
+	// 条件
+	if listReq.Username != "" {
+		adminModel = adminModel.Where("username like ?", "%"+listReq.Username+"%")
+	}
+	if listReq.Nickname != "" {
+		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
+	}
+	if listReq.Role >= 0 {
+		adminModel = adminModel.Where("role = ?", listReq.Role)
+	}
+
+	// 数据
+	var adminResp []SystemAuthAdminResp
+	err := adminModel.Order("id desc, sort desc").Find(&adminResp).Error
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
+		return
+	}
+	for i := 0; i < len(adminResp); i++ {
+		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
+		if adminResp[i].ID == 1 {
+			adminResp[i].Role = "系统管理员"
+		}
+	}
+	return adminResp, nil
+}
+
 // Detail 管理员详细
 func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp, e error) {
 	var sysAdmin system_model.SystemAuthAdmin
@@ -216,7 +254,7 @@ func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp,
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, sysAdmin)
+	util.ConvertUtil.Copy(&res, sysAdmin)
 	res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 	if res.Dept == "" {
 		res.Dept = strconv.FormatUint(uint64(res.DeptId), 10)
@@ -257,7 +295,7 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 		return response.Failed.SetMessage("密码格式不正确")
 	}
 	salt := util.ToolsUtil.RandomString(5)
-	response.Copy(&sysAdmin, addReq)
+	util.ConvertUtil.Copy(&sysAdmin, addReq)
 	sysAdmin.Role = strconv.FormatUint(uint64(addReq.Role), 10)
 	sysAdmin.Salt = salt
 	sysAdmin.Password = util.ToolsUtil.MakeMd5(strings.Trim(addReq.Password, " ") + salt)
@@ -428,7 +466,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 	if id == config.AdminConfig.GetAdminId(c) {
 		return response.AssertArgumentError.SetMessage("不能删除自己!")
 	}
-	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: core.TsTime(time.Now())}).Error
+	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
 	e = response.CheckErr(err, "Del Updates err")
 	return
 }

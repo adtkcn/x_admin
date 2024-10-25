@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -46,8 +45,8 @@ func (l *RedisUtil) Get(key string) string {
 
 func (l *RedisUtil) Set(key string, val string, expiresInSeconds int) {
 	//设置阈值，达到即clear缓存
-	rdsResult := l.Rdb.Set(context.Background(), key, val, time.Duration(expiresInSeconds)*time.Second)
-	fmt.Println("rdsResult: ", rdsResult.String(), "rdsErr: ", rdsResult.Err())
+	l.Rdb.Set(context.Background(), key, val, time.Duration(expiresInSeconds)*time.Second)
+
 	if expiresInSeconds > 0 {
 		// 缓存失效时间
 		nowTime := time.Now().Unix() + int64(expiresInSeconds)

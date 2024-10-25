@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 12/06/2024 16:33:23
+ Date: 25/10/2024 18:35:03
 */
 
 SET NAMES utf8mb4;
@@ -37,13 +37,15 @@ CREATE TABLE `x_album`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_cid`(`cid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '相册管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '相册管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_album
 -- ----------------------------
 INSERT INTO `x_album` VALUES (31, 6, 1, 0, 10, '6dd3ee16f5822373ffb6318c426cf13 (2).png', 'image/20241305/089ab8212e1e4b4ebe6c5cbe516ea3a5.png', 'png', 11914, 0, '2024-05-13 19:12:39', '2024-05-13 19:12:39', NULL);
 INSERT INTO `x_album` VALUES (32, 0, 1, 0, 10, 'appicon.png', 'image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png', 'png', 9873, 0, '2024-05-17 12:15:05', '2024-05-17 12:15:05', NULL);
+INSERT INTO `x_album` VALUES (33, 0, 1, 0, 10, 'COMPUMAX_1p2x61.jpg', 'image/20240908/98587b5a927a4a18b5f7d165a3e60287.jpg', 'jpg', 613802, 0, '2024-08-09 00:21:03', '2024-08-09 00:21:03', NULL);
+INSERT INTO `x_album` VALUES (34, 6, 1, 0, 10, 'Alx_gp73pq - 副本.png', 'image/20242410/7324e2b149f6412f8af21993e13c2fe9.png', 'png', 7138309, 0, '2024-10-24 18:16:44', '2024-10-24 18:16:44', NULL);
 
 -- ----------------------------
 -- Table structure for x_album_cate
@@ -59,12 +61,13 @@ CREATE TABLE `x_album_cate`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '相册分类表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '相册分类表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_album_cate
 -- ----------------------------
 INSERT INTO `x_album_cate` VALUES (6, 0, 10, 'a', 0, '2024-05-13 19:12:28', '2024-05-13 19:12:28', NULL);
+INSERT INTO `x_album_cate` VALUES (7, 0, 10, '1', 0, '2024-08-11 03:43:51', '2024-08-11 03:43:51', NULL);
 
 -- ----------------------------
 -- Table structure for x_article
@@ -151,7 +154,7 @@ CREATE TABLE `x_dict_data`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_dict_data
@@ -170,10 +173,13 @@ INSERT INTO `x_dict_data` VALUES (13, 4, '业务管理', '4', '', '', 0, 1, 0, '
 INSERT INTO `x_dict_data` VALUES (14, 4, '行政管理', '5', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
 INSERT INTO `x_dict_data` VALUES (15, 4, '法务管理', '6', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
 INSERT INTO `x_dict_data` VALUES (16, 4, '其他', '7', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
-INSERT INTO `x_dict_data` VALUES (17, 5, 'web', 'web', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
+INSERT INTO `x_dict_data` VALUES (17, 5, 'web', 'web', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-06-29 00:18:02', NULL);
 INSERT INTO `x_dict_data` VALUES (18, 5, 'go', 'go', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
 INSERT INTO `x_dict_data` VALUES (19, 5, 'uniapp', 'uniapp', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
 INSERT INTO `x_dict_data` VALUES (20, 5, 'node', 'node', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
+INSERT INTO `x_dict_data` VALUES (21, 5, '1', '1', '', '', 0, 1, 1, '2024-06-29 00:31:08', '2024-06-29 00:31:11', '2024-06-29 00:31:11');
+INSERT INTO `x_dict_data` VALUES (22, 6, '禁用', '0', '#FF4B4B', '', 0, 1, 0, '2024-09-25 16:02:08', '2024-09-25 16:02:08', NULL);
+INSERT INTO `x_dict_data` VALUES (23, 6, '启用', '1', '#80D251', '', 0, 1, 0, '2024-09-25 16:02:30', '2024-09-25 16:02:30', NULL);
 
 -- ----------------------------
 -- Table structure for x_dict_type
@@ -190,7 +196,7 @@ CREATE TABLE `x_dict_type`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_dict_type
@@ -198,7 +204,8 @@ CREATE TABLE `x_dict_type`  (
 INSERT INTO `x_dict_type` VALUES (2, '审批申请状态', 'flow_apply_status', '0待提交，1审批中，2审批完成，3审批失败', 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
 INSERT INTO `x_dict_type` VALUES (3, '审批历史状态', 'flow_history_status', '', 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
 INSERT INTO `x_dict_type` VALUES (4, '流程分类', 'flow_group', '1假勤管理,2人事管理3财务管理4业务管理5行政管理6法务管理7其他', 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
-INSERT INTO `x_dict_type` VALUES (5, '项目类型', 'project_type', '项目类型go java web node php 等', 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
+INSERT INTO `x_dict_type` VALUES (5, '项目类型1', 'project_type', '项目类型go java web node php 等', 1, 0, '2024-01-02 03:04:05', '2024-06-29 00:48:34', NULL);
+INSERT INTO `x_dict_type` VALUES (6, '启用状态', 'status', ' 0=否, 1=是', 1, 0, '2024-09-25 15:54:56', '2024-09-25 15:54:56', NULL);
 
 -- ----------------------------
 -- Table structure for x_flow_apply
@@ -222,7 +229,7 @@ CREATE TABLE `x_flow_apply`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '申请流程' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '申请流程' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_flow_apply
@@ -252,7 +259,7 @@ CREATE TABLE `x_flow_history`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `apply_id`(`apply_id`) USING BTREE,
   INDEX `approver_id`(`approver_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程历史' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程历史' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_flow_history
@@ -275,13 +282,11 @@ CREATE TABLE `x_flow_template`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_flow_template
 -- ----------------------------
-INSERT INTO `x_flow_template` VALUES (10, 'a1', 1, '1', '{\"widgetList\":[{\"key\":69408,\"type\":\"input\",\"icon\":\"text-field\",\"formItemFlag\":true,\"options\":{\"name\":\"input30124\",\"label\":\"input\",\"labelAlign\":\"\",\"type\":\"text\",\"defaultValue\":\"\",\"placeholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"clearable\":true,\"showPassword\":false,\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":[],\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"minLength\":null,\"maxLength\":null,\"showWordLimit\":false,\"prefixIcon\":\"\",\"suffixIcon\":\"\",\"appendButton\":false,\"appendButtonDisabled\":false,\"buttonIcon\":\"custom-search\",\"onCreated\":\"\",\"onMounted\":\"\",\"onInput\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\",\"onAppendButtonClick\":\"\"},\"id\":\"input30124\"}],\"formConfig\":{\"modelName\":\"formData\",\"refName\":\"vForm\",\"rulesName\":\"rules\",\"labelWidth\":80,\"labelPosition\":\"left\",\"size\":\"\",\"labelAlign\":\"label-left-align\",\"cssCode\":\"\",\"customClass\":[],\"functions\":\"\",\"layoutType\":\"PC\",\"jsonVersion\":3,\"onFormCreated\":\"\",\"onFormMounted\":\"\",\"onFormDataChange\":\"\"}}', '{\"nodes\":[{\"id\":\"Event_6bbfd06\",\"type\":\"bpmn:startEvent\",\"x\":280,\"y\":180,\"properties\":{},\"zIndex\":1020,\"text\":{\"x\":280,\"y\":220,\"value\":\"开始\"}},{\"id\":\"Event_da0ad7c\",\"type\":\"bpmn:endEvent\",\"x\":500,\"y\":260,\"properties\":{},\"zIndex\":1022,\"text\":{\"x\":500,\"y\":300,\"value\":\"结束\"}}],\"edges\":[]}', '[{\"id\":\"Event_6bbfd06\",\"pid\":0,\"label\":\"开始\",\"type\":\"bpmn:startEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0}]', 0, '2024-05-14 00:50:31', '2024-05-14 00:50:41', NULL);
-INSERT INTO `x_flow_template` VALUES (11, '12', 1, '2', '{\"widgetList\":[{\"key\":69408,\"type\":\"input\",\"icon\":\"text-field\",\"formItemFlag\":true,\"options\":{\"name\":\"input30124\",\"label\":\"input\",\"labelAlign\":\"\",\"type\":\"text\",\"defaultValue\":\"\",\"placeholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"clearable\":true,\"showPassword\":false,\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":[],\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"minLength\":null,\"maxLength\":null,\"showWordLimit\":false,\"prefixIcon\":\"\",\"suffixIcon\":\"\",\"appendButton\":false,\"appendButtonDisabled\":false,\"buttonIcon\":\"custom-search\",\"onCreated\":\"\",\"onMounted\":\"\",\"onInput\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\",\"onAppendButtonClick\":\"\"},\"id\":\"input30124\"}],\"formConfig\":{\"modelName\":\"formData\",\"refName\":\"vForm\",\"rulesName\":\"rules\",\"labelWidth\":80,\"labelPosition\":\"left\",\"size\":\"\",\"labelAlign\":\"label-left-align\",\"cssCode\":\"\",\"customClass\":[],\"functions\":\"\",\"layoutType\":\"PC\",\"jsonVersion\":3,\"onFormCreated\":\"\",\"onFormMounted\":\"\",\"onFormDataChange\":\"\"}}', '{\"nodes\":[{\"id\":\"Event_010c426\",\"type\":\"bpmn:startEvent\",\"x\":290,\"y\":130,\"properties\":{},\"zIndex\":1005,\"text\":{\"x\":290,\"y\":170,\"value\":\"开始\"}},{\"id\":\"Activity_77aa833\",\"type\":\"bpmn:userTask\",\"x\":470,\"y\":250,\"properties\":{},\"zIndex\":1007,\"text\":{\"x\":470,\"y\":250,\"value\":\"审批\"}},{\"id\":\"Event_ff8d83d\",\"type\":\"bpmn:endEvent\",\"x\":630,\"y\":190,\"properties\":{},\"zIndex\":1006,\"text\":{\"x\":630,\"y\":230,\"value\":\"结束\"}}],\"edges\":[{\"id\":\"b042a41a-d2d4-4483-8e90-1acfcc990738\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Event_010c426\",\"targetNodeId\":\"Activity_77aa833\",\"startPoint\":{\"x\":308,\"y\":130},\"endPoint\":{\"x\":420,\"y\":250},\"properties\":{},\"zIndex\":1006,\"pointsList\":[{\"x\":308,\"y\":130},{\"x\":390,\"y\":130},{\"x\":390,\"y\":250},{\"x\":420,\"y\":250}]},{\"id\":\"759307b5-ccb0-4b84-a153-7161a7ae1d85\",\"type\":\"pro-polyline\",\"sourceNodeId\":\"Activity_77aa833\",\"targetNodeId\":\"Event_ff8d83d\",\"startPoint\":{\"x\":520,\"y\":250},\"endPoint\":{\"x\":612,\"y\":190},\"properties\":{},\"zIndex\":1008,\"pointsList\":[{\"x\":520,\"y\":250},{\"x\":582,\"y\":250},{\"x\":582,\"y\":190},{\"x\":612,\"y\":190}]}]}', '[{\"id\":\"Event_010c426\",\"pid\":0,\"label\":\"开始\",\"type\":\"bpmn:startEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_77aa833\",\"pid\":\"Event_010c426\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_ff8d83d\",\"pid\":\"Activity_77aa833\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0}]}]},{\"id\":\"Activity_77aa833\",\"pid\":\"Event_010c426\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_ff8d83d\",\"pid\":\"Activity_77aa833\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0}]},{\"id\":\"Event_ff8d83d\",\"pid\":\"Activity_77aa833\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0}]', 0, '2024-05-14 01:16:44', '2024-05-19 13:12:09', NULL);
 
 -- ----------------------------
 -- Table structure for x_gen_table
@@ -305,7 +310,7 @@ CREATE TABLE `x_gen_table`  (
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_gen_table
@@ -334,11 +339,12 @@ CREATE TABLE `x_gen_table_column`  (
   `query_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'EQ' COMMENT '查询方式: [等于、不等于、大于、小于、范围]',
   `html_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]',
   `dict_type` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '字典类型',
+  `list_all_api` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '下拉框列表数据来源api',
   `sort` smallint(5) UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序编号',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 293 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成字段表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 228 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成字段表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_gen_table_column
@@ -359,17 +365,63 @@ CREATE TABLE `x_monitor_client`  (
   `width` smallint(10) UNSIGNED NULL DEFAULT 0 COMMENT '屏幕',
   `height` smallint(10) UNSIGNED NULL DEFAULT 0 COMMENT '屏幕高度',
   `ua` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'ua记录',
-  `create_time` datetime NOT NULL COMMENT '创建时间',
-  `client_time` datetime NOT NULL COMMENT '更新时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `project_key`(`project_key`) USING BTREE,
   INDEX `user_id`(`user_id`) USING BTREE,
   INDEX `client_id`(`client_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-客户端信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-客户端信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_monitor_client
 -- ----------------------------
+INSERT INTO `x_monitor_client` VALUES (1, 'e19e3be20de94f49b68fafb4c30668bc', '1', '11', '1', '1', '1', 1, 1, '1', '2024-09-25 16:16:03');
+INSERT INTO `x_monitor_client` VALUES (2, '6217ea4ea0044014831bd25121a3113c', '2', '2', '2', '2', '2', 2, 2, '2', '2024-10-11 12:17:26');
+
+-- ----------------------------
+-- Table structure for x_monitor_error
+-- ----------------------------
+DROP TABLE IF EXISTS `x_monitor_error`;
+CREATE TABLE `x_monitor_error`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '错误id',
+  `project_key` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目key',
+  `md5` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'md5',
+  `event_type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '事件类型',
+  `path` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'URL地址',
+  `message` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '错误消息',
+  `stack` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '错误堆栈',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `project_key`(`project_key`, `md5`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-错误列表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of x_monitor_error
+-- ----------------------------
+INSERT INTO `x_monitor_error` VALUES (39, '2a01a60efed14d6eab279ba5c664ceac', 'd5d9182bdad80a3397f248a2d820958c', '1', '1', '', '', '2024-09-25 18:33:17');
+INSERT INTO `x_monitor_error` VALUES (40, '2a01a60efed14d6eab279ba5c664ceac', '4f42e2b532ee0f7924d43f63caaa26d2', '1', '1', '1', '1', '2024-09-25 18:35:33');
+
+-- ----------------------------
+-- Table structure for x_monitor_error_list
+-- ----------------------------
+DROP TABLE IF EXISTS `x_monitor_error_list`;
+CREATE TABLE `x_monitor_error_list`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `error_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '错误id',
+  `client_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '客户端id',
+  `project_key` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目key',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `uid`(`client_id`) USING BTREE,
+  INDEX `eid`(`error_id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '错误对应的用户记录' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of x_monitor_error_list
+-- ----------------------------
+INSERT INTO `x_monitor_error_list` VALUES (6, '40', '1', '2a01a60efed14d6eab279ba5c664ceac', '2024-09-25 18:35:33');
+INSERT INTO `x_monitor_error_list` VALUES (5, '39', '1', '2a01a60efed14d6eab279ba5c664ceac', '2024-09-25 18:34:24');
+INSERT INTO `x_monitor_error_list` VALUES (4, '39', '1', '2a01a60efed14d6eab279ba5c664ceac', '2024-09-25 18:33:17');
 
 -- ----------------------------
 -- Table structure for x_monitor_project
@@ -377,61 +429,29 @@ CREATE TABLE `x_monitor_client`  (
 DROP TABLE IF EXISTS `x_monitor_project`;
 CREATE TABLE `x_monitor_project`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '项目id',
-  `project_key` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目uuid',
+  `project_key` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'project_key',
   `project_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目名称',
   `project_type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '项目类型go java web node php 等',
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否启用: 0=否, 1=是',
   `is_delete` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除: 0=否, 1=是',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `project_key`(`project_key`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控项目' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控项目' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_monitor_project
 -- ----------------------------
-INSERT INTO `x_monitor_project` VALUES (1, '2a01a60efed14d6eab279ba5c664ceac', 'x_admin', 'uniapp', 0, '2024-05-18 15:59:53', '2024-06-07 19:42:05', NULL);
-
--- ----------------------------
--- Table structure for x_monitor_web
--- ----------------------------
-DROP TABLE IF EXISTS `x_monitor_web`;
-CREATE TABLE `x_monitor_web`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'uuid',
-  `project_key` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目key',
-  `client_id` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'sdk生成的客户端id',
-  `event_type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '事件类型',
-  `page` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'URL地址',
-  `message` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '错误消息',
-  `stack` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '错误堆栈',
-  `create_time` datetime NOT NULL COMMENT '创建时间',
-  `client_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `project_key`(`project_key`) USING BTREE,
-  INDEX `client_id`(`client_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-web端错误' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of x_monitor_web
--- ----------------------------
-INSERT INTO `x_monitor_web` VALUES (1, '1', '1', '1', '1', '1', '1123123123', '2024-05-18 16:12:06', NULL);
-INSERT INTO `x_monitor_web` VALUES (2, '1', '1', '1', '1', '1', '11', '2024-05-18 16:14:17', '2022-09-09 09:09:09');
-INSERT INTO `x_monitor_web` VALUES (3, '1', '1', '1', '1', '1', '11', '2024-05-18 16:14:33', NULL);
-INSERT INTO `x_monitor_web` VALUES (4, '1', '1', '1', '1', '1', '11', '2024-05-18 16:14:46', '2022-09-09 09:09:09');
-INSERT INTO `x_monitor_web` VALUES (5, '1', '1', '1', '1', '1', '11', '2024-05-18 16:14:55', NULL);
-INSERT INTO `x_monitor_web` VALUES (6, '1', '1', '1', '1', '1', '11', '2024-05-18 16:14:59', '2022-09-09 09:09:09');
-INSERT INTO `x_monitor_web` VALUES (7, '1', '1', '1', '1', '1', '11', '2024-05-18 16:37:20', '0001-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (8, '1', '1', '1', '1', '1', '11', '2024-05-18 16:37:52', '0001-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (9, '1', '1', '1', '1', '1', '11', '2024-05-18 16:38:04', '0001-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (10, '1', '1', '1', '1', '1', '11', '2024-05-18 16:38:12', '0001-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (11, '1', '1', '1', '1', '1', '11', '2024-05-18 16:38:17', '0001-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (12, '1', '1', '1', '1', '1', '11', '2024-05-18 16:38:24', '0001-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (14, '1', '1', '1', '1', '1', '11', '2024-05-18 16:39:07', '2022-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (15, '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2024-05-18 17:28:55', '2022-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (16, '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2024-05-18 17:29:01', '0022-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (17, '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2024-05-18 17:29:07', '0002-01-01 00:00:00');
-INSERT INTO `x_monitor_web` VALUES (18, '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2022-01-01 00:00:00', '2024-05-18 17:29:18', '0001-01-01 00:00:00');
+INSERT INTO `x_monitor_project` VALUES (1, '2a01a60efed14d6eab279ba5c664ceac', 'x_admin', 'node', 0, 0, '2024-05-18 15:59:53', '2024-07-09 12:06:42', NULL);
+INSERT INTO `x_monitor_project` VALUES (2, '9a1d5d657d884bbfb7df0ddf032a8504', '2', 'go', 0, 1, '2024-06-17 18:58:57', '2024-06-29 00:31:27', NULL);
+INSERT INTO `x_monitor_project` VALUES (3, '603055b4b53e45a4b6fb725147d7fd42', 'ad', 'web', 0, 1, '2024-07-08 15:26:56', '2024-07-10 12:21:11', NULL);
+INSERT INTO `x_monitor_project` VALUES (4, '95cf6a6a37e549019c90c2ed34704f1f', 'a', 'uniapp', 0, 1, '2024-07-09 00:45:18', '2024-07-09 00:49:27', NULL);
+INSERT INTO `x_monitor_project` VALUES (5, '57377a40408f4bfd974047fbf0a18e24', 'go项目', 'go', 0, 0, '2024-07-10 12:20:37', '2024-09-25 16:50:45', NULL);
+INSERT INTO `x_monitor_project` VALUES (6, '6217ea4ea0044014831bd25121a3113c', 'go', 'go', 0, 0, '2024-07-12 23:17:23', '2024-07-12 23:17:23', NULL);
+INSERT INTO `x_monitor_project` VALUES (7, 'e19e3be20de94f49b68fafb4c30668bc', 'web项目', 'web', 1, 0, '2024-07-13 20:56:21', '2024-09-25 16:58:58', NULL);
+INSERT INTO `x_monitor_project` VALUES (8, 'e0cb2d091ce1408babcf17b48eccebf6', '1', 'web', 1, 1, '2024-10-12 10:35:32', '2024-10-12 10:35:38', '2024-10-12 10:35:38');
 
 -- ----------------------------
 -- Table structure for x_notice_setting
@@ -488,7 +508,7 @@ CREATE TABLE `x_system_auth_admin`  (
 -- ----------------------------
 -- Records of x_system_auth_admin
 -- ----------------------------
-INSERT INTO `x_system_auth_admin` VALUES (1, 1, 3, 'admin', 'admin', '81a13dd8e25644a8823082573ca973f7', '/image/20232911/27699a1e991e4ba1ba13ee6d45185db6.jpg', '0', 'WFdiD', 1, 1, 0, 0, '192.168.43.34', '2024-06-12 16:26:51', '2024-01-02 03:04:05', '2024-06-12 16:26:52', NULL);
+INSERT INTO `x_system_auth_admin` VALUES (1, 1, 3, 'admin', 'admin', '81a13dd8e25644a8823082573ca973f7', '/image/20232911/27699a1e991e4ba1ba13ee6d45185db6.jpg', '0', 'WFdiD', 1, 1, 0, 0, '127.0.0.1', '2024-10-25 18:17:07', '2024-01-02 03:04:05', '2024-10-25 18:17:07', NULL);
 
 -- ----------------------------
 -- Table structure for x_system_auth_dept
@@ -508,13 +528,13 @@ CREATE TABLE `x_system_auth_dept`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统部门管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统部门管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_dept
 -- ----------------------------
 INSERT INTO `x_system_auth_dept` VALUES (1, 0, '默认部门', 1, 'admin', '18327647788', 10, 0, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
-INSERT INTO `x_system_auth_dept` VALUES (2, 1, '指挥部', 2, '指挥部01', '17608390654', 0, 0, 0, '2024-01-02 03:04:05', '2024-05-13 20:01:10', NULL);
+INSERT INTO `x_system_auth_dept` VALUES (2, 1, '指挥部', 2, '指挥部01', '17608390000', 3, 0, 0, '2024-01-02 03:04:05', '2024-07-05 15:18:25', NULL);
 INSERT INTO `x_system_auth_dept` VALUES (3, 2, '指挥部子级', 0, '', '', 0, 0, 1, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
 
 -- ----------------------------
@@ -539,7 +559,7 @@ CREATE TABLE `x_system_auth_menu`  (
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 813 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统菜单管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 832 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统菜单管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_menu
@@ -563,7 +583,7 @@ INSERT INTO `x_system_auth_menu` VALUES (122, 120, 'A', '菜单新增', '', 0, '
 INSERT INTO `x_system_auth_menu` VALUES (123, 120, 'A', '菜单编辑', '', 0, 'admin:system:menu:edit', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (124, 120, 'A', '菜单删除', '', 0, 'admin:system:menu:del', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (130, 500, 'M', '组织管理', 'el-icon-OfficeBuilding', 45, '', 'organization', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (131, 130, 'C', '部门管理', 'el-icon-Coordinate', 0, 'admin:system:dept:list', 'department', 'organization/department/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
+INSERT INTO `x_system_auth_menu` VALUES (131, 130, 'C', '部门管理', 'el-icon-Coordinate', 0, 'admin:system:dept:all', 'department', 'organization/department/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (132, 131, 'A', '部门详情', '', 0, 'admin:system:dept:detail', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (133, 131, 'A', '部门新增', '', 0, 'admin:system:dept:add', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (134, 131, 'A', '部门编辑', '', 0, 'admin:system:dept:edit', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
@@ -621,11 +641,11 @@ INSERT INTO `x_system_auth_menu` VALUES (775, 600, 'C', '代码生成器编辑',
 INSERT INTO `x_system_auth_menu` VALUES (776, 778, 'C', '流程模板', '', 0, 'admin:flow:flow_template:list', 'flow_template/index', 'flow/flow_template/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (777, 778, 'C', '我的流程', '', 0, '', 'flow_apply/index', 'flow/flow_apply/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (778, 0, 'M', '审批流', 'el-icon-Coordinate', 0, '', 'flow', '', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (780, 778, 'C', '待处理', '', 0, 'admin:flow:flow_history:list', 'flow_history/todo', 'flow/flow_history/todo', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
+INSERT INTO `x_system_auth_menu` VALUES (780, 778, 'C', '待处理', '', 0, 'admin:flow:flow_history:list', 'flow_history/todo', 'flow/flow_history/todo', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (781, 778, 'C', '已处理', '', 0, 'admin:flow:flow_history:list', 'flow_history/done', 'flow/flow_history/done', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (782, 778, 'C', '已完成流程', '', 0, 'admin:flow:flow_history:list', 'flow_apply/finish', 'flow/flow_apply/finish', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (783, 500, 'C', '项目监控', 'el-icon-Notebook', 0, 'admin:monitor_project:list', 'monitor_project/index', 'monitor_project/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (784, 500, 'C', '监控用户端', '', 0, '', 'monitor_client/index', 'monitor_client/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
+INSERT INTO `x_system_auth_menu` VALUES (783, 500, 'C', '项目监控', 'el-icon-Notebook', 0, 'admin:monitor_project:list', 'monitor/project/index', 'monitor/project/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-09-25 16:14:03');
+INSERT INTO `x_system_auth_menu` VALUES (784, 500, 'C', '监控用户端', '', 0, '', 'monitor/client/index', 'monitor/client/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-09-25 16:13:05');
 INSERT INTO `x_system_auth_menu` VALUES (785, 794, 'A', '错误收集error添加', '', 0, 'admin:monitor_web:add', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (786, 794, 'A', '错误收集error编辑', '', 0, 'admin:monitor_web:edit', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (787, 794, 'A', '错误收集error删除', '', 0, 'admin:monitor_web:del', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
@@ -634,7 +654,7 @@ INSERT INTO `x_system_auth_menu` VALUES (789, 794, 'A', '错误收集error全部
 INSERT INTO `x_system_auth_menu` VALUES (790, 794, 'A', '错误收集error详情', '', 0, 'admin:monitor_web:detail', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (791, 794, 'A', '错误收集error导出excel', '', 0, 'admin:monitor_web:ExportFile', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (792, 794, 'A', '错误收集error导入excel', '', 0, 'admin:monitor_web:ImportFile', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (794, 500, 'C', '错误收集error', '', 0, '', 'monitor_web/index', 'monitor_web/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
+INSERT INTO `x_system_auth_menu` VALUES (794, 500, 'C', '错误列表', '', 0, '', 'monitor/error/index', 'monitor/error/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-09-25 16:38:39');
 INSERT INTO `x_system_auth_menu` VALUES (795, 776, 'A', '流程模板添加', '', 0, 'admin:flow:flow_template:add', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (796, 776, 'A', '流程模板编辑', '', 0, 'admin:flow:flow_template:edit', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (797, 776, 'A', '流程模板删除', '', 0, 'admin:flow:flow_template:del', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
@@ -653,6 +673,24 @@ INSERT INTO `x_system_auth_menu` VALUES (809, 777, 'A', '获取审批人', '', 0
 INSERT INTO `x_system_auth_menu` VALUES (810, 777, 'A', '流程列表', '', 0, 'admin:flow:flow_apply:list', '', '', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (811, 780, 'A', '审批记录列表', '', 0, 'admin:flow:flow_history:list', '', '', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (812, 780, 'A', '审批记录详情', '', 0, 'admin:flow:flow_history:detail', '', '', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
+INSERT INTO `x_system_auth_menu` VALUES (813, 783, 'A', '监控项目添加', '', 0, 'admin:monitor_project:add', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (814, 783, 'A', '监控项目编辑', '', 0, 'admin:monitor_project:edit', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (815, 783, 'A', '监控项目删除', '', 0, 'admin:monitor_project:del', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (816, 783, 'A', '监控项目列表', '', 0, 'admin:monitor_project:list', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (817, 783, 'A', '监控项目全部列表', '', 0, 'admin:monitor_project:listAll', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (818, 783, 'A', '监控项目详情', '', 0, 'admin:monitor_project:detail', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (819, 783, 'A', '监控项目导出excel', '', 0, 'admin:monitor_project:ExportFile', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (820, 783, 'A', '监控项目导入excel', '', 0, 'admin:monitor_project:ImportFile', '', '', '', '', 0, 1, 0, '2024-06-17 19:26:13', '2024-06-17 19:26:13');
+INSERT INTO `x_system_auth_menu` VALUES (821, 0, 'C', '文档', 'el-icon-Wallet', 0, '', 'https://adtkcn.github.io/x_admin/', '', '', 'a=1', 1, 1, 0, '2024-06-28 17:09:17', '2024-08-16 15:05:08');
+INSERT INTO `x_system_auth_menu` VALUES (823, 0, 'C', '用户协议', '', 0, '', 'user/protocol/index', 'user/protocol/index', '', '', 0, 1, 0, '2024-09-10 20:03:46', '2024-09-10 22:47:36');
+INSERT INTO `x_system_auth_menu` VALUES (824, 823, 'A', '用户协议添加', '', 0, 'admin:user_protocol:add', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (825, 823, 'A', '用户协议编辑', '', 0, 'admin:user_protocol:edit', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (826, 823, 'A', '用户协议删除', '', 0, 'admin:user_protocol:del', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (827, 823, 'A', '用户协议列表', '', 0, 'admin:user_protocol:list', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (828, 823, 'A', '用户协议全部列表', '', 0, 'admin:user_protocol:listAll', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (829, 823, 'A', '用户协议详情', '', 0, 'admin:user_protocol:detail', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (830, 823, 'A', '用户协议导出excel', '', 0, 'admin:user_protocol:ExportFile', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (831, 823, 'A', '用户协议导入excel', '', 0, 'admin:user_protocol:ImportFile', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
 
 -- ----------------------------
 -- Table structure for x_system_auth_perm
@@ -668,115 +706,134 @@ CREATE TABLE `x_system_auth_perm`  (
 -- ----------------------------
 -- Records of x_system_auth_perm
 -- ----------------------------
-INSERT INTO `x_system_auth_perm` VALUES ('02849ad51fd24d0f959ad0629e9e1fe4', 1, 522);
-INSERT INTO `x_system_auth_perm` VALUES ('04487e8700f2406abfad957f3732ee30', 1, 784);
-INSERT INTO `x_system_auth_perm` VALUES ('04a34fc8ae12416c95595ed4c93828b0', 1, 797);
-INSERT INTO `x_system_auth_perm` VALUES ('0c2921d838874c7091f8e312d8985193', 1, 804);
-INSERT INTO `x_system_auth_perm` VALUES ('115dd9eeb1404d89b2fb6827de49a737', 1, 812);
-INSERT INTO `x_system_auth_perm` VALUES ('11ae6d9c46364ad093149803836758c2', 1, 780);
-INSERT INTO `x_system_auth_perm` VALUES ('12023b0aaae14a48bcfb9011f069ed1e', 1, 217);
-INSERT INTO `x_system_auth_perm` VALUES ('13d8c8ead1ca49e9aab50977671ebbce', 1, 798);
-INSERT INTO `x_system_auth_perm` VALUES ('142baed090b141b2a9ede7d96bf4df78', 1, 552);
-INSERT INTO `x_system_auth_perm` VALUES ('154aaec657a74034b20eea3991fe5dbb', 1, 205);
-INSERT INTO `x_system_auth_perm` VALUES ('18bb6d0fd189410fad80cb0b64e5f74f', 1, 140);
-INSERT INTO `x_system_auth_perm` VALUES ('1ac303aef5794defaab58613ae1efc7a', 1, 502);
-INSERT INTO `x_system_auth_perm` VALUES ('1e048396a2924be8bef72822f460bd9f', 1, 131);
-INSERT INTO `x_system_auth_perm` VALUES ('1f9e87e5ffa04992bded01c6dc2350aa', 1, 550);
-INSERT INTO `x_system_auth_perm` VALUES ('21c7ca19973549aca58612e7cb1fbeb2', 1, 505);
-INSERT INTO `x_system_auth_perm` VALUES ('2437bd9c41ee4222bcaf6df3407fb20a', 1, 100);
-INSERT INTO `x_system_auth_perm` VALUES ('25866e25dbb84299acac12ca92745755', 1, 123);
-INSERT INTO `x_system_auth_perm` VALUES ('259e59808a7e45eaa5f3a4bad9c1e0aa', 1, 506);
-INSERT INTO `x_system_auth_perm` VALUES ('28b7b9c680514dc2bbd7f548c35a2d73', 1, 792);
-INSERT INTO `x_system_auth_perm` VALUES ('2aff7d76f4fa4f058d93be667fadbef8', 1, 785);
-INSERT INTO `x_system_auth_perm` VALUES ('2f2af99726b444cab4d08fd4a2d3af0f', 1, 794);
-INSERT INTO `x_system_auth_perm` VALUES ('333e4bab351246a8908fbe6b4e73aef5', 1, 519);
-INSERT INTO `x_system_auth_perm` VALUES ('365393451dcb485eb18adb3422d89dc6', 1, 781);
-INSERT INTO `x_system_auth_perm` VALUES ('36ce29f4f2de480495ece60f51ff3e94', 1, 791);
-INSERT INTO `x_system_auth_perm` VALUES ('370c8eb2e71442ff9f652c1f5021b423', 1, 133);
-INSERT INTO `x_system_auth_perm` VALUES ('3b659baff55d42ffa688c1f6fc984d70', 1, 617);
-INSERT INTO `x_system_auth_perm` VALUES ('424a2b7dd0d54db28045edb064e7747e', 1, 500);
-INSERT INTO `x_system_auth_perm` VALUES ('47e6e92c3f8d47a0a7ecf6055c75bcd6', 1, 208);
-INSERT INTO `x_system_auth_perm` VALUES ('4bf2e6a46d164a7d8018c8df067126ab', 1, 207);
-INSERT INTO `x_system_auth_perm` VALUES ('4c10437c35d04c3c88e2d8a63e98c925', 1, 134);
-INSERT INTO `x_system_auth_perm` VALUES ('4c2b595615ea49628e989a9266e3e253', 1, 204);
-INSERT INTO `x_system_auth_perm` VALUES ('4cd78098aea84e5e9e1d79452a607658', 1, 808);
-INSERT INTO `x_system_auth_perm` VALUES ('4d993bc9a28e462dbad7be6101b50535', 1, 811);
-INSERT INTO `x_system_auth_perm` VALUES ('4de195ebe48f47fea47ef972b227720e', 1, 113);
-INSERT INTO `x_system_auth_perm` VALUES ('4deb9fc89d634115b3b7d30b571aa4dd', 1, 102);
-INSERT INTO `x_system_auth_perm` VALUES ('4f9f5cbe148e4c9e82bd03ed24bb934a', 1, 805);
-INSERT INTO `x_system_auth_perm` VALUES ('5272e3b59007467c92a5b953ffc6900c', 1, 520);
-INSERT INTO `x_system_auth_perm` VALUES ('52a5530f482f4ec3a07aa7941df40dff', 1, 700);
-INSERT INTO `x_system_auth_perm` VALUES ('56664480a15a4ee898ac9aee1c1014f3', 1, 802);
-INSERT INTO `x_system_auth_perm` VALUES ('59618b0354574f8d8949de4efa170471', 1, 776);
-INSERT INTO `x_system_auth_perm` VALUES ('5b5a0b548bfe4e1fb51b0592122eb048', 1, 616);
-INSERT INTO `x_system_auth_perm` VALUES ('5cafd9be52b6436090ff76520e454c23', 1, 611);
-INSERT INTO `x_system_auth_perm` VALUES ('6083696b56f047c3923a1284278925a5', 1, 104);
-INSERT INTO `x_system_auth_perm` VALUES ('632edb42cb694d8d9534e942d6338293', 1, 206);
-INSERT INTO `x_system_auth_perm` VALUES ('67cfb9970a954c55b06ba50a62b47611', 1, 143);
-INSERT INTO `x_system_auth_perm` VALUES ('6bfb96696d204ae29bbe6f9f3742488e', 1, 701);
-INSERT INTO `x_system_auth_perm` VALUES ('6c5f2568cd074b2086bfdf3db9e999ad', 1, 787);
-INSERT INTO `x_system_auth_perm` VALUES ('6cc0625e26424d0b88c202fd6f38af88', 1, 142);
-INSERT INTO `x_system_auth_perm` VALUES ('6e0896d04ba34f2f901a7ed764957c6e', 1, 803);
-INSERT INTO `x_system_auth_perm` VALUES ('7197d7b4eafd47f3819f70fd67b95169', 1, 103);
-INSERT INTO `x_system_auth_perm` VALUES ('776061d01f0743af97431d76a7d29a3b', 1, 510);
-INSERT INTO `x_system_auth_perm` VALUES ('7b6a55357b524c61950a558ebb050383', 1, 807);
-INSERT INTO `x_system_auth_perm` VALUES ('7cd0fdb89fb64622bcc20041749ad98a', 1, 130);
-INSERT INTO `x_system_auth_perm` VALUES ('836584161e314db4a7c9d3e17b10dffb', 1, 788);
-INSERT INTO `x_system_auth_perm` VALUES ('8424d4ee6ec844b1add5e9386b3aa936', 1, 610);
-INSERT INTO `x_system_auth_perm` VALUES ('88ee4db9432c4610a1158e698cc02c7c', 1, 518);
-INSERT INTO `x_system_auth_perm` VALUES ('8995c474475f43c492c343edf21e4f3f', 1, 614);
-INSERT INTO `x_system_auth_perm` VALUES ('8b1776a8436146e4963565cff4231b78', 1, 795);
-INSERT INTO `x_system_auth_perm` VALUES ('927e29c0b369442bb0e88cb77a4e4d5b', 1, 202);
-INSERT INTO `x_system_auth_perm` VALUES ('9430404611924c809be637162f445b88', 1, 600);
-INSERT INTO `x_system_auth_perm` VALUES ('946d97b5bf284d12a058d3eb92b410f9', 1, 120);
-INSERT INTO `x_system_auth_perm` VALUES ('97f0c2ad897c4e03a5be79d4e6a8bc4a', 1, 778);
-INSERT INTO `x_system_auth_perm` VALUES ('9b06d4afc00c4198b19b7159cf82f796', 1, 132);
-INSERT INTO `x_system_auth_perm` VALUES ('9cac9258695947988efbea8188633dc4', 1, 209);
-INSERT INTO `x_system_auth_perm` VALUES ('9e4e502124a541fd8af7dc740e1bcf5e', 1, 141);
-INSERT INTO `x_system_auth_perm` VALUES ('a3852632d33f41f9a34748e68cc3f73a', 1, 105);
-INSERT INTO `x_system_auth_perm` VALUES ('a9a1234793464bbcb2872964598035bf', 1, 806);
-INSERT INTO `x_system_auth_perm` VALUES ('ab2a34c2b175448487971f5d10d4fd84', 1, 201);
-INSERT INTO `x_system_auth_perm` VALUES ('ab39e031d9554d0f8c9bd23a22d2992b', 1, 799);
-INSERT INTO `x_system_auth_perm` VALUES ('ab6044f2957e40ec9dab8ef4604a980a', 1, 517);
-INSERT INTO `x_system_auth_perm` VALUES ('b22848d6194449719affc0378c5defa8', 1, 501);
-INSERT INTO `x_system_auth_perm` VALUES ('b26e5a7ab57b4191bca9b6ef05d7e766', 1, 515);
-INSERT INTO `x_system_auth_perm` VALUES ('b7a30ea8a3534fb48778f10a6cbff2eb', 1, 521);
-INSERT INTO `x_system_auth_perm` VALUES ('b8ce62b38c0148e0ad7d2f83b077fb52', 1, 786);
-INSERT INTO `x_system_auth_perm` VALUES ('b90ad473fa0b431b8b7f21f282e27f63', 1, 553);
-INSERT INTO `x_system_auth_perm` VALUES ('bb27c9499e7a4c93a15e5a448291e9aa', 1, 122);
-INSERT INTO `x_system_auth_perm` VALUES ('bc079980f626418e8d7236480d11b507', 1, 783);
-INSERT INTO `x_system_auth_perm` VALUES ('bd06cabd21f44d3786f2a6e9b1131d5d', 1, 110);
-INSERT INTO `x_system_auth_perm` VALUES ('bec81045070c462986c8c6c4cc7555ca', 1, 613);
-INSERT INTO `x_system_auth_perm` VALUES ('c20a057a443c4e2f990819800c23d9f5', 1, 800);
-INSERT INTO `x_system_auth_perm` VALUES ('c5a3a048e8fe40678c411e76bd3a7c69', 1, 124);
-INSERT INTO `x_system_auth_perm` VALUES ('c80498f6a0424195afe7e40bcd287262', 1, 516);
-INSERT INTO `x_system_auth_perm` VALUES ('cc3020f5228e468d87f91e83ad61e818', 1, 789);
-INSERT INTO `x_system_auth_perm` VALUES ('ce6e84d612c942dba783b5d2df6ed595', 1, 612);
-INSERT INTO `x_system_auth_perm` VALUES ('cfa5702a424347099eea48f28d57714f', 1, 782);
-INSERT INTO `x_system_auth_perm` VALUES ('d0d98c528c9840a89f4aa04ed0415c10', 1, 203);
-INSERT INTO `x_system_auth_perm` VALUES ('d1232298befc44d5beca54260e93761b', 1, 216);
-INSERT INTO `x_system_auth_perm` VALUES ('d14f51d7515e4bf0a092d3bf0a4225ac', 1, 790);
-INSERT INTO `x_system_auth_perm` VALUES ('d1784f85d159497ca13dfc7a1749e612', 1, 135);
-INSERT INTO `x_system_auth_perm` VALUES ('d2b7aa04883d47f0bbb9414d5e736205', 1, 503);
-INSERT INTO `x_system_auth_perm` VALUES ('d5d6a09bc7494c919e03472dca3faad3', 1, 801);
-INSERT INTO `x_system_auth_perm` VALUES ('d6388c117a364080a7d169ff60afe5f2', 1, 111);
-INSERT INTO `x_system_auth_perm` VALUES ('e0af9fc2032a4c4a8284a420c1dfcf20', 1, 144);
-INSERT INTO `x_system_auth_perm` VALUES ('e401edd59c5b4bb8a4a1cd2391c28476', 1, 1);
-INSERT INTO `x_system_auth_perm` VALUES ('e475f99a770f4fa791c3b2b139c9f98c', 1, 810);
-INSERT INTO `x_system_auth_perm` VALUES ('e6b216b706f44aefaf43a154fda4d1cd', 1, 618);
-INSERT INTO `x_system_auth_perm` VALUES ('e813a85f488741ed90c77e48b20b3f3e', 1, 809);
-INSERT INTO `x_system_auth_perm` VALUES ('ed406503650c44849f6b82bfb78ff432', 1, 775);
-INSERT INTO `x_system_auth_perm` VALUES ('edcbeefe1c6d457aab65a5640c5e8802', 1, 112);
-INSERT INTO `x_system_auth_perm` VALUES ('ee441f534ab049a5adb590bcbedda29e', 1, 200);
-INSERT INTO `x_system_auth_perm` VALUES ('f21e0aeb1a504690a933b83b2ae3c8d5', 1, 796);
-INSERT INTO `x_system_auth_perm` VALUES ('f21e3c5152064ba79c3d2ee0a3036022', 1, 215);
-INSERT INTO `x_system_auth_perm` VALUES ('f2696be26aa44060bb3330deb301f2c0', 1, 114);
-INSERT INTO `x_system_auth_perm` VALUES ('f42ae39a8c5e464fa1301f6dd1d3bae6', 1, 121);
-INSERT INTO `x_system_auth_perm` VALUES ('f91a6aacb7114e569f4953e224145335', 1, 511);
-INSERT INTO `x_system_auth_perm` VALUES ('f932b361ab53400c86f73a183d1cd248', 1, 101);
-INSERT INTO `x_system_auth_perm` VALUES ('fc973331a38249889b3743dde4abede9', 1, 777);
-INSERT INTO `x_system_auth_perm` VALUES ('fcbd54d2a0e04e82b5847a1426ed29ba', 1, 551);
-INSERT INTO `x_system_auth_perm` VALUES ('feeddde0528c4660bf5ddbcd7e6c46ac', 1, 106);
+INSERT INTO `x_system_auth_perm` VALUES ('00b23681b95c4432a56fd7f5438d29ff', 1, 111);
+INSERT INTO `x_system_auth_perm` VALUES ('015a14213276483ab2d5ff7904ad00ac', 1, 519);
+INSERT INTO `x_system_auth_perm` VALUES ('06289de4159748d783ea5c24ae36cc26', 1, 102);
+INSERT INTO `x_system_auth_perm` VALUES ('066c5d6eb0f043d3b6cd0c08b4178d49', 1, 206);
+INSERT INTO `x_system_auth_perm` VALUES ('0e20554114934323b68e2c1935466384', 1, 612);
+INSERT INTO `x_system_auth_perm` VALUES ('0f6ba3d081ad4d9b86f0ae47c7b9107f', 1, 610);
+INSERT INTO `x_system_auth_perm` VALUES ('10124b836e4244c79535351dabd80528', 1, 701);
+INSERT INTO `x_system_auth_perm` VALUES ('117be250cd6f4637843aec001b26d644', 1, 700);
+INSERT INTO `x_system_auth_perm` VALUES ('126b45b2c73a436ba90fe54c2e780981', 1, 784);
+INSERT INTO `x_system_auth_perm` VALUES ('1852c3f2614b459eaffb11b69ff7d3ac', 1, 809);
+INSERT INTO `x_system_auth_perm` VALUES ('1937a72912fc4564af391ea8a1045b37', 1, 775);
+INSERT INTO `x_system_auth_perm` VALUES ('1aabdba5cacc4c5fba84c1c58433e5cf', 1, 200);
+INSERT INTO `x_system_auth_perm` VALUES ('2436b8caae694cfe8b1d56cea92c3410', 1, 829);
+INSERT INTO `x_system_auth_perm` VALUES ('2479a60e4c47414282d11cc627e26df6', 1, 828);
+INSERT INTO `x_system_auth_perm` VALUES ('257937880a6843dbb60e6a171a8436ea', 1, 144);
+INSERT INTO `x_system_auth_perm` VALUES ('28f9a3ea7cfd4c47ae7f19c2d17001e8', 1, 207);
+INSERT INTO `x_system_auth_perm` VALUES ('29760cf1193e4a989cd5e5442dab3b4b', 1, 106);
+INSERT INTO `x_system_auth_perm` VALUES ('2ee8928a0d594dd2a6d6f210666ab3a6', 1, 802);
+INSERT INTO `x_system_auth_perm` VALUES ('2f03c73106f548258742681ab95c8ed2', 1, 796);
+INSERT INTO `x_system_auth_perm` VALUES ('2f4b7c6cf88d4b0ca27d015470d9a005', 1, 822);
+INSERT INTO `x_system_auth_perm` VALUES ('3072e49dc9a645feb3eb05b8d464eeba', 1, 825);
+INSERT INTO `x_system_auth_perm` VALUES ('326f68c509a7457b80296ab1a6ea141e', 1, 780);
+INSERT INTO `x_system_auth_perm` VALUES ('3525ee3d7ce6490885ca3f3889fbd110', 1, 505);
+INSERT INTO `x_system_auth_perm` VALUES ('38f456adb1644b7fa83f8045d38a8d3e', 1, 618);
+INSERT INTO `x_system_auth_perm` VALUES ('3b39276ec49342ab8b0b49ce759cb20b', 1, 613);
+INSERT INTO `x_system_auth_perm` VALUES ('4047a2c7efbb49fa95abb419c49ab4cb', 1, 807);
+INSERT INTO `x_system_auth_perm` VALUES ('45b8230de8454d9299c5557f857f14d7', 1, 132);
+INSERT INTO `x_system_auth_perm` VALUES ('4829c386f37e4ad0bfba9691745e2ef0', 1, 522);
+INSERT INTO `x_system_auth_perm` VALUES ('485fe03be60c4b208a3a5932c1b82451', 1, 203);
+INSERT INTO `x_system_auth_perm` VALUES ('4a602dbb4e1549c49ae2dea8d93ffc06', 1, 816);
+INSERT INTO `x_system_auth_perm` VALUES ('4ae52b2643284ca3afa0160765d2aa85', 1, 798);
+INSERT INTO `x_system_auth_perm` VALUES ('4d701fd8c34041d49cdca9c6a19ad383', 1, 810);
+INSERT INTO `x_system_auth_perm` VALUES ('4e2fcc51fe774a5ab6514009b3dc263c', 1, 818);
+INSERT INTO `x_system_auth_perm` VALUES ('4f8ca12187054b9ca61a9c9b0437e615', 1, 794);
+INSERT INTO `x_system_auth_perm` VALUES ('50a90d5574594cd18a9c97857027f417', 1, 815);
+INSERT INTO `x_system_auth_perm` VALUES ('513ab57533d544858d4d1abda4a72960', 1, 103);
+INSERT INTO `x_system_auth_perm` VALUES ('5216160327b74c9b950667036cb99e8b', 1, 777);
+INSERT INTO `x_system_auth_perm` VALUES ('531b5f44f62a4f1c85ec56f6dc56bdd7', 1, 820);
+INSERT INTO `x_system_auth_perm` VALUES ('53789a2311394a01a0b9e8957136a9e8', 1, 515);
+INSERT INTO `x_system_auth_perm` VALUES ('5449939f72aa4c50b9df93992e19c51a', 1, 122);
+INSERT INTO `x_system_auth_perm` VALUES ('56112a65356a451db622ce3b431ca73d', 1, 783);
+INSERT INTO `x_system_auth_perm` VALUES ('5841ea91228347718c4d7d7c43fb8fd2', 1, 792);
+INSERT INTO `x_system_auth_perm` VALUES ('58504dd855314786a11663c65c4ce15f', 1, 134);
+INSERT INTO `x_system_auth_perm` VALUES ('613ad8755a644db79541bf25b1f010f8', 1, 201);
+INSERT INTO `x_system_auth_perm` VALUES ('61c0692345c14dea9d8ac26656418791', 1, 1);
+INSERT INTO `x_system_auth_perm` VALUES ('62411ba321544c289cd87234da2fd003', 1, 600);
+INSERT INTO `x_system_auth_perm` VALUES ('6372e3c7064a4d75b43f57621ffcefcf', 1, 553);
+INSERT INTO `x_system_auth_perm` VALUES ('6499ca918ee04a1fb76220da8c4c2794', 1, 801);
+INSERT INTO `x_system_auth_perm` VALUES ('64baaf548bc342c3af9322a30768bf96', 1, 516);
+INSERT INTO `x_system_auth_perm` VALUES ('65fe5c85bf2349aca368aed82c7f1538', 1, 113);
+INSERT INTO `x_system_auth_perm` VALUES ('664180087ea24ce8b6c0dc1cb1436c44', 1, 811);
+INSERT INTO `x_system_auth_perm` VALUES ('67f07d19bc9a49919692dd33eae90692', 1, 808);
+INSERT INTO `x_system_auth_perm` VALUES ('67f1013bc0d644c5b12a08cd48c85bbc', 1, 823);
+INSERT INTO `x_system_auth_perm` VALUES ('6cb18648246049909a53c8bd15b529e8', 1, 124);
+INSERT INTO `x_system_auth_perm` VALUES ('6e4fcd3359ed48cd9c8cbfab8bee7c10', 1, 789);
+INSERT INTO `x_system_auth_perm` VALUES ('6e5d3b14c120473da6af38046727fc29', 1, 791);
+INSERT INTO `x_system_auth_perm` VALUES ('6ebd40320bab491785d1a940f9cd31b5', 1, 510);
+INSERT INTO `x_system_auth_perm` VALUES ('715bc10138aa44e2b0fd48f72efe26e5', 1, 114);
+INSERT INTO `x_system_auth_perm` VALUES ('71a975a2fa694c089f876ace329e70e3', 1, 831);
+INSERT INTO `x_system_auth_perm` VALUES ('7356ec71b47945bc8758235859ad6d30', 1, 209);
+INSERT INTO `x_system_auth_perm` VALUES ('742e2c95cc5d42bca97845b71b969f12', 1, 551);
+INSERT INTO `x_system_auth_perm` VALUES ('77d0aa7e90744bb191112a64b305aacb', 1, 502);
+INSERT INTO `x_system_auth_perm` VALUES ('7a6c10af221f4bf4a6b3a75f49e0c25f', 1, 216);
+INSERT INTO `x_system_auth_perm` VALUES ('7f2b461215ac46d88d4faf184885df1b', 1, 806);
+INSERT INTO `x_system_auth_perm` VALUES ('802afa2ffa1d4680b177dd542669505e', 1, 819);
+INSERT INTO `x_system_auth_perm` VALUES ('8039993b87fe4eeb82b596ae56596b01', 1, 787);
+INSERT INTO `x_system_auth_perm` VALUES ('80b771ff355a48178510d7f57b4507a6', 1, 110);
+INSERT INTO `x_system_auth_perm` VALUES ('8410858035a14989afb56b6aeafed26d', 1, 552);
+INSERT INTO `x_system_auth_perm` VALUES ('857e8369ce4f41ac981a27b6e22b2ad4', 1, 550);
+INSERT INTO `x_system_auth_perm` VALUES ('8f3508393a0b49368cc0642908e99029', 1, 786);
+INSERT INTO `x_system_auth_perm` VALUES ('90c582e4b81b4012925c94c0d228f6a2', 1, 776);
+INSERT INTO `x_system_auth_perm` VALUES ('97241dd15a18425da170e1e3aa275f33', 1, 812);
+INSERT INTO `x_system_auth_perm` VALUES ('9ab2879262944c22b180812a6838c236', 1, 521);
+INSERT INTO `x_system_auth_perm` VALUES ('9ac4019e53754a678e179251ea9bbd23', 1, 140);
+INSERT INTO `x_system_auth_perm` VALUES ('9cf5f295c1c2459f81013a71d3808b91', 1, 506);
+INSERT INTO `x_system_auth_perm` VALUES ('a33dbcc175b04b8786516a466b7d49c9', 1, 143);
+INSERT INTO `x_system_auth_perm` VALUES ('a7c63c20539649abb9291f9ce8a59320', 1, 100);
+INSERT INTO `x_system_auth_perm` VALUES ('a9d84e3316884b77819dffb7067f26f6', 1, 813);
+INSERT INTO `x_system_auth_perm` VALUES ('adbd5b8fe1ba46fbaef7aa759883c97b', 1, 803);
+INSERT INTO `x_system_auth_perm` VALUES ('ae71e16ab1e4453e8b49a3b7f81e72b2', 1, 517);
+INSERT INTO `x_system_auth_perm` VALUES ('ae8f4a6240b24c128fd1963d207d5f22', 1, 799);
+INSERT INTO `x_system_auth_perm` VALUES ('b1926fb4bbfd49fd864c53d87f748ccb', 1, 205);
+INSERT INTO `x_system_auth_perm` VALUES ('b244feef3f6d48e8b07a25b4cd8f88b1', 1, 611);
+INSERT INTO `x_system_auth_perm` VALUES ('b35a70ed6f564d5896c4721edc22a4e6', 1, 141);
+INSERT INTO `x_system_auth_perm` VALUES ('b6379a839ec248929ad702910ba115c8', 1, 518);
+INSERT INTO `x_system_auth_perm` VALUES ('b6462df064a6453d93ac66b20fa454d6', 1, 511);
+INSERT INTO `x_system_auth_perm` VALUES ('b7375b434e5d48909709a7d9d71e067f', 1, 614);
+INSERT INTO `x_system_auth_perm` VALUES ('b8149f7108284f0c948734960f350248', 1, 131);
+INSERT INTO `x_system_auth_perm` VALUES ('b94b7f9b2bd843859169390c385cf12d', 1, 617);
+INSERT INTO `x_system_auth_perm` VALUES ('b952a010c84440f5ae30cc9b7dc3600d', 1, 520);
+INSERT INTO `x_system_auth_perm` VALUES ('bad3f621a6bf41be90b52cbd900a8090', 1, 503);
+INSERT INTO `x_system_auth_perm` VALUES ('bb3765c66fc440519d20442afd1e5ad1', 1, 824);
+INSERT INTO `x_system_auth_perm` VALUES ('bbdff371c01f4c668a93414222918f26', 1, 788);
+INSERT INTO `x_system_auth_perm` VALUES ('bccfdfafe7ab41e69d8f1507c503ab00', 1, 133);
+INSERT INTO `x_system_auth_perm` VALUES ('bf0e3f14fcde49afb7d5d84f4484fe8b', 1, 500);
+INSERT INTO `x_system_auth_perm` VALUES ('bf76b5e1d11b48648712d9327b28c295', 1, 215);
+INSERT INTO `x_system_auth_perm` VALUES ('c40c5e94d93f4cb4a65790ca6e775112', 1, 785);
+INSERT INTO `x_system_auth_perm` VALUES ('c58aac49117b451a813dbb55771b1460', 1, 104);
+INSERT INTO `x_system_auth_perm` VALUES ('c73861e354de430a8888272dde38ee08', 1, 797);
+INSERT INTO `x_system_auth_perm` VALUES ('c93abc921a6a490eb5939d8ad2484183', 1, 208);
+INSERT INTO `x_system_auth_perm` VALUES ('cb00e88d06234cc99b2d7f78a7fdc7b5', 1, 817);
+INSERT INTO `x_system_auth_perm` VALUES ('cc18bc1d8b09481ebff2cbb080bd77db', 1, 814);
+INSERT INTO `x_system_auth_perm` VALUES ('cd49713040df4f6fb02a5e696ab41042', 1, 142);
+INSERT INTO `x_system_auth_perm` VALUES ('d066f83036974df081f3e99fd87949cc', 1, 778);
+INSERT INTO `x_system_auth_perm` VALUES ('d145f604248c439994999fe262b35364', 1, 501);
+INSERT INTO `x_system_auth_perm` VALUES ('d3c11aedec9d4663904a5ee1fd72cd1d', 1, 826);
+INSERT INTO `x_system_auth_perm` VALUES ('d60fe11f05eb4c74aa2ada0d289a24fb', 1, 830);
+INSERT INTO `x_system_auth_perm` VALUES ('dad0f8c0fffe436f9914d26959680eda', 1, 105);
+INSERT INTO `x_system_auth_perm` VALUES ('db6cb5870a5747698abb281b6a41362b', 1, 804);
+INSERT INTO `x_system_auth_perm` VALUES ('dbbc46d9f44346d8bae7cd75f6aaf47e', 1, 616);
+INSERT INTO `x_system_auth_perm` VALUES ('dde39b9cef884c6c8a6d4c07304ce420', 1, 790);
+INSERT INTO `x_system_auth_perm` VALUES ('e2d2f485941f4d58b74bc62f8aabb608', 1, 121);
+INSERT INTO `x_system_auth_perm` VALUES ('e3d9361e9ef14545b97c943e8ecbf244', 1, 130);
+INSERT INTO `x_system_auth_perm` VALUES ('e453e0a958ab4a38890e1e9aef9837ae', 1, 821);
+INSERT INTO `x_system_auth_perm` VALUES ('e5c01fa8e4004a54b6d08bc47b061c66', 1, 120);
+INSERT INTO `x_system_auth_perm` VALUES ('e814631ae1474c00adda3949bf68c7d9', 1, 217);
+INSERT INTO `x_system_auth_perm` VALUES ('e82b9544d5984bf4b4d9a7bcb433287f', 1, 800);
+INSERT INTO `x_system_auth_perm` VALUES ('e9ee9bc1a9464edd9b8c833156a73788', 1, 782);
+INSERT INTO `x_system_auth_perm` VALUES ('f0dcd90a6d564381a129ee3597c13c0f', 1, 123);
+INSERT INTO `x_system_auth_perm` VALUES ('f4c5738b28f54592b5165293d39735ee', 1, 781);
+INSERT INTO `x_system_auth_perm` VALUES ('f6262ef5adac4f0094c31807f45e29a1', 1, 827);
+INSERT INTO `x_system_auth_perm` VALUES ('f6b002373b6646d9896f514b9481e070', 1, 202);
+INSERT INTO `x_system_auth_perm` VALUES ('f78473a721824e0ba754c9b8468adc04', 1, 204);
+INSERT INTO `x_system_auth_perm` VALUES ('f79aaccc502749ff90b1633ca71f1f6e', 1, 795);
+INSERT INTO `x_system_auth_perm` VALUES ('f86c95e1db2b40d7beb0afa4e86225dc', 1, 135);
+INSERT INTO `x_system_auth_perm` VALUES ('fa90f76b6f114166be51b23ff8bb06f5', 1, 101);
+INSERT INTO `x_system_auth_perm` VALUES ('fb43a7eeccc54eaf9c7e34ef054ed60c', 1, 805);
+INSERT INTO `x_system_auth_perm` VALUES ('fe7a53bc5d14423f83f540114022db94', 1, 112);
 
 -- ----------------------------
 -- Table structure for x_system_auth_post
@@ -794,16 +851,12 @@ CREATE TABLE `x_system_auth_post`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统岗位管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统岗位管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_post
 -- ----------------------------
-INSERT INTO `x_system_auth_post` VALUES (2, 'gw0001', '默认岗位', '', 3, 0, 0, '2024-01-02 03:04:05', '2024-05-13 19:11:42', NULL);
 INSERT INTO `x_system_auth_post` VALUES (3, 'zhihuibu01', '指挥部岗位', '', 0, 0, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05', NULL);
-INSERT INTO `x_system_auth_post` VALUES (7, 'zhihuibu02', 'zhihuibu02', '2', 1, 0, 1, '2024-05-13 19:13:44', '2024-05-13 19:13:49', NULL);
-INSERT INTO `x_system_auth_post` VALUES (8, 'zhihuibu03', 'zhihuibu03', '3', 1, 0, 1, '2024-05-13 19:57:38', '2024-05-13 19:57:38', '2024-05-13 19:57:55');
-INSERT INTO `x_system_auth_post` VALUES (9, '1', '1', '1', 1, 0, 1, '2024-05-19 00:07:46', '2024-05-19 00:07:46', '2024-05-19 00:07:49');
 
 -- ----------------------------
 -- Table structure for x_system_auth_role
@@ -823,7 +876,7 @@ CREATE TABLE `x_system_auth_role`  (
 -- ----------------------------
 -- Records of x_system_auth_role
 -- ----------------------------
-INSERT INTO `x_system_auth_role` VALUES (1, '审核员', '审核数据', 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
+INSERT INTO `x_system_auth_role` VALUES (1, '审核员', '1', 1, 0, '2024-01-02 03:04:05', '2024-09-10 20:05:50');
 
 -- ----------------------------
 -- Table structure for x_system_config
@@ -851,15 +904,15 @@ INSERT INTO `x_system_config` VALUES (6, 'sms', 'default', 'aliyun', '2024-01-02
 INSERT INTO `x_system_config` VALUES (7, 'sms', 'aliyun', '{\"name\":\"阿里云短信\",\"alias\":\"aliyun\",\"sign\":\"\",\"appKey\":\"\",\"secretKey\":\"\"}', '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_config` VALUES (8, 'sms', 'tencent', '{\"name\":\"腾讯云短信\",\"alias\":\"tencent\",\"sign\":\"\",\"appId\":\"\",\"secretId\":\"\",\"secretKey\":\"\"}', '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_config` VALUES (9, 'sms', 'huawei', '{\"name\":\"华为云短信\",\"alias\":\"huawei\"}', '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_config` VALUES (10, 'website', 'name', 'x_admin开源系统', '2024-01-02 03:04:05', '2024-05-17 12:15:14');
-INSERT INTO `x_system_config` VALUES (11, 'website', 'logo', '/api/static/backend_logo.png', '2024-01-02 03:04:05', '2024-05-17 12:15:14');
-INSERT INTO `x_system_config` VALUES (12, 'website', 'favicon', '/api/static/backend_favicon.ico', '2024-01-02 03:04:05', '2024-05-17 12:15:14');
-INSERT INTO `x_system_config` VALUES (13, 'website', 'backdrop', '/api/static/backend_backdrop.png', '2024-01-02 03:04:05', '2024-05-17 12:15:14');
-INSERT INTO `x_system_config` VALUES (14, 'website', 'copyright', '[{\"name\":\"蜀ICP备15007060号-1\",\"link\":\"http://www.beian.gov.cn\"},{\"name\":\"x_admin\",\"link\":\"http://x.adtk.cn\"}]', '2024-01-02 03:04:05', '2024-05-17 12:49:17');
-INSERT INTO `x_system_config` VALUES (15, 'website', 'shopName', 'x_admin开源管理系统', '2024-01-02 03:04:05', '2024-05-17 12:15:14');
-INSERT INTO `x_system_config` VALUES (16, 'website', 'shopLogo', '/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png', '2024-01-02 03:04:05', '2024-05-17 12:15:14');
-INSERT INTO `x_system_config` VALUES (17, 'protocol', 'service', '{\"name\":\"服务协议\",\"content\":\"\\u003cp\\u003e服务协议666\\u003c/p\\u003e\"}', '2024-01-02 03:04:05', '2024-05-19 18:23:50');
-INSERT INTO `x_system_config` VALUES (18, 'protocol', 'privacy', '{\"name\":\"隐私协议\",\"content\":\"\\u003cp\\u003e隐私协议\\u003c/p\\u003e\"}', '2024-01-02 03:04:05', '2024-05-19 18:23:50');
+INSERT INTO `x_system_config` VALUES (10, 'website', 'name', 'x_admin开源系统', '2024-01-02 03:04:05', '2024-06-29 00:30:51');
+INSERT INTO `x_system_config` VALUES (11, 'website', 'logo', '/api/static/backend_logo.png', '2024-01-02 03:04:05', '2024-06-29 00:30:51');
+INSERT INTO `x_system_config` VALUES (12, 'website', 'favicon', '/api/static/backend_favicon.ico', '2024-01-02 03:04:05', '2024-06-29 00:30:51');
+INSERT INTO `x_system_config` VALUES (13, 'website', 'backdrop', '/api/static/backend_backdrop.png', '2024-01-02 03:04:05', '2024-06-29 00:30:51');
+INSERT INTO `x_system_config` VALUES (14, 'website', 'copyright', '[{\"name\":\"蜀ICP备15007060号-1\",\"link\":\"http://www.beian.gov.cn\"},{\"name\":\"x_admin\",\"link\":\"http://x.adtk.cn\"}]', '2024-01-02 03:04:05', '2024-06-29 00:30:54');
+INSERT INTO `x_system_config` VALUES (15, 'website', 'shopName', 'x_admin开源管理系统', '2024-01-02 03:04:05', '2024-06-29 00:30:51');
+INSERT INTO `x_system_config` VALUES (16, 'website', 'shopLogo', '/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png', '2024-01-02 03:04:05', '2024-06-29 00:30:51');
+INSERT INTO `x_system_config` VALUES (17, 'protocol', 'service', '{\"name\":\"服务协议\",\"content\":\"\\u003cp\\u003e服务协议666\\u003c/p\\u003e\"}', '2024-01-02 03:04:05', '2024-06-29 00:30:56');
+INSERT INTO `x_system_config` VALUES (18, 'protocol', 'privacy', '{\"name\":\"隐私协议\",\"content\":\"\\u003cp\\u003e隐私协议\\u003c/p\\u003e\"}', '2024-01-02 03:04:05', '2024-06-29 00:30:56');
 INSERT INTO `x_system_config` VALUES (19, 'tabbar', 'style', '{\"defaultColor\":\"#4A5DFF\",\"selectedColor\":\"#EA5455\"}', '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_config` VALUES (20, 'search', 'isHotSearch', '0', '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_config` VALUES (30, 'h5_channel', 'status', '1', '2024-01-02 03:04:05', '2024-01-02 03:04:05');
@@ -903,7 +956,7 @@ CREATE TABLE `x_system_log_login`  (
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '操作状态: 1=成功, 2=失败',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 270 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统登录日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 164 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统登录日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_login
@@ -929,7 +982,7 @@ CREATE TABLE `x_system_log_operate`  (
   `task_time` int(11) NULL DEFAULT NULL COMMENT '执行耗时',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 769 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统操作日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 623 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统操作日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_operate
@@ -941,16 +994,16 @@ CREATE TABLE `x_system_log_operate`  (
 DROP TABLE IF EXISTS `x_system_log_sms`;
 CREATE TABLE `x_system_log_sms`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `scene` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '场景编号',
-  `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '手机号码',
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '发送内容',
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '发送状态：[0=发送中, 1=发送成功, 2=发送失败]',
+  `scene` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '场景编号',
+  `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机号码',
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '发送内容',
+  `status` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '发送状态：[0=发送中, 1=发送成功, 2=发送失败]',
   `results` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '短信结果',
-  `send_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '发送时间',
-  `create_time` datetime NOT NULL COMMENT '创建时间',
-  `update_time` datetime NOT NULL COMMENT '更新时间',
+  `send_time` datetime NULL DEFAULT NULL COMMENT '发送时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统短信日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 117 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统短信日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_sms
@@ -1005,5 +1058,33 @@ CREATE TABLE `x_user_auth`  (
 -- ----------------------------
 -- Records of x_user_auth
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for x_user_protocol
+-- ----------------------------
+DROP TABLE IF EXISTS `x_user_protocol`;
+CREATE TABLE `x_user_protocol`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '标题',
+  `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '协议内容',
+  `sort` double(3, 2) NULL DEFAULT NULL COMMENT '排序',
+  `is_delete` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除: 0=否, 1=是',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户协议' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of x_user_protocol
+-- ----------------------------
+INSERT INTO `x_user_protocol` VALUES (1, '123', '<p>123123</p><p>123123</p><p>123123<img src=\"/api/uploads/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png\" alt=\"\" data-href=\"\" style=\"\"/></p>', 0.10, 1, '2024-09-11 00:02:48', '2024-09-11 13:14:01', '2024-09-12 11:41:00');
+INSERT INTO `x_user_protocol` VALUES (2, '123', '<p>123123</p><p>123123</p><p>123123<img src=\"/api/uploads/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png\" alt=\"\" data-href=\"\" style=\"\"/></p>', NULL, 1, '2024-09-11 00:02:48', '2024-09-11 12:58:17', '2024-09-11 12:58:17');
+INSERT INTO `x_user_protocol` VALUES (3, '123', '<p>123123</p><p>123123</p><p>123123<img src=\"/api/uploads/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png\" alt=\"\" data-href=\"\" style=\"\"/></p>', NULL, 1, '2024-09-11 00:02:48', '2024-09-11 13:14:01', '2024-09-12 12:20:51');
+INSERT INTO `x_user_protocol` VALUES (4, '1', '<p>1</p>', 1.00, 1, '2024-09-12 16:40:10', '2024-09-12 16:40:10', '2024-09-12 16:40:21');
+INSERT INTO `x_user_protocol` VALUES (5, '2', '<p>2</p>', 2.00, 1, '2024-09-12 16:40:16', '2024-09-12 16:40:16', '2024-09-13 09:02:24');
+INSERT INTO `x_user_protocol` VALUES (6, '123', '<p>123123</p><p>123123</p><p>123123<img src=\"/api/uploads/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png\" alt=\"\" data-href=\"\" style=\"\"/></p>', NULL, 1, '2024-09-11 00:02:48', '2024-09-11 13:14:01', '2024-09-13 09:02:24');
+INSERT INTO `x_user_protocol` VALUES (7, '3', '<p>3</p>', 3.00, 0, '2024-09-13 09:01:53', '2024-09-13 09:01:53', NULL);
+INSERT INTO `x_user_protocol` VALUES (8, '4', '<p>4</p>', 4.00, 1, '2024-09-13 09:04:43', '2024-09-13 09:04:43', '2024-09-18 23:09:41');
 
 SET FOREIGN_KEY_CHECKS = 1;

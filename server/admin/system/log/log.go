@@ -10,14 +10,6 @@ import (
 )
 
 func LogRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// permSrv := NewSystemAuthPermService(db)
-	// roleSrv := NewSystemAuthRoleService(db, permSrv)
-	// adminSrv := NewSystemAuthAdminService(db, permSrv, roleSrv)
-	// service := NewSystemLoginService(db, adminSrv)
-
-	// authSrv := NewSystemLogsServer(db)
-
 	handle := logHandler{}
 
 	rg = rg.Group("/system", middleware.TokenAuth())

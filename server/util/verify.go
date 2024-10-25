@@ -68,19 +68,7 @@ func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
 		e = response.ParamsValidError.SetData(errs.Translate(trans))
 		return
 	}
-	// response.Copy(obj, reqInfo)
 	return
-
-	// if err := c.ShouldBindBodyWith(obj, binding.JSON); err != nil {
-	// 	errs, ok := err.(validator.ValidationErrors)
-	// 	if !ok {
-	// 		e = response.ParamsValidError.SetData(err.Error())
-	// 		return
-	// 	}
-	// 	e = response.ParamsValidError.SetData(errs.Translate(trans))
-	// 	return
-	// }
-	// return
 }
 
 func (vu verifyUtil) VerifyJSONArray(c *gin.Context, obj any) (e error) {

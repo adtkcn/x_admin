@@ -32,14 +32,6 @@ const emit = defineEmits<{
     // (event: 'update:modelValue', value: any): void
 }>()
 const pager = defineModel<Record<string, any>>({})
-// const pager = computed({
-//     get() {
-//         return props.modelValue
-//     },
-//     set(value) {
-//         emit('update:modelValue', value)
-//     }
-// })
 const sizeChange = () => {
     pager.value.page = 1
     emit('change')

@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, shallowRef } from 'vue'
+import { computed, defineComponent, ref, toRaw, shallowRef } from 'vue'
 import useUserStore from '@/stores/modules/user'
 import config from '@/config'
 import feedback from '@/utils/feedback'

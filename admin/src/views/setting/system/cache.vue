@@ -140,7 +140,7 @@
 import { systemCache } from '@/api/setting/system'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 // import { ElTable } from 'element-plus'
 defineOptions({
     name: 'cache'

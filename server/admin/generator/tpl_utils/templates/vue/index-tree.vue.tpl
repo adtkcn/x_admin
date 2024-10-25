@@ -5,22 +5,20 @@
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ (toCamelCase .GoField) }}}Start"
-                        v-model:endTime="queryParams.{{{ (toCamelCase .GoField) }}}End"
+                        v-model:startTime="queryParams.{{{ (.GoField) }}}Start"
+                        v-model:endTime="queryParams.{{{ (.GoField) }}}End"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" class="w-[280px]">
                     <el-select
-                        v-model="queryParams.{{{ (toCamelCase .GoField) }}}"
+                        v-model="queryParams.{{{ (.GoField) }}}"
                         
                         clearable
                     >
-                        {{{- if eq .DictType "" }}}
-                        <el-option label="请选择字典生成" value="" />
-                        {{{- else }}}
+                        {{{- if ne .DictType "" }}}
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.{{{ .DictType }}}"
@@ -28,12 +26,22 @@
                             :label="item.name"
                             :value="item.value"
                         />
+                         {{{- else if ne .ListAllApi ""}}}
+                         <el-option label="全部" value="" />
+                        <el-option
+                            v-for="(item, index) in listAllData.{{{pathToName .ListAllApi}}}"
+                            :key="index"
+                            :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                            :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                        />
+                        {{{- else }}}
+                        <el-option label="请选择字典生成" value="" />
                         {{{- end }}}
                     </el-select>
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
-                    <el-input v-model="queryParams.{{{ (toCamelCase .GoField) }}}" />
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" class="w-[280px]">
+                    <el-input v-model="queryParams.{{{ (.GoField) }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
@@ -66,26 +74,32 @@
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toCamelCase .GoField) }}}" />
+                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (.GoField) }}}" />
+                    </template>
+                </el-table-column>
+                {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
+                    <template #default="{ row }">
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (.GoField) }}}" labelKey='{{{toUpperCamelCase .PrimaryKey }}}' valueKey='{{{toUpperCamelCase .PrimaryKey }}}' />
                     </template>
                 </el-table-column>
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
                             :height="40"
-                            :src="row.{{{ (toCamelCase .GoField) }}}"
-                            :preview-src-list="[row.{{{ (toCamelCase .GoField) }}}]"
+                            :src="row.{{{ (.GoField) }}}"
+                            :preview-src-list="[row.{{{ (.GoField) }}}]"
                             preview-teleported
                             hide-on-click-modal
                         />
                     </template>
                 </el-table-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100" />
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
@@ -125,18 +139,25 @@
             {{{- if ge (len .DictFields) 1 }}}
             :dict-data="dictData"
             {{{- end }}}
+            {{{- if ge (len .ListAllFields) 1 }}}
+            :list-all-data="listAllData"
+            {{{- end }}}
             @success="getLists"
             @close="showEdit = false"
         />
     </div>
 </template>
 <script lang="ts" setup>
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{ .ModuleName }}}'
+import { ref,shallowRef,reactive,onMounted,watch } from 'vue'
+import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{nameToPath .ModuleName }}}'
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
+
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
-{{{- if ge (len .DictFields) 1 }}}
-import { useDictData } from '@/hooks/useDictOptions'
-{{{- end }}}
+
+import { useDictData,useListAllData } from '@/hooks/useDictOptions'
+import type { type_dict } from '@/hooks/useDictOptions'
+
 import type { ElTable } from 'element-plus'
 defineOptions({
     name:"{{{ .ModuleName }}}"
@@ -146,16 +167,16 @@ const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 let isExpand = false
 const showEdit = ref(false)
 const loading = ref(false)
-const lists = ref<any[]>([])
+const lists = ref<type_{{{ .ModuleName }}}[]>([])
 
-const queryParams = reactive({
+const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toCamelCase .GoField) }}}Start: '',
-    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{ (.GoField) }}}Start: '',
+    {{{ (.GoField) }}}End: '',
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (.GoField) }}}: '',
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -176,9 +197,22 @@ const getLists = async () => {
 {{{- $dictSize := sub (len .DictFields) 1 }}}
 const { dictData } = useDictData<{
 {{{- range .DictFields }}}
-    {{{ . }}}: any[]
+    {{{ . }}}: type_dict[]
 {{{- end }}}
 }>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+{{{- end }}}
+
+{{{- if ge (len .ListAllFields) 1 }}}
+{{{- $list_all_size := sub (len .ListAllFields) 1 }}}
+const { listAllData } = useListAllData<{
+    {{{- range .ListAllFields }}}
+    {{{pathToName . }}}: any[]
+    {{{- end }}}
+}>({ 
+	{{{- range .ListAllFields }}}
+		{{{pathToName . }}}:'{{{deletePathPrefix . }}}',
+	{{{- end }}}
+})
 {{{- end }}}
 
 const handleAdd = async ({{{ .Table.TreePrimary }}}?: number) => {
@@ -199,9 +233,9 @@ const handleEdit = async (data: any) => {
     editRef.value?.getDetail(data)
 }
 
-const handleDelete = async ({{{ .PrimaryKey }}}: number) => {
+const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
     await feedback.confirm('确定要删除？')
-    await {{{ .ModuleName }}}_delete({ {{{ .PrimaryKey }}} })
+    await {{{ .ModuleName }}}_delete({ {{{toUpperCamelCase .PrimaryKey }}} })
     feedback.msgSuccess('删除成功')
     getLists()
 }

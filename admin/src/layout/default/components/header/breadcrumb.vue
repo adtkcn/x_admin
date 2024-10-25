@@ -6,6 +6,7 @@
     </el-breadcrumb>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useWatchRoute } from '@/hooks/useWatchRoute'
 import type { RouteLocationMatched, RouteLocationNormalizedLoaded } from 'vue-router'
 const breadcrumbs = ref<RouteLocationMatched[]>([])

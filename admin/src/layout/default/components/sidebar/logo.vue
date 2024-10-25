@@ -1,18 +1,18 @@
 <template>
     <div class="logo">
-        <image-contain :width="szie" :height="szie" :src="config.webLogo" />
+        <image-contain :width="size" :height="size" :src="config.webLogo" />
         <transition name="title-width">
             <div
                 v-show="showTitle"
                 class="logo-title overflow-hidden whitespace-nowrap"
                 :class="{ 'text-white': theme == ThemeEnum.DARK }"
-                :style="{ left: `${szie + 16}px` }"
+                :style="{ left: `${size + 16}px` }"
             >
                 <overflow-tooltip
                     :content="title || config.webName"
                     :teleported="true"
                     placement="bottom"
-                    overflo-type="unset"
+                    overflow-type="unset"
                 >
                 </overflow-tooltip>
             </div>
@@ -21,13 +21,14 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import useAppStore from '@/stores/modules/app'
 import { ThemeEnum } from '@/enums/appEnums'
 defineOptions({
     name: 'SideLogo'
 })
 defineProps({
-    szie: { type: Number, default: 34 },
+    size: { type: Number, default: 34 },
     title: { type: String },
     theme: { type: String },
     showTitle: { type: Boolean, default: true }

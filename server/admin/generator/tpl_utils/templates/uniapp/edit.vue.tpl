@@ -3,18 +3,20 @@
 		<uv-form labelPosition="left" :model="form" :rules="formRules" ref="formRef">
 			{{{- range .Columns }}}
             {{{- if .IsEdit }}}			
-			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" borderBottom>
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" borderBottom>
                 {{{- if eq .HtmlType "input" }}}
-					<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-input>
+					<uv-input v-model="form.{{{ (toUpperCamelCase .GoField) }}}" border="surround"></uv-input>
 				{{{- else if eq .HtmlType "number" }}}
-					<uv-number-box v-model="form.{{{ (toCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
+					<uv-number-box v-model="form.{{{ (toUpperCamelCase .GoField) }}}" :min="-99999999" :max="99999999" :integer="true"></uv-number-box>
 				{{{- else if eq .HtmlType "textarea" }}}
-					<uv-textarea v-model="form.{{{ (toCamelCase .GoField) }}}" border="surround"></uv-textarea>
+					<uv-textarea v-model="form.{{{ (toUpperCamelCase .GoField) }}}" border="surround"></uv-textarea>
 				{{{- else if eq .HtmlType "datetime" }}}
-					<x-date v-model:time="form.{{{ (toCamelCase .GoField) }}}"></x-date>
+					<x-date v-model:time="form.{{{ (toUpperCamelCase .GoField) }}}"></x-date>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select")}}}
 					{{{- if ne .DictType "" }}}
-						<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+						<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+					{{{- else if ne .ListAllApi "" }}}
+						<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="Id" labelKey="Id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- else }}}
 						请选择字典生成代码
 					{{{- end }}}
@@ -39,28 +41,29 @@
 		{{{ .ModuleName }}}_edit,
 		{{{ .ModuleName }}}_add
 	} from "@/api/{{{ .ModuleName }}}";
-	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{ .ModuleName }}}";
+	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 	import {
 		toast,
 		alert
 	} from "@/utils/utils";
 	import {
-		useDictData
+		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
-	
+	import type { type_dict } from '@/hooks/useDictOptions'
+
 	let formRef = ref();
 	let form = ref<type_{{{ .ModuleName }}}_edit>({
 	{{{- range .Columns }}}
-    {{{- if eq (toCamelCase .GoField) $.PrimaryKey }}}
+    {{{- if eq (toUpperCamelCase .GoField) $.PrimaryKey }}}
     {{{ $.PrimaryKey }}}: '',
     {{{- else if .IsEdit }}}
     {{{- if eq .HtmlType "checkbox" }}}
-    {{{ (toCamelCase .GoField) }}}: [],
+    {{{ (toUpperCamelCase .GoField) }}}: [],
     {{{- else if eq .HtmlType "number" }}}
-    {{{ (toCamelCase .GoField) }}}: 0,
+    {{{ (toUpperCamelCase .GoField) }}}: 0,
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (toUpperCamelCase .GoField) }}}: '',
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -68,7 +71,7 @@
 	const formRules = {
 		{{{- range .Columns }}}
 		{{{- if and .IsEdit .IsRequired }}}
-		{{{ (toCamelCase .GoField) }}}: [
+		{{{ (toUpperCamelCase .GoField) }}}: [
 			{
 				required: true,
 				{{{- if or (eq .HtmlType "checkbox") (eq .HtmlType "datetime") (eq .HtmlType "radio") (eq .HtmlType "select") (eq .HtmlType "imageUpload") }}}
@@ -84,8 +87,8 @@
 	}
 	onLoad((e) => {
 		console.log("onLoad", e);
-		if (e.id) {
-			getDetails(e.id);
+		if (e.{{{toUpperCamelCase .PrimaryKey}}}) {
+			getDetails(e.{{{toUpperCamelCase .PrimaryKey}}});
 		}
 	});
 
@@ -94,13 +97,26 @@
 	{{{- $dictSize := sub (len .DictFields) 1 }}}
 	const { dictData } = useDictData<{
     {{{- range .DictFields }}}
-    {{{ . }}}: any[]
+    {{{ . }}}: type_dict[]
     {{{- end }}}
 }>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 	{{{- end }}}
 
-	function getDetails(id) {
-		{{{ .ModuleName }}}_detail(id).then((res) => {
+{{{- if ge (len .ListAllFields) 1 }}}
+{{{- $list_all_size := sub (len .ListAllFields) 1 }}}
+const { listAllData } = useListAllData<{
+    {{{- range .ListAllFields }}}
+    {{{pathToName . }}}: any[]
+    {{{- end }}}
+}>({ 
+	{{{- range .ListAllFields }}}
+		{{{pathToName . }}}:'{{{deletePathPrefix . }}}',
+	{{{- end }}}
+})
+{{{- end }}}
+
+	function getDetails({{{toUpperCamelCase .PrimaryKey}}}) {
+		{{{ .ModuleName }}}_detail({{{toUpperCamelCase .PrimaryKey}}}).then((res) => {
             if (res.code == 200) {
                 if (res?.data) {
                     form.value = res?.data
@@ -117,11 +133,11 @@
 	function submit() {
 		console.log("submit", form.value);
 		formRef.value.validate().then(() => {
-			if (form.value.id) {
+			if (form.value.{{{toUpperCamelCase .PrimaryKey}}}) {
 				{{{ .ModuleName }}}_edit(form.value).then((res) => {
 					if (res.code == 200) {
 						toast("编辑成功");				
-						getDetails(form.value?.id);
+						getDetails(form.value?.{{{toUpperCamelCase .PrimaryKey}}});
 					} else {
 						toast(res.message);
 					}

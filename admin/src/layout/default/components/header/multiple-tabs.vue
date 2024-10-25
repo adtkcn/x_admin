@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import useMultipleTabs from '@/hooks/useMultipleTabs'
 import { useWatchRoute } from '@/hooks/useWatchRoute'
 import useTabsStore, { getRouteParams } from '@/stores/modules/multipleTabs'

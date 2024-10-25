@@ -6,21 +6,20 @@
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ (toCamelCase .GoField) }}}Start"
-                        v-model:endTime="queryParams.{{{ (toCamelCase .GoField) }}}End"
+                        v-model:startTime="queryParams.{{{ (toUpperCamelCase .GoField) }}}Start"
+                        v-model:endTime="queryParams.{{{ (toUpperCamelCase .GoField) }}}End"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}"  class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}"  class="w-[280px]">
                     <el-select
-                        v-model="queryParams.{{{ (toCamelCase .GoField) }}}"
+                        v-model="queryParams.{{{ (toUpperCamelCase .GoField) }}}"
                         clearable
                     >
-                        {{{- if eq .DictType "" }}}
-                        <el-option label="请选择字典生成" value="" />
-                        {{{- else }}}
+                        {{{- if ne .DictType "" }}}
+                      
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.{{{ .DictType }}}"
@@ -28,12 +27,22 @@
                             :label="item.name"
                             :value="item.value"
                         />
+                         {{{- else if ne .ListAllApi ""}}}
+                         <el-option label="全部" value="" />
+                        <el-option
+                            v-for="(item, index) in listAllData.{{{pathToName .ListAllApi}}}"
+                            :key="index"
+                            :label="item.Id"
+                            :value="item.Id"
+                        />
+                        {{{- else }}}
+                        <el-option label="请选择字典生成" value="" />
                         {{{- end }}}
                     </el-select>
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" class="w-[280px]">
-                    <el-input  v-model="queryParams.{{{ (toCamelCase .GoField) }}}" />
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" class="w-[280px]">
+                    <el-input  v-model="queryParams.{{{ (toUpperCamelCase .GoField) }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
@@ -45,7 +54,7 @@
             </el-form>
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
-            <div>
+            <div class="text-right">
                 <el-button v-perms="['admin:{{{ .ModuleName }}}:add']" type="primary" @click="handleAdd()">
                     <template #icon>
                         <icon name="el-icon-Plus" />
@@ -53,6 +62,7 @@
                     新增
                 </el-button>
                     <upload
+                    v-perms="['admin:{{{ .ModuleName }}}:ImportFile']"
                     class="ml-3 mr-3"
                     :url="{{{.ModuleName}}}_import_file"
                     :data="{ cid: 0 }"
@@ -67,11 +77,19 @@
                         导入
                     </el-button>
                 </upload>
-                <el-button type="primary" @click="exportFile">
+                <el-button v-perms="['admin:{{{ .ModuleName }}}:ExportFile']" type="primary" @click="exportFile">
                     <template #icon>
                         <icon name="el-icon-Download" />
                     </template>
                     导出
+                </el-button>
+                <el-button
+                    v-perms="['admin:{{{ .ModuleName }}}:delBatch']"
+                    type="danger"
+                    :disabled="!multipleSelection.length"
+                    @click="deleteBatch"
+                >
+                    批量删除
                 </el-button>
             </div>
             <el-table
@@ -79,30 +97,39 @@
                 size="large"
                 v-loading="pager.loading"
                 :data="pager.lists"
+                @selection-change="handleSelectionChange"
             >
+                <el-table-column type="selection" width="55" />
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toCamelCase .GoField) }}}" />
+                       <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" />
                     </template>
                 </el-table-column>
+                {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
+                    <template #default="{ row }">
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='Id' valueKey='Id' />
+                    </template>
+                </el-table-column>
+
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
                             :height="40"
-                            :src="row.{{{ (toCamelCase .GoField) }}}"
-                            :preview-src-list="[row.{{{ (toCamelCase .GoField) }}}]"
+                            :src="row.{{{ (toUpperCamelCase .GoField) }}}"
+                            :preview-src-list="[row.{{{ (toUpperCamelCase .GoField) }}}]"
                             preview-teleported
                             hide-on-click-modal
                         />
                     </template>
                 </el-table-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" min-width="130" />
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="130" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
@@ -120,7 +147,7 @@
                             v-perms="['admin:{{{ .ModuleName }}}:del']"
                             type="danger"
                             link
-                            @click="handleDelete(row.{{{ .PrimaryKey }}})"
+                            @click="handleDelete(row.{{{toUpperCamelCase .PrimaryKey }}})"
                         >
                             删除
                         </el-button>
@@ -137,18 +164,23 @@
             {{{- if ge (len .DictFields) 1 }}}
             :dict-data="dictData"
             {{{- end }}}
+            {{{- if ge (len .ListAllFields) 1 }}}
+            :list-all-data="listAllData"
+            {{{- end }}}
             @success="getLists"
             @close="showEdit = false"
         />
     </div>
 </template>
 <script lang="ts" setup>
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{ .ModuleName }}}'
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{ .ModuleName }}}";
+import { ref,reactive,shallowRef } from 'vue'
+import { {{{ .ModuleName }}}_delete,{{{ .ModuleName }}}_delete_batch, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{nameToPath .ModuleName }}}'
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 
-{{{- if ge (len .DictFields) 1 }}}
-import { useDictData } from '@/hooks/useDictOptions'
-{{{- end }}}
+
+import { useDictData,useListAllData } from '@/hooks/useDictOptions'
+import type { type_dict } from '@/hooks/useDictOptions'
+
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -161,10 +193,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toCamelCase .GoField) }}}Start: '',
-    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{ (toUpperCamelCase .GoField) }}}Start: null,
+    {{{ (toUpperCamelCase .GoField) }}}End: null,
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (toUpperCamelCase .GoField) }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -179,9 +211,22 @@ const { pager, getLists, resetPage, resetParams } = usePaging<type_{{{ .ModuleNa
 {{{- $dictSize := sub (len .DictFields) 1 }}}
 const { dictData } = useDictData<{
     {{{- range .DictFields }}}
-    {{{ . }}}: any[]
+    {{{ . }}}: type_dict[]
     {{{- end }}}
 }>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
+{{{- end }}}
+
+{{{- if ge (len .ListAllFields) 1 }}}
+{{{- $list_all_size := sub (len .ListAllFields) 1 }}}
+const { listAllData } = useListAllData<{
+    {{{- range .ListAllFields }}}
+    {{{pathToName . }}}: any[]
+    {{{- end }}}
+}>({ 
+	{{{- range .ListAllFields }}}
+		{{{pathToName . }}}:'{{{deletePathPrefix . }}}',
+	{{{- end }}}
+})
 {{{- end }}}
 
 
@@ -197,15 +242,36 @@ const handleEdit = async (data: any) => {
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
+const multipleSelection = ref<type_{{{ .ModuleName }}}[]>([])
+const handleSelectionChange = (val: type_{{{ .ModuleName }}}[]) => {
+    console.log(val)
+    multipleSelection.value = val
+}
 
-const handleDelete = async ({{{ .PrimaryKey }}}: number) => {
+const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
     try {
         await feedback.confirm('确定要删除？')
-        await {{{ .ModuleName }}}_delete( {{{ .PrimaryKey }}} )
+        await {{{ .ModuleName }}}_delete( {{{toUpperCamelCase .PrimaryKey }}} )
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {}
 }
+// 批量删除
+const deleteBatch = async () => {
+    if (multipleSelection.value.length === 0) {
+        feedback.msgError('请选择要删除的数据')
+        return
+    }
+    try {
+        await feedback.confirm('确定要删除？')
+        await {{{ .ModuleName }}}_delete_batch({
+            Ids: multipleSelection.value.map((item) => item.{{{toUpperCamelCase .PrimaryKey }}}).join(',')
+        })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {}
+}
+
 const exportFile = async () => {
     try {
         await feedback.confirm('确定要导出？')

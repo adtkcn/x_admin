@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import useAppStore from '@/stores/modules/app'
 import Fold from './fold.vue'
 import Refresh from './refresh.vue'
@@ -50,9 +51,17 @@ const settingStore = useSettingStore()
 <style lang="scss">
 .navbar {
     height: var(--navbar-height);
-    @apply flex px-2 bg-body;
+
+    display: flex;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: var(--el-bg-color);
     .navbar-item {
-        @apply h-full  flex justify-center items-center  hover:bg-page;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--el-bg-color-page);
     }
 }
 </style>

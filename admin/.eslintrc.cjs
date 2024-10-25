@@ -3,13 +3,14 @@ require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
     root: true,
-    ignorePatterns: ['/auto-imports.d.ts', '/components.d.ts'],
+    // ignorePatterns 忽略特定的文件和目录
+    ignorePatterns: ['/auto-imports.d.ts', '/components.d.ts', 'scripts'],
     extends: [
         'plugin:vue/vue3-essential',
         'eslint:recommended',
         '@vue/eslint-config-typescript/recommended',
-        '@vue/eslint-config-prettier',
-        './.eslintrc-auto-import.json'
+        '@vue/eslint-config-prettier'
+        // './.eslintrc-auto-import.json'
     ],
     rules: {
         'prettier/prettier': [
@@ -26,12 +27,18 @@ module.exports = {
                 trailingComma: 'none'
             }
         ],
+        // 'vue/no-undef-components': [
+        //     'error',
+        //     {
+        //         ignorePatterns: ['el(\\-\\w+)+']
+        //     }
+        // ],
         'vue/multi-word-component-names': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
-        'no-undef': 'off',
-        'vue/prefer-import-from-vue': 'off',
-        'no-prototype-builtins': 'off',
+        // 'no-undef': 'off',
+        // 'vue/prefer-import-from-vue': 'off',
+        // 'no-prototype-builtins': 'off',
         'prefer-spread': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',

@@ -94,8 +94,7 @@ func (service systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds str
 			perms = append(perms, system_model.SystemAuthPerm{ID: util.ToolsUtil.MakeUuid(), RoleId: roleId, MenuId: uint(menuId)})
 		}
 		txErr := tx.Create(&perms).Error
-		var te error
-		te = response.CheckErr(txErr, "BatchSaveByMenuIds Create in tx err")
+		var te = response.CheckErr(txErr, "BatchSaveByMenuIds Create in tx err")
 		return te
 	})
 	e = response.CheckErr(err, "BatchSaveByMenuIds Transaction err")

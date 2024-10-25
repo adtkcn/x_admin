@@ -80,6 +80,7 @@
 </template>
 
 <script lang="ts" name="material-picker">
+import { defineComponent, ref, computed, toRefs, watch, nextTick, provide } from 'vue'
 import Draggable from 'vuedraggable'
 import Popup from '@/components/popup/index.vue'
 import FileItem from './file.vue'

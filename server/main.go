@@ -11,7 +11,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
-	"x_admin/routers"
+	"x_admin/router"
 
 	_ "x_admin/docs"
 
@@ -28,23 +28,23 @@ var staticFs embed.FS
 func initRouter() *gin.Engine {
 	// 初始化gin
 	gin.SetMode(config.Config.GinMode)
-	router := gin.New()
-	router.MaxMultipartMemory = 8 << 20 // 8 MiB
+	r := gin.New()
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 	// 设置静态路径
-	router.Static(config.Config.PublicPrefix, config.Config.UploadDirectory)
+	r.Static(config.Config.PublicPrefix, config.Config.UploadDirectory)
 
 	staticHttpFs := http.FS(staticFs)
-	router.GET("/api/static/*filepath", func(c *gin.Context) {
+	r.GET("/api/static/*filepath", func(c *gin.Context) {
 		filepath := c.Param("filepath")
 		fmt.Println(filepath)
 
 		c.FileFromFS("static"+filepath, staticHttpFs)
 	})
 	// 设置中间件
-	router.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
-	router.GET("/api/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
+	r.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
+	r.GET("/api/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
 		var path = []string{}
-		for _, route := range router.Routes() {
+		for _, route := range r.Routes() {
 			// fmt.Printf("%s 127.0.0.1:%v%s\n", route.Method, config.Config.ServerPort, route.Path)
 			path = append(path, route.Path)
 		}
@@ -53,17 +53,17 @@ func initRouter() *gin.Engine {
 
 	// 演示模式
 	if config.Config.DisallowModify {
-		router.Use(middleware.ShowMode())
+		r.Use(middleware.ShowMode())
 	}
 	// 特殊异常处理
-	router.NoMethod(response.NoMethod)
-	// router.NoRoute(response.NoRoute)
+	r.NoMethod(response.NoMethod)
+	// r.NoRoute(response.NoRoute)
 	// 注册路由
-	apiGroup := router.Group("/api")
+	apiGroup := r.Group("/api")
 
-	routers.RegisterGroup(apiGroup)
+	router.RegisterGroup(apiGroup)
 
-	return router
+	return r
 }
 
 // initServer 初始化server

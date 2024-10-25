@@ -24,15 +24,1232 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/admin/flow/flow_apply/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "模板",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
+                        "name": "status",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_apply/back": {
+            "post": {
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/flow/flow_apply/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_apply/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/flow_apply.FlowApplyResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_apply/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "模板",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
+                        "name": "status",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_apply/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_apply-申请流程"
+                ],
+                "summary": "申请流程列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "模板",
+                        "name": "templateId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/flow_apply.FlowApplyResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_apply/pass": {
+            "post": {
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/flow/flow_history/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "模板id",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "审批人id",
+                        "name": "approverId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "审批用户昵称",
+                        "name": "approverNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "节点",
+                        "name": "nodeId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单值",
+                        "name": "formValue",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "通过状态：0待处理，1通过，2拒绝",
+                        "name": "passStatus",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "通过备注",
+                        "name": "passRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_history/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_history/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_history/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "模板id",
+                        "name": "templateId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "审批人id",
+                        "name": "approverId",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "审批用户昵称",
+                        "name": "approverNickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "节点",
+                        "name": "nodeId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单值",
+                        "name": "formValue",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "通过状态：0待处理，1通过，2拒绝",
+                        "name": "passStatus",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "通过备注",
+                        "name": "passRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_history/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "模板id",
+                        "name": "templateId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "申请人id",
+                        "name": "applyUserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "申请人昵称",
+                        "name": "applyUserNickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "审批人id",
+                        "name": "approverId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "审批用户昵称",
+                        "name": "approverNickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "节点",
+                        "name": "nodeId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表单值",
+                        "name": "formValue",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "通过状态：0待处理，1通过，2拒绝",
+                        "name": "passStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "通过备注",
+                        "name": "passRemark",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_history/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史列表-所有",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_template/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_template/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_template/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/flow_template.FlowTemplateResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_template/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": ".",
+                        "name": "id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_template/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程名称",
+                        "name": "flowName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "流程分类",
+                        "name": "flowGroup",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程描述",
+                        "name": "flowRemark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表单配置",
+                        "name": "flowFormData",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "流程配置",
+                        "name": "flowProcessData",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/flow_template.FlowTemplateResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_template/listAll": {
+            "get": {
+                "tags": [
+                    "flow_template-流程模板"
+                ],
+                "summary": "流程模板列表-所有",
+                "responses": {}
+            }
+        },
         "/api/admin/monitor_client/ExportFile": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "monitor_client-客户端信息"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "客户端信息导出",
+                "summary": "监控-客户端信息导出",
                 "parameters": [
                     {
                         "type": "string",
@@ -93,12 +1310,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "ua记录.",
                         "name": "ua",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "客户端时间.",
-                        "name": "clientTime",
                         "in": "query"
                     }
                 ],
@@ -111,9 +1322,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "monitor_client-客户端信息"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "客户端信息新增",
+                "summary": "监控-客户端信息新增",
                 "parameters": [
                     {
                         "type": "string",
@@ -121,14 +1332,6 @@ const docTemplate = `{
                         "name": "Token",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "description": "项目key.",
-                        "name": "projectKey",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
                     },
                     {
                         "description": "sdk生成的客户端id.",
@@ -195,11 +1398,11 @@ const docTemplate = `{
                         }
                     },
                     {
-                        "description": "客户端时间.",
+                        "description": "更新时间.",
                         "name": "clientTime",
                         "in": "body",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -207,7 +1410,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -219,9 +1422,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "monitor_client-客户端信息"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "客户端信息删除",
+                "summary": "监控-客户端信息删除",
                 "parameters": [
                     {
                         "type": "string",
@@ -243,7 +1446,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -255,9 +1458,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "monitor_client-客户端信息"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "客户端信息详情",
+                "summary": "监控-客户端信息详情",
                 "parameters": [
                     {
                         "type": "string",
@@ -277,7 +1480,19 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -289,9 +1504,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "monitor_client-客户端信息"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "客户端信息编辑",
+                "summary": "监控-客户端信息编辑",
                 "parameters": [
                     {
                         "type": "string",
@@ -299,22 +1514,6 @@ const docTemplate = `{
                         "name": "Token",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "description": "uuid.",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "项目key.",
-                        "name": "projectKey",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
                     },
                     {
                         "description": "sdk生成的客户端id.",
@@ -381,11 +1580,11 @@ const docTemplate = `{
                         }
                     },
                     {
-                        "description": "客户端时间.",
+                        "description": "更新时间.",
                         "name": "clientTime",
                         "in": "body",
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -393,7 +1592,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -405,9 +1604,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "monitor_client-客户端信息"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "客户端信息列表",
+                "summary": "监控-客户端信息列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -483,22 +1682,40 @@ const docTemplate = `{
                         "description": "ua记录.",
                         "name": "ua",
                         "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "客户端时间.",
-                        "name": "clientTime",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -516,17 +1733,85 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "monitor_client-客户端信息"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "客户端信息列表-所有",
+                "summary": "监控-客户端信息列表-所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "项目key.",
+                        "name": "projectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id.",
+                        "name": "clientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户id.",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "系统.",
+                        "name": "os",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器.",
+                        "name": "browser",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市.",
+                        "name": "city",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "屏幕.",
+                        "name": "width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "屏幕高度.",
+                        "name": "height",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ua记录.",
+                        "name": "ua",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -617,7 +1902,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -653,7 +1938,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -687,7 +1972,19 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -747,7 +2044,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -807,38 +2104,40 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "请求错误",
                         "schema": {
                             "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_project/listAll": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目列表-所有",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
-                            }
                         }
                     }
                 }
@@ -985,7 +2284,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -1021,7 +2320,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -1147,7 +2446,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/response.RespType"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -1268,6 +2567,458 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/system_log_sms/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/system_log_sms/ImportFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志导入",
+                "responses": {}
+            }
+        },
+        "/api/admin/system_log_sms/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "Id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "body",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "发送时间",
+                        "name": "SendTime",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        " lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_log_sms/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_log_sms-系统短信日志"
+                ],
+                "summary": "系统短信日志列表-所有",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "场景编号",
+                        "name": "Scene",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手机号码",
+                        "name": "Mobile",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发送内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "短信结果",
+                        "name": "Results",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/article_collect/list": {
             "get": {
                 "produces": [
@@ -1334,1130 +3085,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/flow_apply/add": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_apply-申请流程"
-                ],
-                "summary": "申请流程新增",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "模板",
-                        "name": "templateId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人id",
-                        "name": "applyUserId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人昵称",
-                        "name": "applyUserNickname",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程名称",
-                        "name": "flowName",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程分类",
-                        "name": "flowGroup",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "流程描述",
-                        "name": "flowRemark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "表单配置",
-                        "name": "flowFormData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程配置",
-                        "name": "flowProcessData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
-                        "name": "status",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_apply/back": {
-            "post": {
-                "responses": {}
-            }
-        },
-        "/api/flow_apply/del": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_apply-申请流程"
-                ],
-                "summary": "申请流程删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "申请id",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_apply/detail": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_apply-申请流程"
-                ],
-                "summary": "申请流程详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "申请id",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/flow_apply.FlowApplyResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_apply/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_apply-申请流程"
-                ],
-                "summary": "申请流程编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "申请id",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "模板",
-                        "name": "templateId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人id",
-                        "name": "applyUserId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人昵称",
-                        "name": "applyUserNickname",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程名称",
-                        "name": "flowName",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程分类",
-                        "name": "flowGroup",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "流程描述",
-                        "name": "flowRemark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "表单配置",
-                        "name": "flowFormData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程配置",
-                        "name": "flowProcessData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
-                        "name": "status",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_apply/list": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_apply-申请流程"
-                ],
-                "summary": "申请流程列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "PageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "模板",
-                        "name": "templateId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "申请人id",
-                        "name": "applyUserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "申请人昵称",
-                        "name": "applyUserNickname",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "流程名称",
-                        "name": "flowName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "流程分类",
-                        "name": "flowGroup",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "流程描述",
-                        "name": "flowRemark",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "表单配置",
-                        "name": "flowFormData",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "流程配置",
-                        "name": "flowProcessData",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/flow_apply.FlowApplyResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "请求错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_apply/pass": {
-            "post": {
-                "responses": {}
-            }
-        },
-        "/api/flow_history/add": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史新增",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "申请id",
-                        "name": "applyId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "模板id",
-                        "name": "templateId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人id",
-                        "name": "applyUserId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人昵称",
-                        "name": "applyUserNickname",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "审批人id",
-                        "name": "approverId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "审批用户昵称",
-                        "name": "approverNickname",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "节点",
-                        "name": "nodeId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "表单值",
-                        "name": "formValue",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "通过状态：0待处理，1通过，2拒绝",
-                        "name": "passStatus",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "通过备注",
-                        "name": "passRemark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_history/del": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "历史id",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_history/detail": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "历史id",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/flow_history.FlowHistoryResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_history/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "历史id",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请id",
-                        "name": "applyId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "模板id",
-                        "name": "templateId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人id",
-                        "name": "applyUserId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "申请人昵称",
-                        "name": "applyUserNickname",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "审批人id",
-                        "name": "approverId",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "审批用户昵称",
-                        "name": "approverNickname",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "节点",
-                        "name": "nodeId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "表单值",
-                        "name": "formValue",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "通过状态：0待处理，1通过，2拒绝",
-                        "name": "passStatus",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "通过备注",
-                        "name": "passRemark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_history/list": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "PageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "申请id",
-                        "name": "applyId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "模板id",
-                        "name": "templateId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "申请人id",
-                        "name": "applyUserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "申请人昵称",
-                        "name": "applyUserNickname",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "审批人id",
-                        "name": "approverId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "审批用户昵称",
-                        "name": "approverNickname",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "节点",
-                        "name": "nodeId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "表单值",
-                        "name": "formValue",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "通过状态：0待处理，1通过，2拒绝",
-                        "name": "passStatus",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "通过备注",
-                        "name": "passRemark",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/flow_history.FlowHistoryResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "请求错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_history/listAll": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史列表-所有",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/flow_history.FlowHistoryResp"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_template/add": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_template-流程模板"
-                ],
-                "summary": "流程模板新增",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "流程名称",
-                        "name": "flowName",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程分类",
-                        "name": "flowGroup",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "流程描述",
-                        "name": "flowRemark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "表单配置",
-                        "name": "flowFormData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程配置",
-                        "name": "flowProcessData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_template/del": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_template-流程模板"
-                ],
-                "summary": "流程模板删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "历史id",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_template/detail": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_template-流程模板"
-                ],
-                "summary": "流程模板详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "历史id",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/flow_template.FlowTemplateResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_template/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_template-流程模板"
-                ],
-                "summary": "流程模板编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": ".",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "流程名称",
-                        "name": "flowName",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程分类",
-                        "name": "flowGroup",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "流程描述",
-                        "name": "flowRemark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "表单配置",
-                        "name": "flowFormData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "流程配置",
-                        "name": "flowProcessData",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.RespType"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_template/list": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_template-流程模板"
-                ],
-                "summary": "流程模板列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "PageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "流程名称",
-                        "name": "flowName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "流程分类",
-                        "name": "flowGroup",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "流程描述",
-                        "name": "flowRemark",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "表单配置",
-                        "name": "flowFormData",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "流程配置",
-                        "name": "flowProcessData",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/flow_template.FlowTemplateResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "请求错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/flow_template/listAll": {
-            "get": {
-                "tags": [
-                    "flow_template-流程模板"
-                ],
-                "summary": "流程模板列表-所有",
-                "responses": {}
-            }
-        },
         "/system/admin/ListByDeptId/{deptId}": {
             "get": {
                 "description": "获取部门的用户",
@@ -2486,6 +3113,28 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "core.NullInt": {
+            "type": "object",
+            "properties": {
+                "int": {
+                    "type": "integer"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "core.NullTime": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "flow_apply.FlowApplyResp": {
             "type": "object",
             "properties": {
@@ -2659,7 +3308,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "clientTime": {
-                    "description": "客户端时间",
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "createTime": {
@@ -2786,9 +3435,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.RespType": {
-            "type": "object"
-        },
         "response.Response": {
             "type": "object",
             "properties": {
@@ -2798,6 +3444,67 @@ const docTemplate = `{
                 "data": {},
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "system_log_sms.SystemLogSmsResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "发送内容",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "id",
+                    "type": "integer"
+                },
+                "mobile": {
+                    "description": "手机号码",
+                    "type": "string"
+                },
+                "results": {
+                    "description": "短信结果",
+                    "type": "string"
+                },
+                "scene": {
+                    "description": "场景编号",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
+                },
+                "sendTime": {
+                    "description": "发送时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
+                },
+                "status": {
+                    "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 }
             }
         }

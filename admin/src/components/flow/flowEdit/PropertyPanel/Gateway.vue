@@ -1,11 +1,10 @@
 <template>
     <div style="padding-bottom: 10px">
         <el-card header="条件编辑">
-            <el-alert title="同一父级的网关只能有一个通过" type="warning" />
+            <el-alert title="同一父级的网关只能有一个通过" type="warning" :closable="false" />
 
-            <!-- 设置优先级 -->
-            <div style="padding: 40px 0 20px">
-                <el-select v-model="selectGateway" placeholder="请选择">
+            <div style="padding: 20px 0 20px" class="flex">
+                <el-select class="flex-1" v-model="selectGateway" placeholder="请选择">
                     <el-option
                         v-for="item in fieldList"
                         :key="item.id"
@@ -24,7 +23,7 @@
                         {{ getLabel(row.id) }}
                     </template>
                 </el-table-column>
-                <el-table-column label="权限">
+                <el-table-column label="判断方式">
                     <template #default="{ row }">
                         <el-select v-model="row.condition" placeholder="请选择判断符">
                             <el-option
@@ -53,27 +52,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { PropType } from 'vue'
+// import type { PropType } from 'vue'
 import { Close } from '@element-plus/icons-vue'
-const props = defineProps({
-    node: {
-        type: Object,
-        default: () => ({})
-    },
-    fieldList: {
-        type: Array as PropType<
-            {
-                id: string
-                label: string
-            }[]
-        >,
-        default: () => []
-    },
-    properties: {
-        type: Object,
-        default: () => ({})
-    }
-})
+
+import type { NodeType, PropertiesType, FieldListType } from './property.type'
+
+const props = defineProps<{
+    node?: NodeType
+    fieldList?: FieldListType[]
+    properties?: PropertiesType
+}>()
 const conditionList = [
     {
         value: '==',
@@ -100,7 +88,7 @@ const selectGateway = ref('')
 function getLabel(id) {
     return props.fieldList.find((item) => {
         if (item.id === id) {
-            return item.label
+            return true
         }
     })?.label
 }

@@ -8,22 +8,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type FlowTemplateHandler struct{}
+type FlowTemplateHandler struct {
+}
 
 // @Summary	流程模板列表
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		Token			header		string				true	"token"
-// @Param		PageNo			query		int					true	"页码"
-// @Param		PageSize		query		int					true	"每页数量"
-// @Param		flowName		query		string				false	"流程名称"
-// @Param		flowGroup		query		int					false	"流程分类"
-// @Param		flowRemark		query		string				false	"流程描述"
-// @Param		flowFormData	query		string				false	"表单配置"
-// @Param		flowProcessData	query		string				false	"流程配置"
-// @Success	200				{object}	[]FlowTemplateResp	"成功"
-// @Failure	400				{object}	string				"请求错误"
-// @Router		/api/flow_template/list [get]
+// @Param		Token			header		string																true	"token"
+// @Param		PageNo			query		int																	true	"页码"
+// @Param		PageSize		query		int																	true	"每页数量"
+// @Param		flowName		query		string																false	"流程名称"
+// @Param		flowGroup		query		int																	false	"流程分类"
+// @Param		flowRemark		query		string																false	"流程描述"
+// @Param		flowFormData	query		string																false	"表单配置"
+// @Param		flowProcessData	query		string																false	"流程配置"
+// @Success	200				{object}	response.Response{data=response.PageResp{lists=[]FlowTemplateResp}}	"成功"
+// @Router		/api/admin/flow/flow_template/list [get]
 func (hd FlowTemplateHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq FlowTemplateListReq
@@ -39,7 +39,7 @@ func (hd FlowTemplateHandler) List(c *gin.Context) {
 
 // @Summary	流程模板列表-所有
 // @Tags		flow_template-流程模板
-// @Router		/api/flow_template/listAll [get]
+// @Router		/api/admin/flow/flow_template/listAll [get]
 func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 	res, err := Service.ListAll()
 	response.CheckAndRespWithData(c, res, err)
@@ -51,7 +51,7 @@ func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 // @Param		Token	header		string				true	"token"
 // @Param		id		query		int					false	"历史id"
 // @Success	200		{object}	FlowTemplateResp	"成功"
-// @Router		/api/flow_template/detail [get]
+// @Router		/api/admin/flow/flow_template/detail [get]
 func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 	var detailReq FlowTemplateDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
@@ -70,8 +70,8 @@ func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 // @Param		flowRemark		body		string				false	"流程描述"
 // @Param		flowFormData	body		string				false	"表单配置"
 // @Param		flowProcessData	body		string				false	"流程配置"
-// @Success	200				{object}	response.RespType	"成功"
-// @Router		/api/flow_template/add [post]
+// @Success	200				{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_template/add [post]
 func (hd FlowTemplateHandler) Add(c *gin.Context) {
 	var addReq FlowTemplateAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
@@ -90,8 +90,8 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 // @Param		flowRemark		body		string				false	"流程描述"
 // @Param		flowFormData	body		string				false	"表单配置"
 // @Param		flowProcessData	body		string				false	"流程配置"
-// @Success	200				{object}	response.RespType	"成功"
-// @Router		/api/flow_template/edit [post]
+// @Success	200				{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_template/edit [post]
 func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 	var editReq FlowTemplateEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
@@ -105,8 +105,8 @@ func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 // @Produce	json
 // @Param		Token	header		string				true	"token"
 // @Param		id		body		int					false	"历史id"
-// @Success	200		{object}	response.RespType	"成功"
-// @Router		/api/flow_template/del [post]
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_template/del [post]
 func (hd FlowTemplateHandler) Del(c *gin.Context) {
 	var delReq FlowTemplateDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {

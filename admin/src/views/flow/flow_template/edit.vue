@@ -48,6 +48,7 @@ import {
 } from '@/api/flow/flow_template'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
+import { computed, ref, reactive, shallowRef } from 'vue'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {
@@ -134,9 +135,7 @@ const setFormData = async (data: Record<string, any>) => {
 }
 
 const getDetail = async (row: Record<string, any>) => {
-    const data = await flow_template_detail({
-        id: row.id
-    })
+    const data = await flow_template_detail(row.id)
     setFormData(data)
 }
 

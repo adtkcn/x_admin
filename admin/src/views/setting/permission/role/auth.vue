@@ -43,11 +43,12 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, shallowRef, nextTick, reactive } from 'vue'
 import type { CheckboxValueType, ElTree, FormInstance } from 'element-plus'
 import { roleDetail, roleEdit } from '@/api/perms/role'
 import { menuLists } from '@/api/perms/menu'
 import Popup from '@/components/popup/index.vue'
-import { treeToArray } from '@/utils/util'
+import { treeToArray, arrayToTree } from '@/utils/util'
 import feedback from '@/utils/feedback'
 const emit = defineEmits(['success', 'close'])
 const treeRef = shallowRef<InstanceType<typeof ElTree>>()
@@ -78,7 +79,7 @@ const rules = {
 
 const getOptions = async () => {
     const data = await menuLists()
-    menuTree.value = data
+    menuTree.value = arrayToTree(data)
     menuArray.value = treeToArray(data)
 }
 

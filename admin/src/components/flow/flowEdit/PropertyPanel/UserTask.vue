@@ -14,7 +14,7 @@
                 </el-form-item>
 
                 <el-form-item label="指定部门" v-if="props.properties.userType == 1">
-                    <el-select
+                    <!-- <el-select
                         v-model="props.properties.deptId"
                         placeholder="请选择审批部门"
                         style="width: 100%"
@@ -25,14 +25,18 @@
                             :label="item.label"
                             :value="item.value"
                         />
-                    </el-select>
+                    </el-select> -->
+                    <el-tree-select
+                        v-model="props.properties.deptId"
+                        :data="deptList"
+                        :check-strictly="true"
+                        default-expand-all
+                        :render-after-expand="false"
+                        style="width: 100%"
+                    />
                 </el-form-item>
                 <el-form-item label="岗位" v-if="[1].includes(props.properties.userType)">
-                    <el-select
-                        v-model="props.properties.postId"
-                        placeholder="请选择岗位"
-                        style="width: 100%"
-                    >
+                    <el-select v-model="props.properties.postId" placeholder="请选择岗位">
                         <el-option
                             v-for="item in postList"
                             :key="item.value"
@@ -63,48 +67,44 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { adminLists } from '@/api/perms/admin'
-import { deptLists } from '@/api/org/department'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { adminListAll } from '@/api/perms/admin'
+import { deptAll } from '@/api/org/department'
 import { postAll } from '@/api/org/post'
-const props = defineProps({
-    node: {
-        type: Object,
-        default: () => ({})
-    },
-    properties: {
-        type: Object,
-        default: () => ({})
-    },
-    fieldList: {
-        type: Array,
-        default: () => []
-    }
-})
+import { arrayToTree } from '@/utils/util'
+import type { NodeType, PropertiesType, FieldListType } from './property.type'
+
+const props = defineProps<{
+    node?: NodeType
+    fieldList?: FieldListType[]
+    properties?: PropertiesType
+}>()
 
 const adminUserList = ref([])
 const deptList = ref([])
 const postList = ref([])
 
 function getAdminList() {
-    adminLists().then((res) => {
-        adminUserList.value = res.lists.map((item) => {
+    adminListAll({}).then((res) => {
+        adminUserList.value = res.map((item) => {
             return {
                 value: item.id,
-                label: item.nickname
+                label: item.nickname + ' (' + item.username + ')'
             }
         })
     })
 }
 function getDeptList() {
-    deptLists().then((res) => {
-        deptList.value = res.map((item) => {
+    deptAll().then((res) => {
+        const list = res.map((item) => {
             return {
                 value: item.id,
-                label: item.name
+                label: item.name,
+                ...item
             }
         })
+        deptList.value = arrayToTree(list, '')
     })
 }
 function getPostList() {

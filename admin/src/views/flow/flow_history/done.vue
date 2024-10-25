@@ -64,15 +64,15 @@
             </div>
         </el-card>
 
-        <!-- <Approve ref="ApproveRef"></Approve> -->
-
         <ViewForm ref="viewFormRef"></ViewForm>
-        <!-- <ApplySubmit ref="ApplySubmitRef" title="审批" @close="getLists"></ApplySubmit> -->
     </div>
 </template>
 <script lang="ts" setup>
+import { shallowRef, reactive } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list } from '@/api/flow/flow_history'
+import type { type_flow_apply } from '@/api/flow/flow_apply'
+
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import useUserStore from '@/stores/modules/user'
@@ -82,7 +82,7 @@ import ViewForm from './components/ViewForm.vue'
 const userStore = useUserStore()
 
 defineOptions({
-    name: 'todo'
+    name: 'done'
 })
 const ApproveRef = shallowRef<InstanceType<typeof ApproveRef>>()
 const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
@@ -95,7 +95,7 @@ const queryParams = reactive({
     passStatus: 2
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_apply>({
     fetchFun: flow_history_list,
     params: queryParams
 })

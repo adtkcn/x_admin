@@ -5,6 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -57,7 +58,7 @@ func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []Se
 		return
 	}
 	res = []SettingDictDataResp{}
-	response.Copy(&res, dictDatas)
+	util.ConvertUtil.Copy(&res, dictDatas)
 	return
 }
 
@@ -94,7 +95,7 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 		return
 	}
 	dtResp := []SettingDictDataResp{}
-	response.Copy(&dtResp, dds)
+	util.ConvertUtil.Copy(&dtResp, dds)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -113,7 +114,7 @@ func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, dd)
+	util.ConvertUtil.Copy(&res, dd)
 	return
 }
 
@@ -123,7 +124,7 @@ func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) 
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 	var dd setting_model.DictData
-	response.Copy(&dd, addReq)
+	util.ConvertUtil.Copy(&dd, addReq)
 	err := ddSrv.db.Create(&dd).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -143,7 +144,7 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 
-	response.Copy(&dd, editReq)
+	util.ConvertUtil.Copy(&dd, editReq)
 	err = ddSrv.db.Save(&dd).Error
 	e = response.CheckErr(err, "编辑失败")
 	return
@@ -152,6 +153,6 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 // Del 字典数据删除
 func (ddSrv settingDictDataService) Del(delReq SettingDictDataDelReq) (e error) {
 	err := ddSrv.db.Model(&setting_model.DictData{}).Where("id IN ?", delReq.Ids).Updates(
-		setting_model.DictData{IsDelete: 1, DeleteTime: core.NowTime()}).Error
+		setting_model.DictData{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
 	return response.CheckErr(err, "Del Update err")
 }

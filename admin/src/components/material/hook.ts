@@ -11,7 +11,8 @@ import {
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import { ElMessage, ElTree, type CheckboxValueType } from 'element-plus'
-import { shallowRef, type Ref } from 'vue'
+import { shallowRef, ref, reactive } from 'vue'
+import type { Ref } from 'vue'
 
 // 左侧分组的钩子函数
 export function useCate(type: number) {

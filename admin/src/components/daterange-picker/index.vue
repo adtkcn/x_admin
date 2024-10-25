@@ -13,6 +13,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from 'vue'
 /* Props S */
 const props = defineProps({
     startTime: {
@@ -44,20 +45,4 @@ watch([() => props.startTime, () => props.endTime], () => {
     console.log('watch', props)
     content.value = [props.startTime, props.endTime]
 })
-// const content = computed<any>({
-//     get: () => {
-//         return [props.startTime, props.endTime]
-//     },
-//     set: (value: Event | any) => {
-//         console.log('change', value)
-
-//         if (value === null) {
-//             emit('update:startTime', '')
-//             emit('update:endTime', '')
-//         } else {
-//             emit('update:startTime', value[0])
-//             emit('update:endTime', value[1])
-//         }
-//     }
-// })
 </script>

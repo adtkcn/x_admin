@@ -14,12 +14,13 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: '后端', link: '/server/准备.md' },
-      { text: '前端', link: '/admin/准备.md' }
+      { text: '前端', link: '/admin/准备.md' },
+      { text: '在线体验', link: 'https://x.adtk.cn/' },
     ],
 
     sidebar: [
       {
-        text: '后端',
+        text: '后端-server',
         items: [
           // { text: '后端', link: '/markdown-examples' },
           // { text: '前端', link: '/api-examples' },
@@ -31,16 +32,20 @@ export default defineConfig({
           { text: '权限验证', link: '/server/权限验证.md' },
           { text: '结构说明', link: '/server/结构说明.md' },
           { text: '注意事项', link: '/server/注意事项.md' },
+          { text: '数据库null值', link: '/server/数据库null值.md' },
+          { text: 'swaggo', link: '/server/swaggo.md' },
+          { text: '导入导出excel', link: '/server/导入导出excel.md' },
         ]
       },
       {
-        text: '前端',
+        text: '前端-admin',
         items: [          
           { text: '准备', link: '/admin/准备.md' },
   
           { text: 'nginx配置', link: '/admin/nginx配置.md' },
 
           { text: '路由', link: '/admin/路由.md' },
+          { text: '自定义hooks', link: '/admin/自定义hooks.md' },
         ]
       }
     ],

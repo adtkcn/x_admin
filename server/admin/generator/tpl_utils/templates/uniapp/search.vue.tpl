@@ -3,16 +3,18 @@
 		<uv-form labelPosition="left" labelWidth="80" :model="form">
 			{{{- range .Columns }}}
 			{{{- if eq .IsQuery 1 }}}
-			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toCamelCase .GoField) }}}" borderBottom>
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" borderBottom>
 				{{{- if eq .HtmlType "datetime" }}}
-					<x-date-range v-model:startTime="form.{{{ (toCamelCase .GoField) }}}Start"
-							v-model:endTime="form.{{{ (toCamelCase .GoField) }}}End"></x-date-range>
-				{{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-				{{{- if ne .DictType "" }}}
-					<x-picker v-model="form.{{{ (toCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
-				{{{- end }}}
+					<x-date-range v-model:startTime="form.{{{ (toUpperCamelCase .GoField) }}}Start"
+							v-model:endTime="form.{{{ (toUpperCamelCase .GoField) }}}End"></x-date-range>
+				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select") }}}
+					{{{- if ne .DictType "" }}}
+						<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+					{{{- else if ne .ListAllApi "" }}}
+							<x-picker v-model="form.{{{ (toUpperCamelCase .GoField) }}}" valueKey="Id" labelKey="Id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+					{{{- end }}}
 				{{{- else if eq .HtmlType "input" }}}
-					<uv-input v-model="form.{{{ (toCamelCase .GoField) }}}"> </uv-input>
+					<uv-input v-model="form.{{{ (toUpperCamelCase .GoField) }}}"> </uv-input>
 				{{{- end }}}
 			</uv-form-item>
 			{{{- end }}}
@@ -39,10 +41,10 @@
 		clearObjEmpty
 	} from "@/utils/utils";
 	import {
-		useDictData
+		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
 	import xDateRange from "@/components/x-date-range/x-date-range.vue";
-	import type {type_{{{.ModuleName}}}_query} from "@/api/monitor_project";
+	import type {type_{{{.ModuleName}}}_query} from "@/api/{{{nameToPath .ModuleName}}}";
 {{{- if ge (len .DictFields) 1 }}}
 {{{- $dictSize := sub (len .DictFields) 1 }}}
 const { dictData } = useDictData<{
@@ -52,15 +54,27 @@ const { dictData } = useDictData<{
 }>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 {{{- end }}}
 
+{{{- if ge (len .ListAllFields) 1 }}}
+{{{- $list_all_size := sub (len .ListAllFields) 1 }}}
+const { listAllData } = useListAllData<{
+    {{{- range .ListAllFields }}}
+    {{{pathToName . }}}: any[]
+    {{{- end }}}
+}>({ 
+	{{{- range .ListAllFields }}}
+		{{{pathToName . }}}:'{{{deletePathPrefix . }}}',
+	{{{- end }}}
+})
+{{{- end }}}
 
 	let form = ref<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toCamelCase .GoField) }}}Start: '',
-    {{{ (toCamelCase .GoField) }}}End: '',
+    {{{ (toUpperCamelCase .GoField) }}}Start: null,
+    {{{ (toUpperCamelCase .GoField) }}}End: null,
     {{{- else }}}
-    {{{ (toCamelCase .GoField) }}}: '',
+    {{{ (toUpperCamelCase .GoField) }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -75,7 +89,7 @@ const { dictData } = useDictData<{
 			return toast("请输入查询条件");
 		}
 
-		toPath("/pages/{{{ .ModuleName }}}/index", search);
+		toPath("/pages/{{{nameToPath .ModuleName }}}/index", search);
 	}
 </script>
 

@@ -12,10 +12,10 @@ var GenConstants = genConstants{
 
 //GoConstants Go相关常量
 var GoConstants = goConstants{
-	TypeString: "string",      //字符串类型
-	TypeFloat:  "float64",     //浮点型
-	TypeInt:    "int",         //整型
-	TypeDate:   "core.TsTime", //时间类型
+	TypeString: "string",        //字符串类型
+	TypeFloat:  "float64",       //浮点型
+	TypeInt:    "int",           //整型
+	TypeDate:   "core.NullTime", //时间类型
 }
 
 //SqlConstants 数据库相关常量
@@ -28,6 +28,11 @@ var SqlConstants = sqlConstants{
 	ColumnTypeTime: []string{"datetime", "time", "date", "timestamp"},
 	//数据库数字类型
 	ColumnTypeNumber: []string{"tinyint", "smallint", "mediumint", "int", "integer", "bit", "bigint", "float", "double", "decimal"},
+	// int类型
+	ColumnTypeInt: []string{"tinyint", "smallint", "mediumint", "int", "integer", "bit", "bigint"},
+	// float类型
+	ColumnTypeFloat: []string{"float", "double", "decimal"},
+
 	//时间日期字段名
 	ColumnTimeName: []string{"create_time", "update_time", "delete_time", "start_time", "end_time", "client_time"},
 	//页面不需要插入字段
@@ -35,14 +40,15 @@ var SqlConstants = sqlConstants{
 	//页面不需要编辑字段
 	ColumnNameNotEdit: []string{"is_delete", "create_time", "update_time", "delete_time"},
 	//页面不需要列表字段
-	ColumnNameNotList: []string{"id", "intro", "content", "is_delete", "delete_time"},
+	ColumnNameNotList: []string{"id", "is_delete", "delete_time"},
 	//页面不需要查询字段
 	ColumnNameNotQuery: []string{"is_delete", "delete_time"}, //"create_time", "update_time",
 }
 
 //HtmlConstants HTML相关常量
 var HtmlConstants = htmlConstants{
-	HtmlInput:       "input",       //文本框
+	HtmlInput:       "input", //文本框
+	HtmlInputNumber: "number",
 	HtmlTextarea:    "textarea",    //文本域
 	HtmlSelect:      "select",      //下拉框
 	HtmlRadio:       "radio",       //单选框
@@ -69,10 +75,14 @@ type goConstants struct {
 }
 
 type sqlConstants struct {
-	ColumnTypeStr      []string
-	ColumnTypeText     []string
-	ColumnTypeTime     []string
-	ColumnTypeNumber   []string
+	ColumnTypeStr    []string
+	ColumnTypeText   []string
+	ColumnTypeTime   []string
+	ColumnTypeNumber []string
+
+	ColumnTypeInt   []string
+	ColumnTypeFloat []string
+
 	ColumnTimeName     []string
 	ColumnNameNotAdd   []string
 	ColumnNameNotEdit  []string
@@ -82,6 +92,7 @@ type sqlConstants struct {
 
 type htmlConstants struct {
 	HtmlInput       string
+	HtmlInputNumber string
 	HtmlTextarea    string
 	HtmlSelect      string
 	HtmlRadio       string

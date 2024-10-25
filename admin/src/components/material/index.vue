@@ -273,6 +273,7 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, onMounted, toRefs, ref, watch } from 'vue'
 import { useCate, useFile } from './hook'
 import FileItem from './file.vue'
 import Preview from './preview.vue'

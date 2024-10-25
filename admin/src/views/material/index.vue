@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
 import material from '@/components/material/index.vue'
 defineOptions({
     name: 'materialCenter'
@@ -46,11 +47,11 @@ const activeTab = ref('image')
     min-width: 700px;
     :deep(.el-tabs) {
         height: calc(100vh - 180px);
-        display: flex;
-        flex-direction: column;
-        .el-tabs__header {
-            margin-bottom: 0 !important;
-        }
+        // display: flex;
+        // flex-direction: column;
+        // .el-tabs__header {
+        //     margin-bottom: 0 !important;
+        // }
         .el-tabs__content,
         .el-tab-pane {
             min-height: 0;

@@ -89,7 +89,7 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 	for i, pointVO := range cachePoint {
 		targetPoint := userPoint[i]
 
-		if targetPoint.X >= pointVO.X-10 && targetPoint.X <= pointVO.X+fontSize+10 && targetPoint.Y >= pointVO.Y-10 && targetPoint.Y <= pointVO.Y+fontSize+10 {
+		if targetPoint.X >= pointVO.X-15 && targetPoint.X <= pointVO.X+fontSize+15 && targetPoint.Y >= pointVO.Y-15 && targetPoint.Y <= pointVO.Y+fontSize+15 {
 
 		} else {
 			return errors.New("验证失败")

@@ -25,7 +25,11 @@
         <!-- {{ historyList }} -->
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button v-if="applyDetail.status == 1" type="primary" @click="onSubmit">
+            <el-button
+                v-if="applyDetail.status == 1 || applyDetail.status == 4"
+                type="primary"
+                @click="onSubmit"
+            >
                 确定
             </el-button>
         </template>
@@ -33,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
 
 import { flow_history_list_all } from '@/api/flow/flow_history'

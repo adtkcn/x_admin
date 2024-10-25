@@ -5,6 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -39,7 +40,7 @@ func (dtSrv settingDictTypeService) All() (res []SettingDictTypeResp, e error) {
 		return
 	}
 	res = []SettingDictTypeResp{}
-	response.Copy(&res, dictTypes)
+	util.ConvertUtil.Copy(&res, dictTypes)
 	return
 }
 
@@ -68,7 +69,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq SettingDi
 		return
 	}
 	dtResp := []SettingDictTypeResp{}
-	response.Copy(&dtResp, dts)
+	util.ConvertUtil.Copy(&dtResp, dts)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -87,7 +88,7 @@ func (dtSrv settingDictTypeService) Detail(id uint) (res SettingDictTypeResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, dt)
+	util.ConvertUtil.Copy(&res, dt)
 	return
 }
 
@@ -100,7 +101,7 @@ func (dtSrv settingDictTypeService) Add(addReq SettingDictTypeAddReq) (e error) 
 		return response.AssertArgumentError.SetMessage("字典类型已存在！")
 	}
 	var dt setting_model.DictType
-	response.Copy(&dt, addReq)
+	util.ConvertUtil.Copy(&dt, addReq)
 	err := dtSrv.db.Create(&dt).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -123,7 +124,7 @@ func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e erro
 		return response.AssertArgumentError.SetMessage("字典类型已存在！")
 	}
 
-	response.Copy(&dt, editReq)
+	util.ConvertUtil.Copy(&dt, editReq)
 	// err = dtSrv.db.Model(&dt).Updates(&up).Error
 	err = dtSrv.db.Save(&dt).Error
 	e = response.CheckErr(err, "编辑失败")
@@ -133,6 +134,6 @@ func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e erro
 // Del 字典类型删除
 func (dtSrv settingDictTypeService) Del(delReq SettingDictTypeDelReq) (e error) {
 	err := dtSrv.db.Model(&setting_model.DictType{}).Where("id IN ?", delReq.Ids).Updates(
-		setting_model.DictType{IsDelete: 1, DeleteTime: core.NowTime()}).Error
+		setting_model.DictType{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
 	return response.CheckErr(err, "Del Update err")
 }

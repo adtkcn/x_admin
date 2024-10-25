@@ -5,8 +5,8 @@ import CryptoJS from 'crypto-js'
  *  */
 export function aesEncrypt(word, keyWord = 'XwKsGlMcdPMEhR1B') {
     const key = CryptoJS.enc.Utf8.parse(keyWord)
-    const srcs = CryptoJS.enc.Utf8.parse(word)
-    const encrypted = CryptoJS.AES.encrypt(srcs, key, {
+    const src = CryptoJS.enc.Utf8.parse(word)
+    const encrypted = CryptoJS.AES.encrypt(src, key, {
         mode: CryptoJS.mode.ECB,
         padding: CryptoJS.pad.Pkcs7
     })

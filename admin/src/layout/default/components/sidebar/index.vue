@@ -3,7 +3,7 @@
         <el-drawer
             v-model="showMenuDrawer"
             direction="ltr"
-            :size="drawderSize"
+            :size="drawerSize"
             title="主题设置"
             :with-header="false"
         >
@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import Side from './side.vue'
 import useAppStore from '@/stores/modules/app'
 import useSettingStore from '@/stores/modules/setting'
@@ -32,7 +33,7 @@ const showMenuDrawer = computed({
     }
 })
 
-const drawderSize = computed(() => {
+const drawerSize = computed(() => {
     return `${settingStore.sideWidth + 1}px`
 })
 </script>

@@ -54,6 +54,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { reactive, onActivated } from 'vue'
 import { usePaging } from '@/hooks/usePaging'
 
 import { getUserList } from '@/api/consumer'

@@ -87,6 +87,7 @@
     </div>
 </template>
 <script lang="ts" setup name="articleLists">
+import { reactive, onActivated } from 'vue'
 import { articleLists, articleDelete, articleStatus, articleCateAll } from '@/api/article'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'

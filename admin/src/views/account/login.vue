@@ -103,6 +103,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, shallowRef } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import type { InputInstance, FormInstance } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
 import useAppStore from '@/stores/modules/app'
@@ -113,7 +114,7 @@ import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
 import { encryptPassword } from '@/utils/util'
 import Verify from '@/components/verify/Verify.vue'
-
+import ImageContain from '@/components/image-contain/index.vue'
 // const verifyRef = ref(null)
 const verifyRef = shallowRef<InstanceType<typeof Verify>>()
 const onShowCaptcha = () => {
@@ -190,7 +191,8 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .login {
-    background-image: url('./images/login_bg.png');
+    // background-image: url('./images/login_bg.png');
+    background-color: #f8f8f8;
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;

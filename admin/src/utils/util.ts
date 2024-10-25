@@ -1,4 +1,4 @@
-import { isObject } from '@vue/shared'
+// import { isObject } from '@vue/shared'
 import { cloneDeep } from 'lodash-es'
 // import { md5 } from 'js-md5'
 import MD5 from 'crypto-js/md5'
@@ -21,14 +21,19 @@ export const addUnit = (value: string | number, unit = 'px') => {
 }
 
 /**
- * @description 添加单位
- * @param {unknown} value
+ * @description 是否为空
+ * @param {any} value
  * @return {Boolean}
  */
-export const isEmpty = (value: unknown) => {
-    return value == null && typeof value == 'undefined'
+export const isEmpty = (value: any) => {
+    return value === '' || value === null || value === undefined
 }
-
+/**
+ * 判读是否为对象
+ */
+export const isObject = (val: any): boolean => {
+    return val !== null && typeof val === 'object'
+}
 /**
  * @description 树转数组，队列实现广度优先遍历
  * @param {Array} data  数据
@@ -133,4 +138,16 @@ export const getNonDuplicateID = (length = 8) => {
  */
 export const firstToUpperCase = (str = '') => {
     return str.toLowerCase().replace(/( |^)[a-z]/g, ($1) => $1.toUpperCase())
+}
+
+/**
+ * @description 清空对象空值属性
+ */
+export const clearEmpty = (obj: Record<string, any>) => {
+    for (const key of Object.keys(obj)) {
+        if (isEmpty(obj[key])) {
+            delete obj[key]
+        }
+    }
+    return obj
 }

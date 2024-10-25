@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import defaultSetting from '@/config/setting'
 import cache from '@/utils/cache'
-import { isObject } from '@vue/shared'
+import { isObject } from '@/utils/util'
 import { setTheme } from '@/utils/theme'
 import { SETTING_KEY } from '@/enums/cacheEnums'
 const storageSetting = cache.get(SETTING_KEY)

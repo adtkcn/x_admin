@@ -61,6 +61,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { shallowRef, ref, reactive, nextTick } from 'vue'
 import { article_collect_delete, article_collect_lists } from '@/api/article_collect'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'

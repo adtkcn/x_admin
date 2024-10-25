@@ -88,10 +88,13 @@ onMounted(() => {
 })
 const elFormRef = shallowRef<FormInstance>()
 function getData() {
-    return new Promise((resolve, reject) => {
+    return new Promise<{
+        formData: any
+        target: string
+    }>((resolve, reject) => {
         elFormRef.value.validate((valid) => {
             if (!valid) {
-                reject({ target: this.tabName })
+                reject({ target: props.tabName })
                 return
             }
             // this.formData.flowImg = this.activeIcon

@@ -1,7 +1,13 @@
 <template>
     <div class="code-preview">
-        <el-dialog v-model="show" width="95%" title="代码预览">
-            <el-container style="height: 75vh">
+        <el-dialog
+            v-model="show"
+            width="98%"
+            :title="'代码预览【' + showItem.label + '】'"
+            top="0px"
+            draggable
+        >
+            <el-container style="max-height: calc(100vh - 200px)">
                 <el-aside
                     width="400px"
                     style="padding: 10px 0; margin-right: 20px; border: 1px solid #dcdfe6"
@@ -15,7 +21,7 @@
                 </el-aside>
                 <el-main style="padding: 0; border: 1px solid #dcdfe6">
                     <div class="flex flex-col h-[100%]">
-                        <div class="flex">
+                        <!-- <div class="flex">
                             <div class="flex-1 p-4">{{ showItem.label }}</div>
                             <div>
                                 <el-button @click="handleCopy(showItem.value)" type="primary" link>
@@ -25,19 +31,38 @@
                                     复制
                                 </el-button>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="flex-1 overflow-auto">
-                            <highlightjs autodetect :code="showItem.value" language="javascript" />
+                            <div style="height: calc(100vh - 200px)">
+                                <highlightjs
+                                    autodetect
+                                    :code="showItem.value"
+                                    language="javascript"
+                                />
+                            </div>
                         </div>
                     </div>
                 </el-main>
             </el-container>
+            <template v-slot:footer>
+                <div>
+                    <!-- {{ showItem.label }} -->
+                    <el-button
+                        icon="el-icon-CopyDocument"
+                        type="primary"
+                        @click="handleCopy(showItem.value)"
+                        >复制</el-button
+                    >
+                    <el-button @click="show = false">关闭</el-button>
+                </div>
+            </template>
         </el-dialog>
     </div>
 </template>
 
 <script lang="ts" setup>
+import { onMounted, ref, computed } from 'vue'
 import feedback from '@/utils/feedback'
 import useClipboard from 'vue-clipboard3'
 
@@ -110,3 +135,9 @@ const show = computed<boolean>({
     }
 })
 </script>
+<style lang="scss">
+.code-preview .el-dialog__body {
+    // max-height: calc(100vh - 200px);
+    overflow: auto;
+}
+</style>

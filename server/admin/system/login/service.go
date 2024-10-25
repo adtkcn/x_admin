@@ -94,7 +94,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (r
 	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, adminIdStr, 7200)
 	admin.Service.CacheAdminUserByUid(sysAdmin.ID)
 
-	u := system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: core.NowTime()}
+	u := system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: util.NullTimeUtil.Now()}
 	// 更新登录信息
 	err = loginSrv.db.Model(&sysAdmin).Updates(u).Error
 	if err != nil {
@@ -127,8 +127,14 @@ func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId uint, 
 		status = 1
 	}
 	err := loginSrv.db.Create(&system_model.SystemLogLogin{
-		AdminId: adminId, Username: username, Ip: c.ClientIP(), Os: ua.Os.Family,
-		Browser: ua.UserAgent.Family, Status: status}).Error
-	e = response.CheckErr(err, "RecordLoginLog Create err")
+		AdminId:    adminId,
+		Username:   username,
+		Ip:         c.ClientIP(),
+		Os:         ua.Os.Family,
+		Browser:    ua.UserAgent.Family,
+		Status:     status,
+		CreateTime: util.NullTimeUtil.Now(),
+	}).Error
+	e = response.CheckErr(err, "创建记录失败")
 	return
 }

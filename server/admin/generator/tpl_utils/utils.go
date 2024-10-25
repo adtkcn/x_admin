@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"strings"
 	"x_admin/config"
-	"x_admin/core"
 	"x_admin/model/gen_model"
 	"x_admin/util"
 
@@ -70,8 +69,8 @@ func (gu genUtil) InitTable(table gen_model.GenTable) gen_model.GenTable {
 		EntityName:   gu.ToClassName(table.TableName),
 		ModuleName:   gu.ToModuleName(table.TableName),
 		FunctionName: strings.Replace(table.TableComment, "表", "", -1),
-		CreateTime:   core.NowTime(),
-		UpdateTime:   core.NowTime(),
+		CreateTime:   util.NullTimeUtil.Now(),
+		UpdateTime:   util.NullTimeUtil.Now(),
 	}
 }
 
@@ -92,8 +91,8 @@ func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_
 		IsPk:          column.IsPk,
 		IsIncrement:   column.IsIncrement,
 		IsRequired:    column.IsRequired,
-		CreateTime:    core.NowTime(),
-		UpdateTime:    core.NowTime(),
+		CreateTime:    util.NullTimeUtil.Now(),
+		UpdateTime:    util.NullTimeUtil.Now(),
 	}
 	if util.ToolsUtil.Contains(append(SqlConstants.ColumnTypeStr, SqlConstants.ColumnTypeText...), columnType) {
 		//文本域组
@@ -110,14 +109,18 @@ func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_
 		//时间字段
 		col.GoType = GoConstants.TypeDate
 		col.HtmlType = HtmlConstants.HtmlDatetime
-	} else if util.ToolsUtil.Contains(SqlConstants.ColumnTypeNumber, columnType) {
-		//数字字段
-		col.HtmlType = HtmlConstants.HtmlInput
-		if strings.Contains(columnType, ",") {
-			col.GoType = GoConstants.TypeFloat
-		} else {
-			col.GoType = GoConstants.TypeInt
-		}
+	} else if util.ToolsUtil.Contains(SqlConstants.ColumnTypeInt, columnType) {
+		//int数字字段
+		col.HtmlType = HtmlConstants.HtmlInputNumber
+
+		col.GoType = GoConstants.TypeInt
+
+	} else if util.ToolsUtil.Contains(SqlConstants.ColumnTypeFloat, columnType) {
+		// float数字字段
+		col.HtmlType = HtmlConstants.HtmlInputNumber
+
+		col.GoType = GoConstants.TypeFloat
+
 	}
 	//非必填字段
 	if util.ToolsUtil.Contains(SqlConstants.ColumnNameNotEdit, col.ColumnName) {
@@ -210,4 +213,111 @@ func (gu genUtil) GetTablePriCol(columns []gen_model.GenTableColumn) (res gen_mo
 		}
 	}
 	return
+}
+
+/**
+ * @description: Go类型转TS类型
+ */
+func (gu genUtil) GoToTsType(s string) string {
+	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+		return "number"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "number"
+	} else if s == "string" {
+		return "string"
+	} else if s == "bool" {
+		return "boolean"
+	} else if s == "time.Time" {
+		return "Date"
+	} else if s == "[]byte" {
+		return "string"
+	} else if s == "[]string" {
+		return "string[]"
+	} else if s == "[]int" {
+		return "number[]"
+	} else if s == "[]float" {
+		return "number[]"
+	} else if s == "core.NullTime" {
+		return "string"
+	}
+	return "string"
+}
+
+/**
+ * @description: Go类型转 添加编辑 类型
+ */
+func (gu genUtil) GoWithAddEditType(s string) string {
+	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+		return "core.NullInt"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "core.NullFloat"
+	} else if s == "string" {
+		return "*string"
+	} else if s == "bool" {
+		return "*int"
+	} else if s == "time.Time" {
+		return "core.NullTime"
+	} else if s == "core.NullTime" {
+		return "core.NullTime"
+	}
+	return "string"
+}
+
+/**
+ * @description: Go类型转 添加编辑 类型
+ */
+func (gu genUtil) GoWithRespType(s string) string {
+	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+		return "core.NullInt"
+	} else if s == "float" || s == "float32" || s == "float64" {
+		return "core.NullFloat"
+	} else if s == "string" {
+		return "string"
+	} else if s == "bool" {
+		return "int"
+	} else if s == "time.Time" {
+		return "core.NullTime"
+	} else if s == "core.NullTime" {
+		return "core.NullTime"
+	}
+	return "string"
+}
+
+/**
+ * @description: Go类型转为Param类型
+ */
+// func (gu genUtil) GoToParamType(s string) string {
+// 	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+// 		return "int"
+// 	} else if s == "float" || s == "float32" || s == "float64" {
+// 		return "float"
+// 	} else if s == "string" {
+// 		return "string"
+// 	} else if s == "bool" {
+// 		return "bool"
+// 	} else if s == "core.NullTime" {
+// 		return "string"
+// 	}
+// 	return "string"
+// }
+
+// 拼接字符串
+func (gu genUtil) GetPageResp(s string) string {
+	return `response.Response{ data=response.PageResp{ lists=[]` + s + `Resp}}`
+}
+
+// NameToPath 下划线文件路径
+func (gu genUtil) NameToPath(s string) string {
+	return strings.ReplaceAll(s, "_", "/")
+}
+func (gu genUtil) PathToName(s string) string {
+	// 去掉前缀urlPrefix
+	s = strings.Replace(s, "/api/admin/", "", 1)
+
+	return strings.ReplaceAll(s, "/", "_")
+}
+func (gu genUtil) DeletePathPrefix(s string) string {
+	// 去掉前缀urlPrefix
+	s = strings.Replace(s, "/api/admin", "", 1)
+	return s
 }

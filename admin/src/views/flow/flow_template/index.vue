@@ -87,6 +87,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, shallowRef, reactive } from 'vue'
 import {
     flow_template_delete,
     flow_template_lists,
@@ -137,7 +138,7 @@ const handleAdd = async () => {
 
 const handleDelete = async (id: number) => {
     await feedback.confirm('确定要删除？')
-    await flow_template_delete({ id })
+    await flow_template_delete(id)
     feedback.msgSuccess('删除成功')
     getLists()
 }
@@ -185,8 +186,6 @@ function save(info) {
 }
 const approverRef = shallowRef<InstanceType<typeof EditPopup>>()
 const handleConfig = async (data: any) => {
-    console.log('toRaw(data)', toRaw(data))
-
     approverRef.value?.open({
         id: data.id,
         basicSetting: {

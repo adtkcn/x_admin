@@ -12,6 +12,7 @@
             :width="width"
             draggable
             :close-on-click-modal="clickModalClose"
+            top="0"
             @closed="close"
         >
             <!-- 弹窗内容 -->
@@ -39,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { ref, provide } from 'vue'
+import { ref, provide, defineComponent, nextTick } from 'vue'
 export default defineComponent({
     props: {
         title: {
@@ -127,8 +128,14 @@ export default defineComponent({
 })
 </script>
 
-<style scoped lang="scss">
-.dialog-body {
-    white-space: pre-line;
+<style lang="scss">
+.dialog {
+    .dialog-body {
+        white-space: pre-line;
+    }
+    .el-dialog__body {
+        // max-height: calc(100vh - 200px);
+        overflow: auto;
+    }
 }
 </style>

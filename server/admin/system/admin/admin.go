@@ -104,6 +104,18 @@ func (ah AdminHandler) List(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
+// ListAll 所有管理员列表
+func (ah AdminHandler) ListAll(c *gin.Context) {
+
+	var listReq SystemAuthAdminListReq
+
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := Service.ListAll(listReq)
+	response.CheckAndRespWithData(c, res, err)
+}
+
 // detail 管理员详细
 func (ah AdminHandler) Detail(c *gin.Context) {
 	var detailReq SystemAuthAdminDetailReq

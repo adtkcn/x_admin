@@ -29,6 +29,7 @@ import {
 } from '@/api/article_collect'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
+import { computed, reactive, ref, shallowRef } from 'vue'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {

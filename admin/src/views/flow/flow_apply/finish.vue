@@ -101,12 +101,14 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { shallowRef, reactive } from 'vue'
 import {
     flow_apply_delete,
     flow_apply_lists,
     flow_apply_edit,
     flow_apply_detail
 } from '@/api/flow/flow_apply'
+import type { type_flow_apply } from '@/api/flow/flow_apply'
 
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
@@ -131,7 +133,7 @@ const queryParams = reactive({
     status: '3'
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_apply>({
     fetchFun: flow_apply_lists,
     params: queryParams
 })
@@ -142,7 +144,7 @@ const { dictData } = useDictData<{
 
 const handleDelete = async (id: number) => {
     await feedback.confirm('确定要删除？')
-    await flow_apply_delete({ id })
+    await flow_apply_delete(id)
     feedback.msgSuccess('删除成功')
     getLists()
 }

@@ -8,24 +8,23 @@ import (
 	"x_admin/model/system_model"
 	"x_admin/util"
 
-	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-type ISystemAuthMenuService interface {
-	SelectMenuByRoleId(c *gin.Context, roleId uint) (mapList []interface{}, e error)
-	List() (res []interface{}, e error)
-	Detail(id uint) (res SystemAuthMenuResp, e error)
-	Add(addReq SystemAuthMenuAddReq) (e error)
-	Edit(editReq SystemAuthMenuEditReq) (e error)
-	Del(id uint) (e error)
-}
+// type ISystemAuthMenuService interface {
+// 	SelectMenuByRoleId(c *gin.Context, roleId uint) (mapList []interface{}, e error)
+// 	List() (res []interface{}, e error)
+// 	Detail(id uint) (res SystemAuthMenuResp, e error)
+// 	Add(addReq SystemAuthMenuAddReq) (e error)
+// 	Edit(editReq SystemAuthMenuEditReq) (e error)
+// 	Del(id uint) (e error)
+// }
 
 var Service = NewSystemAuthMenuService()
 
 // NewSystemAuthMenuService 初始化
-func NewSystemAuthMenuService() ISystemAuthMenuService {
+func NewSystemAuthMenuService() *systemAuthMenuService {
 	db := core.GetDB()
 	return &systemAuthMenuService{db: db}
 }
@@ -58,23 +57,22 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 		return
 	}
 	var menuResps []SystemAuthMenuResp
-	response.Copy(&menuResps, menus)
+	util.ConvertUtil.Copy(&menuResps, menus)
 	mapList = util.ArrayUtil.ListToTree(
 		util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children")
 	return
 }
 
 // List 菜单列表
-func (menuSrv systemAuthMenuService) List() (res []interface{}, e error) {
+func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 	var menus []system_model.SystemAuthMenu
 	err := menuSrv.db.Order("menu_sort desc, id").Find(&menus).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
 	var menuResps []SystemAuthMenuResp
-	response.Copy(&menuResps, menus)
-	return util.ArrayUtil.ListToTree(
-		util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children"), nil
+	util.ConvertUtil.Copy(&menuResps, menus)
+	return menuResps, nil
 }
 
 // Detail 菜单详情
@@ -87,13 +85,13 @@ func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	response.Copy(&res, menu)
+	util.ConvertUtil.Copy(&res, menu)
 	return
 }
 
 func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) {
 	var menu system_model.SystemAuthMenu
-	response.Copy(&menu, addReq)
+	util.ConvertUtil.Copy(&menu, addReq)
 	err := menuSrv.db.Create(&menu).Error
 	if e = response.CheckErr(err, "添加失败"); e != nil {
 		return
@@ -111,8 +109,9 @@ func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e erro
 	if e = response.CheckErr(err, "Edit Find err"); e != nil {
 		return
 	}
-	response.Copy(&menu, editReq)
-	err = menuSrv.db.Model(&menu).Updates(structs.Map(menu)).Error
+	util.ConvertUtil.Copy(&menu, editReq)
+
+	err = menuSrv.db.Model(&menu).Select("*").Updates(menu).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
@@ -127,18 +126,18 @@ func (menuSrv systemAuthMenuService) Del(id uint) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "Delete First err"); e != nil {
+	if e = response.CheckErr(err, "查找失败"); e != nil {
 		return
 	}
 	r := menuSrv.db.Where("pid = ?", id).Limit(1).Find(&system_model.SystemAuthMenu{})
 	err = r.Error
-	if e = response.CheckErr(err, "Delete Find by pid err"); e != nil {
+	if e = response.CheckErr(err, "查找子菜单失败"); e != nil {
 		return
 	}
 	if r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("请先删除子菜单再操作！")
 	}
 	err = menuSrv.db.Delete(&menu).Error
-	e = response.CheckErr(err, "Delete Delete err")
+	e = response.CheckErr(err, "删除失败")
 	return
 }

@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -39,7 +38,7 @@ var (
 	LoginAccountError = RespType{code: 330, message: "登录账号或密码错误"}
 	LoginDisableError = RespType{code: 331, message: "登录账号已被禁用了"}
 	TokenEmpty        = RespType{code: 332, message: "token参数为空"}
-	TokenInvalid      = RespType{code: 333, message: "token参数无效"}
+	TokenInvalid      = RespType{code: 333, message: "登录失效"}
 
 	NoPermission    = RespType{code: 403, message: "无相关权限"}
 	Request404Error = RespType{code: 404, message: "请求接口不存在"}
@@ -95,26 +94,17 @@ func Result(c *gin.Context, resp RespType, data interface{}) {
 	})
 }
 
-// Copy 拷贝结构体
-func Copy(toValue interface{}, fromValue interface{}) interface{} {
-	if err := copier.Copy(toValue, fromValue); err != nil {
-		core.Logger.Errorf("Copy err: err=[%+v]", err)
-		panic(SystemError)
-	}
-	return toValue
-}
-
 // Ok 正常响应
 func Ok(c *gin.Context) {
 	Result(c, Success, nil)
 }
 
-// OkWithMsg 正常响应附带msg
-func OkWithMsg(c *gin.Context, message string) {
-	resp := Success
-	resp.message = message
-	Result(c, resp, nil)
-}
+// // OkWithMsg 正常响应附带msg
+// func OkWithMsg(c *gin.Context, message string) {
+// 	resp := Success
+// 	resp.message = message
+// 	Result(c, resp, nil)
+// }
 
 // OkWithData 正常响应附带data
 func OkWithData(c *gin.Context, data interface{}) {
@@ -212,6 +202,7 @@ func CheckMysqlErr(err error) (e error) {
 		default:
 			// 处理其他错误
 			core.Logger.WithOptions(zap.AddCallerSkip(1)).Errorf("未知错误: err=[%+v]", err)
+			return err
 		}
 	}
 	return

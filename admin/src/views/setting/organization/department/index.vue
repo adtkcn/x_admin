@@ -89,6 +89,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, shallowRef, reactive, nextTick, onMounted } from 'vue'
 import type { ElTable } from 'element-plus'
 import EditPopup from './edit.vue'
 import { deptDelete, deptAll } from '@/api/org/department'

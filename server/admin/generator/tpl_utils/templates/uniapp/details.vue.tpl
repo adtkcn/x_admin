@@ -3,13 +3,15 @@
 		<uv-form labelPosition="left" :model="form">
         {{{- range .Columns }}}
         {{{- if .IsList }}}
-            <uv-form-item label="{{{.ColumnComment}}}" prop="{{{(toCamelCase .GoField)}}}" borderBottom>
+            <uv-form-item label="{{{.ColumnComment}}}" prop="{{{(toUpperCamelCase .GoField)}}}" borderBottom>
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                    <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toCamelCase .GoField) }}}" />
+                    <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" />
+				{{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
+				 	<dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='id' valueKey='id' />
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                    <uv-image :src="$filePath(form.{{{(toCamelCase .GoField)}}})" width="100%"></uv-image>
+                    <uv-image :src="$filePath(form.{{{(toUpperCamelCase .GoField)}}})" width="100%"></uv-image>
                 {{{- else }}}
-                    {{form.{{{(toCamelCase .GoField)}}}}}
+                    {{form.{{{(toUpperCamelCase .GoField)}}}}}
                 {{{- end }}}
             </uv-form-item>
         {{{- end }}}
@@ -29,8 +31,8 @@
 <script setup lang="ts">
 	import {ref} from "vue";
 	import { onLoad,onShow } from "@dcloudio/uni-app";
-	import { useDictData } from "@/hooks/useDictOptions";
-	import { {{{ .ModuleName }}}_detail } from "@/api/{{{ .ModuleName }}}";
+	import { useDictData,useListAllData } from "@/hooks/useDictOptions";
+	import { {{{ .ModuleName }}}_detail } from "@/api/{{{nameToPath .ModuleName }}}";
 
 
 	import {
@@ -42,10 +44,11 @@
 	let form = ref({
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
-		{{{ toCamelCase .GoField }}}: "",
+		{{{ toUpperCamelCase .GoField }}}: "",
 	{{{- end }}}
     {{{- end }}}
 	});
+	
 {{{- if ge (len .DictFields) 1 }}}
 {{{- $dictSize := sub (len .DictFields) 1 }}}
 const { dictData } = useDictData<
@@ -55,6 +58,20 @@ const { dictData } = useDictData<
     {{{- end }}}
 }>([{{{- range .DictFields }}}'{{{ . }}}'{{{- if ne (index $.DictFields $dictSize) . }}},{{{- end }}}{{{- end }}}])
 {{{- end }}}
+
+{{{- if ge (len .ListAllFields) 1 }}}
+{{{- $list_all_size := sub (len .ListAllFields) 1 }}}
+const { listAllData } = useListAllData<{
+    {{{- range .ListAllFields }}}
+    {{{pathToName . }}}: any[]
+    {{{- end }}}
+}>({ 
+	{{{- range .ListAllFields }}}
+		{{{pathToName . }}}:'{{{deletePathPrefix . }}}',
+	{{{- end }}}
+})
+{{{- end }}}
+
 	onLoad((e) => {
 		console.log("onLoad", e);
 		getDetails(e.id);
@@ -85,7 +102,7 @@ const { dictData } = useDictData<
 	}
 
 	function edit() {
-		toPath("/pages/{{{ .ModuleName }}}/edit", { id: form.value.id });
+		toPath("/pages/{{{nameToPath .ModuleName }}}/edit", { id: form.value.id });
 	}
 </script>
 

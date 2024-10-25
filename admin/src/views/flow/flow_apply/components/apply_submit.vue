@@ -48,13 +48,13 @@
 
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button type="primary" @click="submit"> 通过 </el-button>
+            <el-button type="primary" @click="submit"> 确定 </el-button>
         </template>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import feedback from '@/utils/feedback'
 import {
     flow_history_next_node,

@@ -77,6 +77,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, withDefaults } from 'vue'
 import { computed, nextTick, onMounted, reactive, shallowRef, watch } from 'vue'
 import { useEventListener } from '@vueuse/core'
 import { ElInput } from 'element-plus'

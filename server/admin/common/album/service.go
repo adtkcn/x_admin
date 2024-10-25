@@ -18,7 +18,7 @@ type IAlbumService interface {
 	AlbumMove(ids []uint, cid int) (e error)
 	AlbumAdd(addReq CommonAlbumAddReq) (res uint, e error)
 	AlbumDel(ids []uint) (e error)
-	CateList(listReq CommonCateListReq) (mapList []interface{}, e error)
+	CateList(listReq CommonCateListReq) (mapList []CommonCateListResp, e error)
 	CateAdd(addReq CommonCateAddReq) (e error)
 	CateRename(id uint, name string) (e error)
 	CateDel(id uint) (e error)
@@ -66,7 +66,7 @@ func (albSrv albumService) AlbumList(page request.PageReq, listReq CommonAlbumLi
 		return
 	}
 	albumResps := []CommonAlbumListResp{}
-	response.Copy(&albumResps, albums)
+	util.ConvertUtil.Copy(&albumResps, albums)
 	// TODO: engine默认local
 	engine := "local"
 	for i := 0; i < len(albumResps); i++ {
@@ -134,7 +134,7 @@ func (albSrv albumService) AlbumAdd(addReq CommonAlbumAddReq) (res uint, e error
 	//	core.Logger.Errorf("AlbumAdd Decode err: err=[%+v]", err)
 	//	return response.SystemError
 	//}
-	response.Copy(&alb, addReq)
+	util.ConvertUtil.Copy(&alb, addReq)
 	err := albSrv.db.Create(&alb).Error
 	if e = response.CheckErr(err, "Album添加失败"); e != nil {
 		return
@@ -153,13 +153,13 @@ func (albSrv albumService) AlbumDel(ids []uint) (e error) {
 		return response.AssertArgumentError.SetMessage("文件丢失！")
 	}
 	err = albSrv.db.Model(&common_model.Album{}).Where("id in ?", ids).Updates(
-		common_model.Album{IsDelete: 1, DeleteTime: core.NowTime()}).Error
+		common_model.Album{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
 	e = response.CheckErr(err, "AlbumDel UpdateColumn err")
 	return
 }
 
 // CateList 相册分类列表
-func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []interface{}, e error) {
+func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []CommonCateListResp, e error) {
 	var cates []common_model.AlbumCate
 	cateModel := albSrv.db.Where("is_delete = ?", 0).Order("id desc")
 	if listReq.Type > 0 {
@@ -173,15 +173,14 @@ func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []interf
 		return
 	}
 	cateResps := []CommonCateListResp{}
-	response.Copy(&cateResps, cates)
-	return util.ArrayUtil.ListToTree(
-		util.ConvertUtil.StructsToMaps(cateResps), "id", "pid", "children"), nil
+	util.ConvertUtil.Copy(&cateResps, cates)
+	return cateResps, nil
 }
 
 // CateAdd 分类新增
 func (albSrv albumService) CateAdd(addReq CommonCateAddReq) (e error) {
 	var cate common_model.AlbumCate
-	response.Copy(&cate, addReq)
+	util.ConvertUtil.Copy(&cate, addReq)
 	err := albSrv.db.Create(&cate).Error
 	e = response.CheckErr(err, "Cate添加失败")
 	return
@@ -221,7 +220,7 @@ func (albSrv albumService) CateDel(id uint) (e error) {
 		return response.AssertArgumentError.SetMessage("当前分类正被使用中,不能删除！")
 	}
 	cate.IsDelete = 1
-	cate.DeleteTime = core.NowTime()
+	cate.DeleteTime = util.NullTimeUtil.Now()
 	err = albSrv.db.Save(&cate).Error
 	e = response.CheckErr(err, "CateDel Save err")
 	return

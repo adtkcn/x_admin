@@ -12,7 +12,7 @@
         style="height: 100vh"
         class="flow-config-dialog"
     >
-        <template #header="{ close }">
+        <template #header>
             <header class="page__header">
                 <div class="page-actions">
                     {{ title }}
@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <el-button class="publish-btn" @click="close">关闭</el-button>
+                <el-button class="publish-btn" @click="exit">关闭</el-button>
                 <el-button class="publish-btn" type="primary" @click="publish">发布</el-button>
             </header>
         </template>
@@ -48,168 +48,151 @@
                 v-show="activeStep === 'formDesign'"
                 tabName="formDesign"
             />
-            <Diagram
-                ref="processDesign"
-                v-show="activeStep === 'processDesign'"
-                tabName="processDesign"
+            <FlowEdit
+                ref="flowEdit"
+                v-show="activeStep === 'flowEdit'"
+                tabName="flowEdit"
                 :fieldList="fieldList"
                 :conf="mockData.flowProcessData"
-            ></Diagram>
+            ></FlowEdit>
         </div>
     </el-dialog>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref, shallowRef, watch } from 'vue'
 import XForm from './XForm/index.vue'
-import Diagram from './flowEdit/Diagram.vue'
-
+import FlowEdit from './flowEdit/index.vue'
 import BasicSetting from './BasicSetting/index.vue'
 
+import feedback from '@/utils/feedback'
+
 const beforeUnload = function (e) {
-    const confirmationMessage = '离开网站可能会丢失您编辑得内容'
-    ;(e || window.event).returnValue = confirmationMessage // Gecko and Trident
-    return confirmationMessage // Gecko and WebKit
+    e.preventDefault()
+
+    e.returnValue = '离开网站可能会丢失您编辑得内容' // Gecko and Trident
+    return false // Gecko and WebKit
 }
-export default defineComponent({
-    name: 'Approver',
-    components: {
-        // Process,
-        Diagram,
-        // DynamicForm,
-        XForm,
-        BasicSetting
+defineOptions({
+    name: 'Approver'
+})
+const props = defineProps({
+    title: {
+        type: String,
+        default: '流程配置'
     },
-    props: {
-        title: {
-            type: String,
-            default: '流程配置'
-        },
-        save: {
-            type: Function,
-            default: () => {}
-        }
-    },
-    data() {
-        return {
-            dialogVisible: false,
+    save: {
+        type: Function,
+        default: () => {}
+    }
+})
 
-            activeStep: 'basicSetting', // 激活的步骤面板
-            mockData: {
-                id: '',
-                basicSetting: {},
-                flowFormData: {},
-                flowProcessData: {}
-            },
-            fieldList: [],
-            steps: [
-                { label: '基础设置', key: 'basicSetting' },
-                { label: '表单设计', key: 'formDesign' },
-                { label: '流程设计', key: 'processDesign' }
-            ]
-        }
-    },
-    beforeRouteEnter(to, from, next) {
-        window.addEventListener('beforeunload', beforeUnload)
-        next()
-    },
-    beforeRouteLeave(to, from, next) {
-        window.removeEventListener('beforeunload', beforeUnload)
-        next()
-    },
-
-    mounted() {},
-    methods: {
-        reset() {
-            this.mockData = {
-                id: '',
-                basicSetting: {},
-                flowFormData: {},
-                flowProcessData: {}
-            }
-            this.activeStep = 'basicSetting'
-            this.fieldList = []
-        },
-        open(data) {
-            this.reset()
-            console.log('data', data)
-            if (data) {
-                this.mockData = { ...data }
-            } else {
-                this.mockData = {
-                    id: '',
-                    basicSetting: {},
-                    flowFormData: {},
-                    flowProcessData: {}
-                }
-            }
-
-            this.dialogVisible = true
-        },
-        async changeSteps(item) {
-            const fieldList = this.$refs?.formDesign?.getFieldWidgets()
-
-            this.fieldList = fieldList
-
-            this.activeStep = item.key
-        },
-        // 发布
-        publish() {
-            const getCmpData = (name) => {
-                return this.$refs[name]?.getData()
-            }
-            // basicSetting  formDesign processDesign 返回的是Promise 因为要做校验
-
-            const p1 = getCmpData('basicSetting')
-            const p2 = getCmpData('formDesign')
-            const p3 = getCmpData('processDesign')
-            Promise.all([p1, p2, p3])
-                .then((res) => {
-                    console.log('res', res)
-                    const param = {
-                        id: this?.mockData?.id,
-                        basicSetting: res[0].formData,
-                        flowFormData: res[1].formData,
-                        flowProcessData: res[2].formData,
-                        flowProcessDataList: res[2].treeToList
-                    }
-                    console.log(param)
-                    this.sendToServer(param)
-                })
-                .catch((err) => {
-                    console.error(err)
-                    err.target && (this.activeStep = err.target)
-                    err.message && this.$message.error(err.message)
-                })
-        },
-
-        sendToServer(param) {
-            this.$notify({
-                title: '数据已整合完成',
-                message: '请在控制台中查看数据输出',
-                position: 'bottom-right'
-            })
-            this.save(param)
-                .then(() => {
-                    this.dialogVisible = false
-                })
-                .catch((err) => {
-                    err.message && this.$message.error(err.message)
-                })
-            console.log('配置数据', param)
-        },
-        exit() {
-            this.$confirm('离开此页面您得修改将会丢失, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            })
-                .then(() => {
-                    window.history.back()
-                })
-                .catch(() => {})
+const basicSetting = shallowRef<InstanceType<typeof BasicSetting>>()
+const formDesign = shallowRef<InstanceType<typeof XForm>>()
+const flowEdit = shallowRef<InstanceType<typeof FlowEdit>>()
+const dialogVisible = ref(false)
+const activeStep = ref('basicSetting')
+const mockData = ref({
+    id: '',
+    basicSetting: {},
+    flowFormData: {},
+    flowProcessData: {}
+})
+const fieldList = ref([])
+const steps = [
+    { label: '基础设置', key: 'basicSetting' },
+    { label: '表单设计', key: 'formDesign' },
+    { label: '流程设计', key: 'flowEdit' }
+]
+watch(
+    () => dialogVisible.value,
+    (val) => {
+        if (!val) {
+            window.removeEventListener('beforeunload', beforeUnload)
+        } else {
+            window.addEventListener('beforeunload', beforeUnload)
         }
     }
+)
+function reset() {
+    mockData.value = {
+        id: '',
+        basicSetting: {},
+        flowFormData: {},
+        flowProcessData: {}
+    }
+    activeStep.value = 'basicSetting'
+    fieldList.value = []
+}
+function open(data) {
+    reset()
+    console.log('data', data)
+    if (data) {
+        mockData.value = { ...data }
+    } else {
+        mockData.value = {
+            id: '',
+            basicSetting: {},
+            flowFormData: {},
+            flowProcessData: {}
+        }
+    }
+
+    dialogVisible.value = true
+}
+function changeSteps(item) {
+    fieldList.value = formDesign.value.getFieldWidgets()
+    console.log('fieldList', fieldList.value)
+
+    activeStep.value = item.key
+}
+// 发布
+function publish() {
+    const p1 = basicSetting.value.getData()
+    const p2 = formDesign.value.getData()
+    const p3 = flowEdit.value.getData()
+    Promise.all([p1, p2, p3])
+        .then((res) => {
+            console.log('res', res)
+            const param = {
+                id: mockData.value?.id,
+                basicSetting: res[0].formData,
+                flowFormData: res[1].formData,
+                flowProcessData: res[2].formData,
+                flowProcessDataList: res[2].treeToList
+            }
+            console.log(param)
+            sendToServer(param)
+        })
+        .catch((err) => {
+            console.error(err)
+            err.target && (activeStep.value = err.target)
+            err.message && feedback.msgError(err.message)
+        })
+}
+
+function sendToServer(param) {
+    feedback.notify('数据已整合完成')
+    props
+        .save(param)
+        .then(() => {
+            dialogVisible.value = false
+        })
+        .catch((err) => {
+            err.message && feedback.msgError(err.message)
+        })
+    console.log('配置数据', param)
+}
+function exit() {
+    feedback
+        .confirm('离开此页面您得修改将会丢失, 是否继续?')
+        .then(() => {
+            dialogVisible.value = false
+        })
+        .catch(() => {})
+}
+defineExpose({
+    open
 })
 </script>
 <style>

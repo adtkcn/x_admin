@@ -38,6 +38,7 @@
 import type { FormInstance } from 'element-plus'
 import { flow_apply_edit, flow_apply_add, flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_template_lists_all } from '@/api/flow/flow_template'
+import type { type_flow_template } from '@/api/flow/flow_template'
 
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
@@ -143,7 +144,7 @@ const formRules = {
         }
     ]
 }
-const flow_template = ref([])
+const flow_template = ref<type_flow_template[]>([])
 const get_flow_template = async () => {
     flow_template.value = await flow_template_lists_all()
 }

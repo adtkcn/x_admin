@@ -17,6 +17,7 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, ref, watch } from 'vue'
 import type { PropType } from 'vue'
 import { LinkTypeEnum, type Link } from '.'
 import ShopPages from './shop-pages.vue'

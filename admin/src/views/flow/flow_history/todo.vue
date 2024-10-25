@@ -63,19 +63,21 @@
 
         <ViewForm ref="viewFormRef" :save="SaveViewForm" @back="OpenBack"></ViewForm>
 
-        <Back ref="backRef"></Back>
+        <Back ref="backRef" @close="closeBack"></Back>
 
         <ApplySubmit ref="ApplySubmitRef" title="审批" @close="getLists"></ApplySubmit>
     </div>
 </template>
 <script lang="ts" setup>
+import { shallowRef, reactive, defineOptions } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
+import type { type_flow_history } from '@/api/flow/flow_history'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
-import ApplySubmit from '@/views/flow/flow_apply/components/apply_submit.vue'
+import ApplySubmit from './components/apply_submit.vue'
 import ViewForm from './components/ViewForm.vue'
 import Back from './components/Back.vue'
 const userStore = useUserStore()
@@ -94,7 +96,7 @@ const queryParams = reactive({
     passStatus: 1
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_history>({
     fetchFun: flow_history_list,
     params: queryParams
 })
@@ -134,7 +136,7 @@ const SaveViewForm = (historyId, form_data) => {
                 feedback.msgSuccess('保存成功')
                 await getLists()
 
-                const row = pager.lists.find((item) => item.id === historyId)
+                const row = pager.lists.find((item: any) => item.id === historyId)
 
                 OpenApplySubmit(row)
                 resolve(true)
@@ -154,6 +156,11 @@ const OpenBack = async (row: any) => {
     console.log('OpenBack')
 
     backRef.value?.open(row.applyId)
+}
+const closeBack = () => {
+    console.log('closeBack')
+
+    viewFormRef.value?.closeFn()
 }
 
 getLists()

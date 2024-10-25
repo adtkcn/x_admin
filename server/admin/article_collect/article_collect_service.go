@@ -5,6 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -31,12 +32,12 @@ type ArticleCollectService struct {
 }
 
 // List 文章收藏列表
-func (Service ArticleCollectService) List(page request.PageReq, listReq ArticleCollectListReq) (res response.PageResp, e error) {
+func (service ArticleCollectService) List(page request.PageReq, listReq ArticleCollectListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	dbModel := Service.db.Model(&model.ArticleCollect{})
+	dbModel := service.db.Model(&model.ArticleCollect{})
 	if listReq.UserId > 0 {
 		dbModel = dbModel.Where("user_id = ?", listReq.UserId)
 	}
@@ -51,17 +52,17 @@ func (Service ArticleCollectService) List(page request.PageReq, listReq ArticleC
 		return
 	}
 	// 数据
-	var objs []model.ArticleCollect
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&objs).Error
+	var modelList []model.ArticleCollect
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	resps := []ArticleCollectResp{}
-	response.Copy(&resps, objs)
+	result := []ArticleCollectResp{}
+	util.ConvertUtil.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
 		Count:    count,
-		Lists:    resps,
+		Lists:    result,
 	}, nil
 }

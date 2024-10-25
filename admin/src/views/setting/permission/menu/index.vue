@@ -16,8 +16,10 @@
                 class="mt-4"
                 size="large"
                 :data="lists"
+                :lazy="true"
                 row-key="id"
                 :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+                height="calc(100vh - 220px)"
             >
                 <el-table-column
                     label="菜单名称"
@@ -96,7 +98,9 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, shallowRef, nextTick } from 'vue'
 import { menuDelete, menuLists } from '@/api/perms/menu'
+import { arrayToTree } from '@/utils/util'
 import type { ElTable } from 'element-plus'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
@@ -117,9 +121,10 @@ const getLists = async () => {
     try {
         const data = await menuLists()
 
-        lists.value = data.map((item: any) => {
-            return item
-        })
+        lists.value = arrayToTree(data)
+        //  .map((item: any) => {
+        // return item
+        // })
         loading.value = false
     } catch (error) {
         loading.value = false

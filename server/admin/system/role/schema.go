@@ -4,23 +4,23 @@ import "x_admin/core"
 
 //SystemAuthRoleSimpleResp 系统角色返回简单信息
 type SystemAuthRoleSimpleResp struct {
-	ID         uint        `json:"id" structs:"id"`                 // 主键
-	Name       string      `json:"name" structs:"name"`             // 角色名称
-	CreateTime core.TsTime `json:"createTime" structs:"createTime"` // 创建时间
-	UpdateTime core.TsTime `json:"updateTime" structs:"updateTime"` // 更新时间
+	ID         uint          `json:"id" structs:"id"`                 // 主键
+	Name       string        `json:"name" structs:"name"`             // 角色名称
+	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
 }
 
 //SystemAuthRoleResp 系统角色返回信息
 type SystemAuthRoleResp struct {
-	ID         uint        `json:"id" structs:"id"`                 // 主键
-	Name       string      `json:"name" structs:"name"`             // 角色名称
-	Remark     string      `json:"remark" structs:"remark"`         // 角色备注
-	Menus      []uint      `json:"menus" structs:"menus"`           // 关联菜单
-	Member     int64       `json:"member" structs:"member"`         // 成员数量
-	Sort       uint16      `json:"sort" structs:"sort"`             // 角色排序
-	IsDisable  uint8       `json:"isDisable" structs:"isDisable"`   // 是否禁用: [0=否, 1=是]
-	CreateTime core.TsTime `json:"createTime" structs:"createTime"` // 创建时间
-	UpdateTime core.TsTime `json:"updateTime" structs:"updateTime"` // 更新时间
+	ID         uint          `json:"id" structs:"id"`                 // 主键
+	Name       string        `json:"name" structs:"name"`             // 角色名称
+	Remark     string        `json:"remark" structs:"remark"`         // 角色备注
+	Menus      []uint        `json:"menus" structs:"menus"`           // 关联菜单
+	Member     int64         `json:"member" structs:"member"`         // 成员数量
+	Sort       uint16        `json:"sort" structs:"sort"`             // 角色排序
+	IsDisable  uint8         `json:"isDisable" structs:"isDisable"`   // 是否禁用: [0=否, 1=是]
+	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
 }
 
 //

@@ -84,10 +84,10 @@
                             link
                             @click="OpenViewForm(row)"
                         >
-                            {{ row.status == 1 ? '编辑' : '预览' }}
+                            {{ row.status == 1 || row.status == 4 ? '编辑' : '预览' }}
                         </el-button>
                         <el-button
-                            v-if="row.status == 1 && row.formValue"
+                            v-if="(row.status == 1 || row.status == 4) && row.formValue"
                             v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
@@ -136,6 +136,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ref, reactive, shallowRef, nextTick } from 'vue'
 import {
     flow_apply_delete,
     flow_apply_lists,
@@ -143,7 +144,10 @@ import {
     flow_apply_detail
 } from '@/api/flow/flow_apply'
 
+import type { type_flow_apply } from '@/api/flow/flow_apply'
+
 import { useDictData } from '@/hooks/useDictOptions'
+import type { type_dict } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -174,13 +178,13 @@ const queryParams = reactive({
     status: ''
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_apply>({
     fetchFun: flow_apply_lists,
     params: queryParams
 })
 const { dictData } = useDictData<{
-    flow_apply_status: any[]
-    flow_group: any[]
+    flow_apply_status: type_dict[]
+    flow_group: type_dict[]
 }>(['flow_apply_status', 'flow_group'])
 
 const handleAdd = async () => {
@@ -198,7 +202,7 @@ const handleAdd = async () => {
 
 const handleDelete = async (id: number) => {
     await feedback.confirm('确定要删除？')
-    await flow_apply_delete({ id })
+    await flow_apply_delete(id)
     feedback.msgSuccess('删除成功')
     getLists()
 }
