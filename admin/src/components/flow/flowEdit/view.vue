@@ -13,8 +13,8 @@
 <script>
 import LogicFlow from '@logicflow/core'
 import { BpmnElement } from '@logicflow/extension'
-// import { SelectionSelect, Menu } from "@logicflow/extension";
-import '@logicflow/core/dist/style/index.css'
+
+import '@logicflow/core/lib/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 
 import { registerCustomElement } from './node'
@@ -27,36 +27,14 @@ export default {
             lf: null,
             activeNodes: [],
             activeEdges: [],
-            properties: {},
-
-            timer: null,
-            time: 60000
+            properties: {}
         }
     },
-    watch: {
-        // appStore: {
-        //   handler() {
-        //     if (this.lf) {
-        //       // this.lf.graphModel.resize();
-        //       // this.lf.fitView();
-        //       // 侧栏有动画，所以要加延时
-        //       setTimeout(() => {
-        //         this.lf.graphModel.resize();
-        //         this.lf.fitView();
-        //       }, 500);
-        //     }
-        //   },
-        //   deep: true,
-        // },
-    },
+
     mounted() {
         // this.initLogicFlow(exportInfo);
     },
-    beforeUnmount() {
-        if (this.timer) {
-            clearInterval(this.timer)
-        }
-    },
+
     methods: {
         initLogicFlow(data) {
             // 引入框选插件

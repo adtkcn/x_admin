@@ -13,6 +13,7 @@
         "btns",
         "daterange",
         "datetimerange",
+        "dbclick",
         "echarts",
         "execa",
         "highlightjs",

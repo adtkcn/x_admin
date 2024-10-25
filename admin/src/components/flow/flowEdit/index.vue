@@ -25,10 +25,13 @@
 // Importing necessary functions and components
 import { ref, onMounted } from 'vue'
 import LogicFlow from '@logicflow/core'
-import { SelectionSelect, Menu, BpmnElement } from '@logicflow/extension'
+import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
 
-import '@logicflow/core/dist/style/index.css'
+// import '@logicflow/core/dist/style/index.css'
+// import '@logicflow/extension/lib/style/index.css'
+import '@logicflow/core/lib/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
+
 import DiagramToolbar from './DiagramToolbar.vue'
 import DiagramSidebar from './DiagramSidebar.vue'
 import PropertyPanel from './PropertyPanel/index.vue'
@@ -70,12 +73,15 @@ function initLogicFlow(data) {
     LogicFlow.use(SelectionSelect)
     LogicFlow.use(Menu)
     LogicFlow.use(BpmnElement)
-
+    LogicFlow.use(MiniMap)
     // Creating a new LogicFlow instance
     const logicFlowInstance = new LogicFlow({
         container: diagramRef.value, // Setting the container where LogicFlow will be rendered
         overlapMode: 1,
+        // allowResize: true,
         autoWrap: true,
+        adjustEdge: true,
+        adjustEdgeStartAndEnd: true,
         metaKeyMultipleSelected: true,
         keyboard: {
             enabled: true
@@ -99,14 +105,25 @@ function initLogicFlow(data) {
 
     // Setting default edge type and rendering initial data
     logicFlowInstance.setDefaultEdgeType('pro-polyline')
+    logicFlowInstance.extension.menu.addMenuConfig({
+        nodeMenu: [
+            {
+                text: '属性配置',
+                callback(node) {
+                    // alert('分享成功！')
+                    PropertyPanelRef.value.open(node, props.fieldList)
+                }
+            }
+        ]
+    })
     logicFlowInstance.render(data)
-
+    logicFlowInstance.extension.miniMap.show()
     // Assigning the LogicFlow instance to the 'lf' ref
     lf.value = logicFlowInstance
 
     // Event listener for node clicks
-    lf.value.on('node:click', (e) => {
-        console.log('Click on node', e.data, props.fieldList)
+    lf.value.on('node:dbclick', (e) => {
+        console.log('dbclick on node', e.data, props.fieldList)
         PropertyPanelRef.value.open(e.data, props.fieldList)
     })
 }

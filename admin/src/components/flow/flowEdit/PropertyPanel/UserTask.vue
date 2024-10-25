@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { adminListAll } from '@/api/perms/admin'
 import { deptAll } from '@/api/org/department'
 import { postAll } from '@/api/org/post'
