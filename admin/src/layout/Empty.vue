@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterView } from 'vue-router'
 import useAppStore from '@/stores/modules/app'
 import useTabsStore from '@/stores/modules/multipleTabs'
 import useSettingStore from '@/stores/modules/setting'
