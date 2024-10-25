@@ -1,5 +1,6 @@
 import { getConfig } from '@/api/app'
 import { defineStore } from 'pinia'
+import { nextTick } from 'vue'
 interface AppSate {
     config: Record<string, any>
     isMobile: boolean

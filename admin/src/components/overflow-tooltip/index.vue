@@ -4,7 +4,7 @@
             <div
                 ref="textRef"
                 class="overflow-text truncate"
-                :style="{ textOverflow: overfloType }"
+                :style="{ textOverflow: overflowType }"
             >
                 {{ content }}
             </div>
@@ -28,7 +28,7 @@ const props = defineProps({
         type: String as PropType<Placement>,
         default: 'top'
     },
-    overfloType: {
+    overflowType: {
         type: String as PropType<'ellipsis' | 'unset' | 'clip'>,
         default: 'ellipsis'
     }

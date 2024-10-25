@@ -3,7 +3,7 @@
         <el-drawer
             v-model="showMenuDrawer"
             direction="ltr"
-            :size="drawderSize"
+            :size="drawerSize"
             title="主题设置"
             :with-header="false"
         >
@@ -33,7 +33,7 @@ const showMenuDrawer = computed({
     }
 })
 
-const drawderSize = computed(() => {
+const drawerSize = computed(() => {
     return `${settingStore.sideWidth + 1}px`
 })
 </script>

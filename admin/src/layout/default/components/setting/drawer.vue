@@ -215,7 +215,10 @@ const resetTheme = () => {
 
 <style lang="scss" scoped>
 .icon-select {
-    @apply absolute left-1/2 top-1/2;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
     transform: translate(-50%, -50%);
 }
 </style>

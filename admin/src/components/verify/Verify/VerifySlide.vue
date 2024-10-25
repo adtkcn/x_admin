@@ -149,7 +149,7 @@ const secretKey = ref(''), //后端返回的ase加密秘钥
     blockBackImgBase = ref(''), //验证滑块的背景图片
     backToken = ref(''), //后端返回的唯一token值
     startMoveTime = ref(), //移动开始的时间
-    endMovetime = ref(), //移动结束的时间
+    endMoveTime = ref(), //移动结束的时间
     tipWords = ref(''),
     text = ref(''),
     finishText = ref(''),
@@ -257,7 +257,7 @@ function move(e) {
 
 //鼠标松开
 function end() {
-    endMovetime.value = +new Date()
+    endMoveTime.value = +new Date()
     //判断是否重合
     if (status.value && isEnd.value == false) {
         let moveLeftDistance = parseInt((moveBlockLeft.value || '').replace('px', ''))
@@ -284,7 +284,7 @@ function end() {
                     }, 1500)
                 }
                 passFlag.value = true
-                tipWords.value = `${((endMovetime.value - startMoveTime.value) / 1000).toFixed(
+                tipWords.value = `${((endMoveTime.value - startMoveTime.value) / 1000).toFixed(
                     2
                 )}s验证成功`
                 setTimeout(() => {
