@@ -129,11 +129,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.dialog-body {
-    white-space: pre-line;
-}
-.el-dialog__body {
-    max-height: calc(100vh - 200px);
-    overflow: auto;
+.dialog {
+    .dialog-body {
+        white-space: pre-line;
+    }
+    .el-dialog__body {
+        // max-height: calc(100vh - 200px);
+        overflow: auto;
+    }
 }
 </style>
