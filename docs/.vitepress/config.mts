@@ -5,7 +5,7 @@ export default defineConfig({
   base:'/x_admin/',
   title: "x_admin",
   description: "x_admin 开发文档",
-
+  ignoreDeadLinks: true,
   markdown: {
     lineNumbers: true
   },
