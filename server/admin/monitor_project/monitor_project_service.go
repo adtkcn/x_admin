@@ -188,9 +188,10 @@ func (service monitorProjectService) DelBatch(Ids []string) (e error) {
 		return err
 	}
 	// 删除缓存
-	for _, v := range Ids {
-		cacheUtil.RemoveCache(v)
-	}
+	// for _, v := range Ids {
+	// 	cacheUtil.RemoveCache(v)
+	// }
+	cacheUtil.RemoveCache(Ids)
 	return nil
 }
 

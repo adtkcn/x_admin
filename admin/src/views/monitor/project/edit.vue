@@ -10,8 +10,8 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="项目uuid" prop="ProjectKey">
-                    <el-input v-model="formData.ProjectKey" placeholder="请输入项目uuid" />
+                <el-form-item label="项目uuid" prop="ProjectKey" v-if="mode === 'edit'">
+                    {{ formData.ProjectKey }}
                 </el-form-item>
                 <el-form-item label="项目名称" prop="ProjectName">
                     <el-input v-model="formData.ProjectName" placeholder="请输入项目名称" />
