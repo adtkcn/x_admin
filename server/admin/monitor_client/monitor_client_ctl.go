@@ -135,9 +135,10 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	addReq.Os = &ua.Os.Family
 	addReq.Browser = &ua.UserAgent.Family
 	// addReq.Ip = *c.ClientIP()
-	core.IpUtils.Parse(c.ClientIP())
-	core.IpUtils.Parse("124.223.171.170")
-	core.IpUtils.Parse("118.24.157.190")
+	regionInfo := util.IpUtil.Parse(c.ClientIP())
+	// regionInfo := util.IpUtil.Parse("118.24.157.190")
+
+	addReq.City = &regionInfo.City
 
 	createId, e := MonitorClientService.Add(addReq)
 	response.CheckAndRespWithData(c, createId, e)

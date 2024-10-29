@@ -117,27 +117,7 @@ const formRules = {
             trigger: ['blur']
         }
     ],
-    Os: [
-        {
-            required: true,
-            message: '请输入系统',
-            trigger: ['blur']
-        }
-    ],
-    Browser: [
-        {
-            required: true,
-            message: '请输入浏览器',
-            trigger: ['blur']
-        }
-    ],
-    City: [
-        {
-            required: true,
-            message: '请输入城市',
-            trigger: ['blur']
-        }
-    ],
+
     Width: [
         {
             required: true,
@@ -152,13 +132,7 @@ const formRules = {
             trigger: ['blur']
         }
     ],
-    Ua: [
-        {
-            required: true,
-            message: '请输入ua记录',
-            trigger: ['blur']
-        }
-    ],
+
     ClientTime: [
         {
             required: true,

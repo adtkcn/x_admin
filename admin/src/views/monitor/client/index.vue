@@ -123,7 +123,7 @@
                 <el-table-column label="城市" prop="City" min-width="130" />
                 <el-table-column label="屏幕" prop="Width" min-width="130" />
                 <el-table-column label="屏幕高度" prop="Height" min-width="130" />
-                <el-table-column label="ua记录" prop="Ua" min-width="130" />
+                <el-table-column label="ua记录" prop="Ua" min-width="380" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
 
                 <el-table-column label="操作" width="80" fixed="right">
