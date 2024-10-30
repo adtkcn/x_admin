@@ -98,8 +98,7 @@ const formData = reactive({
     Path: null,
     Message: null,
     Stack: null,
-    Md5: null,
-    ClientTime: null
+    Md5: null
 })
 
 const formRules = {

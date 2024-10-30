@@ -13,7 +13,11 @@ export type type_monitor_client = {
     UserId?: string
     Os?: string
     Browser?: string
+    Country?: string
+    Province?: string
     City?: string
+    Operator?: string
+    Ip?: string
     Width?: number
     Height?: number
     Ua?: string
@@ -26,14 +30,16 @@ export type type_monitor_client_query = {
     UserId?: string
     Os?: string
     Browser?: string
+    Country?: string
+    Province?: string
     City?: string
+    Operator?: string
+    Ip?: string
     Width?: number
     Height?: number
     Ua?: string
     CreateTimeStart?: string
     CreateTimeEnd?: string
-    ClientTimeStart?: string
-    ClientTimeEnd?: string
 }
 // 添加编辑
 export type type_monitor_client_edit = {
@@ -43,7 +49,11 @@ export type type_monitor_client_edit = {
     UserId?: string
     Os?: string
     Browser?: string
+    Country?: string
+    Province?: string
     City?: string
+    Operator?: string
+    Ip?: string
     Width?: number
     Height?: number
     Ua?: string

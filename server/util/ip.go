@@ -41,6 +41,7 @@ func (ipUtils *ipUtil) Parse(ip string) Region {
 		fmt.Println("输入ip为空")
 		return Region{}
 	}
+
 	region, err := ipUtils.Searcher.SearchByStr(ip)
 	if err != nil {
 		fmt.Printf("解析ip(%s)错误: %s\n", ip, err)

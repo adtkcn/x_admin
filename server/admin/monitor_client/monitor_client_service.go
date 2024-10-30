@@ -49,8 +49,20 @@ func (service monitorClientService) GetModel(listReq MonitorClientListReq) *gorm
 	if listReq.Browser != nil {
 		dbModel = dbModel.Where("browser = ?", *listReq.Browser)
 	}
+	if listReq.Country != nil {
+		dbModel = dbModel.Where("country = ?", *listReq.Country)
+	}
+	if listReq.Province != nil {
+		dbModel = dbModel.Where("province = ?", *listReq.Province)
+	}
 	if listReq.City != nil {
 		dbModel = dbModel.Where("city = ?", *listReq.City)
+	}
+	if listReq.Operator != nil {
+		dbModel = dbModel.Where("operator = ?", *listReq.Operator)
+	}
+	if listReq.Ip != nil {
+		dbModel = dbModel.Where("ip = ?", *listReq.Ip)
 	}
 	if listReq.Width != nil {
 		dbModel = dbModel.Where("width = ?", *listReq.Width)
@@ -100,32 +112,32 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 }
 
 // List 监控-客户端信息列表
-func (service monitorClientService) ListByErrorId(page request.PageReq, listReq MonitorClientListReq, errorId int) (res response.PageResp, e error) {
-	// 分页信息
-	limit := page.PageSize
-	offset := page.PageSize * (page.PageNo - 1)
-	dbModel := service.GetModel(listReq)
-	// 总数
-	var count int64
-	err := dbModel.Count(&count).Error
-	if e = response.CheckErr(err, "失败"); e != nil {
-		return
-	}
-	// 数据
-	var modelList []model.MonitorClient
-	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
-	if e = response.CheckErr(err, "查询失败"); e != nil {
-		return
-	}
-	result := []MonitorClientResp{}
-	util.ConvertUtil.Copy(&result, modelList)
-	return response.PageResp{
-		PageNo:   page.PageNo,
-		PageSize: page.PageSize,
-		Count:    count,
-		Lists:    result,
-	}, nil
-}
+// func (service monitorClientService) ListByErrorId(page request.PageReq, listReq MonitorClientListReq, errorId int) (res response.PageResp, e error) {
+// 	// 分页信息
+// 	limit := page.PageSize
+// 	offset := page.PageSize * (page.PageNo - 1)
+// 	dbModel := service.GetModel(listReq)
+// 	// 总数
+// 	var count int64
+// 	err := dbModel.Count(&count).Error
+// 	if e = response.CheckErr(err, "失败"); e != nil {
+// 		return
+// 	}
+// 	// 数据
+// 	var modelList []model.MonitorClient
+// 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
+// 	if e = response.CheckErr(err, "查询失败"); e != nil {
+// 		return
+// 	}
+// 	result := []MonitorClientResp{}
+// 	util.ConvertUtil.Copy(&result, modelList)
+// 	return response.PageResp{
+// 		PageNo:   page.PageNo,
+// 		PageSize: page.PageSize,
+// 		Count:    count,
+// 		Lists:    result,
+// 	}, nil
+// }
 
 // ListAll 监控-客户端信息列表
 func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res []MonitorClientResp, e error) {
@@ -139,6 +151,24 @@ func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res [
 	}
 	util.ConvertUtil.Copy(&res, modelList)
 	return res, nil
+}
+
+func (service monitorClientService) DetailByClientId(ClientId string) (res MonitorClientResp, e error) {
+	var obj = model.MonitorClient{}
+	err := cacheUtil.GetCache("ClientId:"+ClientId, &obj)
+	if err != nil {
+		err := service.db.Where("client_id = ?", ClientId).Order("id DESC").Limit(1).First(&obj).Error
+		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+			return
+		}
+		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+			return
+		}
+		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
+	}
+
+	util.ConvertUtil.Copy(&res, obj)
+	return
 }
 
 // Detail 监控-客户端信息详情
@@ -163,15 +193,7 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 // ErrorUser 监控-客户端信息详情
 func (service monitorClientService) ErrorUsers(error_id int) (res []MonitorClientResp, e error) {
 	var obj = []model.MonitorClient{}
-	service.db.Raw("SELECT client.* from x_monitor_error_list as list left join x_monitor_client as client on client.client_id = list.client_id where list.error_id = ? Order by list.id DESC", error_id).Scan(&obj)
-
-	// if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-	// 	return
-	// }
-	// if e = response.CheckErr(err, "获取失败"); e != nil {
-	// 	return
-	// }
-	// cacheUtil.SetCache(obj.Id, obj)
+	service.db.Raw("SELECT client.* from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.client_id where list.error_id = ? Order by list.id DESC", error_id).Scan(&obj)
 
 	util.ConvertUtil.Copy(&res, obj)
 	return

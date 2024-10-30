@@ -81,7 +81,12 @@ const formData = reactive({
     UserId: null,
     Os: null,
     Browser: null,
+    Country: null,
+    Province: null,
     City: null,
+    Operator: null,
+    Ip: null,
+
     Width: null,
     Height: null,
     Ua: null,

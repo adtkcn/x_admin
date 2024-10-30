@@ -6,7 +6,7 @@
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
-                label-width="70px"
+                label-width="90px"
                 label-position="left"
             >
                 <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
@@ -32,8 +32,20 @@
                 <el-form-item label="浏览器" prop="Browser" class="w-[280px]">
                     <el-input v-model="queryParams.Browser" />
                 </el-form-item>
+                <el-form-item label="国家" prop="Country" class="w-[280px]">
+                    <el-input v-model="queryParams.Country" />
+                </el-form-item>
+                <el-form-item label="省份" prop="Province" class="w-[280px]">
+                    <el-input v-model="queryParams.Province" />
+                </el-form-item>
                 <el-form-item label="城市" prop="City" class="w-[280px]">
                     <el-input v-model="queryParams.City" />
+                </el-form-item>
+                <el-form-item label="电信运营商" prop="Operator" class="w-[280px]">
+                    <el-input v-model="queryParams.Operator" />
+                </el-form-item>
+                <el-form-item label="ip" prop="Ip" class="w-[280px]">
+                    <el-input v-model="queryParams.Ip" />
                 </el-form-item>
                 <el-form-item label="ua记录" prop="Ua" class="w-[280px]">
                     <el-input v-model="queryParams.Ua" />
@@ -120,9 +132,15 @@
                 <el-table-column label="用户id" prop="UserId" min-width="130" />
                 <el-table-column label="系统" prop="Os" min-width="130" />
                 <el-table-column label="浏览器" prop="Browser" min-width="130" />
+                <el-table-column label="国家" prop="Country" min-width="130" />
+                <el-table-column label="省份" prop="Province" min-width="130" />
                 <el-table-column label="城市" prop="City" min-width="130" />
-                <el-table-column label="屏幕" prop="Width" min-width="130" />
-                <el-table-column label="屏幕高度" prop="Height" min-width="130" />
+                <el-table-column label="电信运营商" prop="Operator" min-width="130" />
+                <el-table-column label="ip" prop="Ip" min-width="130" />
+                <el-table-column label="屏幕" prop="Width" min-width="130">
+                    <template #default="{ row }"> {{ row.Width }} * {{ row.Height }} </template>
+                </el-table-column>
+                <!-- <el-table-column label="屏幕高度" prop="Height" min-width="130" /> -->
                 <el-table-column label="ua记录" prop="Ua" min-width="380" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
 
@@ -182,14 +200,16 @@ const queryParams = reactive<type_monitor_client_query>({
     UserId: null,
     Os: null,
     Browser: null,
+    Country: null,
+    Province: null,
     City: null,
+    Operator: null,
+    Ip: null,
     Width: null,
     Height: null,
     Ua: null,
     CreateTimeStart: null,
-    CreateTimeEnd: null,
-    ClientTimeStart: null,
-    ClientTimeEnd: null
+    CreateTimeEnd: null
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_client>({

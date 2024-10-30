@@ -10,7 +10,7 @@
             @close="handleClose"
         >
             <el-row :gutter="20">
-                <el-col :span="12">
+                <el-col :span="10">
                     <el-card>
                         <template #header>
                             <div class="card-header">
@@ -44,7 +44,7 @@
                         <!-- <template #footer>Footer content</template> -->
                     </el-card>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="14">
                     <el-card>
                         <template #header>
                             <div class="card-header">
@@ -61,24 +61,31 @@
                                 >
                                     <template #title>
                                         <div class="flex-1 text-left">
-                                            {{ user.UserId }}
+                                            {{ user.City }}-{{ user.Browser }}：{{ user.Ip }}
                                         </div>
-                                        <span class="">
+                                        <span>
                                             {{ user.CreateTime }}
                                         </span>
                                     </template>
                                     <el-descriptions border>
-                                        <el-descriptions-item label="城市：">{{
-                                            user.City
+                                        <el-descriptions-item label="省市区">
+                                            {{ user.Country }}{{ user.Province }}{{ user.City }}
+                                        </el-descriptions-item>
+                                        <el-descriptions-item label="浏览器">
+                                            {{ user.Os }}/{{ user.Browser }}
+                                        </el-descriptions-item>
+                                        <el-descriptions-item label="网络">{{
+                                            user.Operator
+                                        }}</el-descriptions-item>
+                                        <el-descriptions-item label="IP">{{
+                                            user.Ip
                                         }}</el-descriptions-item>
 
-                                        <el-descriptions-item label="OS：">{{
-                                            user.Os
+                                        <el-descriptions-item label="业务ID">{{
+                                            user.UserId
                                         }}</el-descriptions-item>
-                                        <el-descriptions-item label="屏幕尺寸：">
-                                            <el-tag size="small"
-                                                >{{ user.Width }}*{{ user.Height }}</el-tag
-                                            >
+                                        <el-descriptions-item label="屏幕">
+                                            {{ user.Width }}*{{ user.Height }}
                                         </el-descriptions-item>
                                         <el-descriptions-item label="userAgent">
                                             {{ user.Ua }}

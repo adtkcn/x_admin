@@ -2,6 +2,7 @@ package monitor_error
 
 import (
 	"strconv"
+	"x_admin/admin/monitor_client"
 	"x_admin/admin/monitor_error_list"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -167,10 +168,15 @@ func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int,
 	} else {
 		createId = errorDetails.Id
 	}
+	client, err := monitor_client.MonitorClientService.DetailByClientId(addReq.ClientId)
+	if err != nil {
+		return
+	}
 
 	monitor_error_list.MonitorErrorListService.Add(monitor_error_list.MonitorErrorListAddReq{
-		ErrorId:    strconv.Itoa(createId),
-		ClientId:   addReq.ClientId,
+		ErrorId:  strconv.Itoa(createId),
+		ClientId: strconv.Itoa(client.Id),
+		// ClientId:   addReq.ClientId,
 		ProjectKey: addReq.ProjectKey,
 	})
 

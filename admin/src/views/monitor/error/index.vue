@@ -108,7 +108,7 @@
                 <el-table-column label="错误堆栈" prop="Stack" min-width="130" />
                 <el-table-column label="md5" prop="Md5" min-width="130" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="ClientTime" min-width="130" />
+
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
