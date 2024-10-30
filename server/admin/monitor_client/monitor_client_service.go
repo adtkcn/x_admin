@@ -1,6 +1,7 @@
 package monitor_client
 
 import (
+	"errors"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -111,34 +112,6 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 	}, nil
 }
 
-// List 监控-客户端信息列表
-// func (service monitorClientService) ListByErrorId(page request.PageReq, listReq MonitorClientListReq, errorId int) (res response.PageResp, e error) {
-// 	// 分页信息
-// 	limit := page.PageSize
-// 	offset := page.PageSize * (page.PageNo - 1)
-// 	dbModel := service.GetModel(listReq)
-// 	// 总数
-// 	var count int64
-// 	err := dbModel.Count(&count).Error
-// 	if e = response.CheckErr(err, "失败"); e != nil {
-// 		return
-// 	}
-// 	// 数据
-// 	var modelList []model.MonitorClient
-// 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
-// 	if e = response.CheckErr(err, "查询失败"); e != nil {
-// 		return
-// 	}
-// 	result := []MonitorClientResp{}
-// 	util.ConvertUtil.Copy(&result, modelList)
-// 	return response.PageResp{
-// 		PageNo:   page.PageNo,
-// 		PageSize: page.PageSize,
-// 		Count:    count,
-// 		Lists:    result,
-// 	}, nil
-// }
-
 // ListAll 监控-客户端信息列表
 func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res []MonitorClientResp, e error) {
 	dbModel := service.GetModel(listReq)
@@ -154,6 +127,9 @@ func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res [
 }
 
 func (service monitorClientService) DetailByClientId(ClientId string) (res MonitorClientResp, e error) {
+	if ClientId == "" {
+		return res, errors.New("ClientId不能为空")
+	}
 	var obj = model.MonitorClient{}
 	err := cacheUtil.GetCache("ClientId:"+ClientId, &obj)
 	if err != nil {
@@ -164,6 +140,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res Monit
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
+		cacheUtil.SetCache(obj.Id, obj)
 		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 
@@ -184,6 +161,7 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 			return
 		}
 		cacheUtil.SetCache(obj.Id, obj)
+		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 
 	util.ConvertUtil.Copy(&res, obj)
@@ -193,7 +171,7 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 // ErrorUser 监控-客户端信息详情
 func (service monitorClientService) ErrorUsers(error_id int) (res []MonitorClientResp, e error) {
 	var obj = []model.MonitorClient{}
-	service.db.Raw("SELECT client.* from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.client_id where list.error_id = ? Order by list.id DESC", error_id).Scan(&obj)
+	service.db.Raw("SELECT client.*,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.client_id where list.error_id = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
 
 	util.ConvertUtil.Copy(&res, obj)
 	return
@@ -209,6 +187,7 @@ func (service monitorClientService) Add(addReq MonitorClientAddReq) (createId in
 		return 0, e
 	}
 	cacheUtil.SetCache(obj.Id, obj)
+	cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	createId = obj.Id
 	return
 }

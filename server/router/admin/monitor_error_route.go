@@ -45,13 +45,12 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 // MonitorErrorRoute(rg)
 func MonitorErrorRoute(rg *gin.RouterGroup) {
 	handle := monitor_error.MonitorErrorHandler{}
+	rg.GET("/monitor_error/add", middleware.RecordLog("监控-错误列新增"), handle.Add)
 
 	r := rg.Group("/", middleware.TokenAuth())
 	r.GET("/monitor_error/list", handle.List)
 	r.GET("/monitor_error/listAll", handle.ListAll)
 	r.GET("/monitor_error/detail", handle.Detail)
-
-	r.POST("/monitor_error/add", middleware.RecordLog("监控-错误列新增"), handle.Add)
 
 	r.POST("/monitor_error/del", middleware.RecordLog("监控-错误列删除"), handle.Del)
 	r.POST("/monitor_error/delBatch", middleware.RecordLog("监控-错误列删除-批量"), handle.DelBatch)

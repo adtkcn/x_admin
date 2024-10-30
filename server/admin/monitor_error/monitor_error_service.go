@@ -151,7 +151,7 @@ func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int,
 	var obj model.MonitorError
 	util.ConvertUtil.StructToStruct(addReq, &obj)
 
-	Md5 := util.ToolsUtil.MakeMd5(obj.ProjectKey + obj.Path + obj.Stack)
+	Md5 := util.ToolsUtil.MakeMd5(obj.ProjectKey + obj.EventType + obj.Message + obj.Path + obj.Stack)
 
 	errorDetails, e := service.DetailByMD5(Md5)
 	if e != nil {

@@ -20,9 +20,9 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="客户端id" prop="ClientId" class="w-[280px]">
+                <!-- <el-form-item label="客户端id" prop="ClientId" class="w-[280px]">
                     <el-input v-model="queryParams.ClientId" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="用户id" prop="UserId" class="w-[280px]">
                     <el-input v-model="queryParams.UserId" />
                 </el-form-item>
@@ -47,10 +47,10 @@
                 <el-form-item label="ip" prop="Ip" class="w-[280px]">
                     <el-input v-model="queryParams.Ip" />
                 </el-form-item>
-                <el-form-item label="ua记录" prop="Ua" class="w-[280px]">
+                <!-- <el-form-item label="ua记录" prop="Ua" class="w-[280px]">
                     <el-input v-model="queryParams.Ua" />
-                </el-form-item>
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
+                </el-form-item> -->
+                <el-form-item label="创建时间" prop="CreateTime" class="w-[425px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
                         v-model:endTime="queryParams.CreateTimeEnd"
@@ -128,21 +128,56 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column label="客户端id" prop="ClientId" min-width="130" />
-                <el-table-column label="用户id" prop="UserId" min-width="130" />
-                <el-table-column label="系统" prop="Os" min-width="130" />
-                <el-table-column label="浏览器" prop="Browser" min-width="130" />
-                <el-table-column label="国家" prop="Country" min-width="130" />
-                <el-table-column label="省份" prop="Province" min-width="130" />
-                <el-table-column label="城市" prop="City" min-width="130" />
-                <el-table-column label="电信运营商" prop="Operator" min-width="130" />
-                <el-table-column label="ip" prop="Ip" min-width="130" />
-                <el-table-column label="屏幕" prop="Width" min-width="130">
+                <!-- <el-table-column label="客户端id" prop="ClientId" min-width="130" /> -->
+                <el-table-column label="用户id" prop="UserId">
+                    <template #default="{ row }">
+                        <el-popover
+                            placement="top-start"
+                            :width="500"
+                            trigger="hover"
+                            :content="row.ClientId"
+                        >
+                            <template #reference>
+                                <el-link type="primary">{{ row.UserId }}</el-link>
+                            </template>
+                            <div>用 户 ID ：{{ row.UserId }}</div>
+                            <div>客户端ID：{{ row.ClientId }}</div>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="浏览器" prop="Browser" min-width="150">
+                    <template #default="{ row }">
+                        <el-popover
+                            placement="top-start"
+                            title="浏览器ua"
+                            :width="500"
+                            trigger="hover"
+                            :content="row.Ua"
+                        >
+                            <template #reference>
+                                <el-link type="primary">{{ row.Os }} / {{ row.Browser }}</el-link>
+                            </template>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+                <el-table-column label="IP" prop="Ip" />
+                <el-table-column label="区域">
+                    <template #default="{ row }">
+                        {{ row.Country }}{{ row.Province }}{{ row.City }}
+                    </template>
+                </el-table-column>
+
+                <!-- <el-table-column label="省份" prop="Province" />
+                <el-table-column label="城市" prop="City" /> -->
+                <el-table-column label="运营商" prop="Operator" />
+
+                <el-table-column label="屏幕" prop="Width">
                     <template #default="{ row }"> {{ row.Width }} * {{ row.Height }} </template>
                 </el-table-column>
                 <!-- <el-table-column label="屏幕高度" prop="Height" min-width="130" /> -->
-                <el-table-column label="ua记录" prop="Ua" min-width="380" />
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
+                <!-- <el-table-column label="ua记录" prop="Ua" min-width="380" /> -->
+                <el-table-column label="创建时间" prop="CreateTime" min-width="140" />
 
                 <el-table-column label="操作" width="80" fixed="right">
                     <template #default="{ row }">
