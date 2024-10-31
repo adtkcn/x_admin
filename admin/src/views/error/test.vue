@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import { onUnmounted } from 'vue'
 import XLog from '../../../../x_error_sdk/x-log'
 import x_log_browser from '../../../../x_error_sdk/x-log-browser'
-const xlog = new XLog(
+const xLog = new XLog(
     {
         Dns: 'http://localhost:5174/api',
         Pid: 'e19e3be20de94f49b68fafb4c30668bc',
         Uid: '10'
     },
-    x_log_browser
+    new x_log_browser()
 )
+onUnmounted(() => {
+    xLog.unListen()
+})
 defineProps<{ msg: string }>()
 function error() {
     throw new Error('主动抛error')

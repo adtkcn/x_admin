@@ -4,13 +4,13 @@
             ref="popupRef"
             :title="popupTitle"
             :async="true"
-            width="90%"
+            width="98%"
             :clickModalClose="true"
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-row :gutter="20">
-                <el-col :span="10">
+            <el-row :gutter="10">
+                <el-col :span="18">
                     <el-card>
                         <template #header>
                             <div class="card-header">
@@ -44,7 +44,7 @@
                         <!-- <template #footer>Footer content</template> -->
                     </el-card>
                 </el-col>
-                <el-col :span="14">
+                <el-col :span="6">
                     <el-card>
                         <template #header>
                             <div class="card-header">

@@ -229,18 +229,34 @@ func (service monitorClientService) Del(Id int) (e error) {
 	err = service.db.Delete(&obj).Error
 	e = response.CheckErr(err, "删除失败")
 	cacheUtil.RemoveCache(obj.Id)
+	cacheUtil.RemoveCache("ClientId:" + obj.ClientId)
 	return
 }
 
 // DelBatch 用户协议-批量删除
 func (service monitorClientService) DelBatch(Ids []string) (e error) {
-	var obj model.MonitorClient
-	err := service.db.Where("id in (?)", Ids).Delete(&obj).Error
+	var obj []model.MonitorClient
+	// 查询Ids对应的数据
+	err := service.db.Where("id in (?)", Ids).Find(&obj).Error
 	if err != nil {
 		return err
 	}
+	if len(obj) == 0 {
+		return errors.New("数据不存在")
+	}
+	err = service.db.Where("id in (?)", Ids).Delete(model.MonitorClient{}).Error
+	if err != nil {
+		return err
+	}
+	// md5集合
+	var Clients []string
+	for _, v := range obj {
+		Clients = append(Clients, "ClientId:"+v.ClientId)
+	}
+
 	// 删除缓存
 	cacheUtil.RemoveCache(Ids)
+	cacheUtil.RemoveCache(Clients)
 	return nil
 }
 

@@ -1,5 +1,5 @@
 import { v1 as uuid_v1 } from "uuid";
-import type { LogWithError, Platform,LogWithEnv  } from "./types";
+import type { LogWithError, IErrorEvent,LogWithEnv  } from "./types";
 
 type Uid = string | number;
 
@@ -15,11 +15,12 @@ class XLog {
   private Pid: string = "";
   private Uid: Uid = "";
 
-  private platform: Platform;
+  private platform: IErrorEvent;
 
   MessageList: any[] = [];
+  timer: number;
 
-  constructor(props: Props, platform: Platform) {
+  constructor(props: Props, platform: IErrorEvent) {
     this.platform = platform;
     if (props) {
       props.Dns && (this.Dns = props.Dns);
@@ -33,12 +34,12 @@ class XLog {
  
     // 监听错误
     platform.listen((params: LogWithError) => {
-      console.log('listen',params);
+      console.log('listenCallback',params);
       
       this.Push(params);
     });
 
-    setInterval(() => {
+    this.timer=setInterval(() => {
       this.upload();
     }, 1000 * 10);
   }
@@ -132,6 +133,10 @@ class XLog {
       this.MessageList = [];
       this.platform.delCache("x_message_list");
     } catch (error) {}
+  }
+  public unListen(){
+    clearInterval(this.timer)
+    this.platform.unListen()
   }
   // public Vue2 = (app: any) => {
   //   app.prototype.$xLog = this;

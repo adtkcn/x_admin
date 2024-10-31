@@ -1,6 +1,7 @@
 package monitor_error
 
 import (
+	"errors"
 	"strconv"
 	"x_admin/admin/monitor_client"
 	"x_admin/admin/monitor_error_list"
@@ -146,41 +147,42 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res MonitorErrorResp
 }
 
 // Add 监控-错误列新增
-func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int, e error) {
+func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int, err error) {
 
 	var obj model.MonitorError
 	util.ConvertUtil.StructToStruct(addReq, &obj)
 
 	Md5 := util.ToolsUtil.MakeMd5(obj.ProjectKey + obj.EventType + obj.Message + obj.Path + obj.Stack)
 
-	errorDetails, e := service.DetailByMD5(Md5)
-	if e != nil {
+	errorDetails, err := service.DetailByMD5(Md5)
+	if err != nil {
 
 		obj.Md5 = Md5
 
 		err := service.db.Create(&obj).Error
-		e = response.CheckMysqlErr(err)
-		if e != nil {
-			return 0, e
+		err = response.CheckMysqlErr(err)
+		if err != nil {
+			return 0, err
 		}
 		createId = obj.Id
 		cacheUtil.SetCache(createId, obj)
+		cacheUtil.SetCache("md5:"+Md5, obj)
 	} else {
 		createId = errorDetails.Id
 	}
 	client, err := monitor_client.MonitorClientService.DetailByClientId(addReq.ClientId)
 	if err != nil {
-		return
+		return 0, err
 	}
 
-	monitor_error_list.MonitorErrorListService.Add(monitor_error_list.MonitorErrorListAddReq{
-		ErrorId:  strconv.Itoa(createId),
-		ClientId: strconv.Itoa(client.Id),
+	_, err = monitor_error_list.MonitorErrorListService.Add(monitor_error_list.MonitorErrorListAddReq{
+		Eid: strconv.Itoa(createId),
+		Cid: strconv.Itoa(client.Id),
 		// ClientId:   addReq.ClientId,
-		ProjectKey: addReq.ProjectKey,
+		// ProjectKey: addReq.ProjectKey,
 	})
 
-	return
+	return createId, err
 }
 
 // Del 监控-错误列删除
@@ -198,18 +200,33 @@ func (service monitorErrorService) Del(Id int) (e error) {
 	err = service.db.Delete(&obj).Error
 	e = response.CheckErr(err, "删除失败")
 	cacheUtil.RemoveCache(obj.Id)
+	cacheUtil.RemoveCache("md5:" + obj.Md5)
 	return
 }
 
 // DelBatch 用户协议-批量删除
 func (service monitorErrorService) DelBatch(Ids []string) (e error) {
-	var obj model.MonitorError
-	err := service.db.Where("id in (?)", Ids).Delete(&obj).Error
+	var obj []model.MonitorError
+	// 查询Ids对应的数据
+	err := service.db.Where("id in (?)", Ids).Find(&obj).Error
 	if err != nil {
 		return err
 	}
+	if len(obj) == 0 {
+		return errors.New("数据不存在")
+	}
+	err = service.db.Where("id in (?)", Ids).Delete(model.MonitorError{}).Error
+	if err != nil {
+		return err
+	}
+	// md5集合
+	var md5s []string
+	for _, v := range obj {
+		md5s = append(md5s, "md5:"+v.Md5)
+	}
 	// 删除缓存
 	cacheUtil.RemoveCache(Ids)
+	cacheUtil.RemoveCache(md5s)
 	return nil
 }
 

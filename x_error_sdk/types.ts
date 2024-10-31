@@ -5,7 +5,7 @@ export type LogWithEnv = {
   ScreenWidth?: number;
 };
 export type LogWithError = {
-  Type: "error"|"event"|"resources";
+  Type: "error"|"event"|"resources"|'click'|'historyChange'|'hashChange';
   EventType: string;
   Path:string;
   Message: string;
@@ -13,13 +13,14 @@ export type LogWithError = {
 };
 
 
-export interface Platform {
-  upload(url: string, data: Object);
+//  扩展必须实现的接口
+export interface IErrorEvent  {
+  upload(url: string, data: object): Promise<void>;
+  setCache(key: string, info: any): void;
+  getCache(key: string): any;
+  delCache(key: string): void;
   getEnvInfo(): LogWithEnv;
   listen(callback: ListenCallbackFn): void;
-  getCache(key: string): any;
-  setCache(key: string, info: any): void;
-  delCache(key: string): void;
+  unListen(): void;
 }
- 
 export type ListenCallbackFn = (params: LogWithError) => void;

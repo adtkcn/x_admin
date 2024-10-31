@@ -38,7 +38,7 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div class="text-right">
-                <el-button
+                <!-- <el-button
                     v-perms="['admin:monitor_error:add']"
                     type="primary"
                     @click="handleAdd()"
@@ -47,8 +47,8 @@
                         <icon name="el-icon-Plus" />
                     </template>
                     新增
-                </el-button>
-                <upload
+                </el-button> -->
+                <!-- <upload
                     v-perms="['admin:monitor_error:ImportFile']"
                     class="ml-3 mr-3"
                     :url="monitor_error_import_file"
@@ -63,8 +63,8 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
-                <el-button
+                </upload> -->
+                <!-- <el-button
                     v-perms="['admin:monitor_error:ExportFile']"
                     type="primary"
                     @click="exportFile"
@@ -73,7 +73,7 @@
                         <icon name="el-icon-Download" />
                     </template>
                     导出
-                </el-button>
+                </el-button> -->
                 <el-button
                     v-perms="['admin:monitor_error:delBatch']"
                     type="danger"
@@ -154,9 +154,7 @@ import { ref, reactive, shallowRef, nextTick } from 'vue'
 import {
     monitor_error_delete,
     monitor_error_delete_batch,
-    monitor_error_list,
-    monitor_error_import_file,
-    monitor_error_export_file
+    monitor_error_list
 } from '@/api/monitor/error'
 import type { type_monitor_error, type_monitor_error_query } from '@/api/monitor/error'
 
@@ -197,11 +195,6 @@ const { listAllData } = useListAllData<{
 })
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-const handleAdd = async () => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('add')
-}
 
 const multipleSelection = ref<type_monitor_error[]>([])
 const handleSelectionChange = (val: type_monitor_error[]) => {
@@ -240,11 +233,5 @@ const deleteBatch = async () => {
     } catch (error) {}
 }
 
-const exportFile = async () => {
-    try {
-        await feedback.confirm('确定要导出？')
-        await monitor_error_export_file(queryParams)
-    } catch (error) {}
-}
 getLists()
 </script>
