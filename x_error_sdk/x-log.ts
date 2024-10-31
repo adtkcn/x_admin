@@ -17,8 +17,8 @@ class XLog {
 
   private platform: IErrorEvent;
 
-  MessageList: any[] = [];
-  timer: number;
+  private MessageList: any[] = [];
+  private timer: number;
 
   constructor(props: Props, platform: IErrorEvent) {
     this.platform = platform;

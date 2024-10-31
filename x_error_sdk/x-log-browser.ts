@@ -89,6 +89,7 @@ class Logger implements IErrorEvent {
     }
   };
   private unhandledrejection = (err: any): void => {
+    console.error(err);
     if (err && typeof err.reason === "string") {
       this.callback({
         Type: "error",

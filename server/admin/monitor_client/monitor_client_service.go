@@ -171,7 +171,7 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 // ErrorUser 监控-客户端信息详情
 func (service monitorClientService) ErrorUsers(error_id int) (res []MonitorClientResp, e error) {
 	var obj = []model.MonitorClient{}
-	service.db.Raw("SELECT client.*,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.client_id where list.error_id = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
+	service.db.Raw("SELECT client.*,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.cid where list.eid = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
 
 	util.ConvertUtil.Copy(&res, obj)
 	return
@@ -191,28 +191,6 @@ func (service monitorClientService) Add(addReq MonitorClientAddReq) (createId in
 	createId = obj.Id
 	return
 }
-
-// // Edit 监控-客户端信息编辑
-// func (service monitorClientService) Edit(editReq MonitorClientEditReq) (e error) {
-// 	var obj model.MonitorClient
-// 	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
-// 	// 校验
-// 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-// 		return
-// 	}
-// 	if e = response.CheckErr(err, "查询失败"); e != nil {
-// 		return
-// 	}
-// 	util.ConvertUtil.Copy(&obj, editReq)
-
-// 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
-// 	if e = response.CheckErr(err, "编辑失败"); e != nil {
-// 		return
-// 	}
-// 	cacheUtil.RemoveCache(obj.Id)
-// 	service.Detail(obj.Id)
-// 	return
-// }
 
 // Del 监控-客户端信息删除
 func (service monitorClientService) Del(Id int) (e error) {
