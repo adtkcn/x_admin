@@ -3,7 +3,7 @@ import type {
   LogWithEnv,
   ListenCallbackFn,
   IErrorEvent,
-} from "./types";
+} from "../types";
 
 class Logger implements IErrorEvent {
   public upload(url: string, data: object): Promise<void> {
@@ -108,7 +108,7 @@ class Logger implements IErrorEvent {
       });
     }
   };
-  listenClick = (e) => {
+  private listenClick = (e: Event) => {
     let target = e.target as HTMLElement;
     let tagName = target?.localName;
     let name = [tagName];
@@ -129,7 +129,7 @@ class Logger implements IErrorEvent {
       Stack: "",
     });
   };
-  listenHistoryRouterChange = () => {
+  private listenHistoryRouterChange = () => {
     this.callback({
       Type: "historyChange",
       EventType: "popstate",
@@ -139,7 +139,7 @@ class Logger implements IErrorEvent {
     });
   };
   // 监听hash
-  private listenHashRouterChange = (e) => {
+  private listenHashRouterChange = () => {
     this.callback({
       Type: "hashChange",
       EventType: "hashChange",
@@ -159,13 +159,58 @@ class Logger implements IErrorEvent {
     }
     return newStack.join("\n");
   }
+  private onLoad = () => {
+    // 获取性能数据
+    const entries = performance.getEntriesByType("navigation") ;
+    if (entries.length > 0) {
+      const performanceData = entries[0] as PerformanceNavigationTiming
+
+    // 计算页面加载时间
+    console.log("performanceData", performanceData);
+
+    // 计算请求响应时间
+    const requestResponseTime =
+      performanceData.responseEnd - performanceData.requestStart;
+
+    // 计算DNS查询时间
+    let dnsLookupTime =
+      performanceData.domainLookupEnd - performanceData.domainLookupStart;
+
+    // 计算TCP连接时间
+    let tcpConnectTime =
+      performanceData.connectEnd - performanceData.connectStart;
+
+    // 计算白屏时间
+    let whiteScreenTime =
+      performanceData.responseStart - performanceData.startTime
+    // 获取 FCP 时间
+    let fcpTime = 0;
+    const [fcpEntry] = performance.getEntriesByName("first-contentful-paint");
+    if (fcpEntry) {
+      fcpTime = fcpEntry.startTime;
+    }
+
+    // 构造要发送的性能数据
+    let perfData = {
+      type: "performance",
+      // pageLoadTime: pageLoadTime,
+      dnsLookupTime: dnsLookupTime,
+      tcpConnectTime: tcpConnectTime,
+      whiteScreenTime: whiteScreenTime,
+      requestResponseTime: requestResponseTime,
+      // 其它你想要收集的信息
+    };
+  }
+  };
   public listen(callback: ListenCallbackFn): void {
     this.callback = callback;
     window.addEventListener("unhandledrejection", this.unhandledrejection);
     window.addEventListener("error", this.listenError, true);
     // window.addEventListener("click", this.listenClick);
     window.addEventListener("hashchange", this.listenHashRouterChange);
-    window.addEventListener("popstate",this.listenHistoryRouterChange);
+    window.addEventListener("popstate", this.listenHistoryRouterChange);
+
+    window.addEventListener("load", this.onLoad);
   }
 
   public unListen(): void {
@@ -174,7 +219,7 @@ class Logger implements IErrorEvent {
     window.removeEventListener("unhandledrejection", this.unhandledrejection);
     window.removeEventListener("click", this.listenClick);
     window.removeEventListener("hashchange", this.listenHashRouterChange);
-    window.removeEventListener("popstate",this.listenHistoryRouterChange);
+    window.removeEventListener("popstate", this.listenHistoryRouterChange);
   }
 }
 

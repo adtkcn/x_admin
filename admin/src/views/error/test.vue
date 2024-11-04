@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { onUnmounted } from 'vue'
-import XLog from '../../../../x_error_sdk/x-log'
-import x_log_browser from '../../../../x_error_sdk/x-log-browser'
-const xLog = new XLog(
+import { XErr, XErrWeb } from '../../../../x_err_sdk/web/index'
+// { XErr, XErrWeb }
+const xErr = new XErr(
     {
         Dns: 'http://localhost:5174/api',
         Pid: 'e19e3be20de94f49b68fafb4c30668bc',
         Uid: '10'
     },
-    new x_log_browser()
+    new XErrWeb()
 )
 onUnmounted(() => {
-    xLog.unListen()
+    xErr.unListen()
 })
 defineProps<{ msg: string }>()
 function error() {
@@ -45,7 +45,7 @@ function loadError() {
     <div class="card">
         <button class="a b" type="button" aa="11" @click="error">主动抛error</button>
         <button class="a b" type="button" aa="11" @click="yufaError">语法错误</button>
-        <button class="a b c" id="abv" type="button" @click="promiseError">promiseerror</button>
+        <button class="a b c" id="abv" type="button" @click="promiseError">promise error</button>
         <button type="button" @click="loadError">资源加载错误</button>
 
         <!-- <img src="http://a.cn/a/b" alt="" srcset="" />

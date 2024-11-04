@@ -19,7 +19,7 @@
 			"path": ".workflow"
 		},
 		{
-			"path": "x_error_sdk"
+			"path": "x_err_sdk"
 		}
 	],
 	"settings": {
