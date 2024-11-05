@@ -4,7 +4,7 @@
             ref="popupRef"
             :title="popupTitle"
             :async="true"
-            width="550px"
+            width="700px"
             :clickModalClose="true"
             @confirm="handleSubmit"
             @close="handleClose"
@@ -48,6 +48,9 @@
                         />
                     </el-select>
                 </el-form-item>
+                <el-form-item label="使用SDK" v-if="mode == 'edit'">
+                    <highlight-code :code="code" lang="javascript"></highlight-code>
+                </el-form-item>
             </el-form>
         </popup>
     </div>
@@ -73,6 +76,7 @@ defineProps({
         default: () => ({})
     }
 })
+
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
@@ -88,7 +92,17 @@ const formData = reactive({
     ProjectType: null,
     Status: null
 })
-
+const code = computed(() => {
+    return `import { XErr, XErrWeb } from '../../x_err_sdk/web/index'
+new XErr(
+    {
+        Dns: '${location.origin}/api',
+        Pid: ${formData.ProjectKey},
+        Uid: ''
+    },
+    new XErrWeb()
+)`
+})
 const formRules = {
     Id: [
         {

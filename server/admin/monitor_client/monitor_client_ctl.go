@@ -140,7 +140,8 @@ func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	data, err := url.QueryUnescape(c.Query("data"))
 	if err != nil {
-		response.CheckAndRespWithData(c, 0, err)
+		// response.CheckAndRespWithData(c, 0, err)
+		c.Writer.WriteString("0")
 		return
 	}
 	var addReq MonitorClientAddReq
@@ -161,7 +162,8 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 		if last == newStr {
 			// 前后数据一样，不用创建新的数据
 			fmt.Println("前后数据一样，不用创建新的数据")
-			response.CheckAndRespWithData(c, 0, nil)
+			c.Writer.WriteString("0")
+			// response.CheckAndRespWithData(c, 0, nil)
 			return
 		} else {
 			// 新建的话，需要清除lastClient对应的缓存
@@ -186,8 +188,10 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 		addReq.Province = &regionInfo.Province
 	}
 
-	createId, e := MonitorClientService.Add(addReq)
-	response.CheckAndRespWithData(c, createId, e)
+	createId, _ := MonitorClientService.Add(addReq)
+	// response.CheckAndRespWithData(c, createId, e)
+	// c.Value(createId)
+	c.Writer.WriteString(strconv.Itoa(createId))
 }
 
 // @Summary	监控-客户端信息删除

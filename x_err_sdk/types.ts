@@ -5,11 +5,11 @@ export type LogWithEnv = {
   ScreenWidth?: number;
 };
 export type LogWithError = {
-  Type: "error"|"event"|"resources"|'click'|'historyChange'|'hashChange';
+  Type: "error"|"event"|"resources"|'click'|'historyChange'|'hashChange'|'onloadTime';
   EventType: string;
   Path:string;
-  Message: string;
-  Stack: string;
+  Message?: string;
+  Stack?: string;
 };
 
 

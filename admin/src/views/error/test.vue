@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
-import { XErr, XErrWeb } from '../../../../x_err_sdk/web/index'
-// { XErr, XErrWeb }
-const xErr = new XErr(
-    {
-        Dns: 'http://localhost:5174/api',
-        Pid: 'e19e3be20de94f49b68fafb4c30668bc',
-        Uid: '10'
-    },
-    new XErrWeb()
-)
-onUnmounted(() => {
-    xErr.unListen()
-})
+// import { onUnmounted } from 'vue'
+// import { XErr, XErrWeb } from '../../../../x_err_sdk/web/index'
+// // { XErr, XErrWeb }
+// const xErr = new XErr(
+//     {
+//         Dns: 'http://localhost:5174/api',
+//         Pid: 'e19e3be20de94f49b68fafb4c30668bc',
+//         Uid: '10'
+//     },
+//     new XErrWeb()
+// )
+// onUnmounted(() => {
+// xErr.unListen()
+// })
 defineProps<{ msg: string }>()
 function error() {
     throw new Error('主动抛error')

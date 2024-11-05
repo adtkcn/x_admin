@@ -5,8 +5,19 @@ import type {
   IErrorEvent,
 } from "../types";
 
+interface LoggerProps {
+  // timeout:number
+  onloadTimeOut?: number;
+}
 class Logger implements IErrorEvent {
-  public upload(url: string, data: object): Promise<void> {
+  props: LoggerProps;
+  constructor(props?: LoggerProps) {
+    this.props = {
+      onloadTimeOut: 3000,
+      ...props,
+    };
+  }
+  public upload(url: string, data: any): Promise<void> {
     return new Promise((resolve) => {
       try {
         let h = new Image();
@@ -58,7 +69,7 @@ class Logger implements IErrorEvent {
   }
   private callback(err: LogWithError): void {}
   private listenError = (err: any) => {
-    console.error(err);
+    console.error([err]);
     let target = err.target;
     if (target?.localName) {
       if (target?.localName === "img" || target?.localName === "script") {
@@ -74,8 +85,6 @@ class Logger implements IErrorEvent {
           Type: "resources",
           EventType: target?.localName,
           Path: target.href,
-          Message: "",
-          Stack: "",
         });
       }
     } else {
@@ -108,46 +117,46 @@ class Logger implements IErrorEvent {
       });
     }
   };
-  private listenClick = (e: Event) => {
-    let target = e.target as HTMLElement;
-    let tagName = target?.localName;
-    let name = [tagName];
-    if (target.id) {
-      name.push("#" + target.id);
-    }
-    target.classList.forEach((item) => {
-      name.push("." + item);
-    });
-    if (target.innerText) {
-      name.push(":" + target.innerText.slice(0, 20));
-    }
-    this.callback({
-      Type: "click",
-      EventType: "click",
-      Path: window.location.href,
-      Message: name.join(""),
-      Stack: "",
-    });
-  };
-  private listenHistoryRouterChange = () => {
-    this.callback({
-      Type: "historyChange",
-      EventType: "popstate",
-      Path: window.location.href,
-      Message: "",
-      Stack: "",
-    });
-  };
-  // 监听hash
-  private listenHashRouterChange = () => {
-    this.callback({
-      Type: "hashChange",
-      EventType: "hashChange",
-      Path: window.location.href,
-      Message: "",
-      Stack: "",
-    });
-  };
+  // private listenClick = (e: Event) => {
+  //   let target = e.target as HTMLElement;
+  //   let tagName = target?.localName;
+  //   let name = [tagName];
+  //   if (target.id) {
+  //     name.push("#" + target.id);
+  //   }
+  //   target.classList.forEach((item) => {
+  //     name.push("." + item);
+  //   });
+  //   if (target.innerText) {
+  //     name.push(":" + target.innerText.slice(0, 20));
+  //   }
+  //   this.callback({
+  //     Type: "click",
+  //     EventType: "click",
+  //     Path: window.location.href,
+  //     Message: name.join(""),
+  //     Stack: "",
+  //   });
+  // };
+  // private listenHistoryRouterChange = () => {
+  //   this.callback({
+  //     Type: "historyChange",
+  //     EventType: "popstate",
+  //     Path: window.location.href,
+  //     Message: "",
+  //     Stack: "",
+  //   });
+  // };
+  // // 监听hash
+  // private listenHashRouterChange = () => {
+  //   this.callback({
+  //     Type: "hashChange",
+  //     EventType: "hashChange",
+  //     Path: window.location.href,
+  //     Message: "",
+  //     Stack: "",
+  //   });
+  // };
   private handleStack(stack: string): string {
     let newStack: string[] = [];
     if (stack) {
@@ -161,54 +170,37 @@ class Logger implements IErrorEvent {
   }
   private onLoad = () => {
     // 获取性能数据
-    const entries = performance.getEntriesByType("navigation") ;
+    const entries = performance.getEntriesByType("navigation");
     if (entries.length > 0) {
-      const performanceData = entries[0] as PerformanceNavigationTiming
+      const performanceData = entries[0] as PerformanceNavigationTiming;
 
-    // 计算页面加载时间
-    console.log("performanceData", performanceData);
+      console.log("performanceData", performanceData);
 
-    // 计算请求响应时间
-    const requestResponseTime =
-      performanceData.responseEnd - performanceData.requestStart;
-
-    // 计算DNS查询时间
-    let dnsLookupTime =
-      performanceData.domainLookupEnd - performanceData.domainLookupStart;
-
-    // 计算TCP连接时间
-    let tcpConnectTime =
-      performanceData.connectEnd - performanceData.connectStart;
-
-    // 计算白屏时间
-    let whiteScreenTime =
-      performanceData.responseStart - performanceData.startTime
-    // 获取 FCP 时间
-    let fcpTime = 0;
-    const [fcpEntry] = performance.getEntriesByName("first-contentful-paint");
-    if (fcpEntry) {
-      fcpTime = fcpEntry.startTime;
+      // 计算页面onload时间
+      let onloadTime =
+        performanceData.loadEventStart - performanceData.startTime;
+      if (
+        this.props.onloadTimeOut &&
+        onloadTime > this.props.onloadTimeOut
+      ) {
+        // 页面加载时间5s以上
+        this.callback({
+          Type: "onloadTime",
+          EventType: "onloadTime",
+          Path: window.location.href,
+          Message: "时间：" + parseFloat(onloadTime.toFixed(2)) + "ms",
+          Stack: "",
+        });
+      }
     }
-
-    // 构造要发送的性能数据
-    let perfData = {
-      type: "performance",
-      // pageLoadTime: pageLoadTime,
-      dnsLookupTime: dnsLookupTime,
-      tcpConnectTime: tcpConnectTime,
-      whiteScreenTime: whiteScreenTime,
-      requestResponseTime: requestResponseTime,
-      // 其它你想要收集的信息
-    };
-  }
   };
   public listen(callback: ListenCallbackFn): void {
     this.callback = callback;
     window.addEventListener("unhandledrejection", this.unhandledrejection);
     window.addEventListener("error", this.listenError, true);
     // window.addEventListener("click", this.listenClick);
-    window.addEventListener("hashchange", this.listenHashRouterChange);
-    window.addEventListener("popstate", this.listenHistoryRouterChange);
+    // window.addEventListener("hashchange", this.listenHashRouterChange);
+    // window.addEventListener("popstate", this.listenHistoryRouterChange);
 
     window.addEventListener("load", this.onLoad);
   }
@@ -217,9 +209,9 @@ class Logger implements IErrorEvent {
     this.callback = () => {};
     window.removeEventListener("error", this.listenError);
     window.removeEventListener("unhandledrejection", this.unhandledrejection);
-    window.removeEventListener("click", this.listenClick);
-    window.removeEventListener("hashchange", this.listenHashRouterChange);
-    window.removeEventListener("popstate", this.listenHistoryRouterChange);
+    // window.removeEventListener("click", this.listenClick);
+    // window.removeEventListener("hashchange", this.listenHashRouterChange);
+    // window.removeEventListener("popstate", this.listenHistoryRouterChange);
   }
 }
 

@@ -96,7 +96,7 @@ class XLog {
     }
   }
   // 记录错误，超出5条时立即上报，否则缓存到本地(等待定时器上报)
-  public Push(data: LogWithError) {
+  public Push=(data: LogWithError) =>{
     this.MessageList.push({
       ...data,
       ProjectKey: this.Pid,
@@ -109,7 +109,7 @@ class XLog {
       this.platform?.setCache("x_err_message_list", this.MessageList);
     }
   }
-  public uploadInfo(envInfo: LogWithEnv) {
+  public uploadInfo=(envInfo: LogWithEnv) =>{
     if (!this.Dns) return; //未设置Dns服务器不上传
 
     try {
