@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 	"strings"
-	"x_admin/core"
 
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 )
@@ -20,7 +19,7 @@ type ipUtil struct {
 func (su ipUtil) GetHostIp() (ip string) {
 	conn, err := net.Dial("udp", "114.114.114.114:80")
 	if err != nil {
-		core.Logger.Errorf("GetHostIp Dial err: err=[%+v]", err)
+		// core.Logger.Errorf("GetHostIp Dial err: err=[%+v]", err)
 		return
 	}
 	defer conn.Close()

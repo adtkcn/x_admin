@@ -59,8 +59,9 @@ class XLog {
   // 设置用户id
   public SetUid(uid?: Uid) {
     if (uid) {
-      this.platform?.setCache("x_err_uid", uid);
       this.Uid = uid;
+      this.platform?.setCache("x_err_uid", uid);
+
     } else {
       const u_id = this.platform?.getCache("x_err_uid");
       if (u_id) {

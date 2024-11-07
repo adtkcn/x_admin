@@ -66,7 +66,7 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column label="事件类型" prop="EventType" width="100" />
+                <el-table-column label="事件类型" prop="EventType" width="130" />
                 <el-table-column label="URL地址" prop="Path" min-width="130" />
                 <el-table-column label="错误消息" prop="Message" min-width="130" />
 

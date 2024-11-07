@@ -10,15 +10,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type IIndexService interface {
-	Console() (res map[string]interface{}, e error)
-	Config() (res map[string]interface{}, e error)
-}
-
 var Service = NewIndexService()
 
 // NewIndexService 初始化
-func NewIndexService() IIndexService {
+func NewIndexService() *indexService {
 	db := core.GetDB()
 	return &indexService{db: db}
 }

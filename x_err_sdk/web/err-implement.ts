@@ -193,6 +193,7 @@ class Logger implements IErrorEvent {
         });
       }
     }
+
   };
   public listen(callback: ListenCallbackFn): void {
     this.callback = callback;

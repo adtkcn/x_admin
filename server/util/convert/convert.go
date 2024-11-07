@@ -1,7 +1,12 @@
-package util
+package convert
 
 import (
+	"fmt"
+	"strconv"
+
 	"reflect"
+
+	"github.com/duke-git/lancet/v2/convertor"
 
 	"github.com/fatih/structs"
 	"github.com/jinzhu/copier"
@@ -12,6 +17,17 @@ var ConvertUtil = convertUtil{}
 
 // convertUtil 转换工具
 type convertUtil struct{}
+
+func (c convertUtil) ToFloat64(value interface{}) (float64, error) {
+	switch v := value.(type) {
+	case float64, float32:
+		return strconv.ParseFloat(fmt.Sprintf("%f", v), 64)
+	default:
+		return convertor.ToFloat(value)
+	}
+
+	// return 0, nil
+}
 
 // StructToMap 结构体转换成map,深度转换
 func (c convertUtil) StructToMap(from interface{}) map[string]interface{} {
