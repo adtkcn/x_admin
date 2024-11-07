@@ -16,30 +16,35 @@ type NullFloat struct {
 
 func DecodeFloat(value any) (any, error) {
 	switch v := value.(type) {
-	case float64:
-		f := v
-		return NullFloat{Float: &f, Valid: true}, nil
-	case float32:
-		f := float64(v)
-		return NullFloat{Float: &f, Valid: true}, nil
-	case int:
-		f := float64(v)
-		return NullFloat{Float: &f, Valid: true}, nil
-	case int64:
-		f := float64(v)
-		return NullFloat{Float: &f, Valid: true}, nil
-	case string:
-		if v == "" {
-			return NullFloat{Float: nil, Valid: false}, nil
-		}
-		f, err := strconv.ParseFloat(v, 64)
-		return NullFloat{Float: &f, Valid: true}, err
+	// case float64:
+	// 	f := v
+	// 	return NullFloat{Float: &f, Valid: true}, nil
+	// case float32:
+	// 	f := float64(v)
+	// 	return NullFloat{Float: &f, Valid: true}, nil
+	// case int:
+	// 	f := float64(v)
+	// 	return NullFloat{Float: &f, Valid: true}, nil
+	// case int64:
+	// 	f := float64(v)
+	// 	return NullFloat{Float: &f, Valid: true}, nil
+	// case string:
+	// 	if v == "" {
+	// 		return NullFloat{Float: nil, Valid: false}, nil
+	// 	}
+	// 	f, err := strconv.ParseFloat(v, 64)
+	// 	return NullFloat{Float: &f, Valid: true}, err
 	case nil:
 		return NullFloat{Float: nil, Valid: false}, nil
 	case NullFloat:
 		return v, nil
+	default:
+		result, err := convert_util.ToFloat64(value)
+		if err != nil {
+			return NullFloat{Float: nil, Valid: false}, err
+		}
+		return NullFloat{Float: &result, Valid: true}, nil
 	}
-	return NullFloat{Float: nil, Valid: false}, nil
 }
 
 // gorm实现Scanner

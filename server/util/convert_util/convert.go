@@ -15,13 +15,14 @@ import (
 
 func ToFloat64(value interface{}) (float64, error) {
 	switch v := value.(type) {
-	case float64, float32:
+	case float32:
 		return strconv.ParseFloat(fmt.Sprintf("%f", v), 64)
 	default:
 		return convertor.ToFloat(value)
 	}
-
-	// return 0, nil
+}
+func ToInt64(value interface{}) (int64, error) {
+	return convertor.ToInt(value)
 }
 
 // StructToMap 结构体转换成map,深度转换

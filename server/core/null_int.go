@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"strconv"
+	"x_admin/util/convert_util"
 )
 
 // int类型别名，支持前端传递null，int，string类型
@@ -41,23 +42,29 @@ type NullInt struct {
 //	}
 func DecodeInt(value any) (any, error) {
 	switch v := value.(type) {
-	case int:
-		i := int64(v)
-		return NullInt{Int: &i, Valid: true}, nil
-	case int64:
-		return NullInt{Int: &v, Valid: true}, nil
-	case string:
-		if v == "" {
-			return NullInt{Int: nil, Valid: false}, nil
-		}
-		i, err := strconv.ParseInt(v, 10, 64)
-		return NullInt{Int: &i, Valid: true}, err
+	// case int:
+	// 	i := int64(v)
+	// 	return NullInt{Int: &i, Valid: true}, nil
+	// case int64:
+	// 	return NullInt{Int: &v, Valid: true}, nil
+	// case string:
+	// 	if v == "" {
+	// 		return NullInt{Int: nil, Valid: false}, nil
+	// 	}
+	// 	i, err := strconv.ParseInt(v, 10, 64)
+	// 	return NullInt{Int: &i, Valid: true}, err
 	case nil:
 		return NullInt{Int: nil, Valid: false}, nil
 	case NullInt:
 		return v, nil
+	default:
+		result, err := convert_util.ToInt64(value)
+		if err != nil {
+			return NullInt{Int: nil, Valid: false}, err
+		}
+		return NullInt{Int: &result, Valid: true}, nil
 	}
-	return NullInt{Int: nil, Valid: false}, nil
+
 }
 
 // gorm实现Scanner
