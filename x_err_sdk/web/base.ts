@@ -1,5 +1,5 @@
 import { v1 as uuid_v1 } from "uuid";
-import type { LogWithError, IErrorEvent, LogWithEnv } from "../types";
+import type { LogWithError, IErrorEvent,ISlow, LogWithEnv } from "../types";
  
 type Uid = string | number;
 
@@ -9,7 +9,7 @@ type Props = {
   Uid?: Uid; //用户标识
 };
 
-class XLog {
+class Base {
   private Dns: string = "";
   private client_id: string = "";
   private Pid: string = "";
@@ -38,17 +38,23 @@ class XLog {
       return;
     }
     if (props.Uid) {
-      this.Uid = props.Uid;
+      this.Uid = String(props.Uid);
     }
     this.setClientID();
     this.SetUid();
     this.getLocalMessage();
 
+    
     // 监听错误
-    platform.listen((params: LogWithError) => {
+    platform.listen((params: LogWithError|ISlow) => {
       console.log("listenCallback", params);
-
-      this.Push(params);
+      if(params.Type=='onloadTime'){
+        let slow=params as ISlow;
+        this.uploadSlow(slow);
+      }else{
+        this.Push(params);
+      }
+   
     });
 
     this.timer = setInterval(() => {
@@ -59,8 +65,8 @@ class XLog {
   // 设置用户id
   public SetUid(uid?: Uid) {
     if (uid) {
-      this.Uid = uid;
-      this.platform?.setCache("x_err_uid", uid);
+      this.Uid =String(uid) ;
+      this.platform?.setCache("x_err_uid", this.Uid);
 
     } else {
       const u_id = this.platform?.getCache("x_err_uid");
@@ -127,6 +133,23 @@ class XLog {
         });
     } catch (error) {}
   }
+  public uploadSlow=(envInfo: ISlow) =>{
+    if (!this.Dns) return; //未设置Dns服务器不上传
+
+    try {
+      this.platform
+        ?.upload(this.Dns + `/admin/monitor_slow/add`, {
+          ProjectKey: this.Pid,
+          ClientId: this.client_id,
+          UserId: this.Uid,
+          Path: envInfo.Path,
+          Time: envInfo.Time,
+        })
+        .catch((err: any) => {
+          // 上传失败
+        });
+    } catch (error) {}
+  }
 
   // 上传文件
   public upload() {
@@ -149,4 +172,4 @@ class XLog {
     this.platform?.unListen();
   }
 }
-export default XLog;
+export default Base;

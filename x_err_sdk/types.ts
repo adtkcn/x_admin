@@ -5,11 +5,18 @@ export type LogWithEnv = {
   ScreenWidth?: number;
 };
 export type LogWithError = {
-  Type: "error"|"event"|"resources"|'click'|'historyChange'|'hashChange'|'onloadTime';
+  Type: "error"|"event"|"resources"|'click';
   EventType: string;
   Path:string;
   Message?: string;
   Stack?: string;
+};
+
+export type ISlow = {
+  Type: "onloadTime"
+
+  Path:string;
+  Time: number; 
 };
 
 
@@ -23,4 +30,4 @@ export interface IErrorEvent  {
   listen(callback: ListenCallbackFn): void;
   unListen(): void;
 }
-export type ListenCallbackFn = (params: LogWithError) => void;
+export type ListenCallbackFn = (params: LogWithError|ISlow) => void;

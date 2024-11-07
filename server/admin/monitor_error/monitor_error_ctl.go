@@ -1,11 +1,7 @@
 package monitor_error
 
 import (
-	"bytes"
 	"encoding/json"
-	"image"
-	"image/color"
-	"image/gif"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -15,6 +11,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/util"
 	"x_admin/util/excel2"
+	"x_admin/util/img_util"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/singleflight"
@@ -111,7 +108,8 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 	data, err := url.QueryUnescape(c.Query("data"))
 	if err != nil {
-		response.CheckAndRespWithData(c, 0, err)
+		// response.CheckAndRespWithData(c, 0, err)
+		c.Data(200, "image/gif", img_util.EmptyGif())
 		return
 	}
 
@@ -124,35 +122,8 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 	for i := 0; i < len(addReq); i++ {
 		MonitorErrorService.Add(addReq[i])
 	}
-	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
-
-	// 设置像素颜色为黑色
-	img.Set(0, 0, color.Black)
-
-	// 创建GIF动画
-	g := &gif.GIF{
-		Image: []*image.Paletted{imageToPaletted(img)},
-		Delay: []int{0}, // 延迟时间，单位是10毫秒
-	}
-	var buffer bytes.Buffer
-
-	// 编码GIF到缓冲区
-	err = gif.EncodeAll(&buffer, g)
-
 	// response.CheckAndRespWithData(c, g, nil)
-	c.Data(200, "image/gif", buffer.Bytes())
-}
-
-// 将image.Image转换为*image.Paletted
-func imageToPaletted(img image.Image) *image.Paletted {
-	b := img.Bounds()
-	pm := image.NewPaletted(b, color.Palette{color.Black})
-	for y := b.Min.Y; y < b.Max.Y; y++ {
-		for x := b.Min.X; x < b.Max.X; x++ {
-			pm.Set(x, y, img.At(x, y))
-		}
-	}
-	return pm
+	c.Data(200, "image/gif", img_util.EmptyGif())
 }
 
 // @Summary	监控-错误列删除

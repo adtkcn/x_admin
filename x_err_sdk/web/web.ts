@@ -2,18 +2,18 @@ import type {
   LogWithError,
   LogWithEnv,
   ListenCallbackFn,
-  IErrorEvent,
+  IErrorEvent,ISlow
 } from "../types";
 
 interface LoggerProps {
   // timeout:number
   onloadTimeOut?: number;
 }
-class Logger implements IErrorEvent {
+class Web implements IErrorEvent {
   props: LoggerProps;
   constructor(props?: LoggerProps) {
     this.props = {
-      onloadTimeOut: 3000,
+      onloadTimeOut: 5000,
       ...props,
     };
   }
@@ -67,7 +67,7 @@ class Logger implements IErrorEvent {
     }
     return env;
   }
-  private callback(err: LogWithError): void {}
+  private callback(err: LogWithError|ISlow): void {}
   private listenError = (err: any) => {
     console.error([err]);
     let target = err.target;
@@ -117,46 +117,8 @@ class Logger implements IErrorEvent {
       });
     }
   };
-  // private listenClick = (e: Event) => {
-  //   let target = e.target as HTMLElement;
-  //   let tagName = target?.localName;
-  //   let name = [tagName];
-  //   if (target.id) {
-  //     name.push("#" + target.id);
-  //   }
-  //   target.classList.forEach((item) => {
-  //     name.push("." + item);
-  //   });
-  //   if (target.innerText) {
-  //     name.push(":" + target.innerText.slice(0, 20));
-  //   }
-  //   this.callback({
-  //     Type: "click",
-  //     EventType: "click",
-  //     Path: window.location.href,
-  //     Message: name.join(""),
-  //     Stack: "",
-  //   });
-  // };
-  // private listenHistoryRouterChange = () => {
-  //   this.callback({
-  //     Type: "historyChange",
-  //     EventType: "popstate",
-  //     Path: window.location.href,
-  //     Message: "",
-  //     Stack: "",
-  //   });
-  // };
-  // // 监听hash
-  // private listenHashRouterChange = () => {
-  //   this.callback({
-  //     Type: "hashChange",
-  //     EventType: "hashChange",
-  //     Path: window.location.href,
-  //     Message: "",
-  //     Stack: "",
-  //   });
-  // };
+
+
   private handleStack(stack: string): string {
     let newStack: string[] = [];
     if (stack) {
@@ -186,10 +148,8 @@ class Logger implements IErrorEvent {
         // 页面加载时间5s以上
         this.callback({
           Type: "onloadTime",
-          EventType: "onloadTime",
           Path: window.location.href,
-          Message: "时间：" + parseFloat(onloadTime.toFixed(2)) + "ms",
-          Stack: "",
+          Time:onloadTime
         });
       }
     }
@@ -216,4 +176,4 @@ class Logger implements IErrorEvent {
   }
 }
 
-export default Logger;
+export default Web;

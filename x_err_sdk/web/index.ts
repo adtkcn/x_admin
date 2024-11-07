@@ -1,6 +1,4 @@
-import XErr from "./err-entry"
-import XErrWeb from "./err-implement"
+import Base from "./base";
+import Web from "./web";
 
-
-export {XErr,XErrWeb}
- 
+export { Base, Web };

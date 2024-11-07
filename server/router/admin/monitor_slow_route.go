@@ -45,7 +45,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 // MonitorSlowRoute(rg)
 func MonitorSlowRoute(rg *gin.RouterGroup) {
 	handle := monitor_slow.MonitorSlowHandler{}
-	rg.POST("/monitor_slow/add", middleware.RecordLog("慢接口新增"), handle.Add)
+	rg.GET("/monitor_slow/add", middleware.RecordLog("慢接口新增"), handle.Add)
 	r := rg.Group("/", middleware.TokenAuth())
 	r.GET("/monitor_slow/list", handle.List)
 	r.GET("/monitor_slow/listAll", handle.ListAll)

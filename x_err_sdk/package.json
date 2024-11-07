@@ -2,21 +2,25 @@
   "name": "@adtkcn/x_err_sdk",
   "version": "1.0.0",
   "description": "错误监控sdk",
-  "main": "dist/web/index.js",
+  "main": "dist/web/XErr.umd.js",
   "private": false,
+  "file": [
+    "dist"
+  ],
   "scripts": {
-    "build": "npm run build:web&&npm run build:ts",
-    "build:web": "esbuild web/index.ts --bundle --sourcemap --minify --outfile=dist/web/index.js --format=esm --target=es2015",
+    "build": "vite build&&npm run build:ts", 
     "build:ts": "tsc --emitDeclarationOnly",
     "outdated": "pnpm outdated"
   },
-  "keywords": ["x_err_sdk","X_admin"],
+  "keywords": [
+    "x_err_sdk",
+    "X_admin"
+  ],
   "author": "adtkcn",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
     "typescript": "^5.6.3",
     "uuid": "^11.0.2",
-    "esbuild": "^0.24.0"
+    "vite": "^5.4.10"
   }
 }

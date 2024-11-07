@@ -97,10 +97,12 @@ const code = computed(() => {
 new XErr(
     {
         Dns: '${location.origin}/api',
-        Pid: ${formData.ProjectKey},
+        Pid: '${formData.ProjectKey}',
         Uid: ''
     },
-    new XErrWeb()
+    new XErrWeb({
+        onloadTimeOut: 3000
+    })
 )`
 })
 const formRules = {

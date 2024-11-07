@@ -13,6 +13,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/util"
 	"x_admin/util/excel2"
+	"x_admin/util/img_util"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/singleflight"
@@ -141,28 +142,24 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	data, err := url.QueryUnescape(c.Query("data"))
 	if err != nil {
 		// response.CheckAndRespWithData(c, 0, err)
-		c.Writer.WriteString("0")
+		c.Data(200, "image/gif", img_util.EmptyGif())
 		return
 	}
 	var addReq MonitorClientAddReq
 	json.Unmarshal([]byte(data), &addReq)
-	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
-	// 	return
-	// }
 
 	lastClient, err := MonitorClientService.DetailByClientId(*addReq.ClientId)
 
 	uaStr := c.GetHeader("user-agent")
 	ip := c.ClientIP()
 
-	// createFlag := true
 	if err == nil {
 		last := lastClient.UserId + lastClient.Width.String() + lastClient.Height.String() + lastClient.Ip + lastClient.Ua
 		newStr := *addReq.UserId + addReq.Width.String() + addReq.Height.String() + ip + uaStr
 		if last == newStr {
 			// 前后数据一样，不用创建新的数据
 			fmt.Println("前后数据一样，不用创建新的数据")
-			c.Writer.WriteString("0")
+			c.Data(200, "image/gif", img_util.EmptyGif())
 			// response.CheckAndRespWithData(c, 0, nil)
 			return
 		} else {
@@ -188,10 +185,9 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 		addReq.Province = &regionInfo.Province
 	}
 
-	createId, _ := MonitorClientService.Add(addReq)
-	// response.CheckAndRespWithData(c, createId, e)
-	// c.Value(createId)
-	c.Writer.WriteString(strconv.Itoa(createId))
+	MonitorClientService.Add(addReq)
+
+	c.Data(200, "image/gif", img_util.EmptyGif())
 }
 
 // @Summary	监控-客户端信息删除

@@ -9,16 +9,22 @@
                 label-width="70px"
                 label-position="left"
             >
-                <el-form-item label="项目key" prop="ProjectKey" class="w-[280px]">
-                    <el-input v-model="queryParams.ProjectKey" />
+                <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
+                    <el-select v-model="queryParams.ProjectKey" clearable>
+                        <el-option label="全部" value="" />
+                        <el-option
+                            v-for="(item, index) in listAllData.monitor_project_listAll"
+                            :key="index"
+                            :label="item.ProjectName"
+                            :value="item.ProjectKey"
+                        />
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="sdk生成的客户端id" prop="ClientId" class="w-[280px]">
-                    <el-input v-model="queryParams.ClientId" />
-                </el-form-item>
+
                 <el-form-item label="用户id" prop="UserId" class="w-[280px]">
                     <el-input v-model="queryParams.UserId" />
                 </el-form-item>
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
+                <el-form-item label="创建时间" prop="CreateTime" class="w-[420px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
                         v-model:endTime="queryParams.CreateTimeEnd"
@@ -32,13 +38,13 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div class="text-right">
-                <el-button v-perms="['admin:monitor_slow:add']" type="primary" @click="handleAdd()">
+                <!-- <el-button v-perms="['admin:monitor_slow:add']" type="primary" @click="handleAdd()">
                     <template #icon>
                         <icon name="el-icon-Plus" />
                     </template>
                     新增
-                </el-button>
-                <upload
+                </el-button> -->
+                <!-- <upload
                     v-perms="['admin:monitor_slow:ImportFile']"
                     class="ml-3 mr-3"
                     :url="monitor_slow_import_file"
@@ -53,8 +59,8 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
-                <el-button
+                </upload> -->
+                <!-- <el-button
                     v-perms="['admin:monitor_slow:ExportFile']"
                     type="primary"
                     @click="exportFile"
@@ -63,7 +69,7 @@
                         <icon name="el-icon-Download" />
                     </template>
                     导出
-                </el-button>
+                </el-button> -->
                 <el-button
                     v-perms="['admin:monitor_slow:delBatch']"
                     type="danger"
@@ -81,22 +87,31 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
-                <el-table-column label="项目key" prop="ProjectKey" min-width="130" />
-                <el-table-column label="sdk生成的客户端id" prop="ClientId" min-width="130" />
-                <el-table-column label="用户id" prop="UserId" min-width="130" />
-                <el-table-column label="URL地址" prop="Path" min-width="130" />
-                <el-table-column label="时间" prop="Time" min-width="130" />
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column label="项目" prop="ProjectKey" width="150">
                     <template #default="{ row }">
-                        <el-button
+                        <dict-value
+                            :options="listAllData.monitor_project_listAll"
+                            :value="row.ProjectKey"
+                            labelKey="ProjectName"
+                            valueKey="ProjectKey"
+                        />
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="用户id" prop="UserId" width="150" />
+                <el-table-column label="URL地址" prop="Path" />
+                <el-table-column label="时间(毫秒)" prop="Time" width="130" />
+                <el-table-column label="创建时间" prop="CreateTime" width="180" />
+                <el-table-column label="操作" width="80" fixed="right">
+                    <template #default="{ row }">
+                        <!-- <el-button
                             v-perms="['admin:monitor_slow:edit']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
                         >
                             编辑
-                        </el-button>
+                        </el-button> -->
                         <el-button
                             v-perms="['admin:monitor_slow:del']"
                             type="danger"
@@ -116,16 +131,15 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, shallowRef, nextTick } from 'vue'
+import { ref, reactive, shallowRef } from 'vue'
 import {
     monitor_slow_delete,
     monitor_slow_delete_batch,
-    monitor_slow_list,
-    monitor_slow_import_file,
-    monitor_slow_export_file
+    monitor_slow_list
 } from '@/api/monitor/slow'
 import type { type_monitor_slow, type_monitor_slow_query } from '@/api/monitor/slow'
 
+import { useListAllData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -148,19 +162,12 @@ const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_slow>
     fetchFun: monitor_slow_list,
     params: queryParams
 })
+const { listAllData } = useListAllData<{
+    monitor_project_listAll: any[]
+}>({
+    monitor_project_listAll: '/monitor_project/listAll'
+})
 
-const handleAdd = async () => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('add')
-}
-
-const handleEdit = async (data: any) => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('edit')
-    editRef.value?.getDetail(data)
-}
 const multipleSelection = ref<type_monitor_slow[]>([])
 const handleSelectionChange = (val: type_monitor_slow[]) => {
     console.log(val)
@@ -191,11 +198,5 @@ const deleteBatch = async () => {
     } catch (error) {}
 }
 
-const exportFile = async () => {
-    try {
-        await feedback.confirm('确定要导出？')
-        await monitor_slow_export_file(queryParams)
-    } catch (error) {}
-}
 getLists()
 </script>
