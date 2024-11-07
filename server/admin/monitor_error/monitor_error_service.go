@@ -10,6 +10,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
 	"gorm.io/gorm"
@@ -85,7 +86,7 @@ func (service monitorErrorService) List(page request.PageReq, listReq MonitorErr
 		return
 	}
 	result := []MonitorErrorResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -104,7 +105,7 @@ func (service monitorErrorService) ListAll(listReq MonitorErrorListReq) (res []M
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, modelList)
+	convert_util.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -123,7 +124,7 @@ func (service monitorErrorService) Detail(Id int) (res MonitorErrorResp, e error
 		cacheUtil.SetCache(obj.Id, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
@@ -142,7 +143,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res MonitorErrorResp
 		cacheUtil.SetCache("md5:"+md5, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
@@ -150,7 +151,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res MonitorErrorResp
 func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int, err error) {
 
 	var obj model.MonitorError
-	util.ConvertUtil.StructToStruct(addReq, &obj)
+	convert_util.StructToStruct(addReq, &obj)
 
 	Md5 := util.ToolsUtil.MakeMd5(obj.ProjectKey + obj.EventType + obj.Message + obj.Path + obj.Stack)
 
@@ -258,14 +259,14 @@ func (service monitorErrorService) ExportFile(listReq MonitorErrorListReq) (res 
 		return
 	}
 	result := []MonitorErrorResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service monitorErrorService) ImportFile(importReq []MonitorErrorResp) (e error) {
 	var importData []model.MonitorError
-	util.ConvertUtil.Copy(&importData, importReq)
+	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

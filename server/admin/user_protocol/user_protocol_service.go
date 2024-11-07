@@ -6,6 +6,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
 	"gorm.io/gorm"
@@ -78,7 +79,7 @@ func (service userProtocolService) List(page request.PageReq, listReq UserProtoc
 		return
 	}
 	result := []UserProtocolResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -97,7 +98,7 @@ func (service userProtocolService) ListAll(listReq UserProtocolListReq) (res []U
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, modelList)
+	convert_util.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -116,14 +117,14 @@ func (service userProtocolService) Detail(Id int) (res UserProtocolResp, e error
 		cacheUtil.SetCache(obj.Id, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
 // Add 用户协议新增
 func (service userProtocolService) Add(addReq UserProtocolAddReq) (createId int, e error) {
 	var obj model.UserProtocol
-	util.ConvertUtil.StructToStruct(addReq, &obj)
+	convert_util.StructToStruct(addReq, &obj)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -145,7 +146,7 @@ func (service userProtocolService) Edit(editReq UserProtocolEditReq) (e error) {
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&obj, editReq)
+	convert_util.Copy(&obj, editReq)
 
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
@@ -215,14 +216,14 @@ func (service userProtocolService) ExportFile(listReq UserProtocolListReq) (res 
 		return
 	}
 	result := []UserProtocolResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service userProtocolService) ImportFile(importReq []UserProtocolResp) (e error) {
 	var importData []model.UserProtocol
-	util.ConvertUtil.Copy(&importData, importReq)
+	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

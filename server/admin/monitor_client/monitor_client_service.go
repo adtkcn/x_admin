@@ -7,6 +7,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
 	"gorm.io/gorm"
@@ -103,7 +104,7 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 		return
 	}
 	result := []MonitorClientResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -122,7 +123,7 @@ func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res [
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, modelList)
+	convert_util.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -144,7 +145,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res Monit
 		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
@@ -164,7 +165,7 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
@@ -173,14 +174,14 @@ func (service monitorClientService) ErrorUsers(error_id int) (res []MonitorClien
 	var obj = []model.MonitorClient{}
 	service.db.Raw("SELECT client.*,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.cid where list.eid = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
 // Add 监控-客户端信息新增
 func (service monitorClientService) Add(addReq MonitorClientAddReq) (createId int, e error) {
 	var obj model.MonitorClient
-	util.ConvertUtil.StructToStruct(addReq, &obj)
+	convert_util.StructToStruct(addReq, &obj)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -268,14 +269,14 @@ func (service monitorClientService) ExportFile(listReq MonitorClientListReq) (re
 		return
 	}
 	result := []MonitorClientResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service monitorClientService) ImportFile(importReq []MonitorClientResp) (e error) {
 	var importData []model.MonitorClient
-	util.ConvertUtil.Copy(&importData, importReq)
+	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

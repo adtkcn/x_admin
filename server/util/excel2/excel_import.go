@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
-	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -99,7 +99,7 @@ func importData(f *excelize.File, dst interface{}, sheetName string, startRow in
 		data = append(data, rowMap)
 
 	}
-	util.ConvertUtil.MapToStruct(data, dst)
+	convert_util.MapToStruct(data, dst)
 
 	// 		fmt.Println("Type.Name:", field.Type.Name(), field.Type.Kind())
 	// 		// 根据字段类型设置值

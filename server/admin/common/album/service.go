@@ -8,6 +8,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model/common_model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
@@ -66,7 +67,7 @@ func (albSrv albumService) AlbumList(page request.PageReq, listReq CommonAlbumLi
 		return
 	}
 	albumResps := []CommonAlbumListResp{}
-	util.ConvertUtil.Copy(&albumResps, albums)
+	convert_util.Copy(&albumResps, albums)
 	// TODO: engine默认local
 	engine := "local"
 	for i := 0; i < len(albumResps); i++ {
@@ -134,7 +135,7 @@ func (albSrv albumService) AlbumAdd(addReq CommonAlbumAddReq) (res uint, e error
 	//	core.Logger.Errorf("AlbumAdd Decode err: err=[%+v]", err)
 	//	return response.SystemError
 	//}
-	util.ConvertUtil.Copy(&alb, addReq)
+	convert_util.Copy(&alb, addReq)
 	err := albSrv.db.Create(&alb).Error
 	if e = response.CheckErr(err, "Album添加失败"); e != nil {
 		return
@@ -173,14 +174,14 @@ func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []Common
 		return
 	}
 	cateResps := []CommonCateListResp{}
-	util.ConvertUtil.Copy(&cateResps, cates)
+	convert_util.Copy(&cateResps, cates)
 	return cateResps, nil
 }
 
 // CateAdd 分类新增
 func (albSrv albumService) CateAdd(addReq CommonCateAddReq) (e error) {
 	var cate common_model.AlbumCate
-	util.ConvertUtil.Copy(&cate, addReq)
+	convert_util.Copy(&cate, addReq)
 	err := albSrv.db.Create(&cate).Error
 	e = response.CheckErr(err, "Cate添加失败")
 	return

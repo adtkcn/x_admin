@@ -8,6 +8,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
@@ -81,7 +82,7 @@ func (service flowApplyService) List(page request.PageReq, listReq FlowApplyList
 		return
 	}
 	result := []FlowApplyResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -100,7 +101,7 @@ func (service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
@@ -111,7 +112,7 @@ func (service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
 	if e = response.CheckErrDBNotRecord(err, "模板不存在!"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&obj, addReq)
+	convert_util.Copy(&obj, addReq)
 	// obj.FlowName = flow_template_resp.FlowName
 	obj.FlowGroup = flow_template_resp.FlowGroup
 	obj.FlowRemark = flow_template_resp.FlowRemark
@@ -136,7 +137,7 @@ func (service flowApplyService) Edit(editReq FlowApplyEditReq) (e error) {
 		return
 	}
 	// 更新
-	util.ConvertUtil.Copy(&obj, editReq)
+	convert_util.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Updates(obj).Error
 	e = response.CheckErr(err, "编辑失败")
 	return

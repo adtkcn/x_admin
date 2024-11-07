@@ -5,7 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
@@ -67,7 +67,7 @@ func (service flowTemplateService) List(page request.PageReq, listReq FlowTempla
 		return
 	}
 	result := []FlowTemplateResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -83,7 +83,7 @@ func (service flowTemplateService) ListAll() (res []FlowTemplateResp, e error) {
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, modelList)
+	convert_util.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -97,14 +97,14 @@ func (service flowTemplateService) Detail(id int) (res FlowTemplateResp, e error
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
 // Add 流程模板新增
 func (service flowTemplateService) Add(addReq FlowTemplateAddReq) (e error) {
 	var obj model.FlowTemplate
-	util.ConvertUtil.Copy(&obj, addReq)
+	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -122,7 +122,7 @@ func (service flowTemplateService) Edit(editReq FlowTemplateEditReq) (e error) {
 		return
 	}
 	// 更新
-	util.ConvertUtil.Copy(&obj, editReq)
+	convert_util.Copy(&obj, editReq)
 	err = service.db.Model(&obj).Updates(obj).Error
 	e = response.CheckErr(err, "编辑失败")
 	return

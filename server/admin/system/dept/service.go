@@ -4,7 +4,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
@@ -39,7 +39,7 @@ func (service systemAuthDeptService) All() (res []SystemAuthDeptResp, e error) {
 		return
 	}
 	res = []SystemAuthDeptResp{}
-	util.ConvertUtil.Copy(&res, depts)
+	convert_util.Copy(&res, depts)
 	return
 }
 
@@ -57,7 +57,7 @@ func (service systemAuthDeptService) List(listReq SystemAuthDeptListReq) (deptRe
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&deptResps, depts)
+	convert_util.Copy(&deptResps, depts)
 	return
 }
 
@@ -71,7 +71,7 @@ func (service systemAuthDeptService) Detail(id uint) (res SystemAuthDeptResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, dept)
+	convert_util.Copy(&res, dept)
 	return
 }
 
@@ -87,7 +87,7 @@ func (service systemAuthDeptService) Add(addReq SystemAuthDeptAddReq) (e error) 
 		}
 	}
 	var dept system_model.SystemAuthDept
-	util.ConvertUtil.Copy(&dept, addReq)
+	convert_util.Copy(&dept, addReq)
 	err := service.db.Create(&dept).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -111,7 +111,7 @@ func (service systemAuthDeptService) Edit(editReq SystemAuthDeptEditReq) (e erro
 		return response.AssertArgumentError.SetMessage("上级部门不能是自己!")
 	}
 	// 更新
-	util.ConvertUtil.Copy(&dept, editReq)
+	convert_util.Copy(&dept, editReq)
 	err = service.db.Model(&dept).Select("*").Updates(dept).Error
 	e = response.CheckErr(err, "编辑失败")
 	return

@@ -5,12 +5,14 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	"gorm.io/gorm"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
+
+	"gorm.io/gorm"
 )
 
-var MonitorSlowService=NewMonitorSlowService()
+var MonitorSlowService = NewMonitorSlowService()
 var cacheUtil = util.CacheUtil{
 	Name: MonitorSlowService.Name,
 }
@@ -23,41 +25,40 @@ func NewMonitorSlowService() *monitorSlowService {
 	}
 }
 
-//monitorSlowService 监控-错误列服务实现类
+// monitorSlowService 监控-错误列服务实现类
 type monitorSlowService struct {
-	db *gorm.DB
+	db   *gorm.DB
 	Name string
 }
-
-
 
 // List 监控-错误列列表
 func (service monitorSlowService) GetModel(listReq MonitorSlowListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.MonitorSlow{})
-			if listReq.ProjectKey!= nil {
-				dbModel = dbModel.Where("project_key = ?", *listReq.ProjectKey)
-			}
-			if listReq.ClientId!= nil {
-				dbModel = dbModel.Where("client_id = ?", *listReq.ClientId)
-			}
-			if listReq.UserId!= nil {
-				dbModel = dbModel.Where("user_id = ?", *listReq.UserId)
-			}
-			if listReq.Path!= nil {
-				dbModel = dbModel.Where("path = ?", *listReq.Path)
-			}
-			if listReq.Time!= nil {
-				dbModel = dbModel.Where("time = ?", *listReq.Time)
-			}
-			if listReq.CreateTimeStart!= nil {
-				dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart)
-			}
-			if listReq.CreateTimeEnd!= nil {
-				dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd)
-			}
+	if listReq.ProjectKey != nil {
+		dbModel = dbModel.Where("project_key = ?", *listReq.ProjectKey)
+	}
+	if listReq.ClientId != nil {
+		dbModel = dbModel.Where("client_id = ?", *listReq.ClientId)
+	}
+	if listReq.UserId != nil {
+		dbModel = dbModel.Where("user_id = ?", *listReq.UserId)
+	}
+	if listReq.Path != nil {
+		dbModel = dbModel.Where("path = ?", *listReq.Path)
+	}
+	if listReq.Time != nil {
+		dbModel = dbModel.Where("time = ?", *listReq.Time)
+	}
+	if listReq.CreateTimeStart != nil {
+		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart)
+	}
+	if listReq.CreateTimeEnd != nil {
+		dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd)
+	}
 	return dbModel
 }
+
 // List 监控-错误列列表
 func (service monitorSlowService) List(page request.PageReq, listReq MonitorSlowListReq) (res response.PageResp, e error) {
 	// 分页信息
@@ -77,7 +78,7 @@ func (service monitorSlowService) List(page request.PageReq, listReq MonitorSlow
 		return
 	}
 	result := []MonitorSlowResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -85,6 +86,7 @@ func (service monitorSlowService) List(page request.PageReq, listReq MonitorSlow
 		Lists:    result,
 	}, nil
 }
+
 // ListAll 监控-错误列列表
 func (service monitorSlowService) ListAll(listReq MonitorSlowListReq) (res []MonitorSlowResp, e error) {
 	dbModel := service.GetModel(listReq)
@@ -95,7 +97,7 @@ func (service monitorSlowService) ListAll(listReq MonitorSlowListReq) (res []Mon
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, modelList)
+	convert_util.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -114,18 +116,18 @@ func (service monitorSlowService) Detail(Id int) (res MonitorSlowResp, e error) 
 		cacheUtil.SetCache(obj.Id, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
 // Add 监控-错误列新增
-func (service monitorSlowService) Add(addReq MonitorSlowAddReq) (createId int,e error) {
+func (service monitorSlowService) Add(addReq MonitorSlowAddReq) (createId int, e error) {
 	var obj model.MonitorSlow
-	util.ConvertUtil.StructToStruct(addReq,&obj)
+	convert_util.StructToStruct(addReq, &obj)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
-		return 0,e
+		return 0, e
 	}
 	cacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
@@ -143,7 +145,7 @@ func (service monitorSlowService) Edit(editReq MonitorSlowEditReq) (e error) {
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&obj, editReq)
+	convert_util.Copy(&obj, editReq)
 
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
@@ -165,9 +167,9 @@ func (service monitorSlowService) Del(Id int) (e error) {
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {
 		return
 	}
-    // 删除
-    err = service.db.Delete(&obj).Error
-    e = response.CheckErr(err, "删除失败")
+	// 删除
+	err = service.db.Delete(&obj).Error
+	e = response.CheckErr(err, "删除失败")
 	cacheUtil.RemoveCache(obj.Id)
 	return
 }
@@ -192,7 +194,7 @@ func (service monitorSlowService) GetExcelCol() []excel2.Col {
 		{Name: "用户id", Key: "UserId", Width: 15},
 		{Name: "URL地址", Key: "Path", Width: 15},
 		{Name: "时间", Key: "Time", Width: 15},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime },
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols
@@ -210,14 +212,14 @@ func (service monitorSlowService) ExportFile(listReq MonitorSlowListReq) (res []
 		return
 	}
 	result := []MonitorSlowResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service monitorSlowService) ImportFile(importReq []MonitorSlowResp) (e error) {
 	var importData []model.MonitorSlow
-	util.ConvertUtil.Copy(&importData, importReq)
+	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

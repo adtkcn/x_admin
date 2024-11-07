@@ -13,6 +13,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model/system_model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
@@ -78,7 +79,7 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res SystemAuthAdminSe
 		auths = append(auths, "*")
 	}
 	var admin SystemAuthAdminSelfOneResp
-	util.ConvertUtil.Copy(&admin, sysAdmin)
+	convert_util.Copy(&admin, sysAdmin)
 	admin.Dept = strconv.FormatUint(uint64(sysAdmin.DeptId), 10)
 	admin.Avatar = util.UrlUtil.ToAbsoluteUrl(sysAdmin.Avatar)
 	return SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
@@ -151,7 +152,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq SystemAuthAdminListReq
 // 导入
 func (adminSrv systemAuthAdminService) ImportFile(importReq []SystemAuthAdminResp) (e error) {
 	var sysAdmin []system_model.SystemAuthAdmin
-	util.ConvertUtil.Copy(&sysAdmin, importReq)
+	convert_util.Copy(&sysAdmin, importReq)
 	err := adminSrv.db.Create(&sysAdmin).Error
 	e = response.CheckErr(err, "添加失败")
 	return e
@@ -254,7 +255,7 @@ func (adminSrv systemAuthAdminService) Detail(id uint) (res SystemAuthAdminResp,
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, sysAdmin)
+	convert_util.Copy(&res, sysAdmin)
 	res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 	if res.Dept == "" {
 		res.Dept = strconv.FormatUint(uint64(res.DeptId), 10)
@@ -295,7 +296,7 @@ func (adminSrv systemAuthAdminService) Add(addReq SystemAuthAdminAddReq) (e erro
 		return response.Failed.SetMessage("密码格式不正确")
 	}
 	salt := util.ToolsUtil.RandomString(5)
-	util.ConvertUtil.Copy(&sysAdmin, addReq)
+	convert_util.Copy(&sysAdmin, addReq)
 	sysAdmin.Role = strconv.FormatUint(uint64(addReq.Role), 10)
 	sysAdmin.Salt = salt
 	sysAdmin.Password = util.ToolsUtil.MakeMd5(strings.Trim(addReq.Password, " ") + salt)

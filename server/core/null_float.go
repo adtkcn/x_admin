@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"strconv"
-	"x_admin/util/convert"
+	"x_admin/util/convert_util"
 )
 
 // Float类型别名，支持前端传递null，float64, string类型
@@ -46,7 +46,7 @@ func DecodeFloat(value any) (any, error) {
 func (f *NullFloat) Scan(value interface{}) error {
 	f.Valid = false
 
-	result, err := convert.ConvertUtil.ToFloat64(value)
+	result, err := convert_util.ToFloat64(value)
 	if err != nil {
 		return err
 	}

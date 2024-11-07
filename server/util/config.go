@@ -9,7 +9,7 @@ import (
 
 var ConfigUtil = configUtil{}
 
-// convertUtil 数据库配置操作工具
+// 数据库配置操作工具
 type configUtil struct{}
 
 // Get 根据类型和名称获取配置字典

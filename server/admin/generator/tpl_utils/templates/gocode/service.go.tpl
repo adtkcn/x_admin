@@ -7,6 +7,7 @@ import (
 	"x_admin/model"
 	"gorm.io/gorm"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 )
 
@@ -82,7 +83,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 		return
 	}
 	result := []{{{ toUpperCamelCase .EntityName }}}Resp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -100,7 +101,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ toUppe
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, modelList)
+	convert_util.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -125,14 +126,14 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 		cacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
 // Add {{{ .FunctionName }}}新增
 func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ toUpperCamelCase .EntityName }}}AddReq) (createId int,e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
-	util.ConvertUtil.StructToStruct(addReq,&obj)
+	convert_util.StructToStruct(addReq,&obj)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
@@ -154,7 +155,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ toUpperCa
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&obj, editReq)
+	convert_util.Copy(&obj, editReq)
 
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
@@ -235,14 +236,14 @@ func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ toU
 		return
 	}
 	result := []{{{ toUpperCamelCase .EntityName }}}Resp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service {{{ toCamelCase .EntityName }}}Service) ImportFile(importReq []{{{ toUpperCamelCase .EntityName }}}Resp) (e error) {
 	var importData []model.{{{ toUpperCamelCase .EntityName }}}
-	util.ConvertUtil.Copy(&importData, importReq)
+	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e
