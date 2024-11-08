@@ -65,7 +65,7 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div class="text-right">
-                <el-button
+                <!-- <el-button
                     v-perms="['admin:monitor_client:add']"
                     type="primary"
                     @click="handleAdd()"
@@ -100,7 +100,7 @@
                         <icon name="el-icon-Download" />
                     </template>
                     导出
-                </el-button>
+                </el-button> -->
                 <el-button
                     v-perms="['admin:monitor_client:delBatch']"
                     type="danger"

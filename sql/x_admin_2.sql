@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 25/10/2024 18:35:03
+ Date: 08/11/2024 17:50:01
 */
 
 SET NAMES utf8mb4;
@@ -229,11 +229,12 @@ CREATE TABLE `x_flow_apply`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '申请流程' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '申请流程' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_flow_apply
 -- ----------------------------
+INSERT INTO `x_flow_apply` VALUES (1, 1, 1, 'admin', 'a', 1, 'a', '{\"widgetList\":[{\"key\":33700,\"type\":\"input\",\"icon\":\"text-field\",\"formItemFlag\":true,\"options\":{\"name\":\"input97761\",\"label\":\"input\",\"labelAlign\":\"\",\"type\":\"text\",\"defaultValue\":\"\",\"placeholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"clearable\":true,\"showPassword\":false,\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":\"\",\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"minLength\":null,\"maxLength\":null,\"showWordLimit\":false,\"prefixIcon\":\"\",\"suffixIcon\":\"\",\"appendButton\":false,\"appendButtonDisabled\":false,\"buttonIcon\":\"custom-search\",\"onCreated\":\"\",\"onMounted\":\"\",\"onInput\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\",\"onAppendButtonClick\":\"\"},\"id\":\"input97761\"}],\"formConfig\":{\"modelName\":\"formData\",\"refName\":\"vForm\",\"rulesName\":\"rules\",\"labelWidth\":80,\"labelPosition\":\"left\",\"size\":\"\",\"labelAlign\":\"label-left-align\",\"cssCode\":\"\",\"customClass\":\"\",\"functions\":\"\",\"layoutType\":\"PC\",\"jsonVersion\":3,\"onFormCreated\":\"\",\"onFormMounted\":\"\",\"onFormDataChange\":\"\"}}', '{\"nodes\":[{\"id\":\"Event_a677124\",\"type\":\"bpmn:startEvent\",\"x\":300,\"y\":100,\"properties\":{\"width\":36,\"height\":36},\"zIndex\":1013,\"text\":{\"x\":300,\"y\":140,\"value\":\"开始\"}},{\"id\":\"Activity_2c996a7\",\"type\":\"bpmn:userTask\",\"x\":500,\"y\":120,\"properties\":{\"width\":100,\"height\":80},\"zIndex\":1015,\"text\":{\"x\":500,\"y\":120,\"value\":\"审批\"}},{\"id\":\"Event_129de4e\",\"type\":\"bpmn:endEvent\",\"x\":730,\"y\":130,\"properties\":{\"width\":36,\"height\":36},\"zIndex\":1012,\"text\":{\"x\":730,\"y\":170,\"value\":\"结束\"}}],\"edges\":[{\"id\":\"2b28919f-30fe-4feb-9db9-0863359f87ed\",\"type\":\"pro-polyline\",\"properties\":{},\"sourceNodeId\":\"Event_a677124\",\"targetNodeId\":\"Activity_2c996a7\",\"startPoint\":{\"x\":318,\"y\":100},\"endPoint\":{\"x\":450,\"y\":120},\"zIndex\":1014,\"pointsList\":[{\"x\":318,\"y\":100},{\"x\":384,\"y\":100},{\"x\":384,\"y\":120},{\"x\":450,\"y\":120}]},{\"id\":\"dd95a2cd-2ecc-4e03-9d86-932673dd677b\",\"type\":\"pro-polyline\",\"properties\":{},\"sourceNodeId\":\"Activity_2c996a7\",\"targetNodeId\":\"Event_129de4e\",\"startPoint\":{\"x\":550,\"y\":120},\"endPoint\":{\"x\":712,\"y\":130},\"zIndex\":1016,\"pointsList\":[{\"x\":550,\"y\":120},{\"x\":631,\"y\":120},{\"x\":631,\"y\":130},{\"x\":712,\"y\":130}]}]}', '[{\"id\":\"Event_a677124\",\"pid\":0,\"label\":\"开始\",\"type\":\"bpmn:startEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_2c996a7\",\"pid\":\"Event_a677124\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]}]},{\"id\":\"Activity_2c996a7\",\"pid\":\"Event_a677124\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]},{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null},{\"id\":\"Activity_2c996a7\",\"pid\":0,\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]},{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null},{\"id\":\"Event_129de4e\",\"pid\":0,\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]', '', 1, 0, '2024-11-07 15:01:53', '2024-11-07 15:01:53', NULL);
 
 -- ----------------------------
 -- Table structure for x_flow_history
@@ -259,7 +260,7 @@ CREATE TABLE `x_flow_history`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `apply_id`(`apply_id`) USING BTREE,
   INDEX `approver_id`(`approver_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程历史' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程历史' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_flow_history
@@ -282,11 +283,12 @@ CREATE TABLE `x_flow_template`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '流程模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_flow_template
 -- ----------------------------
+INSERT INTO `x_flow_template` VALUES (1, 'a', 1, 'a', '{\"widgetList\":[{\"key\":33700,\"type\":\"input\",\"icon\":\"text-field\",\"formItemFlag\":true,\"options\":{\"name\":\"input97761\",\"label\":\"input\",\"labelAlign\":\"\",\"type\":\"text\",\"defaultValue\":\"\",\"placeholder\":\"\",\"columnWidth\":\"200px\",\"size\":\"\",\"labelWidth\":null,\"labelHidden\":false,\"readonly\":false,\"disabled\":false,\"hidden\":false,\"clearable\":true,\"showPassword\":false,\"required\":false,\"requiredHint\":\"\",\"validation\":\"\",\"validationHint\":\"\",\"customClass\":\"\",\"labelIconClass\":null,\"labelIconPosition\":\"rear\",\"labelTooltip\":null,\"minLength\":null,\"maxLength\":null,\"showWordLimit\":false,\"prefixIcon\":\"\",\"suffixIcon\":\"\",\"appendButton\":false,\"appendButtonDisabled\":false,\"buttonIcon\":\"custom-search\",\"onCreated\":\"\",\"onMounted\":\"\",\"onInput\":\"\",\"onChange\":\"\",\"onFocus\":\"\",\"onBlur\":\"\",\"onValidate\":\"\",\"onAppendButtonClick\":\"\"},\"id\":\"input97761\"}],\"formConfig\":{\"modelName\":\"formData\",\"refName\":\"vForm\",\"rulesName\":\"rules\",\"labelWidth\":80,\"labelPosition\":\"left\",\"size\":\"\",\"labelAlign\":\"label-left-align\",\"cssCode\":\"\",\"customClass\":\"\",\"functions\":\"\",\"layoutType\":\"PC\",\"jsonVersion\":3,\"onFormCreated\":\"\",\"onFormMounted\":\"\",\"onFormDataChange\":\"\"}}', '{\"nodes\":[{\"id\":\"Event_a677124\",\"type\":\"bpmn:startEvent\",\"x\":300,\"y\":100,\"properties\":{\"width\":36,\"height\":36},\"zIndex\":1013,\"text\":{\"x\":300,\"y\":140,\"value\":\"开始\"}},{\"id\":\"Activity_2c996a7\",\"type\":\"bpmn:userTask\",\"x\":500,\"y\":120,\"properties\":{\"width\":100,\"height\":80},\"zIndex\":1015,\"text\":{\"x\":500,\"y\":120,\"value\":\"审批\"}},{\"id\":\"Event_129de4e\",\"type\":\"bpmn:endEvent\",\"x\":730,\"y\":130,\"properties\":{\"width\":36,\"height\":36},\"zIndex\":1012,\"text\":{\"x\":730,\"y\":170,\"value\":\"结束\"}}],\"edges\":[{\"id\":\"2b28919f-30fe-4feb-9db9-0863359f87ed\",\"type\":\"pro-polyline\",\"properties\":{},\"sourceNodeId\":\"Event_a677124\",\"targetNodeId\":\"Activity_2c996a7\",\"startPoint\":{\"x\":318,\"y\":100},\"endPoint\":{\"x\":450,\"y\":120},\"zIndex\":1014,\"pointsList\":[{\"x\":318,\"y\":100},{\"x\":384,\"y\":100},{\"x\":384,\"y\":120},{\"x\":450,\"y\":120}]},{\"id\":\"dd95a2cd-2ecc-4e03-9d86-932673dd677b\",\"type\":\"pro-polyline\",\"properties\":{},\"sourceNodeId\":\"Activity_2c996a7\",\"targetNodeId\":\"Event_129de4e\",\"startPoint\":{\"x\":550,\"y\":120},\"endPoint\":{\"x\":712,\"y\":130},\"zIndex\":1016,\"pointsList\":[{\"x\":550,\"y\":120},{\"x\":631,\"y\":120},{\"x\":631,\"y\":130},{\"x\":712,\"y\":130}]}]}', '[{\"id\":\"Event_a677124\",\"pid\":0,\"label\":\"开始\",\"type\":\"bpmn:startEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Activity_2c996a7\",\"pid\":\"Event_a677124\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]}]},{\"id\":\"Activity_2c996a7\",\"pid\":\"Event_a677124\",\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]},{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null},{\"id\":\"Activity_2c996a7\",\"pid\":0,\"label\":\"审批\",\"type\":\"bpmn:userTask\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":[{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]},{\"id\":\"Event_129de4e\",\"pid\":\"Activity_2c996a7\",\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null},{\"id\":\"Event_129de4e\",\"pid\":0,\"label\":\"结束\",\"type\":\"bpmn:endEvent\",\"userType\":0,\"userId\":0,\"deptId\":0,\"postId\":0,\"children\":null}]', 0, '2024-11-07 15:01:46', '2024-11-07 15:01:46', NULL);
 
 -- ----------------------------
 -- Table structure for x_gen_table
@@ -310,11 +312,16 @@ CREATE TABLE `x_gen_table`  (
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_gen_table
 -- ----------------------------
+INSERT INTO `x_gen_table` VALUES (1, 'x_monitor_client', '监控-客户端信息', '', '', '', 'monitorClient', 'monitor_client', '监控-客户端信息', '', '', '', 'crud', '', '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table` VALUES (2, 'x_album', '相册管理表', '', '', '', 'album', 'album', '相册管理', '', '', '', 'crud', '', '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table` VALUES (3, 'x_album_cate', '相册分类表', '', '', '', 'albumCate', 'album_cate', '相册分类', '', '', '', 'crud', '', '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table` VALUES (4, 'x_monitor_slow', '监控-错误列表', '', '', '', 'monitorSlow', 'monitor_slow', '监控-错误列', '', '', '', 'crud', '', '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table` VALUES (5, 'x_notice_setting', '消息通知设置表', '', '', '', 'noticeSetting', 'notice_setting', '消息通知设置', '', '', '', 'crud', '', '2024-11-08 14:12:22', '2024-11-08 14:12:22');
 
 -- ----------------------------
 -- Table structure for x_gen_table_column
@@ -344,11 +351,68 @@ CREATE TABLE `x_gen_table_column`  (
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 228 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成字段表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '代码生成字段表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_gen_table_column
 -- ----------------------------
+INSERT INTO `x_gen_table_column` VALUES (1, 1, 'id', 'uuid', '11', 'int', 'int', 'id', 1, 1, 1, 0, 1, 0, 0, '=', 'number', '', '', 1, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (2, 1, 'project_key', '项目key', '128', 'varchar', 'string', 'project_key', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 2, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (3, 1, 'client_id', 'sdk生成的客户端id', '128', 'varchar', 'string', 'client_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 3, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (4, 1, 'user_id', '用户id', '128', 'varchar', 'string', 'user_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 4, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (5, 1, 'os', '系统', '30', 'varchar', 'string', 'os', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 5, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (6, 1, 'browser', '浏览器', '30', 'varchar', 'string', 'browser', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 6, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (7, 1, 'country', '国家', '50', 'varchar', 'string', 'country', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 7, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (8, 1, 'province', '省份', '50', 'varchar', 'string', 'province', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 8, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (9, 1, 'city', '城市', '50', 'varchar', 'string', 'city', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 9, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (10, 1, 'operator', '电信运营商', '50', 'varchar', 'string', 'operator', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 10, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (11, 1, 'ip', 'ip', '50', 'varchar', 'string', 'ip', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 11, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (12, 1, 'width', '屏幕', '10', 'smallint', 'int', 'width', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 12, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (13, 1, 'height', '屏幕高度', '10', 'smallint', 'int', 'height', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 13, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (14, 1, 'ua', 'ua记录', '128', 'varchar', 'string', 'ua', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 14, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (15, 1, 'create_time', '创建时间', '0', 'datetime', 'core.NullTime', 'create_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 15, '2024-10-30 11:03:27', '2024-10-30 11:03:27');
+INSERT INTO `x_gen_table_column` VALUES (16, 2, 'id', '主键ID', '10', 'int', 'int', 'id', 1, 1, 1, 0, 1, 0, 0, '=', 'number', '', '', 1, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (17, 2, 'cid', '类目ID', '10', 'int', 'int', 'cid', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 2, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (18, 2, 'aid', '管理员ID', '10', 'int', 'int', 'aid', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 3, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (19, 2, 'uid', '用户ID', '10', 'int', 'int', 'uid', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 4, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (20, 2, 'type', '文件类型: [10=图片, 20=视频]', '2', 'tinyint', 'int', 'type', 0, 0, 1, 1, 1, 1, 1, '=', 'select', '', '', 5, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (21, 2, 'name', '文件名称', '100', 'varchar', 'string', 'name', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', '', 6, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (22, 2, 'uri', '文件路径', '200', 'varchar', 'string', 'uri', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 7, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (23, 2, 'ext', '文件扩展', '10', 'varchar', 'string', 'ext', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 8, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (24, 2, 'size', '文件大小', '10', 'int', 'int', 'size', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 9, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (25, 2, 'is_delete', '是否删除: 0=否, 1=是', '1', 'int', 'int', 'is_delete', 0, 0, 0, 0, 0, 0, 0, '=', 'number', '', '', 10, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (26, 2, 'create_time', '创建时间', '0', 'datetime', 'core.NullTime', 'create_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 11, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (27, 2, 'update_time', '更新时间', '0', 'datetime', 'core.NullTime', 'update_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 12, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (28, 2, 'delete_time', '删除时间', '0', 'datetime', 'core.NullTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', '', 13, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (29, 3, 'id', '主键ID', '10', 'int', 'int', 'id', 1, 1, 1, 0, 1, 0, 0, '=', 'number', '', '', 1, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (30, 3, 'pid', '父级ID', '10', 'int', 'int', 'pid', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 2, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (31, 3, 'type', '类型: [10=图片, 20=视频]', '2', 'tinyint', 'int', 'type', 0, 0, 1, 1, 1, 1, 1, '=', 'select', '', '', 3, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (32, 3, 'name', '分类名称', '32', 'varchar', 'string', 'name', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', '', 4, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (33, 3, 'is_delete', '是否删除: [0=否, 1=是]', '1', 'tinyint', 'int', 'is_delete', 0, 0, 0, 0, 0, 0, 0, '=', 'number', '', '', 5, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (34, 3, 'create_time', '创建时间', '0', 'datetime', 'core.NullTime', 'create_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 6, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (35, 3, 'update_time', '更新时间', '0', 'datetime', 'core.NullTime', 'update_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 7, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (36, 3, 'delete_time', '删除时间', '0', 'datetime', 'core.NullTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', '', 8, '2024-11-05 17:53:14', '2024-11-05 17:53:14');
+INSERT INTO `x_gen_table_column` VALUES (37, 4, 'id', '错误id', '11', 'int', 'int', 'id', 1, 1, 1, 0, 1, 0, 0, '=', 'number', '', '', 1, '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table_column` VALUES (38, 4, 'project_key', '项目key', '128', 'varchar', 'string', 'project_key', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 2, '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table_column` VALUES (39, 4, 'client_id', 'sdk生成的客户端id', '128', 'varchar', 'string', 'client_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 3, '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table_column` VALUES (40, 4, 'user_id', '用户id', '128', 'varchar', 'string', 'user_id', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 4, '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table_column` VALUES (41, 4, 'path', 'URL地址', '1000', 'varchar', 'string', 'path', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', '', 5, '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table_column` VALUES (42, 4, 'time', '时间', '0', 'float', 'float64', 'time', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 6, '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table_column` VALUES (43, 4, 'create_time', '创建时间', '0', 'datetime', 'core.NullTime', 'create_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 7, '2024-11-06 12:13:50', '2024-11-06 12:13:50');
+INSERT INTO `x_gen_table_column` VALUES (44, 5, 'id', '', '11', 'int', 'int', 'id', 1, 1, 1, 0, 1, 0, 0, '=', 'number', '', '', 1, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (45, 5, 'scene', '场景编号', '10', 'int', 'int', 'scene', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 2, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (46, 5, 'name', '场景名称', '100', 'varchar', 'string', 'name', 0, 0, 1, 1, 1, 1, 1, 'LIKE', 'input', '', '', 3, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (47, 5, 'remarks', '场景描述', '200', 'varchar', 'string', 'remarks', 0, 0, 1, 1, 1, 1, 1, '=', 'input', '', '', 4, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (48, 5, 'recipient', '接收人员: [1=用户, 2=平台]', '1', 'tinyint', 'int', 'recipient', 0, 0, 1, 1, 1, 1, 1, '=', 'number', '', '', 5, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (49, 5, 'type', '通知类型: [1=业务, 2=验证]', '1', 'tinyint', 'int', 'type', 0, 0, 1, 1, 1, 1, 1, '=', 'select', '', '', 6, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (50, 5, 'system_notice', '系统的通知设置', '0', 'text', 'string', 'system_notice', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', '', 7, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (51, 5, 'sms_notice', '短信的通知设置', '0', 'text', 'string', 'sms_notice', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', '', 8, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (52, 5, 'oa_notice', '公众号通知设置', '0', 'text', 'string', 'oa_notice', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', '', 9, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (53, 5, 'mnp_notice', '小程序通知设置', '0', 'text', 'string', 'mnp_notice', 0, 0, 1, 1, 1, 1, 1, '=', 'textarea', '', '', 10, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (54, 5, 'is_delete', '是否删除', '1', 'tinyint', 'int', 'is_delete', 0, 0, 0, 0, 0, 0, 0, '=', 'number', '', '', 11, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (55, 5, 'create_time', '创建时间', '0', 'datetime', 'core.NullTime', 'create_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 12, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (56, 5, 'update_time', '更新时间', '0', 'datetime', 'core.NullTime', 'update_time', 0, 0, 0, 0, 0, 1, 1, '=', 'datetime', '', '', 13, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
+INSERT INTO `x_gen_table_column` VALUES (57, 5, 'delete_time', '删除时间', '0', 'datetime', 'core.NullTime', 'delete_time', 0, 0, 0, 0, 0, 0, 0, '=', 'datetime', '', '', 14, '2024-11-08 14:12:22', '2024-11-08 14:12:22');
 
 -- ----------------------------
 -- Table structure for x_monitor_client
@@ -361,7 +425,11 @@ CREATE TABLE `x_monitor_client`  (
   `user_id` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户id',
   `os` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统',
   `browser` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '浏览器',
+  `country` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '国家',
+  `province` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '省份',
   `city` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '城市',
+  `operator` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '电信运营商',
+  `ip` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'ip',
   `width` smallint(10) UNSIGNED NULL DEFAULT 0 COMMENT '屏幕',
   `height` smallint(10) UNSIGNED NULL DEFAULT 0 COMMENT '屏幕高度',
   `ua` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'ua记录',
@@ -370,13 +438,58 @@ CREATE TABLE `x_monitor_client`  (
   INDEX `project_key`(`project_key`) USING BTREE,
   INDEX `user_id`(`user_id`) USING BTREE,
   INDEX `client_id`(`client_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-客户端信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 84 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-客户端信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_monitor_client
 -- ----------------------------
-INSERT INTO `x_monitor_client` VALUES (1, 'e19e3be20de94f49b68fafb4c30668bc', '1', '11', '1', '1', '1', 1, 1, '1', '2024-09-25 16:16:03');
-INSERT INTO `x_monitor_client` VALUES (2, '6217ea4ea0044014831bd25121a3113c', '2', '2', '2', '2', '2', 2, 2, '2', '2024-10-11 12:17:26');
+INSERT INTO `x_monitor_client` VALUES (37, 'e19e3be20de94f49b68fafb4c30668bc', '81949910-96ae-11ef-9c27-e79173e89fc1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-10-31 12:55:58');
+INSERT INTO `x_monitor_client` VALUES (38, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-04 19:05:47');
+INSERT INTO `x_monitor_client` VALUES (39, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 994, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 12:12:19');
+INSERT INTO `x_monitor_client` VALUES (40, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 715, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 14:36:42');
+INSERT INTO `x_monitor_client` VALUES (41, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 715, 7270, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:07:15');
+INSERT INTO `x_monitor_client` VALUES (42, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 715, 72, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:08:08');
+INSERT INTO `x_monitor_client` VALUES (43, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 715, 782, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:08:54');
+INSERT INTO `x_monitor_client` VALUES (44, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 715, 7822, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:10:25');
+INSERT INTO `x_monitor_client` VALUES (45, 'e19e3be20de94f49b68fafb4c30668bc', '81949910-96ae-11ef-9c27-e79173e89fc1', '10', 'Windows', 'Edge', '', '', '北京', '', '', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-10-31 12:55:58');
+INSERT INTO `x_monitor_client` VALUES (46, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '北京', '', '', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-04 19:05:47');
+INSERT INTO `x_monitor_client` VALUES (47, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '天津', '', '', 994, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 12:12:19');
+INSERT INTO `x_monitor_client` VALUES (48, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '上海', '', '', 715, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 14:36:42');
+INSERT INTO `x_monitor_client` VALUES (49, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '', 715, 7270, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:07:15');
+INSERT INTO `x_monitor_client` VALUES (50, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '', 715, 72, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:08:08');
+INSERT INTO `x_monitor_client` VALUES (51, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '', 715, 782, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:08:54');
+INSERT INTO `x_monitor_client` VALUES (52, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '', 715, 7822, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 15:10:25');
+INSERT INTO `x_monitor_client` VALUES (53, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 17:00:35');
+INSERT INTO `x_monitor_client` VALUES (54, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 934, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 17:29:02');
+INSERT INTO `x_monitor_client` VALUES (55, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 17:51:13');
+INSERT INTO `x_monitor_client` VALUES (56, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 934, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 19:13:29');
+INSERT INTO `x_monitor_client` VALUES (57, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 19:20:40');
+INSERT INTO `x_monitor_client` VALUES (58, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 934, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 19:26:27');
+INSERT INTO `x_monitor_client` VALUES (59, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 19:27:11');
+INSERT INTO `x_monitor_client` VALUES (60, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '10', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 934, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 23:37:45');
+INSERT INTO `x_monitor_client` VALUES (61, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 934, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-05 23:40:30');
+INSERT INTO `x_monitor_client` VALUES (62, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-06 11:13:42');
+INSERT INTO `x_monitor_client` VALUES (63, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1076, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-06 11:45:21');
+INSERT INTO `x_monitor_client` VALUES (64, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 854, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-06 11:46:20');
+INSERT INTO `x_monitor_client` VALUES (65, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 606, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-06 11:48:05');
+INSERT INTO `x_monitor_client` VALUES (66, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-06 11:57:55');
+INSERT INTO `x_monitor_client` VALUES (67, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 704, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-06 12:39:47');
+INSERT INTO `x_monitor_client` VALUES (68, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-06 12:41:11');
+INSERT INTO `x_monitor_client` VALUES (69, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1011, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:31:35');
+INSERT INTO `x_monitor_client` VALUES (70, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1059, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:32:59');
+INSERT INTO `x_monitor_client` VALUES (71, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 667, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:34:46');
+INSERT INTO `x_monitor_client` VALUES (72, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:49:47');
+INSERT INTO `x_monitor_client` VALUES (73, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:52:00');
+INSERT INTO `x_monitor_client` VALUES (74, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:52:00');
+INSERT INTO `x_monitor_client` VALUES (75, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:52:00');
+INSERT INTO `x_monitor_client` VALUES (76, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 16:52:10');
+INSERT INTO `x_monitor_client` VALUES (77, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 903, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 17:15:07');
+INSERT INTO `x_monitor_client` VALUES (78, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 332, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 17:24:01');
+INSERT INTO `x_monitor_client` VALUES (79, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 362, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 18:26:57');
+INSERT INTO `x_monitor_client` VALUES (80, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 362, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 18:26:57');
+INSERT INTO `x_monitor_client` VALUES (81, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-07 18:33:15');
+INSERT INTO `x_monitor_client` VALUES (82, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 362, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-08 14:05:06');
+INSERT INTO `x_monitor_client` VALUES (83, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'Windows', 'Edge', '', '', '', '', '127.0.0.1', 1536, 727, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0', '2024-11-08 14:18:55');
 
 -- ----------------------------
 -- Table structure for x_monitor_error
@@ -388,18 +501,63 @@ CREATE TABLE `x_monitor_error`  (
   `md5` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'md5',
   `event_type` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '事件类型',
   `path` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'URL地址',
-  `message` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '错误消息',
+  `message` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '错误消息',
   `stack` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '错误堆栈',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `project_key`(`project_key`, `md5`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-错误列表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 155 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-错误列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_monitor_error
 -- ----------------------------
-INSERT INTO `x_monitor_error` VALUES (39, '2a01a60efed14d6eab279ba5c664ceac', 'd5d9182bdad80a3397f248a2d820958c', '1', '1', '', '', '2024-09-25 18:33:17');
-INSERT INTO `x_monitor_error` VALUES (40, '2a01a60efed14d6eab279ba5c664ceac', '4f42e2b532ee0f7924d43f63caaa26d2', '1', '1', '1', '1', '2024-09-25 18:35:33');
+INSERT INTO `x_monitor_error` VALUES (93, 'e19e3be20de94f49b68fafb4c30668bc', '02fd9c50b0dfcf319577a9e47e693b18', 'error', 'http://localhost:5174/dev_tools/error/test', 'Uncaught Error: 主动抛error', 'Error: 主动抛error\n    at error (http://localhost:5174/src/views/error/test.vue?t=1730367699656:24:13)\n    at callWithErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2477:19)\n    at callWithAsyncErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2484:17)', '2024-10-31 17:44:37');
+INSERT INTO `x_monitor_error` VALUES (94, 'e19e3be20de94f49b68fafb4c30668bc', 'aefe6052f362cff581c583a0b1220210', 'error', 'http://localhost:5174/dev_tools/error/test', 'Uncaught Error: 主动抛error', 'Error: 主动抛error\n    at error (http://localhost:5174/src/views/error/test.vue?t=1730718341248:23:13)\n    at callWithErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2477:19)\n    at callWithAsyncErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2484:17)', '2024-11-04 19:06:07');
+INSERT INTO `x_monitor_error` VALUES (95, 'e19e3be20de94f49b68fafb4c30668bc', 'd92f2036acfb736fb91b46419bb350ae', 'error', 'http://localhost:5174/dev_tools/error/test', 'Uncaught Error: 主动抛error', 'Error: 主动抛error\n    at error (http://localhost:5174/src/views/error/test.vue?t=1730778883476:10:13)\n    at callWithErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2477:19)\n    at callWithAsyncErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2484:17)', '2024-11-05 14:07:02');
+INSERT INTO `x_monitor_error` VALUES (96, 'e19e3be20de94f49b68fafb4c30668bc', '30d04ccb00905006fcc3308541250c67', 'error', 'http://localhost:5174/dev_tools/error/test', 'Uncaught Error: 主动抛error', 'Error: 主动抛error\n    at error (http://localhost:5174/src/views/error/test.vue?t=1730786719985:10:13)\n    at callWithErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2477:19)\n    at callWithAsyncErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2484:17)', '2024-11-05 14:48:05');
+INSERT INTO `x_monitor_error` VALUES (97, 'e19e3be20de94f49b68fafb4c30668bc', 'a5c695f6bcbee6ed4fc15f438dbe750b', 'error', 'http://localhost:5174/monitor/project/index', 'ResizeObserver loop completed with undelivered notifications.', '', '2024-11-05 17:27:34');
+INSERT INTO `x_monitor_error` VALUES (113, 'e19e3be20de94f49b68fafb4c30668bc', '5dbe27c63610e9fc315a047041bab6a7', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：0ms', '', '2024-11-05 19:25:09');
+INSERT INTO `x_monitor_error` VALUES (114, 'e19e3be20de94f49b68fafb4c30668bc', '987445c92a18acfab2493eeb881631a0', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：559.9000000357628ms', '', '2024-11-05 19:26:00');
+INSERT INTO `x_monitor_error` VALUES (115, 'e19e3be20de94f49b68fafb4c30668bc', '16bd6d91c4a212d2cfac903514da2357', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：368.19999998807907ms', '', '2024-11-05 19:26:11');
+INSERT INTO `x_monitor_error` VALUES (116, 'e19e3be20de94f49b68fafb4c30668bc', '1b2553f51f9ab7791e7162219ee2568f', 'error', 'http://localhost:5174/monitor/error/index', 'ResizeObserver loop completed with undelivered notifications.', '', '2024-11-05 19:26:21');
+INSERT INTO `x_monitor_error` VALUES (117, 'e19e3be20de94f49b68fafb4c30668bc', '6275faaaa0d45dda8fad3e60b6156cee', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：2393.300000011921ms', '', '2024-11-05 19:26:37');
+INSERT INTO `x_monitor_error` VALUES (118, 'e19e3be20de94f49b68fafb4c30668bc', '822ea1ded1482eb8ca8d798b44c56cc7', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：547.1999999880791ms', '', '2024-11-05 19:27:25');
+INSERT INTO `x_monitor_error` VALUES (119, 'e19e3be20de94f49b68fafb4c30668bc', 'b51eb156afdee7850a0376e510ce5ead', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：635.5ms', '', '2024-11-05 19:27:25');
+INSERT INTO `x_monitor_error` VALUES (120, 'e19e3be20de94f49b68fafb4c30668bc', 'c1ce04e9775a09f4298f556bf11179f2', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：438.10000002384186ms', '', '2024-11-05 19:27:43');
+INSERT INTO `x_monitor_error` VALUES (121, 'e19e3be20de94f49b68fafb4c30668bc', 'cb462e986c3872255ee4ef536fb93c32', 'whiteScreen', 'http://localhost:5174/monitor/error/index', '白屏时间：444.39999997615814ms', '', '2024-11-05 19:27:43');
+INSERT INTO `x_monitor_error` VALUES (122, 'e19e3be20de94f49b68fafb4c30668bc', 'bdbb8d8362d7c910e13fe2b5ed365824', 'onloadTime', 'http://localhost:5174/monitor/error/index', '白屏时间：435.7000000476837ms', '', '2024-11-05 19:28:02');
+INSERT INTO `x_monitor_error` VALUES (123, 'e19e3be20de94f49b68fafb4c30668bc', '97d0da90fade3a5b55063c5cc830a12f', 'onloadTime', 'http://localhost:5174/monitor/error/index', 'onload时间：540.8999999761581ms', '', '2024-11-05 19:28:28');
+INSERT INTO `x_monitor_error` VALUES (124, 'e19e3be20de94f49b68fafb4c30668bc', '287a31dc5083d1f028b77c3510188780', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：456.60000002384186ms', '', '2024-11-05 19:28:52');
+INSERT INTO `x_monitor_error` VALUES (125, 'e19e3be20de94f49b68fafb4c30668bc', '98592ff4989ccaf00a1bc30dc49dd519', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：500.0999999642372ms', '', '2024-11-05 19:29:55');
+INSERT INTO `x_monitor_error` VALUES (126, 'e19e3be20de94f49b68fafb4c30668bc', 'b353c4513002e844462d28ba134c06dc', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：460.7ms', '', '2024-11-05 19:30:21');
+INSERT INTO `x_monitor_error` VALUES (127, 'e19e3be20de94f49b68fafb4c30668bc', '7aaeeb95968a3dcaed20f9a3bf2af9df', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：651.8ms', '', '2024-11-05 22:29:58');
+INSERT INTO `x_monitor_error` VALUES (128, 'e19e3be20de94f49b68fafb4c30668bc', '34693ff0ad3c53cb32ce1063a99e0aaa', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：940.8ms', '', '2024-11-05 22:31:17');
+INSERT INTO `x_monitor_error` VALUES (129, 'e19e3be20de94f49b68fafb4c30668bc', 'e22326fc31689e7419add91c837c2218', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：1064.3ms', '', '2024-11-05 22:31:51');
+INSERT INTO `x_monitor_error` VALUES (130, 'e19e3be20de94f49b68fafb4c30668bc', 'f32c8682bc033e759f6047ccf7d20c4b', 'onloadTime', 'http://localhost:5174/workbench', '时间：3101.6ms', '', '2024-11-05 23:40:46');
+INSERT INTO `x_monitor_error` VALUES (131, 'e19e3be20de94f49b68fafb4c30668bc', 'afcf8d7d254a40d772a24a380c3775df', 'onloadTime', 'http://localhost:5174/', '时间：10721.7ms', '', '2024-11-06 11:13:52');
+INSERT INTO `x_monitor_error` VALUES (132, 'e19e3be20de94f49b68fafb4c30668bc', 'b4f43b1db77fcb30def44f9a7893ebcc', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：8199.9ms', '', '2024-11-06 11:46:49');
+INSERT INTO `x_monitor_error` VALUES (133, 'e19e3be20de94f49b68fafb4c30668bc', '0c3f557b31e895fd3ded693cb0ddd847', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：8441.3ms', '', '2024-11-06 11:47:34');
+INSERT INTO `x_monitor_error` VALUES (134, 'e19e3be20de94f49b68fafb4c30668bc', '99e4b9a6c4f89b036ca5d9bfa7b8ce40', 'onloadTime', 'http://localhost:5174/monitor/error/index', '时间：8188ms', '', '2024-11-06 11:48:15');
+INSERT INTO `x_monitor_error` VALUES (135, 'e19e3be20de94f49b68fafb4c30668bc', 'd63648211078130f9e9f558158e86192', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', 'nextTick is not defined', 'ReferenceError: nextTick is not defined\n    at Proxy.handleAdd (http://localhost:5174/src/views/monitor/slow/index.vue:35:7)\n    at _createBlock.onClick._cache.<computed>._cache.<computed> (http://localhost:5174/src/views/monitor/slow/index.vue:218:67)\n    at callWithErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2477:19)', '2024-11-06 12:37:43');
+INSERT INTO `x_monitor_error` VALUES (136, 'e19e3be20de94f49b68fafb4c30668bc', 'ff93a0dcd262e61a52151ef662d75353', 'error', 'http://localhost:5174/monitor/monitor/slow/index', 'ResizeObserver loop completed with undelivered notifications.', '', '2024-11-06 12:37:43');
+INSERT INTO `x_monitor_error` VALUES (137, 'e19e3be20de94f49b68fafb4c30668bc', 'ba922c6841afabfb0e1d5eb1a90f873a', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', '', '', '2024-11-06 12:48:11');
+INSERT INTO `x_monitor_error` VALUES (138, 'e19e3be20de94f49b68fafb4c30668bc', '11b6b34938947c386f816deb4ad36c5f', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', 'Request failed with status code 500', 'AxiosError: Request failed with status code 500\n    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1230:12)\n    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1593:7)\n    at Axios.request (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:2145:41)', '2024-11-06 12:52:01');
+INSERT INTO `x_monitor_error` VALUES (139, 'e19e3be20de94f49b68fafb4c30668bc', 'ac41faabe5c45af29b696b37119b7389', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', 'timeout of 120000ms exceeded', 'AxiosError: timeout of 120000ms exceeded\n    at XMLHttpRequest.handleTimeout (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1632:14)\n    at Axios.request (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:2145:41)', '2024-11-06 13:15:37');
+INSERT INTO `x_monitor_error` VALUES (140, 'e19e3be20de94f49b68fafb4c30668bc', 'b57c3d565abfba586e8a617649b592a1', 'onloadTime', 'http://localhost:5174/', '时间：13914.8ms', '', '2024-11-07 12:32:39');
+INSERT INTO `x_monitor_error` VALUES (141, 'e19e3be20de94f49b68fafb4c30668bc', 'ee461d81b0ef6728a89640be5f794675', 'onloadTime', 'http://localhost:5174/', '时间：5872.9ms', '', '2024-11-07 14:46:41');
+INSERT INTO `x_monitor_error` VALUES (142, 'e19e3be20de94f49b68fafb4c30668bc', '3d201a726fbb323c5fc792acb9854884', 'img', 'http://localhost:5174/workbench', '', '', '2024-11-07 15:17:30');
+INSERT INTO `x_monitor_error` VALUES (143, 'e19e3be20de94f49b68fafb4c30668bc', 'ed7d8ba6b8ca8dc9e3d5a51258aca428', 'img', 'http://localhost:5174/api/static/backend_backdrop.png', '', '', '2024-11-07 16:37:36');
+INSERT INTO `x_monitor_error` VALUES (144, 'e19e3be20de94f49b68fafb4c30668bc', '0b520372ea4f67141414e50085c44951', 'unhandledrejection', 'http://localhost:5174/login?redirect=/monitor/monitor/slow/index', 'Request failed with status code 500', 'AxiosError: Request failed with status code 500\n    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1230:12)\n    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1593:7)\n    at Axios.request (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:2145:41)', '2024-11-07 16:40:46');
+INSERT INTO `x_monitor_error` VALUES (145, 'e19e3be20de94f49b68fafb4c30668bc', 'c66cf37bb5dc338b63678d00a7054ecf', 'img', 'http://localhost:5174/login?redirect=/monitor/monitor/slow/index', '', '', '2024-11-07 16:40:46');
+INSERT INTO `x_monitor_error` VALUES (146, 'e19e3be20de94f49b68fafb4c30668bc', 'b4ab03a2fd2c320812854d55fe6abb4f', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', 'Cannot read properties of undefined (reading \'monitor_project_listAll\')', 'TypeError: Cannot read properties of undefined (reading \'monitor_project_listAll\')\n    at http://localhost:5174/src/views/monitor/slow/index.vue?t=1730969588901:148:52\n    at renderFnWithContext (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2926:13)\n    at renderSlot (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:4537:53)', '2024-11-07 16:53:10');
+INSERT INTO `x_monitor_error` VALUES (147, 'e19e3be20de94f49b68fafb4c30668bc', '6697e34d8798e9c5bfb8edce0b869870', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', 'Cannot read properties of null (reading \'parentNode\')', 'TypeError: Cannot read properties of null (reading \'parentNode\')\n    at parentNode (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:11830:34)\n    at ReactiveEffect.componentUpdateFn [as fn] (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:6633:11)\n    at ReactiveEffect.run (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:1770:23)', '2024-11-07 16:53:50');
+INSERT INTO `x_monitor_error` VALUES (148, 'e19e3be20de94f49b68fafb4c30668bc', 'a359051a7d0903201728fe227bf8d091', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', 'Request failed with status code 404', 'AxiosError: Request failed with status code 404\n    at settle (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1230:12)\n    at XMLHttpRequest.onloadend (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1593:7)\n    at Axios.request (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:2145:41)', '2024-11-07 16:54:55');
+INSERT INTO `x_monitor_error` VALUES (149, 'e19e3be20de94f49b68fafb4c30668bc', 'f47f07c13732e818c84dc087b7169615', 'unhandledrejection', 'http://localhost:5174/monitor/monitor/slow/index', 'Cannot read properties of undefined (reading \'Vue\')', 'TypeError: Cannot read properties of undefined (reading \'Vue\')\n    at initBackend (chrome-extension://olofadcdnkkjdfgjcmjaadnlehnnihnl/build/backend.js:2119:28)', '2024-11-07 17:28:58');
+INSERT INTO `x_monitor_error` VALUES (150, 'e19e3be20de94f49b68fafb4c30668bc', 'fe7b096876be7f647d94ce84a053dab9', 'script', 'http://localhost:5174/src/main.ts?t=1730975599285', '', '', '2024-11-08 13:27:15');
+INSERT INTO `x_monitor_error` VALUES (151, 'e19e3be20de94f49b68fafb4c30668bc', '58a3679c7266f040d3e8116412c22ed8', 'script', 'http://localhost:5174/@vite/client', '', '', '2024-11-08 14:03:52');
+INSERT INTO `x_monitor_error` VALUES (152, 'e19e3be20de94f49b68fafb4c30668bc', 'f970e7ec49c1227292840651f9abb7b6', 'script', 'http://localhost:5174/src/main.ts?t=1731043835935', '', '', '2024-11-08 14:03:52');
+INSERT INTO `x_monitor_error` VALUES (153, 'e19e3be20de94f49b68fafb4c30668bc', '1079deb09a1e4fd73b20649d73e9dd4d', 'unhandledrejection', 'http://localhost:5174/setting/system/environment', 'Network Error', 'AxiosError: Network Error\n    at XMLHttpRequest.handleError (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:1623:14)\n    at Axios.request (http://localhost:5174/node_modules/.vite/deps/axios.js?v=2db2a83d:2145:41)', '2024-11-08 15:09:40');
+INSERT INTO `x_monitor_error` VALUES (154, 'e19e3be20de94f49b68fafb4c30668bc', '3858135af1f6deb9079a34b7a5b42440', 'error', 'http://localhost:5174/dev_tools/error/test', 'Uncaught Error: 主动抛error', 'Error: 主动抛error\n    at error (http://localhost:5174/src/views/error/test.vue:10:13)\n    at callWithErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2477:19)\n    at callWithAsyncErrorHandling (http://localhost:5174/node_modules/.vite/deps/chunk-W2D5EV7B.js?v=2db2a83d:2484:17)', '2024-11-08 16:44:27');
 
 -- ----------------------------
 -- Table structure for x_monitor_error_list
@@ -407,21 +565,183 @@ INSERT INTO `x_monitor_error` VALUES (40, '2a01a60efed14d6eab279ba5c664ceac', '4
 DROP TABLE IF EXISTS `x_monitor_error_list`;
 CREATE TABLE `x_monitor_error_list`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `error_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '错误id',
-  `client_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '客户端id',
-  `project_key` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目key',
+  `eid` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '错误表id',
+  `cid` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '客户端表id',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `uid`(`client_id`) USING BTREE,
-  INDEX `eid`(`error_id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '错误对应的用户记录' ROW_FORMAT = Dynamic;
+  INDEX `uid`(`cid`) USING BTREE,
+  INDEX `eid`(`eid`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 404 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '错误对应的用户记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of x_monitor_error_list
 -- ----------------------------
-INSERT INTO `x_monitor_error_list` VALUES (6, '40', '1', '2a01a60efed14d6eab279ba5c664ceac', '2024-09-25 18:35:33');
-INSERT INTO `x_monitor_error_list` VALUES (5, '39', '1', '2a01a60efed14d6eab279ba5c664ceac', '2024-09-25 18:34:24');
-INSERT INTO `x_monitor_error_list` VALUES (4, '39', '1', '2a01a60efed14d6eab279ba5c664ceac', '2024-09-25 18:33:17');
+INSERT INTO `x_monitor_error_list` VALUES (238, '84', '37', '2024-10-31 13:05:54');
+INSERT INTO `x_monitor_error_list` VALUES (239, '85', '37', '2024-10-31 13:05:54');
+INSERT INTO `x_monitor_error_list` VALUES (240, '84', '37', '2024-10-31 13:05:54');
+INSERT INTO `x_monitor_error_list` VALUES (241, '84', '37', '2024-10-31 13:05:54');
+INSERT INTO `x_monitor_error_list` VALUES (242, '84', '37', '2024-10-31 13:05:54');
+INSERT INTO `x_monitor_error_list` VALUES (243, '84', '37', '2024-10-31 13:05:54');
+INSERT INTO `x_monitor_error_list` VALUES (244, '84', '37', '2024-10-31 13:05:57');
+INSERT INTO `x_monitor_error_list` VALUES (245, '84', '37', '2024-10-31 13:05:57');
+INSERT INTO `x_monitor_error_list` VALUES (246, '84', '37', '2024-10-31 13:05:57');
+INSERT INTO `x_monitor_error_list` VALUES (247, '84', '37', '2024-10-31 13:05:57');
+INSERT INTO `x_monitor_error_list` VALUES (248, '84', '37', '2024-10-31 13:05:57');
+INSERT INTO `x_monitor_error_list` VALUES (249, '84', '37', '2024-10-31 13:05:57');
+INSERT INTO `x_monitor_error_list` VALUES (250, '84', '37', '2024-10-31 13:06:07');
+INSERT INTO `x_monitor_error_list` VALUES (251, '84', '37', '2024-10-31 13:06:28');
+INSERT INTO `x_monitor_error_list` VALUES (252, '84', '37', '2024-10-31 13:06:28');
+INSERT INTO `x_monitor_error_list` VALUES (253, '85', '37', '2024-10-31 13:07:01');
+INSERT INTO `x_monitor_error_list` VALUES (254, '86', '37', '2024-10-31 13:07:01');
+INSERT INTO `x_monitor_error_list` VALUES (255, '87', '37', '2024-10-31 13:07:12');
+INSERT INTO `x_monitor_error_list` VALUES (256, '84', '37', '2024-10-31 13:11:48');
+INSERT INTO `x_monitor_error_list` VALUES (257, '84', '37', '2024-10-31 13:11:48');
+INSERT INTO `x_monitor_error_list` VALUES (258, '88', '37', '2024-10-31 15:01:25');
+INSERT INTO `x_monitor_error_list` VALUES (259, '89', '37', '2024-10-31 15:01:25');
+INSERT INTO `x_monitor_error_list` VALUES (260, '88', '37', '2024-10-31 15:19:35');
+INSERT INTO `x_monitor_error_list` VALUES (261, '90', '37', '2024-10-31 15:19:35');
+INSERT INTO `x_monitor_error_list` VALUES (262, '88', '37', '2024-10-31 15:29:55');
+INSERT INTO `x_monitor_error_list` VALUES (263, '90', '37', '2024-10-31 15:29:55');
+INSERT INTO `x_monitor_error_list` VALUES (264, '88', '37', '2024-10-31 15:46:27');
+INSERT INTO `x_monitor_error_list` VALUES (265, '90', '37', '2024-10-31 15:46:27');
+INSERT INTO `x_monitor_error_list` VALUES (266, '88', '37', '2024-10-31 15:46:38');
+INSERT INTO `x_monitor_error_list` VALUES (267, '90', '37', '2024-10-31 15:46:38');
+INSERT INTO `x_monitor_error_list` VALUES (268, '91', '37', '2024-10-31 15:48:25');
+INSERT INTO `x_monitor_error_list` VALUES (269, '92', '37', '2024-10-31 15:48:52');
+INSERT INTO `x_monitor_error_list` VALUES (270, '93', '37', '2024-10-31 17:44:37');
+INSERT INTO `x_monitor_error_list` VALUES (271, '93', '37', '2024-10-31 17:44:37');
+INSERT INTO `x_monitor_error_list` VALUES (272, '94', '38', '2024-11-04 19:06:07');
+INSERT INTO `x_monitor_error_list` VALUES (273, '95', '39', '2024-11-05 14:07:03');
+INSERT INTO `x_monitor_error_list` VALUES (274, '95', '39', '2024-11-05 14:07:33');
+INSERT INTO `x_monitor_error_list` VALUES (275, '95', '39', '2024-11-05 14:07:33');
+INSERT INTO `x_monitor_error_list` VALUES (276, '95', '39', '2024-11-05 14:07:33');
+INSERT INTO `x_monitor_error_list` VALUES (277, '95', '39', '2024-11-05 14:07:33');
+INSERT INTO `x_monitor_error_list` VALUES (278, '95', '39', '2024-11-05 14:07:33');
+INSERT INTO `x_monitor_error_list` VALUES (279, '96', '40', '2024-11-05 14:48:05');
+INSERT INTO `x_monitor_error_list` VALUES (280, '96', '40', '2024-11-05 14:48:05');
+INSERT INTO `x_monitor_error_list` VALUES (281, '96', '40', '2024-11-05 14:48:05');
+INSERT INTO `x_monitor_error_list` VALUES (282, '96', '40', '2024-11-05 14:48:13');
+INSERT INTO `x_monitor_error_list` VALUES (283, '96', '40', '2024-11-05 14:48:13');
+INSERT INTO `x_monitor_error_list` VALUES (284, '96', '40', '2024-11-05 14:48:13');
+INSERT INTO `x_monitor_error_list` VALUES (285, '96', '40', '2024-11-05 14:48:15');
+INSERT INTO `x_monitor_error_list` VALUES (286, '96', '40', '2024-11-05 14:48:26');
+INSERT INTO `x_monitor_error_list` VALUES (287, '96', '40', '2024-11-05 14:48:26');
+INSERT INTO `x_monitor_error_list` VALUES (288, '96', '40', '2024-11-05 14:48:26');
+INSERT INTO `x_monitor_error_list` VALUES (289, '96', '40', '2024-11-05 14:51:52');
+INSERT INTO `x_monitor_error_list` VALUES (290, '96', '40', '2024-11-05 14:51:52');
+INSERT INTO `x_monitor_error_list` VALUES (291, '96', '40', '2024-11-05 14:51:52');
+INSERT INTO `x_monitor_error_list` VALUES (292, '97', '53', '2024-11-05 17:27:34');
+INSERT INTO `x_monitor_error_list` VALUES (293, '97', '54', '2024-11-05 17:29:54');
+INSERT INTO `x_monitor_error_list` VALUES (294, '97', '54', '2024-11-05 17:34:04');
+INSERT INTO `x_monitor_error_list` VALUES (295, '97', '54', '2024-11-05 17:35:24');
+INSERT INTO `x_monitor_error_list` VALUES (296, '98', '55', '2024-11-05 17:53:26');
+INSERT INTO `x_monitor_error_list` VALUES (297, '98', '55', '2024-11-05 17:53:26');
+INSERT INTO `x_monitor_error_list` VALUES (298, '98', '55', '2024-11-05 17:53:26');
+INSERT INTO `x_monitor_error_list` VALUES (299, '98', '55', '2024-11-05 17:53:26');
+INSERT INTO `x_monitor_error_list` VALUES (300, '98', '55', '2024-11-05 17:53:36');
+INSERT INTO `x_monitor_error_list` VALUES (301, '98', '55', '2024-11-05 17:53:36');
+INSERT INTO `x_monitor_error_list` VALUES (302, '99', '55', '2024-11-05 17:57:06');
+INSERT INTO `x_monitor_error_list` VALUES (303, '100', '55', '2024-11-05 17:57:16');
+INSERT INTO `x_monitor_error_list` VALUES (304, '99', '55', '2024-11-05 17:57:26');
+INSERT INTO `x_monitor_error_list` VALUES (305, '101', '55', '2024-11-05 19:00:34');
+INSERT INTO `x_monitor_error_list` VALUES (306, '102', '55', '2024-11-05 19:05:15');
+INSERT INTO `x_monitor_error_list` VALUES (307, '103', '55', '2024-11-05 19:11:32');
+INSERT INTO `x_monitor_error_list` VALUES (308, '104', '55', '2024-11-05 19:12:59');
+INSERT INTO `x_monitor_error_list` VALUES (309, '105', '55', '2024-11-05 19:12:59');
+INSERT INTO `x_monitor_error_list` VALUES (310, '106', '55', '2024-11-05 19:12:59');
+INSERT INTO `x_monitor_error_list` VALUES (311, '107', '55', '2024-11-05 19:13:10');
+INSERT INTO `x_monitor_error_list` VALUES (312, '108', '55', '2024-11-05 19:13:20');
+INSERT INTO `x_monitor_error_list` VALUES (313, '109', '56', '2024-11-05 19:13:39');
+INSERT INTO `x_monitor_error_list` VALUES (314, '108', '56', '2024-11-05 19:13:59');
+INSERT INTO `x_monitor_error_list` VALUES (315, '110', '57', '2024-11-05 19:20:53');
+INSERT INTO `x_monitor_error_list` VALUES (316, '111', '57', '2024-11-05 19:20:53');
+INSERT INTO `x_monitor_error_list` VALUES (317, '112', '57', '2024-11-05 19:24:16');
+INSERT INTO `x_monitor_error_list` VALUES (318, '112', '57', '2024-11-05 19:24:38');
+INSERT INTO `x_monitor_error_list` VALUES (319, '112', '57', '2024-11-05 19:24:38');
+INSERT INTO `x_monitor_error_list` VALUES (320, '112', '57', '2024-11-05 19:24:38');
+INSERT INTO `x_monitor_error_list` VALUES (321, '113', '57', '2024-11-05 19:25:09');
+INSERT INTO `x_monitor_error_list` VALUES (322, '114', '57', '2024-11-05 19:26:00');
+INSERT INTO `x_monitor_error_list` VALUES (323, '115', '57', '2024-11-05 19:26:11');
+INSERT INTO `x_monitor_error_list` VALUES (324, '116', '57', '2024-11-05 19:26:21');
+INSERT INTO `x_monitor_error_list` VALUES (325, '117', '58', '2024-11-05 19:26:37');
+INSERT INTO `x_monitor_error_list` VALUES (326, '116', '58', '2024-11-05 19:26:57');
+INSERT INTO `x_monitor_error_list` VALUES (327, '118', '59', '2024-11-05 19:27:25');
+INSERT INTO `x_monitor_error_list` VALUES (328, '119', '59', '2024-11-05 19:27:25');
+INSERT INTO `x_monitor_error_list` VALUES (329, '120', '59', '2024-11-05 19:27:43');
+INSERT INTO `x_monitor_error_list` VALUES (330, '121', '59', '2024-11-05 19:27:43');
+INSERT INTO `x_monitor_error_list` VALUES (331, '122', '59', '2024-11-05 19:28:02');
+INSERT INTO `x_monitor_error_list` VALUES (332, '123', '59', '2024-11-05 19:28:28');
+INSERT INTO `x_monitor_error_list` VALUES (333, '124', '59', '2024-11-05 19:28:52');
+INSERT INTO `x_monitor_error_list` VALUES (334, '125', '59', '2024-11-05 19:29:55');
+INSERT INTO `x_monitor_error_list` VALUES (335, '126', '59', '2024-11-05 19:30:21');
+INSERT INTO `x_monitor_error_list` VALUES (336, '127', '59', '2024-11-05 22:29:58');
+INSERT INTO `x_monitor_error_list` VALUES (337, '128', '59', '2024-11-05 22:31:17');
+INSERT INTO `x_monitor_error_list` VALUES (338, '129', '59', '2024-11-05 22:31:51');
+INSERT INTO `x_monitor_error_list` VALUES (339, '130', '61', '2024-11-05 23:40:46');
+INSERT INTO `x_monitor_error_list` VALUES (340, '97', '61', '2024-11-05 23:42:49');
+INSERT INTO `x_monitor_error_list` VALUES (341, '131', '62', '2024-11-06 11:13:52');
+INSERT INTO `x_monitor_error_list` VALUES (342, '116', '62', '2024-11-06 11:30:32');
+INSERT INTO `x_monitor_error_list` VALUES (343, '116', '63', '2024-11-06 11:45:31');
+INSERT INTO `x_monitor_error_list` VALUES (344, '132', '64', '2024-11-06 11:46:49');
+INSERT INTO `x_monitor_error_list` VALUES (345, '133', '64', '2024-11-06 11:47:34');
+INSERT INTO `x_monitor_error_list` VALUES (346, '134', '65', '2024-11-06 11:48:15');
+INSERT INTO `x_monitor_error_list` VALUES (347, '116', '65', '2024-11-06 11:57:15');
+INSERT INTO `x_monitor_error_list` VALUES (348, '135', '66', '2024-11-06 12:37:43');
+INSERT INTO `x_monitor_error_list` VALUES (349, '135', '66', '2024-11-06 12:37:43');
+INSERT INTO `x_monitor_error_list` VALUES (350, '135', '66', '2024-11-06 12:37:43');
+INSERT INTO `x_monitor_error_list` VALUES (351, '136', '66', '2024-11-06 12:37:43');
+INSERT INTO `x_monitor_error_list` VALUES (352, '116', '67', '2024-11-06 12:39:57');
+INSERT INTO `x_monitor_error_list` VALUES (353, '116', '67', '2024-11-06 12:39:57');
+INSERT INTO `x_monitor_error_list` VALUES (354, '116', '67', '2024-11-06 12:39:57');
+INSERT INTO `x_monitor_error_list` VALUES (355, '116', '67', '2024-11-06 12:40:07');
+INSERT INTO `x_monitor_error_list` VALUES (356, '137', '68', '2024-11-06 12:48:11');
+INSERT INTO `x_monitor_error_list` VALUES (357, '136', '68', '2024-11-06 12:48:11');
+INSERT INTO `x_monitor_error_list` VALUES (358, '137', '68', '2024-11-06 12:48:41');
+INSERT INTO `x_monitor_error_list` VALUES (359, '137', '68', '2024-11-06 12:49:01');
+INSERT INTO `x_monitor_error_list` VALUES (360, '138', '68', '2024-11-06 12:52:01');
+INSERT INTO `x_monitor_error_list` VALUES (361, '138', '68', '2024-11-06 12:52:01');
+INSERT INTO `x_monitor_error_list` VALUES (362, '137', '68', '2024-11-06 12:52:01');
+INSERT INTO `x_monitor_error_list` VALUES (363, '137', '68', '2024-11-06 12:52:01');
+INSERT INTO `x_monitor_error_list` VALUES (364, '137', '68', '2024-11-06 12:52:41');
+INSERT INTO `x_monitor_error_list` VALUES (365, '116', '68', '2024-11-06 12:53:11');
+INSERT INTO `x_monitor_error_list` VALUES (366, '137', '68', '2024-11-06 12:53:31');
+INSERT INTO `x_monitor_error_list` VALUES (367, '136', '68', '2024-11-06 13:05:11');
+INSERT INTO `x_monitor_error_list` VALUES (368, '139', '68', '2024-11-06 13:15:37');
+INSERT INTO `x_monitor_error_list` VALUES (369, '139', '68', '2024-11-06 13:15:37');
+INSERT INTO `x_monitor_error_list` VALUES (370, '139', '68', '2024-11-06 13:22:12');
+INSERT INTO `x_monitor_error_list` VALUES (371, '139', '68', '2024-11-06 13:22:12');
+INSERT INTO `x_monitor_error_list` VALUES (372, '140', '68', '2024-11-07 12:32:39');
+INSERT INTO `x_monitor_error_list` VALUES (373, '136', '68', '2024-11-07 14:22:45');
+INSERT INTO `x_monitor_error_list` VALUES (374, '136', '68', '2024-11-07 14:31:55');
+INSERT INTO `x_monitor_error_list` VALUES (375, '141', '68', '2024-11-07 14:46:41');
+INSERT INTO `x_monitor_error_list` VALUES (376, '142', '68', '2024-11-07 15:17:30');
+INSERT INTO `x_monitor_error_list` VALUES (377, '136', '68', '2024-11-07 16:30:58');
+INSERT INTO `x_monitor_error_list` VALUES (378, '143', '71', '2024-11-07 16:37:36');
+INSERT INTO `x_monitor_error_list` VALUES (379, '144', '71', '2024-11-07 16:40:46');
+INSERT INTO `x_monitor_error_list` VALUES (380, '144', '71', '2024-11-07 16:40:46');
+INSERT INTO `x_monitor_error_list` VALUES (381, '145', '71', '2024-11-07 16:40:46');
+INSERT INTO `x_monitor_error_list` VALUES (382, '136', '71', '2024-11-07 16:48:56');
+INSERT INTO `x_monitor_error_list` VALUES (383, '146', '76', '2024-11-07 16:53:10');
+INSERT INTO `x_monitor_error_list` VALUES (384, '146', '76', '2024-11-07 16:53:10');
+INSERT INTO `x_monitor_error_list` VALUES (385, '146', '76', '2024-11-07 16:53:10');
+INSERT INTO `x_monitor_error_list` VALUES (386, '146', '76', '2024-11-07 16:53:10');
+INSERT INTO `x_monitor_error_list` VALUES (387, '146', '76', '2024-11-07 16:53:10');
+INSERT INTO `x_monitor_error_list` VALUES (388, '146', '76', '2024-11-07 16:53:10');
+INSERT INTO `x_monitor_error_list` VALUES (389, '147', '76', '2024-11-07 16:53:50');
+INSERT INTO `x_monitor_error_list` VALUES (390, '147', '76', '2024-11-07 16:54:15');
+INSERT INTO `x_monitor_error_list` VALUES (391, '148', '76', '2024-11-07 16:54:55');
+INSERT INTO `x_monitor_error_list` VALUES (392, '136', '76', '2024-11-07 17:00:45');
+INSERT INTO `x_monitor_error_list` VALUES (393, '136', '76', '2024-11-07 17:14:58');
+INSERT INTO `x_monitor_error_list` VALUES (394, '136', '77', '2024-11-07 17:15:57');
+INSERT INTO `x_monitor_error_list` VALUES (395, '136', '77', '2024-11-07 17:16:37');
+INSERT INTO `x_monitor_error_list` VALUES (396, '136', '77', '2024-11-07 17:18:48');
+INSERT INTO `x_monitor_error_list` VALUES (397, '149', '78', '2024-11-07 17:28:58');
+INSERT INTO `x_monitor_error_list` VALUES (398, '149', '78', '2024-11-07 17:30:18');
+INSERT INTO `x_monitor_error_list` VALUES (399, '150', '81', '2024-11-08 13:27:15');
+INSERT INTO `x_monitor_error_list` VALUES (400, '151', '81', '2024-11-08 14:03:52');
+INSERT INTO `x_monitor_error_list` VALUES (401, '152', '81', '2024-11-08 14:03:52');
+INSERT INTO `x_monitor_error_list` VALUES (402, '153', '83', '2024-11-08 15:09:40');
+INSERT INTO `x_monitor_error_list` VALUES (403, '154', '83', '2024-11-08 16:44:27');
 
 -- ----------------------------
 -- Table structure for x_monitor_project
@@ -439,19 +759,72 @@ CREATE TABLE `x_monitor_project`  (
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `project_key`(`project_key`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控项目' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控项目' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_monitor_project
 -- ----------------------------
-INSERT INTO `x_monitor_project` VALUES (1, '2a01a60efed14d6eab279ba5c664ceac', 'x_admin', 'node', 0, 0, '2024-05-18 15:59:53', '2024-07-09 12:06:42', NULL);
+INSERT INTO `x_monitor_project` VALUES (1, '2a01a60efed14d6eab279ba5c664ceac', 'x_admin', 'node', 0, 1, '2024-05-18 15:59:53', '2024-07-09 12:06:42', '2024-10-29 16:11:37');
 INSERT INTO `x_monitor_project` VALUES (2, '9a1d5d657d884bbfb7df0ddf032a8504', '2', 'go', 0, 1, '2024-06-17 18:58:57', '2024-06-29 00:31:27', NULL);
 INSERT INTO `x_monitor_project` VALUES (3, '603055b4b53e45a4b6fb725147d7fd42', 'ad', 'web', 0, 1, '2024-07-08 15:26:56', '2024-07-10 12:21:11', NULL);
 INSERT INTO `x_monitor_project` VALUES (4, '95cf6a6a37e549019c90c2ed34704f1f', 'a', 'uniapp', 0, 1, '2024-07-09 00:45:18', '2024-07-09 00:49:27', NULL);
-INSERT INTO `x_monitor_project` VALUES (5, '57377a40408f4bfd974047fbf0a18e24', 'go项目', 'go', 0, 0, '2024-07-10 12:20:37', '2024-09-25 16:50:45', NULL);
-INSERT INTO `x_monitor_project` VALUES (6, '6217ea4ea0044014831bd25121a3113c', 'go', 'go', 0, 0, '2024-07-12 23:17:23', '2024-07-12 23:17:23', NULL);
+INSERT INTO `x_monitor_project` VALUES (5, '57377a40408f4bfd974047fbf0a18e24', 'go项目', 'go', 0, 1, '2024-07-10 12:20:37', '2024-09-25 16:50:45', '2024-10-29 16:11:37');
+INSERT INTO `x_monitor_project` VALUES (6, '6217ea4ea0044014831bd25121a3113c', 'go', 'go', 0, 0, '2024-07-12 23:17:23', '2024-11-07 15:43:08', NULL);
 INSERT INTO `x_monitor_project` VALUES (7, 'e19e3be20de94f49b68fafb4c30668bc', 'web项目', 'web', 1, 0, '2024-07-13 20:56:21', '2024-09-25 16:58:58', NULL);
 INSERT INTO `x_monitor_project` VALUES (8, 'e0cb2d091ce1408babcf17b48eccebf6', '1', 'web', 1, 1, '2024-10-12 10:35:32', '2024-10-12 10:35:38', '2024-10-12 10:35:38');
+INSERT INTO `x_monitor_project` VALUES (9, '72ed4cafe3c141e9ba662224651a22f0', 'a', 'web', 1, 1, '2024-10-29 16:16:08', '2024-10-29 16:16:22', '2024-10-29 16:16:22');
+
+-- ----------------------------
+-- Table structure for x_monitor_slow
+-- ----------------------------
+DROP TABLE IF EXISTS `x_monitor_slow`;
+CREATE TABLE `x_monitor_slow`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '错误id',
+  `project_key` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目key',
+  `client_id` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'sdk生成的客户端id',
+  `user_id` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户id',
+  `path` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'URL地址',
+  `time` float(10, 2) NOT NULL COMMENT '时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `project_key`(`project_key`) USING BTREE,
+  INDEX `client_id`(`client_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 167 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '监控-慢接口' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of x_monitor_slow
+-- ----------------------------
+INSERT INTO `x_monitor_slow` VALUES (136, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'http://localhost:5174/login?redirect=/monitor/monitor/slow/index', 8515.50, '2024-11-07 16:47:42');
+INSERT INTO `x_monitor_slow` VALUES (137, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '', 'http://localhost:5174/monitor/monitor/slow/index', 702.10, '2024-11-07 16:52:00');
+INSERT INTO `x_monitor_slow` VALUES (138, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 2648.20, '2024-11-07 16:52:02');
+INSERT INTO `x_monitor_slow` VALUES (139, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 393.70, '2024-11-07 16:52:13');
+INSERT INTO `x_monitor_slow` VALUES (140, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 635.30, '2024-11-07 16:54:10');
+INSERT INTO `x_monitor_slow` VALUES (141, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 620.50, '2024-11-07 16:56:25');
+INSERT INTO `x_monitor_slow` VALUES (142, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 1083.00, '2024-11-07 17:11:11');
+INSERT INTO `x_monitor_slow` VALUES (143, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 656.50, '2024-11-07 17:12:08');
+INSERT INTO `x_monitor_slow` VALUES (144, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8103.20, '2024-11-07 17:15:07');
+INSERT INTO `x_monitor_slow` VALUES (145, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8614.60, '2024-11-07 17:24:01');
+INSERT INTO `x_monitor_slow` VALUES (146, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 9773.30, '2024-11-07 17:25:51');
+INSERT INTO `x_monitor_slow` VALUES (147, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8567.50, '2024-11-07 17:26:09');
+INSERT INTO `x_monitor_slow` VALUES (148, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 9582.50, '2024-11-07 17:26:25');
+INSERT INTO `x_monitor_slow` VALUES (149, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8762.30, '2024-11-07 17:27:20');
+INSERT INTO `x_monitor_slow` VALUES (150, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8923.60, '2024-11-07 17:27:39');
+INSERT INTO `x_monitor_slow` VALUES (151, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8564.70, '2024-11-07 17:28:16');
+INSERT INTO `x_monitor_slow` VALUES (152, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8892.90, '2024-11-07 17:28:49');
+INSERT INTO `x_monitor_slow` VALUES (153, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8643.80, '2024-11-07 17:29:29');
+INSERT INTO `x_monitor_slow` VALUES (154, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8916.20, '2024-11-07 17:30:08');
+INSERT INTO `x_monitor_slow` VALUES (155, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8609.90, '2024-11-07 17:37:47');
+INSERT INTO `x_monitor_slow` VALUES (156, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8719.30, '2024-11-07 18:13:16');
+INSERT INTO `x_monitor_slow` VALUES (157, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8694.10, '2024-11-07 18:16:45');
+INSERT INTO `x_monitor_slow` VALUES (158, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8556.70, '2024-11-07 18:17:57');
+INSERT INTO `x_monitor_slow` VALUES (159, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '1', 'http://localhost:5174/monitor/monitor/slow/index', 8470.90, '2024-11-07 18:23:04');
+INSERT INTO `x_monitor_slow` VALUES (160, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'http://localhost:5174/monitor/monitor/slow/index', 8797.10, '2024-11-07 18:27:05');
+INSERT INTO `x_monitor_slow` VALUES (161, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'http://localhost:5174/monitor/monitor/slow/index', 2031.20, '2024-11-07 18:33:16');
+INSERT INTO `x_monitor_slow` VALUES (162, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'http://localhost:5174/monitor/monitor/slow/index', 909.20, '2024-11-07 18:33:18');
+INSERT INTO `x_monitor_slow` VALUES (163, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'http://localhost:5174/monitor/monitor/slow/index', 810.80, '2024-11-07 18:33:20');
+INSERT INTO `x_monitor_slow` VALUES (164, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'http://localhost:5174/monitor/monitor/slow/index', 1180.90, '2024-11-08 13:27:05');
+INSERT INTO `x_monitor_slow` VALUES (165, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'http://localhost:5174/monitor/monitor/slow/index', 927.50, '2024-11-08 13:29:29');
+INSERT INTO `x_monitor_slow` VALUES (166, 'e19e3be20de94f49b68fafb4c30668bc', 'be924f50-9a9c-11ef-b456-837484cb12c1', '2', 'http://localhost:5174/setting/permission/menu', 12655.80, '2024-11-08 14:05:10');
 
 -- ----------------------------
 -- Table structure for x_notice_setting
@@ -503,12 +876,12 @@ CREATE TABLE `x_system_auth_admin`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统管理成员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统管理成员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_admin
 -- ----------------------------
-INSERT INTO `x_system_auth_admin` VALUES (1, 1, 3, 'admin', 'admin', '81a13dd8e25644a8823082573ca973f7', '/image/20232911/27699a1e991e4ba1ba13ee6d45185db6.jpg', '0', 'WFdiD', 1, 1, 0, 0, '127.0.0.1', '2024-10-25 18:17:07', '2024-01-02 03:04:05', '2024-10-25 18:17:07', NULL);
+INSERT INTO `x_system_auth_admin` VALUES (1, 1, 3, 'admin', 'admin', '81a13dd8e25644a8823082573ca973f7', '/image/20232911/27699a1e991e4ba1ba13ee6d45185db6.jpg', '0', 'WFdiD', 1, 1, 0, 0, '127.0.0.1', '2024-11-08 13:29:42', '2024-01-02 03:04:05', '2024-11-08 13:29:42', NULL);
 
 -- ----------------------------
 -- Table structure for x_system_auth_dept
@@ -528,7 +901,7 @@ CREATE TABLE `x_system_auth_dept`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统部门管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统部门管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_dept
@@ -559,7 +932,7 @@ CREATE TABLE `x_system_auth_menu`  (
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 832 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统菜单管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 873 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统菜单管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_menu
@@ -627,7 +1000,7 @@ INSERT INTO `x_system_auth_menu` VALUES (551, 550, 'C', '系统环境', '', 0, '
 INSERT INTO `x_system_auth_menu` VALUES (552, 550, 'C', '系统缓存', '', 0, 'admin:monitor:cache', 'cache', 'setting/system/cache', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (553, 550, 'C', '系统日志', '', 0, 'admin:system:log:operate', 'journal', 'setting/system/journal', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (600, 0, 'M', '开发工具', 'el-icon-EditPen', 0, '', 'dev_tools', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (610, 600, 'C', '代码生成器', 'el-icon-DocumentAdd', 0, 'admin:gen:list', 'code', 'dev_tools/code/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
+INSERT INTO `x_system_auth_menu` VALUES (610, 600, 'C', '代码生成器', '', 0, 'admin:gen:list', 'code', 'dev_tools/code/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-10-31 14:59:14');
 INSERT INTO `x_system_auth_menu` VALUES (611, 610, 'A', '导入数据表', '', 0, 'admin:gen:importTable', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (612, 610, 'A', '生成代码', '', 0, 'admin:gen:genCode', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (613, 610, 'A', '下载代码', '', 0, 'admin:gen:downloadCode', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
@@ -644,8 +1017,8 @@ INSERT INTO `x_system_auth_menu` VALUES (778, 0, 'M', '审批流', 'el-icon-Coor
 INSERT INTO `x_system_auth_menu` VALUES (780, 778, 'C', '待处理', '', 0, 'admin:flow:flow_history:list', 'flow_history/todo', 'flow/flow_history/todo', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (781, 778, 'C', '已处理', '', 0, 'admin:flow:flow_history:list', 'flow_history/done', 'flow/flow_history/done', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (782, 778, 'C', '已完成流程', '', 0, 'admin:flow:flow_history:list', 'flow_apply/finish', 'flow/flow_apply/finish', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (783, 500, 'C', '项目监控', 'el-icon-Notebook', 0, 'admin:monitor_project:list', 'monitor/project/index', 'monitor/project/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-09-25 16:14:03');
-INSERT INTO `x_system_auth_menu` VALUES (784, 500, 'C', '监控用户端', '', 0, '', 'monitor/client/index', 'monitor/client/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-09-25 16:13:05');
+INSERT INTO `x_system_auth_menu` VALUES (783, 832, 'C', '项目', '', 0, 'admin:monitor_project:list', 'project/index', 'monitor/project/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-10-29 15:40:44');
+INSERT INTO `x_system_auth_menu` VALUES (784, 832, 'C', '用户端', '', 0, '', 'client/index', 'monitor/client/index', '', '', 1, 1, 0, '2024-01-02 03:04:05', '2024-10-29 15:40:54');
 INSERT INTO `x_system_auth_menu` VALUES (785, 794, 'A', '错误收集error添加', '', 0, 'admin:monitor_web:add', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (786, 794, 'A', '错误收集error编辑', '', 0, 'admin:monitor_web:edit', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (787, 794, 'A', '错误收集error删除', '', 0, 'admin:monitor_web:del', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
@@ -654,7 +1027,7 @@ INSERT INTO `x_system_auth_menu` VALUES (789, 794, 'A', '错误收集error全部
 INSERT INTO `x_system_auth_menu` VALUES (790, 794, 'A', '错误收集error详情', '', 0, 'admin:monitor_web:detail', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (791, 794, 'A', '错误收集error导出excel', '', 0, 'admin:monitor_web:ExportFile', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (792, 794, 'A', '错误收集error导入excel', '', 0, 'admin:monitor_web:ImportFile', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
-INSERT INTO `x_system_auth_menu` VALUES (794, 500, 'C', '错误列表', '', 0, '', 'monitor/error/index', 'monitor/error/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-09-25 16:38:39');
+INSERT INTO `x_system_auth_menu` VALUES (794, 832, 'C', '错误列表', '', 0, '', 'error/index', 'monitor/error/index', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-10-29 15:39:16');
 INSERT INTO `x_system_auth_menu` VALUES (795, 776, 'A', '流程模板添加', '', 0, 'admin:flow:flow_template:add', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (796, 776, 'A', '流程模板编辑', '', 0, 'admin:flow:flow_template:edit', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
 INSERT INTO `x_system_auth_menu` VALUES (797, 776, 'A', '流程模板删除', '', 0, 'admin:flow:flow_template:del', '', '', '', '', 0, 1, 0, '2024-01-02 03:04:05', '2024-01-02 03:04:05');
@@ -691,6 +1064,27 @@ INSERT INTO `x_system_auth_menu` VALUES (828, 823, 'A', '用户协议全部列�
 INSERT INTO `x_system_auth_menu` VALUES (829, 823, 'A', '用户协议详情', '', 0, 'admin:user_protocol:detail', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
 INSERT INTO `x_system_auth_menu` VALUES (830, 823, 'A', '用户协议导出excel', '', 0, 'admin:user_protocol:ExportFile', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
 INSERT INTO `x_system_auth_menu` VALUES (831, 823, 'A', '用户协议导入excel', '', 0, 'admin:user_protocol:ImportFile', '', '', '', '', 0, 1, 0, '2024-09-10 20:05:13', '2024-09-10 20:05:13');
+INSERT INTO `x_system_auth_menu` VALUES (832, 0, 'M', '错误监控', 'el-icon-Memo', 0, '', 'monitor', '', '', '', 1, 1, 0, '2024-10-29 15:32:33', '2024-10-29 15:32:33');
+INSERT INTO `x_system_auth_menu` VALUES (833, 600, 'C', '错误捕获', '', 0, '', 'error/test', 'error/test', '', '', 1, 1, 0, '2024-10-30 18:16:56', '2024-10-30 18:16:56');
+INSERT INTO `x_system_auth_menu` VALUES (834, 832, 'C', '慢接口', '', 0, '', 'slow/index', 'monitor/slow/index', '', '', 0, 1, 0, '2024-11-06 12:30:19', '2024-11-08 13:45:22');
+INSERT INTO `x_system_auth_menu` VALUES (844, 834, 'A', '慢接口添加', '', 0, 'admin:monitor_slow:add', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (845, 834, 'A', '慢接口编辑', '', 0, 'admin:monitor_slow:edit', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (846, 834, 'A', '慢接口删除', '', 0, 'admin:monitor_slow:del', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (847, 834, 'A', '慢接口删除-批量', '', 0, 'admin:monitor_slow:delBatch', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (848, 834, 'A', '慢接口列表', '', 0, 'admin:monitor_slow:list', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (849, 834, 'A', '慢接口全部列表', '', 0, 'admin:monitor_slow:listAll', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (850, 834, 'A', '慢接口详情', '', 0, 'admin:monitor_slow:detail', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (851, 834, 'A', '慢接口导出excel', '', 0, 'admin:monitor_slow:ExportFile', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (852, 834, 'A', '慢接口导入excel', '', 0, 'admin:monitor_slow:ImportFile', '', '', '', '', 0, 1, 0, '2024-11-06 12:34:55', '2024-11-06 12:34:55');
+INSERT INTO `x_system_auth_menu` VALUES (864, 784, 'A', '监控-客户端信息添加', '', 0, 'admin:monitor_client:add', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (865, 784, 'A', '监控-客户端信息编辑', '', 0, 'admin:monitor_client:edit', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (866, 784, 'A', '监控-客户端信息删除', '', 0, 'admin:monitor_client:del', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (867, 784, 'A', '监控-客户端信息删除-批量', '', 0, 'admin:monitor_client:delBatch', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (868, 784, 'A', '监控-客户端信息列表', '', 0, 'admin:monitor_client:list', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (869, 784, 'A', '监控-客户端信息全部列表', '', 0, 'admin:monitor_client:listAll', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (870, 784, 'A', '监控-客户端信息详情', '', 0, 'admin:monitor_client:detail', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (871, 784, 'A', '监控-客户端信息导出excel', '', 0, 'admin:monitor_client:ExportFile', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
+INSERT INTO `x_system_auth_menu` VALUES (872, 784, 'A', '监控-客户端信息导入excel', '', 0, 'admin:monitor_client:ImportFile', '', '', '', '', 0, 1, 0, '2024-11-08 14:15:28', '2024-11-08 14:15:28');
 
 -- ----------------------------
 -- Table structure for x_system_auth_perm
@@ -851,7 +1245,7 @@ CREATE TABLE `x_system_auth_post`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `delete_time` datetime NULL DEFAULT NULL COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统岗位管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统岗位管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_auth_post
@@ -956,11 +1350,30 @@ CREATE TABLE `x_system_log_login`  (
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '操作状态: 1=成功, 2=失败',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 164 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统登录日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统登录日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_login
 -- ----------------------------
+INSERT INTO `x_system_log_login` VALUES (1, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-29 14:27:41');
+INSERT INTO `x_system_log_login` VALUES (2, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-29 14:46:35');
+INSERT INTO `x_system_log_login` VALUES (3, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-29 23:05:34');
+INSERT INTO `x_system_log_login` VALUES (4, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-30 09:49:22');
+INSERT INTO `x_system_log_login` VALUES (5, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-30 10:05:00');
+INSERT INTO `x_system_log_login` VALUES (6, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-30 18:15:47');
+INSERT INTO `x_system_log_login` VALUES (7, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-30 19:02:50');
+INSERT INTO `x_system_log_login` VALUES (8, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-31 10:57:33');
+INSERT INTO `x_system_log_login` VALUES (9, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-10-31 14:56:49');
+INSERT INTO `x_system_log_login` VALUES (10, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-04 14:59:54');
+INSERT INTO `x_system_log_login` VALUES (11, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-04 19:02:36');
+INSERT INTO `x_system_log_login` VALUES (12, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-05 14:05:30');
+INSERT INTO `x_system_log_login` VALUES (13, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-05 22:22:23');
+INSERT INTO `x_system_log_login` VALUES (14, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-06 11:13:57');
+INSERT INTO `x_system_log_login` VALUES (15, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-07 12:32:52');
+INSERT INTO `x_system_log_login` VALUES (16, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-07 13:01:06');
+INSERT INTO `x_system_log_login` VALUES (17, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-07 15:17:26');
+INSERT INTO `x_system_log_login` VALUES (18, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-07 16:47:51');
+INSERT INTO `x_system_log_login` VALUES (19, 1, 'admin', '127.0.0.1', 'Windows', 'Edge', 1, '2024-11-08 13:29:42');
 
 -- ----------------------------
 -- Table structure for x_system_log_operate
@@ -982,11 +1395,12 @@ CREATE TABLE `x_system_log_operate`  (
   `task_time` int(11) NULL DEFAULT NULL COMMENT '执行耗时',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 623 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统操作日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统操作日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_operate
 -- ----------------------------
+INSERT INTO `x_system_log_operate` VALUES (1, 0, 'GET', '监控-客户端信息新增', '127.0.0.1', '/api/admin/monitor_client/add', 'x_admin/admin/monitor_client.(*MonitorClientHandler).Add-fm', 'data=[{\"type\":\"error\",\"eventType\":\"error\",\"message\":\"ResizeObserver loop completed with undelivered notifications.\",\"stack\":\"\"}]', 'runtime error: invalid memory address or nil pointer dereference', 2, '2024-10-30 23:30:23', '2024-10-30 23:30:29', 6622, '2024-10-30 23:30:30');
 
 -- ----------------------------
 -- Table structure for x_system_log_sms
@@ -1003,7 +1417,7 @@ CREATE TABLE `x_system_log_sms`  (
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 117 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统短信日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统短信日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of x_system_log_sms
