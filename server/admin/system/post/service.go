@@ -5,7 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
@@ -40,7 +40,7 @@ func (service systemAuthPostService) All() (res []SystemAuthPostResp, e error) {
 		return
 	}
 	res = []SystemAuthPostResp{}
-	util.ConvertUtil.Copy(&res, posts)
+	convert_util.Copy(&res, posts)
 	return
 }
 
@@ -73,7 +73,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq SystemAu
 		return
 	}
 	postResps := []SystemAuthPostResp{}
-	util.ConvertUtil.Copy(&postResps, posts)
+	convert_util.Copy(&postResps, posts)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -92,7 +92,7 @@ func (service systemAuthPostService) Detail(id uint) (res SystemAuthPostResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, post)
+	convert_util.Copy(&res, post)
 	return
 }
 
@@ -106,7 +106,7 @@ func (service systemAuthPostService) Add(addReq SystemAuthPostAddReq) (e error) 
 		return response.AssertArgumentError.SetMessage("该岗位已存在!")
 	}
 	var post system_model.SystemAuthPost
-	util.ConvertUtil.Copy(&post, addReq)
+	convert_util.Copy(&post, addReq)
 	err := service.db.Create(&post).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -131,7 +131,7 @@ func (service systemAuthPostService) Edit(editReq SystemAuthPostEditReq) (e erro
 		return response.AssertArgumentError.SetMessage("该岗位已存在!")
 	}
 	// 更新
-	util.ConvertUtil.Copy(&post, editReq)
+	convert_util.Copy(&post, editReq)
 	err = service.db.Model(&post).Select("*").Updates(post).Error
 	e = response.CheckErr(err, "编辑失败")
 	return

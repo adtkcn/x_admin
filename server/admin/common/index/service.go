@@ -10,15 +10,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type IIndexService interface {
-	Console() (res map[string]interface{}, e error)
-	Config() (res map[string]interface{}, e error)
-}
-
 var Service = NewIndexService()
 
 // NewIndexService 初始化
-func NewIndexService() IIndexService {
+func NewIndexService() *indexService {
 	db := core.GetDB()
 	return &indexService{db: db}
 }
@@ -47,7 +42,7 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 	}
 	// 今日数据
 	today := map[string]interface{}{
-		"time":        "2022-08-11 15:08:29",
+		"time":        util.NullTimeUtil.Now(),
 		"todayVisits": 10,  // 访问量(人)
 		"totalVisits": 100, // 总访问量
 		"todaySales":  30,  // 销售额(元)
@@ -65,7 +60,7 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 	}
 	visitor := map[string]interface{}{
 		"date": date,
-		"list": []int{12, 13, 11, 5, 8, 22, 14, 9, 456, 62, 78, 12, 18, 22, 46},
+		"list": []int{12, 13, 11, 5, 100, 22, 14, 9, 456, 62, 78, 12, 18, 22, 46},
 	}
 	return map[string]interface{}{
 		"version": version,

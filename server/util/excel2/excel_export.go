@@ -2,7 +2,7 @@ package excel2
 
 import (
 	"fmt"
-	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -26,7 +26,7 @@ func GetExcelColumnName(columnNumber int) string {
 func Export(lists any, cols []Col, sheet string, title string) (file *excelize.File, err error) {
 	e := ExcelInit()
 
-	data := util.ConvertUtil.ShallowStructsToMaps(lists)
+	data := convert_util.ShallowStructsToMaps(lists)
 
 	err = ExportExcel(sheet, title, data, cols, e)
 	if err != nil {

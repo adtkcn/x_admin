@@ -52,16 +52,23 @@ func (c CacheUtil) GetCache(key interface{}, obj interface{}) error {
 	return nil
 }
 
-// 删除缓存
+// 删除缓存-支持批量删除
 func (c CacheUtil) RemoveCache(key interface{}) bool {
-	var cacheKey string
+	var cacheKey []string
 	switch k := key.(type) {
 	case int:
-		cacheKey = strconv.Itoa(k)
+		cacheKey = append(cacheKey, strconv.Itoa(k))
 	case string:
+		cacheKey = append(cacheKey, k)
+	//  判断是slice
+	case []int:
+		for _, v := range k {
+			cacheKey = append(cacheKey, strconv.Itoa(v))
+		}
+	case []string:
 		cacheKey = k
 	default:
 		return false
 	}
-	return RedisUtil.HDel(c.Name, cacheKey)
+	return RedisUtil.HDel(c.Name, cacheKey...)
 }

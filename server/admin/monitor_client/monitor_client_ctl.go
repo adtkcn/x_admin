@@ -1,14 +1,19 @@
 package monitor_client
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
+	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
 	"x_admin/util/excel2"
+	"x_admin/util/img_util"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/singleflight"
@@ -29,7 +34,11 @@ type MonitorClientHandler struct {
 //	@Param		UserId			query		string																	false	"用户id"
 //	@Param		Os				query		string																	false	"系统"
 //	@Param		Browser			query		string																	false	"浏览器"
+//	@Param		Country			query		string																	false	"国家"
+//	@Param		Province		query		string																	false	"省份"
 //	@Param		City			query		string																	false	"城市"
+//	@Param		Operator		query		string																	false	"电信运营商"
+//	@Param		Ip				query		string																	false	"ip"
 //	@Param		Width			query		number																	false	"屏幕"
 //	@Param		Height			query		number																	false	"屏幕高度"
 //	@Param		Ua				query		string																	false	"ua记录"
@@ -59,7 +68,11 @@ func (hd *MonitorClientHandler) List(c *gin.Context) {
 //	@Param		UserId			query		string											false	"用户id"
 //	@Param		Os				query		string											false	"系统"
 //	@Param		Browser			query		string											false	"浏览器"
+//	@Param		Country			query		string											false	"国家"
+//	@Param		Province		query		string											false	"省份"
 //	@Param		City			query		string											false	"城市"
+//	@Param		Operator		query		string											false	"电信运营商"
+//	@Param		Ip				query		string											false	"ip"
 //	@Param		Width			query		number											false	"屏幕"
 //	@Param		Height			query		number											false	"屏幕高度"
 //	@Param		Ua				query		string											false	"ua记录"
@@ -114,44 +127,67 @@ func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 //	@Param		UserId		body		string				false	"用户id"
 //	@Param		Os			body		string				false	"系统"
 //	@Param		Browser		body		string				false	"浏览器"
-//	@Param		City		body		string				false	"城市"
+//	@Param		Country		query		string				false	"国家"
+//	@Param		Province	query		string				false	"省份"
+//	@Param		City		query		string				false	"城市"
+//	@Param		Operator	query		string				false	"电信运营商"
+//	@Param		Ip			query		string				false	"ip"
 //	@Param		Width		body		number				false	"屏幕"
 //	@Param		Height		body		number				false	"屏幕高度"
 //	@Param		Ua			body		string				false	"ua记录"
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/monitor_client/add [post]
 func (hd *MonitorClientHandler) Add(c *gin.Context) {
-	var addReq MonitorClientAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	data, err := url.QueryUnescape(c.Query("data"))
+	if err != nil {
+		// response.CheckAndRespWithData(c, 0, err)
+		c.Data(200, "image/gif", img_util.EmptyGif())
 		return
 	}
-	createId, e := MonitorClientService.Add(addReq)
-	response.CheckAndRespWithData(c, createId, e)
-}
+	var addReq MonitorClientAddReq
+	json.Unmarshal([]byte(data), &addReq)
 
-//	@Summary	监控-客户端信息编辑
-//	@Tags		monitor_client-监控-客户端信息
-//	@Produce	json
-//	@Param		Token		header		string				true	"token"
-//	@Param		Id			body		number				false	"uuid"
-//	@Param		ProjectKey	body		string				false	"项目key"
-//	@Param		ClientId	body		string				false	"sdk生成的客户端id"
-//	@Param		UserId		body		string				false	"用户id"
-//	@Param		Os			body		string				false	"系统"
-//	@Param		Browser		body		string				false	"浏览器"
-//	@Param		City		body		string				false	"城市"
-//	@Param		Width		body		number				false	"屏幕"
-//	@Param		Height		body		number				false	"屏幕高度"
-//	@Param		Ua			body		string				false	"ua记录"
-//	@Success	200			{object}	response.Response	"成功"
-//	@Router		/api/admin/monitor_client/edit [post]
-// func (hd *MonitorClientHandler) Edit(c *gin.Context) {
-// 	var editReq MonitorClientEditReq
-// 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
-// 		return
-// 	}
-// 	response.CheckAndRespWithData(c, editReq.Id, MonitorClientService.Edit(editReq))
-// }
+	lastClient, err := MonitorClientService.DetailByClientId(*addReq.ClientId)
+
+	uaStr := c.GetHeader("user-agent")
+	ip := c.ClientIP()
+
+	if err == nil {
+		last := lastClient.UserId + lastClient.Width.String() + lastClient.Height.String() + lastClient.Ip + lastClient.Ua
+		newStr := *addReq.UserId + addReq.Width.String() + addReq.Height.String() + ip + uaStr
+		if last == newStr {
+			// 前后数据一样，不用创建新的数据
+			fmt.Println("前后数据一样，不用创建新的数据")
+			c.Data(200, "image/gif", img_util.EmptyGif())
+			// response.CheckAndRespWithData(c, 0, nil)
+			return
+		} else {
+			// 新建的话，需要清除lastClient对应的缓存
+			cacheUtil.RemoveCache("ClientId:" + lastClient.ClientId)
+		}
+	}
+
+	if uaStr != "" {
+		ua := core.UAParser.Parse(uaStr)
+		addReq.Ua = &uaStr
+		addReq.Os = &ua.Os.Family
+		addReq.Browser = &ua.UserAgent.Family
+	}
+
+	addReq.Ip = &ip
+	if ip != "" && ip != "127.0.0.1" {
+		regionInfo := util.IpUtil.Parse(ip)
+		// regionInfo := util.IpUtil.Parse("118.24.157.190")
+		addReq.City = &regionInfo.City
+		addReq.Country = &regionInfo.Country
+		addReq.Operator = &regionInfo.Operator
+		addReq.Province = &regionInfo.Province
+	}
+
+	MonitorClientService.Add(addReq)
+
+	c.Data(200, "image/gif", img_util.EmptyGif())
+}
 
 //	@Summary	监控-客户端信息删除
 //	@Tags		monitor_client-监控-客户端信息
@@ -199,7 +235,11 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 //	@Param		UserId			query	string	false	"用户id"
 //	@Param		Os				query	string	false	"系统"
 //	@Param		Browser			query	string	false	"浏览器"
+//	@Param		Country			query	string	false	"国家"
+//	@Param		Province		query	string	false	"省份"
 //	@Param		City			query	string	false	"城市"
+//	@Param		Operator		query	string	false	"电信运营商"
+//	@Param		Ip				query	string	false	"ip"
 //	@Param		Width			query	number	false	"屏幕"
 //	@Param		Height			query	number	false	"屏幕高度"
 //	@Param		Ua				query	string	false	"ua记录"

@@ -4,47 +4,47 @@
             ref="popupRef"
             :title="popupTitle"
             :async="true"
-            width="90%"
+            width="98%"
             :clickModalClose="true"
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-row :gutter="20">
-                <el-col :span="12">
+            <el-row :gutter="10">
+                <el-col :xs="24" :md="14">
                     <el-card>
                         <template #header>
                             <div class="card-header">
-                                <span>错误详情</span>
+                                <span
+                                    >【
+                                    <dict-value
+                                        :options="listAllData.monitor_project_listAll"
+                                        :value="formData.ProjectKey"
+                                        labelKey="ProjectName"
+                                        valueKey="ProjectKey"
+                                    />】错误详情</span
+                                >
                             </div>
                         </template>
 
                         <el-form ref="formRef">
-                            <el-form-item label="项目key" prop="ProjectKey">
-                                <dict-value
-                                    :options="listAllData.monitor_project_listAll"
-                                    :value="formData.ProjectKey"
-                                    labelKey="ProjectName"
-                                    valueKey="ProjectKey"
-                                />
-                            </el-form-item>
+                            <!-- <el-form-item label="项目key" prop="ProjectKey"> </el-form-item> -->
 
-                            <el-form-item label="事件类型" prop="EventType">
+                            <el-form-item label="事件类型：" prop="EventType">
                                 {{ formData.EventType }}
                             </el-form-item>
-                            <el-form-item label="URL地址" prop="Path">
+                            <el-form-item label="URL地址：" prop="Path">
                                 {{ formData.Path }}
                             </el-form-item>
-                            <el-form-item label="错误消息" prop="Message">
+                            <el-form-item label="错误消息：" prop="Message">
                                 {{ formData.Message }}
                             </el-form-item>
-                            <el-form-item label="错误堆栈" prop="Stack">
+                            <el-form-item label="" prop="Stack">
                                 {{ formData.Stack }}
                             </el-form-item>
                         </el-form>
-                        <!-- <template #footer>Footer content</template> -->
                     </el-card>
                 </el-col>
-                <el-col :span="12">
+                <el-col :xs="24" :md="10">
                     <el-card>
                         <template #header>
                             <div class="card-header">
@@ -61,24 +61,31 @@
                                 >
                                     <template #title>
                                         <div class="flex-1 text-left">
-                                            {{ user.UserId }}
+                                            {{ user.City }} {{ user.Browser }}：{{ user.Ip }}
                                         </div>
-                                        <span class="">
+                                        <span>
                                             {{ user.CreateTime }}
                                         </span>
                                     </template>
-                                    <el-descriptions border>
-                                        <el-descriptions-item label="城市：">{{
-                                            user.City
+                                    <el-descriptions border :column="2">
+                                        <el-descriptions-item label="省市区">
+                                            {{ user.Country }}{{ user.Province }}{{ user.City }}
+                                        </el-descriptions-item>
+                                        <el-descriptions-item label="浏览器">
+                                            {{ user.Os }}/{{ user.Browser }}
+                                        </el-descriptions-item>
+                                        <el-descriptions-item label="网络">{{
+                                            user.Operator
+                                        }}</el-descriptions-item>
+                                        <el-descriptions-item label="IP">{{
+                                            user.Ip
                                         }}</el-descriptions-item>
 
-                                        <el-descriptions-item label="OS：">{{
-                                            user.Os
+                                        <el-descriptions-item label="业务ID">{{
+                                            user.UserId
                                         }}</el-descriptions-item>
-                                        <el-descriptions-item label="屏幕尺寸：">
-                                            <el-tag size="small"
-                                                >{{ user.Width }}*{{ user.Height }}</el-tag
-                                            >
+                                        <el-descriptions-item label="屏幕">
+                                            {{ user.Width }}*{{ user.Height }}
                                         </el-descriptions-item>
                                         <el-descriptions-item label="userAgent">
                                             {{ user.Ua }}

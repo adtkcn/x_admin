@@ -37,13 +37,13 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
+                <el-form-item label="创建时间" prop="CreateTime" class="w-[430px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
                         v-model:endTime="queryParams.CreateTimeEnd"
                     />
                 </el-form-item>
-                <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
+                <el-form-item label="更新时间" prop="UpdateTime" class="w-[420px]">
                     <daterange-picker
                         v-model:startTime="queryParams.UpdateTimeStart"
                         v-model:endTime="queryParams.UpdateTimeEnd"

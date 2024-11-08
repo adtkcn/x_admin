@@ -35,11 +35,15 @@
 
                         <div class="flex-1 overflow-auto">
                             <div style="height: calc(100vh - 200px)">
-                                <highlightjs
+                                <highlight-code
+                                    :code="showItem.value"
+                                    lang="javascript"
+                                ></highlight-code>
+                                <!-- <highlightjs
                                     autodetect
                                     :code="showItem.value"
                                     language="javascript"
-                                />
+                                /> -->
                             </div>
                         </div>
                     </div>
@@ -66,17 +70,17 @@ import { onMounted, ref, computed } from 'vue'
 import feedback from '@/utils/feedback'
 import useClipboard from 'vue-clipboard3'
 
-import 'highlight.js/styles/monokai.min.css'
-import hljs from 'highlight.js/lib/common'
-import javascript from 'highlight.js/lib/languages/javascript'
-import go from 'highlight.js/lib/languages/go'
+// import 'highlight.js/styles/monokai.min.css'
+// import hljs from 'highlight.js/lib/common'
+// import javascript from 'highlight.js/lib/languages/javascript'
+// import go from 'highlight.js/lib/languages/go'
 
 // Then register the languages you need
-hljs.registerLanguage('javascript', javascript)
-hljs.registerLanguage('go', go)
+// hljs.registerLanguage('javascript', javascript)
+// hljs.registerLanguage('go', go)
 
-import hljsVuePlugin from '@highlightjs/vue-plugin'
-const highlightjs = hljsVuePlugin.component
+// import hljsVuePlugin from '@highlightjs/vue-plugin'
+// const highlightjs = hljsVuePlugin.component
 
 const props = defineProps<{
     modelValue: boolean

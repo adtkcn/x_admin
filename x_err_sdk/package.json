@@ -1,0 +1,26 @@
+{
+  "name": "@adtkcn/x_err_sdk",
+  "version": "1.0.0",
+  "description": "错误监控sdk",
+  "main": "dist/web/XErr.umd.js",
+  "private": false,
+  "file": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build&&npm run build:ts", 
+    "build:ts": "tsc --emitDeclarationOnly",
+    "outdated": "pnpm outdated"
+  },
+  "keywords": [
+    "x_err_sdk",
+    "X_admin"
+  ],
+  "author": "adtkcn",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "uuid": "^11.0.2",
+    "vite": "^5.4.10"
+  }
+}

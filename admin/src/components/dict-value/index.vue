@@ -1,14 +1,12 @@
 <template>
-    <div>
-        <template v-for="(item, index) in getOptions" :key="index">
-            <span :style="{ color: item.color }"
-                >{{ index != 0 ? '、' : '' }}{{ item[props.labelKey] }}</span
-            >
-        </template>
-    </div>
+    <template v-for="(item, index) in getOptions" :key="index">
+        <span :style="{ color: item.color }"
+            >{{ index != 0 ? '、' : '' }}{{ item[props.labelKey] }}</span
+        >
+    </template>
 </template>
 <script lang="ts" setup>
-import { computed, withDefaults } from 'vue'
+import { computed } from 'vue'
 defineOptions({
     name: 'dict-value'
 })

@@ -60,6 +60,7 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	MonitorProjectRoute(rg)
 	MonitorClientRoute(rg)
 	MonitorErrorRoute(rg)
+	MonitorSlowRoute(rg)
 
 	UserProtocolRoute(rg)
 }

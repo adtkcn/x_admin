@@ -8,14 +8,6 @@ import (
 )
 
 func IndexRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// permSrv := system.NewSystemAuthPermService(db)
-	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
-	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
-	// service := system.NewSystemLoginService(db, adminSrv)
-
-	// authSrv := system.NewSystemAuthMenuService(db, permSrv)
-	// IndexService := NewIndexService()
 	handle := indexHandler{}
 
 	rg = rg.Group("/common", middleware.TokenAuth())

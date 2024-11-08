@@ -12,7 +12,11 @@ type MonitorClient struct {
 	UserId     string        `gorm:"comment:'用户id'"`                // 用户id
 	Os         string        `gorm:"comment:'系统'"`                  // 系统
 	Browser    string        `gorm:"comment:'浏览器'"`                 // 浏览器
+	Country    string        `gorm:"comment:'国家'"`                  // 国家
+	Province   string        `gorm:"comment:'省份'"`                  // 省份
 	City       string        `gorm:"comment:'城市'"`                  // 城市
+	Operator   string        `gorm:"comment:'电信运营商'"`               // 电信运营商
+	Ip         string        `gorm:"comment:'ip'"`                  // ip
 	Width      core.NullInt  `gorm:"comment:'屏幕'"`                  // 屏幕
 	Height     core.NullInt  `gorm:"comment:'屏幕高度'"`                // 屏幕高度
 	Ua         string        `gorm:"comment:'ua记录'"`                // ua记录

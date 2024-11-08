@@ -6,6 +6,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
@@ -58,7 +59,7 @@ func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []Se
 		return
 	}
 	res = []SettingDictDataResp{}
-	util.ConvertUtil.Copy(&res, dictDatas)
+	convert_util.Copy(&res, dictDatas)
 	return
 }
 
@@ -95,7 +96,7 @@ func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDi
 		return
 	}
 	dtResp := []SettingDictDataResp{}
-	util.ConvertUtil.Copy(&dtResp, dds)
+	convert_util.Copy(&dtResp, dds)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -114,7 +115,7 @@ func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, dd)
+	convert_util.Copy(&res, dd)
 	return
 }
 
@@ -124,7 +125,7 @@ func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) 
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 	var dd setting_model.DictData
-	util.ConvertUtil.Copy(&dd, addReq)
+	convert_util.Copy(&dd, addReq)
 	err := ddSrv.db.Create(&dd).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -144,7 +145,7 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 
-	util.ConvertUtil.Copy(&dd, editReq)
+	convert_util.Copy(&dd, editReq)
 	err = ddSrv.db.Save(&dd).Error
 	e = response.CheckErr(err, "编辑失败")
 	return

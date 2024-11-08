@@ -4,14 +4,14 @@
             ref="popupRef"
             :title="popupTitle"
             :async="true"
-            width="550px"
+            width="700px"
             :clickModalClose="true"
             @confirm="handleSubmit"
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="项目uuid" prop="ProjectKey">
-                    <el-input v-model="formData.ProjectKey" placeholder="请输入项目uuid" />
+                <el-form-item label="项目uuid" prop="ProjectKey" v-if="mode === 'edit'">
+                    {{ formData.ProjectKey }}
                 </el-form-item>
                 <el-form-item label="项目名称" prop="ProjectName">
                     <el-input v-model="formData.ProjectName" placeholder="请输入项目名称" />
@@ -48,6 +48,9 @@
                         />
                     </el-select>
                 </el-form-item>
+                <el-form-item label="使用SDK" v-if="mode == 'edit'">
+                    <highlight-code :code="code" lang="javascript"></highlight-code>
+                </el-form-item>
             </el-form>
         </popup>
     </div>
@@ -73,6 +76,7 @@ defineProps({
         default: () => ({})
     }
 })
+
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
@@ -88,7 +92,19 @@ const formData = reactive({
     ProjectType: null,
     Status: null
 })
-
+const code = computed(() => {
+    return `import { XErr, XErrWeb } from '../../x_err_sdk/web/index'
+new XErr(
+    {
+        Dns: '${location.origin}/api',
+        Pid: '${formData.ProjectKey}',
+        Uid: ''
+    },
+    new XErrWeb({
+        onloadTimeOut: 3000
+    })
+)`
+})
 const formRules = {
     Id: [
         {

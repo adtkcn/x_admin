@@ -45,6 +45,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 // MonitorClientRoute(rg)
 func MonitorClientRoute(rg *gin.RouterGroup) {
 	handle := monitor_client.MonitorClientHandler{}
+	rg.GET("/monitor_client/add", middleware.RecordLog("监控-客户端信息新增"), handle.Add)
 
 	r := rg.Group("/", middleware.TokenAuth())
 	r.GET("/monitor_client/list", handle.List)
@@ -52,7 +53,6 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 	r.GET("/monitor_client/detail", handle.Detail)
 	r.GET("/monitor_client/errorUsers", handle.ErrorUsers)
 
-	r.POST("/monitor_client/add", middleware.RecordLog("监控-客户端信息新增"), handle.Add)
 	// r.POST("/monitor_client/edit",middleware.RecordLog("监控-客户端信息编辑"), handle.Edit)
 
 	r.POST("/monitor_client/del", middleware.RecordLog("监控-客户端信息删除"), handle.Del)

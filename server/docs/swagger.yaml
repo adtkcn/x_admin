@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  core.NullFloat:
+    properties:
+      float:
+        type: number
+      valid:
+        type: boolean
+    type: object
   core.NullInt:
     properties:
       int:
@@ -9,6 +16,8 @@ definitions:
     type: object
   core.NullTime:
     properties:
+      format:
+        type: string
       time:
         type: string
       valid:
@@ -23,8 +32,9 @@ definitions:
         description: 申请人昵称
         type: string
       createTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 创建时间
-        type: string
       flowFormData:
         description: 表单配置
         type: string
@@ -55,8 +65,9 @@ definitions:
         description: 模板
         type: integer
       updateTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 更新时间
-        type: string
     type: object
   flow_history.FlowHistoryResp:
     properties:
@@ -76,8 +87,9 @@ definitions:
         description: 审批用户昵称
         type: string
       createTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 创建时间
-        type: string
       formValue:
         description: 表单值
         type: string
@@ -103,8 +115,9 @@ definitions:
         description: 模板id
         type: integer
       updateTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 更新时间
-        type: string
     type: object
   flow_template.FlowTemplateResp:
     properties:
@@ -140,23 +153,34 @@ definitions:
       clientId:
         description: sdk生成的客户端id
         type: string
-      clientTime:
-        description: 更新时间
+      country:
+        description: 国家
         type: string
       createTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 创建时间
-        type: string
       height:
+        allOf:
+        - $ref: '#/definitions/core.NullInt'
         description: 屏幕高度
-        type: integer
       id:
         description: uuid
         type: integer
+      ip:
+        description: ip
+        type: string
+      operator:
+        description: 电信运营商
+        type: string
       os:
         description: 系统
         type: string
       projectKey:
         description: 项目key
+        type: string
+      province:
+        description: 省份
         type: string
       ua:
         description: ua记录
@@ -165,14 +189,44 @@ definitions:
         description: 用户id
         type: string
       width:
+        allOf:
+        - $ref: '#/definitions/core.NullInt'
         description: 屏幕
+    type: object
+  monitor_error.MonitorErrorResp:
+    properties:
+      createTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
+        description: 创建时间
+      eventType:
+        description: 事件类型
+        type: string
+      id:
+        description: 错误id
         type: integer
+      md5:
+        description: md5
+        type: string
+      message:
+        description: 错误消息
+        type: string
+      path:
+        description: URL地址
+        type: string
+      projectKey:
+        description: 项目key
+        type: string
+      stack:
+        description: 错误堆栈
+        type: string
     type: object
   monitor_project.MonitorProjectResp:
     properties:
       createTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 创建时间
-        type: string
       id:
         description: 项目id
         type: integer
@@ -185,38 +239,39 @@ definitions:
       projectType:
         description: 项目类型go java web node php 等
         type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/core.NullInt'
+        description: '是否启用: 0=否, 1=是'
       updateTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 更新时间
-        type: string
     type: object
-  monitor_web.MonitorWebResp:
+  monitor_slow.MonitorSlowResp:
     properties:
       clientId:
         description: sdk生成的客户端id
         type: string
-      clientTime:
-        description: 客户端时间
-        type: string
       createTime:
+        allOf:
+        - $ref: '#/definitions/core.NullTime'
         description: 创建时间
-        type: string
-      eventType:
-        description: 事件类型
-        type: string
       id:
-        description: uuid
+        description: 错误id
         type: integer
-      message:
-        description: 错误消息
-        type: string
-      page:
+      path:
         description: URL地址
         type: string
       projectKey:
         description: 项目key
         type: string
-      stack:
-        description: 错误堆栈
+      time:
+        allOf:
+        - $ref: '#/definitions/core.NullFloat'
+        description: 时间
+      userId:
+        description: 用户id
         type: string
     type: object
   response.PageResp:
@@ -241,36 +296,24 @@ definitions:
       message:
         type: string
     type: object
-  system_log_sms.SystemLogSmsResp:
+  user_protocol.UserProtocolResp:
     properties:
       content:
-        description: 发送内容
+        description: 协议内容
         type: string
       createTime:
         allOf:
         - $ref: '#/definitions/core.NullTime'
         description: 创建时间
       id:
-        description: id
         type: integer
-      mobile:
-        description: 手机号码
+      sort:
+        allOf:
+        - $ref: '#/definitions/core.NullFloat'
+        description: 排序
+      title:
+        description: 标题
         type: string
-      results:
-        description: 短信结果
-        type: string
-      scene:
-        allOf:
-        - $ref: '#/definitions/core.NullInt'
-        description: 场景编号
-      sendTime:
-        allOf:
-        - $ref: '#/definitions/core.NullTime'
-        description: 发送时间
-      status:
-        allOf:
-        - $ref: '#/definitions/core.NullInt'
-        description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
       updateTime:
         allOf:
         - $ref: '#/definitions/core.NullTime'
@@ -1058,46 +1101,78 @@ paths:
         name: Token
         required: true
         type: string
-      - description: 项目key.
+      - description: 项目key
         in: query
-        name: projectKey
+        name: ProjectKey
         type: string
-      - description: sdk生成的客户端id.
+      - description: sdk生成的客户端id
         in: query
-        name: clientId
+        name: ClientId
         type: string
-      - description: 用户id.
+      - description: 用户id
         in: query
-        name: userId
+        name: UserId
         type: string
-      - description: 系统.
+      - description: 系统
         in: query
-        name: os
+        name: Os
         type: string
-      - description: 浏览器.
+      - description: 浏览器
         in: query
-        name: browser
+        name: Browser
         type: string
-      - description: 城市.
+      - description: 国家
         in: query
-        name: city
+        name: Country
         type: string
-      - description: 屏幕.
+      - description: 省份
         in: query
-        name: width
-        type: integer
-      - description: 屏幕高度.
+        name: Province
+        type: string
+      - description: 城市
         in: query
-        name: height
-        type: integer
-      - description: ua记录.
+        name: City
+        type: string
+      - description: 电信运营商
         in: query
-        name: ua
+        name: Operator
+        type: string
+      - description: ip
+        in: query
+        name: Ip
+        type: string
+      - description: 屏幕
+        in: query
+        name: Width
+        type: number
+      - description: 屏幕高度
+        in: query
+        name: Height
+        type: number
+      - description: ua记录
+        in: query
+        name: Ua
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
         type: string
       produces:
       - application/json
       responses: {}
       summary: 监控-客户端信息导出
+      tags:
+      - monitor_client-监控-客户端信息
+  /api/admin/monitor_client/ImportFile:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      summary: 监控-客户端信息导入
       tags:
       - monitor_client-监控-客户端信息
   /api/admin/monitor_client/add:
@@ -1108,49 +1183,64 @@ paths:
         name: Token
         required: true
         type: string
-      - description: sdk生成的客户端id.
+      - description: 项目key
         in: body
-        name: clientId
+        name: ProjectKey
         schema:
           type: string
-      - description: 用户id.
+      - description: sdk生成的客户端id
         in: body
-        name: userId
+        name: ClientId
         schema:
           type: string
-      - description: 系统.
+      - description: 用户id
         in: body
-        name: os
+        name: UserId
         schema:
           type: string
-      - description: 浏览器.
+      - description: 系统
         in: body
-        name: browser
+        name: Os
         schema:
           type: string
-      - description: 城市.
+      - description: 浏览器
         in: body
-        name: city
+        name: Browser
         schema:
           type: string
-      - description: 屏幕.
+      - description: 国家
+        in: query
+        name: Country
+        type: string
+      - description: 省份
+        in: query
+        name: Province
+        type: string
+      - description: 城市
+        in: query
+        name: City
+        type: string
+      - description: 电信运营商
+        in: query
+        name: Operator
+        type: string
+      - description: ip
+        in: query
+        name: Ip
+        type: string
+      - description: 屏幕
         in: body
-        name: width
+        name: Width
         schema:
-          type: integer
-      - description: 屏幕高度.
+          type: number
+      - description: 屏幕高度
         in: body
-        name: height
+        name: Height
         schema:
-          type: integer
-      - description: ua记录.
+          type: number
+      - description: ua记录
         in: body
-        name: ua
-        schema:
-          type: string
-      - description: 更新时间.
-        in: body
-        name: clientTime
+        name: Ua
         schema:
           type: string
       produces:
@@ -1171,11 +1261,11 @@ paths:
         name: Token
         required: true
         type: string
-      - description: uuid.
+      - description: uuid
         in: body
-        name: id
+        name: Id
         schema:
-          type: integer
+          type: number
       produces:
       - application/json
       responses:
@@ -1186,34 +1276,7 @@ paths:
       summary: 监控-客户端信息删除
       tags:
       - monitor_client-监控-客户端信息
-  /api/admin/monitor_client/detail:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: uuid.
-        in: query
-        name: id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/monitor_client.MonitorClientResp'
-              type: object
-      summary: 监控-客户端信息详情
-      tags:
-      - monitor_client-监控-客户端信息
-  /api/admin/monitor_client/edit:
+  /api/admin/monitor_client/delBatch:
     post:
       parameters:
       - description: token
@@ -1221,49 +1284,9 @@ paths:
         name: Token
         required: true
         type: string
-      - description: sdk生成的客户端id.
+      - description: 逗号分割的id
         in: body
-        name: clientId
-        schema:
-          type: string
-      - description: 用户id.
-        in: body
-        name: userId
-        schema:
-          type: string
-      - description: 系统.
-        in: body
-        name: os
-        schema:
-          type: string
-      - description: 浏览器.
-        in: body
-        name: browser
-        schema:
-          type: string
-      - description: 城市.
-        in: body
-        name: city
-        schema:
-          type: string
-      - description: 屏幕.
-        in: body
-        name: width
-        schema:
-          type: integer
-      - description: 屏幕高度.
-        in: body
-        name: height
-        schema:
-          type: integer
-      - description: ua记录.
-        in: body
-        name: ua
-        schema:
-          type: string
-      - description: 更新时间.
-        in: body
-        name: clientTime
+        name: Ids
         schema:
           type: string
       produces:
@@ -1273,7 +1296,34 @@ paths:
           description: 成功
           schema:
             $ref: '#/definitions/response.Response'
-      summary: 监控-客户端信息编辑
+      summary: 监控-客户端信息删除-批量
+      tags:
+      - monitor_client-监控-客户端信息
+  /api/admin/monitor_client/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: uuid
+        in: query
+        name: Id
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/monitor_client.MonitorClientResp'
+              type: object
+      summary: 监控-客户端信息详情
       tags:
       - monitor_client-监控-客户端信息
   /api/admin/monitor_client/list:
@@ -1294,41 +1344,65 @@ paths:
         name: PageSize
         required: true
         type: integer
-      - description: 项目key.
+      - description: 项目key
         in: query
-        name: projectKey
+        name: ProjectKey
         type: string
-      - description: sdk生成的客户端id.
+      - description: sdk生成的客户端id
         in: query
-        name: clientId
+        name: ClientId
         type: string
-      - description: 用户id.
+      - description: 用户id
         in: query
-        name: userId
+        name: UserId
         type: string
-      - description: 系统.
+      - description: 系统
         in: query
-        name: os
+        name: Os
         type: string
-      - description: 浏览器.
+      - description: 浏览器
         in: query
-        name: browser
+        name: Browser
         type: string
-      - description: 城市.
+      - description: 国家
         in: query
-        name: city
+        name: Country
         type: string
-      - description: 屏幕.
+      - description: 省份
         in: query
-        name: width
-        type: integer
-      - description: 屏幕高度.
+        name: Province
+        type: string
+      - description: 城市
         in: query
-        name: height
-        type: integer
-      - description: ua记录.
+        name: City
+        type: string
+      - description: 电信运营商
         in: query
-        name: ua
+        name: Operator
+        type: string
+      - description: ip
+        in: query
+        name: Ip
+        type: string
+      - description: 屏幕
+        in: query
+        name: Width
+        type: number
+      - description: 屏幕高度
+        in: query
+        name: Height
+        type: number
+      - description: ua记录
+        in: query
+        name: Ua
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
         type: string
       produces:
       - application/json
@@ -1339,61 +1413,81 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                data:
+                ' data':
                   allOf:
                   - $ref: '#/definitions/response.PageResp'
                   - properties:
-                      lists:
+                      ' lists':
                         items:
                           $ref: '#/definitions/monitor_client.MonitorClientResp'
                         type: array
                     type: object
               type: object
-        "400":
-          description: 请求错误
-          schema:
-            type: string
       summary: 监控-客户端信息列表
       tags:
       - monitor_client-监控-客户端信息
   /api/admin/monitor_client/listAll:
     get:
       parameters:
-      - description: 项目key.
+      - description: 项目key
         in: query
-        name: projectKey
+        name: ProjectKey
         type: string
-      - description: sdk生成的客户端id.
+      - description: sdk生成的客户端id
         in: query
-        name: clientId
+        name: ClientId
         type: string
-      - description: 用户id.
+      - description: 用户id
         in: query
-        name: userId
+        name: UserId
         type: string
-      - description: 系统.
+      - description: 系统
         in: query
-        name: os
+        name: Os
         type: string
-      - description: 浏览器.
+      - description: 浏览器
         in: query
-        name: browser
+        name: Browser
         type: string
-      - description: 城市.
+      - description: 国家
         in: query
-        name: city
+        name: Country
         type: string
-      - description: 屏幕.
+      - description: 省份
         in: query
-        name: width
-        type: integer
-      - description: 屏幕高度.
+        name: Province
+        type: string
+      - description: 城市
         in: query
-        name: height
-        type: integer
-      - description: ua记录.
+        name: City
+        type: string
+      - description: 电信运营商
         in: query
-        name: ua
+        name: Operator
+        type: string
+      - description: ip
+        in: query
+        name: Ip
+        type: string
+      - description: 屏幕
+        in: query
+        name: Width
+        type: number
+      - description: 屏幕高度
+        in: query
+        name: Height
+        type: number
+      - description: ua记录
+        in: query
+        name: Ua
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
         type: string
       produces:
       - application/json
@@ -1404,7 +1498,7 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                data:
+                ' data':
                   items:
                     $ref: '#/definitions/monitor_client.MonitorClientResp'
                   type: array
@@ -1412,6 +1506,305 @@ paths:
       summary: 监控-客户端信息列表-所有
       tags:
       - monitor_client-监控-客户端信息
+  /api/admin/monitor_error/ExportFile:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目key
+        in: query
+        name: ProjectKey
+        type: string
+      - description: 事件类型
+        in: query
+        name: EventType
+        type: string
+      - description: URL地址
+        in: query
+        name: Path
+        type: string
+      - description: 错误消息
+        in: query
+        name: Message
+        type: string
+      - description: 错误堆栈
+        in: query
+        name: Stack
+        type: string
+      - description: md5
+        in: query
+        name: Md5
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: 监控-错误列导出
+      tags:
+      - monitor_error-监控-错误列
+  /api/admin/monitor_error/ImportFile:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      summary: 监控-错误列导入
+      tags:
+      - monitor_error-监控-错误列
+  /api/admin/monitor_error/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目key
+        in: body
+        name: ProjectKey
+        schema:
+          type: string
+      - description: 事件类型
+        in: body
+        name: EventType
+        schema:
+          type: string
+      - description: URL地址
+        in: body
+        name: Path
+        schema:
+          type: string
+      - description: 错误消息
+        in: body
+        name: Message
+        schema:
+          type: string
+      - description: 错误堆栈
+        in: body
+        name: Stack
+        schema:
+          type: string
+      - description: md5
+        in: body
+        name: Md5
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-错误列新增
+      tags:
+      - monitor_error-监控-错误列
+  /api/admin/monitor_error/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 错误id
+        in: body
+        name: Id
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-错误列删除
+      tags:
+      - monitor_error-监控-错误列
+  /api/admin/monitor_error/delBatch:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 逗号分割的id
+        in: body
+        name: Ids
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-错误列删除-批量
+      tags:
+      - monitor_error-监控-错误列
+  /api/admin/monitor_error/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 错误id
+        in: query
+        name: Id
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/monitor_error.MonitorErrorResp'
+              type: object
+      summary: 监控-错误列详情
+      tags:
+      - monitor_error-监控-错误列
+  /api/admin/monitor_error/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 项目key
+        in: query
+        name: ProjectKey
+        type: string
+      - description: 事件类型
+        in: query
+        name: EventType
+        type: string
+      - description: URL地址
+        in: query
+        name: Path
+        type: string
+      - description: 错误消息
+        in: query
+        name: Message
+        type: string
+      - description: 错误堆栈
+        in: query
+        name: Stack
+        type: string
+      - description: md5
+        in: query
+        name: Md5
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      ' lists':
+                        items:
+                          $ref: '#/definitions/monitor_error.MonitorErrorResp'
+                        type: array
+                    type: object
+              type: object
+      summary: 监控-错误列列表
+      tags:
+      - monitor_error-监控-错误列
+  /api/admin/monitor_error/listAll:
+    get:
+      parameters:
+      - description: 项目key
+        in: query
+        name: ProjectKey
+        type: string
+      - description: 事件类型
+        in: query
+        name: EventType
+        type: string
+      - description: URL地址
+        in: query
+        name: Path
+        type: string
+      - description: 错误消息
+        in: query
+        name: Message
+        type: string
+      - description: 错误堆栈
+        in: query
+        name: Stack
+        type: string
+      - description: md5
+        in: query
+        name: Md5
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/monitor_error.MonitorErrorResp'
+                  type: array
+              type: object
+      summary: 监控-错误列列表-所有
+      tags:
+      - monitor_error-监控-错误列
   /api/admin/monitor_project/ExportFile:
     get:
       parameters:
@@ -1420,24 +1813,52 @@ paths:
         name: Token
         required: true
         type: string
-      - description: 项目uuid.
+      - description: 项目uuid
         in: query
-        name: projectKey
+        name: ProjectKey
         type: string
-      - description: 项目名称.
+      - description: 项目名称
         in: query
-        name: projectName
+        name: ProjectName
         type: string
-      - description: 项目类型go java web node php 等.
+      - description: 项目类型go java web node php 等
         in: query
-        name: projectType
+        name: ProjectType
+        type: string
+      - description: '是否启用: 0=否, 1=是'
+        in: query
+        name: Status
+        type: number
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeStart
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeEnd
         type: string
       produces:
       - application/json
       responses: {}
-      summary: 错误项目导出
+      summary: 监控项目导出
       tags:
-      - monitor_project-错误项目
+      - monitor_project-监控项目
+  /api/admin/monitor_project/ImportFile:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      summary: 监控项目导入
+      tags:
+      - monitor_project-监控项目
   /api/admin/monitor_project/add:
     post:
       parameters:
@@ -1446,21 +1867,26 @@ paths:
         name: Token
         required: true
         type: string
-      - description: 项目uuid.
+      - description: 项目uuid
         in: body
-        name: projectKey
+        name: ProjectKey
         schema:
           type: string
-      - description: 项目名称.
+      - description: 项目名称
         in: body
-        name: projectName
+        name: ProjectName
         schema:
           type: string
-      - description: 项目类型go java web node php 等.
+      - description: 项目类型go java web node php 等
         in: body
-        name: projectType
+        name: ProjectType
         schema:
           type: string
+      - description: '是否启用: 0=否, 1=是'
+        in: body
+        name: Status
+        schema:
+          type: number
       produces:
       - application/json
       responses:
@@ -1468,9 +1894,9 @@ paths:
           description: 成功
           schema:
             $ref: '#/definitions/response.Response'
-      summary: 错误项目新增
+      summary: 监控项目新增
       tags:
-      - monitor_project-错误项目
+      - monitor_project-监控项目
   /api/admin/monitor_project/del:
     post:
       parameters:
@@ -1479,11 +1905,11 @@ paths:
         name: Token
         required: true
         type: string
-      - description: 项目id.
+      - description: 项目id
         in: body
-        name: id
+        name: Id
         schema:
-          type: integer
+          type: number
       produces:
       - application/json
       responses:
@@ -1491,9 +1917,32 @@ paths:
           description: 成功
           schema:
             $ref: '#/definitions/response.Response'
-      summary: 错误项目删除
+      summary: 监控项目删除
       tags:
-      - monitor_project-错误项目
+      - monitor_project-监控项目
+  /api/admin/monitor_project/delBatch:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 逗号分割的id
+        in: body
+        name: Ids
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控项目删除-批量
+      tags:
+      - monitor_project-监控项目
   /api/admin/monitor_project/detail:
     get:
       parameters:
@@ -1502,10 +1951,10 @@ paths:
         name: Token
         required: true
         type: string
-      - description: 项目id.
+      - description: 项目id
         in: query
-        name: id
-        type: integer
+        name: Id
+        type: number
       produces:
       - application/json
       responses:
@@ -1515,12 +1964,12 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                data:
+                ' data':
                   $ref: '#/definitions/monitor_project.MonitorProjectResp'
               type: object
-      summary: 错误项目详情
+      summary: 监控项目详情
       tags:
-      - monitor_project-错误项目
+      - monitor_project-监控项目
   /api/admin/monitor_project/edit:
     post:
       parameters:
@@ -1529,26 +1978,31 @@ paths:
         name: Token
         required: true
         type: string
-      - description: 项目id.
+      - description: 项目id
         in: body
-        name: id
+        name: Id
         schema:
-          type: integer
-      - description: 项目uuid.
+          type: number
+      - description: 项目uuid
         in: body
-        name: projectKey
-        schema:
-          type: string
-      - description: 项目名称.
-        in: body
-        name: projectName
+        name: ProjectKey
         schema:
           type: string
-      - description: 项目类型go java web node php 等.
+      - description: 项目名称
         in: body
-        name: projectType
+        name: ProjectName
         schema:
           type: string
+      - description: 项目类型go java web node php 等
+        in: body
+        name: ProjectType
+        schema:
+          type: string
+      - description: '是否启用: 0=否, 1=是'
+        in: body
+        name: Status
+        schema:
+          type: number
       produces:
       - application/json
       responses:
@@ -1556,9 +2010,9 @@ paths:
           description: 成功
           schema:
             $ref: '#/definitions/response.Response'
-      summary: 错误项目编辑
+      summary: 监控项目编辑
       tags:
-      - monitor_project-错误项目
+      - monitor_project-监控项目
   /api/admin/monitor_project/list:
     get:
       parameters:
@@ -1577,538 +2031,37 @@ paths:
         name: PageSize
         required: true
         type: integer
-      - description: 项目uuid.
+      - description: 项目uuid
         in: query
-        name: projectKey
+        name: ProjectKey
         type: string
-      - description: 项目名称.
+      - description: 项目名称
         in: query
-        name: projectName
+        name: ProjectName
         type: string
-      - description: 项目类型go java web node php 等.
+      - description: 项目类型go java web node php 等
         in: query
-        name: projectType
+        name: ProjectType
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  allOf:
-                  - $ref: '#/definitions/response.PageResp'
-                  - properties:
-                      lists:
-                        items:
-                          $ref: '#/definitions/monitor_project.MonitorProjectResp'
-                        type: array
-                    type: object
-              type: object
-        "400":
-          description: 请求错误
-          schema:
-            type: string
-      summary: 错误项目列表
-      tags:
-      - monitor_project-错误项目
-  /api/admin/monitor_web/ExportFile:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 项目key.
-        in: query
-        name: projectKey
-        type: string
-      - description: sdk生成的客户端id.
-        in: query
-        name: clientId
-        type: string
-      - description: 事件类型.
-        in: query
-        name: eventType
-        type: string
-      - description: URL地址.
-        in: query
-        name: page
-        type: string
-      - description: 错误消息.
-        in: query
-        name: message
-        type: string
-      - description: 错误堆栈.
-        in: query
-        name: stack
-        type: string
-      - description: 客户端时间.
-        in: query
-        name: clientTime
-        type: integer
-      produces:
-      - application/json
-      responses: {}
-      summary: 错误收集error导出
-      tags:
-      - monitor_web-错误收集error
-  /api/admin/monitor_web/add:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 项目key.
-        in: body
-        name: projectKey
-        schema:
-          type: string
-      - description: sdk生成的客户端id.
-        in: body
-        name: clientId
-        schema:
-          type: string
-      - description: 事件类型.
-        in: body
-        name: eventType
-        schema:
-          type: string
-      - description: URL地址.
-        in: body
-        name: page
-        schema:
-          type: string
-      - description: 错误消息.
-        in: body
-        name: message
-        schema:
-          type: string
-      - description: 错误堆栈.
-        in: body
-        name: stack
-        schema:
-          type: string
-      - description: 客户端时间.
-        in: body
-        name: clientTime
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 错误收集error新增
-      tags:
-      - monitor_web-错误收集error
-  /api/admin/monitor_web/del:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: uuid.
-        in: body
-        name: id
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 错误收集error删除
-      tags:
-      - monitor_web-错误收集error
-  /api/admin/monitor_web/detail:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: uuid.
-        in: query
-        name: id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/monitor_web.MonitorWebResp'
-      summary: 错误收集error详情
-      tags:
-      - monitor_web-错误收集error
-  /api/admin/monitor_web/edit:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: uuid.
-        in: body
-        name: id
-        schema:
-          type: integer
-      - description: 项目key.
-        in: body
-        name: projectKey
-        schema:
-          type: string
-      - description: sdk生成的客户端id.
-        in: body
-        name: clientId
-        schema:
-          type: string
-      - description: 事件类型.
-        in: body
-        name: eventType
-        schema:
-          type: string
-      - description: URL地址.
-        in: body
-        name: page
-        schema:
-          type: string
-      - description: 错误消息.
-        in: body
-        name: message
-        schema:
-          type: string
-      - description: 错误堆栈.
-        in: body
-        name: stack
-        schema:
-          type: string
-      - description: 客户端时间.
-        in: body
-        name: clientTime
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 错误收集error编辑
-      tags:
-      - monitor_web-错误收集error
-  /api/admin/monitor_web/list:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 页码
-        in: query
-        name: PageNo
-        required: true
-        type: integer
-      - description: 每页数量
-        in: query
-        name: PageSize
-        required: true
-        type: integer
-      - description: 项目key.
-        in: query
-        name: projectKey
-        type: string
-      - description: sdk生成的客户端id.
-        in: query
-        name: clientId
-        type: string
-      - description: 事件类型.
-        in: query
-        name: eventType
-        type: string
-      - description: URL地址.
-        in: query
-        name: page
-        type: string
-      - description: 错误消息.
-        in: query
-        name: message
-        type: string
-      - description: 错误堆栈.
-        in: query
-        name: stack
-        type: string
-      - description: 客户端时间.
-        in: query
-        name: clientTime
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            items:
-              $ref: '#/definitions/monitor_web.MonitorWebResp'
-            type: array
-        "400":
-          description: 请求错误
-          schema:
-            type: string
-      summary: 错误收集error列表
-      tags:
-      - monitor_web-错误收集error
-  /api/admin/monitor_web/listAll:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            items:
-              $ref: '#/definitions/monitor_web.MonitorWebResp'
-            type: array
-      summary: 错误收集error列表-所有
-      tags:
-      - monitor_web-错误收集error
-  /api/admin/system_log_sms/ExportFile:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 场景编号
-        in: query
-        name: Scene
-        type: integer
-      - description: 手机号码
-        in: query
-        name: Mobile
-        type: string
-      - description: 发送内容
-        in: query
-        name: Content
-        type: string
-      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+      - description: '是否启用: 0=否, 1=是'
         in: query
         name: Status
-        type: integer
-      - description: 短信结果
+        type: number
+      - description: 创建时间
         in: query
-        name: Results
+        name: CreateTimeStart
         type: string
-      produces:
-      - application/json
-      responses: {}
-      summary: 系统短信日志导出
-      tags:
-      - system_log_sms-系统短信日志
-  /api/admin/system_log_sms/ImportFile:
-    post:
-      produces:
-      - application/json
-      responses: {}
-      summary: 系统短信日志导入
-      tags:
-      - system_log_sms-系统短信日志
-  /api/admin/system_log_sms/add:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 场景编号
-        in: formData
-        name: Scene
-        type: integer
-      - description: 手机号码
-        in: formData
-        name: Mobile
-        type: string
-      - description: 发送内容
-        in: formData
-        name: Content
-        type: string
-      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
-        in: formData
-        name: Status
-        type: integer
-      - description: 短信结果
-        in: formData
-        name: Results
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 系统短信日志新增
-      tags:
-      - system_log_sms-系统短信日志
-  /api/admin/system_log_sms/del:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: id
-        in: body
-        name: Id
-        schema:
-          type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 系统短信日志删除
-      tags:
-      - system_log_sms-系统短信日志
-  /api/admin/system_log_sms/detail:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: id
+      - description: 创建时间
         in: query
-        name: Id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                ' data':
-                  $ref: '#/definitions/system_log_sms.SystemLogSmsResp'
-              type: object
-      summary: 系统短信日志详情
-      tags:
-      - system_log_sms-系统短信日志
-  /api/admin/system_log_sms/edit:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
+        name: CreateTimeEnd
         type: string
-      - description: id
-        in: body
-        name: Id
-        schema:
-          type: integer
-      - description: 场景编号
-        in: body
-        name: Scene
-        schema:
-          type: integer
-      - description: 手机号码
-        in: body
-        name: Mobile
-        schema:
-          type: string
-      - description: 发送内容
-        in: body
-        name: Content
-        schema:
-          type: string
-      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
-        in: body
-        name: Status
-        schema:
-          type: integer
-      - description: 短信结果
-        in: body
-        name: Results
-        schema:
-          type: string
-      - description: 发送时间
-        in: body
-        name: SendTime
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 系统短信日志编辑
-      tags:
-      - system_log_sms-系统短信日志
-  /api/admin/system_log_sms/list:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
+      - description: 更新时间
+        in: query
+        name: UpdateTimeStart
         type: string
-      - description: 页码
+      - description: 更新时间
         in: query
-        name: PageNo
-        required: true
-        type: integer
-      - description: 每页数量
-        in: query
-        name: PageSize
-        required: true
-        type: integer
-      - description: 场景编号
-        in: query
-        name: Scene
-        type: integer
-      - description: 手机号码
-        in: query
-        name: Mobile
-        type: string
-      - description: 发送内容
-        in: query
-        name: Content
-        type: string
-      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
-        in: query
-        name: Status
-        type: integer
-      - description: 短信结果
-        in: query
-        name: Results
+        name: UpdateTimeEnd
         type: string
       produces:
       - application/json
@@ -2125,35 +2078,47 @@ paths:
                   - properties:
                       ' lists':
                         items:
-                          $ref: '#/definitions/system_log_sms.SystemLogSmsResp'
+                          $ref: '#/definitions/monitor_project.MonitorProjectResp'
                         type: array
                     type: object
               type: object
-      summary: 系统短信日志列表
+      summary: 监控项目列表
       tags:
-      - system_log_sms-系统短信日志
-  /api/admin/system_log_sms/listAll:
+      - monitor_project-监控项目
+  /api/admin/monitor_project/listAll:
     get:
       parameters:
-      - description: 场景编号
+      - description: 项目uuid
         in: query
-        name: Scene
-        type: integer
-      - description: 手机号码
-        in: query
-        name: Mobile
+        name: ProjectKey
         type: string
-      - description: 发送内容
+      - description: 项目名称
         in: query
-        name: Content
+        name: ProjectName
         type: string
-      - description: 发送状态：[0=发送中, 1=发送成功, 2=发送失败]
+      - description: 项目类型go java web node php 等
+        in: query
+        name: ProjectType
+        type: string
+      - description: '是否启用: 0=否, 1=是'
         in: query
         name: Status
-        type: integer
-      - description: 短信结果
+        type: number
+      - description: 创建时间
         in: query
-        name: Results
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeStart
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeEnd
         type: string
       produces:
       - application/json
@@ -2166,12 +2131,621 @@ paths:
             - properties:
                 ' data':
                   items:
-                    $ref: '#/definitions/system_log_sms.SystemLogSmsResp'
+                    $ref: '#/definitions/monitor_project.MonitorProjectResp'
                   type: array
               type: object
-      summary: 系统短信日志列表-所有
+      summary: 监控项目列表-所有
       tags:
-      - system_log_sms-系统短信日志
+      - monitor_project-监控项目
+  /api/admin/monitor_slow/ExportFile:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 项目key
+        in: query
+        name: ProjectKey
+        type: string
+      - description: sdk生成的客户端id
+        in: query
+        name: ClientId
+        type: string
+      - description: 用户id
+        in: query
+        name: UserId
+        type: string
+      - description: URL地址
+        in: query
+        name: Path
+        type: string
+      - description: 时间
+        in: query
+        name: Time
+        type: number
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: 监控-错误列导出
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/ImportFile:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      summary: 监控-错误列导入
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/add:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-错误列新增
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 错误id
+        in: body
+        name: Id
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-错误列删除
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/delBatch:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 逗号分割的id
+        in: body
+        name: Ids
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-错误列删除-批量
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 错误id
+        in: query
+        name: Id
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/monitor_slow.MonitorSlowResp'
+              type: object
+      summary: 监控-错误列详情
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 错误id
+        in: body
+        name: Id
+        schema:
+          type: number
+      - description: 项目key
+        in: body
+        name: ProjectKey
+        schema:
+          type: string
+      - description: sdk生成的客户端id
+        in: body
+        name: ClientId
+        schema:
+          type: string
+      - description: 用户id
+        in: body
+        name: UserId
+        schema:
+          type: string
+      - description: URL地址
+        in: body
+        name: Path
+        schema:
+          type: string
+      - description: 时间
+        in: body
+        name: Time
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-错误列编辑
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 项目key
+        in: query
+        name: ProjectKey
+        type: string
+      - description: sdk生成的客户端id
+        in: query
+        name: ClientId
+        type: string
+      - description: 用户id
+        in: query
+        name: UserId
+        type: string
+      - description: URL地址
+        in: query
+        name: Path
+        type: string
+      - description: 时间
+        in: query
+        name: Time
+        type: number
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      ' lists':
+                        items:
+                          $ref: '#/definitions/monitor_slow.MonitorSlowResp'
+                        type: array
+                    type: object
+              type: object
+      summary: 监控-错误列列表
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/monitor_slow/listAll:
+    get:
+      parameters:
+      - description: 项目key
+        in: query
+        name: ProjectKey
+        type: string
+      - description: sdk生成的客户端id
+        in: query
+        name: ClientId
+        type: string
+      - description: 用户id
+        in: query
+        name: UserId
+        type: string
+      - description: URL地址
+        in: query
+        name: Path
+        type: string
+      - description: 时间
+        in: query
+        name: Time
+        type: number
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/monitor_slow.MonitorSlowResp'
+                  type: array
+              type: object
+      summary: 监控-错误列列表-所有
+      tags:
+      - monitor_slow-监控-错误列
+  /api/admin/user_protocol/ExportFile:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 标题
+        in: query
+        name: Title
+        type: string
+      - description: 协议内容
+        in: query
+        name: Content
+        type: string
+      - description: 排序
+        in: query
+        name: Sort
+        type: number
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeStart
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: 用户协议导出
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/ImportFile:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      summary: 用户协议导入
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/add:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 标题
+        in: body
+        name: Title
+        schema:
+          type: string
+      - description: 协议内容
+        in: body
+        name: Content
+        schema:
+          type: string
+      - description: 排序
+        in: body
+        name: Sort
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 用户协议新增
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/del:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: Id
+        in: body
+        name: Id
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 用户协议删除
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/delBatch:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 逗号分割的id
+        in: body
+        name: Ids
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 用户协议删除-批量
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/detail:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: Id
+        in: query
+        name: Id
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/user_protocol.UserProtocolResp'
+              type: object
+      summary: 用户协议详情
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/edit:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: Id
+        in: body
+        name: Id
+        schema:
+          type: number
+      - description: 标题
+        in: body
+        name: Title
+        schema:
+          type: string
+      - description: 协议内容
+        in: body
+        name: Content
+        schema:
+          type: string
+      - description: 排序
+        in: body
+        name: Sort
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 用户协议编辑
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/list:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: PageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: PageSize
+        required: true
+        type: integer
+      - description: 标题
+        in: query
+        name: Title
+        type: string
+      - description: 协议内容
+        in: query
+        name: Content
+        type: string
+      - description: 排序
+        in: query
+        name: Sort
+        type: number
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeStart
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      ' lists':
+                        items:
+                          $ref: '#/definitions/user_protocol.UserProtocolResp'
+                        type: array
+                    type: object
+              type: object
+      summary: 用户协议列表
+      tags:
+      - user_protocol-用户协议
+  /api/admin/user_protocol/listAll:
+    get:
+      parameters:
+      - description: 标题
+        in: query
+        name: Title
+        type: string
+      - description: 协议内容
+        in: query
+        name: Content
+        type: string
+      - description: 排序
+        in: query
+        name: Sort
+        type: number
+      - description: 创建时间
+        in: query
+        name: CreateTimeStart
+        type: string
+      - description: 创建时间
+        in: query
+        name: CreateTimeEnd
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeStart
+        type: string
+      - description: 更新时间
+        in: query
+        name: UpdateTimeEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/user_protocol.UserProtocolResp'
+                  type: array
+              type: object
+      summary: 用户协议列表-所有
+      tags:
+      - user_protocol-用户协议
   /api/article_collect/list:
     get:
       parameters:

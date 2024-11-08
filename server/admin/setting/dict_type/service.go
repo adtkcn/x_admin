@@ -6,6 +6,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
@@ -40,7 +41,7 @@ func (dtSrv settingDictTypeService) All() (res []SettingDictTypeResp, e error) {
 		return
 	}
 	res = []SettingDictTypeResp{}
-	util.ConvertUtil.Copy(&res, dictTypes)
+	convert_util.Copy(&res, dictTypes)
 	return
 }
 
@@ -69,7 +70,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq SettingDi
 		return
 	}
 	dtResp := []SettingDictTypeResp{}
-	util.ConvertUtil.Copy(&dtResp, dts)
+	convert_util.Copy(&dtResp, dts)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -88,7 +89,7 @@ func (dtSrv settingDictTypeService) Detail(id uint) (res SettingDictTypeResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, dt)
+	convert_util.Copy(&res, dt)
 	return
 }
 
@@ -101,7 +102,7 @@ func (dtSrv settingDictTypeService) Add(addReq SettingDictTypeAddReq) (e error) 
 		return response.AssertArgumentError.SetMessage("字典类型已存在！")
 	}
 	var dt setting_model.DictType
-	util.ConvertUtil.Copy(&dt, addReq)
+	convert_util.Copy(&dt, addReq)
 	err := dtSrv.db.Create(&dt).Error
 	e = response.CheckErr(err, "添加失败")
 	return
@@ -124,7 +125,7 @@ func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e erro
 		return response.AssertArgumentError.SetMessage("字典类型已存在！")
 	}
 
-	util.ConvertUtil.Copy(&dt, editReq)
+	convert_util.Copy(&dt, editReq)
 	// err = dtSrv.db.Model(&dt).Updates(&up).Error
 	err = dtSrv.db.Save(&dt).Error
 	e = response.CheckErr(err, "编辑失败")

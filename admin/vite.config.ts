@@ -23,10 +23,12 @@ export default ({ mode }) => {
             // 依赖预构建，避免开发刷新
             include: ['@wangeditor/editor-for-vue', 'vuedraggable', 'vue-echarts', 'crypto-js']
         },
+
         base: '/',
         build: {
             sourcemap: true,
             rollupOptions: {
+                external: ['XErr'],
                 output: {
                     manualChunks: {
                         vue: ['vue'],

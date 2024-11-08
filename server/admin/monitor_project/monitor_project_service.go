@@ -6,6 +6,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
 	"gorm.io/gorm"
@@ -81,7 +82,7 @@ func (service monitorProjectService) List(page request.PageReq, listReq MonitorP
 		return
 	}
 	result := []MonitorProjectResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -100,7 +101,7 @@ func (service monitorProjectService) ListAll(listReq MonitorProjectListReq) (res
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, modelList)
+	convert_util.Copy(&res, modelList)
 	return res, nil
 }
 
@@ -119,14 +120,14 @@ func (service monitorProjectService) Detail(Id int) (res MonitorProjectResp, e e
 		cacheUtil.SetCache(obj.Id, obj)
 	}
 
-	util.ConvertUtil.Copy(&res, obj)
+	convert_util.Copy(&res, obj)
 	return
 }
 
 // Add 监控项目新增
 func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (createId int, e error) {
 	var obj model.MonitorProject
-	util.ConvertUtil.StructToStruct(addReq, &obj)
+	convert_util.StructToStruct(addReq, &obj)
 	obj.ProjectKey = util.ToolsUtil.MakeUuid()
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
@@ -149,7 +150,7 @@ func (service monitorProjectService) Edit(editReq MonitorProjectEditReq) (e erro
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&obj, editReq)
+	convert_util.Copy(&obj, editReq)
 
 	err = service.db.Model(&obj).Select("*").Updates(obj).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
@@ -188,9 +189,10 @@ func (service monitorProjectService) DelBatch(Ids []string) (e error) {
 		return err
 	}
 	// 删除缓存
-	for _, v := range Ids {
-		cacheUtil.RemoveCache(v)
-	}
+	// for _, v := range Ids {
+	// 	cacheUtil.RemoveCache(v)
+	// }
+	cacheUtil.RemoveCache(Ids)
 	return nil
 }
 
@@ -220,14 +222,14 @@ func (service monitorProjectService) ExportFile(listReq MonitorProjectListReq) (
 		return
 	}
 	result := []MonitorProjectResp{}
-	util.ConvertUtil.Copy(&result, modelList)
+	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
 func (service monitorProjectService) ImportFile(importReq []MonitorProjectResp) (e error) {
 	var importData []model.MonitorProject
-	util.ConvertUtil.Copy(&importData, importReq)
+	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")
 	return e

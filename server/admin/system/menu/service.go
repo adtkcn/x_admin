@@ -7,6 +7,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model/system_model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -57,9 +58,9 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 		return
 	}
 	var menuResps []SystemAuthMenuResp
-	util.ConvertUtil.Copy(&menuResps, menus)
+	convert_util.Copy(&menuResps, menus)
 	mapList = util.ArrayUtil.ListToTree(
-		util.ConvertUtil.StructsToMaps(menuResps), "id", "pid", "children")
+		convert_util.StructsToMaps(menuResps), "id", "pid", "children")
 	return
 }
 
@@ -71,7 +72,7 @@ func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 		return
 	}
 	var menuResps []SystemAuthMenuResp
-	util.ConvertUtil.Copy(&menuResps, menus)
+	convert_util.Copy(&menuResps, menus)
 	return menuResps, nil
 }
 
@@ -85,13 +86,13 @@ func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, menu)
+	convert_util.Copy(&res, menu)
 	return
 }
 
 func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) {
 	var menu system_model.SystemAuthMenu
-	util.ConvertUtil.Copy(&menu, addReq)
+	convert_util.Copy(&menu, addReq)
 	err := menuSrv.db.Create(&menu).Error
 	if e = response.CheckErr(err, "添加失败"); e != nil {
 		return
@@ -109,7 +110,7 @@ func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e erro
 	if e = response.CheckErr(err, "Edit Find err"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&menu, editReq)
+	convert_util.Copy(&menu, editReq)
 
 	err = menuSrv.db.Model(&menu).Select("*").Updates(menu).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {

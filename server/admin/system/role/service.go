@@ -9,6 +9,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model/system_model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 
 	"github.com/fatih/structs"
 	"gorm.io/gorm"
@@ -43,7 +44,7 @@ func (roleSrv systemAuthRoleService) All() (res []SystemAuthRoleSimpleResp, e er
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, roles)
+	convert_util.Copy(&res, roles)
 	return
 }
 
@@ -63,7 +64,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 		return
 	}
 	var roleResp []SystemAuthRoleResp
-	util.ConvertUtil.Copy(&roleResp, roles)
+	convert_util.Copy(&roleResp, roles)
 	for i := 0; i < len(roleResp); i++ {
 		roleResp[i].Menus = []uint{}
 		roleResp[i].Member = roleSrv.getMemberCnt(roleResp[i].ID)
@@ -86,7 +87,7 @@ func (roleSrv systemAuthRoleService) Detail(id uint) (res SystemAuthRoleResp, e 
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, role)
+	convert_util.Copy(&res, role)
 	res.Member = roleSrv.getMemberCnt(role.ID)
 	res.Menus, _ = PermService.SelectMenuIdsByRoleId(role.ID)
 	return
@@ -105,7 +106,7 @@ func (roleSrv systemAuthRoleService) Add(addReq SystemAuthRoleAddReq) (e error) 
 	if r := roleSrv.db.Where("name = ?", strings.Trim(addReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("角色名称已存在!")
 	}
-	util.ConvertUtil.Copy(&role, addReq)
+	convert_util.Copy(&role, addReq)
 	role.Name = strings.Trim(addReq.Name, " ")
 	// 事务
 	err := roleSrv.db.Transaction(func(tx *gorm.DB) error {

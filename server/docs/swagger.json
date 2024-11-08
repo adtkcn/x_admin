@@ -1254,59 +1254,107 @@
                     },
                     {
                         "type": "string",
-                        "description": "项目key.",
-                        "name": "projectKey",
+                        "description": "项目key",
+                        "name": "ProjectKey",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "用户id.",
-                        "name": "userId",
+                        "description": "用户id",
+                        "name": "UserId",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "系统.",
-                        "name": "os",
+                        "description": "系统",
+                        "name": "Os",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "浏览器.",
-                        "name": "browser",
+                        "description": "浏览器",
+                        "name": "Browser",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "城市.",
-                        "name": "city",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "屏幕.",
-                        "name": "width",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "屏幕高度.",
-                        "name": "height",
+                        "description": "国家",
+                        "name": "Country",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "ua记录.",
-                        "name": "ua",
+                        "description": "省份",
+                        "name": "Province",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市",
+                        "name": "City",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "电信运营商",
+                        "name": "Operator",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ip",
+                        "name": "Ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "屏幕",
+                        "name": "Width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "屏幕高度",
+                        "name": "Height",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ua记录",
+                        "name": "Ua",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
                         "in": "query"
                     }
                 ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_client/ImportFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-监控-客户端信息"
+                ],
+                "summary": "监控-客户端信息导入",
                 "responses": {}
             }
         },
@@ -1328,72 +1376,94 @@
                         "required": true
                     },
                     {
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
+                        "description": "项目key",
+                        "name": "ProjectKey",
                         "in": "body",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "用户id.",
-                        "name": "userId",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
                         "in": "body",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "系统.",
-                        "name": "os",
+                        "description": "用户id",
+                        "name": "UserId",
                         "in": "body",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "浏览器.",
-                        "name": "browser",
+                        "description": "系统",
+                        "name": "Os",
                         "in": "body",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "城市.",
-                        "name": "city",
+                        "description": "浏览器",
+                        "name": "Browser",
                         "in": "body",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "屏幕.",
-                        "name": "width",
+                        "type": "string",
+                        "description": "国家",
+                        "name": "Country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "省份",
+                        "name": "Province",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市",
+                        "name": "City",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "电信运营商",
+                        "name": "Operator",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ip",
+                        "name": "Ip",
+                        "in": "query"
+                    },
+                    {
+                        "description": "屏幕",
+                        "name": "Width",
                         "in": "body",
                         "schema": {
-                            "type": "integer"
+                            "type": "number"
                         }
                     },
                     {
-                        "description": "屏幕高度.",
-                        "name": "height",
+                        "description": "屏幕高度",
+                        "name": "Height",
                         "in": "body",
                         "schema": {
-                            "type": "integer"
+                            "type": "number"
                         }
                     },
                     {
-                        "description": "ua记录.",
-                        "name": "ua",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "更新时间.",
-                        "name": "clientTime",
+                        "description": "ua记录",
+                        "name": "Ua",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1428,11 +1498,47 @@
                         "required": true
                     },
                     {
-                        "description": "uuid.",
-                        "name": "id",
+                        "description": "uuid",
+                        "name": "Id",
                         "in": "body",
                         "schema": {
-                            "type": "integer"
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_client/delBatch": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-监控-客户端信息"
+                ],
+                "summary": "监控-客户端信息删除-批量",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "逗号分割的id",
+                        "name": "Ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -1464,9 +1570,9 @@
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "uuid.",
-                        "name": "id",
+                        "type": "number",
+                        "description": "uuid",
+                        "name": "Id",
                         "in": "query"
                     }
                 ],
@@ -1481,112 +1587,12 @@
                                 {
                                     "type": "object",
                                     "properties": {
-                                        "data": {
+                                        " data": {
                                             "$ref": "#/definitions/monitor_client.MonitorClientResp"
                                         }
                                     }
                                 }
                             ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_client/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_client-监控-客户端信息"
-                ],
-                "summary": "监控-客户端信息编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "用户id.",
-                        "name": "userId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "系统.",
-                        "name": "os",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "浏览器.",
-                        "name": "browser",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "城市.",
-                        "name": "city",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "屏幕.",
-                        "name": "width",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "屏幕高度.",
-                        "name": "height",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "ua记录.",
-                        "name": "ua",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "更新时间.",
-                        "name": "clientTime",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -1625,1288 +1631,92 @@
                     },
                     {
                         "type": "string",
-                        "description": "项目key.",
-                        "name": "projectKey",
+                        "description": "项目key",
+                        "name": "ProjectKey",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "用户id.",
-                        "name": "userId",
+                        "description": "用户id",
+                        "name": "UserId",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "系统.",
-                        "name": "os",
+                        "description": "系统",
+                        "name": "Os",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "浏览器.",
-                        "name": "browser",
+                        "description": "浏览器",
+                        "name": "Browser",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "城市.",
-                        "name": "city",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "屏幕.",
-                        "name": "width",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "屏幕高度.",
-                        "name": "height",
+                        "description": "国家",
+                        "name": "Country",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "ua记录.",
-                        "name": "ua",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.PageResp"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "lists": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_client/listAll": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_client-监控-客户端信息"
-                ],
-                "summary": "监控-客户端信息列表-所有",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "项目key.",
-                        "name": "projectKey",
+                        "description": "省份",
+                        "name": "Province",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
+                        "description": "城市",
+                        "name": "City",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "用户id.",
-                        "name": "userId",
+                        "description": "电信运营商",
+                        "name": "Operator",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "系统.",
-                        "name": "os",
+                        "description": "ip",
+                        "name": "Ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "屏幕",
+                        "name": "Width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "屏幕高度",
+                        "name": "Height",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "浏览器.",
-                        "name": "browser",
+                        "description": "ua记录",
+                        "name": "Ua",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "城市.",
-                        "name": "city",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "屏幕.",
-                        "name": "width",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "屏幕高度.",
-                        "name": "height",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "ua记录.",
-                        "name": "ua",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_project/ExportFile": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目导出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目uuid.",
-                        "name": "projectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目名称.",
-                        "name": "projectName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目类型go java web node php 等.",
-                        "name": "projectType",
-                        "in": "query"
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/admin/monitor_project/add": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目新增",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "项目uuid.",
-                        "name": "projectKey",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "项目名称.",
-                        "name": "projectName",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "项目类型go java web node php 等.",
-                        "name": "projectType",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_project/del": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "项目id.",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_project/detail": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "项目id.",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/monitor_project.MonitorProjectResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_project/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "项目id.",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "项目uuid.",
-                        "name": "projectKey",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "项目名称.",
-                        "name": "projectName",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "项目类型go java web node php 等.",
-                        "name": "projectType",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_project/list": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-错误项目"
-                ],
-                "summary": "错误项目列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "PageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目uuid.",
-                        "name": "projectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目名称.",
-                        "name": "projectName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目类型go java web node php 等.",
-                        "name": "projectType",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.PageResp"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "lists": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_web/ExportFile": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_web-错误收集error"
-                ],
-                "summary": "错误收集error导出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目key.",
-                        "name": "projectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "事件类型.",
-                        "name": "eventType",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "URL地址.",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "错误消息.",
-                        "name": "message",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "错误堆栈.",
-                        "name": "stack",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "客户端时间.",
-                        "name": "clientTime",
-                        "in": "query"
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/admin/monitor_web/add": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_web-错误收集error"
-                ],
-                "summary": "错误收集error新增",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "项目key.",
-                        "name": "projectKey",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "事件类型.",
-                        "name": "eventType",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "URL地址.",
-                        "name": "page",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "错误消息.",
-                        "name": "message",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "错误堆栈.",
-                        "name": "stack",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "客户端时间.",
-                        "name": "clientTime",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_web/del": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_web-错误收集error"
-                ],
-                "summary": "错误收集error删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "uuid.",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_web/detail": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_web-错误收集error"
-                ],
-                "summary": "错误收集error详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "uuid.",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/monitor_web.MonitorWebResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_web/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_web-错误收集error"
-                ],
-                "summary": "错误收集error编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "uuid.",
-                        "name": "id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "项目key.",
-                        "name": "projectKey",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "事件类型.",
-                        "name": "eventType",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "URL地址.",
-                        "name": "page",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "错误消息.",
-                        "name": "message",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "错误堆栈.",
-                        "name": "stack",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "客户端时间.",
-                        "name": "clientTime",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_web/list": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_web-错误收集error"
-                ],
-                "summary": "错误收集error列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "PageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目key.",
-                        "name": "projectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sdk生成的客户端id.",
-                        "name": "clientId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "事件类型.",
-                        "name": "eventType",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "URL地址.",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "错误消息.",
-                        "name": "message",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "错误堆栈.",
-                        "name": "stack",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "客户端时间.",
-                        "name": "clientTime",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/monitor_web.MonitorWebResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "请求错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_web/listAll": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_web-错误收集error"
-                ],
-                "summary": "错误收集error列表-所有",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/monitor_web.MonitorWebResp"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/system_log_sms/ExportFile": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system_log_sms-系统短信日志"
-                ],
-                "summary": "系统短信日志导出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "场景编号",
-                        "name": "Scene",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "手机号码",
-                        "name": "Mobile",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "发送内容",
-                        "name": "Content",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
-                        "name": "Status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "短信结果",
-                        "name": "Results",
-                        "in": "query"
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/admin/system_log_sms/ImportFile": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system_log_sms-系统短信日志"
-                ],
-                "summary": "系统短信日志导入",
-                "responses": {}
-            }
-        },
-        "/api/admin/system_log_sms/add": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system_log_sms-系统短信日志"
-                ],
-                "summary": "系统短信日志新增",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "场景编号",
-                        "name": "Scene",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "手机号码",
-                        "name": "Mobile",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "发送内容",
-                        "name": "Content",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
-                        "name": "Status",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "短信结果",
-                        "name": "Results",
-                        "in": "formData"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/system_log_sms/del": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system_log_sms-系统短信日志"
-                ],
-                "summary": "系统短信日志删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "id",
-                        "name": "Id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/system_log_sms/detail": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system_log_sms-系统短信日志"
-                ],
-                "summary": "系统短信日志详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "id",
-                        "name": "Id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        " data": {
-                                            "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/system_log_sms/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system_log_sms-系统短信日志"
-                ],
-                "summary": "系统短信日志编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "id",
-                        "name": "Id",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "场景编号",
-                        "name": "Scene",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "手机号码",
-                        "name": "Mobile",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "发送内容",
-                        "name": "Content",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
-                        "name": "Status",
-                        "in": "body",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "短信结果",
-                        "name": "Results",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "发送时间",
-                        "name": "SendTime",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/system_log_sms/list": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "system_log_sms-系统短信日志"
-                ],
-                "summary": "系统短信日志列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "PageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "场景编号",
-                        "name": "Scene",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "手机号码",
-                        "name": "Mobile",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "发送内容",
-                        "name": "Content",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
-                        "name": "Status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "短信结果",
-                        "name": "Results",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
                         "in": "query"
                     }
                 ],
@@ -2932,7 +1742,7 @@
                                                         " lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
                                                             }
                                                         }
                                                     }
@@ -2947,44 +1757,104 @@
                 }
             }
         },
-        "/api/admin/system_log_sms/listAll": {
+        "/api/admin/monitor_client/listAll": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "system_log_sms-系统短信日志"
+                    "monitor_client-监控-客户端信息"
                 ],
-                "summary": "系统短信日志列表-所有",
+                "summary": "监控-客户端信息列表-所有",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "场景编号",
-                        "name": "Scene",
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "手机号码",
-                        "name": "Mobile",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "发送内容",
-                        "name": "Content",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
-                        "name": "Status",
+                        "description": "用户id",
+                        "name": "UserId",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "短信结果",
-                        "name": "Results",
+                        "description": "系统",
+                        "name": "Os",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器",
+                        "name": "Browser",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "国家",
+                        "name": "Country",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "省份",
+                        "name": "Province",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市",
+                        "name": "City",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "电信运营商",
+                        "name": "Operator",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ip",
+                        "name": "Ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "屏幕",
+                        "name": "Width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "屏幕高度",
+                        "name": "Height",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ua记录",
+                        "name": "Ua",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
                         "in": "query"
                     }
                 ],
@@ -3002,7 +1872,1982 @@
                                         " data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/system_log_sms.SystemLogSmsResp"
+                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_error/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "事件类型",
+                        "name": "EventType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误消息",
+                        "name": "Message",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误堆栈",
+                        "name": "Stack",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "md5",
+                        "name": "Md5",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_error/ImportFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列导入",
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_error/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "事件类型",
+                        "name": "EventType",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "错误消息",
+                        "name": "Message",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "错误堆栈",
+                        "name": "Stack",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "md5",
+                        "name": "Md5",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_error/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "错误id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_error/delBatch": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列删除-批量",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "逗号分割的id",
+                        "name": "Ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_error/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "错误id",
+                        "name": "Id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/monitor_error.MonitorErrorResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_error/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "事件类型",
+                        "name": "EventType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误消息",
+                        "name": "Message",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误堆栈",
+                        "name": "Stack",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "md5",
+                        "name": "Md5",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        " lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitor_error.MonitorErrorResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_error/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列列表-所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "事件类型",
+                        "name": "EventType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误消息",
+                        "name": "Message",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误堆栈",
+                        "name": "Stack",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "md5",
+                        "name": "Md5",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/monitor_error.MonitorErrorResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目uuid",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目名称",
+                        "name": "ProjectName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目类型go java web node php 等",
+                        "name": "ProjectType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "是否启用: 0=否, 1=是",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_project/ImportFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目导入",
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_project/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目uuid",
+                        "name": "ProjectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目名称",
+                        "name": "ProjectName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目类型go java web node php 等",
+                        "name": "ProjectType",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "是否启用: 0=否, 1=是",
+                        "name": "Status",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/delBatch": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目删除-批量",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "逗号分割的id",
+                        "name": "Ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "项目id",
+                        "name": "Id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "项目id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "description": "项目uuid",
+                        "name": "ProjectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目名称",
+                        "name": "ProjectName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "项目类型go java web node php 等",
+                        "name": "ProjectType",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "是否启用: 0=否, 1=是",
+                        "name": "Status",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目uuid",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目名称",
+                        "name": "ProjectName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目类型go java web node php 等",
+                        "name": "ProjectType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "是否启用: 0=否, 1=是",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        " lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_project/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目列表-所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "项目uuid",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目名称",
+                        "name": "ProjectName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目类型go java web node php 等",
+                        "name": "ProjectType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "是否启用: 0=否, 1=是",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_slow/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户id",
+                        "name": "UserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "时间",
+                        "name": "Time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_slow/ImportFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列导入",
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_slow/add": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列新增",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_slow/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "错误id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_slow/delBatch": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列删除-批量",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "逗号分割的id",
+                        "name": "Ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_slow/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "错误id",
+                        "name": "Id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/monitor_slow.MonitorSlowResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_slow/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "错误id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "用户id",
+                        "name": "UserId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "时间",
+                        "name": "Time",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_slow/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户id",
+                        "name": "UserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "时间",
+                        "name": "Time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        " lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/monitor_slow.MonitorSlowResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/monitor_slow/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_slow-监控-错误列"
+                ],
+                "summary": "监控-错误列列表-所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户id",
+                        "name": "UserId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "时间",
+                        "name": "Time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/monitor_slow.MonitorSlowResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/ExportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "Title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "协议内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "排序",
+                        "name": "Sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/user_protocol/ImportFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议导入",
+                "responses": {}
+            }
+        },
+        "/api/admin/user_protocol/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "标题",
+                        "name": "Title",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "协议内容",
+                        "name": "Content",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "排序",
+                        "name": "Sort",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/delBatch": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议删除-批量",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "逗号分割的id",
+                        "name": "Ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/detail": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Id",
+                        "name": "Id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/user_protocol.UserProtocolResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Id",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "description": "标题",
+                        "name": "Title",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "协议内容",
+                        "name": "Content",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "排序",
+                        "name": "Sort",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "PageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "PageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "Title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "协议内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "排序",
+                        "name": "Sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        " lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/user_protocol.UserProtocolResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议列表-所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "Title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "协议内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "排序",
+                        "name": "Sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/user_protocol.UserProtocolResp"
                                             }
                                         }
                                     }
@@ -3107,6 +3952,17 @@
         }
     },
     "definitions": {
+        "core.NullFloat": {
+            "type": "object",
+            "properties": {
+                "float": {
+                    "type": "number"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "core.NullInt": {
             "type": "object",
             "properties": {
@@ -3121,6 +3977,9 @@
         "core.NullTime": {
             "type": "object",
             "properties": {
+                "format": {
+                    "type": "string"
+                },
                 "time": {
                     "type": "string"
                 },
@@ -3142,7 +4001,11 @@
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 },
                 "flowFormData": {
                     "description": "表单配置",
@@ -3185,7 +4048,11 @@
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 }
             }
         },
@@ -3214,7 +4081,11 @@
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 },
                 "formValue": {
                     "description": "表单值",
@@ -3250,7 +4121,11 @@
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 }
             }
         },
@@ -3301,21 +4176,37 @@
                     "description": "sdk生成的客户端id",
                     "type": "string"
                 },
-                "clientTime": {
-                    "description": "更新时间",
+                "country": {
+                    "description": "国家",
                     "type": "string"
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 },
                 "height": {
                     "description": "屏幕高度",
-                    "type": "integer"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
                 },
                 "id": {
                     "description": "uuid",
                     "type": "integer"
+                },
+                "ip": {
+                    "description": "ip",
+                    "type": "string"
+                },
+                "operator": {
+                    "description": "电信运营商",
+                    "type": "string"
                 },
                 "os": {
                     "description": "系统",
@@ -3323,6 +4214,10 @@
                 },
                 "projectKey": {
                     "description": "项目key",
+                    "type": "string"
+                },
+                "province": {
+                    "description": "省份",
                     "type": "string"
                 },
                 "ua": {
@@ -3335,7 +4230,52 @@
                 },
                 "width": {
                     "description": "屏幕",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
+                }
+            }
+        },
+        "monitor_error.MonitorErrorResp": {
+            "type": "object",
+            "properties": {
+                "createTime": {
+                    "description": "创建时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
+                },
+                "eventType": {
+                    "description": "事件类型",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "错误id",
                     "type": "integer"
+                },
+                "md5": {
+                    "description": "md5",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "错误消息",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "URL地址",
+                    "type": "string"
+                },
+                "projectKey": {
+                    "description": "项目key",
+                    "type": "string"
+                },
+                "stack": {
+                    "description": "错误堆栈",
+                    "type": "string"
                 }
             }
         },
@@ -3344,7 +4284,11 @@
             "properties": {
                 "createTime": {
                     "description": "创建时间",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 },
                 "id": {
                     "description": "项目id",
@@ -3362,40 +4306,44 @@
                     "description": "项目类型go java web node php 等",
                     "type": "string"
                 },
+                "status": {
+                    "description": "是否启用: 0=否, 1=是",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
+                },
                 "updateTime": {
                     "description": "更新时间",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 }
             }
         },
-        "monitor_web.MonitorWebResp": {
+        "monitor_slow.MonitorSlowResp": {
             "type": "object",
             "properties": {
                 "clientId": {
                     "description": "sdk生成的客户端id",
                     "type": "string"
                 },
-                "clientTime": {
-                    "description": "客户端时间",
-                    "type": "string"
-                },
                 "createTime": {
                     "description": "创建时间",
-                    "type": "string"
-                },
-                "eventType": {
-                    "description": "事件类型",
-                    "type": "string"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullTime"
+                        }
+                    ]
                 },
                 "id": {
-                    "description": "uuid",
+                    "description": "错误id",
                     "type": "integer"
                 },
-                "message": {
-                    "description": "错误消息",
-                    "type": "string"
-                },
-                "page": {
+                "path": {
                     "description": "URL地址",
                     "type": "string"
                 },
@@ -3403,8 +4351,16 @@
                     "description": "项目key",
                     "type": "string"
                 },
-                "stack": {
-                    "description": "错误堆栈",
+                "time": {
+                    "description": "时间",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullFloat"
+                        }
+                    ]
+                },
+                "userId": {
+                    "description": "用户id",
                     "type": "string"
                 }
             }
@@ -3441,11 +4397,11 @@
                 }
             }
         },
-        "system_log_sms.SystemLogSmsResp": {
+        "user_protocol.UserProtocolResp": {
             "type": "object",
             "properties": {
                 "content": {
-                    "description": "发送内容",
+                    "description": "协议内容",
                     "type": "string"
                 },
                 "createTime": {
@@ -3457,40 +4413,19 @@
                     ]
                 },
                 "id": {
-                    "description": "id",
                     "type": "integer"
                 },
-                "mobile": {
-                    "description": "手机号码",
+                "sort": {
+                    "description": "排序",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullFloat"
+                        }
+                    ]
+                },
+                "title": {
+                    "description": "标题",
                     "type": "string"
-                },
-                "results": {
-                    "description": "短信结果",
-                    "type": "string"
-                },
-                "scene": {
-                    "description": "场景编号",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullInt"
-                        }
-                    ]
-                },
-                "sendTime": {
-                    "description": "发送时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
-                },
-                "status": {
-                    "description": "发送状态：[0=发送中, 1=发送成功, 2=发送失败]",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullInt"
-                        }
-                    ]
                 },
                 "updateTime": {
                     "description": "更新时间",

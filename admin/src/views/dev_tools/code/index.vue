@@ -39,13 +39,13 @@
                     </template>
                     删除
                 </el-button>
-                <el-button
+                <!-- <el-button
                     v-perms="['admin:gen:genCode', 'admin:gen:downloadCode']"
                     :disabled="!selectData.length"
                     @click="handleGenerate(selectData)"
                 >
                     生成代码
-                </el-button>
+                </el-button> -->
             </div>
             <div class="mt-4">
                 <el-table

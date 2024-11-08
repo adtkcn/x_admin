@@ -7,7 +7,7 @@
                 :model="queryParams"
                 :inline="true"
                 label-width="70px"
-                label-position="left"
+                label-position="right"
             >
                 <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
                     <el-select v-model="queryParams.ProjectKey" clearable>
@@ -39,42 +39,6 @@
         <el-card class="!border-none mt-4" shadow="never">
             <div class="text-right">
                 <el-button
-                    v-perms="['admin:monitor_error:add']"
-                    type="primary"
-                    @click="handleAdd()"
-                >
-                    <template #icon>
-                        <icon name="el-icon-Plus" />
-                    </template>
-                    新增
-                </el-button>
-                <upload
-                    v-perms="['admin:monitor_error:ImportFile']"
-                    class="ml-3 mr-3"
-                    :url="monitor_error_import_file"
-                    :data="{ cid: 0 }"
-                    type="file"
-                    :show-progress="true"
-                    @change="resetPage"
-                >
-                    <el-button type="primary">
-                        <template #icon>
-                            <icon name="el-icon-Upload" />
-                        </template>
-                        导入
-                    </el-button>
-                </upload>
-                <el-button
-                    v-perms="['admin:monitor_error:ExportFile']"
-                    type="primary"
-                    @click="exportFile"
-                >
-                    <template #icon>
-                        <icon name="el-icon-Download" />
-                    </template>
-                    导出
-                </el-button>
-                <el-button
                     v-perms="['admin:monitor_error:delBatch']"
                     type="danger"
                     :disabled="!multipleSelection.length"
@@ -92,7 +56,7 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
-                <el-table-column label="项目" prop="ProjectKey" min-width="100">
+                <el-table-column label="项目" prop="ProjectKey" min-width="80">
                     <template #default="{ row }">
                         <dict-value
                             :options="listAllData.monitor_project_listAll"
@@ -102,13 +66,13 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column label="事件类型" prop="EventType" min-width="130" />
+                <el-table-column label="事件类型" prop="EventType" width="130" />
                 <el-table-column label="URL地址" prop="Path" min-width="130" />
                 <el-table-column label="错误消息" prop="Message" min-width="130" />
-                <el-table-column label="错误堆栈" prop="Stack" min-width="130" />
-                <el-table-column label="md5" prop="Md5" min-width="130" />
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="ClientTime" min-width="130" />
+
+                <!-- <el-table-column label="md5" prop="Md5" min-width="130" /> -->
+                <el-table-column label="创建时间" prop="CreateTime" width="170" />
+
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
@@ -154,9 +118,7 @@ import { ref, reactive, shallowRef, nextTick } from 'vue'
 import {
     monitor_error_delete,
     monitor_error_delete_batch,
-    monitor_error_list,
-    monitor_error_import_file,
-    monitor_error_export_file
+    monitor_error_list
 } from '@/api/monitor/error'
 import type { type_monitor_error, type_monitor_error_query } from '@/api/monitor/error'
 
@@ -197,11 +159,6 @@ const { listAllData } = useListAllData<{
 })
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-const handleAdd = async () => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('add')
-}
 
 const multipleSelection = ref<type_monitor_error[]>([])
 const handleSelectionChange = (val: type_monitor_error[]) => {
@@ -240,11 +197,5 @@ const deleteBatch = async () => {
     } catch (error) {}
 }
 
-const exportFile = async () => {
-    try {
-        await feedback.confirm('确定要导出？')
-        await monitor_error_export_file(queryParams)
-    } catch (error) {}
-}
 getLists()
 </script>

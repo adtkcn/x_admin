@@ -4,7 +4,7 @@ import (
 	"mime/multipart"
 	"x_admin/admin/common/album"
 	"x_admin/plugin"
-	"x_admin/util"
+	"x_admin/util/convert_util"
 )
 
 type IUploadService interface {
@@ -39,14 +39,14 @@ func (upSrv uploadService) uploadFile(file *multipart.FileHeader, folder string,
 		return
 	}
 	var addReq album.CommonAlbumAddReq
-	util.ConvertUtil.Copy(&addReq, upRes)
+	convert_util.Copy(&addReq, upRes)
 	addReq.Aid = aid
 	addReq.Cid = cid
 	var albumId uint
 	if albumId, e = album.Service.AlbumAdd(addReq); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&res, addReq)
+	convert_util.Copy(&res, addReq)
 	res.ID = albumId
 	res.Path = upRes.Path
 	return res, nil

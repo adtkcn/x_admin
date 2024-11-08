@@ -9,6 +9,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/gen_model"
+	"x_admin/util/convert_util"
 
 	"strings"
 
@@ -123,11 +124,11 @@ func (genSrv generateService) Detail(id uint) (res GenTableDetailResp, e error) 
 		return
 	}
 	var base GenTableBaseResp
-	util.ConvertUtil.Copy(&base, genTb)
+	convert_util.Copy(&base, genTb)
 	var gen GenTableGenResp
-	util.ConvertUtil.Copy(&gen, genTb)
+	convert_util.Copy(&gen, genTb)
 	var colResp []GenColumnResp
-	util.ConvertUtil.Copy(&colResp, columns)
+	convert_util.Copy(&colResp, columns)
 	return GenTableDetailResp{
 		Base:   base,
 		Gen:    gen,
@@ -143,7 +144,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 		return
 	}
 	var tables []gen_model.GenTable
-	util.ConvertUtil.Copy(&tables, dbTbs)
+	convert_util.Copy(&tables, dbTbs)
 	if len(tables) == 0 {
 		e = response.AssertArgumentError.SetMessage("表不存在!")
 		return
@@ -281,7 +282,7 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 	if e = response.CheckErr(err, "查找数据失败"); e != nil {
 		return
 	}
-	util.ConvertUtil.Copy(&genTable, editReq)
+	convert_util.Copy(&genTable, editReq)
 	err = genSrv.db.Transaction(func(tx *gorm.DB) error {
 		genTable.SubTableName = strings.Replace(editReq.SubTableName, config.Config.DbTablePrefix, "", 1)
 		txErr := tx.Save(&genTable).Error
@@ -290,7 +291,7 @@ func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
 		}
 		for i := 0; i < len(editReq.Columns); i++ {
 			var col gen_model.GenTableColumn
-			util.ConvertUtil.Copy(&col, editReq.Columns[i])
+			convert_util.Copy(&col, editReq.Columns[i])
 			txErr = tx.Save(&col).Error
 			if te := response.CheckErr(txErr, "更新失败"); te != nil {
 				return te
