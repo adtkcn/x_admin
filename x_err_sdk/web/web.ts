@@ -149,7 +149,7 @@ class Web implements IErrorEvent {
         this.callback({
           Type: "onloadTime",
           Path: window.location.href,
-          Time:onloadTime
+          Time:Math.floor(onloadTime)
         });
       }
     }

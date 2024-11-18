@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // import { onUnmounted } from 'vue'
-// import { XErr, XErrWeb } from '../../../../x_err_sdk/web/index'
-// // { XErr, XErrWeb }
-// const xErr = new XErr(
+// import { Base, Web } from '../../../../x_err_sdk/web/index'
+// // { XErr, Web }
+// const xErr = new Base(
 //     {
 //         Dns: 'http://localhost:5174/api',
 //         Pid: 'e19e3be20de94f49b68fafb4c30668bc',
 //         Uid: '10'
 //     },
-//     new XErrWeb()
+//     new Web()
 // )
 // onUnmounted(() => {
 // xErr.unListen()

@@ -196,7 +196,7 @@ func (service userProtocolService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
 		{Name: "标题", Key: "Title", Width: 15},
 		{Name: "协议内容", Key: "Content", Width: 15},
-		{Name: "排序", Key: "Sort", Width: 15},
+		{Name: "排序", Key: "Sort", Width: 15, Decode: core.DecodeFloat},
 		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
 		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
 	}

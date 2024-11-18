@@ -15,9 +15,9 @@ const TimeFormat = "2006-01-02 15:04:05"
 
 // NullTime 自定义时间格式
 type NullTime struct {
-	Time   *time.Time
-	Valid  bool
-	Format string
+	Time  *time.Time
+	Valid bool
+	// Format string
 }
 
 //	func (t *NullTime) IsZero() bool {
@@ -70,25 +70,23 @@ func (t NullTime) Value() (driver.Value, error) {
 
 // 读取数据gorm调用
 func (t *NullTime) Scan(v any) error {
-	// pt, err := time.ParseInLocation("2006-01-02 15:04:05", v.(time.Time).String(), time.Local)
-	if pt, ok := v.(time.Time); ok {
-		tt := pt.Format(TimeFormat)
+	switch val := v.(type) {
+	case time.Time:
+		tt := val.Format(TimeFormat)
 		if tt == "0001-01-01 00:00:00" {
 			*t = NullTime{
-				Time:  &pt,
+				Time:  nil,
 				Valid: false,
 			}
-			return nil
 		} else {
 			*t = NullTime{
-				Time:  &pt,
+				Time:  &val,
 				Valid: true,
 			}
 		}
-
 		return nil
 	}
-	return fmt.Errorf("cant convert %s to time", v)
+	return fmt.Errorf("NullTime cant convert %s", v)
 }
 
 func (t NullTime) String() string {

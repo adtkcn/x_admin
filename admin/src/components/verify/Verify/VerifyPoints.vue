@@ -207,6 +207,10 @@ export default {
                 captchaType: captchaType.value
             }
             reqGet(data).then((res) => {
+                if (!res) {
+                    text.value = '网络错误'
+                    return
+                }
                 if (res.repCode == '0000') {
                     pointBackImgBase.value =
                         'data:image/png;base64,' + res.repData.originalImageBase64

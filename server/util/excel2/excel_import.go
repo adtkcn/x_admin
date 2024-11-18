@@ -78,22 +78,22 @@ func importData(f *excelize.File, dst interface{}, sheetName string, startRow in
 			key := col.Key
 			replace := col.Replace
 
-			val := rows[i][j]
+			rowVal := rows[i][j]
 			// 先替换，将val替换为key
-			for replaceKey, v := range replace {
-				if fmt.Sprintf("%v", v) == fmt.Sprintf("%v", val) {
-					val = fmt.Sprintf("%v", replaceKey)
+			for replaceKey, replaceVal := range replace {
+				if fmt.Sprintf("%v", replaceVal) == rowVal {
+					rowVal = replaceKey
 					break
 				}
 			}
 			// 再解码
 			if col.Decode != nil {
-				v, e := col.Decode(val)
+				v, e := col.Decode(rowVal)
 				if e == nil {
 					rowMap[key] = v
 				}
 			} else {
-				rowMap[key] = val
+				rowMap[key] = rowVal
 			}
 		}
 		data = append(data, rowMap)

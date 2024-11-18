@@ -93,15 +93,15 @@ const formData = reactive({
     Status: null
 })
 const code = computed(() => {
-    return `import { XErr, XErrWeb } from '../../x_err_sdk/web/index'
-new XErr(
+    return `import { Base, Web } from '../../x_err_sdk/web/index'
+new Base(
     {
         Dns: '${location.origin}/api',
         Pid: '${formData.ProjectKey}',
         Uid: ''
     },
-    new XErrWeb({
-        onloadTimeOut: 3000
+    new Web({
+        onloadTimeOut: 8000
     })
 )`
 })
