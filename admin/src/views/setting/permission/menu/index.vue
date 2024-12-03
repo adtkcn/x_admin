@@ -59,11 +59,11 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="排序" prop="menuSort" min-width="60" />
-                <el-table-column
+                <!-- <el-table-column
                     label="更新时间"
                     prop="updateTime"
                     min-width="120"
-                ></el-table-column>
+                ></el-table-column> -->
                 <el-table-column label="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button

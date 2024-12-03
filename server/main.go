@@ -42,14 +42,6 @@ func initRouter() *gin.Engine {
 	})
 	// 设置中间件
 	r.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
-	r.GET("/api/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
-		var path = []string{}
-		for _, route := range r.Routes() {
-			// fmt.Printf("%s 127.0.0.1:%v%s\n", route.Method, config.Config.ServerPort, route.Path)
-			path = append(path, route.Path)
-		}
-		response.Result(ctx, response.Success, path)
-	})
 
 	// 演示模式
 	if config.Config.DisallowModify {
@@ -61,7 +53,7 @@ func initRouter() *gin.Engine {
 	// 注册路由
 	apiGroup := r.Group("/api")
 
-	router.RegisterGroup(apiGroup)
+	router.RegisterGroup(apiGroup, r)
 
 	return r
 }

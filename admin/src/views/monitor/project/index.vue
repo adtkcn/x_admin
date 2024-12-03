@@ -37,12 +37,12 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[430px]">
+                <!-- <el-form-item label="创建时间" prop="CreateTime" class="w-[430px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
                         v-model:endTime="queryParams.CreateTimeEnd"
                     />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="更新时间" prop="UpdateTime" class="w-[420px]">
                     <daterange-picker
                         v-model:startTime="queryParams.UpdateTimeStart"
@@ -112,18 +112,18 @@
                 <el-table-column type="selection" width="55" />
                 <el-table-column label="项目uuid" prop="ProjectKey" min-width="130" />
                 <el-table-column label="项目名称" prop="ProjectName" min-width="130" />
-                <el-table-column label="项目类型" prop="ProjectType" min-width="100">
+                <el-table-column label="项目类型" prop="ProjectType" width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.project_type" :value="row.ProjectType" />
                     </template>
                 </el-table-column>
-                <el-table-column label="是否启用" prop="Status" min-width="100">
+                <el-table-column label="是否启用" prop="Status" width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.status" :value="row.Status" />
                     </template>
                 </el-table-column>
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
+                <!-- <el-table-column label="创建时间" prop="CreateTime" min-width="130" /> -->
+                <el-table-column label="更新时间" prop="UpdateTime" width="180" />
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button

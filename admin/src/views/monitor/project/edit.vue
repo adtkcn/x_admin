@@ -48,7 +48,7 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="使用SDK" v-if="mode == 'edit'">
+                <el-form-item label="使用SDK" v-if="mode == 'edit'&&formData.ProjectType=='web'">
                     <highlight-code :code="code" lang="javascript"></highlight-code>
                 </el-form-item>
             </el-form>

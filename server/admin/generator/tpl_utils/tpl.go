@@ -176,8 +176,10 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 		"gocode/service.go.tpl",
 		"gocode/route.go.tpl",
 		"gocode/controller.go.tpl",
+
 		"vue/api.ts.tpl",
 		"vue/edit.vue.tpl",
+		"vue/details.vue.tpl",
 
 		"uniapp/api.ts.tpl",
 		"uniapp/edit.vue.tpl",
@@ -233,10 +235,11 @@ func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName str
 		"gocode/service.go.tpl":    strings.Join([]string{"server/admin/", ModuleName, "/", ModuleName, "_service.go"}, ""), //"server/admin/%s/%s_service.go",
 		"gocode/controller.go.tpl": strings.Join([]string{"server/admin/", ModuleName, "/", ModuleName, "_ctl.go"}, ""),     //"server/admin/%s/%s_ctl.go",
 
-		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", GenUtil.NameToPath(ModuleName), ".ts"}, ""),          // "admin/src/api/%s.ts",
-		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),  // "admin/src/views/%s/edit.vue",
-		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""), // "admin/src/views/%s/index.vue",
-		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""), // "admin/src/views/%s/index-tree.vue",
+		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", GenUtil.NameToPath(ModuleName), ".ts"}, ""),            // "admin/src/api/%s.ts",
+		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),    // "admin/src/views/%s/edit.vue",
+		"vue/details.vue.tpl":    strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/details.vue"}, ""), // "admin/src/views/%s/details.vue",
+		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""),   // "admin/src/views/%s/index.vue",
+		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""),   // "admin/src/views/%s/index-tree.vue",
 
 		"uniapp/api.ts.tpl":      strings.Join([]string{"x_admin_app/api/", GenUtil.NameToPath(ModuleName), ".ts"}, ""),
 		"uniapp/edit.vue.tpl":    strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),

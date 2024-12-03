@@ -2,14 +2,27 @@ package router
 
 import (
 	"x_admin/admin/common/captcha"
+	"x_admin/core/response"
+	"x_admin/middleware"
 	"x_admin/router/admin"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterGroup(rg *gin.RouterGroup) {
-	// 一下路由前缀为/api
-	admin.RegisterGroup(rg)
+func RegisterGroup(api *gin.RouterGroup, rootRouter *gin.Engine) {
 
-	captcha.CaptchaRoute(rg)
+	// /api/admin/apiList 获取所有接口
+	api.GET("/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
+		var path = []string{}
+		for _, route := range rootRouter.Routes() {
+			// fmt.Printf("%s 127.0.0.1:%v%s\n", route.Method, config.Config.ServerPort, route.Path)
+			path = append(path, route.Path)
+		}
+		response.Result(ctx, response.Success, path)
+	})
+
+	// /api/admin
+	admin.RegisterGroup(api)
+	// /api/common/captcha 验证码
+	captcha.CaptchaRoute(api)
 }
