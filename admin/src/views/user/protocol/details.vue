@@ -4,31 +4,31 @@
             ref="popupRef"
             :title="popupTitle"
             :async="true"
-            width="900px"
+            width="550px"
             :clickModalClose="true"
-            @confirm="handleSubmit"
+            :confirmButtonText="false"
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
                 <el-form-item label="标题" prop="Title">
-                    <el-input v-model="formData.Title" placeholder="请输入标题" />
+                    <span v-text="formData.Title"></span>
                 </el-form-item>
                 <el-form-item label="协议内容" prop="Content">
-                    <editor v-model="formData.Content" :height="500" />
+                    <div v-html="formData.Content"></div>
                 </el-form-item>
                 <el-form-item label="排序" prop="Sort">
-                    <el-input v-model="formData.Sort" type="number" placeholder="请输入排序" />
+                    <span v-text="formData.Sort"></span>
                 </el-form-item>
             </el-form>
         </popup>
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, shallowRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
-import { user_protocol_edit, user_protocol_add, user_protocol_detail } from '@/api/user/protocol'
+import { user_protocol_detail } from '@/api/user/protocol'
 import Popup from '@/components/popup/index.vue'
-import feedback from '@/utils/feedback'
+
+import { shallowRef, computed, reactive } from 'vue'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {
@@ -40,12 +40,12 @@ defineProps({
         default: () => ({})
     }
 })
-const emit = defineEmits(['success', 'close'])
+const emit = defineEmits(['close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
-const mode = ref('add')
+
 const popupTitle = computed(() => {
-    return mode.value == 'edit' ? '编辑用户协议' : '新增用户协议'
+    return '预览用户协议'
 })
 
 const formData = reactive({
@@ -86,22 +86,15 @@ const formRules = {
     ]
 }
 
-const handleSubmit = async () => {
-    try {
-        await formRef.value?.validate()
-        const data: any = { ...formData }
-        mode.value == 'edit' ? await user_protocol_edit(data) : await user_protocol_add(data)
-        popupRef.value?.close()
-        feedback.msgSuccess('操作成功')
-        emit('success')
-    } catch (error) {}
-}
-
-const open = (type = 'add') => {
-    mode.value = type
+const open = () => {
     popupRef.value?.open()
 }
-
+const getDetail = async (row: Record<string, any>) => {
+    try {
+        const data = await user_protocol_detail(row.Id)
+        setFormData(data)
+    } catch (error) {}
+}
 const setFormData = async (data: Record<string, any>) => {
     for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
@@ -109,13 +102,6 @@ const setFormData = async (data: Record<string, any>) => {
             formData[key] = data[key]
         }
     }
-}
-
-const getDetail = async (row: Record<string, any>) => {
-    try {
-        const data = await user_protocol_detail(row.Id)
-        setFormData(data)
-    } catch (error) {}
 }
 
 const handleClose = () => {

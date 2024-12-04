@@ -133,10 +133,16 @@
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column label="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['admin:{{{ .ModuleName }}}:edit']"
+                            v-perms="['admin:{{{ .ModuleName }}}:detail']"
+                            type="primary"
+                            link
+                            @click="viewDetails(row)"
+                        >详情</el-button>
+                        <el-button
+                            v-perms="['admin:{{{ .ModuleName }}}:edit','admin:{{{ .ModuleName }}}:detail']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -158,7 +164,7 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup
+        <EditPopup
             v-if="showEdit"
             ref="editRef"
             {{{- if ge (len .DictFields) 1 }}}
@@ -170,6 +176,18 @@
             @success="getLists"
             @close="showEdit = false"
         />
+        <DetailsPopup
+            v-if="showDetails"
+            ref="detailsRef"
+            {{{- if ge (len .DictFields) 1 }}}
+            :dict-data="dictData"
+            {{{- end }}}
+            {{{- if ge (len .ListAllFields) 1 }}}
+            :list-all-data="listAllData"
+            {{{- end }}}
+            @close="showDetails = false"
+        />
+        
     </div>
 </template>
 <script lang="ts" setup>
@@ -184,11 +202,14 @@ import type { type_dict } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+import DetailsPopup from './details.vue'
 defineOptions({
     name:"{{{ .ModuleName }}}"
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
+const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
+const showDetails = ref(false)
 const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
@@ -241,6 +262,12 @@ const handleEdit = async (data: any) => {
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
+}
+const viewDetails = async (data: any) => {
+    showDetails.value = true
+    await nextTick()
+    detailsRef.value?.open()
+    detailsRef.value?.getDetail(data)
 }
 const multipleSelection = ref<type_{{{ .ModuleName }}}[]>([])
 const handleSelectionChange = (val: type_{{{ .ModuleName }}}[]) => {

@@ -86,12 +86,18 @@
             >
                 <el-table-column type="selection" width="55" />
                 <el-table-column label="标题" prop="Title" min-width="130" />
-                <el-table-column label="协议内容" prop="Content" min-width="130" />
-                <el-table-column label="排序" prop="Sort" min-width="130" />
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column label="排序" prop="Sort" width="60" />
+                <el-table-column label="创建时间" prop="CreateTime" width="180" />
+                <el-table-column label="更新时间" prop="UpdateTime" width="180" />
+                <el-table-column label="操作" width="160" fixed="right">
                     <template #default="{ row }">
+                        <el-button
+                            v-perms="['admin:user_protocol:detail']"
+                            type="primary"
+                            link
+                            @click="viewDetails(row)"
+                            >详情</el-button
+                        >
                         <el-button
                             v-perms="['admin:user_protocol:edit']"
                             type="primary"
@@ -116,6 +122,7 @@
             </div>
         </el-card>
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <DetailsPopup v-if="showDetails" ref="detailsRef" @close="showDetails = false" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -132,11 +139,14 @@ import type { type_user_protocol, type_user_protocol_query } from '@/api/user/pr
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+import DetailsPopup from './details.vue'
 defineOptions({
     name: 'user_protocol'
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
+const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
+const showDetails = ref(false)
 const queryParams = reactive<type_user_protocol_query>({
     Title: null,
     Content: null,
@@ -163,6 +173,12 @@ const handleEdit = async (data: any) => {
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
+}
+const viewDetails = async (data: any) => {
+    showDetails.value = true
+    await nextTick()
+    detailsRef.value?.open()
+    detailsRef.value?.getDetail(data)
 }
 const multipleSelection = ref<type_user_protocol[]>([])
 const handleSelectionChange = (val: type_user_protocol[]) => {

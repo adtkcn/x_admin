@@ -106,7 +106,13 @@
                 <el-table-column label="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="['admin:{{{ .ModuleName }}}:add']"
+                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll',{{{ end }}}'admin:{{{ .ModuleName }}}:detail']"
+                            type="primary"
+                            link
+                            @click="viewDetails(row)"
+                        >详情</el-button>
+                        <el-button
+                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll',{{{ end }}}'admin:{{{ .ModuleName }}}:add']"
                             type="primary"
                             link
                             @click="handleAdd(row.{{{ .Table.TreePrimary }}})"
@@ -145,6 +151,18 @@
             @success="getLists"
             @close="showEdit = false"
         />
+        <DetailsPopup
+            v-if="showDetails"
+            ref="detailsRef"
+            {{{- if ge (len .DictFields) 1 }}}
+            :dict-data="dictData"
+            {{{- end }}}
+            {{{- if ge (len .ListAllFields) 1 }}}
+            :list-all-data="listAllData"
+            {{{- end }}}
+            @close="showDetails = false"
+        />
+        
     </div>
 </template>
 <script lang="ts" setup>
@@ -153,6 +171,7 @@ import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{n
 import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
 
 import EditPopup from './edit.vue'
+import DetailsPopup from './details.vue'
 import feedback from '@/utils/feedback'
 
 import { useDictData,useListAllData } from '@/hooks/useDictOptions'
@@ -166,6 +185,10 @@ const tableRef = shallowRef<InstanceType<typeof ElTable>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 let isExpand = false
 const showEdit = ref(false)
+
+const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
+const showDetails = ref(false)
+
 const loading = ref(false)
 const lists = ref<type_{{{ .ModuleName }}}[]>([])
 
@@ -173,10 +196,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (.GoField) }}}Start: '',
-    {{{ (.GoField) }}}End: '',
+    {{{ (toUpperCamelCase .GoField) }}}Start: null,
+    {{{ (toUpperCamelCase .GoField) }}}End: null,
     {{{- else }}}
-    {{{ (.GoField) }}}: '',
+    {{{ (toUpperCamelCase .GoField) }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -232,7 +255,12 @@ const handleEdit = async (data: any) => {
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
-
+const viewDetails = async (data: any) => {
+    showDetails.value = true
+    await nextTick()
+    detailsRef.value?.open()
+    detailsRef.value?.getDetail(data)
+}
 const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
     await feedback.confirm('确定要删除？')
     await {{{ .ModuleName }}}_delete({ {{{toUpperCamelCase .PrimaryKey }}} })

@@ -345,12 +345,12 @@ func (genSrv generateService) getSubTableInfo(genTable gen_model.GenTable) (pkCo
 func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (res map[string]string, e error) {
 	var columns []gen_model.GenTableColumn
 	err := genSrv.db.Where("table_id = ?", genTable.ID).Order("sort").Find(&columns).Error
-	if e = response.CheckErr(err, "renderCodeByTable Find err"); e != nil {
+	if e = response.CheckErr(err, "获取表信息失败"); e != nil {
 		return
 	}
 	//获取子表信息
 	pkCol, cols, err := genSrv.getSubTableInfo(genTable)
-	if e = response.CheckErr(err, "renderCodeByTable getSubTableInfo err"); e != nil {
+	if e = response.CheckErr(err, "获取子表信息失败"); e != nil {
 		return
 	}
 
@@ -361,7 +361,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (re
 	tplPaths := tpl_utils.TemplateUtil.GetTemplatePaths(genTable.GenTpl)
 	for _, tplPath := range tplPaths {
 		res[tplPath], err = tpl_utils.TemplateUtil.Render(tplPath, vars)
-		if e = response.CheckErr(err, "renderCodeByTable Render err"); e != nil {
+		if e = response.CheckErr(err, "渲染模板失败"); e != nil {
 			return
 		}
 	}

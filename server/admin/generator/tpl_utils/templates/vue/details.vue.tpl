@@ -11,25 +11,25 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            {{{- if and .Table.TreePrimary .Table.TreeParent }}}
+                <el-form-item label="父级" prop="{{{ (toUpperCamelCase .Table.TreeParent) }}}">
+                    <el-tree-select
+                        class="flex-1"
+                        v-model="formData.{{{ (toUpperCamelCase .Table.TreeParent) }}}"
+                        :data="treeList"
+                        clearable
+                        node-key="{{{ .Table.TreePrimary }}}"
+                        :props="{ label: '{{{ (toUpperCamelCase .Table.TreeName) }}}', value: '{{{ (toUpperCamelCase .Table.TreePrimary) }}}', children: 'children' }"
+                        :default-expand-all="true" 
+                        check-strictly
+                        disabled
+                    />
+                </el-form-item>
+            {{{- end }}}
             {{{- range .Columns }}}
                 {{{- if .IsEdit }}}
-                {{{- if ne (toUpperCamelCase .GoField) "Id" }}}
-                    {{{- if and (ne $.Table.TreeParent "") (eq (toUpperCamelCase .GoField) $.Table.TreeParent) }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <el-tree-select
-                                class="flex-1"
-                                v-model="formData.{{{ (toUpperCamelCase .GoField) }}}"
-                                :data="treeList"
-                                clearable
-                                node-key="{{{ .Table.TreePrimary }}}"
-                                :props="{ label: '{{{ .Table.TreeName }}}', value: '{{{ .Table.TreePrimary }}}', children: 'children' }"
-                                :default-expand-all="true"
-                                placeholder="请选择{{{ .ColumnComment }}}"
-                                check-strictly
-                                disabled
-                            />
-                        </el-form-item>
-                    {{{- else if eq .HtmlType "input" }}}
+                {{{- if ne (toUpperCamelCase .GoField) "Id" }}}               
+                    {{{- if eq .HtmlType "input" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
                             <span v-text="formData.{{{ (toUpperCamelCase .GoField) }}}"></span>
                         </el-form-item>
@@ -175,9 +175,9 @@
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_list_all,{{{ end }}} ,{{{ .ModuleName }}}_detail } from '@/api/{{{nameToPath .ModuleName }}}'
+import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_list_all,{{{ end }}} {{{ .ModuleName }}}_detail } from '@/api/{{{nameToPath .ModuleName }}}'
 import Popup from '@/components/popup/index.vue'
-import feedback from '@/utils/feedback'
+ 
 import { ref, shallowRef, computed, reactive } from 'vue'
 import type { PropType } from 'vue'
 defineProps({
@@ -190,7 +190,7 @@ defineProps({
         default: () => ({})
     }
 })
-const emit = defineEmits(['success', 'close'])
+const emit = defineEmits(['close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
 {{{- if and .Table.TreePrimary .Table.TreeParent }}}
@@ -238,7 +238,12 @@ const formRules = {
 const open = () => {
     popupRef.value?.open()
 }
-
+const getDetail = async (row: Record<string, any>) => {
+     try {
+        const data = await {{{ .ModuleName }}}_detail(row.{{{toUpperCamelCase .PrimaryKey }}})
+        setFormData(data)
+     } catch (error) {}
+}
 const setFormData = async (data: Record<string, any>) => {
     for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
@@ -254,25 +259,17 @@ const setFormData = async (data: Record<string, any>) => {
     }
 }
 
-const getDetail = async (row: Record<string, any>) => {
-     try {
-        const data = await {{{ .ModuleName }}}_detail(row.{{{toUpperCamelCase .PrimaryKey }}})
-        setFormData(data)
-     } catch (error) {}
-}
-
 const handleClose = () => {
     emit('close')
 }
-{{{- if and .Table.TreePrimary .Table.TreeParent }}}
 
+{{{- if and .Table.TreePrimary .Table.TreeParent }}}
 const getLists = async () => {
     const data: any = await {{{ .ModuleName }}}_list_all()
     const item = { {{{ .Table.TreePrimary }}}: 0, {{{ .Table.TreeName }}}: '顶级', children: [] }
     item.children = data
     treeList.value.push(item)
 }
-
 getLists()
 {{{- end }}}
 

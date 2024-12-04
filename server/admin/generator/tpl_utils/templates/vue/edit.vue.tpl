@@ -10,24 +10,25 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+                {{{- if and .Table.TreePrimary .Table.TreeParent }}}
+                    <el-form-item label="父级" prop="{{{ (toUpperCamelCase .Table.TreeParent) }}}">
+                        <el-tree-select
+                            class="flex-1"
+                            v-model="formData.{{{ (toUpperCamelCase .Table.TreeParent) }}}"
+                            :data="treeList"
+                            clearable
+                            node-key="{{{ .Table.TreePrimary }}}"
+                            :props="{ label: '{{{ (toUpperCamelCase .Table.TreeName) }}}', value: '{{{ (toUpperCamelCase .Table.TreePrimary) }}}', children: 'children' }"
+                            :default-expand-all="true"
+                            placeholder="请选择父级"
+                            check-strictly
+                        />
+                    </el-form-item>
+                {{{- end }}}
             {{{- range .Columns }}}
                 {{{- if .IsEdit }}}
                 {{{- if ne (toUpperCamelCase .GoField) "Id" }}}
-                    {{{- if and (ne $.Table.TreeParent "") (eq (toUpperCamelCase .GoField) $.Table.TreeParent) }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <el-tree-select
-                                class="flex-1"
-                                v-model="formData.{{{ (toUpperCamelCase .GoField) }}}"
-                                :data="treeList"
-                                clearable
-                                node-key="{{{ .Table.TreePrimary }}}"
-                                :props="{ label: '{{{ .Table.TreeName }}}', value: '{{{ .Table.TreePrimary }}}', children: 'children' }"
-                                :default-expand-all="true"
-                                placeholder="请选择{{{ .ColumnComment }}}"
-                                check-strictly
-                            />
-                        </el-form-item>
-                    {{{- else if eq .HtmlType "input" }}}
+                    {{{- if eq .HtmlType "input" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
                             <el-input v-model="formData.{{{ (toUpperCamelCase .GoField) }}}" placeholder="请输入{{{ .ColumnComment }}}" />
                         </el-form-item>

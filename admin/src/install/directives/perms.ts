@@ -16,7 +16,7 @@ export default {
                 // const hasPermission = permissions.some((key: string) => {
                 //     return all_permission == key || value.includes(key)
                 // })
-                // debugger
+
                 let hasPermission = false
                 // 查找是不是有所有权限
                 for (let i = 0; i < permissions.length; i++) {

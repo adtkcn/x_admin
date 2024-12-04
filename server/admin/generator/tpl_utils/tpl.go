@@ -163,6 +163,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		ListAllFields:   listAllFields,
 		IsSearch:        isSearch,
 		ModelOprMap:     modelOprMap,
+		Table:           table,
 		Columns:         columns,
 		SubColumns:      subColumns,
 	}
@@ -212,13 +213,14 @@ var templatesFs embed.FS
 func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e error) {
 
 	tpl, err := tu.tpl.ParseFS(templatesFs, "templates/"+tplPath)
-	if e = response.CheckErr(err, "TemplateUtil.Render ParseFiles err"); e != nil {
+	if e = response.CheckErr(err, "tu.tpl.ParseFS err"); e != nil {
 		return "", e
 	}
 	buf := &bytes.Buffer{}
 	fileName := path.Base(tplPath)
 	err = tpl.ExecuteTemplate(buf, fileName, tplVars)
-	if e = response.CheckErr(err, "TemplateUtil.Render Execute err"); e != nil {
+
+	if e = response.CheckErr(err, "tpl.ExecuteTemplate err"); e != nil {
 		return "", e
 	}
 	return buf.String(), nil
