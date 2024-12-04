@@ -120,7 +120,7 @@
                             新增
                         </el-button>
                         <el-button
-                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll','admin:{{{ .ModuleName }}}:edit','admin:{{{ .ModuleName }}}:detail']"
+                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll',{{{ end }}}'admin:{{{ .ModuleName }}}:edit','admin:{{{ .ModuleName }}}:detail']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
