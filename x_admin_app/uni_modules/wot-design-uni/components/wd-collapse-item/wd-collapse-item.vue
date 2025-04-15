@@ -1,11 +1,18 @@
 <template>
   <view :class="`wd-collapse-item ${disabled ? 'is-disabled' : ''} is-border ${customClass}`" :style="customStyle">
-    <view :class="`wd-collapse-item__header  ${isFirst ? 'wd-collapse-item__header-first' : ''}`" @click="handleClick">
-      <text class="wd-collapse-item__title">{{ title }}</text>
-      <wd-icon name="arrow-down" :custom-class="`wd-collapse-item__arrow ${expanded ? 'is-retract' : ''}`" />
+    <view
+      :class="`wd-collapse-item__header ${expanded ? 'is-expanded' : ''} ${isFirst ? 'wd-collapse-item__header-first' : ''} ${
+        $slots.title ? 'is-custom' : ''
+      }`"
+      @click="handleClick"
+    >
+      <slot name="title" :expanded="expanded" :disabled="disabled" :isFirst="isFirst">
+        <text class="wd-collapse-item__title">{{ title }}</text>
+        <wd-icon name="arrow-down" :custom-class="`wd-collapse-item__arrow ${expanded ? 'is-retract' : ''}`" />
+      </slot>
     </view>
-    <view class="wd-collapse-item__wrapper" :style="contentStyle">
-      <view class="wd-collapse-item__body">
+    <view class="wd-collapse-item__wrapper" :style="contentStyle" @transitionend="handleTransitionEnd">
+      <view class="wd-collapse-item__body" :class="customBodyClass" :style="customBodyStyle" :id="collapseId">
         <slot />
       </view>
     </view>
@@ -23,23 +30,22 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { getRect, isArray, isDef, isPromise, objToStyle } from '../common/util'
+import wdIcon from '../wd-icon/wd-icon.vue'
+import { computed, getCurrentInstance, onMounted, ref, watch, type CSSProperties } from 'vue'
+import { addUnit, getRect, isArray, isDef, isPromise, isString, objToStyle, pause, uuid } from '../common/util'
 import { useParent } from '../composables/useParent'
 import { COLLAPSE_KEY } from '../wd-collapse/types'
 import { collapseItemProps, type CollapseItemExpose } from './types'
 
-const $body = '.wd-collapse-item__body'
+const collapseId = ref<string>(`collapseId${uuid()}`)
 
 const props = defineProps(collapseItemProps)
 
 const { parent: collapse, index } = useParent(COLLAPSE_KEY)
 
 const height = ref<string | number>('')
-
+const inited = ref<boolean>(false)
 const expanded = ref<boolean>(false)
-
-const transD = ref<string>('0.3s')
 const { proxy } = getCurrentInstance() as any
 
 /**
@@ -53,100 +59,111 @@ const isFirst = computed(() => {
  * 容器样式，(动画)
  */
 const contentStyle = computed(() => {
-  let style: Record<string, string> = {
-    height: expanded.value ? height.value + 'px' : '0px',
-    'transition-duration': transD.value
+  const style: CSSProperties = {}
+  if (inited.value) {
+    style.transition = 'height 0.3s ease-in-out'
+  }
+  if (!expanded.value) {
+    style.height = '0px'
+  } else if (height.value) {
+    style.height = addUnit(height.value)
   }
   return objToStyle(style)
 })
 
-const selected = computed(() => {
-  if (collapse) {
-    return collapse.props.modelValue
-  } else {
-    return []
-  }
+/**
+ * 是否选中
+ */
+const isSelected = computed(() => {
+  const modelValue = collapse ? collapse?.props.modelValue || [] : []
+  const { name } = props
+  return (isString(modelValue) && modelValue === name) || (isArray(modelValue) && modelValue.indexOf(name as string) >= 0)
 })
 
 watch(
-  () => selected.value,
+  () => isSelected.value,
   (newVal) => {
-    const name = props.name
-    if (isDef(newVal)) {
-      if (typeof newVal === 'string' && newVal === name) {
-        doResetHeight($body)
-        expanded.value = true
-      } else if (isArray(newVal) && newVal.indexOf(name as string) >= 0) {
-        doResetHeight($body)
-        expanded.value = true
-      } else {
-        expanded.value = false
-      }
-    } else {
-      expanded.value = false
-    }
-  },
-  {
-    deep: true,
-    immediate: true
+    updateExpand(newVal)
   }
 )
 
 onMounted(() => {
-  init()
+  updateExpand(isSelected.value)
 })
 
-/**
- * 初始化将组件信息注入父组件
- */
-function init() {
-  doResetHeight($body)
+async function updateExpand(useBeforeExpand: boolean = true) {
+  try {
+    if (useBeforeExpand) {
+      await handleBeforeExpand()
+    }
+    initRect()
+  } catch (error) {
+    /* empty */
+  }
 }
 
-/**
- * 控制折叠面板滚动
- * @param {String} select 选择器名称
- * @param {Boolean} firstRender 是否首次渲染
- */
-function doResetHeight(select: string) {
-  getRect(select, false, proxy).then((rect) => {
-    if (!rect) return
+function initRect() {
+  getRect(`#${collapseId.value}`, false, proxy).then(async (rect) => {
     const { height: rectHeight } = rect
-    height.value = Number(rectHeight)
+    height.value = isDef(rectHeight) ? Number(rectHeight) : ''
+    await pause()
+    if (isSelected.value) {
+      expanded.value = true
+    } else {
+      expanded.value = false
+    }
+    if (!inited.value) {
+      inited.value = true
+    }
   })
 }
 
+function handleTransitionEnd() {
+  if (expanded.value) {
+    height.value = ''
+  }
+}
+
 // 点击子项
-function handleClick() {
+async function handleClick() {
   if (props.disabled) return
-  let name = props.name
-  const nexexpanded = !expanded.value // 执行后展开状态
-  if (nexexpanded) {
-    if (props.beforeExpend) {
-      const response: any = props.beforeExpend(name)
+  try {
+    await updateExpand()
+    const { name } = props
+    collapse && collapse.toggle(name, !expanded.value)
+  } catch (error) {
+    /* empty */
+  }
+}
+
+/**
+ * 展开前钩子
+ */
+function handleBeforeExpand() {
+  return new Promise<void>((resolve, reject) => {
+    const { name } = props
+    const nextexpanded = !expanded.value
+    if (nextexpanded && props.beforeExpend) {
+      const response = props.beforeExpend(name)
       if (!response) {
-        return
+        reject()
       }
       if (isPromise(response)) {
-        response.then(() => {
-          collapse && collapse.toggle(name, !expanded.value)
-        })
+        response.then(() => resolve()).catch(reject)
       } else {
-        collapse && collapse.toggle(name, !expanded.value)
+        resolve()
       }
     } else {
-      collapse && collapse.toggle(name, !expanded.value)
+      resolve()
     }
-  } else {
-    collapse && collapse.toggle(name, !expanded.value)
-  }
+  })
 }
 
 function getExpanded() {
   return expanded.value
 }
 
-defineExpose<CollapseItemExpose>({ getExpanded })
+defineExpose<CollapseItemExpose>({ getExpanded, updateExpand })
 </script>
 
 <style lang="scss" scoped>

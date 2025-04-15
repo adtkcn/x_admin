@@ -1,9 +1,9 @@
 {
-	"name": "x_admin_app",
+	"name": "x-admin",
 	"appid": "__UNI__FB29F21",
 	"description": "",
-	"versionName": "2024.08.170956",
-	"versionCode": 104,
+	"versionName": "2025.04.142245",
+	"versionCode": 130,
 	"transformPx": false,
 	"app-plus": {
 		"compatible": {

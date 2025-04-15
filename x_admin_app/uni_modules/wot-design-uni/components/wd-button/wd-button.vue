@@ -1,22 +1,23 @@
 <template>
   <button
+    :id="buttonId"
     :hover-class="`${disabled || loading ? '' : 'wd-button--active'}`"
     :style="customStyle"
     :class="[
       'wd-button',
       'is-' + type,
       'is-' + size,
-      plain ? 'is-plain' : '',
-      disabled ? 'is-disabled' : '',
       round ? 'is-round' : '',
       hairline ? 'is-hairline' : '',
+      plain ? 'is-plain' : '',
+      disabled ? 'is-disabled' : '',
       block ? 'is-block' : '',
       loading ? 'is-loading' : '',
       customClass
     ]"
     :hover-start-time="hoverStartTime"
     :hover-stay-time="hoverStayTime"
-    :open-type="openType"
+    :open-type="disabled || loading ? undefined : openType"
     :send-message-title="sendMessageTitle"
     :send-message-path="sendMessagePath"
     :send-message-img="sendMessageImg"
@@ -25,8 +26,9 @@
     :session-from="sessionFrom"
     :lang="lang"
     :hover-stop-propagation="hoverStopPropagation"
-    :form-type="formType"
+    :scope="scope"
     @click="handleClick"
+    @getAuthorize="handleGetAuthorize"
     @getuserinfo="handleGetuserinfo"
     @contact="handleConcat"
     @getphonenumber="handleGetphonenumber"
@@ -36,11 +38,13 @@
     @chooseavatar="handleChooseavatar"
     @agreeprivacyauthorization="handleAgreePrivacyAuthorization"
   >
-    <view v-if="loading" class="wd-button__loading">
-      <view class="wd-button__loading-svg" :style="loadingStyle"></view>
+    <view class="wd-button__content">
+      <view v-if="loading" class="wd-button__loading">
+        <view class="wd-button__loading-svg" :style="loadingStyle"></view>
+      </view>
+      <wd-icon v-else-if="icon" custom-class="wd-button__icon" :name="icon" :classPrefix="classPrefix"></wd-icon>
+      <view class="wd-button__text"><slot /></view>
     </view>
-    <wd-icon v-else-if="icon" custom-class="wd-button__icon" :name="icon"></wd-icon>
-    <view class="wd-button__text"><slot /></view>
   </button>
 </template>
 
@@ -56,6 +60,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdIcon from '../wd-icon/wd-icon.vue'
 import { computed, watch } from 'vue'
 import { ref } from 'vue'
 import base64 from '../common/base64'
@@ -101,7 +106,19 @@ watch(
 
 function handleClick(event: any) {
   if (!props.disabled && !props.loading) {
-    emit('click', event.detail)
+    emit('click', event)
+  }
+}
+
+/**
+ * 支付宝小程序授权
+ * @param event
+ */
+function handleGetAuthorize(event: any) {
+  if (props.scope === 'phoneNumber') {
+    handleGetphonenumber(event)
+  } else if (props.scope === 'userInfo') {
+    handleGetuserinfo(event)
   }
 }
 

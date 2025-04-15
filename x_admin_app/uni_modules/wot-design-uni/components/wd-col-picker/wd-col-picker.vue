@@ -4,7 +4,7 @@
       <slot v-if="useDefaultSlot"></slot>
       <view
         v-else
-        :class="`wd-col-picker__cell ${disabled && 'is-disabled'} ${readonly && 'is-readonly'} ${alignRight && 'is-align-right'} ${
+        :class="`wd-col-picker__cell ${disabled && 'is-disabled'} ${props.readonly && 'is-readonly'} ${alignRight && 'is-align-right'} ${
           error && 'is-error'
         }  ${size && 'is-' + size}`"
       >
@@ -38,19 +38,20 @@
       :safe-area-inset-bottom="safeAreaInsetBottom"
       @open="handlePickerOpend"
       @close="handlePickerClose"
+      @closed="handlePickerClosed"
     >
       <view class="wd-col-picker__selected">
         <scroll-view :scroll-x="true" scroll-with-animation :scroll-left="scrollLeft">
           <view class="wd-col-picker__selected-container">
             <view
-              v-for="(select, colIndex) in selectList"
+              v-for="(_, colIndex) in selectList"
               :key="colIndex"
               :class="`wd-col-picker__selected-item  ${colIndex === currentCol && 'is-selected'}`"
               @click="handleColClick(colIndex)"
             >
               {{ selectShowList[colIndex] || translate('select') }}
             </view>
-            <view class="wd-col-picker__selected-line" :style="lineStyle"></view>
+            <view class="wd-col-picker__selected-line" :style="state.lineStyle"></view>
           </view>
         </scroll-view>
       </view>
@@ -95,8 +96,11 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { debounce, getRect, isArray, isBoolean, isFunction } from '../common/util'
+import wdIcon from '../wd-icon/wd-icon.vue'
+import wdLoading from '../wd-loading/wd-loading.vue'
+import wdActionSheet from '../wd-action-sheet/wd-action-sheet.vue'
+import { computed, getCurrentInstance, onMounted, ref, watch, type CSSProperties, reactive, nextTick } from 'vue'
+import { addUnit, debounce, getRect, isArray, isBoolean, isDef, isFunction, objToStyle } from '../common/util'
 import { useCell } from '../composables/useCell'
 import { FORM_KEY, type FormItemRule } from '../wd-form/types'
 import { useParent } from '../composables/useParent'
@@ -120,10 +124,14 @@ const loading = ref<boolean>(false)
 const isChange = ref<boolean>(false)
 const lastSelectList = ref<Record<string, any>[][]>([])
 const lastPickerColSelected = ref<(string | number)[]>([])
-const lineStyle = ref<string>('')
 const scrollLeft = ref<number>(0)
 const inited = ref<boolean>(false)
 const isCompleting = ref<boolean>(false)
+
+const state = reactive({
+  lineStyle: 'display:none;' // 激活项边框线样式
+})
+
 const { proxy } = getCurrentInstance() as any
 
 const cell = useCell()
@@ -275,7 +283,10 @@ function handlePickerOpend() {
 
 function handlePickerClose() {
   pickerShow.value = false
-  // 如果目前用户正在选择，需要在popup关闭时将数据重置回上次数据，popup 关闭时间 250
+  emit('close')
+}
+
+function handlePickerClosed() {
   if (isChange.value) {
     setTimeout(() => {
       selectList.value = lastSelectList.value.slice(0)
@@ -287,8 +298,8 @@ function handlePickerClose() {
       isChange.value = false
     }, 250)
   }
-  emit('close')
 }
+
 function showPicker() {
   const { disabled, readonly } = props
 
@@ -328,8 +339,14 @@ function chooseItem(colIndex: number, index: number) {
   selectShowList.value = newPickerColSelected.map((item, colIndex) => {
     return getSelectedItem(item, colIndex, selectList.value)[props.labelKey]
   })
+
+  if (selectShowList.value[colIndex] && colIndex === currentCol.value) {
+    updateLineAndScroll(true)
+  }
+
   handleColChange(colIndex, item, index)
 }
+
 function handleColChange(colIndex: number, item: Record<string, any>, index: number, callback?: () => void) {
   loading.value = true
   const { columnChange, beforeConfirm } = props
@@ -414,40 +431,47 @@ function handleColClick(index: number) {
  * @description 更新navBar underline的偏移量
  * @param {Boolean} animation 是否伴随动画
  */
-function setLineStyle(animation = true) {
+function setLineStyle(animation: boolean = true) {
   if (!inited.value) return
-  getRect($item, true, proxy).then((rects) => {
-    const rect = rects[currentCol.value]
-    // const width = lineWidth || (slidableNum < items.length ? rect.width : (rect.width - 14))
-    const width = 16
-    let left = rects.slice(0, currentCol.value).reduce((prev: any, curr: any) => prev + curr.width, 0)
-    left += (Number(rect.width) - width) / 2
-    const transition = animation ? 'transition: width 300ms ease, transform 300ms ease;' : ''
+  const { lineWidth, lineHeight } = props
+  getRect($item, true, proxy)
+    .then((rects) => {
+      const lineStyle: CSSProperties = {}
+      if (isDef(lineWidth)) {
+        lineStyle.width = addUnit(lineWidth)
+      }
+      if (isDef(lineHeight)) {
+        lineStyle.height = addUnit(lineHeight)
+        lineStyle.borderRadius = `calc(${addUnit(lineHeight)} / 2)`
+      }
+      const rect = rects[currentCol.value]
+      let left = rects.slice(0, currentCol.value).reduce((prev, curr) => prev + Number(curr.width), 0) + Number(rect.width) / 2
+      lineStyle.transform = `translateX(${left}px) translateX(-50%)`
 
-    const lineStyleTemp = `
-          transform: translateX(${left}px);
-          ${transition}
-        `
-    // 防止重复绘制
-    if (lineStyle.value !== lineStyleTemp) {
-      lineStyle.value = lineStyleTemp
-    }
-  })
+      if (animation) {
+        lineStyle.transition = 'width 300ms ease, transform 300ms ease'
+      }
+
+      state.lineStyle = objToStyle(lineStyle)
+    })
+    .catch(() => {})
 }
 /**
  * @description scroll-view滑动到active的tab_nav
  */
 function lineScrollIntoView() {
   if (!inited.value) return
-  Promise.all([getRect($item, true, proxy), getRect($container, false, proxy)]).then(([navItemsRects, navRect]) => {
-    if (!isArray(navItemsRects) || navItemsRects.length === 0) return
-    // 选中元素
-    const selectItem = navItemsRects[currentCol.value]
-    // 选中元素之前的节点的宽度总和
-    const offsetLeft = navItemsRects.slice(0, currentCol.value).reduce((prev, curr) => prev + Number(curr.width), 0)
-    // scroll-view滑动到selectItem的偏移量
-    scrollLeft.value = offsetLeft - ((navRect as any).width - Number(selectItem.width)) / 2
-  })
+  Promise.all([getRect($item, true, proxy), getRect($container, false, proxy)])
+    .then(([navItemsRects, navRect]) => {
+      if (!isArray(navItemsRects) || navItemsRects.length === 0) return
+      // 选中元素
+      const selectItem = navItemsRects[currentCol.value]
+      // 选中元素之前的节点的宽度总和
+      const offsetLeft = navItemsRects.slice(0, currentCol.value).reduce((prev, curr) => prev + Number(curr.width), 0)
+      // scroll-view滑动到selectItem的偏移量
+      scrollLeft.value = offsetLeft - ((navRect as any).width - Number(selectItem.width)) / 2
+    })
+    .catch(() => {})
 }
 
 // 递归列数据补齐

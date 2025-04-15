@@ -19,7 +19,7 @@
       color: $-dark-color-gray;
   
       &:active {
-        background-color: $-dark-background2;;
+        background-color: $-dark-background2;
       }
     }
   }
@@ -92,16 +92,5 @@
     font-size: $-sidebar-icon-size;
     margin-right: 2px;
   }
-
-  // @include e(line) {
-  //   width: 6rpx;
-  //   height: 28rpx;
-  //   position: absolute;
-  //   left: 0;
-  //   top: 50%;
-  //   transform: translateY(-50%);
-  //   background: $-sidebar-active-color;
-  //   border-radius: 8rpx;
-  // }
 
 }

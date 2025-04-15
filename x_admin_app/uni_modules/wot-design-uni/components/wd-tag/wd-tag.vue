@@ -7,13 +7,15 @@
     <view class="wd-tag__text" :style="textStyle">
       <slot />
     </view>
-    <wd-icon v-if="closable && round" custom-class="wd-tag__close" name="error-fill" @click.stop="handleClose" />
+    <view class="wd-tag__close" v-if="closable && round" @click.stop="handleClose">
+      <wd-icon name="error-fill" />
+    </view>
     <input
       v-if="dynamicInput && dynamic"
       class="wd-tag__add-text"
       :placeholder="translate('placeholder')"
       type="text"
-      focus="true"
+      :focus="true"
       v-model="dynamicValue"
       @blur="handleBlur"
       @confirm="handleConfirm"
@@ -39,6 +41,7 @@ export default {
 }
 </script>
 <script lang="ts" setup>
+import wdIcon from '../wd-icon/wd-icon.vue'
 import { objToStyle } from '../common/util'
 import { computed, ref, watch } from 'vue'
 import { useTranslate } from '../composables/useTranslate'

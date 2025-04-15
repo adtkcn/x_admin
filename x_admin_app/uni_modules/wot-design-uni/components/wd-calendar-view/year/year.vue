@@ -2,12 +2,14 @@
   <wd-toast selector="wd-year" />
 
   <view class="wd-year year">
-    <view class="wd-year__title">{{ yearTitle(date) }}</view>
+    <view class="wd-year__title" v-if="showTitle">{{ yearTitle(date) }}</view>
     <view class="wd-year__months">
       <view
         v-for="(item, index) in months"
         :key="index"
-        :class="`wd-year__month ${item.disabled ? 'is-disabled' : ''} ${item.type ? itemClass(item.type, value!, type) : ''}`"
+        :class="`wd-year__month ${item.disabled ? 'is-disabled' : ''} ${item.isLastRow ? 'is-last-row' : ''} ${
+          item.type ? monthTypeClass(item.type) : ''
+        }`"
         @click="handleDateClick(index)"
       >
         <view class="wd-year__month-top">{{ item.topInfo }}</view>
@@ -28,6 +30,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdToast from '../../wd-toast/wd-toast.vue'
 import { computed, ref, watch } from 'vue'
 import { deepClone, isArray, isFunction } from '../../common/util'
 import { compareMonth, formatYearTitle, getDateByDefaultTime, getItemClass, getMonthByOffset, getMonthOffset } from '../utils'
@@ -35,7 +38,7 @@ import { useToast } from '../../wd-toast'
 import { useTranslate } from '../../composables/useTranslate'
 import { dayjs } from '../../common/dayjs'
 import { yearProps } from './types'
-import type { CalendarDayItem, CalendarDayType, CalendarType } from '../types'
+import type { CalendarDayItem, CalendarDayType } from '../types'
 
 const props = defineProps(yearProps)
 const emit = defineEmits(['change'])
@@ -45,9 +48,9 @@ const { translate } = useTranslate('calendar-view')
 
 const months = ref<CalendarDayItem[]>([])
 
-const itemClass = computed(() => {
-  return (monthType: CalendarDayType, value: number | (number | null)[], type: CalendarType) => {
-    return getItemClass(monthType, value, type)
+const monthTypeClass = computed(() => {
+  return (monthType: CalendarDayType) => {
+    return getItemClass(monthType, props.value, props.type)
   }
 })
 
@@ -178,8 +181,10 @@ function getFormatterDate(date: number, month: number, type?: CalendarDayType) {
     topInfo: '',
     bottomInfo: '',
     type,
-    disabled: compareMonth(date, props.minDate) === -1 || compareMonth(date, props.maxDate) === 1
+    disabled: compareMonth(date, props.minDate) === -1 || compareMonth(date, props.maxDate) === 1,
+    isLastRow: month >= 8
   }
+
   if (props.formatter) {
     if (isFunction(props.formatter)) {
       monthObj = props.formatter(monthObj)

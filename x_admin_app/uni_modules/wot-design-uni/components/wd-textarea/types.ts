@@ -1,11 +1,29 @@
-import type { ExtractPropTypes } from 'vue'
+import type { ExtractPropTypes, PropType } from 'vue'
 import { baseProps, makeArrayProp, makeBooleanProp, makeNumberProp, makeNumericProp, makeStringProp } from '../common/props'
 import type { FormItemRule } from '../wd-form/types'
+import type { InputClearTrigger, InputMode } from '../wd-input/types'
 
 export type ConfirmType = 'send' | 'search' | 'next' | 'go' | 'done'
 
 export const textareaProps = {
   ...baseProps,
+  /**
+   * * 自定义文本域容器class名称。
+   * 类型：string
+   */
+  customTextareaContainerClass: makeStringProp(''),
+
+  /**
+   * * 自定义文本域class名称。
+   * 类型：string
+   */
+  customTextareaClass: makeStringProp(''),
+
+  /**
+   * * 自定义标签class名称。
+   * 类型：string
+   */
+  customLabelClass: makeStringProp(''),
   // 原生属性
   /**
    * * 绑定值。
@@ -42,7 +60,7 @@ export const textareaProps = {
 
   /**
    * * 最大输入长度，设置为-1表示不限制最大长度。
-   * 类型：string
+   * 类型：number
    * 默认值：-1
    */
   maxlength: makeNumberProp(-1),
@@ -95,7 +113,7 @@ export const textareaProps = {
    * 默认值：'done'
    * 可选值有'done', 'go', 'next', 'search', 'send'
    */
-  confirmType: makeStringProp<ConfirmType | null>(null),
+  confirmType: String as PropType<ConfirmType>,
 
   /**
    * * 点击键盘右下角按钮时是否保持键盘不收起。
@@ -173,41 +191,23 @@ export const textareaProps = {
    * 类型：string
    */
   prefixIcon: String,
-
-  /**
-   * * 是否使用前置图标插槽。
-   * 类型：boolean
-   * 默认值：false
-   */
-  usePrefixSlot: makeBooleanProp(false),
-
   /**
    * * 是否显示字数限制，需要同时设置maxlength。
    * 类型：boolean
    * 默认值：false
    */
   showWordLimit: makeBooleanProp(false),
-
   /**
-   * * 设置左侧标题。
+   * 设置左侧标题。
    * 类型：string
    */
   label: String,
 
   /**
-   * * 设置左侧标题宽度。
+   * 设置左侧标题宽度。
    * 类型：string
-   * 默认值：'33%'
    */
-  labelWidth: makeStringProp('33%'),
-
-  /**
-   * * 是否使用label插槽。
-   * 类型：boolean
-   * 默认值：false
-   */
-  useLabelSlot: makeBooleanProp(false),
-
+  labelWidth: makeStringProp(''),
   /**
    * * 设置输入框大小。
    * 类型：string
@@ -254,24 +254,31 @@ export const textareaProps = {
    * 默认值：[]
    */
   rules: makeArrayProp<FormItemRule>(),
-
   /**
-   * * 自定义文本域容器class名称。
-   * 类型：string
+   * 显示清除图标的时机，always 表示输入框不为空时展示，focus 表示输入框聚焦且不为空时展示
+   * 类型: "focus" | "always"
+   * 默认值: "always"
    */
-  customTextareaContainerClass: makeStringProp(''),
-
+  clearTrigger: makeStringProp<InputClearTrigger>('always'),
   /**
-   * * 自定义文本域class名称。
-   * 类型：string
+   * 是否在点击清除按钮时聚焦输入框
+   * 类型: boolean
+   * 默认值: true
    */
-  customTextareaClass: makeStringProp(''),
-
+  focusWhenClear: makeBooleanProp(true),
   /**
-   * * 自定义标签class名称。
-   * 类型：string
+   * 是否忽略组件内对文本合成系统事件的处理。为 false 时将触发 compositionstart、compositionend、compositionupdate 事件，且在文本合成期间会触发 input 事件
+   * 类型: boolean
+   * 默认值: true
    */
-  customLabelClass: makeStringProp('')
+  ignoreCompositionEvent: makeBooleanProp(true),
+  /**
+   * 它提供了用户在编辑元素或其内容时可能输入的数据类型的提示。在符合条件的高版本webview里，uni-app的web和app-vue平台中可使用本属性。
+   * 类型: InputMode
+   * 可选值: "none" | "text" | "tel" | "url" | "email" | "numeric" | "decimal" | "search" | "password"
+   * 默认值: "text"
+   */
+  inputmode: makeStringProp<InputMode>('text')
 }
 
 export type TextareaProps = ExtractPropTypes<typeof textareaProps>

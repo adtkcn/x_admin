@@ -1,3 +1,7 @@
+import { AbortablePromise } from './AbortablePromise'
+
+type NotUndefined<T> = T extends undefined ? never : T
+
 /**
  * 生成uuid
  * @returns string
@@ -18,7 +22,7 @@ function s4() {
  * @return {string} num+px
  */
 export function addUnit(num: number | string) {
-  return Number.isNaN(Number(num)) ? num : `${num}px`
+  return Number.isNaN(Number(num)) ? `${num}` : `${num}px`
 }
 
 /**
@@ -233,9 +237,10 @@ export type RectResultType<T extends boolean> = T extends true ? UniApp.NodeInfo
  * @param selector 节点选择器 #id,.class
  * @param all 是否返回所有 selector 对应的节点
  * @param scope 作用域（支付宝小程序无效）
+ * @param useFields 是否使用 fields 方法获取节点信息
  * @returns 节点信息或节点信息数组
  */
-export function getRect<T extends boolean>(selector: string, all: T, scope?: any): Promise<RectResultType<T>> {
+export function getRect<T extends boolean>(selector: string, all: T, scope?: any, useFields?: boolean): Promise<RectResultType<T>> {
   return new Promise<RectResultType<T>>((resolve, reject) => {
     let query: UniNamespace.SelectorQuery | null = null
     if (scope) {
@@ -243,17 +248,24 @@ export function getRect<T extends boolean>(selector: string, all: T, scope?: any
     } else {
       query = uni.createSelectorQuery()
     }
-    query[all ? 'selectAll' : 'select'](selector)
-      .boundingClientRect((rect) => {
-        if (all && isArray(rect) && rect.length > 0) {
-          resolve(rect as RectResultType<T>)
-        } else if (!all && rect) {
-          resolve(rect as RectResultType<T>)
-        } else {
-          reject(new Error('No nodes found'))
-        }
-      })
-      .exec()
+
+    const method = all ? 'selectAll' : 'select'
+
+    const callback = (rect: UniApp.NodeInfo | UniApp.NodeInfo[]) => {
+      if (all && isArray(rect) && rect.length > 0) {
+        resolve(rect as RectResultType<T>)
+      } else if (!all && rect) {
+        resolve(rect as RectResultType<T>)
+      } else {
+        reject(new Error('No nodes found'))
+      }
+    }
+
+    if (useFields) {
+      query[method](selector).fields({ size: true, node: true }, callback).exec()
+    } else {
+      query[method](selector).boundingClientRect(callback).exec()
+    }
   })
 }
 
@@ -303,7 +315,7 @@ export function isArray(value: any): value is Array<any> {
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function isFunction<T extends Function>(value: any): value is T {
-  return getType(value) === 'function'
+  return getType(value) === 'function' || getType(value) === 'asyncfunction'
 }
 
 /**
@@ -330,7 +342,7 @@ export function isNumber(value: any): value is number {
  */
 export function isPromise(value: unknown): value is Promise<any> {
   // 先将 value 断言为 object 类型
-  if (isObj(value)) {
+  if (isObj(value) && isDef(value)) {
     // 然后进一步检查 value 是否具有 then 和 catch 方法，并且它们是函数类型
     return isFunction((value as Promise<any>).then) && isFunction((value as Promise<any>).catch)
   }
@@ -344,6 +356,14 @@ export function isPromise(value: unknown): value is Promise<any> {
  */
 export function isBoolean(value: any): value is boolean {
   return typeof value === 'boolean'
+}
+
+export function isUndefined(value: any): value is undefined {
+  return typeof value === 'undefined'
+}
+
+export function isNotUndefined<T>(value: T): value is NotUndefined<T> {
+  return !isUndefined(value)
 }
 
 /**
@@ -417,12 +437,26 @@ export function objToStyle(styles: Record<string, any> | Record<string, any>[]):
 }
 
 export const requestAnimationFrame = (cb = () => {}) => {
-  return new Promise((resolve) => {
+  return new AbortablePromise((resolve) => {
     const timer = setInterval(() => {
       clearInterval(timer)
       resolve(true)
       cb()
     }, 1000 / 30)
+  })
+}
+
+/**
+ * 暂停指定时间函数
+ * @param ms 延迟时间
+ * @returns
+ */
+export const pause = (ms: number = 1000 / 30) => {
+  return new AbortablePromise((resolve) => {
+    const timer = setTimeout(() => {
+      clearTimeout(timer)
+      resolve(true)
+    }, ms)
   })
 }
 
@@ -433,7 +467,7 @@ export const requestAnimationFrame = (cb = () => {}) => {
  * @returns 深拷贝后的对象副本
  */
 export function deepClone<T>(obj: T, cache: Map<any, any> = new Map()): T {
-  // 如果对象为 null 或者不是对象类型，则直接返回该对象
+  // 如果对象为 null 或或者不是对象类型，则直接返回该对象
   if (obj === null || typeof obj !== 'object') {
     return obj
   }
@@ -645,6 +679,69 @@ export const getPropByPath = (obj: any, path: string): any => {
 export const isDate = (val: unknown): val is Date => Object.prototype.toString.call(val) === '[object Date]' && !Number.isNaN((val as Date).getTime())
 
 /**
+ * 检查提供的URL是否为视频链接。
+ * @param url 需要检查的URL字符串。
+ * @returns 返回一个布尔值，如果URL是视频链接则为true，否则为false。
+ */
+export function isVideoUrl(url: string): boolean {
+  // 使用正则表达式匹配视频文件类型的URL
+  const videoRegex = /\.(mp4|mpg|mpeg|dat|asf|avi|rm|rmvb|mov|wmv|flv|mkv|video)/i
+  return videoRegex.test(url)
+}
+
+/**
+ * 检查提供的URL是否为图片URL。
+ * @param url 待检查的URL字符串。
+ * @returns 返回一个布尔值，如果URL是图片格式，则为true；否则为false。
+ */
+export function isImageUrl(url: string): boolean {
+  // 使用正则表达式匹配图片URL
+  const imageRegex = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg|image)/i
+  return imageRegex.test(url)
+}
+
+/**
  * 判断环境是否是H5
  */
-export const isH5 = process.env.UNI_PLATFORM === 'h5'
+export const isH5 = (() => {
+  let isH5 = false
+  // #ifdef H5
+  isH5 = true
+  // #endif
+  return isH5
+})()
+
+/**
+ * 剔除对象中的某些属性
+ * @param obj
+ * @param predicate
+ * @returns
+ */
+export function omitBy<O extends Record<string, any>>(obj: O, predicate: (value: any, key: keyof O) => boolean): Partial<O> {
+  const newObj = deepClone(obj)
+  Object.keys(newObj).forEach((key) => predicate(newObj[key], key) && delete newObj[key]) // 遍历对象的键，删除值为不满足predicate的字段
+  return newObj
+}
+
+/**
+ * 缓动函数，用于在动画或过渡效果中根据时间参数计算当前值
+ * @param t 当前时间，通常是从动画开始经过的时间
+ * @param b 初始值，动画属性的初始值
+ * @param c 变化量，动画属性的目标值与初始值的差值
+ * @param d 持续时间，动画持续的总时间长度
+ * @returns 计算出的当前值
+ */
+export function easingFn(t: number = 0, b: number = 0, c: number = 0, d: number = 0): number {
+  return (c * (-Math.pow(2, (-10 * t) / d) + 1) * 1024) / 1023 + b
+}
+
+/**
+ * 从数组中寻找最接近目标值的元素
+ *
+ * @param arr 数组
+ * @param target 目标值
+ * @returns 最接近目标值的元素
+ */
+export function closest(arr: number[], target: number) {
+  return arr.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev))
+}

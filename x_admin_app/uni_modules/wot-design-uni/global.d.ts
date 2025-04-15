@@ -1,15 +1,4 @@
-/*
- * @Author: weisheng
- * @Date: 2023-09-25 17:28:12
- * @LastEditTime: 2024-01-09 12:48:02
- * @LastEditors: weisheng
- * @Description:
- * @FilePath: \wot-design-uni\src\uni_modules\wot-design-uni\global.d.ts
- * 记得注释
- */
-import '@vue/runtime-core'
-
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   // Helper for Volar
   export interface GlobalComponents {
     WdActionSheet: typeof import('./components/wd-action-sheet/wd-action-sheet.vue')['default']
@@ -91,14 +80,20 @@ declare module '@vue/runtime-core' {
     WdFab: typeof import('./components/wd-fab/wd-fab.vue')['default']
     WdCountDown: typeof import('./components/wd-count-down/wd-count-down.vue')['default']
     WdNumberKeyboard: typeof import('./components/wd-number-keyboard/wd-number-keyboard.vue')['default']
+    WdKeyboard: typeof import('./components/wd-keyboard/wd-keyboard.vue')['default']
     WdGap: typeof import('./components/wd-gap/wd-gap.vue')['default']
     WdPasswordInput: typeof import('./components/wd-password-input/wd-password-input.vue')['default']
     WdForm: typeof import('./components/wd-form/wd-form.vue')['default']
     WdTextarea: typeof import('./components/wd-textarea/wd-textarea.vue')['default']
+    WdVideoPreview: typeof import('./components/wd-video-preview/wd-video-preview.vue')['default']
     WdBacktop: typeof import('./components/wd-backtop/wd-backtop.vue')['default']
     WdSkeleton: typeof import('./components/wd-skeleton/wd-skeleton.vue')['default']
     WdIndexBar: typeof import('./components/wd-index-bar/wd-index-bar.vue')['default']
     WdIndexAnchor: typeof import('./components/wd-index-anchor/wd-index-anchor.vue')['default']
+    WdText: typeof import('./components/wd-text/wd-text.vue')['default']
+    WdCountTo: typeof import('./components/wd-count-to/wd-count-to.vue')['default']
+    WdFloatingPanel: typeof import('./components/wd-floating-panel/wd-floating-panel.vue')['default']
+    WdSignature: typeof import('./components/wd-signature/wd-signature.vue')['default']
   }
 }
 

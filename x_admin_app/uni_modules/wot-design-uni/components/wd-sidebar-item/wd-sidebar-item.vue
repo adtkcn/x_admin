@@ -8,9 +8,9 @@
   >
     <slot name="icon"></slot>
     <template v-if="!$slots.icon && icon">
-      <wd-icon custom-class="wd-sidebar-item__icon" :name="icon" size="20px"></wd-icon>
+      <wd-icon custom-class="wd-sidebar-item__icon" :name="icon"></wd-icon>
     </template>
-    <wd-badge :model-value="badge" :is-dot="isDot" :max="max" v-bind="badgeProps" custom-class="wd-sidebar-item__badge">
+    <wd-badge v-bind="customBadgeProps" custom-class="wd-sidebar-item__badge">
       {{ label }}
     </wd-badge>
   </view>
@@ -28,14 +28,36 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdIcon from '../wd-icon/wd-icon.vue'
+import wdBadge from '../wd-badge/wd-badge.vue'
 import { computed } from 'vue'
 import { useParent } from '../composables/useParent'
 import { SIDEBAR_KEY } from '../wd-sidebar/types'
 import { sidebarItemProps } from './types'
+import type { BadgeProps } from '../wd-badge/types'
+import { deepAssign, isDef, isUndefined, omitBy } from '../common/util'
 
 const props = defineProps(sidebarItemProps)
 
 const { parent: sidebar } = useParent(SIDEBAR_KEY)
+
+const customBadgeProps = computed(() => {
+  const badgeProps: Partial<BadgeProps> = deepAssign(
+    isDef(props.badgeProps) ? omitBy(props.badgeProps, isUndefined) : {},
+    omitBy(
+      {
+        max: props.max,
+        isDot: props.isDot,
+        modelValue: props.badge
+      },
+      isUndefined
+    )
+  )
+  if (!isDef(badgeProps.max)) {
+    badgeProps.max = 99
+  }
+  return badgeProps
+})
 
 const active = computed(() => {
   let active: boolean = false

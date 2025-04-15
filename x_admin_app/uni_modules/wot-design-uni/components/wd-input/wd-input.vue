@@ -1,21 +1,20 @@
 <template>
   <view :class="rootClass" :style="customStyle" @click="handleClick">
-    <view v-if="label || useLabelSlot" :class="labelClass" :style="labelStyle">
-      <view v-if="prefixIcon || usePrefixSlot" class="wd-input__prefix">
-        <wd-icon v-if="prefixIcon && !usePrefixSlot" custom-class="wd-input__icon" :name="prefixIcon" @click="onClickPrefixIcon" />
+    <view v-if="label || $slots.label" :class="labelClass" :style="labelStyle">
+      <view v-if="prefixIcon || $slots.prefix" class="wd-input__prefix">
+        <wd-icon v-if="prefixIcon && !$slots.prefix" custom-class="wd-input__icon" :name="prefixIcon" @click="onClickPrefixIcon" />
         <slot v-else name="prefix"></slot>
       </view>
       <view class="wd-input__label-inner">
-        <template v-if="label">{{ label }}</template>
+        <template v-if="label && !$slots.label">{{ label }}</template>
         <slot v-else name="label"></slot>
       </view>
     </view>
-    <!-- 输入域 -->
     <view class="wd-input__body">
       <view class="wd-input__value">
-        <view v-if="(prefixIcon || usePrefixSlot) && !label" class="wd-input__prefix">
-          <wd-icon v-if="prefixIcon" custom-class="wd-input__icon" :name="prefixIcon" @click="onClickPrefixIcon" />
-          <slot name="prefix"></slot>
+        <view v-if="(prefixIcon || $slots.prefix) && !label" class="wd-input__prefix">
+          <wd-icon v-if="prefixIcon && !$slots.prefix" custom-class="wd-input__icon" :name="prefixIcon" @click="onClickPrefixIcon" />
+          <slot v-else name="prefix"></slot>
         </view>
         <input
           :class="[
@@ -28,10 +27,10 @@
           :type="type"
           :password="showPassword && !isPwdVisible"
           v-model="inputValue"
-          :placeholder="placeholder || translate('placeholder')"
-          :disabled="disabled"
+          :placeholder="placeholderValue"
+          :disabled="disabled || readonly"
           :maxlength="maxlength"
-          :focus="isFocus"
+          :focus="focused"
           :confirm-type="confirmType"
           :confirm-hold="confirmHold"
           :cursor="cursor"
@@ -43,29 +42,31 @@
           :hold-keyboard="holdKeyboard"
           :always-embed="alwaysEmbed"
           :placeholder-class="inputPlaceholderClass"
+          :ignoreCompositionEvent="ignoreCompositionEvent"
+          :inputmode="inputmode"
           @input="handleInput"
           @focus="handleFocus"
           @blur="handleBlur"
           @confirm="handleConfirm"
           @keyboardheightchange="handleKeyboardheightchange"
         />
-        <view v-if="readonly" class="wd-input__readonly-mask" />
-        <view v-if="showClear || showPassword || suffixIcon || showWordCount || useSuffixSlot" class="wd-input__suffix">
-          <wd-icon v-if="showClear" custom-class="wd-input__clear" name="error-fill" @click="clear" />
+        <view v-if="props.readonly" class="wd-input__readonly-mask" />
+        <view v-if="showClear || showPassword || suffixIcon || showWordCount || $slots.suffix" class="wd-input__suffix">
+          <wd-icon v-if="showClear" custom-class="wd-input__clear" name="error-fill" @click="handleClear" />
           <wd-icon v-if="showPassword" custom-class="wd-input__icon" :name="isPwdVisible ? 'view' : 'eye-close'" @click="togglePwdVisible" />
           <view v-if="showWordCount" class="wd-input__count">
             <text
               :class="[
-                inputValue && String(inputValue).length > 0 ? 'wd-input__count-current' : '',
-                String(inputValue).length > maxlength! ? 'is-error' : ''
-              ]"
+              inputValue && String(inputValue).length > 0 ? 'wd-input__count-current' : '',
+              String(inputValue).length > maxlength! ? 'is-error' : ''
+            ]"
             >
               {{ String(inputValue).length }}
             </text>
             /{{ maxlength }}
           </view>
-          <wd-icon v-if="suffixIcon" custom-class="wd-input__icon" :name="suffixIcon" @click="onClickSuffixIcon" />
-          <slot name="suffix"></slot>
+          <wd-icon v-if="suffixIcon && !$slots.suffix" custom-class="wd-input__icon" :name="suffixIcon" @click="onClickSuffixIcon" />
+          <slot v-else name="suffix"></slot>
         </view>
       </view>
       <view v-if="errorMessage" class="wd-input__error-message">{{ errorMessage }}</view>
@@ -85,43 +86,48 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { computed, onBeforeMount, ref, watch } from 'vue'
-import { objToStyle, requestAnimationFrame } from '../common/util'
+import { computed, ref, watch, useSlots, type Slots } from 'vue'
+import wdIcon from '../wd-icon/wd-icon.vue'
+import { isDef, objToStyle, pause, isEqual } from '../common/util'
 import { useCell } from '../composables/useCell'
 import { FORM_KEY, type FormItemRule } from '../wd-form/types'
 import { useParent } from '../composables/useParent'
 import { useTranslate } from '../composables/useTranslate'
 import { inputProps } from './types'
 
+interface InputSlots extends Slots {
+  prefix?: () => any
+  suffix?: () => any
+  label?: () => any
+}
+
 const props = defineProps(inputProps)
 const emit = defineEmits([
   'update:modelValue',
   'clear',
-  'change',
   'blur',
   'focus',
   'input',
   'keyboardheightchange',
   'confirm',
-  'linechange',
   'clicksuffixicon',
   'clickprefixicon',
   'click'
 ])
+const slots = useSlots() as InputSlots
 const { translate } = useTranslate('input')
 
-const showClear = ref<boolean>(false)
-const showWordCount = ref<boolean>(false)
 const isPwdVisible = ref<boolean>(false)
-const clearing = ref<boolean>(false)
-const isFocus = ref<boolean>(false) // 是否聚焦
-const inputValue = ref<string | number>('') // 输入框的值
+const clearing = ref<boolean>(false) // 是否正在清空操作，避免重复触发失焦
+const focused = ref<boolean>(false) // 控制聚焦
+const focusing = ref<boolean>(false) // 当前是否激活状态
+const inputValue = ref<string | number>(getInitValue()) // 输入框的值
 const cell = useCell()
 
 watch(
   () => props.focus,
   (newValue) => {
-    isFocus.value = newValue
+    focused.value = newValue
   },
   { immediate: true, deep: true }
 )
@@ -129,19 +135,39 @@ watch(
 watch(
   () => props.modelValue,
   (newValue) => {
-    const { disabled, readonly, clearable } = props
-    if (newValue === undefined) {
-      newValue = ''
-      console.warn('[wot-design] warning(wd-input): value can not be undefined.')
-    }
-    inputValue.value = newValue
-    showClear.value = Boolean(clearable && !disabled && !readonly && newValue)
-  },
-  { immediate: true, deep: true }
+    inputValue.value = isDef(newValue) ? String(newValue) : ''
+  }
 )
 
 const { parent: form } = useParent(FORM_KEY)
 
+const placeholderValue = computed(() => {
+  return isDef(props.placeholder) ? props.placeholder : translate('placeholder')
+})
+
+/**
+ * 展示清空按钮
+ */
+const showClear = computed(() => {
+  const { disabled, readonly, clearable, clearTrigger } = props
+  if (clearable && !readonly && !disabled && inputValue.value && (clearTrigger === 'always' || (props.clearTrigger === 'focus' && focusing.value))) {
+    return true
+  } else {
+    return false
+  }
+})
+
+/**
+ * 展示字数统计
+ */
+const showWordCount = computed(() => {
+  const { disabled, readonly, maxlength, showWordLimit } = props
+  return Boolean(!disabled && !readonly && isDef(maxlength) && maxlength > -1 && showWordLimit)
+})
+
+/**
+ * 表单错误提示信息
+ */
 const errorMessage = computed(() => {
   if (form && props.prop && form.errorMessages && form.errorMessages[props.prop]) {
     return form.errorMessages[props.prop]
@@ -165,9 +191,9 @@ const isRequired = computed(() => {
 })
 
 const rootClass = computed(() => {
-  return `wd-input  ${props.label || props.useLabelSlot ? 'is-cell' : ''} ${props.center ? 'is-center' : ''} ${
-    cell.border.value ? 'is-border' : ''
-  } ${props.size ? 'is-' + props.size : ''} ${props.error ? 'is-error' : ''} ${props.disabled ? 'is-disabled' : ''}  ${
+  return `wd-input  ${props.label || slots.label ? 'is-cell' : ''} ${props.center ? 'is-center' : ''} ${cell.border.value ? 'is-border' : ''} ${
+    props.size ? 'is-' + props.size : ''
+  } ${props.error ? 'is-error' : ''} ${props.disabled ? 'is-disabled' : ''}  ${
     inputValue.value && String(inputValue.value).length > 0 ? 'is-not-empty' : ''
   }  ${props.noBorder ? 'is-no-border' : ''} ${props.customClass}`
 })
@@ -189,66 +215,63 @@ const labelStyle = computed(() => {
     : ''
 })
 
-onBeforeMount(() => {
-  initState()
-})
-
 // 状态初始化
-function initState() {
-  const { disabled, readonly, clearable, maxlength, showWordLimit } = props
-  let newVal = ''
-  if (showWordLimit && maxlength && inputValue.value.toString().length > maxlength) {
-    newVal = inputValue.value.toString().substring(0, maxlength)
+function getInitValue() {
+  const formatted = formatValue(props.modelValue)
+  if (!isValueEqual(formatted, props.modelValue)) {
+    emit('update:modelValue', formatted)
   }
-  showClear.value = Boolean(!disabled && !readonly && clearable && inputValue.value)
-  showWordCount.value = Boolean(!disabled && !readonly && maxlength && showWordLimit)
-  inputValue.value = newVal || inputValue.value
-  emit('update:modelValue', inputValue.value)
+  return formatted
 }
+
+function formatValue(value: string | number) {
+  const { maxlength } = props
+  if (isDef(maxlength) && maxlength !== -1 && String(value).length > maxlength) {
+    return value.toString().slice(0, maxlength)
+  }
+  return value
+}
+
 function togglePwdVisible() {
-  // password属性设置false不生效，置空生效
   isPwdVisible.value = !isPwdVisible.value
 }
-function clear() {
+async function handleClear() {
+  clearing.value = true
+  focusing.value = false
   inputValue.value = ''
-  requestAnimationFrame()
-    .then(() => requestAnimationFrame())
-    .then(() => requestAnimationFrame())
-    .then(() => {
-      isFocus.value = true
-      emit('change', {
-        value: ''
-      })
-      emit('update:modelValue', inputValue.value)
-      emit('clear')
-    })
-}
-// 失去焦点时会先后触发change、blur，未输入内容但失焦不触发 change 只触发 blur
-function handleBlur() {
-  isFocus.value = false
-  emit('change', {
-    value: inputValue.value
-  })
+  if (props.focusWhenClear) {
+    focused.value = false
+  }
+  await pause()
+  if (props.focusWhenClear) {
+    focused.value = true
+    focusing.value = true
+  }
   emit('update:modelValue', inputValue.value)
+  emit('clear')
+}
+async function handleBlur() {
+  // 等待150毫秒，clear执行完毕
+  await pause(150)
+  if (clearing.value) {
+    clearing.value = false
+    return
+  }
+  focusing.value = false
   emit('blur', {
     value: inputValue.value
   })
 }
 function handleFocus({ detail }: any) {
-  if (clearing.value) {
-    clearing.value = false
-    return
-  }
-  isFocus.value = true
+  focusing.value = true
   emit('focus', detail)
 }
-// input事件需要传入
-function handleInput() {
+function handleInput({ detail }: any) {
   emit('update:modelValue', inputValue.value)
-  emit('input', inputValue.value)
+  emit('input', detail)
 }
-function handleKeyboardheightchange(event: any) {
-  emit('keyboardheightchange', event.detail)
+function handleKeyboardheightchange({ detail }: any) {
+  emit('keyboardheightchange', detail)
 }
 function handleConfirm({ detail }: any) {
   emit('confirm', detail)
@@ -262,8 +285,14 @@ function onClickPrefixIcon() {
 function handleClick(event: MouseEvent) {
   emit('click', event)
 }
+function isValueEqual(value1: number | string, value2: number | string) {
+  return isEqual(String(value1), String(value2))
+}
 </script>
 
 <style lang="scss" scoped>
 @import './index.scss';
+</style>
+<style lang="scss">
+@import './placeholder.scss';
 </style>

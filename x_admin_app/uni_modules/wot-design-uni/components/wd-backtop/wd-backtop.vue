@@ -6,7 +6,7 @@
       @click="handleBacktop"
     >
       <slot v-if="$slots.default"></slot>
-      <wd-icon v-else name="backtop" size="20px" :custom-style="iconStyle" />
+      <wd-icon v-else custom-class="wd-backtop__backicon" name="backtop" :custom-style="iconStyle" />
     </view>
   </wd-transition>
 </template>
@@ -23,6 +23,8 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdTransition from '../wd-transition/wd-transition.vue'
+import wdIcon from '../wd-icon/wd-icon.vue'
 import { computed } from 'vue'
 import { backtopProps } from './types'
 

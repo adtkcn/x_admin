@@ -5,7 +5,6 @@
     } ${error ? 'is-error' : ''} ${customClass}`"
     :style="customStyle"
   >
-    <!--文案-->
     <view class="wd-picker__field" @click="showPopup">
       <slot v-if="useDefaultSlot"></slot>
       <view v-else class="wd-picker__cell">
@@ -22,13 +21,15 @@
             <view :class="`wd-picker__value ${ellipsis && 'is-ellipsis'} ${customValueClass} ${showValue ? '' : 'wd-picker__placeholder'}`">
               {{ showValue ? showValue : placeholder || translate('placeholder') }}
             </view>
-            <wd-icon v-if="!disabled && !readonly" custom-class="wd-picker__arrow" name="arrow-right" />
+            <wd-icon v-if="showArrow" custom-class="wd-picker__arrow" name="arrow-right" />
+            <view v-else-if="showClear" @click.stop="handleClear">
+              <wd-icon custom-class="wd-picker__clear" name="error-fill" />
+            </view>
           </view>
           <view v-if="errorMessage" class="wd-picker__error-message">{{ errorMessage }}</view>
         </view>
       </view>
     </view>
-    <!--弹出层，picker-view 在隐藏时修改值，会触发多次change事件，从而导致所有列选中第一项，因此picker在关闭时不隐藏 -->
     <wd-popup
       v-model="popupShow"
       position="bottom"
@@ -40,20 +41,15 @@
       custom-class="wd-picker__popup"
     >
       <view class="wd-picker__wraper">
-        <!--toolBar-->
         <view class="wd-picker__toolbar" @touchmove="noop">
-          <!--取消按钮-->
           <view class="wd-picker__action wd-picker__action--cancel" @click="onCancel">
             {{ cancelButtonText || translate('cancel') }}
           </view>
-          <!--标题-->
           <view v-if="title" class="wd-picker__title">{{ title }}</view>
-          <!--确定按钮-->
           <view :class="`wd-picker__action ${isLoading ? 'is-loading' : ''}`" @click="onConfirm">
             {{ confirmButtonText || translate('done') }}
           </view>
         </view>
-        <!--pickerView-->
         <wd-picker-view
           ref="pickerViewWd"
           :custom-class="customViewClass"
@@ -64,6 +60,7 @@
           :columns-height="columnsHeight"
           :value-key="valueKey"
           :label-key="labelKey"
+          :immediate-change="immediateChange"
           @change="pickerViewChange"
           @pickstart="onPickStart"
           @pickend="onPickEnd"
@@ -86,6 +83,9 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdIcon from '../wd-icon/wd-icon.vue'
+import wdPopup from '../wd-popup/wd-popup.vue'
+import wdPickerView from '../wd-picker-view/wd-picker-view.vue'
 import { getCurrentInstance, onBeforeMount, ref, watch, computed, onMounted, nextTick } from 'vue'
 import { deepClone, defaultDisplayFormat, getType, isArray, isDef, isFunction } from '../common/util'
 import { useCell } from '../composables/useCell'
@@ -97,7 +97,7 @@ import { pickerProps, type PickerExpose } from './types'
 const { translate } = useTranslate('picker')
 
 const props = defineProps(pickerProps)
-const emit = defineEmits(['confirm', 'open', 'cancel', 'update:modelValue'])
+const emit = defineEmits(['confirm', 'open', 'cancel', 'clear', 'update:modelValue'])
 
 const pickerViewWd = ref<PickerViewInstance | null>(null)
 const cell = useCell()
@@ -150,10 +150,16 @@ watch(
 watch(
   () => props.columns,
   (newValue) => {
-    displayColumns.value = newValue
-    resetColumns.value = newValue
-    // 获取初始选中项,并展示初始选中文案
-    handleShowValueUpdate(props.modelValue)
+    displayColumns.value = deepClone(newValue)
+    resetColumns.value = deepClone(newValue)
+    if (newValue.length === 0) {
+      // 当 columns 变为空时，清空 pickerValue 和 showValue
+      pickerValue.value = isArray(props.modelValue) ? [] : ''
+      showValue.value = ''
+    } else {
+      // 非空时正常更新显示值
+      handleShowValueUpdate(props.modelValue)
+    }
   },
   {
     deep: true,
@@ -281,7 +287,7 @@ function close() {
   onCancel()
 }
 /**
- * @description 展示popup，小程序有个bug，在picker-view弹出时设置value，会触发change事件，而且会将picker-view的value多次触发change重置为第一项
+ * 展示popup
  */
 function showPopup() {
   if (props.disabled || props.readonly) return
@@ -291,15 +297,20 @@ function showPopup() {
   pickerValue.value = props.modelValue
   displayColumns.value = resetColumns.value
 }
+
 /**
- * @description 点击取消按钮触发。关闭popup，触发cancel事件。
+ * 点击取消按钮触发。关闭popup，触发cancel事件。
  */
 function onCancel() {
   popupShow.value = false
   emit('cancel')
+  let timmer = setTimeout(() => {
+    clearTimeout(timmer)
+    isDef(pickerViewWd.value) && pickerViewWd.value.resetColumns(resetColumns.value)
+  }, 300)
 }
 /**
- * @description 点击确定按钮触发。展示选中值，触发cancel事件。
+ * 点击确定按钮触发。展示选中值，触发cancel事件。
  */
 function onConfirm() {
   if (isLoading.value) return
@@ -344,14 +355,14 @@ function handleConfirm() {
   })
 }
 /**
- * @description 初始change事件
+ * 初始change事件
  * @param event
  */
 function pickerViewChange({ value }: any) {
   pickerValue.value = value
 }
 /**
- * @description 设置展示值
+ * 设置展示值
  * @param  items
  */
 function setShowValue(items: ColumnItem | ColumnItem[]) {
@@ -381,6 +392,22 @@ function onPickEnd() {
 function setLoading(loading: boolean) {
   innerLoading.value = loading
 }
+
+// 是否展示清除按钮
+const showClear = computed(() => {
+  return props.clearable && !props.disabled && !props.readonly && showValue.value.length
+})
+
+function handleClear() {
+  const clearValue = isArray(pickerValue.value) ? [] : ''
+  emit('update:modelValue', clearValue)
+  emit('clear')
+}
+
+// 是否展示箭头
+const showArrow = computed(() => {
+  return !props.disabled && !props.readonly && !showClear.value
+})
 
 defineExpose<PickerExpose>({
   close,
