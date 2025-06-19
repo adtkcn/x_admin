@@ -53,7 +53,7 @@ const config = computed(() => appStore.config)
     }
 
     .title-width-enter-active {
-        opacity: 0;
+        // opacity: 0;
         transition: all 0.3s ease-out;
     }
 
@@ -64,7 +64,7 @@ const config = computed(() => appStore.config)
     .title-width-enter-from,
     .title-width-leave-to {
         width: 0;
-        opacity: 0;
+        // opacity: 0;
     }
 }
 </style>

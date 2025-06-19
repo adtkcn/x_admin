@@ -19,4 +19,8 @@
 import LayoutMain from './components/main.vue'
 import LayoutSidebar from './components/sidebar/index.vue'
 import LayoutHeader from './components/header/index.vue'
+defineOptions({
+    name: 'LayoutDefault'
+})
+
 </script>

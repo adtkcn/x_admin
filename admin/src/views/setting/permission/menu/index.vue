@@ -24,7 +24,7 @@
                 <el-table-column
                     label="菜单名称"
                     prop="menuName"
-                    min-width="150"
+                    min-width="200"
                     show-overflow-tooltip
                 ></el-table-column>
                 <el-table-column label="类型" prop="menuType" width="60">
@@ -42,29 +42,21 @@
                     </template>
                 </el-table-column>
 
-                <el-table-column label="路径" prop="paths" min-width="120" />
-                <el-table-column label="权限标识" prop="permsArr" min-width="180">
+                <el-table-column label="路径" prop="paths" width="200" />
+                <el-table-column label="权限标识" prop="permsArr" width="220">
                     <template #default="{ row }">
-                        <div v-if="row.perms">
-                            <el-tag v-for="item in row.perms.split(',')" :key="item" type="info">{{
-                                item
-                            }}</el-tag>
-                        </div>
+                        <el-tag v-if="row.perms" type="info">{{ row.perms }}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column label="状态" prop="isDisable" min-width="100">
+                <el-table-column label="状态" prop="isDisable" width="100">
                     <template #default="{ row }">
                         <el-tag v-if="row.isDisable == 0" type="primary">正常</el-tag>
                         <el-tag v-else type="danger">停用</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column label="排序" prop="menuSort" min-width="60" />
-                <!-- <el-table-column
-                    label="更新时间"
-                    prop="updateTime"
-                    min-width="120"
-                ></el-table-column> -->
-                <el-table-column label="操作" width="160" fixed="right">
+                <el-table-column label="排序" prop="menuSort" width="80" />
+
+                <el-table-column label="操作" width="160">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:system:menu:add']"
@@ -172,3 +164,9 @@ const toggleExpand = (children: any[], unfold = true) => {
 
 getLists()
 </script>
+<style>
+.el-table__body-wrapper tr {
+    content-visibility: auto;
+    contain-intrinsic-size: 51px; /* 每行预估高度 */
+}
+</style>
