@@ -146,7 +146,7 @@
                     </el-table-column>
                     <el-table-column label="名称" min-width="100" show-overflow-tooltip>
                         <template #default="{ row }">
-                            <el-link @click.stop="handlePreview(row.uri)" :underline="false">
+                            <el-link @click.stop="handlePreview(row.uri)" underline="never">
                                 {{ row.name }}
                             </el-link>
                         </template>
