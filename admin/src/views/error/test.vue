@@ -13,7 +13,7 @@
 // onUnmounted(() => {
 // xErr.unListen()
 // })
-defineProps<{ msg: string }>()
+
 function error() {
     throw new Error('主动抛error')
 }
@@ -40,8 +40,6 @@ function loadError() {
 </script>
 
 <template>
-    <h1>{{ msg }}</h1>
-
     <div class="card">
         <button class="a b" type="button" aa="11" @click="error">主动抛error</button>
         <button class="a b" type="button" aa="11" @click="yufaError">语法错误</button>
