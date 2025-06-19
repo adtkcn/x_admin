@@ -1,7 +1,6 @@
 package dict_data
 
 import (
-	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -22,7 +21,6 @@ func DictDataRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/setting", middleware.TokenAuth())
 	rg.GET("/dict/data/all", handle.All)
-	rg.GET("/dict/data/list", handle.List)
 	rg.GET("/dict/data/detail", handle.Detail)
 	rg.POST("/dict/data/add", handle.Add)
 	rg.POST("/dict/data/edit", handle.Edit)
@@ -38,20 +36,6 @@ func (ddh dictDataHandler) All(c *gin.Context) {
 		return
 	}
 	res, err := Service.All(allReq)
-	response.CheckAndRespWithData(c, res, err)
-}
-
-// list 字典数据列表
-func (ddh dictDataHandler) List(c *gin.Context) {
-	var page request.PageReq
-	var listReq SettingDictDataListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
-		return
-	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
-		return
-	}
-	res, err := Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 

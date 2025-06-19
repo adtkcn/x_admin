@@ -2,7 +2,6 @@ package dict_data
 
 import (
 	"x_admin/core"
-	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
 	"x_admin/util"
@@ -13,7 +12,7 @@ import (
 
 type ISettingDictDataService interface {
 	All(allReq SettingDictDataListReq) (res []SettingDictDataResp, e error)
-	List(page request.PageReq, listReq SettingDictDataListReq) (res response.PageResp, e error)
+	// List(page request.PageReq, listReq SettingDictDataListReq) (res response.PageResp, e error)
 	Detail(id uint) (res SettingDictDataResp, e error)
 	Add(addReq SettingDictDataAddReq) (e error)
 	Edit(editReq SettingDictDataEditReq) (e error)
@@ -61,48 +60,6 @@ func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []Se
 	res = []SettingDictDataResp{}
 	convert_util.Copy(&res, dictDatas)
 	return
-}
-
-// List 字典数据列表
-func (ddSrv settingDictDataService) List(page request.PageReq, listReq SettingDictDataListReq) (res response.PageResp, e error) {
-	limit := page.PageSize
-	offset := page.PageSize * (page.PageNo - 1)
-	var dictType setting_model.DictType
-	err := ddSrv.db.Where("dict_type = ? AND is_delete = ?", listReq.DictType, 0).Limit(1).First(&dictType).Error
-	if e = response.CheckErrDBNotRecord(err, "该字典类型不存在！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "List First err"); e != nil {
-		return
-	}
-	ddModel := ddSrv.db.Model(&setting_model.DictData{}).Where("type_id = ? AND is_delete = ?", dictType.ID, 0)
-	if listReq.Name != "" {
-		ddModel = ddModel.Where("name like ?", "%"+listReq.Name+"%")
-	}
-	if listReq.Value != "" {
-		ddModel = ddModel.Where("value like ?", "%"+listReq.Value+"%")
-	}
-	if listReq.Status >= 0 {
-		ddModel = ddModel.Where("status = ?", listReq.Status)
-	}
-	var count int64
-	e = ddModel.Count(&count).Error
-	if e = response.CheckErr(e, "列表总数获取失败"); e != nil {
-		return
-	}
-	var dds []setting_model.DictData
-	err = ddModel.Limit(limit).Offset(offset).Order("id asc").Find(&dds).Error
-	if e = response.CheckErr(err, "列表获取失败"); e != nil {
-		return
-	}
-	dtResp := []SettingDictDataResp{}
-	convert_util.Copy(&dtResp, dds)
-	return response.PageResp{
-		PageNo:   page.PageNo,
-		PageSize: page.PageSize,
-		Count:    count,
-		Lists:    dtResp,
-	}, nil
 }
 
 // Detail 字典数据详情

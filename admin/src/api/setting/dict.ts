@@ -26,13 +26,6 @@ export function dictTypeDelete(data: any) {
 }
 
 // 字典数据列表
-// export function dictDataLists(params: any) {
-//     return request.get(
-//         { url: '/setting/dict/data/list', params },
-//     )
-// }
-
-// 字典数据列表
 export function dictDataAll(params: any) {
     return request.get({ url: '/setting/dict/data/all', params })
 }

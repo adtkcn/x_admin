@@ -61,7 +61,7 @@ const settingStore = useSettingStore()
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: var(--el-bg-color-page);
+        // background-color: var(--el-bg-color-page);
     }
 }
 </style>
