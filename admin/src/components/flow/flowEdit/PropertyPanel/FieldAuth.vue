@@ -13,9 +13,9 @@
                 <el-table-column label="">
                     <template #default="{ row }">
                         <el-radio-group v-model="row.auth">
-                            <el-radio :label="1">读写</el-radio>
-                            <el-radio :label="2">可读</el-radio>
-                            <el-radio :label="3">隐藏</el-radio>
+                            <el-radio :value="1">读写</el-radio>
+                            <el-radio :value="2">可读</el-radio>
+                            <el-radio :value="3">隐藏</el-radio>
                         </el-radio-group>
                     </template>
                 </el-table-column>

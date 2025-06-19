@@ -7,9 +7,9 @@
             <el-form label-width="80px">
                 <el-form-item label="">
                     <el-radio-group v-model="props.properties.userType">
-                        <el-radio :label="1">指定部门、岗位</el-radio>
-                        <el-radio :label="2">用户部门负责人</el-radio>
-                        <el-radio :label="3">指定审批人</el-radio>
+                        <el-radio :value="1">指定部门、岗位</el-radio>
+                        <el-radio :value="2">用户部门负责人</el-radio>
+                        <el-radio :value="3">指定审批人</el-radio>
                     </el-radio-group>
                 </el-form-item>
 
