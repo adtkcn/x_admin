@@ -18,9 +18,7 @@ import VForm3 from 'vform3-builds' //引入VForm3库
 //         Pid: 'e19e3be20de94f49b68fafb4c30668bc',
 //         Uid: ''
 //     },
-//     new Web({
-//         onloadTimeOut: 300
-//     })
+//     new Web()
 // )
 // xErr.SetUid(1) //设置用户ID
 

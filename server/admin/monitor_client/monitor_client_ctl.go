@@ -140,7 +140,6 @@ func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	data, err := url.QueryUnescape(c.Query("data"))
 	if err != nil {
-		// response.CheckAndRespWithData(c, 0, err)
 		c.Data(200, "image/gif", img_util.EmptyGif())
 		return
 	}
@@ -159,7 +158,6 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 			// 前后数据一样，不用创建新的数据
 			fmt.Println("前后数据一样，不用创建新的数据")
 			c.Data(200, "image/gif", img_util.EmptyGif())
-			// response.CheckAndRespWithData(c, 0, nil)
 			return
 		} else {
 			// 新建的话，需要清除lastClient对应的缓存

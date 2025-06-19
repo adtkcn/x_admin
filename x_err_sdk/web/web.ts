@@ -2,18 +2,15 @@ import type {
   LogWithError,
   LogWithEnv,
   ListenCallbackFn,
-  IErrorEvent,ISlow
+  IErrorEvent
 } from "../types";
 
 interface LoggerProps {
-  // timeout:number
-  onloadTimeOut?: number;
 }
 class Web implements IErrorEvent {
   props: LoggerProps;
   constructor(props?: LoggerProps) {
     this.props = {
-      onloadTimeOut: 5000,
       ...props,
     };
   }
@@ -67,7 +64,7 @@ class Web implements IErrorEvent {
     }
     return env;
   }
-  private callback(err: LogWithError|ISlow): void {}
+  private callback(err: LogWithError): void {}
   private listenError = (err: any) => {
     console.error([err]);
     let target = err.target;
@@ -130,31 +127,7 @@ class Web implements IErrorEvent {
     }
     return newStack.join("\n");
   }
-  private onLoad = () => {
-    // 获取性能数据
-    const entries = performance.getEntriesByType("navigation");
-    if (entries.length > 0) {
-      const performanceData = entries[0] as PerformanceNavigationTiming;
 
-      console.log("performanceData", performanceData);
-
-      // 计算页面onload时间
-      let onloadTime =
-        performanceData.loadEventStart - performanceData.startTime;
-      if (
-        this.props.onloadTimeOut &&
-        onloadTime > this.props.onloadTimeOut
-      ) {
-        // 页面加载时间5s以上
-        this.callback({
-          Type: "onloadTime",
-          Path: window.location.href,
-          Time:Math.floor(onloadTime)
-        });
-      }
-    }
-
-  };
   public listen(callback: ListenCallbackFn): void {
     this.callback = callback;
     window.addEventListener("unhandledrejection", this.unhandledrejection);
@@ -162,8 +135,6 @@ class Web implements IErrorEvent {
     // window.addEventListener("click", this.listenClick);
     // window.addEventListener("hashchange", this.listenHashRouterChange);
     // window.addEventListener("popstate", this.listenHistoryRouterChange);
-
-    window.addEventListener("load", this.onLoad);
   }
 
   public unListen(): void {

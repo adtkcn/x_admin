@@ -108,7 +108,6 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 	data, err := url.QueryUnescape(c.Query("data"))
 	if err != nil {
-		// response.CheckAndRespWithData(c, 0, err)
 		c.Data(200, "image/gif", img_util.EmptyGif())
 		return
 	}
@@ -122,7 +121,6 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 	for i := 0; i < len(addReq); i++ {
 		MonitorErrorService.Add(addReq[i])
 	}
-	// response.CheckAndRespWithData(c, g, nil)
 	c.Data(200, "image/gif", img_util.EmptyGif())
 }
 

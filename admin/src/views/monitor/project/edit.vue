@@ -48,7 +48,10 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="使用SDK" v-if="mode == 'edit'&&formData.ProjectType=='web'">
+                <el-form-item
+                    label="使用SDK"
+                    v-if="mode == 'edit' && formData.ProjectType == 'web'"
+                >
                     <highlight-code :code="code" lang="javascript"></highlight-code>
                 </el-form-item>
             </el-form>
@@ -100,9 +103,7 @@ new Base(
         Pid: '${formData.ProjectKey}',
         Uid: ''
     },
-    new Web({
-        onloadTimeOut: 8000
-    })
+    new Web()
 )`
 })
 const formRules = {

@@ -12,12 +12,6 @@ export type LogWithError = {
   Stack?: string;
 };
 
-export type ISlow = {
-  Type: "onloadTime"
-
-  Path:string;
-  Time: number; 
-};
 
 
 //  扩展必须实现的接口
@@ -30,4 +24,4 @@ export interface IErrorEvent  {
   listen(callback: ListenCallbackFn): void;
   unListen(): void;
 }
-export type ListenCallbackFn = (params: LogWithError|ISlow) => void;
+export type ListenCallbackFn = (params: LogWithError) => void;
