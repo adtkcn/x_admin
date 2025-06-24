@@ -1,4 +1,4 @@
-package dict_type
+package settingSchema
 
 import "x_admin/core"
 

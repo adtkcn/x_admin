@@ -7,10 +7,8 @@ import (
 	"x_admin/admin/flow"
 	"x_admin/admin/generator"
 	"x_admin/admin/monitor"
-	"x_admin/admin/setting/copyright"
-	"x_admin/admin/setting/dict_data"
-	"x_admin/admin/setting/dict_type"
-	"x_admin/admin/setting/website"
+
+	"x_admin/controller/admin/settingController"
 	"x_admin/controller/admin/systemController"
 
 	"github.com/gin-gonic/gin"
@@ -27,11 +25,10 @@ func RegisterGroup(rg *gin.RouterGroup) {
 
 	monitor.MonitorRoute(rg)
 
-	copyright.CopyrightRoute(rg)
-	dict_data.DictDataRoute(rg)
-	dict_type.DictTypeRoute(rg)
-
-	website.WebsiteRoute(rg)
+	settingController.CopyrightRoute(rg)
+	settingController.DictDataRoute(rg)
+	settingController.DictTypeRoute(rg)
+	settingController.WebsiteRoute(rg)
 
 	systemController.LoginRoute(rg)
 	systemController.AdminRoute(rg)

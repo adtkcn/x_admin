@@ -1,8 +1,10 @@
-package dict_data
+package settingController
 
 import (
 	"x_admin/core/response"
 	"x_admin/middleware"
+	. "x_admin/schema/settingSchema"
+	"x_admin/service/settingService"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -35,7 +37,7 @@ func (ddh dictDataHandler) All(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &allReq)) {
 		return
 	}
-	res, err := Service.All(allReq)
+	res, err := settingService.DictDataService.All(allReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -45,7 +47,7 @@ func (ddh dictDataHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := Service.Detail(detailReq.ID)
+	res, err := settingService.DictDataService.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -55,7 +57,7 @@ func (ddh dictDataHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Add(addReq))
+	response.CheckAndResp(c, settingService.DictDataService.Add(addReq))
 }
 
 // edit 字典数据编辑
@@ -64,7 +66,7 @@ func (ddh dictDataHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Edit(editReq))
+	response.CheckAndResp(c, settingService.DictDataService.Edit(editReq))
 }
 
 // del 字典数据删除
@@ -73,5 +75,5 @@ func (ddh dictDataHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Del(delReq))
+	response.CheckAndResp(c, settingService.DictDataService.Del(delReq))
 }

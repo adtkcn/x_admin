@@ -1,8 +1,10 @@
-package website
+package settingController
 
 import (
 	"x_admin/core/response"
 	"x_admin/middleware"
+	. "x_admin/schema/settingSchema"
+	"x_admin/service/settingService"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +30,7 @@ type websiteHandler struct{}
 
 // detail 获取网站信息
 func (wh websiteHandler) Detail(c *gin.Context) {
-	res, err := Service.Detail()
+	res, err := settingService.WebsiteService.Detail()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -38,5 +40,5 @@ func (wh websiteHandler) save(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &wsReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Save(wsReq))
+	response.CheckAndResp(c, settingService.WebsiteService.Save(wsReq))
 }

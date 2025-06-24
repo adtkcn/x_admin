@@ -1,9 +1,11 @@
-package dict_type
+package settingController
 
 import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/middleware"
+	. "x_admin/schema/settingSchema"
+	"x_admin/service/settingService"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +35,7 @@ type dictTypeHandler struct{}
 
 // all 字典类型所有
 func (dth dictTypeHandler) All(c *gin.Context) {
-	res, err := Service.All()
+	res, err := settingService.DictTypeService.All()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -47,7 +49,7 @@ func (dth dictTypeHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := Service.List(page, listReq)
+	res, err := settingService.DictTypeService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -57,7 +59,7 @@ func (dth dictTypeHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := Service.Detail(detailReq.ID)
+	res, err := settingService.DictTypeService.Detail(detailReq.ID)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -67,7 +69,7 @@ func (dth dictTypeHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Add(addReq))
+	response.CheckAndResp(c, settingService.DictTypeService.Add(addReq))
 }
 
 // edit 字典类型编辑
@@ -76,7 +78,7 @@ func (dth dictTypeHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Edit(editReq))
+	response.CheckAndResp(c, settingService.DictTypeService.Edit(editReq))
 }
 
 // del 字典类型删除
@@ -85,5 +87,5 @@ func (dth dictTypeHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Del(delReq))
+	response.CheckAndResp(c, settingService.DictTypeService.Del(delReq))
 }

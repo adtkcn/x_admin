@@ -1,4 +1,4 @@
-package copyright
+package settingSchema
 
 //SettingCopyrightItemReq 保存备案信息参数
 type SettingCopyrightItemReq struct {

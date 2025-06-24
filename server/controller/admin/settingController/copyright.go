@@ -1,7 +1,9 @@
-package copyright
+package settingController
 
 import (
 	"x_admin/core/response"
+	. "x_admin/schema/settingSchema"
+	"x_admin/service/settingService"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +24,7 @@ type copyrightHandler struct {
 
 // detail 获取备案信息
 func (ch copyrightHandler) Detail(c *gin.Context) {
-	res, err := Service.Detail()
+	res, err := settingService.CopyrightService.Detail()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -32,5 +34,5 @@ func (ch copyrightHandler) save(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSONArray(c, &cReqs)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Save(cReqs))
+	response.CheckAndResp(c, settingService.CopyrightService.Save(cReqs))
 }

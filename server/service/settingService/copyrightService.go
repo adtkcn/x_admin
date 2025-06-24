@@ -1,8 +1,9 @@
-package copyright
+package settingService
 
 import (
 	"x_admin/core"
 	"x_admin/core/response"
+	. "x_admin/schema/settingSchema"
 	"x_admin/util"
 
 	"gorm.io/gorm"
@@ -13,7 +14,7 @@ type ISettingCopyrightService interface {
 	Save(cReqs []SettingCopyrightItemReq) (e error)
 }
 
-var Service = NewSettingCopyrightService()
+var CopyrightService = NewSettingCopyrightService()
 
 // NewSettingCopyrightService 初始化
 func NewSettingCopyrightService() *settingCopyrightService {

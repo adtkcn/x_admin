@@ -1,9 +1,10 @@
-package dict_data
+package settingService
 
 import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
+	. "x_admin/schema/settingSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -19,7 +20,7 @@ type ISettingDictDataService interface {
 	Del(delReq SettingDictDataDelReq) (e error)
 }
 
-var Service = NewSettingDictDataService()
+var DictDataService = NewSettingDictDataService()
 
 // NewSettingDictDataService 初始化
 func NewSettingDictDataService() ISettingDictDataService {

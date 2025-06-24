@@ -1,4 +1,4 @@
-package storage
+package settingSchema
 
 //SettingStorageEditReq 存储编辑参数
 type SettingStorage struct {

@@ -1,10 +1,11 @@
-package dict_type
+package settingService
 
 import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
+	. "x_admin/schema/settingSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -20,7 +21,7 @@ type ISettingDictTypeService interface {
 	Del(delReq SettingDictTypeDelReq) (e error)
 }
 
-var Service = NewSettingDictTypeService()
+var DictTypeService = NewSettingDictTypeService()
 
 // NewSettingDictTypeService 初始化
 func NewSettingDictTypeService() ISettingDictTypeService {

@@ -1,8 +1,9 @@
-package website
+package settingService
 
 import (
 	"x_admin/core"
 	"x_admin/core/response"
+	. "x_admin/schema/settingSchema"
 	"x_admin/util"
 
 	"gorm.io/gorm"
@@ -13,7 +14,7 @@ type ISettingWebsiteService interface {
 	Save(wsReq SettingWebsiteReq) (e error)
 }
 
-var Service = NewSettingWebsiteService()
+var WebsiteService = NewSettingWebsiteService()
 
 // NewSettingWebsiteService 初始化
 func NewSettingWebsiteService() ISettingWebsiteService {
