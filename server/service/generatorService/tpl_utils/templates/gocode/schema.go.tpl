@@ -1,7 +1,6 @@
-package {{{ .ModuleName }}}
+package schema
 import (
 	"x_admin/core"
-
 )
 
 //{{{ toUpperCamelCase .EntityName }}}ListReq {{{ .FunctionName }}}列表参数

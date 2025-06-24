@@ -1,4 +1,4 @@
-package {{{ .ModuleName }}}
+package admin
 
 import (
 	"net/http"
@@ -38,14 +38,14 @@ type {{{ toUpperCamelCase .ModuleName }}}Handler struct {
 //@Router	/api/admin/{{{ .ModuleName }}}/list [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq {{{ toUpperCamelCase .EntityName }}}ListReq
+	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := {{{ toUpperCamelCase .EntityName }}}Service.List(page, listReq)
+	res, err := service.{{{ toUpperCamelCase .EntityName }}}Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -65,11 +65,11 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 //	@Success	200			{object}	response.Response{ data=[]{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) {
-	var listReq {{{ toUpperCamelCase .EntityName }}}ListReq
+	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := {{{ toUpperCamelCase .EntityName }}}Service.ListAll(listReq)
+	res, err := service.{{{ toUpperCamelCase .EntityName }}}Service.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -85,12 +85,12 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Success	200			{object}	response.Response{ data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
-	var detailReq {{{ toUpperCamelCase .EntityName }}}DetailReq
+	var detailReq schema.{{{ toUpperCamelCase .EntityName }}}DetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do("{{{ toUpperCamelCase .EntityName }}}:Detail:"+strconv.Itoa(detailReq.{{{ toUpperCamelCase .PrimaryKey }}}), func() (any, error) {
-		v, err := {{{ toUpperCamelCase .EntityName }}}Service.Detail(detailReq.{{{ toUpperCamelCase .PrimaryKey }}})
+		v, err := service.{{{ toUpperCamelCase .EntityName }}}Service.Detail(detailReq.{{{ toUpperCamelCase .PrimaryKey }}})
 		return v, err
 	})
 
@@ -110,11 +110,11 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/add [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
-	var addReq {{{ toUpperCamelCase .EntityName }}}AddReq
+	var addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	createId, e := {{{ toUpperCamelCase .EntityName }}}Service.Add(addReq)
+	createId, e := service.{{{ toUpperCamelCase .EntityName }}}Service.Add(addReq)
 	response.CheckAndRespWithData(c,createId, e)
 }
 //	@Summary	{{{ .FunctionName }}}编辑
@@ -129,11 +129,11 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/edit [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
-	var editReq {{{ toUpperCamelCase .EntityName }}}EditReq
+	var editReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c,editReq.{{{ toUpperCamelCase .PrimaryKey }}}, {{{ toUpperCamelCase .EntityName }}}Service.Edit(editReq))
+	response.CheckAndRespWithData(c,editReq.{{{ toUpperCamelCase .PrimaryKey }}}, service.{{{ toUpperCamelCase .EntityName }}}Service.Edit(editReq))
 }
 //	@Summary	{{{ .FunctionName }}}删除
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -147,11 +147,11 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
-	var delReq {{{ toUpperCamelCase .EntityName }}}DelReq
+	var delReq schema.{{{ toUpperCamelCase .EntityName }}}DelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, {{{ toUpperCamelCase .EntityName }}}Service.Del(delReq.{{{ toUpperCamelCase .PrimaryKey }}}))
+	response.CheckAndResp(c, service.{{{ toUpperCamelCase .EntityName }}}Service.Del(delReq.{{{ toUpperCamelCase .PrimaryKey }}}))
 }
 
 //	@Summary	{{{ .FunctionName }}}删除-批量
@@ -162,7 +162,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/{{{ .ModuleName }}}/delBatch [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context) {
-	var delReq {{{ toUpperCamelCase .EntityName }}}DelBatchReq
+	var delReq schema.{{{ toUpperCamelCase .EntityName }}}DelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
@@ -172,7 +172,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, {{{ toUpperCamelCase .EntityName }}}Service.DelBatch(Ids))
+	response.CheckAndResp(c, service.{{{ toUpperCamelCase .EntityName }}}Service.DelBatch(Ids))
 }
 
 
@@ -193,16 +193,16 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 {{{- end }}}
 //	@Router		/api/admin/{{{ .ModuleName }}}/ExportFile [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Context) {
-	var listReq {{{ toUpperCamelCase .EntityName }}}ListReq
+	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := {{{ toUpperCamelCase .EntityName }}}Service.ExportFile(listReq)
+	res, err := service.{{{ toUpperCamelCase .EntityName }}}Service.ExportFile(listReq)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel2.Export(res,{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
+	f, err := excel2.Export(res,service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
@@ -221,13 +221,13 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Contex
 		return
 	}
 	defer file.Close()
-	importList := []{{{ toUpperCamelCase .EntityName }}}Resp{}
-	err = excel2.GetExcelData(file, &importList,{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol())
+	importList := []schema.{{{ toUpperCamelCase .EntityName }}}Resp{}
+	err = excel2.GetExcelData(file, &importList,service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = {{{ toUpperCamelCase .EntityName }}}Service.ImportFile(importList)
+	err = service.{{{ toUpperCamelCase .EntityName }}}Service.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }

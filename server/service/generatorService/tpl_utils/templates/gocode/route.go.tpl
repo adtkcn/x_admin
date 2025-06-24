@@ -3,7 +3,7 @@ package admin
 import (
 	"github.com/gin-gonic/gin"
 	"x_admin/middleware" 
-	"x_admin/admin/{{{ .ModuleName }}}"
+	"x_admin/controller/admin_ctl"
 )
 
 /**
@@ -16,17 +16,7 @@ import (
 请在 router/admin/entry.go 文件引入 {{{ toUpperCamelCase .ModuleName }}}Route 注册路由
 
 3. 后台手动添加菜单和按钮
-admin:{{{ .ModuleName }}}:add
-admin:{{{.ModuleName }}}:edit
-admin:{{{.ModuleName }}}:del
-admin:{{{.ModuleName }}}:delBatch
-admin:{{{.ModuleName }}}:list
-admin:{{{.ModuleName }}}:listAll
-admin:{{{.ModuleName }}}:detail
-admin:{{{.ModuleName }}}:ExportFile
-admin:{{{.ModuleName }}}:ImportFile
 
-// 列表
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'C', '{{{ .FunctionName }}}', '{{{nameToPath .ModuleName }}}/index', '{{{nameToPath .ModuleName }}}/index', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT id, 'A', '{{{ .FunctionName }}}列表','admin:{{{ .ModuleName }}}:list', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT id, 'A', '{{{ .FunctionName }}}全部列表','admin:{{{ .ModuleName }}}:listAll', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
@@ -42,7 +32,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 
 // {{{ toUpperCamelCase .ModuleName }}}Route(rg)
 func {{{ toUpperCamelCase .ModuleName }}}Route(rg *gin.RouterGroup) {
-	handle := {{{ .ModuleName}}}.{{{ toUpperCamelCase .EntityName }}}Handler{}
+	handle := admin_ctl.{{{ toUpperCamelCase .EntityName }}}Handler{}
 
 	r := rg.Group("/", middleware.TokenAuth())
 	r.GET("/{{{ .ModuleName }}}/list", handle.List)

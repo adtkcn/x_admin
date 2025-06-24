@@ -1,7 +1,7 @@
-package admin
+package adminRoute
 
 import (
-	"x_admin/controller/admin"
+	"x_admin/controller/admin_ctl"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +44,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 
 // UserProtocolRoute(rg)
 func UserProtocolRoute(rg *gin.RouterGroup) {
-	handle := admin.UserProtocolHandler{}
+	handle := admin_ctl.UserProtocolHandler{}
 
 	r := rg.Group("/", middleware.TokenAuth())
 	r.GET("/user_protocol/list", handle.List)

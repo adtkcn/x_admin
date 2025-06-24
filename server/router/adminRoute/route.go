@@ -1,11 +1,11 @@
-package admin
+package adminRoute
 
 import (
-	"x_admin/controller/admin/commonController"
-	"x_admin/controller/admin/generatorController"
-	"x_admin/controller/admin/monitorController"
-	"x_admin/controller/admin/settingController"
-	"x_admin/controller/admin/systemController"
+	"x_admin/controller/admin_ctl/commonController"
+	"x_admin/controller/admin_ctl/generatorController"
+	"x_admin/controller/admin_ctl/monitorController"
+	"x_admin/controller/admin_ctl/settingController"
+	"x_admin/controller/admin_ctl/systemController"
 
 	"github.com/gin-gonic/gin"
 )

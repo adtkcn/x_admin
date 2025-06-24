@@ -1,10 +1,10 @@
 package router
 
 import (
-	"x_admin/controller/admin/commonController"
+	"x_admin/controller/admin_ctl/commonController"
 	"x_admin/core/response"
 	"x_admin/middleware"
-	"x_admin/router/admin"
+	"x_admin/router/adminRoute"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	})
 
 	// /api/admin
-	admin.RegisterRoute(api)
+	adminRoute.RegisterRoute(api)
 	// /api/common/captcha 验证码
 	commonController.CaptchaRoute(api)
 }

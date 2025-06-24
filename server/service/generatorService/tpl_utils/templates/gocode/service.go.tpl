@@ -1,10 +1,11 @@
-package {{{ .ModuleName }}}
+package service
 
 import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/schema"
 	"gorm.io/gorm"
 	"x_admin/util"
 	"x_admin/util/convert_util"
@@ -32,7 +33,7 @@ type {{{ toCamelCase .EntityName }}}Service struct {
 
 
 // List {{{ .FunctionName }}}列表
-func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq {{{ toUpperCamelCase .EntityName }}}ListReq) *gorm.DB {
+func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.{{{ toUpperCamelCase .EntityName }}}{})
 	{{{- range .Columns }}}
@@ -64,7 +65,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq {{{ toUpp
 	return dbModel
 }
 // List {{{ .FunctionName }}}列表
-func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq, listReq {{{ toUpperCamelCase .EntityName }}}ListReq) (res response.PageResp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq, listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -81,7 +82,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []{{{ toUpperCamelCase .EntityName }}}Resp{}
+	result := []schema.{{{ toUpperCamelCase .EntityName }}}Resp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -91,7 +92,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq,
 	}, nil
 }
 // ListAll {{{ .FunctionName }}}列表
-func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ toUpperCamelCase .EntityName }}}ListReq) (res []{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq) (res []schema.{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
 	dbModel := service.GetModel(listReq)
 
 	var modelList []model.{{{ toUpperCamelCase .EntityName }}}
@@ -105,7 +106,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ toUppe
 }
 
 // Detail {{{ .FunctionName }}}详情
-func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKey }}} int) (res {{{ toUpperCamelCase .EntityName }}}Resp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKey }}} int) (res schema.{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
 	var obj = model.{{{ toUpperCamelCase .EntityName }}}{}
 	err := service.CacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
@@ -130,7 +131,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 }
 
 // Add {{{ .FunctionName }}}新增
-func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ toUpperCamelCase .EntityName }}}AddReq) (createId int,e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq) (createId int,e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	convert_util.StructToStruct(addReq,&obj)
 	err := service.db.Create(&obj).Error
@@ -144,7 +145,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ toUpperCame
 }
 
 // Edit {{{ .FunctionName }}}编辑
-func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ toUpperCamelCase .EntityName }}}EditReq) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq) (e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", editReq.{{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
@@ -224,7 +225,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetExcelCol() []excel2.Col
 }
 
 // ExportFile {{{ .FunctionName }}}导出
-func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ toUpperCamelCase .EntityName }}}ListReq) (res []{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq) (res []schema.{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
@@ -234,13 +235,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) ExportFile(listReq {{{ toU
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []{{{ toUpperCamelCase .EntityName }}}Resp{}
+	result := []schema.{{{ toUpperCamelCase .EntityName }}}Resp{}
 	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
-func (service {{{ toCamelCase .EntityName }}}Service) ImportFile(importReq []{{{ toUpperCamelCase .EntityName }}}Resp) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) ImportFile(importReq []schema.{{{ toUpperCamelCase .EntityName }}}Resp) (e error) {
 	var importData []model.{{{ toUpperCamelCase .EntityName }}}
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
