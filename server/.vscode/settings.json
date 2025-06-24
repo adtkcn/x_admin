@@ -21,6 +21,7 @@
         "mediumtext",
         "nvarchar",
         "oneof",
+        "primarykey",
         "qrtz",
         "rmvb",
         "singleflight",

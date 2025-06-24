@@ -208,13 +208,11 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive, nextTick } from 'vue'
+import { ref, shallowRef, reactive } from 'vue'
 import {
     monitor_client_delete,
     monitor_client_delete_batch,
-    monitor_client_list,
-    monitor_client_import_file,
-    monitor_client_export_file
+    monitor_client_list
 } from '@/api/monitor/client'
 import type { type_monitor_client, type_monitor_client_query } from '@/api/monitor/client'
 
@@ -256,11 +254,6 @@ const { listAllData } = useListAllData<{
 }>({
     monitor_project_listAll: '/monitor_project/listAll'
 })
-const handleAdd = async () => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('add')
-}
 
 const multipleSelection = ref<type_monitor_client[]>([])
 const handleSelectionChange = (val: type_monitor_client[]) => {
@@ -289,13 +282,6 @@ const deleteBatch = async () => {
         })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
-}
-
-const exportFile = async () => {
-    try {
-        await feedback.confirm('确定要导出？')
-        await monitor_client_export_file(queryParams)
     } catch (error) {}
 }
 getLists()

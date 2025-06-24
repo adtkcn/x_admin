@@ -9,7 +9,7 @@
         "preview": "vite preview --port 4173",
         "build": "node ./scripts/build.mjs",
         "type-check": "vue-tsc --noEmit --checkJs true --skipLibCheck",
-        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+        "lint": "eslint src --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts src --fix --ignore-path .gitignore",
         "preinstall": "npx only-allow pnpm",
         "outdated": "pnpm outdated"
     },

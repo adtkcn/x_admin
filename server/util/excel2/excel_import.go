@@ -11,6 +11,13 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+/**
+ * @Description:  获取导入数据
+ * @param file 上传的文件
+ * @param dst 导入目标对象【传指针】
+ * @param cols 列信息
+ * @return err
+ */
 func GetExcelData(file multipart.File, dst interface{}, cols []Col) (err error) {
 	// 创建缓冲区
 	buf := new(bytes.Buffer)

@@ -41,7 +41,7 @@ export default ({ mode }) => {
                             },
                             {
                                 name: 'vue-router',
-                                test:/node_modules\/vue-router/
+                                test: /node_modules\/vue-router/
                             },
                             {
                                 name: 'element-plus',
@@ -84,9 +84,8 @@ export default ({ mode }) => {
                             {
                                 name: '@wangeditor/editor',
                                 test: /node_modules\/@wangeditor/
-                            },
-
-                        ],
+                            }
+                        ]
                         // vue: ['vue'],
                         // 'vue-router': ['vue-router'],
                         // pinia: ['pinia'],

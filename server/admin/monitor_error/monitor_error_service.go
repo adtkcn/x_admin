@@ -17,22 +17,25 @@ import (
 )
 
 var MonitorErrorService = NewMonitorErrorService()
-var cacheUtil = util.CacheUtil{
-	Name: MonitorErrorService.Name,
-}
+
+// var cacheUtil = util.CacheUtil{
+// 	Name: MonitorErrorService.Name,
+// }
 
 // NewMonitorErrorService 初始化
 func NewMonitorErrorService() *monitorErrorService {
 	return &monitorErrorService{
-		db:   core.GetDB(),
-		Name: "monitorError",
+		db: core.GetDB(),
+		CacheUtil: util.CacheUtil{
+			Name: "monitorError",
+		},
 	}
 }
 
 // monitorErrorService 监控-错误列服务实现类
 type monitorErrorService struct {
-	db   *gorm.DB
-	Name string
+	db        *gorm.DB
+	CacheUtil util.CacheUtil
 }
 
 // List 监控-错误列列表
@@ -112,7 +115,7 @@ func (service monitorErrorService) ListAll(listReq MonitorErrorListReq) (res []M
 // Detail 监控-错误列详情
 func (service monitorErrorService) Detail(Id int) (res MonitorErrorResp, e error) {
 	var obj = model.MonitorError{}
-	err := cacheUtil.GetCache(Id, &obj)
+	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -121,7 +124,7 @@ func (service monitorErrorService) Detail(Id int) (res MonitorErrorResp, e error
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		cacheUtil.SetCache(obj.Id, obj)
+		service.CacheUtil.SetCache(obj.Id, obj)
 	}
 
 	convert_util.Copy(&res, obj)
@@ -131,7 +134,7 @@ func (service monitorErrorService) Detail(Id int) (res MonitorErrorResp, e error
 // DetailByMD5 监控-错误列详情
 func (service monitorErrorService) DetailByMD5(md5 string) (res MonitorErrorResp, e error) {
 	var obj = model.MonitorError{}
-	err := cacheUtil.GetCache("md5:"+md5, &obj)
+	err := service.CacheUtil.GetCache("md5:"+md5, &obj)
 	if err != nil {
 		err := service.db.Where("md5 = ?", md5).Order("id DESC").Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -140,7 +143,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res MonitorErrorResp
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		cacheUtil.SetCache("md5:"+md5, obj)
+		service.CacheUtil.SetCache("md5:"+md5, obj)
 	}
 
 	convert_util.Copy(&res, obj)
@@ -166,8 +169,8 @@ func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int,
 			return 0, err
 		}
 		createId = obj.Id
-		cacheUtil.SetCache(createId, obj)
-		cacheUtil.SetCache("md5:"+Md5, obj)
+		service.CacheUtil.SetCache(createId, obj)
+		service.CacheUtil.SetCache("md5:"+Md5, obj)
 	} else {
 		createId = errorDetails.Id
 	}
@@ -200,8 +203,8 @@ func (service monitorErrorService) Del(Id int) (e error) {
 	// 删除
 	err = service.db.Delete(&obj).Error
 	e = response.CheckErr(err, "删除失败")
-	cacheUtil.RemoveCache(obj.Id)
-	cacheUtil.RemoveCache("md5:" + obj.Md5)
+	service.CacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache("md5:" + obj.Md5)
 	return
 }
 
@@ -226,8 +229,8 @@ func (service monitorErrorService) DelBatch(Ids []string) (e error) {
 		md5s = append(md5s, "md5:"+v.Md5)
 	}
 	// 删除缓存
-	cacheUtil.RemoveCache(Ids)
-	cacheUtil.RemoveCache(md5s)
+	service.CacheUtil.RemoveCache(Ids)
+	service.CacheUtil.RemoveCache(md5s)
 	return nil
 }
 

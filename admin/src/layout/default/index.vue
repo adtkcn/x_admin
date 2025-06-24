@@ -22,5 +22,4 @@ import LayoutHeader from './components/header/index.vue'
 defineOptions({
     name: 'LayoutDefault'
 })
-
 </script>

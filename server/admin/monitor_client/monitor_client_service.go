@@ -164,7 +164,6 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 		cacheUtil.SetCache(obj.Id, obj)
 		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
-
 	convert_util.Copy(&res, obj)
 	return
 }
