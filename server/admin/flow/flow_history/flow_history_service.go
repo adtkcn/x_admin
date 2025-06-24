@@ -6,30 +6,18 @@ import (
 	"fmt"
 	"strconv"
 	"x_admin/admin/flow/flow_apply"
-	"x_admin/admin/system/admin"
-	"x_admin/admin/system/dept"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/model/system_model"
+	"x_admin/schema/systemSchema"
+	"x_admin/service/systemService"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
-
-// type IFlowHistoryService interface {
-// 	List(page request.PageReq, listReq FlowHistoryListReq) (res response.PageResp, e error)
-// 	ListAll() (res []FlowHistoryResp, e error)
-
-// 	Detail(id int) (res FlowHistoryResp, e error)
-// 	Add(addReq FlowHistoryAddReq) (e error)
-// 	Edit(editReq FlowHistoryEditReq) (e error)
-// 	Del(id int) (e error)
-
-// 	GetNextNode(nextNode NextNodeReq) (e error)
-// }
 
 var Service = NewFlowHistoryService()
 
@@ -188,7 +176,7 @@ func (service flowHistoryService) Del(id int) (e error) {
 /**
 * 获取节点的审批用户
  */
-func (service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAuthAdminResp, e error) {
+func (service flowHistoryService) GetApprover(ApplyId int) (res []systemSchema.SystemAuthAdminResp, e error) {
 	nextNodes, applyDetail, _, err := service.GetNextNode(ApplyId)
 	if err != nil {
 		return nil, err
@@ -232,14 +220,14 @@ func (service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAu
 	} else if userType == 2 {
 		// 申请人所在的部门负责人
 
-		applyUser, err := admin.Service.Detail(uint(applyDetail.ApplyUserId))
+		applyUser, err := systemService.AdminService.Detail(uint(applyDetail.ApplyUserId))
 		if err != nil {
 			return nil, err
 		}
 		if applyUser.DeptId == 0 {
 			return nil, errors.New("申请人没有绑定部门")
 		}
-		deptDetails, err := dept.Service.Detail(applyUser.DeptId)
+		deptDetails, err := systemService.DeptService.Detail(applyUser.DeptId)
 		if err != nil {
 			return nil, err
 		}
@@ -256,7 +244,7 @@ func (service flowHistoryService) GetApprover(ApplyId int) (res []admin.SystemAu
 	}
 
 	// 数据
-	var adminResp []admin.SystemAuthAdminResp
+	var adminResp []systemSchema.SystemAuthAdminResp
 	err = adminModel.Where(where).Find(&adminResp).Error
 	if e = response.CheckErr(err, "获取审批用户失败"); e != nil {
 		return
@@ -320,7 +308,7 @@ func (service flowHistoryService) Pass(pass PassReq) (e error) {
 			isUserTask = true
 			flow.PassStatus = 1 //1待处理
 			flow.ApproverId = pass.NextNodeAdminId
-			Approver, err := admin.Service.Detail(uint(pass.NextNodeAdminId))
+			Approver, err := systemService.AdminService.Detail(uint(pass.NextNodeAdminId))
 			if err != nil {
 				return err
 			} else {

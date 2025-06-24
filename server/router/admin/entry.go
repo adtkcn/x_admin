@@ -10,15 +10,8 @@ import (
 	"x_admin/admin/setting/copyright"
 	"x_admin/admin/setting/dict_data"
 	"x_admin/admin/setting/dict_type"
-	"x_admin/admin/setting/protocol"
-
 	"x_admin/admin/setting/website"
-	"x_admin/admin/system"
-	"x_admin/admin/system/dept"
-	"x_admin/admin/system/log"
-	"x_admin/admin/system/login"
-	"x_admin/admin/system/menu"
-	"x_admin/admin/system/post"
+	"x_admin/controller/admin/systemController"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,20 +30,18 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	copyright.CopyrightRoute(rg)
 	dict_data.DictDataRoute(rg)
 	dict_type.DictTypeRoute(rg)
-	protocol.ProtocolRoute(rg)
 
 	website.WebsiteRoute(rg)
 
-	login.LoginRoute(rg)
-	system.AdminRoute(rg)
-	menu.MenuRoute(rg)
-	post.PostRoute(rg)
+	systemController.LoginRoute(rg)
+	systemController.AdminRoute(rg)
+	systemController.MenuRoute(rg)
+	systemController.PostRoute(rg)
 
-	dept.DeptRoute(rg)
-	system.RoleRoute(rg)
-	log.LogRoute(rg)
+	systemController.DeptRoute(rg)
+	systemController.RoleRoute(rg)
+	systemController.LogRoute(rg)
 
-	ArticleCollectRoute(rg)
 	flow.FlowTemplateRoute(rg)
 	flow.FlowApplyRoute(rg)
 	flow.FlowHistoryRoute(rg)

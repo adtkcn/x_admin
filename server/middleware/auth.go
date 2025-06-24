@@ -3,12 +3,12 @@ package middleware
 import (
 	"strconv"
 	"strings"
-	"x_admin/admin/system/admin"
-	"x_admin/admin/system/role"
+
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
+	"x_admin/service/systemService"
 
 	"x_admin/util"
 
@@ -66,7 +66,7 @@ func TokenAuth() gin.HandlerFunc {
 		}
 
 		if !util.RedisUtil.HExists(config.AdminConfig.BackstageManageKey, uidStr) {
-			err := admin.Service.CacheAdminUserByUid(uid)
+			err := systemService.AdminService.CacheAdminUserByUid(uid)
 			if err != nil {
 				core.Logger.Errorf("TokenAuth CacheAdminUserByUid err: err=[%+v]", err)
 				response.Fail(c, response.SystemError)
@@ -126,7 +126,7 @@ func TokenAuth() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			err = role.PermService.CacheRoleMenusByRoleId(uint(i))
+			err = systemService.PermService.CacheRoleMenusByRoleId(uint(i))
 			if err != nil {
 				core.Logger.Errorf("TokenAuth CacheRoleMenusByRoleId err: err=[%+v]", err)
 				response.Fail(c, response.SystemError)
