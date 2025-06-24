@@ -1,4 +1,4 @@
-package album
+package commonSchema
 
 import "x_admin/core"
 

@@ -1,4 +1,4 @@
-package album
+package commonService
 
 import (
 	"path"
@@ -7,6 +7,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/common_model"
+	"x_admin/schema/commonSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -14,18 +15,18 @@ import (
 )
 
 type IAlbumService interface {
-	AlbumList(page request.PageReq, listReq CommonAlbumListReq) (res response.PageResp, e error)
+	AlbumList(page request.PageReq, listReq commonSchema.CommonAlbumListReq) (res response.PageResp, e error)
 	AlbumRename(id uint, name string) (e error)
 	AlbumMove(ids []uint, cid int) (e error)
-	AlbumAdd(addReq CommonAlbumAddReq) (res uint, e error)
+	AlbumAdd(addReq commonSchema.CommonAlbumAddReq) (res uint, e error)
 	AlbumDel(ids []uint) (e error)
-	CateList(listReq CommonCateListReq) (mapList []CommonCateListResp, e error)
-	CateAdd(addReq CommonCateAddReq) (e error)
+	CateList(listReq commonSchema.CommonCateListReq) (mapList []commonSchema.CommonCateListResp, e error)
+	CateAdd(addReq commonSchema.CommonCateAddReq) (e error)
 	CateRename(id uint, name string) (e error)
 	CateDel(id uint) (e error)
 }
 
-var Service = NewAlbumService()
+var AlbumService = NewAlbumService()
 
 // NewAlbumService 初始化
 func NewAlbumService() IAlbumService {
@@ -39,7 +40,7 @@ type albumService struct {
 }
 
 // AlbumList 相册文件列表
-func (albSrv albumService) AlbumList(page request.PageReq, listReq CommonAlbumListReq) (res response.PageResp, e error) {
+func (albSrv albumService) AlbumList(page request.PageReq, listReq commonSchema.CommonAlbumListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -66,7 +67,7 @@ func (albSrv albumService) AlbumList(page request.PageReq, listReq CommonAlbumLi
 	if e = response.CheckErr(err, "Album列表获取失败"); e != nil {
 		return
 	}
-	albumResps := []CommonAlbumListResp{}
+	albumResps := []commonSchema.CommonAlbumListResp{}
 	convert_util.Copy(&albumResps, albums)
 	// TODO: engine默认local
 	engine := "local"
@@ -128,7 +129,7 @@ func (albSrv albumService) AlbumMove(ids []uint, cid int) (e error) {
 }
 
 // AlbumAdd 相册文件新增
-func (albSrv albumService) AlbumAdd(addReq CommonAlbumAddReq) (res uint, e error) {
+func (albSrv albumService) AlbumAdd(addReq commonSchema.CommonAlbumAddReq) (res uint, e error) {
 	var alb common_model.Album
 	//var params map[string]interface{}
 	//if err := mapstructure.Decode(params, &alb); err != nil {
@@ -160,7 +161,7 @@ func (albSrv albumService) AlbumDel(ids []uint) (e error) {
 }
 
 // CateList 相册分类列表
-func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []CommonCateListResp, e error) {
+func (albSrv albumService) CateList(listReq commonSchema.CommonCateListReq) (mapList []commonSchema.CommonCateListResp, e error) {
 	var cates []common_model.AlbumCate
 	cateModel := albSrv.db.Where("is_delete = ?", 0).Order("id desc")
 	if listReq.Type > 0 {
@@ -173,13 +174,13 @@ func (albSrv albumService) CateList(listReq CommonCateListReq) (mapList []Common
 	if e = response.CheckErr(err, "Cate列表获取失败"); e != nil {
 		return
 	}
-	cateResps := []CommonCateListResp{}
+	cateResps := []commonSchema.CommonCateListResp{}
 	convert_util.Copy(&cateResps, cates)
 	return cateResps, nil
 }
 
 // CateAdd 分类新增
-func (albSrv albumService) CateAdd(addReq CommonCateAddReq) (e error) {
+func (albSrv albumService) CateAdd(addReq commonSchema.CommonCateAddReq) (e error) {
 	var cate common_model.AlbumCate
 	convert_util.Copy(&cate, addReq)
 	err := albSrv.db.Create(&cate).Error

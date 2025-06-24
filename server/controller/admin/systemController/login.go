@@ -1,10 +1,11 @@
 package systemController
 
 import (
-	"x_admin/admin/common/captcha"
 	"x_admin/core/response"
 	"x_admin/middleware"
+	"x_admin/schema/commonSchema"
 	. "x_admin/schema/systemSchema"
+	"x_admin/service/commonService"
 	"x_admin/service/systemService"
 	"x_admin/util"
 
@@ -24,11 +25,11 @@ type loginHandler struct{}
 
 // login 登录系统
 func (lh loginHandler) login(c *gin.Context) {
-	var params captcha.ClientParams
+	var params commonSchema.ClientParams
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &params)) {
 		return
 	}
-	err := captcha.Verify(params)
+	err := commonService.CaptchaVerify(params)
 	if err != nil {
 		response.FailWithMsg(c, response.Failed, err.Error())
 		return

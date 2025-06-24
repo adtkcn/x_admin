@@ -1,4 +1,4 @@
-package index
+package commonService
 
 import (
 	"time"
@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var Service = NewIndexService()
+var IndexService = NewIndexService()
 
 // NewIndexService 初始化
 func NewIndexService() *indexService {

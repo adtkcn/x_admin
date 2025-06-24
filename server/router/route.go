@@ -1,7 +1,7 @@
 package router
 
 import (
-	"x_admin/admin/common/captcha"
+	"x_admin/controller/admin/commonController"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/router/admin"
@@ -24,5 +24,5 @@ func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	// /api/admin
 	admin.RegisterRoute(api)
 	// /api/common/captcha 验证码
-	captcha.RegisterRoute(api)
+	commonController.CaptchaRoute(api)
 }

@@ -1,8 +1,9 @@
-package index
+package commonController
 
 import (
 	"x_admin/core/response"
 	"x_admin/middleware"
+	"x_admin/service/commonService"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,12 +21,12 @@ type indexHandler struct{}
 
 // console 控制台
 func (ih indexHandler) console(c *gin.Context) {
-	res, err := Service.Console()
+	res, err := commonService.IndexService.Console()
 	response.CheckAndRespWithData(c, res, err)
 }
 
 // config 公共配置
 func (ih indexHandler) config(c *gin.Context) {
-	res, err := Service.Config()
+	res, err := commonService.IndexService.Config()
 	response.CheckAndRespWithData(c, res, err)
 }
