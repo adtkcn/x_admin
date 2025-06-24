@@ -217,6 +217,7 @@ export default {
                     backToken.value = res.repData.token
                     secretKey.value = res.repData.secretKey
                     pointTextList.value = res.repData.wordList
+                    checkNum.value = res.repData.wordList.length
                     text.value = '请依次点击【' + pointTextList.value.join(',') + '】'
                 } else {
                     text.value = res.repMsg
