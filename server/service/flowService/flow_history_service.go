@@ -1,16 +1,17 @@
-package flow_history
+package flowService
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
-	"x_admin/admin/flow/flow_apply"
+
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
 	"x_admin/model/system_model"
+	. "x_admin/schema/flowSchema"
 	"x_admin/schema/systemSchema"
 	"x_admin/service/systemService"
 	"x_admin/util"
@@ -19,7 +20,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var Service = NewFlowHistoryService()
+var HistoryService = NewFlowHistoryService()
 
 // NewFlowHistoryService 初始化
 func NewFlowHistoryService() *flowHistoryService {
@@ -376,7 +377,7 @@ func (service flowHistoryService) Back(back BackReq) (e error) {
 	// 驳回到申请人，最后一条改驳回状态，驳回备注，新加一条
 	if back.HistoryId == 0 {
 
-		var applyDetail, err = flow_apply.Service.Detail(back.ApplyId)
+		var applyDetail, err = ApplyService.Detail(back.ApplyId)
 		if err != nil {
 			return err
 		}
@@ -465,8 +466,8 @@ func (service flowHistoryService) Back(back BackReq) (e error) {
 /**
  * 获取下一批流程，直到审批或结束节点
  */
-func (service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, apply flow_apply.FlowApplyResp, LastHistory model.FlowHistory, e error) {
-	var applyDetail, err = flow_apply.Service.Detail(ApplyId)
+func (service flowHistoryService) GetNextNode(ApplyId int) (res []FlowTree, apply FlowApplyResp, LastHistory model.FlowHistory, e error) {
+	var applyDetail, err = ApplyService.Detail(ApplyId)
 
 	if e = response.CheckErr(err, "获取审批申请失败"); e != nil {
 		return

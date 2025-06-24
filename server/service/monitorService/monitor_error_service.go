@@ -1,14 +1,14 @@
-package monitor_error
+package monitorService
 
 import (
 	"errors"
 	"strconv"
-	"x_admin/admin/monitor_client"
-	"x_admin/admin/monitor_error_list"
+
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	. "x_admin/schema/monitorSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
@@ -174,12 +174,12 @@ func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int,
 	} else {
 		createId = errorDetails.Id
 	}
-	client, err := monitor_client.MonitorClientService.DetailByClientId(addReq.ClientId)
+	client, err := MonitorClientService.DetailByClientId(addReq.ClientId)
 	if err != nil {
 		return 0, err
 	}
 
-	_, err = monitor_error_list.MonitorErrorListService.Add(monitor_error_list.MonitorErrorListAddReq{
+	_, err = MonitorErrorListService.Add(MonitorErrorListAddReq{
 		Eid: strconv.Itoa(createId),
 		Cid: strconv.Itoa(client.Id),
 		// ClientId:   addReq.ClientId,

@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"x_admin/admin/monitor_client"
+	"x_admin/controller/admin/monitorController"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +44,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 
 // MonitorClientRoute(rg)
 func MonitorClientRoute(rg *gin.RouterGroup) {
-	handle := monitor_client.MonitorClientHandler{}
+	handle := monitorController.MonitorClientHandler{}
 	rg.GET("/monitor_client/add", middleware.RecordLog("监控-客户端信息新增"), handle.Add)
 
 	r := rg.Group("/", middleware.TokenAuth())

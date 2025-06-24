@@ -1,4 +1,4 @@
-package monitor
+package monitorController
 
 import (
 	"strings"
@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func MonitorRoute(rg *gin.RouterGroup) {
+func RegisterRoute(rg *gin.RouterGroup) {
 	handle := monitorHandler{}
 
 	rg = rg.Group("/monitor", middleware.TokenAuth())

@@ -1,9 +1,11 @@
-package flow_history
+package flowController
 
 import (
 	"fmt"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	. "x_admin/schema/flowSchema"
+	"x_admin/service/flowService"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -41,7 +43,7 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := Service.List(page, listReq)
+	res, err := flowService.HistoryService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -55,7 +57,7 @@ func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := Service.ListAll(listReq)
+	res, err := flowService.HistoryService.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -71,7 +73,7 @@ func (hd FlowHistoryHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := Service.Detail(detailReq.Id)
+	res, err := flowService.HistoryService.Detail(detailReq.Id)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -96,7 +98,7 @@ func (hd FlowHistoryHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Add(addReq))
+	response.CheckAndResp(c, flowService.HistoryService.Add(addReq))
 }
 
 // @Summary	流程历史编辑
@@ -121,7 +123,7 @@ func (hd FlowHistoryHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Edit(editReq))
+	response.CheckAndResp(c, flowService.HistoryService.Edit(editReq))
 }
 
 // @Summary	流程历史删除
@@ -136,7 +138,7 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Del(delReq.Id))
+	response.CheckAndResp(c, flowService.HistoryService.Del(delReq.Id))
 }
 
 // 提交申请,通过审批
@@ -149,7 +151,7 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &pass)) {
 		return
 	}
-	err := Service.Pass(pass)
+	err := flowService.HistoryService.Pass(pass)
 
 	response.CheckAndResp(c, err)
 }
@@ -164,7 +166,7 @@ func (hd FlowHistoryHandler) Back(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &back)) {
 		return
 	}
-	err := Service.Back(back)
+	err := flowService.HistoryService.Back(back)
 	fmt.Println(err)
 	response.CheckAndResp(c, err)
 }
@@ -175,7 +177,7 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
 		return
 	}
-	res, _, _, err := Service.GetNextNode(nextNode.ApplyId)
+	res, _, _, err := flowService.HistoryService.GetNextNode(nextNode.ApplyId)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -186,7 +188,7 @@ func (hd FlowHistoryHandler) GetApprover(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
 		return
 	}
-	res, err := Service.GetApprover(nextNode.ApplyId)
+	res, err := flowService.HistoryService.GetApprover(nextNode.ApplyId)
 	if err != nil {
 		response.FailWithMsg(c, response.Failed, err.Error())
 		return

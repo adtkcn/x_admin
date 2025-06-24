@@ -1,8 +1,10 @@
-package flow_template
+package flowController
 
 import (
 	"x_admin/core/request"
 	"x_admin/core/response"
+	. "x_admin/schema/flowSchema"
+	"x_admin/service/flowService"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +35,7 @@ func (hd FlowTemplateHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := Service.List(page, listReq)
+	res, err := flowService.TemplateService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -41,7 +43,7 @@ func (hd FlowTemplateHandler) List(c *gin.Context) {
 // @Tags		flow_template-流程模板
 // @Router		/api/admin/flow/flow_template/listAll [get]
 func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
-	res, err := Service.ListAll()
+	res, err := flowService.TemplateService.ListAll()
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -57,7 +59,7 @@ func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err := Service.Detail(detailReq.Id)
+	res, err := flowService.TemplateService.Detail(detailReq.Id)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -77,7 +79,7 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Add(addReq))
+	response.CheckAndResp(c, flowService.TemplateService.Add(addReq))
 }
 
 // @Summary	流程模板编辑
@@ -97,7 +99,7 @@ func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Edit(editReq))
+	response.CheckAndResp(c, flowService.TemplateService.Edit(editReq))
 }
 
 // @Summary	流程模板删除
@@ -112,5 +114,5 @@ func (hd FlowTemplateHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, Service.Del(delReq.Id))
+	response.CheckAndResp(c, flowService.TemplateService.Del(delReq.Id))
 }

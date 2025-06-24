@@ -1,9 +1,10 @@
-package monitor_error_list
+package monitorService
 
 import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model"
+	. "x_admin/schema/monitorSchema"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"

@@ -1,10 +1,11 @@
-package monitor_project
+package monitorService
 
 import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	. "x_admin/schema/monitorSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
@@ -13,22 +14,22 @@ import (
 )
 
 var MonitorProjectService = NewMonitorProjectService()
-var cacheUtil = util.CacheUtil{
-	Name: MonitorProjectService.Name,
-}
 
 // NewMonitorProjectService 初始化
 func NewMonitorProjectService() *monitorProjectService {
 	return &monitorProjectService{
-		db:   core.GetDB(),
-		Name: "monitorProject",
+		db: core.GetDB(),
+		CacheUtil: util.CacheUtil{
+			Name: "monitorProject",
+		},
 	}
 }
 
 // monitorProjectService 监控项目服务实现类
 type monitorProjectService struct {
-	db   *gorm.DB
-	Name string
+	db        *gorm.DB
+	Name      string
+	CacheUtil util.CacheUtil
 }
 
 // List 监控项目列表
@@ -108,7 +109,7 @@ func (service monitorProjectService) ListAll(listReq MonitorProjectListReq) (res
 // Detail 监控项目详情
 func (service monitorProjectService) Detail(Id int) (res MonitorProjectResp, e error) {
 	var obj = model.MonitorProject{}
-	err := cacheUtil.GetCache(Id, &obj)
+	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -117,7 +118,7 @@ func (service monitorProjectService) Detail(Id int) (res MonitorProjectResp, e e
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		cacheUtil.SetCache(obj.Id, obj)
+		service.CacheUtil.SetCache(obj.Id, obj)
 	}
 
 	convert_util.Copy(&res, obj)
@@ -134,7 +135,7 @@ func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (createId 
 	if e != nil {
 		return 0, e
 	}
-	cacheUtil.SetCache(obj.Id, obj)
+	service.CacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
 	return
 }
@@ -156,7 +157,7 @@ func (service monitorProjectService) Edit(editReq MonitorProjectEditReq) (e erro
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
-	cacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache(obj.Id)
 	service.Detail(obj.Id)
 	return
 }
@@ -177,7 +178,7 @@ func (service monitorProjectService) Del(Id int) (e error) {
 	obj.DeleteTime = util.NullTimeUtil.Now()
 	err = service.db.Save(&obj).Error
 	e = response.CheckErr(err, "删除失败")
-	cacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache(obj.Id)
 	return
 }
 
@@ -190,9 +191,9 @@ func (service monitorProjectService) DelBatch(Ids []string) (e error) {
 	}
 	// 删除缓存
 	// for _, v := range Ids {
-	// 	cacheUtil.RemoveCache(v)
+	// 	service.CacheUtil.RemoveCache(v)
 	// }
-	cacheUtil.RemoveCache(Ids)
+	service.CacheUtil.RemoveCache(Ids)
 	return nil
 }
 

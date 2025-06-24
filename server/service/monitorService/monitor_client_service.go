@@ -1,4 +1,4 @@
-package monitor_client
+package monitorService
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	. "x_admin/schema/monitorSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
@@ -14,22 +15,22 @@ import (
 )
 
 var MonitorClientService = NewMonitorClientService()
-var cacheUtil = util.CacheUtil{
-	Name: MonitorClientService.Name,
-}
 
 // NewMonitorClientService 初始化
 func NewMonitorClientService() *monitorClientService {
 	return &monitorClientService{
-		db:   core.GetDB(),
-		Name: "monitorClient",
+		db: core.GetDB(),
+		CacheUtil: util.CacheUtil{
+			Name: "monitorClient",
+		},
 	}
 }
 
 // monitorClientService 监控-客户端信息服务实现类
 type monitorClientService struct {
-	db   *gorm.DB
-	Name string
+	db        *gorm.DB
+	Name      string
+	CacheUtil util.CacheUtil
 }
 
 // List 监控-客户端信息列表
@@ -132,7 +133,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res Monit
 		return res, errors.New("ClientId不能为空")
 	}
 	var obj = model.MonitorClient{}
-	err := cacheUtil.GetCache("ClientId:"+ClientId, &obj)
+	err := service.CacheUtil.GetCache("ClientId:"+ClientId, &obj)
 	if err != nil {
 		err := service.db.Where("client_id = ?", ClientId).Order("id DESC").Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -141,8 +142,8 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res Monit
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		cacheUtil.SetCache(obj.Id, obj)
-		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
+		service.CacheUtil.SetCache(obj.Id, obj)
+		service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 
 	convert_util.Copy(&res, obj)
@@ -152,7 +153,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res Monit
 // Detail 监控-客户端信息详情
 func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e error) {
 	var obj = model.MonitorClient{}
-	err := cacheUtil.GetCache(Id, &obj)
+	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -161,8 +162,8 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		cacheUtil.SetCache(obj.Id, obj)
-		cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
+		service.CacheUtil.SetCache(obj.Id, obj)
+		service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 	convert_util.Copy(&res, obj)
 	return
@@ -186,8 +187,8 @@ func (service monitorClientService) Add(addReq MonitorClientAddReq) (createId in
 	if e != nil {
 		return 0, e
 	}
-	cacheUtil.SetCache(obj.Id, obj)
-	cacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
+	service.CacheUtil.SetCache(obj.Id, obj)
+	service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	createId = obj.Id
 	return
 }
@@ -206,8 +207,8 @@ func (service monitorClientService) Del(Id int) (e error) {
 	// 删除
 	err = service.db.Delete(&obj).Error
 	e = response.CheckErr(err, "删除失败")
-	cacheUtil.RemoveCache(obj.Id)
-	cacheUtil.RemoveCache("ClientId:" + obj.ClientId)
+	service.CacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache("ClientId:" + obj.ClientId)
 	return
 }
 
@@ -233,8 +234,8 @@ func (service monitorClientService) DelBatch(Ids []string) (e error) {
 	}
 
 	// 删除缓存
-	cacheUtil.RemoveCache(Ids)
-	cacheUtil.RemoveCache(Clients)
+	service.CacheUtil.RemoveCache(Ids)
+	service.CacheUtil.RemoveCache(Clients)
 	return nil
 }
 

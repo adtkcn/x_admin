@@ -1,25 +1,17 @@
-package flow_template
+package flowService
 
 import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	. "x_admin/schema/flowSchema"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
 
-type IFlowTemplateService interface {
-	List(page request.PageReq, listReq FlowTemplateListReq) (res response.PageResp, e error)
-	ListAll() (res []FlowTemplateResp, e error)
-	Detail(id int) (res FlowTemplateResp, e error)
-	Add(addReq FlowTemplateAddReq) (e error)
-	Edit(editReq FlowTemplateEditReq) (e error)
-	Del(id int) (e error)
-}
-
-var Service = NewFlowTemplateService()
+var TemplateService = NewFlowTemplateService()
 
 // NewFlowTemplateService 初始化
 func NewFlowTemplateService() *flowTemplateService {

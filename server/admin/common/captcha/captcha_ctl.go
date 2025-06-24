@@ -62,7 +62,7 @@ func init() {
 	factory.RegisterService(constant.ClickWordCaptcha, service.NewClickWordCaptchaService(factory))
 	factory.RegisterService(constant.BlockPuzzleCaptcha, service.NewBlockPuzzleCaptchaService(factory))
 }
-func CaptchaRoute(rg *gin.RouterGroup) {
+func RegisterRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/common/captcha")
 	rg.POST("/get", func(c *gin.Context) {

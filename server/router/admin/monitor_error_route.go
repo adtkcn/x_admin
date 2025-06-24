@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"x_admin/admin/monitor_error"
+	"x_admin/controller/admin/monitorController"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +44,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 
 // MonitorErrorRoute(rg)
 func MonitorErrorRoute(rg *gin.RouterGroup) {
-	handle := monitor_error.MonitorErrorHandler{}
+	handle := monitorController.MonitorErrorHandler{}
 	rg.GET("/monitor_error/add", middleware.RecordLog("监控-错误列新增"), handle.Add)
 
 	r := rg.Group("/", middleware.TokenAuth())

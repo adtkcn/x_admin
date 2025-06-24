@@ -1,4 +1,4 @@
-package monitor_error
+package monitorSchema
 
 import (
 	"x_admin/core"

@@ -1,9 +1,10 @@
 package admin
 
 import (
+	"x_admin/controller/admin/monitorController"
+	"x_admin/middleware"
+
 	"github.com/gin-gonic/gin"
-	"x_admin/middleware" 
-	"x_admin/admin/monitor_project"
 )
 
 /**
@@ -41,22 +42,21 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) VALUES (0, 'A', '监控项目导入excel','admin:monitor_project:ImportFile', 0, 1, 0, now(), now());
 */
 
-
 // MonitorProjectRoute(rg)
 func MonitorProjectRoute(rg *gin.RouterGroup) {
-	handle := monitor_project.MonitorProjectHandler{}
+	handle := monitorController.MonitorProjectHandler{}
 
 	r := rg.Group("/", middleware.TokenAuth())
 	r.GET("/monitor_project/list", handle.List)
 	r.GET("/monitor_project/listAll", handle.ListAll)
 	r.GET("/monitor_project/detail", handle.Detail)
-	
-	r.POST("/monitor_project/add",middleware.RecordLog("监控项目新增"), handle.Add)
-	r.POST("/monitor_project/edit",middleware.RecordLog("监控项目编辑"), handle.Edit)
-	
+
+	r.POST("/monitor_project/add", middleware.RecordLog("监控项目新增"), handle.Add)
+	r.POST("/monitor_project/edit", middleware.RecordLog("监控项目编辑"), handle.Edit)
+
 	r.POST("/monitor_project/del", middleware.RecordLog("监控项目删除"), handle.Del)
 	r.POST("/monitor_project/delBatch", middleware.RecordLog("监控项目删除-批量"), handle.DelBatch)
 
 	r.GET("/monitor_project/ExportFile", middleware.RecordLog("监控项目导出"), handle.ExportFile)
-	r.POST("/monitor_project/ImportFile",  handle.ImportFile)
+	r.POST("/monitor_project/ImportFile", handle.ImportFile)
 }

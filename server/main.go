@@ -53,7 +53,7 @@ func initRouter() *gin.Engine {
 	// 注册路由
 	apiGroup := r.Group("/api")
 
-	router.RegisterGroup(apiGroup, r)
+	router.RegisterRoute(apiGroup, r)
 
 	return r
 }

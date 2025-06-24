@@ -1,9 +1,7 @@
-package flow
+package admin
 
 import (
-	"x_admin/admin/flow/flow_apply"
-	"x_admin/admin/flow/flow_history"
-	"x_admin/admin/flow/flow_template"
+	"x_admin/controller/admin/flowController"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +16,7 @@ import (
 
 func FlowApplyRoute(rg *gin.RouterGroup) {
 
-	handle := flow_apply.FlowApplyHandler{}
+	handle := flowController.FlowApplyHandler{}
 
 	rg = rg.Group("/flow", middleware.TokenAuth())
 	rg.GET("/flow_apply/list", handle.List)
@@ -42,7 +40,7 @@ flow_history:detail
 // FlowHistoryRoute(rg)
 func FlowHistoryRoute(rg *gin.RouterGroup) {
 
-	handle := flow_history.FlowHistoryHandler{}
+	handle := flowController.FlowHistoryHandler{}
 
 	rg = rg.Group("/flow", middleware.TokenAuth())
 	rg.GET("/flow_history/list", handle.List)
@@ -73,7 +71,7 @@ flow_template:detail
 // FlowTemplateRoute(rg)
 func FlowTemplateRoute(rg *gin.RouterGroup) {
 
-	handle := flow_template.FlowTemplateHandler{}
+	handle := flowController.FlowTemplateHandler{}
 
 	rg = rg.Group("/flow", middleware.TokenAuth())
 	rg.GET("/flow_template/list", handle.List)

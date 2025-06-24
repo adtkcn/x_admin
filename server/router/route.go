@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterGroup(api *gin.RouterGroup, rootRouter *gin.Engine) {
+func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 
 	// /api/admin/apiList 获取所有接口
 	api.GET("/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
@@ -22,7 +22,7 @@ func RegisterGroup(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	})
 
 	// /api/admin
-	admin.RegisterGroup(api)
+	admin.RegisterRoute(api)
 	// /api/common/captcha 验证码
-	captcha.CaptchaRoute(api)
+	captcha.RegisterRoute(api)
 }

@@ -1,4 +1,4 @@
-package flow_template
+package flowSchema
 
 //FlowTemplateListReq 流程模板列表参数
 type FlowTemplateListReq struct {

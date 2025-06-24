@@ -4,17 +4,16 @@ import (
 	"x_admin/admin/common/album"
 	"x_admin/admin/common/index"
 	"x_admin/admin/common/upload"
-	"x_admin/admin/flow"
 	"x_admin/admin/generator"
-	"x_admin/admin/monitor"
 
+	"x_admin/controller/admin/monitorController"
 	"x_admin/controller/admin/settingController"
 	"x_admin/controller/admin/systemController"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterGroup(rg *gin.RouterGroup) {
+func RegisterRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/admin")
 	// 所有子路由需要加上前缀 /api/admin
@@ -23,7 +22,7 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	album.AlbumRoute(rg)
 	index.IndexRoute(rg)
 
-	monitor.MonitorRoute(rg)
+	monitorController.RegisterRoute(rg)
 
 	settingController.CopyrightRoute(rg)
 	settingController.DictDataRoute(rg)
@@ -39,9 +38,9 @@ func RegisterGroup(rg *gin.RouterGroup) {
 	systemController.RoleRoute(rg)
 	systemController.LogRoute(rg)
 
-	flow.FlowTemplateRoute(rg)
-	flow.FlowApplyRoute(rg)
-	flow.FlowHistoryRoute(rg)
+	FlowTemplateRoute(rg)
+	FlowApplyRoute(rg)
+	FlowHistoryRoute(rg)
 
 	generator.RegisterGroup(rg)
 

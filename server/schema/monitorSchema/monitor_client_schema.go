@@ -1,4 +1,4 @@
-package monitor_client
+package monitorSchema
 
 import (
 	"x_admin/core"

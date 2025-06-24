@@ -1,4 +1,4 @@
-package monitor_client
+package monitorController
 
 import (
 	"encoding/json"
@@ -11,6 +11,8 @@ import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	. "x_admin/schema/monitorSchema"
+	"x_admin/service/monitorService"
 	"x_admin/util"
 	"x_admin/util/excel2"
 	"x_admin/util/img_util"
@@ -56,7 +58,7 @@ func (hd *MonitorClientHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := MonitorClientService.List(page, listReq)
+	res, err := monitorService.MonitorClientService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -85,7 +87,7 @@ func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := MonitorClientService.ListAll(listReq)
+	res, err := monitorService.MonitorClientService.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -94,7 +96,7 @@ func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &Req)) {
 		return
 	}
-	res, err := MonitorClientService.ErrorUsers(Req.Id)
+	res, err := monitorService.MonitorClientService.ErrorUsers(Req.Id)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -111,7 +113,7 @@ func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do("MonitorClient:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
-		v, err := MonitorClientService.Detail(detailReq.Id)
+		v, err := monitorService.MonitorClientService.Detail(detailReq.Id)
 		return v, err
 	})
 
@@ -146,7 +148,7 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	var addReq MonitorClientAddReq
 	json.Unmarshal([]byte(data), &addReq)
 
-	lastClient, err := MonitorClientService.DetailByClientId(*addReq.ClientId)
+	lastClient, err := monitorService.MonitorClientService.DetailByClientId(*addReq.ClientId)
 
 	uaStr := c.GetHeader("user-agent")
 	ip := c.ClientIP()
@@ -161,7 +163,8 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 			return
 		} else {
 			// 新建的话，需要清除lastClient对应的缓存
-			cacheUtil.RemoveCache("ClientId:" + lastClient.ClientId)
+			monitorService.MonitorClientService.CacheUtil.RemoveCache("ClientId:" + lastClient.ClientId)
+
 		}
 	}
 
@@ -182,7 +185,7 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 		addReq.Province = &regionInfo.Province
 	}
 
-	MonitorClientService.Add(addReq)
+	monitorService.MonitorClientService.Add(addReq)
 
 	c.Data(200, "image/gif", img_util.EmptyGif())
 }
@@ -199,7 +202,7 @@ func (hd *MonitorClientHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, MonitorClientService.Del(delReq.Id))
+	response.CheckAndResp(c, monitorService.MonitorClientService.Del(delReq.Id))
 }
 
 // @Summary	监控-客户端信息删除-批量
@@ -221,7 +224,7 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, MonitorClientService.DelBatch(Ids))
+	response.CheckAndResp(c, monitorService.MonitorClientService.DelBatch(Ids))
 }
 
 // @Summary	监控-客户端信息导出
@@ -249,12 +252,12 @@ func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := MonitorClientService.ExportFile(listReq)
+	res, err := monitorService.MonitorClientService.ExportFile(listReq)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel2.Export(res, MonitorClientService.GetExcelCol(), "Sheet1", "监控-客户端信息")
+	f, err := excel2.Export(res, monitorService.MonitorClientService.GetExcelCol(), "Sheet1", "监控-客户端信息")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
@@ -274,12 +277,12 @@ func (hd *MonitorClientHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []MonitorClientResp{}
-	err = excel2.GetExcelData(file, &importList, MonitorClientService.GetExcelCol())
+	err = excel2.GetExcelData(file, &importList, monitorService.MonitorClientService.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = MonitorClientService.ImportFile(importList)
+	err = monitorService.MonitorClientService.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }

@@ -1,4 +1,4 @@
-package flow_history
+package flowSchema
 
 import "x_admin/core"
 

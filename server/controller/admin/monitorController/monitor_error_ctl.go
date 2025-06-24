@@ -1,4 +1,4 @@
-package monitor_error
+package monitorController
 
 import (
 	"encoding/json"
@@ -9,6 +9,8 @@ import (
 	"time"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	. "x_admin/schema/monitorSchema"
+	"x_admin/service/monitorService"
 	"x_admin/util"
 	"x_admin/util/excel2"
 	"x_admin/util/img_util"
@@ -47,7 +49,7 @@ func (hd *MonitorErrorHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := MonitorErrorService.List(page, listReq)
+	res, err := monitorService.MonitorErrorService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -69,7 +71,7 @@ func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := MonitorErrorService.ListAll(listReq)
+	res, err := monitorService.MonitorErrorService.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -86,7 +88,7 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do("MonitorError:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
-		v, err := MonitorErrorService.Detail(detailReq.Id)
+		v, err := monitorService.MonitorErrorService.Detail(detailReq.Id)
 		return v, err
 	})
 
@@ -119,7 +121,7 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 	// 	return
 	// }
 	for i := 0; i < len(addReq); i++ {
-		MonitorErrorService.Add(addReq[i])
+		monitorService.MonitorErrorService.Add(addReq[i])
 	}
 	c.Data(200, "image/gif", img_util.EmptyGif())
 }
@@ -136,7 +138,7 @@ func (hd *MonitorErrorHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, MonitorErrorService.Del(delReq.Id))
+	response.CheckAndResp(c, monitorService.MonitorErrorService.Del(delReq.Id))
 }
 
 // @Summary	监控-错误列删除-批量
@@ -158,7 +160,7 @@ func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, MonitorErrorService.DelBatch(Ids))
+	response.CheckAndResp(c, monitorService.MonitorErrorService.DelBatch(Ids))
 }
 
 // @Summary	监控-错误列导出
@@ -179,12 +181,12 @@ func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := MonitorErrorService.ExportFile(listReq)
+	res, err := monitorService.MonitorErrorService.ExportFile(listReq)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel2.Export(res, MonitorErrorService.GetExcelCol(), "Sheet1", "监控-错误列")
+	f, err := excel2.Export(res, monitorService.MonitorErrorService.GetExcelCol(), "Sheet1", "监控-错误列")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
@@ -204,12 +206,12 @@ func (hd *MonitorErrorHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []MonitorErrorResp{}
-	err = excel2.GetExcelData(file, &importList, MonitorErrorService.GetExcelCol())
+	err = excel2.GetExcelData(file, &importList, monitorService.MonitorErrorService.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = MonitorErrorService.ImportFile(importList)
+	err = monitorService.MonitorErrorService.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }

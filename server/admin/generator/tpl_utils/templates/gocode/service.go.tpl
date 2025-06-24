@@ -12,22 +12,21 @@ import (
 )
 
 var {{{ toUpperCamelCase .EntityName }}}Service=New{{{ toUpperCamelCase .EntityName }}}Service()
-var cacheUtil = util.CacheUtil{
-	Name: {{{ toUpperCamelCase .EntityName }}}Service.Name,
-}
 
 // New{{{ toUpperCamelCase .EntityName }}}Service 初始化
 func New{{{ toUpperCamelCase .EntityName }}}Service() *{{{ toCamelCase .EntityName }}}Service {
 	return &{{{ toCamelCase .EntityName }}}Service{
 		db:   core.GetDB(),
-		Name: "{{{ toCamelCase .EntityName }}}",
+		CacheUtil util.CacheUtil{
+			Name: "{{{ toCamelCase .EntityName }}}",
+		}
 	}
 }
 
 //{{{ toCamelCase .EntityName }}}Service {{{ .FunctionName }}}服务实现类
 type {{{ toCamelCase .EntityName }}}Service struct {
 	db *gorm.DB
-	Name string
+	CacheUtil util.CacheUtil
 }
 
 
@@ -108,7 +107,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq {{{ toUppe
 // Detail {{{ .FunctionName }}}详情
 func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKey }}} int) (res {{{ toUpperCamelCase .EntityName }}}Resp, e error) {
 	var obj = model.{{{ toUpperCamelCase .EntityName }}}{}
-	err := cacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
+	err := service.CacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
 		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -123,7 +122,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 		res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 		{{{- end }}}
 		{{{- end }}}
-		cacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
+		service.CacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
 	}
 
 	convert_util.Copy(&res, obj)
@@ -139,7 +138,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq {{{ toUpperCame
 	if e != nil {
 		return 0,e
 	}
-	cacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
+	service.CacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
 	createId = obj.{{{ toUpperCamelCase .PrimaryKey }}}
 	return
 }
@@ -161,7 +160,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq {{{ toUpperCa
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
-	cacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache(obj.Id)
 	service.Detail(obj.Id)
 	return
 }
@@ -189,7 +188,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
     err = service.db.Delete(&obj).Error
     e = response.CheckErr(err, "删除失败")
     {{{- end }}}
-	cacheUtil.RemoveCache(obj.{{{ toUpperCamelCase .PrimaryKey }}})
+	service.CacheUtil.RemoveCache(obj.{{{ toUpperCamelCase .PrimaryKey }}})
 	return
 }
 
@@ -201,7 +200,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) DelBatch(Ids []string) (e 
 		return err
 	}
 	// 删除缓存
-	cacheUtil.RemoveCache(Ids)
+	service.CacheUtil.RemoveCache(Ids)
 	return nil
 }
 

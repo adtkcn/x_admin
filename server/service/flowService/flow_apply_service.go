@@ -1,27 +1,20 @@
-package flow_apply
+package flowService
 
 import (
 	"errors"
-	"x_admin/admin/flow/flow_template"
+
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	. "x_admin/schema/flowSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
 
-type IFlowApplyService interface {
-	List(page request.PageReq, listReq FlowApplyListReq) (res response.PageResp, e error)
-	Detail(id int) (res FlowApplyResp, e error)
-	Add(addReq FlowApplyAddReq) (e error)
-	Edit(editReq FlowApplyEditReq) (e error)
-	Del(id int) (e error)
-}
-
-var Service = NewFlowApplyService()
+var ApplyService = NewFlowApplyService()
 
 // NewFlowApplyService 初始化
 func NewFlowApplyService() *flowApplyService {
@@ -108,7 +101,7 @@ func (service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
 // Add 申请流程新增
 func (service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
 	var obj model.FlowApply
-	var flow_template_resp, err = flow_template.Service.Detail(addReq.TemplateId)
+	var flow_template_resp, err = TemplateService.Detail(addReq.TemplateId)
 	if e = response.CheckErrDBNotRecord(err, "模板不存在!"); e != nil {
 		return
 	}
