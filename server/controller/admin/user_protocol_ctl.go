@@ -1,4 +1,4 @@
-package user_protocol
+package admin
 
 import (
 	"net/http"
@@ -7,6 +7,8 @@ import (
 	"time"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	"x_admin/schema"
+	"x_admin/service"
 	"x_admin/util"
 	"x_admin/util/excel2"
 
@@ -36,14 +38,14 @@ type UserProtocolHandler struct {
 // @Router		/api/admin/user_protocol/list [get]
 func (hd *UserProtocolHandler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq UserProtocolListReq
+	var listReq schema.UserProtocolListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := UserProtocolService.List(page, listReq)
+	res, err := service.UserProtocolService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -60,11 +62,11 @@ func (hd *UserProtocolHandler) List(c *gin.Context) {
 // @Success	200				{object}	response.Response{ data=[]UserProtocolResp}	"成功"
 // @Router		/api/admin/user_protocol/listAll [get]
 func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
-	var listReq UserProtocolListReq
+	var listReq schema.UserProtocolListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := UserProtocolService.ListAll(listReq)
+	res, err := service.UserProtocolService.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -76,12 +78,12 @@ func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
 // @Success	200		{object}	response.Response{ data=UserProtocolResp}	"成功"
 // @Router		/api/admin/user_protocol/detail [get]
 func (hd *UserProtocolHandler) Detail(c *gin.Context) {
-	var detailReq UserProtocolDetailReq
+	var detailReq schema.UserProtocolDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do("UserProtocol:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
-		v, err := UserProtocolService.Detail(detailReq.Id)
+		v, err := service.UserProtocolService.Detail(detailReq.Id)
 		return v, err
 	})
 
@@ -98,11 +100,11 @@ func (hd *UserProtocolHandler) Detail(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/add [post]
 func (hd *UserProtocolHandler) Add(c *gin.Context) {
-	var addReq UserProtocolAddReq
+	var addReq schema.UserProtocolAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	createId, e := UserProtocolService.Add(addReq)
+	createId, e := service.UserProtocolService.Add(addReq)
 	response.CheckAndRespWithData(c, createId, e)
 }
 
@@ -117,11 +119,11 @@ func (hd *UserProtocolHandler) Add(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/edit [post]
 func (hd *UserProtocolHandler) Edit(c *gin.Context) {
-	var editReq UserProtocolEditReq
+	var editReq schema.UserProtocolEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, editReq.Id, UserProtocolService.Edit(editReq))
+	response.CheckAndRespWithData(c, editReq.Id, service.UserProtocolService.Edit(editReq))
 }
 
 // @Summary	用户协议删除
@@ -132,11 +134,11 @@ func (hd *UserProtocolHandler) Edit(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/del [post]
 func (hd *UserProtocolHandler) Del(c *gin.Context) {
-	var delReq UserProtocolDelReq
+	var delReq schema.UserProtocolDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, UserProtocolService.Del(delReq.Id))
+	response.CheckAndResp(c, service.UserProtocolService.Del(delReq.Id))
 }
 
 // @Summary	用户协议删除-批量
@@ -148,7 +150,7 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/delBatch [post]
 func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
-	var delReq UserProtocolDelBatchReq
+	var delReq schema.UserProtocolDelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
@@ -158,7 +160,7 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, UserProtocolService.DelBatch(Ids))
+	response.CheckAndResp(c, service.UserProtocolService.DelBatch(Ids))
 }
 
 // @Summary	用户协议导出
@@ -174,16 +176,16 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 // @Param		UpdateTimeEnd	query	string	false	"更新时间"
 // @Router		/api/admin/user_protocol/ExportFile [get]
 func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
-	var listReq UserProtocolListReq
+	var listReq schema.UserProtocolListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := UserProtocolService.ExportFile(listReq)
+	res, err := service.UserProtocolService.ExportFile(listReq)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel2.Export(res, UserProtocolService.GetExcelCol(), "Sheet1", "用户协议")
+	f, err := excel2.Export(res, service.UserProtocolService.GetExcelCol(), "Sheet1", "用户协议")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
@@ -202,13 +204,13 @@ func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 		return
 	}
 	defer file.Close()
-	importList := []UserProtocolResp{}
-	err = excel2.GetExcelData(file, &importList, UserProtocolService.GetExcelCol())
+	importList := []schema.UserProtocolResp{}
+	err = excel2.GetExcelData(file, &importList, service.UserProtocolService.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = UserProtocolService.ImportFile(importList)
+	err = service.UserProtocolService.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }

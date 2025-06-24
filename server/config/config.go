@@ -76,7 +76,7 @@ func loadConfig(envPath string) envConfig {
 		// 资源访问前缀
 		PublicPrefix: "/api/uploads",
 		// 上传文件路径
-		UploadDirectory: "/tmp/uploads/x_admin-go/",
+		UploadDirectory: "/tmp/uploads/x_admin_go/",
 		// Redis源配置
 		RedisUrl: "redis://localhost:6379",
 		// RedisPoolSize:        100,
@@ -103,7 +103,7 @@ func loadConfig(envPath string) envConfig {
 		// 上传视频限制
 		UploadVideoSize: 1024 * 1024 * 30,
 		// 上传图片扩展
-		UploadImageExt: []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp"},
+		UploadImageExt: []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp", "avif"},
 		// 上传视频扩展
 		UploadVideoExt: []string{"mp4", "mp3", "avi", "flv", "rmvb", "mov"},
 	}

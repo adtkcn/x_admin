@@ -1,10 +1,11 @@
-package user_protocol
+package service
 
 import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
+	"x_admin/schema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
@@ -13,26 +14,26 @@ import (
 )
 
 var UserProtocolService = NewUserProtocolService()
-var cacheUtil = util.CacheUtil{
-	Name: UserProtocolService.Name,
-}
 
 // NewUserProtocolService 初始化
 func NewUserProtocolService() *userProtocolService {
 	return &userProtocolService{
-		db:   core.GetDB(),
-		Name: "userProtocol",
+		db: core.GetDB(),
+		CacheUtil: util.CacheUtil{
+			Name: "userProtocol",
+		},
 	}
 }
 
 // userProtocolService 用户协议服务实现类
 type userProtocolService struct {
-	db   *gorm.DB
-	Name string
+	db *gorm.DB
+
+	CacheUtil util.CacheUtil
 }
 
 // List 用户协议列表
-func (service userProtocolService) GetModel(listReq UserProtocolListReq) *gorm.DB {
+func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.UserProtocol{})
 	if listReq.Title != nil {
@@ -61,7 +62,7 @@ func (service userProtocolService) GetModel(listReq UserProtocolListReq) *gorm.D
 }
 
 // List 用户协议列表
-func (service userProtocolService) List(page request.PageReq, listReq UserProtocolListReq) (res response.PageResp, e error) {
+func (service userProtocolService) List(page request.PageReq, listReq schema.UserProtocolListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -78,7 +79,7 @@ func (service userProtocolService) List(page request.PageReq, listReq UserProtoc
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []UserProtocolResp{}
+	result := []schema.UserProtocolResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -89,7 +90,7 @@ func (service userProtocolService) List(page request.PageReq, listReq UserProtoc
 }
 
 // ListAll 用户协议列表
-func (service userProtocolService) ListAll(listReq UserProtocolListReq) (res []UserProtocolResp, e error) {
+func (service userProtocolService) ListAll(listReq schema.UserProtocolListReq) (res []schema.UserProtocolResp, e error) {
 	dbModel := service.GetModel(listReq)
 
 	var modelList []model.UserProtocol
@@ -103,9 +104,9 @@ func (service userProtocolService) ListAll(listReq UserProtocolListReq) (res []U
 }
 
 // Detail 用户协议详情
-func (service userProtocolService) Detail(Id int) (res UserProtocolResp, e error) {
+func (service userProtocolService) Detail(Id int) (res schema.UserProtocolResp, e error) {
 	var obj = model.UserProtocol{}
-	err := cacheUtil.GetCache(Id, &obj)
+	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -114,7 +115,7 @@ func (service userProtocolService) Detail(Id int) (res UserProtocolResp, e error
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		cacheUtil.SetCache(obj.Id, obj)
+		service.CacheUtil.SetCache(obj.Id, obj)
 	}
 
 	convert_util.Copy(&res, obj)
@@ -122,7 +123,7 @@ func (service userProtocolService) Detail(Id int) (res UserProtocolResp, e error
 }
 
 // Add 用户协议新增
-func (service userProtocolService) Add(addReq UserProtocolAddReq) (createId int, e error) {
+func (service userProtocolService) Add(addReq schema.UserProtocolAddReq) (createId int, e error) {
 	var obj model.UserProtocol
 	convert_util.StructToStruct(addReq, &obj)
 	err := service.db.Create(&obj).Error
@@ -130,13 +131,13 @@ func (service userProtocolService) Add(addReq UserProtocolAddReq) (createId int,
 	if e != nil {
 		return 0, e
 	}
-	cacheUtil.SetCache(obj.Id, obj)
+	service.CacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
 	return
 }
 
 // Edit 用户协议编辑
-func (service userProtocolService) Edit(editReq UserProtocolEditReq) (e error) {
+func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e error) {
 	var obj model.UserProtocol
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验
@@ -152,7 +153,7 @@ func (service userProtocolService) Edit(editReq UserProtocolEditReq) (e error) {
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
-	cacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache(obj.Id)
 	service.Detail(obj.Id)
 	return
 }
@@ -173,7 +174,7 @@ func (service userProtocolService) Del(Id int) (e error) {
 	obj.DeleteTime = util.NullTimeUtil.Now()
 	err = service.db.Save(&obj).Error
 	e = response.CheckErr(err, "删除失败")
-	cacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache(obj.Id)
 	return
 }
 
@@ -186,7 +187,7 @@ func (service userProtocolService) DelBatch(Ids []string) (e error) {
 	}
 	// 删除缓存
 	for _, v := range Ids {
-		cacheUtil.RemoveCache(v)
+		service.CacheUtil.RemoveCache(v)
 	}
 	return nil
 }
@@ -205,7 +206,7 @@ func (service userProtocolService) GetExcelCol() []excel2.Col {
 }
 
 // ExportFile 用户协议导出
-func (service userProtocolService) ExportFile(listReq UserProtocolListReq) (res []UserProtocolResp, e error) {
+func (service userProtocolService) ExportFile(listReq schema.UserProtocolListReq) (res []schema.UserProtocolResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
@@ -215,13 +216,13 @@ func (service userProtocolService) ExportFile(listReq UserProtocolListReq) (res 
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []UserProtocolResp{}
+	result := []schema.UserProtocolResp{}
 	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
-func (service userProtocolService) ImportFile(importReq []UserProtocolResp) (e error) {
+func (service userProtocolService) ImportFile(importReq []schema.UserProtocolResp) (e error) {
 	var importData []model.UserProtocol
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error

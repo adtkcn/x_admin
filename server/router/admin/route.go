@@ -1,9 +1,8 @@
 package admin
 
 import (
-	"x_admin/admin/generator"
-
 	"x_admin/controller/admin/commonController"
+	"x_admin/controller/admin/generatorController"
 	"x_admin/controller/admin/monitorController"
 	"x_admin/controller/admin/settingController"
 	"x_admin/controller/admin/systemController"
@@ -35,12 +34,10 @@ func RegisterRoute(rg *gin.RouterGroup) {
 	systemController.DeptRoute(rg)
 	systemController.RoleRoute(rg)
 	systemController.LogRoute(rg)
-
+	generatorController.GenRoute(rg)
 	FlowTemplateRoute(rg)
 	FlowApplyRoute(rg)
 	FlowHistoryRoute(rg)
-
-	generator.RegisterGroup(rg)
 
 	MonitorProjectRoute(rg)
 	MonitorClientRoute(rg)

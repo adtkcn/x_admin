@@ -1,4 +1,4 @@
-package user_protocol
+package schema
 
 import (
 	"x_admin/core"

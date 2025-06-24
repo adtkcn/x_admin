@@ -28,7 +28,6 @@ func NewMonitorProjectService() *monitorProjectService {
 // monitorProjectService 监控项目服务实现类
 type monitorProjectService struct {
 	db        *gorm.DB
-	Name      string
 	CacheUtil util.CacheUtil
 }
 
@@ -189,10 +188,7 @@ func (service monitorProjectService) DelBatch(Ids []string) (e error) {
 	if err != nil {
 		return err
 	}
-	// 删除缓存
-	// for _, v := range Ids {
-	// 	service.CacheUtil.RemoveCache(v)
-	// }
+
 	service.CacheUtil.RemoveCache(Ids)
 	return nil
 }

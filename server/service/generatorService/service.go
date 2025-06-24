@@ -1,14 +1,16 @@
-package gen
+package generatorService
 
 import (
 	"archive/zip"
 	"bytes"
-	"x_admin/admin/generator/tpl_utils"
+
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/gen_model"
+	"x_admin/schema/generatorSchema"
+	"x_admin/service/generatorService/tpl_utils"
 	"x_admin/util/convert_util"
 
 	"strings"
@@ -18,20 +20,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type IGenerateService interface {
-	DbTables(page request.PageReq, req DbTablesReq) (res response.PageResp, e error)
-	List(page request.PageReq, listReq ListTableReq) (res response.PageResp, e error)
-	Detail(id uint) (res GenTableDetailResp, e error)
-	ImportTable(tableNames []string) (e error)
-	SyncTable(id uint) (e error)
-	EditTable(editReq EditTableReq) (e error)
-	DelTable(ids []uint) (e error)
-	PreviewCode(id uint) (res map[string]string, e error)
-
-	DownloadCode(tableNames []string) ([]byte, error)
-}
-
-var Service = NewGenerateService()
+var GenerateService = NewGenerateService()
 
 // NewGenerateService 初始化
 func NewGenerateService() *generateService {
@@ -45,7 +34,7 @@ type generateService struct {
 }
 
 // DbTables 库表列表
-func (genSrv generateService) DbTables(page request.PageReq, dbReq DbTablesReq) (res response.PageResp, e error) {
+func (genSrv generateService) DbTables(page request.PageReq, dbReq generatorSchema.DbTablesReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -57,7 +46,7 @@ func (genSrv generateService) DbTables(page request.PageReq, dbReq DbTablesReq) 
 		return
 	}
 	// 数据
-	var tbResp []DbTableResp
+	var tbResp []generatorSchema.DbTableResp
 	err = tbModel.Limit(limit).Offset(offset).Find(&tbResp).Error
 	if e = response.CheckErr(err, "DbTables Find err"); e != nil {
 		return
@@ -71,7 +60,7 @@ func (genSrv generateService) DbTables(page request.PageReq, dbReq DbTablesReq) 
 }
 
 // List 生成列表
-func (genSrv generateService) List(page request.PageReq, listReq ListTableReq) (res response.PageResp, e error) {
+func (genSrv generateService) List(page request.PageReq, listReq generatorSchema.ListTableReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -95,7 +84,7 @@ func (genSrv generateService) List(page request.PageReq, listReq ListTableReq) (
 		return
 	}
 	// 数据
-	var genResp []GenTableResp
+	var genResp []generatorSchema.GenTableResp
 	err = genModel.Limit(limit).Offset(offset).Order("id desc").Find(&genResp).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
@@ -109,7 +98,7 @@ func (genSrv generateService) List(page request.PageReq, listReq ListTableReq) (
 }
 
 // Detail 生成详情
-func (genSrv generateService) Detail(id uint) (res GenTableDetailResp, e error) {
+func (genSrv generateService) Detail(id uint) (res generatorSchema.GenTableDetailResp, e error) {
 	var genTb gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTb).Error
 	if e = response.CheckErrDBNotRecord(err, "查询的数据不存在!"); e != nil {
@@ -123,13 +112,13 @@ func (genSrv generateService) Detail(id uint) (res GenTableDetailResp, e error) 
 	if e = response.CheckErr(err, "Detail Find err"); e != nil {
 		return
 	}
-	var base GenTableBaseResp
+	var base generatorSchema.GenTableBaseResp
 	convert_util.Copy(&base, genTb)
-	var gen GenTableGenResp
+	var gen generatorSchema.GenTableGenResp
 	convert_util.Copy(&gen, genTb)
-	var colResp []GenColumnResp
+	var colResp []generatorSchema.GenColumnResp
 	convert_util.Copy(&colResp, columns)
-	return GenTableDetailResp{
+	return generatorSchema.GenTableDetailResp{
 		Base:   base,
 		Gen:    gen,
 		Column: colResp,
@@ -138,7 +127,7 @@ func (genSrv generateService) Detail(id uint) (res GenTableDetailResp, e error) 
 
 // ImportTable 导入表结构
 func (genSrv generateService) ImportTable(tableNames []string) (e error) {
-	var dbTbs []DbTableResp
+	var dbTbs []generatorSchema.DbTableResp
 	err := tpl_utils.GenUtil.GetDbTablesQueryByNames(genSrv.db, tableNames).Find(&dbTbs).Error
 	if e = response.CheckErr(err, "ImportTable Find tables err"); e != nil {
 		return
@@ -263,7 +252,7 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 }
 
 // EditTable 编辑表结构
-func (genSrv generateService) EditTable(editReq EditTableReq) (e error) {
+func (genSrv generateService) EditTable(editReq generatorSchema.EditTableReq) (e error) {
 	if editReq.GenTpl == tpl_utils.GenConstants.TplTree {
 		if editReq.TreePrimary == "" {
 			e = response.AssertArgumentError.SetMessage("树主ID不能为空！")

@@ -18,10 +18,6 @@ import (
 
 var MonitorErrorService = NewMonitorErrorService()
 
-// var cacheUtil = util.CacheUtil{
-// 	Name: MonitorErrorService.Name,
-// }
-
 // NewMonitorErrorService 初始化
 func NewMonitorErrorService() *monitorErrorService {
 	return &monitorErrorService{

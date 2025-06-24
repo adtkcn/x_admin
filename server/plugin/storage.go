@@ -110,7 +110,8 @@ func (sd storageDriver) checkFile(file *multipart.FileHeader, fileType int) (e e
 	fileName := file.Filename
 	fileExt := strings.ToLower(strings.Replace(path.Ext(fileName), ".", "", 1))
 	fileSize := file.Size
-	if fileType == 10 {
+	switch fileType {
+	case 10:
 		// 图片文件
 		if !util.ToolsUtil.Contains(config.Config.UploadImageExt, fileExt) {
 			return response.Failed.SetMessage("不被支持的图片扩展: " + fileExt)
@@ -118,7 +119,7 @@ func (sd storageDriver) checkFile(file *multipart.FileHeader, fileType int) (e e
 		if fileSize > config.Config.UploadImageSize {
 			return response.Failed.SetMessage("上传图片不能超出限制: " + strconv.FormatInt(config.Config.UploadImageSize/1024/1024, 10) + "M")
 		}
-	} else if fileType == 20 {
+	case 20:
 		// 视频文件
 		if !util.ToolsUtil.Contains(config.Config.UploadVideoExt, fileExt) {
 			return response.Failed.SetMessage("不被支持的视频扩展: " + fileExt)
@@ -126,7 +127,7 @@ func (sd storageDriver) checkFile(file *multipart.FileHeader, fileType int) (e e
 		if fileSize > config.Config.UploadVideoSize {
 			return response.Failed.SetMessage("上传视频不能超出限制: " + strconv.FormatInt(config.Config.UploadVideoSize/1024/1024, 10) + "M")
 		}
-	} else {
+	default:
 		core.Logger.Errorf("storageDriver.checkFile fileType err: err=[unsupported fileType]")
 		return response.Failed.SetMessage("上传文件类型错误")
 	}

@@ -29,7 +29,6 @@ func NewMonitorClientService() *monitorClientService {
 // monitorClientService 监控-客户端信息服务实现类
 type monitorClientService struct {
 	db        *gorm.DB
-	Name      string
 	CacheUtil util.CacheUtil
 }
 
