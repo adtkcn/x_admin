@@ -1,4 +1,4 @@
-package admin
+package admin_ctl
 
 import (
 	"net/http"
