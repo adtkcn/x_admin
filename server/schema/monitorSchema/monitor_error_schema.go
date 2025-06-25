@@ -6,12 +6,13 @@ import (
 
 // MonitorErrorListReq 监控-错误列列表参数
 type MonitorErrorListReq struct {
-	ProjectKey      *string // 项目key
-	EventType       *string // 事件类型
-	Path            *string // URL地址
-	Message         *string // 错误消息
-	Stack           *string // 错误堆栈
-	Md5             *string // md5
+	ProjectKey *string // 项目key
+	EventType  *string // 事件类型
+	Path       *string // URL地址
+	Message    *string // 错误消息
+	Stack      *string // 错误堆栈
+	Md5        *string // md5
+
 	CreateTimeStart *string // 开始创建时间
 	CreateTimeEnd   *string // 结束创建时间
 
@@ -19,12 +20,14 @@ type MonitorErrorListReq struct {
 
 // MonitorErrorAddReq 监控-错误列新增参数
 type MonitorErrorAddReq struct {
-	ProjectKey string  // 项目key
-	ClientId   string  // sdk生成的客户端id
-	EventType  *string // 事件类型
-	Path       *string // URL地址
-	Message    *string // 错误消息
-	Stack      *string // 错误堆栈
+	ProjectKey string       // 项目key
+	ClientId   string       // sdk生成的客户端id
+	EventType  *string      // 事件类型
+	Path       *string      // URL地址
+	Message    *string      // 错误消息
+	Stack      *string      // 错误堆栈
+	Width      core.NullInt // 屏幕
+	Height     core.NullInt // 屏幕高度
 }
 
 // MonitorErrorDetailReq 监控-错误列详情参数
@@ -50,6 +53,8 @@ type MonitorErrorResp struct {
 	Path       string        // URL地址
 	Message    string        // 错误消息
 	Stack      string        // 错误堆栈
+	Width      core.NullInt  // 屏幕
+	Height     core.NullInt  // 屏幕高度
 	Md5        string        // md5
 	CreateTime core.NullTime // 创建时间
 }

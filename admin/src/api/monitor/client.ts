@@ -18,8 +18,7 @@ export type type_monitor_client = {
     City?: string
     Operator?: string
     Ip?: string
-    Width?: number
-    Height?: number
+
     Ua?: string
     CreateTime?: string
 }
@@ -35,8 +34,7 @@ export type type_monitor_client_query = {
     City?: string
     Operator?: string
     Ip?: string
-    Width?: number
-    Height?: number
+
     Ua?: string
     CreateTimeStart?: string
     CreateTimeEnd?: string
@@ -54,8 +52,7 @@ export type type_monitor_client_edit = {
     City?: string
     Operator?: string
     Ip?: string
-    Width?: number
-    Height?: number
+
     Ua?: string
 }
 

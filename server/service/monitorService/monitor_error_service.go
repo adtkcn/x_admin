@@ -111,16 +111,13 @@ func (service monitorErrorService) ListAll(listReq MonitorErrorListReq) (res []M
 // Detail 监控-错误列详情
 func (service monitorErrorService) Detail(Id int) (res MonitorErrorResp, e error) {
 	var obj = model.MonitorError{}
-	err := service.CacheUtil.GetCache(Id, &obj)
-	if err != nil {
-		err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
-			return
-		}
-		service.CacheUtil.SetCache(obj.Id, obj)
+
+	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
+	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		return
+	}
+	if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		return
 	}
 
 	convert_util.Copy(&res, obj)
@@ -165,7 +162,7 @@ func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int,
 			return 0, err
 		}
 		createId = obj.Id
-		service.CacheUtil.SetCache(createId, obj)
+
 		service.CacheUtil.SetCache("md5:"+Md5, obj)
 	} else {
 		createId = errorDetails.Id
@@ -176,8 +173,10 @@ func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int,
 	}
 
 	_, err = MonitorErrorListService.Add(MonitorErrorListAddReq{
-		Eid: strconv.Itoa(createId),
-		Cid: strconv.Itoa(client.Id),
+		Eid:    strconv.Itoa(createId),
+		Cid:    strconv.Itoa(client.Id),
+		Width:  addReq.Width,
+		Height: addReq.Height,
 		// ClientId:   addReq.ClientId,
 		// ProjectKey: addReq.ProjectKey,
 	})
@@ -199,7 +198,7 @@ func (service monitorErrorService) Del(Id int) (e error) {
 	// 删除
 	err = service.db.Delete(&obj).Error
 	e = response.CheckErr(err, "删除失败")
-	service.CacheUtil.RemoveCache(obj.Id)
+
 	service.CacheUtil.RemoveCache("md5:" + obj.Md5)
 	return
 }
@@ -225,7 +224,7 @@ func (service monitorErrorService) DelBatch(Ids []string) (e error) {
 		md5s = append(md5s, "md5:"+v.Md5)
 	}
 	// 删除缓存
-	service.CacheUtil.RemoveCache(Ids)
+
 	service.CacheUtil.RemoveCache(md5s)
 	return nil
 }

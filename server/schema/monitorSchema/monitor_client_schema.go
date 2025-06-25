@@ -18,48 +18,41 @@ type MonitorClientListReq struct {
 	Operator *string // 电信运营商
 	Ip       *string // ip
 
-	Width           *int    // 屏幕
-	Height          *int    // 屏幕高度
 	Ua              *string // ua记录
 	CreateTimeStart *string // 开始创建时间
 	CreateTimeEnd   *string // 结束创建时间
-
 }
 
 // MonitorClientAddReq 监控-客户端信息新增参数
 type MonitorClientAddReq struct {
-	ProjectKey *string      // 项目key
-	ClientId   *string      // sdk生成的客户端id
-	UserId     *string      // 用户id
-	Os         *string      // 系统
-	Browser    *string      // 浏览器
-	Country    *string      // 国家
-	Province   *string      // 省份
-	City       *string      // 城市
-	Operator   *string      // 电信运营商
-	Ip         *string      // ip
-	Width      core.NullInt // 屏幕
-	Height     core.NullInt // 屏幕高度
-	Ua         *string      // ua记录
+	ProjectKey *string // 项目key
+	ClientId   *string // sdk生成的客户端id
+	UserId     *string // 用户id
+	Os         *string // 系统
+	Browser    *string // 浏览器
+	Country    *string // 国家
+	Province   *string // 省份
+	City       *string // 城市
+	Operator   *string // 电信运营商
+	Ip         *string // ip
+	Ua         *string // ua记录
 
 }
 
 // MonitorClientEditReq 监控-客户端信息编辑参数
 type MonitorClientEditReq struct {
-	Id         int          // uuid
-	ProjectKey *string      // 项目key
-	ClientId   *string      // sdk生成的客户端id
-	UserId     *string      // 用户id
-	Os         *string      // 系统
-	Browser    *string      // 浏览器
-	Country    *string      // 国家
-	Province   *string      // 省份
-	City       *string      // 城市
-	Operator   *string      // 电信运营商
-	Ip         *string      // ip
-	Width      core.NullInt // 屏幕
-	Height     core.NullInt // 屏幕高度
-	Ua         *string      // ua记录
+	Id         int     // uuid
+	ProjectKey *string // 项目key
+	ClientId   *string // sdk生成的客户端id
+	UserId     *string // 用户id
+	Os         *string // 系统
+	Browser    *string // 浏览器
+	Country    *string // 国家
+	Province   *string // 省份
+	City       *string // 城市
+	Operator   *string // 电信运营商
+	Ip         *string // ip
+	Ua         *string // ua记录
 }
 
 // MonitorClientDetailReq 监控-客户端信息详情参数
@@ -90,8 +83,9 @@ type MonitorClientResp struct {
 	City       string        // 城市
 	Operator   string        // 电信运营商
 	Ip         string        // ip
-	Width      core.NullInt  // 屏幕
-	Height     core.NullInt  // 屏幕高度
 	Ua         string        // ua记录
 	CreateTime core.NullTime // 创建时间
+
+	Width  core.NullInt // 屏幕
+	Height core.NullInt // 屏幕高度
 }

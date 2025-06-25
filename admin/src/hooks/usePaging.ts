@@ -21,7 +21,7 @@ interface Options {
  *
  */
 export function usePaging<T>(options: Options) {
-    const { page = 1, size = 15, fetchFun, params = {}, firstLoading = false } = options
+    const { page = 1, size = 10, fetchFun, params = {}, firstLoading = false } = options
     // 记录分页初始参数
     const paramsInit: Record<any, any> = Object.assign({}, toRaw(params))
     // 分页数据

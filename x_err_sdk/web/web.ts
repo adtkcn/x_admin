@@ -2,11 +2,10 @@ import type {
   LogWithError,
   LogWithEnv,
   ListenCallbackFn,
-  IErrorEvent
+  IErrorEvent,
 } from "../types";
 
-interface LoggerProps {
-}
+interface LoggerProps {}
 class Web implements IErrorEvent {
   props: LoggerProps;
   constructor(props?: LoggerProps) {
@@ -54,13 +53,12 @@ class Web implements IErrorEvent {
 
   public getEnvInfo(): LogWithEnv {
     const env: LogWithEnv = {
-      Type: "env",
-      ScreenHeight: 0,
-      ScreenWidth: 0,
+      Height: 0,
+      Width: 0,
     };
     if (window) {
-      env.ScreenHeight = window.innerHeight || 0; // 获取显示屏信息
-      env.ScreenWidth = window.innerWidth || 0;
+      env.Height = window.innerHeight || 0; // 获取显示屏信息
+      env.Width = window.innerWidth || 0;
     }
     return env;
   }
@@ -76,6 +74,7 @@ class Web implements IErrorEvent {
           Path: target.src,
           Message: "",
           Stack: "",
+          Height: 0,
         });
       } else if (target?.localName === "link") {
         this.callback({
@@ -91,6 +90,7 @@ class Web implements IErrorEvent {
         Path: window.location.href,
         Message: err.message,
         Stack: this.handleStack(err.error?.stack || ""),
+        ...this.getEnvInfo(),
       });
     }
   };
@@ -103,6 +103,7 @@ class Web implements IErrorEvent {
         Path: window.location.href,
         Message: err.reason,
         Stack: "",
+        ...this.getEnvInfo(),
       });
     } else if (err && typeof err.reason === "object") {
       this.callback({
@@ -111,10 +112,10 @@ class Web implements IErrorEvent {
         Path: window.location.href,
         Message: err.reason?.message || "",
         Stack: this.handleStack(err.reason?.stack || ""),
+        ...this.getEnvInfo(),
       });
     }
   };
-
 
   private handleStack(stack: string): string {
     let newStack: string[] = [];

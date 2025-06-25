@@ -66,12 +66,7 @@ func (service monitorClientService) GetModel(listReq MonitorClientListReq) *gorm
 	if listReq.Ip != nil {
 		dbModel = dbModel.Where("ip = ?", *listReq.Ip)
 	}
-	if listReq.Width != nil {
-		dbModel = dbModel.Where("width = ?", *listReq.Width)
-	}
-	if listReq.Height != nil {
-		dbModel = dbModel.Where("height = ?", *listReq.Height)
-	}
+
 	if listReq.Ua != nil {
 		dbModel = dbModel.Where("ua = ?", *listReq.Ua)
 	}
@@ -170,8 +165,8 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 
 // ErrorUser 监控-客户端信息详情
 func (service monitorClientService) ErrorUsers(error_id int) (res []MonitorClientResp, e error) {
-	var obj = []model.MonitorClient{}
-	service.db.Raw("SELECT client.*,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.cid where list.eid = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
+	var obj = []MonitorClientResp{}
+	service.db.Raw("SELECT client.*,list.width,list.height,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.cid where list.eid = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
 
 	convert_util.Copy(&res, obj)
 	return

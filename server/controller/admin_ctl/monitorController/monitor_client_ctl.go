@@ -154,17 +154,16 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	ip := c.ClientIP()
 
 	if err == nil {
-		last := lastClient.UserId + lastClient.Width.String() + lastClient.Height.String() + lastClient.Ip + lastClient.Ua
-		newStr := *addReq.UserId + addReq.Width.String() + addReq.Height.String() + ip + uaStr
+		last := lastClient.UserId + "_" + lastClient.Ip + "_" + lastClient.Ua
+		newStr := *addReq.UserId + "_" + ip + "_" + uaStr
 		if last == newStr {
 			// 前后数据一样，不用创建新的数据
-			fmt.Println("前后数据一样，不用创建新的数据")
+			fmt.Println("前后用户端数据一样，不用创建新的数据")
 			c.Data(200, "image/gif", img_util.EmptyGif())
 			return
 		} else {
 			// 新建的话，需要清除lastClient对应的缓存
 			monitorService.MonitorClientService.CacheUtil.RemoveCache("ClientId:" + lastClient.ClientId)
-
 		}
 	}
 

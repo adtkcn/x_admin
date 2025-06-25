@@ -172,10 +172,6 @@
                 <el-table-column label="城市" prop="City" /> -->
                 <el-table-column label="运营商" prop="Operator" />
 
-                <el-table-column label="屏幕" prop="Width">
-                    <template #default="{ row }"> {{ row.Width }} * {{ row.Height }} </template>
-                </el-table-column>
-                <!-- <el-table-column label="屏幕高度" prop="Height" min-width="130" /> -->
                 <!-- <el-table-column label="ua记录" prop="Ua" min-width="380" /> -->
                 <el-table-column label="创建时间" prop="CreateTime" min-width="140" />
 
@@ -238,8 +234,7 @@ const queryParams = reactive<type_monitor_client_query>({
     City: null,
     Operator: null,
     Ip: null,
-    Width: null,
-    Height: null,
+
     Ua: null,
     CreateTimeStart: null,
     CreateTimeEnd: null
