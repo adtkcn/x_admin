@@ -31,7 +31,6 @@ var AdminConfig = adminConfig{
 		"admin:system:dept:list",      // 所有部门
 		"admin:setting:dict:type:all", // 所有字典类型
 		"admin:setting:dict:data:all", // 所有字典数据
-		"admin:article:cate:all",      // 所有文章分类
 	},
 	// #endregion NotAuth
 	// 演示模式白名单

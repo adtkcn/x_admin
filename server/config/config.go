@@ -15,9 +15,9 @@ var Config = loadConfig(".")
 // #region envConfig
 // envConfig 环境配置
 type envConfig struct {
-	RootPath        string // 项目根目录
-	GinMode         string `mapstructure:"GIN_MODE"`        // gin运行模式
-	PublicUrl       string `mapstructure:"PUBLIC_URL"`      // 对外发布的Url
+	RootPath string // 项目根目录
+	GinMode  string `mapstructure:"GIN_MODE"` // gin运行模式
+
 	OssDomain       string `mapstructure:"OSS_DOMAIN"`      // OSS域名
 	ServerPort      int    `mapstructure:"SERVER_PORT"`     // 服务运行端口
 	DisallowModify  bool   `mapstructure:"DISALLOW_MODIFY"` // 禁止修改操作 (演示功能,限制POST请求)
@@ -115,9 +115,6 @@ func loadConfig(envPath string) envConfig {
 	if err != nil {
 		log.Fatal("loadConfig Unmarshal err:", err)
 	}
-	// PublicUrl未设置设置默认值
-	// if config.PublicUrl == "" {
-	// 	// config.PublicUrl = "http://127.0.0.1:" + strconv.Itoa(config.ServerPort)
-	// }
+
 	return config
 }

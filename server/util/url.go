@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	UrlUtil      = urlUtil{}
-	publicUrl    = config.Config.PublicUrl
-	publicPrefix = config.Config.PublicPrefix
+	UrlUtil = urlUtil{}
+
+	publicPrefix = config.Config.PublicPrefix //"/api/uploads"
 )
 
 // urlUtil 文件路径处理工具
@@ -23,24 +23,20 @@ func (uu urlUtil) ToAbsoluteUrl(u string) string {
 	if u == "" {
 		return ""
 	}
-	up, err := url.Parse(publicUrl)
-	if err != nil {
-		core.Logger.Errorf("ToAbsoluteUrl Parse err: err=[%+v]", err)
-		return u
-	}
+
+	// 处理/api/static/开头的路径
 	if strings.HasPrefix(u, "/api/static/") {
-		up.Path = path.Join(up.Path, u)
-		return up.String()
+		return u
 	}
 	engine := "local"
 	if engine == "local" {
-		up.Path = path.Join(up.Path, publicPrefix, u)
-		return up.String()
+		return path.Join(publicPrefix, u)
 	}
 	// TODO: 其他engine
 	return u
 }
 
+// 去掉publicPrefix前缀
 func (uu urlUtil) ToRelativeUrl(u string) string {
 	// TODO: engine默认local
 	if u == "" {
@@ -54,9 +50,7 @@ func (uu urlUtil) ToRelativeUrl(u string) string {
 	engine := "local"
 	if engine == "local" {
 		lu := up.String()
-		return strings.Replace(
-			strings.Replace(lu, publicUrl, "", 1),
-			publicPrefix, "", 1)
+		return strings.Replace(lu, publicPrefix, "", 1)
 	}
 	// TODO: 其他engine
 	return u
