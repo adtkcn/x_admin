@@ -21,7 +21,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed static
+//go:embed public/static
 var staticFs embed.FS
 
 // initRouter 初始化router
@@ -38,7 +38,7 @@ func initRouter() *gin.Engine {
 		filepath := c.Param("filepath")
 		fmt.Println(filepath)
 
-		c.FileFromFS("static"+filepath, staticHttpFs)
+		c.FileFromFS("public/static"+filepath, staticHttpFs)
 	})
 	// 设置中间件
 	r.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
