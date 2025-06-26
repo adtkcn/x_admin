@@ -12,7 +12,7 @@ type RedisCacheService struct {
 }
 
 // NewConfigRedisCacheService 初始化自定义redis配置
-func NewConfigRedisCacheService(client redis.UniversalClient) CaptchaCacheInterface {
+func NewConfigRedisCacheService(client redis.UniversalClient) CacheCaptchaInterface {
 	redisUtils := util.NewConfigRedisUtil(client)
 	return &RedisCacheService{Cache: redisUtils}
 }

@@ -48,8 +48,6 @@ class Base {
 
     // 监听错误
     platform.listen((params: LogWithError) => {
-      console.log("listenCallback", params);
-
       this.Push(params);
     });
     // 定时检查发送一次

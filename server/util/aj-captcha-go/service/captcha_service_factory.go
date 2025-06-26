@@ -6,27 +6,27 @@ import (
 	configIns "x_admin/util/aj-captcha-go/config"
 )
 
+func NewCaptchaServiceFactory(config *configIns.Config) *CaptchaServiceFactory {
+
+	factory := &CaptchaServiceFactory{
+		ServiceMap: make(map[string]CaptchaInterface),
+		CacheMap:   make(map[string]CacheCaptchaInterface),
+		config:     config,
+	}
+	return factory
+}
+
 // CaptchaServiceFactory 验证码服务工厂
 type CaptchaServiceFactory struct {
 	config      *configIns.Config
 	ServiceMap  map[string]CaptchaInterface
 	ServiceLock sync.RWMutex
 
-	CacheMap  map[string]CaptchaCacheInterface
+	CacheMap  map[string]CacheCaptchaInterface
 	CacheLock sync.RWMutex
 }
 
-func NewCaptchaServiceFactory(config *configIns.Config) *CaptchaServiceFactory {
-
-	factory := &CaptchaServiceFactory{
-		ServiceMap: make(map[string]CaptchaInterface),
-		CacheMap:   make(map[string]CaptchaCacheInterface),
-		config:     config,
-	}
-	return factory
-}
-
-func (c *CaptchaServiceFactory) GetCache() CaptchaCacheInterface {
+func (c *CaptchaServiceFactory) GetCache() CacheCaptchaInterface {
 	key := c.config.CacheType
 	c.CacheLock.RLock()
 	defer c.CacheLock.RUnlock()
@@ -36,7 +36,7 @@ func (c *CaptchaServiceFactory) GetCache() CaptchaCacheInterface {
 	return c.CacheMap[key]
 }
 
-func (c *CaptchaServiceFactory) RegisterCache(key string, cacheInterface CaptchaCacheInterface) {
+func (c *CaptchaServiceFactory) RegisterCache(key string, cacheInterface CacheCaptchaInterface) {
 	c.CacheLock.Lock()
 	defer c.CacheLock.Unlock()
 	c.CacheMap[key] = cacheInterface

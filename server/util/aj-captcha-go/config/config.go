@@ -1,9 +1,7 @@
 package config
 
 import (
-	"errors"
 	"image/color"
-	"strings"
 	constant "x_admin/util/aj-captcha-go/const"
 )
 
@@ -45,75 +43,33 @@ type RedisConfig struct {
 }
 
 type Config struct {
-	Watermark   *WatermarkConfig   `yaml:"watermark"`
-	ClickWord   *ClickWordConfig   `yaml:"clickWord"`
-	BlockPuzzle *BlockPuzzleConfig `yaml:"blockPuzzle"`
 	// 验证码使用的缓存类型
 	CacheType      string `yaml:"cacheType"`
 	CacheExpireSec int    `yaml:"cacheExpireSec"`
-	// 项目的绝对路径: 图片、字体等
-	ResourcePath string `yaml:"resourcePath"`
+
+	Watermark   *WatermarkConfig   `yaml:"watermark"`
+	ClickWord   *ClickWordConfig   `yaml:"clickWord"`
+	BlockPuzzle *BlockPuzzleConfig `yaml:"blockPuzzle"`
 }
 
+// 默认验证码配置
 func NewConfig() *Config {
 	return &Config{
 		//可以为redis类型缓存RedisCacheKey，也可以为内存MemCacheKey
 		CacheType: constant.MemCacheKey,
+		// 水印配置
 		Watermark: &WatermarkConfig{
 			FontSize: 12,
 			Color:    color.RGBA{R: 255, G: 255, B: 255, A: 255},
 			Text:     "我的水印",
 		},
+		// 点击文字配置（参数可从业务系统自定义）
 		ClickWord: &ClickWordConfig{
 			FontSize: 25,
 			FontNum:  4,
 		},
+		// 滑动模块配置（参数可从业务系统自定义）
 		BlockPuzzle:    &BlockPuzzleConfig{Offset: 10},
 		CacheExpireSec: 2 * 60, // 缓存有效时间
-		ResourcePath:   "./",
-	}
-}
-
-// BuildConfig 生成config配置
-func BuildConfig(cacheType, resourcePath string, waterConfig *WatermarkConfig, clickWordConfig *ClickWordConfig,
-	puzzleConfig *BlockPuzzleConfig, cacheExpireSec int) *Config {
-	if len(resourcePath) == 0 {
-		resourcePath = constant.DefaultResourceRoot
-	}
-	if len(cacheType) == 0 {
-		cacheType = constant.MemCacheKey
-	} else if strings.Compare(cacheType, constant.MemCacheKey) != 0 &&
-		strings.Compare(cacheType, constant.RedisCacheKey) != 0 {
-		panic(errors.New("cache type not support"))
-	}
-	if cacheExpireSec == 0 {
-		cacheExpireSec = 2 * 60
-	}
-	if nil == waterConfig {
-		waterConfig = &WatermarkConfig{
-			FontSize: 12,
-			Color:    color.RGBA{R: 255, G: 255, B: 255, A: 255},
-			Text:     constant.DefaultText,
-		}
-	}
-	if nil == clickWordConfig {
-		clickWordConfig = &ClickWordConfig{
-			FontSize: 25,
-			FontNum:  4,
-		}
-	}
-	if nil == puzzleConfig {
-		puzzleConfig = &BlockPuzzleConfig{Offset: 10}
-	}
-
-	return &Config{
-		//可以为redis类型缓存RedisCacheKey，也可以为内存MemCacheKey
-		CacheType:   cacheType,
-		Watermark:   waterConfig,
-		ClickWord:   clickWordConfig,
-		BlockPuzzle: puzzleConfig,
-		// 缓存有效时间
-		CacheExpireSec: cacheExpireSec,
-		ResourcePath:   resourcePath,
 	}
 }

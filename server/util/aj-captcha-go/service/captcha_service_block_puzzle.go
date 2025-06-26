@@ -14,18 +14,18 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-type BlockPuzzleCaptchaService struct {
-	point   vo.PointVO
-	factory *CaptchaServiceFactory
-}
-
 func NewBlockPuzzleCaptchaService(factory *CaptchaServiceFactory) *BlockPuzzleCaptchaService {
 	// 初始化静态资源
-	img.SetUp(factory.config.ResourcePath)
+	img.SetUp()
 
 	return &BlockPuzzleCaptchaService{
 		factory: factory,
 	}
+}
+
+type BlockPuzzleCaptchaService struct {
+	point   vo.PointVO
+	factory *CaptchaServiceFactory
 }
 
 // Get 获取验证码图片信息

@@ -6,8 +6,8 @@ import (
 )
 
 type PointVO struct {
-	X         int `json:"x,float64"`
-	Y         int `json:"y,float64"`
+	X         int `json:"x"`
+	Y         int `json:"y"`
 	SecretKey string
 }
 
@@ -21,8 +21,8 @@ func NewPointVO(x int, y int) *PointVO {
 
 func (p *PointVO) UnmarshalJSON(data []byte) error {
 	clientPoint := struct {
-		X         float64 `json:"x,float64"`
-		Y         float64 `json:"y,float64"`
+		X         float64 `json:"x"`
+		Y         float64 `json:"y"`
 		SecretKey string
 	}{}
 

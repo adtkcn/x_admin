@@ -15,10 +15,8 @@ const (
 	// RedisCacheKey redis缓存标识
 	RedisCacheKey = "redis"
 
-	// DefaultFont 字体文件地址
-	DefaultFont = "/resources/fonts/WenQuanZhengHei.ttf"
 	// DefaultResourceRoot 默认根目录
-	DefaultResourceRoot = "./"
+	DefaultResourceRoot = "./public/"
 	// DefaultText 默认水印显示文字
 	DefaultText = "我的水印"
 )
@@ -30,4 +28,6 @@ const (
 	DefaultBackgroundImageDirectory = "/resources/defaultImages/jigsaw/original"
 	// DefaultClickBackgroundImageDirectory 点击背景图默认地址
 	DefaultClickBackgroundImageDirectory = "/resources/defaultImages/pic-click"
+	// DefaultFont 字体文件地址
+	DefaultFont = "/resources/fonts/WenQuanZhengHei.ttf"
 )

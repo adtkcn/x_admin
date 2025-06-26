@@ -9,7 +9,7 @@ type MemCacheService struct {
 	Cache *util.CacheUtil
 }
 
-func NewMemCacheService(captchaCacheMaxNumber int) CaptchaCacheInterface {
+func NewMemCacheService(captchaCacheMaxNumber int) CacheCaptchaInterface {
 	return &MemCacheService{Cache: util.NewCacheUtil(captchaCacheMaxNumber)}
 }
 
