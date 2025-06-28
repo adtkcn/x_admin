@@ -63,7 +63,7 @@ func (ipUtils *ipUtil) Parse(ip string) Region {
 func initIpUtil() *ipUtil {
 	ip_util := ipUtil{}
 
-	var dbPath = "resources/ip/ip2region.xdb"
+	var dbPath = "public/resources/ip/ip2region.xdb"
 	// 创建完全基于内存的查询对象。
 	cBuff, err := xdb.LoadContentFromFile(dbPath)
 	if err != nil {
