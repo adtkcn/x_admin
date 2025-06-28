@@ -75,7 +75,7 @@
         </div>
 
         <div class="md:flex">
-            <el-card class="flex-1 !border-none md:mr-4 mb-4" shadow="never">
+            <el-card class="flex-1 !border-none mb-4" shadow="never">
                 <template #header>
                     <span>访问量趋势图</span>
                 </template>

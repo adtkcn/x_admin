@@ -26,7 +26,7 @@
 import { ref, onMounted } from 'vue'
 import LogicFlow from '@logicflow/core'
 import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
-
+import type { NodeType, PropertiesType } from './PropertyPanel/property.type'
 // import '@logicflow/core/dist/style/index.css'
 // import '@logicflow/extension/lib/style/index.css'
 import '@logicflow/core/lib/style/index.css'
@@ -70,12 +70,13 @@ onMounted(() => {
 // Function to initialize LogicFlow
 function initLogicFlow(data) {
     // 引入框选插件
-    LogicFlow.use(SelectionSelect)
-    LogicFlow.use(Menu)
-    LogicFlow.use(BpmnElement)
-    LogicFlow.use(MiniMap)
+    // LogicFlow.use(SelectionSelect)
+    // LogicFlow.use(Menu)
+    // LogicFlow.use(BpmnElement)
+    // LogicFlow.use(MiniMap)
     // Creating a new LogicFlow instance
     const logicFlowInstance = new LogicFlow({
+        plugins: [SelectionSelect, Menu, MiniMap, BpmnElement],
         container: diagramRef.value, // Setting the container where LogicFlow will be rendered
         overlapMode: 1,
         // allowResize: true,
@@ -96,8 +97,8 @@ function initLogicFlow(data) {
     logicFlowInstance.setTheme({
         baseEdge: { strokeWidth: 1 },
         baseNode: { strokeWidth: 1 },
-        nodeText: { overflowMode: 'autoWrap', lineHeight: 1.5 },
-        edgeText: { overflowMode: 'autoWrap', lineHeight: 1.5 }
+        nodeText: { overflowMode: 'autoWrap', lineHeight: 1.5, fontSize: 12 },
+        edgeText: { overflowMode: 'autoWrap', lineHeight: 1.5, fontSize: 12, textWidth: 100 }
     })
 
     // Registering custom elements for LogicFlow
@@ -110,7 +111,6 @@ function initLogicFlow(data) {
             {
                 text: '属性配置',
                 callback(node) {
-                    // alert('分享成功！')
                     PropertyPanelRef.value.open(node, props.fieldList)
                 }
             }
@@ -129,7 +129,7 @@ function initLogicFlow(data) {
 }
 
 // Function to handle dragging nodes into the diagram
-function dragInNode(type, text = '') {
+function dragInNode(type: string, text = '') {
     lf.value.dnd.startDrag({
         type,
         text
@@ -137,7 +137,7 @@ function dragInNode(type, text = '') {
 }
 
 // Function to set properties of a node
-function setProperties(node, item) {
+function setProperties(node: NodeType, item: PropertiesType) {
     console.log('setProperties', node, item)
 
     lf.value.setProperties(node.id, item)
@@ -157,7 +157,7 @@ function saveGraph() {
 }
 
 // Function to download the graph data as a file
-function download(filename, text) {
+function download(filename: string, text: string) {
     window.sessionStorage.setItem(filename, text)
     const element = document.createElement('a')
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
