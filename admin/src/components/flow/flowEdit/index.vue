@@ -106,7 +106,7 @@ function initLogicFlow(data) {
 
     // Setting default edge type and rendering initial data
     logicFlowInstance.setDefaultEdgeType('pro-polyline')
-    logicFlowInstance.extension.menu.addMenuConfig({
+    logicFlowInstance.extension.menu?.addMenuConfig({
         nodeMenu: [
             {
                 text: '属性配置',
@@ -117,7 +117,7 @@ function initLogicFlow(data) {
         ]
     })
     logicFlowInstance.render(data)
-    logicFlowInstance.extension.miniMap.show()
+    logicFlowInstance.extension.miniMap?.show()
     // Assigning the LogicFlow instance to the 'lf' ref
     lf.value = logicFlowInstance
 
@@ -153,7 +153,7 @@ function importData(text) {
 // Function to save the graph data
 function saveGraph() {
     const data = lf.value.getGraphData()
-    download('export.json', JSON.stringify(data))
+    download(`export.${Date.now()}.json`, JSON.stringify(data))
 }
 
 // Function to download the graph data as a file
@@ -267,7 +267,7 @@ defineExpose({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .diagram {
     width: 100%;
     height: 100%;
@@ -318,7 +318,7 @@ defineExpose({
         }
     }
     /* 由于背景图和gird不对齐，需要css处理一下 */
-    .diagram-container :v-deep .lf-background {
+    .diagram-container :deep(.lf-background) {
         left: -9px;
     }
 }

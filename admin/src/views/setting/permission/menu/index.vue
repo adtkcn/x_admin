@@ -164,9 +164,3 @@ const toggleExpand = (children: any[], unfold = true) => {
 
 getLists()
 </script>
-<style>
-.el-table__body-wrapper tr {
-    content-visibility: auto;
-    contain-intrinsic-size: 51px; /* 每行预估高度 */
-}
-</style>
