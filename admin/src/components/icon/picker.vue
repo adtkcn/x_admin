@@ -1,14 +1,7 @@
 <template>
     <div class="icon-select">
-        <el-popover
-            trigger="contextmenu"
-            v-model:visible="state.popoverVisible"
-            :width="state.popoverWidth"
-        >
-            <div
-                @mouseover.stop="state.mouseoverSelect = true"
-                @mouseout.stop="state.mouseoverSelect = false"
-            >
+        <el-popover trigger="click" :width="500">
+            <div>
                 <div>
                     <div class="flex justify-between">
                         <div class="mb-3">请选择图标</div>
@@ -30,7 +23,7 @@
                     <div class="h-[280px]">
                         <el-scrollbar>
                             <div class="flex flex-wrap">
-                                <div v-for="item in iconNamesFliter" :key="item" class="m-1">
+                                <div v-for="item in iconNamesFilter" :key="item" class="m-1">
                                     <el-button @click="handleSelect(item)">
                                         <icon :name="item" :size="18" />
                                     </el-button>
@@ -45,10 +38,7 @@
                     ref="inputRef"
                     v-model.trim="state.inputValue"
                     placeholder="搜索图标"
-                    :autofocus="false"
                     :disabled="disabled"
-                    @focus="handleFocus"
-                    @blur="handleBlur"
                     clearable
                 >
                     <template #prepend>
@@ -66,8 +56,8 @@
                         <template v-else>无</template>
                     </template>
                     <template #append>
-                        <el-button>
-                            <icon name="el-icon-Close" :size="18" @click="handleClear" />
+                        <el-button @click.stop="handleClear">
+                            <icon name="el-icon-Close" :size="18" />
                         </el-button>
                     </template>
                 </el-input>
@@ -78,8 +68,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { computed, nextTick, onMounted, reactive, shallowRef, watch } from 'vue'
-import { useEventListener } from '@vueuse/core'
+import { computed, reactive, shallowRef } from 'vue'
+
 import { ElInput } from 'element-plus'
 import { getElementPlusIconNames, getLocalIconNames } from './index'
 interface Props {
@@ -111,27 +101,10 @@ const iconTabsMap = [
 const inputRef = shallowRef<InstanceType<typeof ElInput>>()
 
 const state = reactive({
-    inputValue: '',
-    popoverVisible: false,
-    popoverWidth: 0,
-    mouseoverSelect: false,
-    inputFocus: false
+    inputValue: ''
 })
-
-// input 框聚焦
-const handleFocus = () => {
-    state.inputFocus = state.popoverVisible = true
-}
-
-// input 框失去焦点
-const handleBlur = () => {
-    state.inputFocus = false
-    state.popoverVisible = state.mouseoverSelect
-}
-
 // 选中图标
 const handleSelect = (icon: string) => {
-    state.mouseoverSelect = state.popoverVisible = false
     emits('update:modelValue', icon)
     emits('change', icon)
 }
@@ -142,7 +115,7 @@ const handleClear = () => {
 }
 
 //根据输入框内容塞选
-const iconNamesFliter = computed(() => {
+const iconNamesFilter = computed(() => {
     const iconNames = iconTabsMap[tabIndex.value]?.icons ?? []
     if (!state.inputValue) {
         return iconNames
@@ -153,34 +126,5 @@ const iconNamesFliter = computed(() => {
             return icon
         }
     })
-})
-
-// 获取 input 的宽度
-const getInputWidth = () => {
-    nextTick(() => {
-        const inputWidth = inputRef.value?.$el.offsetWidth
-        state.popoverWidth = inputWidth < 300 ? 300 : inputWidth
-    })
-}
-
-//监听body点击事件
-useEventListener(document.body, 'click', () => {
-    state.popoverVisible = state.inputFocus || state.mouseoverSelect ? true : false
-})
-
-watch(
-    () => state.popoverVisible,
-    async (value) => {
-        await nextTick()
-        if (value) {
-            inputRef.value?.focus()
-        } else {
-            inputRef.value?.blur()
-        }
-    }
-)
-
-onMounted(() => {
-    getInputWidth()
 })
 </script>
