@@ -33,6 +33,7 @@
         "pinia": "^3.0.3",
         "query-string": "^9.1.1",
         "rolldown-vite": "^7.0.9",
+        "spark-md5": "^3.0.2",
         "vform3-builds": "^3.0.10",
         "vue": "^3.5.16",
         "vue-clipboard3": "^2.0.0",

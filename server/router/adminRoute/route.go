@@ -16,6 +16,7 @@ func RegisterRoute(rg *gin.RouterGroup) {
 	// 所有子路由需要加上前缀 /api/admin
 
 	commonController.UploadRoute(rg)
+	commonController.UploadChunkRoute(rg)
 	commonController.AlbumRoute(rg)
 	commonController.IndexRoute(rg)
 
