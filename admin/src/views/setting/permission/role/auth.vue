@@ -43,7 +43,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, nextTick, reactive } from 'vue'
+import { ref, useTemplateRef, nextTick, reactive } from 'vue'
 import type { CheckboxValueType, ElTree, FormInstance } from 'element-plus'
 import { roleDetail, roleEdit } from '@/api/perms/role'
 import { menuLists } from '@/api/perms/menu'
@@ -51,9 +51,9 @@ import Popup from '@/components/popup/index.vue'
 import { treeToArray, arrayToTree } from '@/utils/util'
 import feedback from '@/utils/feedback'
 const emit = defineEmits(['success', 'close'])
-const treeRef = shallowRef<InstanceType<typeof ElTree>>()
-const formRef = shallowRef<FormInstance>()
-const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const treeRef = useTemplateRef<InstanceType<typeof ElTree>>('treeRef')
+const formRef = useTemplateRef<FormInstance>('formRef')
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 const isExpand = ref(false)
 const checkStrictly = ref(true)
 const menuArray = ref<any[]>([])

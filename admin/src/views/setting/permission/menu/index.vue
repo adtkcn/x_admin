@@ -8,9 +8,81 @@
                     </template>
                     新增
                 </el-button>
-                <el-button @click="handleExpand"> 展开/折叠 </el-button>
+                <el-button @click="handleExpand"> 展开/收起 </el-button>
             </div>
-            <el-table
+            <div style="height: calc(100vh - 200px)">
+                <vxe-table
+                    ref="tableRef"
+                    :row-config="rowConfig"
+                    :tree-config="treeConfig"
+                    :data="lists"
+                    max-height="100%"
+                >
+                    <vxe-column type="seq" width="60"></vxe-column>
+                    <vxe-column
+                        field="menuName"
+                        title="菜单名称"
+                        min-width="200"
+                        tree-node
+                    ></vxe-column>
+                    <vxe-column field="menuType" title="类型" width="60">
+                        <template #default="{ row }">
+                            <div v-if="row.menuType == MenuEnum.CATALOGUE">目录</div>
+                            <div v-else-if="row.menuType == MenuEnum.MENU">菜单</div>
+                            <div v-else-if="row.menuType == MenuEnum.BUTTON">按钮</div>
+                        </template>
+                    </vxe-column>
+                    <vxe-column field="menuIcon" title="图标" width="60">
+                        <template #default="{ row }">
+                            <div class="flex">
+                                <icon :name="row.menuIcon" :size="20" />
+                            </div>
+                        </template>
+                    </vxe-column>
+                    <vxe-column field="paths" title="路径" min-width="100"></vxe-column>
+                    <vxe-column field="permsArr" title="权限标识" min-width="120">
+                        <template #default="{ row }">
+                            <span v-if="row.perms" type="info">{{ row.perms }}</span>
+                        </template>
+                    </vxe-column>
+                    <vxe-column field="isDisable" title="状态" width="80">
+                        <template #default="{ row }">
+                            <el-tag v-if="row.isDisable == 0" type="primary">正常</el-tag>
+                            <el-tag v-else type="danger">停用</el-tag>
+                        </template>
+                    </vxe-column>
+                    <vxe-column field="menuSort" title="排序" width="60"></vxe-column>
+                    <vxe-column title="操作" width="160">
+                        <template #default="{ row }">
+                            <el-button
+                                v-perms="['admin:system:menu:add']"
+                                type="primary"
+                                link
+                                @click="handleAdd(row.id)"
+                            >
+                                新增
+                            </el-button>
+                            <el-button
+                                v-perms="['admin:system:menu:edit']"
+                                type="primary"
+                                link
+                                @click="handleEdit(row)"
+                            >
+                                编辑
+                            </el-button>
+                            <el-button
+                                v-perms="['admin:system:menu:del']"
+                                type="danger"
+                                link
+                                @click="handleDelete(row.id)"
+                            >
+                                删除
+                            </el-button>
+                        </template>
+                    </vxe-column>
+                </vxe-table>
+            </div>
+            <!-- <el-table
                 v-loading="loading"
                 ref="tableRef"
                 class="mt-4"
@@ -84,25 +156,35 @@
                         </el-button>
                     </template>
                 </el-table-column>
-            </el-table>
+            </el-table> -->
         </el-card>
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, nextTick } from 'vue'
+import { ref, useTemplateRef, nextTick } from 'vue'
 import { menuDelete, menuLists } from '@/api/perms/menu'
 import { arrayToTree } from '@/utils/util'
-import type { ElTable } from 'element-plus'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
+
+import { VxeTableInstance } from 'vxe-table'
+
 defineOptions({
     name: 'MenuView'
 })
-
-const tableRef = shallowRef<InstanceType<typeof ElTable>>()
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+const rowConfig = {
+    keyField: 'id'
+}
+const treeConfig = {
+    rowField: 'id',
+    childrenField: 'children',
+    indent: 10,
+    reserve: true
+}
+const tableRef = useTemplateRef<VxeTableInstance<any>>('tableRef')
+const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 let isExpand = false
 const loading = ref(false)
 const showEdit = ref(false)
@@ -149,18 +231,15 @@ const handleDelete = async (id: number) => {
 }
 
 const handleExpand = () => {
-    isExpand = !isExpand
-    toggleExpand(lists.value, isExpand)
-}
-
-const toggleExpand = (children: any[], unfold = true) => {
-    for (const key in children) {
-        tableRef.value?.toggleRowExpansion(children[key], unfold)
-        if (children[key].children) {
-            toggleExpand(children[key].children!, unfold)
+    const $table = tableRef.value
+    if ($table) {
+        isExpand = !isExpand
+        if (isExpand) {
+            $table.setAllTreeExpand(true)
+        } else {
+            $table.clearTreeExpand()
         }
     }
 }
-
 getLists()
 </script>

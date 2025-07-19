@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import { useEventListener } from '@vueuse/core'
 import { useTooltipContentProps, type Placement } from 'element-plus'
 import type { PropType } from 'vue'
@@ -33,7 +33,7 @@ const props = defineProps({
         default: 'ellipsis'
     }
 })
-const textRef = shallowRef<HTMLElement>()
+const textRef = useTemplateRef<HTMLElement>('textRef')
 const disabled = ref(false)
 
 useEventListener(textRef, 'mouseenter', () => {

@@ -28,7 +28,7 @@ import type { FormInstance } from 'element-plus'
 import { user_protocol_detail } from '@/api/user/protocol'
 import Popup from '@/components/popup/index.vue'
 
-import { shallowRef, computed, reactive } from 'vue'
+import { useTemplateRef, computed, reactive } from 'vue'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {
@@ -41,8 +41,8 @@ defineProps({
     }
 })
 const emit = defineEmits(['close'])
-const formRef = shallowRef<FormInstance>()
-const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const formRef = useTemplateRef<FormInstance>('formRef')
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 
 const popupTitle = computed(() => {
     return '预览用户协议'

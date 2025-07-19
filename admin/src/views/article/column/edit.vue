@@ -26,14 +26,14 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, shallowRef, reactive } from 'vue'
+import { ref, computed, useTemplateRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { articleCateEdit, articleCateAdd, articleCateDetail } from '@/api/article'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 const emit = defineEmits(['success', 'close'])
-const formRef = shallowRef<FormInstance>()
-const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const formRef = useTemplateRef<FormInstance>('formRef')
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑栏目' : '新增栏目'

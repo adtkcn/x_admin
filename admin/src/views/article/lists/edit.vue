@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, shallowRef } from 'vue'
+import { reactive, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { FormInstance } from 'element-plus'
 import feedback from '@/utils/feedback'
@@ -139,7 +139,7 @@ const formData = reactive({
 })
 
 const { removeTab } = useMultipleTabs()
-const formRef = shallowRef<FormInstance>()
+const formRef = useTemplateRef<FormInstance>('formRef')
 const rules = reactive({
     title: [{ required: true, message: '请输入文章标题', trigger: 'blur' }],
     cid: [{ required: true, message: '请选择文章栏目', trigger: 'blur' }]

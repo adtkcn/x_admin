@@ -67,8 +67,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { computed, reactive, shallowRef } from 'vue'
+import { ref, useTemplateRef } from 'vue'
+import { computed, reactive } from 'vue'
 
 import { ElInput } from 'element-plus'
 import { getElementPlusIconNames, getLocalIconNames } from './index'
@@ -98,7 +98,7 @@ const iconTabsMap = [
     }
 ]
 
-const inputRef = shallowRef<InstanceType<typeof ElInput>>()
+const inputRef = useTemplateRef<InstanceType<typeof ElInput>>('inputRef')
 
 const state = reactive({
     inputValue: ''

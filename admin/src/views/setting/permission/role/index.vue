@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, nextTick } from 'vue'
+import { ref, useTemplateRef, nextTick } from 'vue'
 import { roleLists, roleDelete } from '@/api/perms/role'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -82,8 +82,8 @@ defineOptions({
     name: 'role'
 })
 
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-const authRef = shallowRef<InstanceType<typeof AuthPopup>>()
+const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
+const authRef = useTemplateRef<InstanceType<typeof AuthPopup>>('authRef')
 const showEdit = ref(false)
 const showAuth = ref(false)
 const { pager, getLists } = usePaging({

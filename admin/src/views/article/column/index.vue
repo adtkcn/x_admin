@@ -66,7 +66,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, nextTick } from 'vue'
+import { ref, useTemplateRef, nextTick } from 'vue'
 import { articleCateDelete, articleCateLists, articleCateStatus } from '@/api/article'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -75,7 +75,7 @@ import EditPopup from './edit.vue'
 defineOptions({
     name: 'articleColumn'
 })
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 const showEdit = ref(false)
 
 const { pager, getLists } = usePaging({

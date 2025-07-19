@@ -24,7 +24,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, shallowRef, reactive } from 'vue'
+import { ref, computed, reactive, useTemplateRef } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { user_protocol_edit, user_protocol_add, user_protocol_detail } from '@/api/user/protocol'
 import Popup from '@/components/popup/index.vue'
@@ -41,8 +41,8 @@ defineProps({
     }
 })
 const emit = defineEmits(['success', 'close'])
-const formRef = shallowRef<FormInstance>()
-const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const formRef = useTemplateRef<FormInstance>('formRef')
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑用户协议' : '新增用户协议'

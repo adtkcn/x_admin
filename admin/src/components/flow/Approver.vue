@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, watch } from 'vue'
+import { ref, useTemplateRef, watch } from 'vue'
 import XForm from './XForm/index.vue'
 import FlowEdit from './flowEdit/index.vue'
 import BasicSetting from './BasicSetting/index.vue'
@@ -87,9 +87,9 @@ const props = defineProps({
     }
 })
 
-const basicSetting = shallowRef<InstanceType<typeof BasicSetting>>()
-const formDesign = shallowRef<InstanceType<typeof XForm>>()
-const flowEdit = shallowRef<InstanceType<typeof FlowEdit>>()
+const basicSetting = useTemplateRef<InstanceType<typeof BasicSetting>>('basicSetting')
+const formDesign = useTemplateRef<InstanceType<typeof XForm>>('formDesign')
+const flowEdit = useTemplateRef<InstanceType<typeof FlowEdit>>('flowEdit')
 const dialogVisible = ref(false)
 const activeStep = ref('basicSetting')
 const mockData = ref({

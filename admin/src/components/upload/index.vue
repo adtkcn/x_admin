@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, toRaw, shallowRef } from 'vue'
+import { computed, defineComponent, ref, toRaw, useTemplateRef } from 'vue'
 import useUserStore from '@/stores/modules/user'
 import config from '@/config'
 import feedback from '@/utils/feedback'
@@ -83,7 +83,7 @@ export default defineComponent({
     emits: ['change', 'error'],
     setup(props, { emit }) {
         const userStore = useUserStore()
-        const uploadRefs = shallowRef<InstanceType<typeof ElUpload>>()
+        const uploadRefs = useTemplateRef<InstanceType<typeof ElUpload>>('uploadRefs')
         let action = ''
         if (props.url && typeof props.url === 'string') {
             console.log('props.url', props.url)

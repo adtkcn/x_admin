@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, shallowRef } from 'vue'
+import { computed, onMounted, reactive, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { InputInstance, FormInstance } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
@@ -116,7 +116,7 @@ import { encryptPassword } from '@/utils/util'
 import Verify from '@/components/verify/Verify.vue'
 import ImageContain from '@/components/image-contain/index.vue'
 // const verifyRef = ref(null)
-const verifyRef = shallowRef<InstanceType<typeof Verify>>()
+const verifyRef = useTemplateRef<InstanceType<typeof Verify>>('verifyRef')
 const onShowCaptcha = () => {
     verifyRef.value.show()
 }
@@ -127,8 +127,8 @@ const handleSuccess = (res) => {
     lockLogin(res)
 }
 
-const passwordRef = shallowRef<InputInstance>()
-const formRef = shallowRef<FormInstance>()
+const passwordRef = useTemplateRef<InputInstance>('passwordRef')
+const formRef = useTemplateRef<FormInstance>('formRef')
 const appStore = useAppStore()
 const userStore = useUserStore()
 const route = useRoute()

@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, shallowRef } from 'vue'
+import { reactive, useTemplateRef } from 'vue'
 import 'vue3-video-play/dist/style.css'
 import { videoPlay } from 'vue3-video-play/dist/index.mjs'
 const props = defineProps({
@@ -26,7 +26,7 @@ const props = defineProps({
     poster: String
 })
 
-const playerRef = shallowRef()
+const playerRef = useTemplateRef('playerRef')
 const options = reactive({
     color: 'var(--el-color-primary)', //主题色
     muted: false, //静音

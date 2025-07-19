@@ -60,12 +60,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { useTemplateRef, reactive } from 'vue'
 import { getWebsite, setWebsite } from '@/api/setting/website'
 import useAppStore from '@/stores/modules/app'
 import feedback from '@/utils/feedback'
 import type { FormInstance } from 'element-plus'
-const formRef = ref<FormInstance>()
+const formRef = useTemplateRef<FormInstance>('formRef')
 const { getConfig } = useAppStore()
 
 defineOptions({

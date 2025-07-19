@@ -77,19 +77,23 @@
                     批量删除
                 </el-button>
             </div>
-            <el-table
+            <vxe-table
+                ref="tableRef"
+                border
+                size="medium"
                 class="mt-4"
-                size="large"
-                v-loading="pager.loading"
                 :data="pager.lists"
-                @selection-change="handleSelectionChange"
+                :loading="pager.loading"
+                auto-resize
+                @checkbox-change="handleSelectionChange"
+                @checkbox-all="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" />
-                <el-table-column label="标题" prop="Title" min-width="130" />
-                <el-table-column label="排序" prop="Sort" width="60" />
-                <el-table-column label="创建时间" prop="CreateTime" width="180" />
-                <el-table-column label="更新时间" prop="UpdateTime" width="180" />
-                <el-table-column label="操作" width="160" fixed="right">
+                <vxe-column type="checkbox" width="55"></vxe-column>
+                <vxe-column field="Title" title="标题" min-width="130"></vxe-column>
+                <vxe-column field="Sort" title="排序" width="60"></vxe-column>
+                <vxe-column field="CreateTime" title="创建时间" width="180"></vxe-column>
+                <vxe-column field="UpdateTime" title="更新时间" width="180"></vxe-column>
+                <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:user_protocol:detail']"
@@ -115,8 +119,8 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -126,7 +130,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive, nextTick } from 'vue'
+import { ref, reactive, nextTick, useTemplateRef } from 'vue'
 import {
     user_protocol_delete,
     user_protocol_delete_batch,
@@ -135,6 +139,7 @@ import {
     user_protocol_export_file
 } from '@/api/user/protocol'
 import type { type_user_protocol, type_user_protocol_query } from '@/api/user/protocol'
+import type { VxeTableInstance } from 'vxe-table'
 
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -143,9 +148,9 @@ import DetailsPopup from './details.vue'
 defineOptions({
     name: 'user_protocol'
 })
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 const showEdit = ref(false)
-const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
+const detailsRef = useTemplateRef<InstanceType<typeof DetailsPopup>>('detailsRef')
 const showDetails = ref(false)
 const queryParams = reactive<type_user_protocol_query>({
     Title: null,
@@ -180,10 +185,13 @@ const viewDetails = async (data: any) => {
     detailsRef.value?.open()
     detailsRef.value?.getDetail(data)
 }
+
+const tableRef = useTemplateRef<VxeTableInstance<type_user_protocol>>('tableRef')
 const multipleSelection = ref<type_user_protocol[]>([])
-const handleSelectionChange = (val: type_user_protocol[]) => {
-    console.log(val)
-    multipleSelection.value = val
+const handleSelectionChange = () => {
+    if (tableRef.value) {
+        multipleSelection.value = tableRef.value.getCheckboxRecords()
+    }
 }
 
 const handleDelete = async (Id: number) => {

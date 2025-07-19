@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, useTemplateRef } from 'vue'
 import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
-const designerRef = ref(null)
+const designerRef = useTemplateRef<any>('designerRef')
 function setData(json) {
     console.log('setFormJson', json)
     designerRef.value.setFormJson(json)

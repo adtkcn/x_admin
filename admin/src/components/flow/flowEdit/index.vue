@@ -10,7 +10,7 @@
         />
         <div class="diagram-main">
             <diagram-sidebar class="diagram-sidebar" @dragInNode="dragInNode" />
-            <div ref="container" class="diagram-container">
+            <div class="diagram-container">
                 <div class="diagram-wrapper">
                     <div ref="diagramRef" class="lf-diagram"></div>
                 </div>
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 // Importing necessary functions and components
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, useTemplateRef } from 'vue'
 import LogicFlow from '@logicflow/core'
 import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
 import type { NodeType, PropertiesType } from './PropertyPanel/property.type'
@@ -59,8 +59,8 @@ const props = defineProps({
 // Define refs for reactive data and component references
 const lf = ref(null) // Reference to LogicFlow instance
 const activeEdges = ref([]) // Reactive array for active edges
-const diagramRef = ref(null) // Reference to the diagram container
-const PropertyPanelRef = ref(null) // Reference to the PropertyPanel component
+const diagramRef = useTemplateRef<HTMLInputElement>('diagramRef') // Reference to the diagram container
+const PropertyPanelRef = useTemplateRef<InstanceType<typeof PropertyPanel>>('PropertyPanelRef') // Reference to the PropertyPanel component
 
 // Lifecycle hook to initialize LogicFlow when the component is mounted
 onMounted(() => {

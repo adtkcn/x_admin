@@ -85,7 +85,7 @@
 
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
-import { shallowRef, reactive } from 'vue'
+import { useTemplateRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { getUserDetail, userEdit } from '@/api/consumer'
 import feedback from '@/utils/feedback'
@@ -109,7 +109,7 @@ const formData = reactive({
     username: ''
 })
 
-const formRef = shallowRef<FormInstance>()
+const formRef = useTemplateRef<FormInstance>('formRef')
 
 const getDetails = async () => {
     const data = await getUserDetail({

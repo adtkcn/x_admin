@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, watch, nextTick } from 'vue'
+import { ref, useTemplateRef, watch, nextTick } from 'vue'
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -33,7 +33,7 @@ const props = defineProps({
     }
 })
 
-const playerRef = shallowRef()
+const playerRef = useTemplateRef('playerRef')
 const visible = defineModel({
     type: Boolean
 })

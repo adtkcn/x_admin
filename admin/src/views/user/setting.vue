@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { useTemplateRef, reactive } from 'vue'
 import { setUserInfo } from '@/api/user'
 import useUserStore from '@/stores/modules/user'
 import feedback from '@/utils/feedback'
@@ -87,7 +87,7 @@ import type { FormInstance } from 'element-plus'
 defineOptions({
     name: 'userSetting'
 })
-const formRef = ref<FormInstance>()
+const formRef = useTemplateRef<FormInstance>('formRef')
 const userStore = useUserStore()
 // 表单数据
 const formData = reactive({

@@ -17,13 +17,13 @@
                 >
             </div>
 
-            <el-table fit size="small" :data="props.properties.gateway" style="width: 100%">
-                <el-table-column prop="label" label="表单项">
+            <vxe-table size="small" :data="props.properties.gateway" auto-resize>
+                <vxe-column field="label" title="表单项">
                     <template #default="{ row }">
                         {{ getLabel(row.id) }}
                     </template>
-                </el-table-column>
-                <el-table-column label="判断方式">
+                </vxe-column>
+                <vxe-column title="判断方式">
                     <template #default="{ row }">
                         <el-select v-model="row.condition" placeholder="请选择判断符">
                             <el-option
@@ -34,18 +34,18 @@
                             />
                         </el-select>
                     </template>
-                </el-table-column>
-                <el-table-column label="值">
+                </vxe-column>
+                <vxe-column title="值">
                     <template #default="{ row }">
                         <el-input v-model="row.value" placeholder="请输入"></el-input>
                     </template>
-                </el-table-column>
-                <el-table-column width="50px">
-                    <template #default="{ row, $index }">
-                        <el-button :icon="Close" circle @click="removeCondition(row, $index)" />
+                </vxe-column>
+                <vxe-column width="50">
+                    <template #default="{ row, rowIndex }">
+                        <el-button :icon="Close" circle @click="removeCondition(row, rowIndex)" />
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
         </el-card>
     </div>
 </template>
@@ -54,7 +54,8 @@
 import { ref } from 'vue'
 // import type { PropType } from 'vue'
 import { Close } from '@element-plus/icons-vue'
-
+// import { VxeTable, VxeColumn, VxeTableInstance } from 'vxe-table'
+// import 'vxe-table/lib/style.css'
 import type { NodeType, PropertiesType, FieldListType } from './property.type'
 
 const props = defineProps<{
