@@ -12,17 +12,25 @@ export default class FileUploader {
     file: File
     fileMd5: string
     fileName: string
+    fileSize: number
     chunkSize: number = 1024 * 1024 // 1MB
     chunkCount: number = 0
+
+    private startChunkIndex = -1
     onSuccess: FileUploaderOptions['onSuccess'] = () => {}
-    onError: FileUploaderOptions['onError'] = () => {}
-    onUploadProgress(chunkIndex, percent) {
-        console.log(`当前分片: ${chunkIndex}，进度: ${percent}%`)
+    onError: FileUploaderOptions['onError'] = (error: Error) => {
+        console.log(error)
+    }
+    onUploadProgress(chunkIndex: number, chunkLoaded: number, chunkTotal: number, loaded: number) {
+        console.log(
+            `当前分片: ${chunkIndex}/${this.chunkCount},分片进度${chunkLoaded}/${chunkTotal}，总进度: ${loaded}/${this.fileSize}`
+        )
     }
 
     constructor(file: File, options: FileUploaderOptions) {
         this.file = file
         this.fileName = file.name
+        this.fileSize = file.size
 
         if (options?.chunkSize) {
             this.chunkSize = options.chunkSize
@@ -58,13 +66,20 @@ export default class FileUploader {
     async start() {
         try {
             const arrayBuffer = await this.readerFile(this.file)
-            this.fileMd5 = this.getMd5(arrayBuffer)
+            const fileMd5 = this.getMd5(arrayBuffer)
+            this.fileMd5 = fileMd5 + '_' + this.fileSize
             const isExistFilePath = await this.checkFileExist()
+
             if (isExistFilePath) {
                 this.complete(isExistFilePath)
                 return
             }
-            this.splitChunks()
+            const hasChunk = await this.getHasChunk()
+            this.startChunkIndex = hasChunk && hasChunk.length ? Math.max(...hasChunk) : 0
+            console.log('hasChunk', hasChunk)
+
+            await this.splitChunks()
+            await this.mergeChunk()
         } catch (error) {
             this.onError(error)
         }
@@ -78,79 +93,81 @@ export default class FileUploader {
     }
     // 检查上传状态
     getMd5(arrayBuffer: ArrayBuffer): string {
+        console.time('SparkMD5')
         const spark = new SparkMD5.ArrayBuffer()
         spark.append(arrayBuffer)
-        return spark.end()
+        const hash = spark.end()
+        console.timeEnd('SparkMD5')
+        return hash
     }
     // 检查文件是否存在,可实现秒传
     async checkFileExist(): Promise<string> {
-        try {
-            /* 检查文件是否存在 */
-            const res = await axios.get('/api/admin/common/uploadChunk/CheckFileExist', {
-                params: {
-                    fileMd5: this.fileMd5,
-                    fileName: this.file.name
-                }
-            })
-            console.log('Init', res)
-
-            if (res.data.code === 200 && res.data.data) {
-                return res.data.data
+        /* 检查文件是否存在 */
+        const res = await axios.get('/api/admin/common/uploadChunk/CheckFileExist', {
+            params: {
+                fileMd5: this.fileMd5,
+                fileName: this.fileName
             }
-            return ''
-        } catch (error) {
-            return ''
+        })
+        if (res.data.code === 200) {
+            return res.data.data
         }
+        throw new Error(res.data.message)
     }
+    async getHasChunk(): Promise<number[]> {
+        const hasChunkRes = await axios.get('/api/admin/common/uploadChunk/HasChunk', {
+            params: {
+                fileMd5: this.fileMd5,
+                chunkSize: this.chunkSize,
+                fileName: this.fileName
+            }
+        })
+        console.log('HasChunk', hasChunkRes)
+
+        if (hasChunkRes.data.code === 200) {
+            return hasChunkRes.data.data || []
+        }
+        throw new Error(hasChunkRes.data.message)
+    }
+
     async splitChunks() {
-        for (let index = 0; index < this.chunkCount; index++) {
+        for (let index = this.startChunkIndex; index < this.chunkCount; index++) {
             const chunkStart = index * this.chunkSize
             const chunkEnd = Math.min(chunkStart + this.chunkSize, this.file.size)
             const chunk = this.file.slice(chunkStart, chunkEnd)
             await this.uploadChunk(this.fileMd5, index, chunk)
         }
-        await this.mergeChunk()
     }
     async uploadChunk(fileMd5: string, index: number, chunk: Blob) {
         try {
-            const checkResult = await axios.get('/api/admin/common/uploadChunk/CheckChunkExist', {
-                params: {
-                    index,
-                    fileMd5
+            const formData = new FormData()
+            formData.append('fileMd5', fileMd5)
+            formData.append('chunk', chunk)
+            formData.append('chunkSize', String(this.chunkSize))
+            formData.append('index', String(index))
+
+            const result = await axios.post('/api/admin/common/uploadChunk/UploadChunk', formData, {
+                onUploadProgress: (progressEvent) => {
+                    // const percentCompleted = (
+                    //     ((this.chunkSize * index + progressEvent.loaded) * 100) /
+                    //     this.fileSize
+                    // ).toFixed(3)
+                    const loaded = this.chunkSize * index + progressEvent.loaded //TODO progressEvent.loaded体积比文件大，不能直接相加
+
+                    this.onUploadProgress(index, progressEvent.loaded, progressEvent.total, loaded)
                 }
             })
-            console.log('checkResult', checkResult)
+            chunk = null
+            console.log('result', result)
 
-            if (checkResult.data.code === 200) {
-                console.log(`分片 ${index + 1}/${this.chunkCount} 已存在`)
-                return
-            } else if (checkResult.data.code === 500) {
-                const formData = new FormData()
-                formData.append('chunk', chunk)
-                formData.append('index', String(index))
-                formData.append('fileMd5', fileMd5)
-                const result = await axios.post(
-                    '/api/admin/common/uploadChunk/UploadChunk',
-                    formData,
-                    {
-                        onUploadProgress: (progressEvent) => {
-                            const percentCompleted = Math.round(
-                                (progressEvent.loaded * 100) / progressEvent.total
-                            )
-                            this.onUploadProgress(index, percentCompleted)
-                        }
-                    }
-                )
-                console.log('result', result)
-
-                if (result.data.code === 200) {
-                    console.log(`分片 ${index + 1}/${this.chunkCount} 上传成功`)
-                } else {
-                    console.error(`分片 ${index + 1}/${this.chunkCount} 上传失败: ${result}`)
-                    // break
-                }
+            if (result.data.code === 200) {
+                console.log(`分片 ${index + 1}/${this.chunkCount} 上传成功`)
+            } else {
+                console.error(`分片 ${index + 1}/${this.chunkCount} 上传失败: ${result}`)
+                // break
             }
         } catch (error) {
+            chunk = null
             console.error(`分片 ${index + 1}/${this.chunkCount} 上传失败: ${error}`)
             this.onError(error)
         }
@@ -159,8 +176,9 @@ export default class FileUploader {
         try {
             const res = await axios.post('/api/admin/common/uploadChunk/MergeChunk', {
                 fileMd5: this.fileMd5,
-                fileName: this.file.name,
-                chunkCount: this.chunkCount
+                fileName: this.fileName,
+                chunkCount: this.chunkCount,
+                chunkSize: this.chunkSize
             })
             if (res.data.code === 200) {
                 console.log('合并分片成功')

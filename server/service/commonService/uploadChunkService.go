@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"strconv"
 	"x_admin/util"
 )
 
@@ -40,9 +41,34 @@ func (upSrv uploadChunkService) UploadChunk(chunkDir string, chunkPath string, c
 	}
 	return os.WriteFile(chunkPath, chunkBytes, 0644)
 }
-func (upSrv uploadChunkService) MergeChunk(fileMd5, filePath string, chunkCount int) error {
 
-	chunkDir := fmt.Sprintf("./tmp/%s", fileMd5)
+// 通过文件列表中的文件名获取最大chunk
+func (upSrv uploadChunkService) HasChunk(chunkDir string) []int {
+	// chunks, err := os.ReadDir(chunkDir)
+	files, err := os.ReadDir(chunkDir)
+	var chunks []int
+	if err != nil {
+		fmt.Printf("读取目录失败: %v\n", err)
+		return chunks
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue // 跳过目录
+		}
+
+		filename := file.Name()
+		num, err := strconv.Atoi(filename) // 直接转换整个文件名
+		if err != nil {
+			continue // 跳过非数字文件名
+		}
+		chunks = append(chunks, num)
+	}
+	return chunks
+}
+func (upSrv uploadChunkService) MergeChunk(chunkDir, filePath string, chunkCount int) error {
+
+	// chunkDir := fmt.Sprintf("./tmp/%s", fileMd5)
 
 	chunks, err := os.ReadDir(chunkDir)
 	if err != nil {
