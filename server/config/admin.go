@@ -40,26 +40,42 @@ var AdminConfig = adminConfig{
 	},
 
 	// 管理员账号id
-	SuperAdminId:   1,
-	ReqAdminIdKey:  "admin_id",
-	ReqRoleIdKey:   "role",
+	SuperAdminId: 1,
+	// 管理员账号key
+	ReqAdminIdKey: "admin_id",
+	// 角色key
+	ReqRoleIdKey: "role",
+	// 用户名key
 	ReqUsernameKey: "username",
+	// 昵称key
 	ReqNicknameKey: "nickname",
 }
 
 type adminConfig struct {
+	// 管理缓存键
 	BackstageManageKey string
-	BackstageRolesKey  string
-	BackstageTokenKey  string
-	BackstageTokenSet  string
-	NotLoginUri        []string
-	NotAuthUri         []string
-	ShowWhitelistUri   []string
-	SuperAdminId       uint
-	ReqAdminIdKey      string
-	ReqRoleIdKey       string
-	ReqUsernameKey     string
-	ReqNicknameKey     string
+	// 角色缓存键
+	BackstageRolesKey string
+	// 令牌缓存键
+	BackstageTokenKey string
+	// 令牌的集合
+	BackstageTokenSet string
+	// 免登录验证
+	NotLoginUri []string
+	// 免权限验证
+	NotAuthUri []string
+	// 演示模式白名单
+	ShowWhitelistUri []string
+	// 管理员账号id
+	SuperAdminId uint
+	// 管理员账号key
+	ReqAdminIdKey string
+	// 角色key
+	ReqRoleIdKey string
+	// 用户名key
+	ReqUsernameKey string
+	// 昵称key
+	ReqNicknameKey string
 }
 
 func (cnf adminConfig) GetAdminId(c *gin.Context) uint {

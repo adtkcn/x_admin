@@ -3,6 +3,7 @@ package commonController
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"x_admin/core/response"
@@ -33,8 +34,11 @@ type uploadChunkHandler struct {
 	tmpPath    string
 }
 
-func (uh uploadChunkHandler) getFilePath(fileMd5 string) string {
-	return fmt.Sprintf("%s/%s", uh.uploadPath, fileMd5)
+func (uh uploadChunkHandler) getFilePath(fileMd5 string, fileName string) string {
+	// 获取文件后缀
+	ext := filepath.Ext(fileName)
+
+	return fmt.Sprintf("%s/%s%s", uh.uploadPath, fileMd5, ext)
 }
 func (uh uploadChunkHandler) getChunkDir(fileMd5 string, chunkSize string) string {
 	return fmt.Sprintf("%s/%s_%s", uh.tmpPath, fileMd5, chunkSize)
@@ -91,6 +95,15 @@ func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
 		".gz",
 		".bz2",
 		".xz",
+		".msi",
+		".exe",
+		".dmg",
+		".iso",
+		".app",
+		".deb",
+		".rpm",
+		".pkg",
+		".apk",
 	}
 	var fileExt = ""
 	for _, ext := range whiteList {
@@ -111,7 +124,7 @@ func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
 		response.FailWithMsg(c, response.SystemError, "文件hash错误")
 		return
 	}
-	var filePath = uh.getFilePath(fileMd5)
+	var filePath = uh.getFilePath(fileMd5, fileName)
 	// 检查文件是否存在
 	if commonService.UploadChunkService.CheckFileExist(filePath) {
 		response.OkWithData(c, filePath)
@@ -209,7 +222,7 @@ func (uh uploadChunkHandler) MergeChunk(c *gin.Context) {
 		response.FailWithMsg(c, response.SystemError, "分片大小错误")
 		return
 	}
-	var filePath = uh.getFilePath(MergeChunk.FileMd5)
+	var filePath = uh.getFilePath(MergeChunk.FileMd5, MergeChunk.FileName)
 	var chunkDir = uh.getChunkDir(MergeChunk.FileMd5, fmt.Sprintf("%d", MergeChunk.ChunkSize))
 	err := commonService.UploadChunkService.MergeChunk(chunkDir, filePath, MergeChunk.ChunkCount)
 	if err != nil {

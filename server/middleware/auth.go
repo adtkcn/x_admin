@@ -111,7 +111,7 @@ func TokenAuth() gin.HandlerFunc {
 		c.Set(config.AdminConfig.ReqNicknameKey, mapping.Nickname)
 
 		// 免权限验证接口
-		if util.ToolsUtil.Contains(config.AdminConfig.NotAuthUri, auths) || uid == 1 {
+		if util.ToolsUtil.Contains(config.AdminConfig.NotAuthUri, auths) || uid == config.AdminConfig.SuperAdminId {
 			c.Next()
 			return
 		}

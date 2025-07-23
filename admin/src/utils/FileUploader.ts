@@ -3,7 +3,6 @@ import axios from 'axios'
 
 export interface FileUploaderOptions {
     chunkSize?: number
-    fileName?: string
     onSuccess?: (filePath: string) => void
     onError?: (error: Error) => void
 }
@@ -16,28 +15,35 @@ export default class FileUploader {
     chunkSize: number = 1024 * 1024 // 1MB
     chunkCount: number = 0
 
+    private uploading = false
     private startChunkIndex = -1
-    onSuccess: FileUploaderOptions['onSuccess'] = () => {}
-    onError: FileUploaderOptions['onError'] = (error: Error) => {
-        console.log(error)
+
+    // 上传完成
+    success(filePath: string) {
+        this.uploading = false
+        this.startChunkIndex = -1
+        this.onSuccess(filePath)
     }
-    onUploadProgress(chunkIndex: number, chunkLoaded: number, chunkTotal: number, loaded: number) {
+    onSuccess: FileUploaderOptions['onSuccess'] = (filePath) => {
+        console.log('上传完成', filePath)
+    }
+    error(error: Error) {
+        this.uploading = false
+        this.startChunkIndex = -1
+        this.onError(error)
+    }
+    onError: FileUploaderOptions['onError'] = (error: Error) => {
+        console.log('error', error)
+    }
+    onUploadProgress(chunkIndex: number, chunkLoaded: number, chunkTotal: number) {
         console.log(
-            `当前分片: ${chunkIndex}/${this.chunkCount},分片进度${chunkLoaded}/${chunkTotal}，总进度: ${loaded}/${this.fileSize}`
+            `当前分片: ${chunkIndex}/${this.chunkCount},分片进度${chunkLoaded}/${chunkTotal}}`
         )
     }
 
-    constructor(file: File, options: FileUploaderOptions) {
-        this.file = file
-        this.fileName = file.name
-        this.fileSize = file.size
-
+    constructor(options: FileUploaderOptions, file?: File) {
         if (options?.chunkSize) {
             this.chunkSize = options.chunkSize
-        }
-        this.chunkCount = Math.ceil(this.file.size / this.chunkSize)
-        if (options?.fileName) {
-            this.fileName = options.fileName
         }
         if (options?.onSuccess) {
             this.onSuccess = options.onSuccess
@@ -45,12 +51,29 @@ export default class FileUploader {
         if (options?.onError) {
             this.onError = options.onError
         }
+        if (file) {
+            this.loadFile(file)
+        }
     }
+    public loadFile(file: File, fileName?: string) {
+        if (this.uploading) {
+            this.error(new Error('请等待上一个文件上传完成'))
+            return
+        }
 
+        this.file = file
+        if (fileName) {
+            this.fileName = fileName
+        } else {
+            this.fileName = file.name
+        }
+        this.fileSize = file.size
+        this.chunkCount = Math.ceil(this.file.size / this.chunkSize)
+    }
     readerFile(file: File): Promise<ArrayBuffer> {
         return new Promise((resolve, reject) => {
             if (!file) {
-                return reject(new Error('文件不存在'))
+                return reject(new Error('读取文件失败'))
             }
             const reader = new FileReader()
             reader.onload = (e) => {
@@ -62,35 +85,39 @@ export default class FileUploader {
             reader.readAsArrayBuffer(file)
         })
     }
-    // 开始/恢复上传
-    async start() {
+    // 开始上传
+    public async start() {
         try {
+            if (!this.file) {
+                this.error(new Error('请选择文件后上传'))
+                return
+            }
+            if (this.uploading) {
+                this.error(new Error('正在上传中'))
+                return
+            }
+            this.uploading = true
+
             const arrayBuffer = await this.readerFile(this.file)
             const fileMd5 = this.getMd5(arrayBuffer)
             this.fileMd5 = fileMd5 + '_' + this.fileSize
             const isExistFilePath = await this.checkFileExist()
 
             if (isExistFilePath) {
-                this.complete(isExistFilePath)
+                this.success(isExistFilePath)
                 return
             }
             const hasChunk = await this.getHasChunk()
-            this.startChunkIndex = hasChunk && hasChunk.length ? Math.max(...hasChunk) : 0
+            this.startChunkIndex = hasChunk && hasChunk.length ? Math.max(...hasChunk) : -1
             console.log('hasChunk', hasChunk)
 
             await this.splitChunks()
             await this.mergeChunk()
         } catch (error) {
-            this.onError(error)
+            this.error(error)
         }
     }
 
-    // 上传完成
-    complete(filePath) {
-        /* 合并分片 */
-        console.log('complete:', filePath)
-        this.onSuccess(filePath)
-    }
     // 检查上传状态
     getMd5(arrayBuffer: ArrayBuffer): string {
         console.time('SparkMD5')
@@ -131,7 +158,7 @@ export default class FileUploader {
     }
 
     async splitChunks() {
-        for (let index = this.startChunkIndex; index < this.chunkCount; index++) {
+        for (let index = this.startChunkIndex + 1; index < this.chunkCount; index++) {
             const chunkStart = index * this.chunkSize
             const chunkEnd = Math.min(chunkStart + this.chunkSize, this.file.size)
             const chunk = this.file.slice(chunkStart, chunkEnd)
@@ -152,9 +179,9 @@ export default class FileUploader {
                     //     ((this.chunkSize * index + progressEvent.loaded) * 100) /
                     //     this.fileSize
                     // ).toFixed(3)
-                    const loaded = this.chunkSize * index + progressEvent.loaded //TODO progressEvent.loaded体积比文件大，不能直接相加
+                    // const loaded = this.chunkSize * index + progressEvent.loaded //TODO progressEvent.loaded体积比文件大，不能直接相加
 
-                    this.onUploadProgress(index, progressEvent.loaded, progressEvent.total, loaded)
+                    this.onUploadProgress(index, progressEvent.loaded, progressEvent.total)
                 }
             })
             chunk = null
@@ -169,7 +196,7 @@ export default class FileUploader {
         } catch (error) {
             chunk = null
             console.error(`分片 ${index + 1}/${this.chunkCount} 上传失败: ${error}`)
-            this.onError(error)
+            this.error(error)
         }
     }
     async mergeChunk() {
@@ -182,14 +209,14 @@ export default class FileUploader {
             })
             if (res.data.code === 200) {
                 console.log('合并分片成功')
-                this.complete(res.data.data)
+                this.success(res.data.data)
             } else {
                 console.log('MergeChunk', res)
-                this.onError(new Error('合并分片失败'))
+                this.error(new Error('合并分片失败'))
             }
         } catch (error) {
             console.error(`合并分片失败: ${error}`)
-            this.onError(error)
+            this.error(error)
         }
     }
 }

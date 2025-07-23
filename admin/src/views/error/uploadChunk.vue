@@ -8,17 +8,27 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import FileUploader from '@/utils/FileUploader'
 
 const fileInput = ref<HTMLInputElement>()
 
-let fileUploader: FileUploader | null = null
+const fileUploader = new FileUploader({
+    chunkSize: 1024 * 1024 * 1,
+    onSuccess(filePath) {
+        ElMessage.success('上传成功:' + filePath)
+    },
+    onError(error) {
+        // console.error('error', error)
+        ElMessage.error(error.message)
+    }
+})
 function handleChange(e) {
     const files = (e.target as HTMLInputElement).files
     // console.log('e.target', e.target)
     console.log('files', files)
     if (files) {
-        fileUploader = new FileUploader(files[0], { chunkSize: 1024 * 1024 * 1 })
+        fileUploader.loadFile(files[0])
     }
 }
 function btn() {

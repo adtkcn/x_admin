@@ -27,23 +27,30 @@ type Response struct {
 }
 
 var (
+	// code 200成功
 	Success = RespType{code: 200, message: "成功"}
-	Failed  = RespType{code: 300, message: "失败"}
+	// code 300失败
+	Failed = RespType{code: 300, message: "失败"}
+	// code 310参数校验错误
+	ParamsValidError = RespType{code: 310, message: "参数校验错误"}
+	// code 311参数类型错误
+	ParamsTypeError = RespType{code: 311, message: "参数类型错误"}
 
-	ParamsValidError    = RespType{code: 310, message: "参数校验错误"}
-	ParamsTypeError     = RespType{code: 311, message: "参数类型错误"}
 	RequestMethodError  = RespType{code: 312, message: "请求方法错误"}
 	AssertArgumentError = RespType{code: 313, message: "断言参数错误"}
-
+	// code 330登录账号或密码错误
 	LoginAccountError = RespType{code: 330, message: "登录账号或密码错误"}
+	// code 331登录账号已被禁用了
 	LoginDisableError = RespType{code: 331, message: "登录账号已被禁用了"}
-	TokenEmpty        = RespType{code: 332, message: "token参数为空"}
-	TokenInvalid      = RespType{code: 333, message: "登录失效"}
-
+	// code 332 token参数为空
+	TokenEmpty = RespType{code: 332, message: "token参数为空"}
+	// code 333 登录失效
+	TokenInvalid = RespType{code: 333, message: "登录失效"}
+	// 无相关权限
 	NoPermission    = RespType{code: 403, message: "无相关权限"}
 	Request404Error = RespType{code: 404, message: "请求接口不存在"}
 	Request405Error = RespType{code: 405, message: "请求方法不允许"}
-
+	// code 500系统错误
 	SystemError = RespType{code: 500, message: "系统错误"}
 )
 
