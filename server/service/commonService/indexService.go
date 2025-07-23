@@ -5,6 +5,7 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
+	"x_admin/service/settingService"
 	"x_admin/util"
 
 	"gorm.io/gorm"
@@ -26,7 +27,7 @@ type indexService struct {
 // Console 控制台数据
 func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 	// 版本信息
-	name, err := util.ConfigUtil.GetVal(iSrv.db, "website", "name", "x_admin-Go")
+	name, err := settingService.SystemConfigService.GetVal(iSrv.db, "website", "name", "x_admin-Go")
 	if e = response.CheckErr(err, "Console Get err"); e != nil {
 		return
 	}
@@ -71,11 +72,11 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 
 // Config 公共配置
 func (iSrv indexService) Config() (res map[string]interface{}, e error) {
-	website, err := util.ConfigUtil.Get(iSrv.db, "website")
+	website, err := settingService.SystemConfigService.Get(iSrv.db, "website")
 	if e = response.CheckErr(err, "Config Get err"); e != nil {
 		return
 	}
-	copyrightStr, err := util.ConfigUtil.GetVal(iSrv.db, "website", "copyright", "")
+	copyrightStr, err := settingService.SystemConfigService.GetVal(iSrv.db, "website", "copyright", "")
 	if e = response.CheckErr(err, "Config GetVal err"); e != nil {
 		return
 	}

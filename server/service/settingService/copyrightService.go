@@ -3,7 +3,8 @@ package settingService
 import (
 	"x_admin/core"
 	"x_admin/core/response"
-	. "x_admin/schema/settingSchema"
+	"x_admin/schema/settingSchema"
+
 	"x_admin/util"
 
 	"gorm.io/gorm"
@@ -11,7 +12,7 @@ import (
 
 type ISettingCopyrightService interface {
 	Detail() (res []map[string]interface{}, e error)
-	Save(cReqs []SettingCopyrightItemReq) (e error)
+	Save(cReqs []settingSchema.SettingCopyrightItemReq) (e error)
 }
 
 var CopyrightService = NewSettingCopyrightService()
@@ -29,7 +30,7 @@ type settingCopyrightService struct {
 
 // Detail 获取网站备案信息
 func (cSrv settingCopyrightService) Detail() (res []map[string]interface{}, e error) {
-	data, err := util.ConfigUtil.GetVal(cSrv.db, "website", "copyright", "[]")
+	data, err := SystemConfigService.GetVal(cSrv.db, "website", "copyright", "[]")
 	if e = response.CheckErr(err, "Detail GetVal err"); e != nil {
 		return
 	}
@@ -38,12 +39,12 @@ func (cSrv settingCopyrightService) Detail() (res []map[string]interface{}, e er
 }
 
 // Save 保存网站备案信息
-func (cSrv settingCopyrightService) Save(cReqs []SettingCopyrightItemReq) (e error) {
+func (cSrv settingCopyrightService) Save(cReqs []settingSchema.SettingCopyrightItemReq) (e error) {
 	json, err := util.ToolsUtil.ObjToJson(cReqs)
 	if e = response.CheckErr(err, "Save ObjToJson err"); e != nil {
 		return
 	}
-	err = util.ConfigUtil.Set(cSrv.db, "website", "copyright", json)
+	err = SystemConfigService.Set(cSrv.db, "website", "copyright", json)
 	e = response.CheckErr(err, "保存失败")
 	return
 }

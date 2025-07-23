@@ -5,7 +5,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	. "x_admin/schema/systemSchema"
+	"x_admin/schema/systemSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -57,7 +57,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId u
 	if e = response.CheckErr(err, "SelectMenuByRoleId Find err"); e != nil {
 		return
 	}
-	var menuResps []SystemAuthMenuResp
+	var menuResps []systemSchema.SystemAuthMenuResp
 	convert_util.Copy(&menuResps, menus)
 	mapList = util.ArrayUtil.ListToTree(
 		convert_util.StructsToMaps(menuResps), "id", "pid", "children")
@@ -71,13 +71,13 @@ func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	var menuResps []SystemAuthMenuResp
+	var menuResps []systemSchema.SystemAuthMenuResp
 	convert_util.Copy(&menuResps, menus)
 	return menuResps, nil
 }
 
 // Detail 菜单详情
-func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e error) {
+func (menuSrv systemAuthMenuService) Detail(id uint) (res systemSchema.SystemAuthMenuResp, e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
@@ -90,7 +90,7 @@ func (menuSrv systemAuthMenuService) Detail(id uint) (res SystemAuthMenuResp, e 
 	return
 }
 
-func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) {
+func (menuSrv systemAuthMenuService) Add(addReq systemSchema.SystemAuthMenuAddReq) (e error) {
 	var menu system_model.SystemAuthMenu
 	convert_util.Copy(&menu, addReq)
 	err := menuSrv.db.Create(&menu).Error
@@ -101,7 +101,7 @@ func (menuSrv systemAuthMenuService) Add(addReq SystemAuthMenuAddReq) (e error) 
 	return
 }
 
-func (menuSrv systemAuthMenuService) Edit(editReq SystemAuthMenuEditReq) (e error) {
+func (menuSrv systemAuthMenuService) Edit(editReq systemSchema.SystemAuthMenuEditReq) (e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", editReq.ID).Limit(1).Find(&menu).Error
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {

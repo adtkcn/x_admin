@@ -9,7 +9,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	. "x_admin/schema/systemSchema"
+	"x_admin/schema/systemSchema"
 
 	"x_admin/util"
 
@@ -31,7 +31,7 @@ type systemLoginService struct {
 }
 
 // Login 登录
-func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (res SystemLoginResp, e error) {
+func (loginSrv systemLoginService) Login(c *gin.Context, req *systemSchema.SystemLoginReq) (res systemSchema.SystemLoginResp, e error) {
 	sysAdmin, err := AdminService.FindByUsername(req.Username)
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		if e = loginSrv.RecordLoginLog(c, 0, req.Username, response.LoginAccountError.Msg()); e != nil {
@@ -106,11 +106,11 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *SystemLoginReq) (r
 		return
 	}
 	// 返回登录信息
-	return SystemLoginResp{Token: token}, nil
+	return systemSchema.SystemLoginResp{Token: token}, nil
 }
 
 // Logout 退出
-func (loginSrv systemLoginService) Logout(req *SystemLogoutReq) (e error) {
+func (loginSrv systemLoginService) Logout(req *systemSchema.SystemLogoutReq) (e error) {
 	util.RedisUtil.Del(config.AdminConfig.BackstageTokenKey + req.Token)
 	return
 }

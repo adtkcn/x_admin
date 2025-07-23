@@ -7,7 +7,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	. "x_admin/schema/flowSchema"
+	"x_admin/schema/flowSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -28,7 +28,7 @@ type flowApplyService struct {
 }
 
 // List 申请流程列表
-func (service flowApplyService) List(page request.PageReq, listReq FlowApplyListReq) (res response.PageResp, e error) {
+func (service flowApplyService) List(page request.PageReq, listReq flowSchema.FlowApplyListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -74,7 +74,7 @@ func (service flowApplyService) List(page request.PageReq, listReq FlowApplyList
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	result := []FlowApplyResp{}
+	result := []flowSchema.FlowApplyResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -85,7 +85,7 @@ func (service flowApplyService) List(page request.PageReq, listReq FlowApplyList
 }
 
 // Detail 申请流程详情
-func (service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
+func (service flowApplyService) Detail(id int) (res flowSchema.FlowApplyResp, e error) {
 	var obj model.FlowApply
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -99,7 +99,7 @@ func (service flowApplyService) Detail(id int) (res FlowApplyResp, e error) {
 }
 
 // Add 申请流程新增
-func (service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
+func (service flowApplyService) Add(addReq flowSchema.FlowApplyAddReq) (e error) {
 	var obj model.FlowApply
 	var flow_template_resp, err = TemplateService.Detail(addReq.TemplateId)
 	if e = response.CheckErrDBNotRecord(err, "模板不存在!"); e != nil {
@@ -119,7 +119,7 @@ func (service flowApplyService) Add(addReq FlowApplyAddReq) (e error) {
 }
 
 // Edit 申请流程编辑
-func (service flowApplyService) Edit(editReq FlowApplyEditReq) (e error) {
+func (service flowApplyService) Edit(editReq flowSchema.FlowApplyEditReq) (e error) {
 	var obj model.FlowApply
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验

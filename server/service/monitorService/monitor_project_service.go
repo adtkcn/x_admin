@@ -5,7 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	. "x_admin/schema/monitorSchema"
+	"x_admin/schema/monitorSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
@@ -32,7 +32,7 @@ type monitorProjectService struct {
 }
 
 // List 监控项目列表
-func (service monitorProjectService) GetModel(listReq MonitorProjectListReq) *gorm.DB {
+func (service monitorProjectService) GetModel(listReq monitorSchema.MonitorProjectListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.MonitorProject{})
 	if listReq.ProjectKey != nil {
@@ -64,7 +64,7 @@ func (service monitorProjectService) GetModel(listReq MonitorProjectListReq) *go
 }
 
 // List 监控项目列表
-func (service monitorProjectService) List(page request.PageReq, listReq MonitorProjectListReq) (res response.PageResp, e error) {
+func (service monitorProjectService) List(page request.PageReq, listReq monitorSchema.MonitorProjectListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -81,7 +81,7 @@ func (service monitorProjectService) List(page request.PageReq, listReq MonitorP
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []MonitorProjectResp{}
+	result := []monitorSchema.MonitorProjectResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -92,7 +92,7 @@ func (service monitorProjectService) List(page request.PageReq, listReq MonitorP
 }
 
 // ListAll 监控项目列表
-func (service monitorProjectService) ListAll(listReq MonitorProjectListReq) (res []MonitorProjectResp, e error) {
+func (service monitorProjectService) ListAll(listReq monitorSchema.MonitorProjectListReq) (res []monitorSchema.MonitorProjectResp, e error) {
 	dbModel := service.GetModel(listReq)
 
 	var modelList []model.MonitorProject
@@ -106,7 +106,7 @@ func (service monitorProjectService) ListAll(listReq MonitorProjectListReq) (res
 }
 
 // Detail 监控项目详情
-func (service monitorProjectService) Detail(Id int) (res MonitorProjectResp, e error) {
+func (service monitorProjectService) Detail(Id int) (res monitorSchema.MonitorProjectResp, e error) {
 	var obj = model.MonitorProject{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
@@ -125,7 +125,7 @@ func (service monitorProjectService) Detail(Id int) (res MonitorProjectResp, e e
 }
 
 // Add 监控项目新增
-func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (createId int, e error) {
+func (service monitorProjectService) Add(addReq monitorSchema.MonitorProjectAddReq) (createId int, e error) {
 	var obj model.MonitorProject
 	convert_util.StructToStruct(addReq, &obj)
 	obj.ProjectKey = util.ToolsUtil.MakeUuid()
@@ -140,7 +140,7 @@ func (service monitorProjectService) Add(addReq MonitorProjectAddReq) (createId 
 }
 
 // Edit 监控项目编辑
-func (service monitorProjectService) Edit(editReq MonitorProjectEditReq) (e error) {
+func (service monitorProjectService) Edit(editReq monitorSchema.MonitorProjectEditReq) (e error) {
 	var obj model.MonitorProject
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验
@@ -208,7 +208,7 @@ func (service monitorProjectService) GetExcelCol() []excel2.Col {
 }
 
 // ExportFile 监控项目导出
-func (service monitorProjectService) ExportFile(listReq MonitorProjectListReq) (res []MonitorProjectResp, e error) {
+func (service monitorProjectService) ExportFile(listReq monitorSchema.MonitorProjectListReq) (res []monitorSchema.MonitorProjectResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
@@ -218,13 +218,13 @@ func (service monitorProjectService) ExportFile(listReq MonitorProjectListReq) (
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []MonitorProjectResp{}
+	result := []monitorSchema.MonitorProjectResp{}
 	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
-func (service monitorProjectService) ImportFile(importReq []MonitorProjectResp) (e error) {
+func (service monitorProjectService) ImportFile(importReq []monitorSchema.MonitorProjectResp) (e error) {
 	var importData []model.MonitorProject
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error

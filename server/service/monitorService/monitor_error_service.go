@@ -8,7 +8,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	. "x_admin/schema/monitorSchema"
+	"x_admin/schema/monitorSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
@@ -35,7 +35,7 @@ type monitorErrorService struct {
 }
 
 // List 监控-错误列列表
-func (service monitorErrorService) GetModel(listReq MonitorErrorListReq) *gorm.DB {
+func (service monitorErrorService) GetModel(listReq monitorSchema.MonitorErrorListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.MonitorError{})
 	if listReq.ProjectKey != nil {
@@ -67,7 +67,7 @@ func (service monitorErrorService) GetModel(listReq MonitorErrorListReq) *gorm.D
 }
 
 // List 监控-错误列列表
-func (service monitorErrorService) List(page request.PageReq, listReq MonitorErrorListReq) (res response.PageResp, e error) {
+func (service monitorErrorService) List(page request.PageReq, listReq monitorSchema.MonitorErrorListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -84,7 +84,7 @@ func (service monitorErrorService) List(page request.PageReq, listReq MonitorErr
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []MonitorErrorResp{}
+	result := []monitorSchema.MonitorErrorResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -95,7 +95,7 @@ func (service monitorErrorService) List(page request.PageReq, listReq MonitorErr
 }
 
 // ListAll 监控-错误列列表
-func (service monitorErrorService) ListAll(listReq MonitorErrorListReq) (res []MonitorErrorResp, e error) {
+func (service monitorErrorService) ListAll(listReq monitorSchema.MonitorErrorListReq) (res []monitorSchema.MonitorErrorResp, e error) {
 	dbModel := service.GetModel(listReq)
 
 	var modelList []model.MonitorError
@@ -109,7 +109,7 @@ func (service monitorErrorService) ListAll(listReq MonitorErrorListReq) (res []M
 }
 
 // Detail 监控-错误列详情
-func (service monitorErrorService) Detail(Id int) (res MonitorErrorResp, e error) {
+func (service monitorErrorService) Detail(Id int) (res monitorSchema.MonitorErrorResp, e error) {
 	var obj = model.MonitorError{}
 
 	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
@@ -125,7 +125,7 @@ func (service monitorErrorService) Detail(Id int) (res MonitorErrorResp, e error
 }
 
 // DetailByMD5 监控-错误列详情
-func (service monitorErrorService) DetailByMD5(md5 string) (res MonitorErrorResp, e error) {
+func (service monitorErrorService) DetailByMD5(md5 string) (res monitorSchema.MonitorErrorResp, e error) {
 	var obj = model.MonitorError{}
 	err := service.CacheUtil.GetCache("md5:"+md5, &obj)
 	if err != nil {
@@ -144,7 +144,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res MonitorErrorResp
 }
 
 // Add 监控-错误列新增
-func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int, err error) {
+func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) (createId int, err error) {
 
 	var obj model.MonitorError
 	convert_util.StructToStruct(addReq, &obj)
@@ -172,7 +172,7 @@ func (service monitorErrorService) Add(addReq MonitorErrorAddReq) (createId int,
 		return 0, err
 	}
 
-	_, err = MonitorErrorListService.Add(MonitorErrorListAddReq{
+	_, err = MonitorErrorListService.Add(monitorSchema.MonitorErrorListAddReq{
 		Eid:    strconv.Itoa(createId),
 		Cid:    strconv.Itoa(client.Id),
 		Width:  addReq.Width,
@@ -246,7 +246,7 @@ func (service monitorErrorService) GetExcelCol() []excel2.Col {
 }
 
 // ExportFile 监控-错误列导出
-func (service monitorErrorService) ExportFile(listReq MonitorErrorListReq) (res []MonitorErrorResp, e error) {
+func (service monitorErrorService) ExportFile(listReq monitorSchema.MonitorErrorListReq) (res []monitorSchema.MonitorErrorResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
@@ -256,13 +256,13 @@ func (service monitorErrorService) ExportFile(listReq MonitorErrorListReq) (res 
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []MonitorErrorResp{}
+	result := []monitorSchema.MonitorErrorResp{}
 	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
-func (service monitorErrorService) ImportFile(importReq []MonitorErrorResp) (e error) {
+func (service monitorErrorService) ImportFile(importReq []monitorSchema.MonitorErrorResp) (e error) {
 	var importData []model.MonitorError
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error

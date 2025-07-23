@@ -4,7 +4,8 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
-	. "x_admin/schema/settingSchema"
+	"x_admin/schema/settingSchema"
+
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -12,12 +13,12 @@ import (
 )
 
 type ISettingDictDataService interface {
-	All(allReq SettingDictDataListReq) (res []SettingDictDataResp, e error)
+	All(allReq settingSchema.SettingDictDataListReq) (res []settingSchema.SettingDictDataResp, e error)
 	// List(page request.PageReq, listReq SettingDictDataListReq) (res response.PageResp, e error)
-	Detail(id uint) (res SettingDictDataResp, e error)
-	Add(addReq SettingDictDataAddReq) (e error)
-	Edit(editReq SettingDictDataEditReq) (e error)
-	Del(delReq SettingDictDataDelReq) (e error)
+	Detail(id uint) (res settingSchema.SettingDictDataResp, e error)
+	Add(addReq settingSchema.SettingDictDataAddReq) (e error)
+	Edit(editReq settingSchema.SettingDictDataEditReq) (e error)
+	Del(delReq settingSchema.SettingDictDataDelReq) (e error)
 }
 
 var DictDataService = NewSettingDictDataService()
@@ -34,7 +35,7 @@ type settingDictDataService struct {
 }
 
 // All 字典数据所有
-func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []SettingDictDataResp, e error) {
+func (ddSrv settingDictDataService) All(allReq settingSchema.SettingDictDataListReq) (res []settingSchema.SettingDictDataResp, e error) {
 	var dictType setting_model.DictType
 	err := ddSrv.db.Where("dict_type = ? AND is_delete = ?", allReq.DictType, 0).Limit(1).First(&dictType).Error
 	if e = response.CheckErrDBNotRecord(err, "该字典类型不存在！"); e != nil {
@@ -58,13 +59,13 @@ func (ddSrv settingDictDataService) All(allReq SettingDictDataListReq) (res []Se
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
-	res = []SettingDictDataResp{}
+	res = []settingSchema.SettingDictDataResp{}
 	convert_util.Copy(&res, dictDatas)
 	return
 }
 
 // Detail 字典数据详情
-func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e error) {
+func (ddSrv settingDictDataService) Detail(id uint) (res settingSchema.SettingDictDataResp, e error) {
 	var dd setting_model.DictData
 	err := ddSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dd).Error
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {
@@ -78,7 +79,7 @@ func (ddSrv settingDictDataService) Detail(id uint) (res SettingDictDataResp, e 
 }
 
 // Add 字典数据新增
-func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) {
+func (ddSrv settingDictDataService) Add(addReq settingSchema.SettingDictDataAddReq) (e error) {
 	if r := ddSrv.db.Where("name = ? AND is_delete = ?", addReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
@@ -90,7 +91,7 @@ func (ddSrv settingDictDataService) Add(addReq SettingDictDataAddReq) (e error) 
 }
 
 // Edit 字典数据编辑
-func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e error) {
+func (ddSrv settingDictDataService) Edit(editReq settingSchema.SettingDictDataEditReq) (e error) {
 	var dd setting_model.DictData
 	err := ddSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dd).Error
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {
@@ -110,7 +111,7 @@ func (ddSrv settingDictDataService) Edit(editReq SettingDictDataEditReq) (e erro
 }
 
 // Del 字典数据删除
-func (ddSrv settingDictDataService) Del(delReq SettingDictDataDelReq) (e error) {
+func (ddSrv settingDictDataService) Del(delReq settingSchema.SettingDictDataDelReq) (e error) {
 	err := ddSrv.db.Model(&setting_model.DictData{}).Where("id IN ?", delReq.Ids).Updates(
 		setting_model.DictData{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
 	return response.CheckErr(err, "Del Update err")

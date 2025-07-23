@@ -6,7 +6,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	. "x_admin/schema/systemSchema"
+	"x_admin/schema/systemSchema"
 
 	"gorm.io/gorm"
 )
@@ -25,7 +25,7 @@ type systemLogsServer struct {
 }
 
 // Operate 系统操作日志
-func (logSrv systemLogsServer) Operate(page request.PageReq, logReq SystemLogOperateReq) (res response.PageResp, e error) {
+func (logSrv systemLogsServer) Operate(page request.PageReq, logReq systemSchema.SystemLogOperateReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -67,7 +67,7 @@ func (logSrv systemLogsServer) Operate(page request.PageReq, logReq SystemLogOpe
 		return
 	}
 	// 数据
-	var logResp []SystemLogOperateResp
+	var logResp []systemSchema.SystemLogOperateResp
 	err = logModel.Limit(limit).Offset(offset).Order("id desc").Find(&logResp).Error
 	if e = response.CheckErr(err, "Operate Find err"); e != nil {
 		return
@@ -81,7 +81,7 @@ func (logSrv systemLogsServer) Operate(page request.PageReq, logReq SystemLogOpe
 }
 
 // Login 系统登录日志
-func (logSrv systemLogsServer) Login(page request.PageReq, logReq SystemLogLoginReq) (res response.PageResp, e error) {
+func (logSrv systemLogsServer) Login(page request.PageReq, logReq systemSchema.SystemLogLoginReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -108,7 +108,7 @@ func (logSrv systemLogsServer) Login(page request.PageReq, logReq SystemLogLogin
 		return
 	}
 	// 数据
-	var logResp []SystemLogLoginResp
+	var logResp []systemSchema.SystemLogLoginResp
 	err = logModel.Limit(limit).Offset(offset).Order("id desc").Find(&logResp).Error
 	if e = response.CheckErr(err, "Login Find err"); e != nil {
 		return

@@ -1,19 +1,20 @@
-package util
+package settingService
 
 import (
 	"errors"
 	"x_admin/model/system_model"
+	"x_admin/util"
 
 	"gorm.io/gorm"
 )
 
-var ConfigUtil = configUtil{}
+var SystemConfigService = systemConfigService{}
 
 // 数据库配置操作工具
-type configUtil struct{}
+type systemConfigService struct{}
 
 // Get 根据类型和名称获取配置字典
-func (cu configUtil) Get(db *gorm.DB, cnfType string, names ...string) (data map[string]string, err error) {
+func (cu systemConfigService) Get(db *gorm.DB, cnfType string, names ...string) (data map[string]string, err error) {
 	chain := db.Where("type = ?", cnfType)
 	if len(names) > 0 {
 		chain.Where("name = ?", names[0])
@@ -32,7 +33,7 @@ func (cu configUtil) Get(db *gorm.DB, cnfType string, names ...string) (data map
 }
 
 // GetVal 根据类型和名称获取配置值
-func (cu configUtil) GetVal(db *gorm.DB, cnfType string, name string, defaultVal string) (data string, err error) {
+func (cu systemConfigService) GetVal(db *gorm.DB, cnfType string, name string, defaultVal string) (data string, err error) {
 	config, err := cu.Get(db, cnfType, name)
 	if err != nil {
 		return data, err
@@ -45,7 +46,7 @@ func (cu configUtil) GetVal(db *gorm.DB, cnfType string, name string, defaultVal
 }
 
 // GetMap 根据类型和名称获取配置值(Json字符串转dict)
-func (cu configUtil) GetMap(db *gorm.DB, cnfType string, name string) (data map[string]string, err error) {
+func (cu systemConfigService) GetMap(db *gorm.DB, cnfType string, name string) (data map[string]string, err error) {
 	val, err := cu.GetVal(db, cnfType, name, "")
 	if err != nil {
 		return data, err
@@ -53,7 +54,7 @@ func (cu configUtil) GetMap(db *gorm.DB, cnfType string, name string) (data map[
 	if val == "" {
 		return map[string]string{}, nil
 	}
-	err = ToolsUtil.JsonToObj(val, &data)
+	err = util.ToolsUtil.JsonToObj(val, &data)
 	return data, err
 }
 
@@ -62,7 +63,7 @@ func (cu configUtil) GetMap(db *gorm.DB, cnfType string, name string) (data map[
 // @Param cnfType string  配置的类型
 // @Param name string  配置的名称
 // @Param val string  要设置的配置值
-func (cu configUtil) Set(db *gorm.DB, cnfType string, name string, val string) (err error) {
+func (cu systemConfigService) Set(db *gorm.DB, cnfType string, name string, val string) (err error) {
 	var config system_model.SystemConfig
 	err = db.Where("type = ? AND name = ?", cnfType, name).First(&config).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {

@@ -6,7 +6,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	. "x_admin/schema/monitorSchema"
+	"x_admin/schema/monitorSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
@@ -33,7 +33,7 @@ type monitorClientService struct {
 }
 
 // List 监控-客户端信息列表
-func (service monitorClientService) GetModel(listReq MonitorClientListReq) *gorm.DB {
+func (service monitorClientService) GetModel(listReq monitorSchema.MonitorClientListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.MonitorClient{})
 	if listReq.ProjectKey != nil {
@@ -81,7 +81,7 @@ func (service monitorClientService) GetModel(listReq MonitorClientListReq) *gorm
 }
 
 // List 监控-客户端信息列表
-func (service monitorClientService) List(page request.PageReq, listReq MonitorClientListReq) (res response.PageResp, e error) {
+func (service monitorClientService) List(page request.PageReq, listReq monitorSchema.MonitorClientListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -98,7 +98,7 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []MonitorClientResp{}
+	result := []monitorSchema.MonitorClientResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -109,7 +109,7 @@ func (service monitorClientService) List(page request.PageReq, listReq MonitorCl
 }
 
 // ListAll 监控-客户端信息列表
-func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res []MonitorClientResp, e error) {
+func (service monitorClientService) ListAll(listReq monitorSchema.MonitorClientListReq) (res []monitorSchema.MonitorClientResp, e error) {
 	dbModel := service.GetModel(listReq)
 
 	var modelList []model.MonitorClient
@@ -122,7 +122,7 @@ func (service monitorClientService) ListAll(listReq MonitorClientListReq) (res [
 	return res, nil
 }
 
-func (service monitorClientService) DetailByClientId(ClientId string) (res MonitorClientResp, e error) {
+func (service monitorClientService) DetailByClientId(ClientId string) (res monitorSchema.MonitorClientResp, e error) {
 	if ClientId == "" {
 		return res, errors.New("ClientId不能为空")
 	}
@@ -145,7 +145,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res Monit
 }
 
 // Detail 监控-客户端信息详情
-func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e error) {
+func (service monitorClientService) Detail(Id int) (res monitorSchema.MonitorClientResp, e error) {
 	var obj = model.MonitorClient{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
@@ -164,8 +164,8 @@ func (service monitorClientService) Detail(Id int) (res MonitorClientResp, e err
 }
 
 // ErrorUser 监控-客户端信息详情
-func (service monitorClientService) ErrorUsers(error_id int) (res []MonitorClientResp, e error) {
-	var obj = []MonitorClientResp{}
+func (service monitorClientService) ErrorUsers(error_id int) (res []monitorSchema.MonitorClientResp, e error) {
+	var obj = []monitorSchema.MonitorClientResp{}
 	service.db.Raw("SELECT client.*,list.width,list.height,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.cid where list.eid = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
 
 	convert_util.Copy(&res, obj)
@@ -173,7 +173,7 @@ func (service monitorClientService) ErrorUsers(error_id int) (res []MonitorClien
 }
 
 // Add 监控-客户端信息新增
-func (service monitorClientService) Add(addReq MonitorClientAddReq) (createId int, e error) {
+func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq) (createId int, e error) {
 	var obj model.MonitorClient
 	convert_util.StructToStruct(addReq, &obj)
 	err := service.db.Create(&obj).Error
@@ -252,7 +252,7 @@ func (service monitorClientService) GetExcelCol() []excel2.Col {
 }
 
 // ExportFile 监控-客户端信息导出
-func (service monitorClientService) ExportFile(listReq MonitorClientListReq) (res []MonitorClientResp, e error) {
+func (service monitorClientService) ExportFile(listReq monitorSchema.MonitorClientListReq) (res []monitorSchema.MonitorClientResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
@@ -262,13 +262,13 @@ func (service monitorClientService) ExportFile(listReq MonitorClientListReq) (re
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []MonitorClientResp{}
+	result := []monitorSchema.MonitorClientResp{}
 	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
-func (service monitorClientService) ImportFile(importReq []MonitorClientResp) (e error) {
+func (service monitorClientService) ImportFile(importReq []monitorSchema.MonitorClientResp) (e error) {
 	var importData []model.MonitorClient
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error

@@ -5,7 +5,8 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
-	. "x_admin/schema/settingSchema"
+	"x_admin/schema/settingSchema"
+
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -13,12 +14,12 @@ import (
 )
 
 type ISettingDictTypeService interface {
-	All() (res []SettingDictTypeResp, e error)
-	List(page request.PageReq, listReq SettingDictTypeListReq) (res response.PageResp, e error)
-	Detail(id uint) (res SettingDictTypeResp, e error)
-	Add(addReq SettingDictTypeAddReq) (e error)
-	Edit(editReq SettingDictTypeEditReq) (e error)
-	Del(delReq SettingDictTypeDelReq) (e error)
+	All() (res []settingSchema.SettingDictTypeResp, e error)
+	List(page request.PageReq, listReq settingSchema.SettingDictTypeListReq) (res response.PageResp, e error)
+	Detail(id uint) (res settingSchema.SettingDictTypeResp, e error)
+	Add(addReq settingSchema.SettingDictTypeAddReq) (e error)
+	Edit(editReq settingSchema.SettingDictTypeEditReq) (e error)
+	Del(delReq settingSchema.SettingDictTypeDelReq) (e error)
 }
 
 var DictTypeService = NewSettingDictTypeService()
@@ -35,19 +36,19 @@ type settingDictTypeService struct {
 }
 
 // All 字典类型所有
-func (dtSrv settingDictTypeService) All() (res []SettingDictTypeResp, e error) {
+func (dtSrv settingDictTypeService) All() (res []settingSchema.SettingDictTypeResp, e error) {
 	var dictTypes []setting_model.DictType
 	err := dtSrv.db.Where("is_delete = ?", 0).Order("id desc").Find(&dictTypes).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
-	res = []SettingDictTypeResp{}
+	res = []settingSchema.SettingDictTypeResp{}
 	convert_util.Copy(&res, dictTypes)
 	return
 }
 
 // List 字典类型列表
-func (dtSrv settingDictTypeService) List(page request.PageReq, listReq SettingDictTypeListReq) (res response.PageResp, e error) {
+func (dtSrv settingDictTypeService) List(page request.PageReq, listReq settingSchema.SettingDictTypeListReq) (res response.PageResp, e error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	dtModel := dtSrv.db.Model(&setting_model.DictType{}).Where("is_delete = ?", 0)
@@ -70,7 +71,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq SettingDi
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	dtResp := []SettingDictTypeResp{}
+	dtResp := []settingSchema.SettingDictTypeResp{}
 	convert_util.Copy(&dtResp, dts)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -81,7 +82,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq SettingDi
 }
 
 // Detail 字典类型详情
-func (dtSrv settingDictTypeService) Detail(id uint) (res SettingDictTypeResp, e error) {
+func (dtSrv settingDictTypeService) Detail(id uint) (res settingSchema.SettingDictTypeResp, e error) {
 	var dt setting_model.DictType
 	err := dtSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dt).Error
 	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {
@@ -95,7 +96,7 @@ func (dtSrv settingDictTypeService) Detail(id uint) (res SettingDictTypeResp, e 
 }
 
 // Add 字典类型新增
-func (dtSrv settingDictTypeService) Add(addReq SettingDictTypeAddReq) (e error) {
+func (dtSrv settingDictTypeService) Add(addReq settingSchema.SettingDictTypeAddReq) (e error) {
 	if r := dtSrv.db.Where("dict_name = ? AND is_delete = ?", addReq.DictName, 0).Limit(1).First(&setting_model.DictType{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典名称已存在！")
 	}
@@ -110,7 +111,7 @@ func (dtSrv settingDictTypeService) Add(addReq SettingDictTypeAddReq) (e error) 
 }
 
 // Edit 字典类型编辑
-func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e error) {
+func (dtSrv settingDictTypeService) Edit(editReq settingSchema.SettingDictTypeEditReq) (e error) {
 	var dt setting_model.DictType
 	err := dtSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dt).Error
 	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {
@@ -134,7 +135,7 @@ func (dtSrv settingDictTypeService) Edit(editReq SettingDictTypeEditReq) (e erro
 }
 
 // Del 字典类型删除
-func (dtSrv settingDictTypeService) Del(delReq SettingDictTypeDelReq) (e error) {
+func (dtSrv settingDictTypeService) Del(delReq settingSchema.SettingDictTypeDelReq) (e error) {
 	err := dtSrv.db.Model(&setting_model.DictType{}).Where("id IN ?", delReq.Ids).Updates(
 		setting_model.DictType{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
 	return response.CheckErr(err, "Del Update err")

@@ -8,7 +8,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	. "x_admin/schema/systemSchema"
+	"x_admin/schema/systemSchema"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
@@ -30,7 +30,7 @@ type systemAuthRoleService struct {
 }
 
 // All 角色所有
-func (roleSrv systemAuthRoleService) All() (res []SystemAuthRoleSimpleResp, e error) {
+func (roleSrv systemAuthRoleService) All() (res []systemSchema.SystemAuthRoleSimpleResp, e error) {
 	var roles []system_model.SystemAuthRole
 	err := roleSrv.db.Order("sort desc, id desc").Find(&roles).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
@@ -55,7 +55,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	var roleResp []SystemAuthRoleResp
+	var roleResp []systemSchema.SystemAuthRoleResp
 	convert_util.Copy(&roleResp, roles)
 	for i := 0; i < len(roleResp); i++ {
 		roleResp[i].Menus = []uint{}
@@ -70,7 +70,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 }
 
 // Detail 角色详情
-func (roleSrv systemAuthRoleService) Detail(id uint) (res SystemAuthRoleResp, e error) {
+func (roleSrv systemAuthRoleService) Detail(id uint) (res systemSchema.SystemAuthRoleResp, e error) {
 	var role system_model.SystemAuthRole
 	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&role).Error
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
@@ -93,7 +93,7 @@ func (roleSrv systemAuthRoleService) getMemberCnt(roleId uint) (count int64) {
 }
 
 // Add 新增角色
-func (roleSrv systemAuthRoleService) Add(addReq SystemAuthRoleAddReq) (e error) {
+func (roleSrv systemAuthRoleService) Add(addReq systemSchema.SystemAuthRoleAddReq) (e error) {
 	var role system_model.SystemAuthRole
 	if r := roleSrv.db.Where("name = ?", strings.Trim(addReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("角色名称已存在!")
@@ -115,7 +115,7 @@ func (roleSrv systemAuthRoleService) Add(addReq SystemAuthRoleAddReq) (e error) 
 }
 
 // Edit 编辑角色
-func (roleSrv systemAuthRoleService) Edit(editReq SystemAuthRoleEditReq) (e error) {
+func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEditReq) (e error) {
 	err := roleSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&system_model.SystemAuthRole{}).Error
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return

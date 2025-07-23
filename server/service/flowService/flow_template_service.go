@@ -5,7 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	. "x_admin/schema/flowSchema"
+	"x_admin/schema/flowSchema"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
@@ -25,7 +25,7 @@ type flowTemplateService struct {
 }
 
 // List 流程模板列表
-func (service flowTemplateService) List(page request.PageReq, listReq FlowTemplateListReq) (res response.PageResp, e error) {
+func (service flowTemplateService) List(page request.PageReq, listReq flowSchema.FlowTemplateListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -58,7 +58,7 @@ func (service flowTemplateService) List(page request.PageReq, listReq FlowTempla
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	result := []FlowTemplateResp{}
+	result := []flowSchema.FlowTemplateResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -69,7 +69,7 @@ func (service flowTemplateService) List(page request.PageReq, listReq FlowTempla
 }
 
 // ListAll 流程模板列表
-func (service flowTemplateService) ListAll() (res []FlowTemplateResp, e error) {
+func (service flowTemplateService) ListAll() (res []flowSchema.FlowTemplateResp, e error) {
 	var modelList []model.FlowTemplate
 	err := service.db.Find(&modelList).Error
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
@@ -80,7 +80,7 @@ func (service flowTemplateService) ListAll() (res []FlowTemplateResp, e error) {
 }
 
 // Detail 流程模板详情
-func (service flowTemplateService) Detail(id int) (res FlowTemplateResp, e error) {
+func (service flowTemplateService) Detail(id int) (res flowSchema.FlowTemplateResp, e error) {
 	var obj model.FlowTemplate
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -94,7 +94,7 @@ func (service flowTemplateService) Detail(id int) (res FlowTemplateResp, e error
 }
 
 // Add 流程模板新增
-func (service flowTemplateService) Add(addReq FlowTemplateAddReq) (e error) {
+func (service flowTemplateService) Add(addReq flowSchema.FlowTemplateAddReq) (e error) {
 	var obj model.FlowTemplate
 	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
@@ -103,7 +103,7 @@ func (service flowTemplateService) Add(addReq FlowTemplateAddReq) (e error) {
 }
 
 // Edit 流程模板编辑
-func (service flowTemplateService) Edit(editReq FlowTemplateEditReq) (e error) {
+func (service flowTemplateService) Edit(editReq flowSchema.FlowTemplateEditReq) (e error) {
 	var obj model.FlowTemplate
 	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
 	// 校验

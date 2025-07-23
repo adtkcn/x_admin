@@ -5,7 +5,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	. "x_admin/schema/systemSchema"
+	"x_admin/schema/systemSchema"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
@@ -34,19 +34,19 @@ type systemAuthPostService struct {
 }
 
 // All 岗位所有
-func (service systemAuthPostService) All() (res []SystemAuthPostResp, e error) {
+func (service systemAuthPostService) All() (res []systemSchema.SystemAuthPostResp, e error) {
 	var posts []system_model.SystemAuthPost
 	err := service.db.Order("sort desc, id desc").Find(&posts).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
-	res = []SystemAuthPostResp{}
+	res = []systemSchema.SystemAuthPostResp{}
 	convert_util.Copy(&res, posts)
 	return
 }
 
 // List 岗位列表
-func (service systemAuthPostService) List(page request.PageReq, listReq SystemAuthPostListReq) (res response.PageResp, e error) {
+func (service systemAuthPostService) List(page request.PageReq, listReq systemSchema.SystemAuthPostListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -73,7 +73,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq SystemAu
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	postResps := []SystemAuthPostResp{}
+	postResps := []systemSchema.SystemAuthPostResp{}
 	convert_util.Copy(&postResps, posts)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -84,7 +84,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq SystemAu
 }
 
 // Detail 部门详情
-func (service systemAuthPostService) Detail(id uint) (res SystemAuthPostResp, e error) {
+func (service systemAuthPostService) Detail(id uint) (res systemSchema.SystemAuthPostResp, e error) {
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&post).Error
 	if e = response.CheckErrDBNotRecord(err, "岗位不存在!"); e != nil {
@@ -98,7 +98,7 @@ func (service systemAuthPostService) Detail(id uint) (res SystemAuthPostResp, e 
 }
 
 // Add 部门新增
-func (service systemAuthPostService) Add(addReq SystemAuthPostAddReq) (e error) {
+func (service systemAuthPostService) Add(addReq systemSchema.SystemAuthPostAddReq) (e error) {
 	r := service.db.Where("(code = ? OR name = ?) AND is_delete = ?", addReq.Code, addReq.Name, 0).Limit(1).Find(&system_model.SystemAuthPost{})
 	if e = response.CheckErr(r.Error, "Add Find err"); e != nil {
 		return
@@ -114,7 +114,7 @@ func (service systemAuthPostService) Add(addReq SystemAuthPostAddReq) (e error) 
 }
 
 // Edit 部门编辑
-func (service systemAuthPostService) Edit(editReq SystemAuthPostEditReq) (e error) {
+func (service systemAuthPostService) Edit(editReq systemSchema.SystemAuthPostEditReq) (e error) {
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&post).Error
 	// 校验

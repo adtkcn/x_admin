@@ -4,16 +4,17 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	. "x_admin/schema/systemSchema"
+	"x_admin/schema/systemSchema"
+
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
 )
 
 // type ISystemAuthDeptService interface {
-// 	All() (res []SystemAuthDeptResp, e error)
+// 	All() (res []systemSchema.SystemAuthDeptResp, e error)
 // 	List(listReq SystemAuthDeptListReq) (mapList []interface{}, e error)
-// 	Detail(id uint) (res SystemAuthDeptResp, e error)
+// 	Detail(id uint) (res systemSchema.SystemAuthDeptResp, e error)
 // 	Add(addReq SystemAuthDeptAddReq) (e error)
 // 	Edit(editReq SystemAuthDeptEditReq) (e error)
 // 	Del(id uint) (e error)
@@ -33,19 +34,19 @@ type systemAuthDeptService struct {
 }
 
 // All 部门所有
-func (service systemAuthDeptService) All() (res []SystemAuthDeptResp, e error) {
+func (service systemAuthDeptService) All() (res []systemSchema.SystemAuthDeptResp, e error) {
 	var depts []system_model.SystemAuthDept
 	err := service.db.Where("is_delete = ?", 0).Order("sort desc, id desc").Find(&depts).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
-	res = []SystemAuthDeptResp{}
+	res = []systemSchema.SystemAuthDeptResp{}
 	convert_util.Copy(&res, depts)
 	return
 }
 
 // List 部门列表
-func (service systemAuthDeptService) List(listReq SystemAuthDeptListReq) (deptResps []SystemAuthDeptResp, e error) {
+func (service systemAuthDeptService) List(listReq systemSchema.SystemAuthDeptListReq) (deptResps []systemSchema.SystemAuthDeptResp, e error) {
 	deptModel := service.db.Where("is_delete = ?", 0)
 	if listReq.Name != "" {
 		deptModel = deptModel.Where("name like ?", "%"+listReq.Name+"%")
@@ -63,7 +64,7 @@ func (service systemAuthDeptService) List(listReq SystemAuthDeptListReq) (deptRe
 }
 
 // Detail 部门详情
-func (service systemAuthDeptService) Detail(id uint) (res SystemAuthDeptResp, e error) {
+func (service systemAuthDeptService) Detail(id uint) (res systemSchema.SystemAuthDeptResp, e error) {
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dept).Error
 	if e = response.CheckErrDBNotRecord(err, "部门已不存在!"); e != nil {
@@ -77,7 +78,7 @@ func (service systemAuthDeptService) Detail(id uint) (res SystemAuthDeptResp, e 
 }
 
 // Add 部门新增
-func (service systemAuthDeptService) Add(addReq SystemAuthDeptAddReq) (e error) {
+func (service systemAuthDeptService) Add(addReq systemSchema.SystemAuthDeptAddReq) (e error) {
 	if addReq.Pid == 0 {
 		r := service.db.Where("pid = ? AND is_delete = ?", 0, 0).Limit(1).Find(&system_model.SystemAuthDept{})
 		if e = response.CheckErr(r.Error, "Add Find err"); e != nil {
@@ -95,7 +96,7 @@ func (service systemAuthDeptService) Add(addReq SystemAuthDeptAddReq) (e error) 
 }
 
 // Edit 部门编辑
-func (service systemAuthDeptService) Edit(editReq SystemAuthDeptEditReq) (e error) {
+func (service systemAuthDeptService) Edit(editReq systemSchema.SystemAuthDeptEditReq) (e error) {
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dept).Error
 	// 校验
