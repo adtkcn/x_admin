@@ -9,7 +9,7 @@
                 v-bind="config"
                 :default-active="activeMenu"
                 :collapse="isCollapsed"
-                :collapse-transition="true"
+                :collapse-transition="isCollapsed"
                 mode="vertical"
                 :unique-opened="uniqueOpened"
                 @select="$emit('select')"

@@ -1,6 +1,6 @@
 <template>
     <div class="layout-default flex h-screen w-full">
-        <div class="app-aside">
+        <div class="app-aside" :style="{ width: MainLayoutWidth }">
             <layout-sidebar />
         </div>
 
@@ -8,7 +8,7 @@
             <div class="app-header">
                 <layout-header />
             </div>
-            <div class="app-main flex-1 min-h-0" :style="{ width: MainLayoutWidth }">
+            <div class="app-main flex-1 min-h-0">
                 <layout-main />
             </div>
         </div>
@@ -43,12 +43,18 @@ const settingStore = useSettingStore()
 const MainLayoutWidth = ref('auto')
 watch(
     () => showMenuDrawer.value,
-    throttle(() => {
-        MainLayoutWidth.value = `calc(100vw - ${settingStore.sideWidth}px)`
+    () => {
+        if (!appStore.isMobile) {
+            if (appStore.isCollapsed) {
+                MainLayoutWidth.value = `50px`
+            } else {
+                MainLayoutWidth.value = `${settingStore.sideWidth}px`
+            }
+        }
 
         setTimeout(() => {
             MainLayoutWidth.value = 'auto'
-        }, 500)
-    }, 50)
+        }, 800)
+    }
 )
 </script>
