@@ -2,11 +2,15 @@ import SparkMD5 from 'spark-md5'
 import axios from 'axios'
 
 export interface FileUploaderOptions {
+    /**
+     * 分块大小
+     */
     chunkSize?: number
     onSuccess?: (filePath: string) => void
     onError?: (error: Error) => void
     onUploadProgress?: (
         chunkIndex: number,
+        chunkCount: number,
         chunkLoaded: number,
         chunkTotal: number,
         chunkPercent: number
@@ -34,39 +38,27 @@ export default class FileUploader {
         this.startChunkIndex = -1
         this.onSuccess(filePath)
     }
-    onSuccess: FileUploaderOptions['onSuccess'] = (filePath) => {
-        console.log('上传完成', filePath)
-    }
-    onChunkSuccess: FileUploaderOptions['onChunkSuccess'] = (chunkIndex: number) => {
-        console.log(`分片 ${chunkIndex}/${this.chunkCount} 上传成功`)
-    }
-    onChunkError: FileUploaderOptions['onChunkError'] = (chunkIndex: number, error: Error) => {
-        console.log(`分片 ${chunkIndex}/${this.chunkCount} 上传失败`, error)
-    }
     error(error: Error) {
         this.uploading = false
         this.startChunkIndex = -1
         this.onError(error)
     }
-    onError: FileUploaderOptions['onError'] = (error: Error) => {
-        console.log('上传错误', error)
-    }
     uploadProgress(chunkIndex: number, chunkLoaded: number, chunkTotal: number) {
         // 计算百分比
         const chunkPercent = Math.floor((chunkLoaded / chunkTotal) * 100)
-        this.onUploadProgress(chunkIndex, chunkLoaded, chunkTotal, chunkPercent)
+        this.onUploadProgress(chunkIndex, this.chunkCount, chunkLoaded, chunkTotal, chunkPercent)
     }
-    onUploadProgress: FileUploaderOptions['onUploadProgress'] = (
-        chunkIndex: number,
-        chunkLoaded: number,
-        chunkTotal: number,
-        chunkPercent: number
-    ) => {
-        console.log(
-            `上传进度: 分片${chunkIndex}/${this.chunkCount},分片进度${chunkLoaded}/${chunkTotal},${chunkPercent}%`
-        )
-    }
+    onSuccess: FileUploaderOptions['onSuccess'] = function () {}
+    onChunkSuccess: FileUploaderOptions['onChunkSuccess'] = function () {}
+    onChunkError: FileUploaderOptions['onChunkError'] = function () {}
+    onError: FileUploaderOptions['onError'] = function () {}
+    onUploadProgress: FileUploaderOptions['onUploadProgress'] = function () {}
 
+    /**
+     * 构造函数
+     * @param options
+     * @param file 上传的文件
+     */
     constructor(options: FileUploaderOptions, file?: File) {
         if (options?.chunkSize) {
             this.chunkSize = options.chunkSize
@@ -90,6 +82,12 @@ export default class FileUploader {
             this.loadFile(file)
         }
     }
+    /**
+     * 加载文件
+     * @param file
+     * @param fileName
+     * @returns
+     */
     public loadFile(file: File, fileName?: string) {
         if (this.uploading) {
             this.error(new Error('请等待上一个文件上传完成'))
@@ -125,14 +123,19 @@ export default class FileUploader {
         this.abortControllers.push(controller)
         return controller.signal
     }
-    cancel() {
+    /**
+     * 取消上传
+     */
+    public cancel() {
         this.uploading = false
         this.abortControllers.forEach((controller) => controller.abort())
         this.abortControllers.length = 0 // 清空数组
 
         this.startChunkIndex = -1
     }
-    // 开始上传
+    /**
+     * 开始上传
+     */
     public async start() {
         try {
             if (!this.file) {
@@ -260,10 +263,8 @@ export default class FileUploader {
             console.log('result', result)
 
             if (result.data.code === 200) {
-                // console.log(`分片 ${index + 1}/${this.chunkCount} 上传成功`)
-                this.onChunkSuccess?.(index)
+                this.onChunkSuccess?.(index + 1)
             } else {
-                // console.error(`分片 ${index + 1}/${this.chunkCount} 上传失败: ${result}`)
                 this.onChunkError?.(index + 1, new Error(result.data.message))
                 this.error(new Error(result.data.message))
             }
@@ -271,9 +272,7 @@ export default class FileUploader {
             if (axios.isCancel(error)) {
                 return
             }
-            console.error(`分片 ${index + 1}/${this.chunkCount} 上传失败: ${error}`)
-
-            this.onChunkError?.(index, error)
+            this.onChunkError?.(index + 1, error)
             this.error(error)
         } finally {
             chunk = null

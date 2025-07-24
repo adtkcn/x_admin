@@ -4,6 +4,8 @@
         <el-button type="primary" @click="btn">上传</el-button>
         <el-button type="primary" @click="cancel">取消</el-button>
         <el-button type="primary" @click="merge">合并</el-button>
+
+        {{ status }}
     </div>
 </template>
 
@@ -13,7 +15,7 @@ import { ElMessage } from 'element-plus'
 import FileUploader from '@/utils/FileUploader'
 
 const fileInput = ref<HTMLInputElement>()
-
+const status = ref('')
 const fileUploader = new FileUploader({
     chunkSize: 1024 * 1024 * 1,
     onSuccess(filePath) {
@@ -22,6 +24,21 @@ const fileUploader = new FileUploader({
     onError(error) {
         // console.error('error', error)
         ElMessage.error(error.message)
+    },
+    onChunkSuccess(chunkIndex: number) {
+        console.log(`分片 ${chunkIndex}/${this.chunkCount} 上传成功`)
+    },
+    onChunkError(chunkIndex: number, error: Error) {
+        console.log(`分片 ${chunkIndex}/${this.chunkCount} 上传失败`, error)
+    },
+    onUploadProgress(
+        chunkIndex: number,
+        chunkCount: number,
+        chunkLoaded: number,
+        chunkTotal: number,
+        chunkPercent: number
+    ) {
+        status.value = `分片${chunkIndex}/${chunkCount}进度：${chunkPercent}%`
     }
 })
 function handleChange(e) {
