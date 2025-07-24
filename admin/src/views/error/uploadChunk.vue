@@ -1,8 +1,9 @@
 <template>
     <div class="card">
         <input type="file" ref="fileInput" @change="handleChange" />
-        <el-button @click="btn">上传</el-button>
-        <el-button @click="merge">合并</el-button>
+        <el-button type="primary" @click="btn">上传</el-button>
+        <el-button type="primary" @click="cancel">取消</el-button>
+        <el-button type="primary" @click="merge">合并</el-button>
     </div>
 </template>
 
@@ -33,6 +34,9 @@ function handleChange(e) {
 }
 function btn() {
     fileUploader.start()
+}
+function cancel() {
+    fileUploader.cancel()
 }
 function merge() {
     fileUploader.mergeChunk()
