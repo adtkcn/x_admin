@@ -181,7 +181,8 @@ const treeConfig = {
     rowField: 'id',
     childrenField: 'children',
     indent: 10,
-    reserve: true
+    reserve: true,
+    lazy: true
 }
 const tableRef = useTemplateRef<VxeTableInstance<any>>('tableRef')
 const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')

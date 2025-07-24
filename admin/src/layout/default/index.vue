@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
 // 节流
-import { throttle } from 'lodash-es'
+// import { throttle } from 'lodash-es'
 import LayoutMain from './components/main.vue'
 import LayoutSidebar from './components/sidebar/index.vue'
 import LayoutHeader from './components/header/index.vue'
@@ -54,7 +54,7 @@ watch(
 
         setTimeout(() => {
             MainLayoutWidth.value = 'auto'
-        }, 800)
+        }, 600)
     }
 )
 </script>
