@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	constant "x_admin/util/aj-captcha-go/const"
+	"x_admin/util/aj-captcha-go/constant"
 	"x_admin/util/aj-captcha-go/util"
 )
 

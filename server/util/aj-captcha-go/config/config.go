@@ -2,7 +2,7 @@ package config
 
 import (
 	"image/color"
-	constant "x_admin/util/aj-captcha-go/const"
+	"x_admin/util/aj-captcha-go/constant"
 )
 
 // WatermarkConfig 水印设置

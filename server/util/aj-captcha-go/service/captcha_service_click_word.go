@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	constant "x_admin/util/aj-captcha-go/const"
+	"x_admin/util/aj-captcha-go/constant"
 	"x_admin/util/aj-captcha-go/model/vo"
 	"x_admin/util/aj-captcha-go/util"
 	img "x_admin/util/aj-captcha-go/util/image"

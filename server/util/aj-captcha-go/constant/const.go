@@ -23,11 +23,11 @@ const (
 
 const (
 	// DefaultTemplateImageDirectory 滑动模板图文件目录地址
-	DefaultTemplateImageDirectory = "/resources/defaultImages/jigsaw/slidingBlock"
+	DefaultTemplateImageDirectory = "resources/defaultImages/jigsaw/slidingBlock"
 	// DefaultBackgroundImageDirectory 背景图片目录地址
-	DefaultBackgroundImageDirectory = "/resources/defaultImages/jigsaw/original"
+	DefaultBackgroundImageDirectory = "resources/defaultImages/jigsaw/original"
 	// DefaultClickBackgroundImageDirectory 点击背景图默认地址
-	DefaultClickBackgroundImageDirectory = "/resources/defaultImages/pic-click"
+	DefaultClickBackgroundImageDirectory = "resources/defaultImages/pic-click"
 	// DefaultFont 字体文件地址
-	DefaultFont = "/resources/fonts/WenQuanZhengHei.ttf"
+	DefaultFont = "resources/fonts/WenQuanZhengHei.ttf"
 )

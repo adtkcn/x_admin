@@ -4,24 +4,24 @@ import (
 	"image/color"
 	"x_admin/core"
 	"x_admin/schema/commonSchema"
-	config2 "x_admin/util/aj-captcha-go/config"
-	constant "x_admin/util/aj-captcha-go/const"
+	"x_admin/util/aj-captcha-go/config"
+	"x_admin/util/aj-captcha-go/constant"
 	"x_admin/util/aj-captcha-go/service"
 )
 
-// var captcha_config = config2.NewConfig()// 默认配置，可以根据项目自行配置，将其他类型配置序列化上去
-var captcha_config = config2.Config{
+// var captcha_config = config.NewConfig()// 默认配置，可以根据项目自行配置，将其他类型配置序列化上去
+var captcha_config = config.Config{
 	CacheType: constant.RedisCacheKey,
-	Watermark: &config2.WatermarkConfig{
+	Watermark: &config.WatermarkConfig{
 		FontSize: 12,
 		Color:    color.RGBA{R: 255, G: 255, B: 255, A: 255},
 		Text:     "admin",
 	},
-	ClickWord: &config2.ClickWordConfig{
+	ClickWord: &config.ClickWordConfig{
 		FontSize: 25,
 		FontNum:  4,
 	},
-	BlockPuzzle:    &config2.BlockPuzzleConfig{Offset: 10},
+	BlockPuzzle:    &config.BlockPuzzleConfig{Offset: 10},
 	CacheExpireSec: 2 * 60, // 缓存有效时间
 }
 
