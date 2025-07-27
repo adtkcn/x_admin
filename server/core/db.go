@@ -24,11 +24,14 @@ func initMysql() *gorm.DB {
 	slowThreshold := time.Second
 	ignoreRecordNotFoundError := true
 	logLevel := logger.Warn
-	if config.Config.GinMode == "debug" {
+	if config.DBConfig.LogLevel == "info" {
 		logLevel = logger.Info
-		slowThreshold = 200 * time.Millisecond
 		ignoreRecordNotFoundError = false
 	}
+	if config.DBConfig.SlowThreshold > 0 {
+		slowThreshold = config.DBConfig.SlowThreshold
+	}
+
 	logger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
 		logger.Config{
@@ -40,13 +43,13 @@ func initMysql() *gorm.DB {
 	)
 	// 初始化会话
 	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:                       config.Config.DatabaseUrl,         // DSN data source name
-		DefaultStringSize:         config.Config.DbDefaultStringSize, // string 类型字段的默认长度
+		DSN:                       config.DBConfig.Dsn,               // DSN data source name
+		DefaultStringSize:         config.DBConfig.DefaultStringSize, // string 类型字段的默认长度
 		SkipInitializeWithVersion: false,                             // 根据当前 MySQL 版本自动配置
 	}), &gorm.Config{
 		SkipDefaultTransaction: true, // 禁用默认事务
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix:   config.Config.DbTablePrefix, // 表名前缀
+			TablePrefix:   config.DBConfig.TablePrefix, // 表名前缀
 			SingularTable: true,                        // 使用单一表名, eg. `User` => `user`
 		},
 		DisableForeignKeyConstraintWhenMigrating: true,   // 禁用自动创建外键约束
@@ -61,11 +64,11 @@ func initMysql() *gorm.DB {
 		log.Fatal("initMysql db.DB err:", err)
 	}
 	// 数据库空闲连接池最大值
-	sqlDB.SetMaxIdleConns(config.Config.DbMaxIdleConns)
+	sqlDB.SetMaxIdleConns(config.DBConfig.MaxIdleConns)
 	// 数据库连接池最大值
-	sqlDB.SetMaxOpenConns(config.Config.DbMaxOpenConns)
+	sqlDB.SetMaxOpenConns(config.DBConfig.MaxOpenConns)
 	// 连接可复用的最大时间
-	sqlDB.SetConnMaxLifetime(time.Duration(config.Config.DbConnMaxLifetimeSeconds) * time.Second)
+	sqlDB.SetConnMaxLifetime(time.Duration(config.DBConfig.ConnMaxLifetimeSeconds) * time.Second)
 	return db
 }
 

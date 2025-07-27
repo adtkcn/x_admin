@@ -27,11 +27,11 @@ var staticFs embed.FS
 // initRouter 初始化router
 func initRouter() *gin.Engine {
 	// 初始化gin
-	gin.SetMode(config.Config.GinMode)
+	gin.SetMode(config.AppConfig.GinMode)
 	r := gin.New()
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 	// 设置静态路径
-	r.Static(config.Config.PublicPrefix, config.Config.UploadDirectory)
+	r.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
 
 	staticHttpFs := http.FS(staticFs)
 	r.GET("/api/static/*filepath", func(c *gin.Context) {
@@ -44,7 +44,7 @@ func initRouter() *gin.Engine {
 	r.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 
 	// 演示模式
-	if config.Config.DisallowModify {
+	if config.AppConfig.DisallowModify {
 		r.Use(middleware.ShowMode())
 	}
 	// 特殊异常处理
@@ -61,7 +61,7 @@ func initRouter() *gin.Engine {
 // initServer 初始化server
 func initServer(router *gin.Engine) *http.Server {
 	return &http.Server{
-		Addr:           ":" + strconv.Itoa(config.Config.ServerPort),
+		Addr:           ":" + strconv.Itoa(config.AppConfig.Port),
 		Handler:        router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   100 * time.Second,
@@ -104,7 +104,7 @@ func main() {
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
 
-	fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.Config.ServerPort)
+	fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
 	// 初始化server
 	s := initServer(router)
 	// 运行服务

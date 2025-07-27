@@ -170,13 +170,13 @@ func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_
 
 // ToModuleName 表名转业务名
 func (gu genUtil) ToModuleName(name string) string {
-	names := strings.Split(name, config.Config.DbTablePrefix)
+	names := strings.Split(name, config.DBConfig.TablePrefix)
 	return names[len(names)-1]
 }
 
 // ToClassName 表名转类名
 func (gu genUtil) ToClassName(name string) string {
-	tablePrefix := config.Config.DbTablePrefix
+	tablePrefix := config.DBConfig.TablePrefix
 	name = strings.TrimPrefix(name, tablePrefix)
 
 	return util.StringUtil.ToCamelCase(name)

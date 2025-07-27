@@ -11,7 +11,7 @@ import (
 var (
 	UrlUtil = urlUtil{}
 
-	publicPrefix = config.Config.PublicPrefix //"/api/uploads"
+	publicPrefix = config.FileConfig.PublicPrefix //"/api/uploads"
 )
 
 // urlUtil 文件路径处理工具

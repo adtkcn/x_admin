@@ -11,6 +11,6 @@ func TestCheckSafeString(t *testing.T) {
 	}
 	// 测试包含特殊字符的字符串
 	if !StringUtil.CheckSafeString("abc123!") {
-		t.Log("包含特殊字符的字符串")
+		t.Errorf("CheckSafeString failed, input: %s", "abc123!")
 	}
 }

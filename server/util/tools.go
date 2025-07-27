@@ -49,7 +49,7 @@ func (tu toolsUtil) MakeMd5(data string) string {
 func (tu toolsUtil) MakeToken() string {
 	ms := time.Now().UnixMilli()
 	token := tu.MakeMd5(tu.MakeUuid() + strconv.FormatInt(ms, 10) + tu.RandomString(8))
-	tokenSecret := token + config.Config.Secret
+	tokenSecret := token + config.AppConfig.Secret
 	return tu.MakeMd5(tokenSecret) + tu.RandomString(6)
 }
 

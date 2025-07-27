@@ -73,7 +73,7 @@ func (albSrv albumService) AlbumList(page request.PageReq, listReq commonSchema.
 	engine := "local"
 	for i := 0; i < len(albumResps); i++ {
 		if engine == "local" {
-			albumResps[i].Path = path.Join(config.Config.PublicPrefix, albums[i].Uri)
+			albumResps[i].Path = path.Join(config.FileConfig.PublicPrefix, albums[i].Uri)
 		} else {
 			// TODO: 其他engine
 		}

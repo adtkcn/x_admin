@@ -61,7 +61,7 @@ func (sd storageDriver) Upload(file *multipart.FileHeader, folder string, fileTy
 func (sd storageDriver) localUpload(file *multipart.FileHeader, key string, folder string) (e error) {
 	// TODO: 临时方法，后续调整
 	// 映射目录
-	directory := config.Config.UploadDirectory
+	directory := config.FileConfig.UploadDirectory
 	// 打开源文件
 	src, err := file.Open()
 	if err != nil {
@@ -113,19 +113,19 @@ func (sd storageDriver) checkFile(file *multipart.FileHeader, fileType int) (e e
 	switch fileType {
 	case 10:
 		// 图片文件
-		if !util.ToolsUtil.Contains(config.Config.UploadImageExt, fileExt) {
+		if !util.ToolsUtil.Contains(config.FileConfig.UploadImageExt, fileExt) {
 			return response.Failed.SetMessage("不被支持的图片扩展: " + fileExt)
 		}
-		if fileSize > config.Config.UploadImageSize {
-			return response.Failed.SetMessage("上传图片不能超出限制: " + strconv.FormatInt(config.Config.UploadImageSize/1024/1024, 10) + "M")
+		if fileSize > config.FileConfig.UploadImageSize {
+			return response.Failed.SetMessage("上传图片不能超出限制: " + strconv.FormatInt(config.FileConfig.UploadImageSize/1024/1024, 10) + "M")
 		}
 	case 20:
 		// 视频文件
-		if !util.ToolsUtil.Contains(config.Config.UploadVideoExt, fileExt) {
+		if !util.ToolsUtil.Contains(config.FileConfig.UploadVideoExt, fileExt) {
 			return response.Failed.SetMessage("不被支持的视频扩展: " + fileExt)
 		}
-		if fileSize > config.Config.UploadVideoSize {
-			return response.Failed.SetMessage("上传视频不能超出限制: " + strconv.FormatInt(config.Config.UploadVideoSize/1024/1024, 10) + "M")
+		if fileSize > config.FileConfig.UploadVideoSize {
+			return response.Failed.SetMessage("上传视频不能超出限制: " + strconv.FormatInt(config.FileConfig.UploadVideoSize/1024/1024, 10) + "M")
 		}
 	default:
 		core.Logger.Errorf("storageDriver.checkFile fileType err: err=[unsupported fileType]")

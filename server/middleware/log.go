@@ -109,7 +109,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		}()
 		// 执行方法
 		c.Next()
-		if config.Config.GinMode != "release" {
+		if config.AppConfig.GinMode == "debug" {
 			return
 		}
 		if len(c.Errors) > 0 {

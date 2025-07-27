@@ -273,7 +273,7 @@ func (genSrv generateService) EditTable(editReq generatorSchema.EditTableReq) (e
 	}
 	convert_util.Copy(&genTable, editReq)
 	err = genSrv.db.Transaction(func(tx *gorm.DB) error {
-		genTable.SubTableName = strings.Replace(editReq.SubTableName, config.Config.DbTablePrefix, "", 1)
+		genTable.SubTableName = strings.Replace(editReq.SubTableName, config.DBConfig.TablePrefix, "", 1)
 		txErr := tx.Save(&genTable).Error
 		if te := response.CheckErr(txErr, "更新失败"); te != nil {
 			return te

@@ -13,13 +13,13 @@ var Redis = initRedis()
 
 // initRedis 初始化redis客户端
 func initRedis() *redis.Client {
-	opt, err := redis.ParseURL(config.Config.RedisUrl)
+	opt, err := redis.ParseURL(config.RedisConfig.Url)
 	if err != nil {
 		log.Fatal("initRedis redis.ParseURL err: ", err)
 	}
 	// opt.PoolSize = config.Config.RedisPoolSize
-	opt.MaxIdleConns = config.Config.RedisMaxIdleConns
-	opt.ConnMaxLifetime = config.Config.RedisConnMaxLifetime
+	opt.MaxIdleConns = config.RedisConfig.MaxIdleConns
+	opt.ConnMaxLifetime = config.RedisConfig.ConnMaxLifetime
 
 	client := redis.NewClient(opt)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

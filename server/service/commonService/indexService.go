@@ -33,7 +33,7 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 	}
 	version := map[string]interface{}{
 		"name":    name,
-		"version": config.Config.Version,
+		"version": config.AppConfig.Version,
 		"website": "x.adtk.cn",
 		"based":   "Vue3.x、ElementUI、MySQL",
 		"channel": map[string]string{
@@ -94,7 +94,7 @@ func (iSrv indexService) Config() (res map[string]interface{}, e error) {
 		"webLogo":     util.UrlUtil.ToAbsoluteUrl(website["logo"]),
 		"webFavicon":  util.UrlUtil.ToAbsoluteUrl(website["favicon"]),
 		"webBackdrop": util.UrlUtil.ToAbsoluteUrl(website["backdrop"]),
-		"ossDomain":   config.Config.OssDomain,
+		"ossDomain":   config.AppConfig.OssDomain,
 		"copyright":   copyright,
 	}, nil
 }
