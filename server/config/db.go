@@ -16,7 +16,7 @@ type dbConfig struct {
 
 var DBConfig = dbConfig{
 	Type:                   "mysql",
-	Dsn:                    "root:123456@tcp(127.0.0.1:3306)/x_admin?charset=utf8mb4&parseTime=True&loc=Local",
+	Dsn:                    "", //root:123456@tcp(127.0.0.1:3306)/x_admin?charset=utf8mb4&parseTime=True&loc=Local
 	MaxOpenConns:           100,
 	MaxIdleConns:           10,
 	ConnMaxLifetimeSeconds: 60 * 60 * 24,

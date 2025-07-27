@@ -32,6 +32,6 @@ components.d.ts
 *.sw?
 
 # .env
-.env.development
+# .env.development
 .env.production
 test.html
