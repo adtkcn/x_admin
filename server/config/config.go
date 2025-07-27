@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"log"
 
@@ -23,8 +24,8 @@ var Config = loadConfig(config{
 
 func loadConfig(config config) config {
 	var envFilePath string
-	// flag.StringVar(&envFilePath, "env", "", "-env config file envPath.")
-	// flag.Parse()
+	flag.StringVar(&envFilePath, "env", "", "-env 配置文件路径，默认运行目录下的.env文件")
+	flag.Parse()
 	if envFilePath == "" {
 		envFilePath = ".env"
 	}
