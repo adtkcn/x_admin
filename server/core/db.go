@@ -20,6 +20,7 @@ func GetDB() *gorm.DB {
 
 // initMysql 初始化mysql会话
 func initMysql() *gorm.DB {
+	// fmt.Printf("%#v\n", config.DBConfig)
 	// 日志配置
 	slowThreshold := time.Second
 	ignoreRecordNotFoundError := true
@@ -29,7 +30,7 @@ func initMysql() *gorm.DB {
 		ignoreRecordNotFoundError = false
 	}
 	if config.DBConfig.SlowThreshold > 0 {
-		slowThreshold = config.DBConfig.SlowThreshold
+		slowThreshold = time.Duration(config.DBConfig.SlowThreshold) * time.Second
 	}
 
 	logger := logger.New(
@@ -59,7 +60,7 @@ func initMysql() *gorm.DB {
 		log.Fatal("initMysql gorm.Open err:", err)
 	}
 	db.InstanceSet("gorm:table_options", "ENGINE=InnoDB")
-	sqlDB, err := db.DB()
+	sqlDB, err := db.DB() //通用的数据库接口 *sql.DB
 	if err != nil {
 		log.Fatal("initMysql db.DB err:", err)
 	}
@@ -69,6 +70,15 @@ func initMysql() *gorm.DB {
 	sqlDB.SetMaxOpenConns(config.DBConfig.MaxOpenConns)
 	// 连接可复用的最大时间
 	sqlDB.SetConnMaxLifetime(time.Duration(config.DBConfig.ConnMaxLifetimeSeconds) * time.Second)
+	// 定时打印DBStats
+	// go func() {
+	// 	for {
+	// 		time.Sleep(time.Second * 1)
+	// 		stats := sqlDB.Stats()
+	// 		log.Printf("DBStats: OpenConnections =%d, 正在使用InUse=%d, 空闲连接数Idle=%d, 等待的连接总数WaitCount=%d, 阻塞等待新连接的总时间WaitDuration=%s,MaxIdleTimeClosed=%d,MaxLifetimeClosed=%d \n",
+	// 			stats.OpenConnections, stats.InUse, stats.Idle, stats.WaitCount, stats.WaitDuration, stats.MaxIdleTimeClosed, stats.MaxLifetimeClosed)
+	// 	}
+	// }()
 	return db
 }
 

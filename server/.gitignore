@@ -53,6 +53,7 @@ __debug_bin
 # custom
 # env
 .env
+.env.yaml
 # binary
 main
 # air

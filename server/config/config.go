@@ -29,7 +29,7 @@ func loadConfig(config config) config {
 	if envFilePath == "" {
 		envFilePath = ".env"
 	}
-	viper.SetConfigType("yaml")
+	// viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	viper.SetConfigFile(envFilePath)
 	viper.AutomaticEnv()

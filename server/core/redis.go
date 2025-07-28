@@ -19,7 +19,7 @@ func initRedis() *redis.Client {
 	}
 	// opt.PoolSize = config.Config.RedisPoolSize
 	opt.MaxIdleConns = config.RedisConfig.MaxIdleConns
-	opt.ConnMaxLifetime = config.RedisConfig.ConnMaxLifetime
+	opt.ConnMaxLifetime = time.Duration(config.RedisConfig.ConnMaxLifetime) * time.Second
 
 	client := redis.NewClient(opt)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

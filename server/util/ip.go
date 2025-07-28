@@ -77,7 +77,7 @@ func initIpUtil() *ipUtil {
 		fmt.Printf("failed to create searcher: %s\n", err.Error())
 		return &ip_util
 	}
-	fmt.Printf("创建完全基于内存的查询对象。")
+	// fmt.Printf("创建完全基于内存的查询对象。")
 	ip_util.Searcher = searcher
 	return &ip_util
 }
