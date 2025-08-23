@@ -83,7 +83,6 @@
                 size="medium"
                 class="mt-4"
                 :data="pager.lists"
-                :loading="pager.loading"
                 auto-resize
                 @checkbox-change="handleSelectionChange"
                 @checkbox-all="handleSelectionChange"

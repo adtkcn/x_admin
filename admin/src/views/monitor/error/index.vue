@@ -53,6 +53,7 @@
                 size="large"
                 v-loading="pager.loading"
                 :data="pager.lists"
+                max-height="calc(100vh - 200px)"
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />

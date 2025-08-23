@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
+        "dev:prod": "vite --mode prod",
         "prod": "vite build",
         "preview": "vite preview --port 4173",
         "build": "node ./scripts/build.mjs",

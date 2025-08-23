@@ -9,7 +9,7 @@
                 label-width="90px"
                 label-position="left"
             >
-                <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
+                <el-form-item label="项目" prop="ProjectKey" class="w-[270px]">
                     <el-select v-model="queryParams.ProjectKey" clearable>
                         <el-option label="全部" value="" />
                         <el-option
@@ -20,34 +20,34 @@
                         />
                     </el-select>
                 </el-form-item>
-                <!-- <el-form-item label="客户端id" prop="ClientId" class="w-[280px]">
+                <!-- <el-form-item label="客户端id" prop="ClientId" class="w-[270px]">
                     <el-input v-model="queryParams.ClientId" />
                 </el-form-item> -->
-                <el-form-item label="用户id" prop="UserId" class="w-[280px]">
+                <el-form-item label="用户id" prop="UserId" class="w-[270px]">
                     <el-input v-model="queryParams.UserId" />
                 </el-form-item>
-                <el-form-item label="系统" prop="Os" class="w-[280px]">
+                <el-form-item label="系统" prop="Os" class="w-[270px]">
                     <el-input v-model="queryParams.Os" />
                 </el-form-item>
-                <el-form-item label="浏览器" prop="Browser" class="w-[280px]">
+                <el-form-item label="浏览器" prop="Browser" class="w-[270px]">
                     <el-input v-model="queryParams.Browser" />
                 </el-form-item>
-                <el-form-item label="国家" prop="Country" class="w-[280px]">
+                <el-form-item label="国家" prop="Country" class="w-[270px]">
                     <el-input v-model="queryParams.Country" />
                 </el-form-item>
-                <el-form-item label="省份" prop="Province" class="w-[280px]">
+                <el-form-item label="省份" prop="Province" class="w-[270px]">
                     <el-input v-model="queryParams.Province" />
                 </el-form-item>
-                <el-form-item label="城市" prop="City" class="w-[280px]">
+                <el-form-item label="城市" prop="City" class="w-[270px]">
                     <el-input v-model="queryParams.City" />
                 </el-form-item>
-                <el-form-item label="电信运营商" prop="Operator" class="w-[280px]">
+                <el-form-item label="电信运营商" prop="Operator" class="w-[270px]">
                     <el-input v-model="queryParams.Operator" />
                 </el-form-item>
-                <el-form-item label="ip" prop="Ip" class="w-[280px]">
+                <el-form-item label="ip" prop="Ip" class="w-[270px]">
                     <el-input v-model="queryParams.Ip" />
                 </el-form-item>
-                <!-- <el-form-item label="ua记录" prop="Ua" class="w-[280px]">
+                <!-- <el-form-item label="ua记录" prop="Ua" class="w-[270px]">
                     <el-input v-model="queryParams.Ua" />
                 </el-form-item> -->
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[425px]">
@@ -161,8 +161,8 @@
                         </el-popover>
                     </template>
                 </el-table-column>
-                <el-table-column label="IP" prop="Ip" />
-                <el-table-column label="区域">
+                <el-table-column label="IP" prop="Ip" width="145" />
+                <el-table-column label="区域" min-width="150">
                     <template #default="{ row }">
                         {{ row.Country }}{{ row.Province }}{{ row.City }}
                     </template>
@@ -173,7 +173,7 @@
                 <el-table-column label="运营商" prop="Operator" />
 
                 <!-- <el-table-column label="ua记录" prop="Ua" min-width="380" /> -->
-                <el-table-column label="创建时间" prop="CreateTime" min-width="140" />
+                <el-table-column label="创建时间" prop="CreateTime" width="180" />
 
                 <el-table-column label="操作" width="80" fixed="right">
                     <template #default="{ row }">

@@ -19,7 +19,8 @@
             "delay" : 0
         },
         "modules" : {
-            "VideoPlayer" : {}
+            "VideoPlayer" : {},
+            "Push" : {}
         },
         "distribute" : {
             "android" : {
@@ -49,7 +50,10 @@
                 "dSYMs" : false
             },
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "push" : {
+                    "unipush" : {}
+                }
             },
             "icons" : {
                 "android" : {
