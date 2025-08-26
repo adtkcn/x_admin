@@ -13,6 +13,7 @@ type config struct {
 	DB    *dbConfig
 	REDIS *redisConfig
 	FILE  *fileConfig
+	GeTui *geTuiConfig
 }
 
 var Config = loadConfig(config{
@@ -20,6 +21,7 @@ var Config = loadConfig(config{
 	DB:    &DBConfig,
 	REDIS: &RedisConfig,
 	FILE:  &FileConfig,
+	GeTui: &GeTuiConfig,
 })
 
 func loadConfig(config config) config {

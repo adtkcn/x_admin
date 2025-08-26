@@ -19,6 +19,7 @@ func RegisterRoute(rg *gin.RouterGroup) {
 	commonController.UploadChunkRoute(rg)
 	commonController.AlbumRoute(rg)
 	commonController.IndexRoute(rg)
+	commonController.GeTuiRoute(rg) //个推
 
 	monitorController.RegisterRoute(rg)
 
