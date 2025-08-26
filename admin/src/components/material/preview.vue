@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, useTemplateRef, watch, nextTick } from 'vue'
+import { ref, useTemplateRef, watch, computed, nextTick } from 'vue'
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -26,11 +26,24 @@ const props = defineProps({
     url: {
         type: String,
         default: ''
-    },
-    type: {
-        type: String,
-        default: 'image'
     }
+    // type: {
+    //     type: String,
+    //     default: 'image'
+    // }
+})
+
+const type = computed(() => {
+    const imageExt = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
+    const videoExt = ['mp4', 'avi', 'mov']
+    const ext = props.url.split('.').pop()
+    if (imageExt.includes(ext)) {
+        return 'image'
+    }
+    if (videoExt.includes(ext)) {
+        return 'video'
+    }
+    return 'file'
 })
 
 const playerRef = useTemplateRef('playerRef')

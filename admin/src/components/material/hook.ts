@@ -15,7 +15,7 @@ import { shallowRef, ref, reactive } from 'vue'
 import type { Ref } from 'vue'
 
 // 左侧分组的钩子函数
-export function useCate(type: number) {
+export function useCate() {
     const treeRef = shallowRef<InstanceType<typeof ElTree>>()
     // 分组列表
     const cateLists = ref<any[]>([])
@@ -25,18 +25,12 @@ export function useCate(type: number) {
 
     // 获取分组列表
     const getCateLists = async () => {
-        const data = await fileCateLists({
-            type
-        })
+        const data = await fileCateLists({})
         const item: any[] = [
             {
                 name: '全部',
                 id: 0
             }
-            // {
-            //     name: '未分组',
-            //     id: 0
-            // }
         ]
         cateLists.value = data
         cateLists.value.unshift(...item)
@@ -48,7 +42,6 @@ export function useCate(type: number) {
     // 添加分组
     const handleAddCate = async (value: string) => {
         await fileCateAdd({
-            type,
             name: value,
             pid: 0
         })
@@ -92,7 +85,7 @@ export function useCate(type: number) {
 // 处理文件的钩子函数
 export function useFile(
     cateId: Ref<string | number>,
-    type: Ref<number>,
+    ext: string[],
     limit: Ref<number>,
     size: number
 ) {
@@ -103,7 +96,7 @@ export function useFile(
     const isIndeterminate = ref(false)
     const fileParams = reactive({
         name: '',
-        type: type,
+        ext: ext,
         cid: cateId
     })
     const { pager, getLists, resetPage } = usePaging({

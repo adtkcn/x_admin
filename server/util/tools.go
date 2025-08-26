@@ -4,8 +4,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"io"
 	"math"
 	"math/rand"
+	"mime/multipart"
 	"os"
 	"reflect"
 	"strconv"
@@ -43,6 +45,20 @@ func (tu toolsUtil) MakeUuid() string {
 func (tu toolsUtil) MakeMd5(data string) string {
 	sum := md5.Sum([]byte(data))
 	return hex.EncodeToString(sum[:])
+}
+
+// GetFileMD5 获取文件MD5
+func (tu toolsUtil) GetFileMD5(file *multipart.FileHeader) (string, error) {
+	f, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	hash := md5.New()
+	if _, err := io.Copy(hash, f); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
 // MakeToken 生成唯一Token

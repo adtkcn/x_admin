@@ -14,22 +14,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type IAlbumService interface {
-	AlbumList(page request.PageReq, listReq commonSchema.CommonAlbumListReq) (res response.PageResp, e error)
-	AlbumRename(id uint, name string) (e error)
-	AlbumMove(ids []uint, cid int) (e error)
-	AlbumAdd(addReq commonSchema.CommonAlbumAddReq) (res uint, e error)
-	AlbumDel(ids []uint) (e error)
-	CateList(listReq commonSchema.CommonCateListReq) (mapList []commonSchema.CommonCateListResp, e error)
-	CateAdd(addReq commonSchema.CommonCateAddReq) (e error)
-	CateRename(id uint, name string) (e error)
-	CateDel(id uint) (e error)
-}
-
 var AlbumService = NewAlbumService()
 
 // NewAlbumService 初始化
-func NewAlbumService() IAlbumService {
+func NewAlbumService() *albumService {
 	db := core.GetDB()
 	return &albumService{db: db}
 }
@@ -40,21 +28,29 @@ type albumService struct {
 }
 
 // AlbumList 相册文件列表
-func (albSrv albumService) AlbumList(page request.PageReq, listReq commonSchema.CommonAlbumListReq) (res response.PageResp, e error) {
+func (albSrv albumService) AlbumList(adminId uint, page request.PageReq, listReq commonSchema.CommonAlbumListReq) (res response.PageResp, e error) {
+
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
 	albumModel := albSrv.db.Model(&common_model.Album{}).Where("is_delete = ?", 0)
+
+	albumModel = albumModel.Where("admin_id = ?", adminId)
+
 	if listReq.Cid > 0 {
 		albumModel = albumModel.Where("cid = ?", listReq.Cid)
 	}
 	if listReq.Name != "" {
 		albumModel = albumModel.Where("name like ?", "%"+listReq.Name+"%")
 	}
-	if listReq.Type > 0 {
-		albumModel = albumModel.Where("type = ?", listReq.Type)
+	if len(listReq.Ext) > 0 {
+		albumModel = albumModel.Where("ext in ?", listReq.Ext)
 	}
+
+	// if listReq.Type > 0 {
+	// 	albumModel = albumModel.Where("type = ?", listReq.Type)
+	// }
 	// 总数
 	var count int64
 	err := albumModel.Count(&count).Error
@@ -161,12 +157,14 @@ func (albSrv albumService) AlbumDel(ids []uint) (e error) {
 }
 
 // CateList 相册分类列表
-func (albSrv albumService) CateList(listReq commonSchema.CommonCateListReq) (mapList []commonSchema.CommonCateListResp, e error) {
+func (albSrv albumService) CateList(adminId uint, listReq commonSchema.CommonCateListReq) (mapList []commonSchema.CommonCateListResp, e error) {
+
 	var cates []common_model.AlbumCate
 	cateModel := albSrv.db.Where("is_delete = ?", 0).Order("id desc")
-	if listReq.Type > 0 {
-		cateModel = cateModel.Where("type = ?", listReq.Type)
-	}
+	// if listReq.Type > 0 {
+	// 	cateModel = cateModel.Where("type = ?", listReq.Type)
+	// }
+	cateModel = cateModel.Where("admin_id = ?", adminId)
 	if listReq.Name != "" {
 		cateModel = cateModel.Where("name like ?", "%"+listReq.Name+"%")
 	}
@@ -180,9 +178,12 @@ func (albSrv albumService) CateList(listReq commonSchema.CommonCateListReq) (map
 }
 
 // CateAdd 分类新增
-func (albSrv albumService) CateAdd(addReq commonSchema.CommonCateAddReq) (e error) {
+func (albSrv albumService) CateAdd(adminId uint, addReq commonSchema.CommonCateAddReq) (e error) {
+
 	var cate common_model.AlbumCate
 	convert_util.Copy(&cate, addReq)
+	cate.AdminId = adminId
+
 	err := albSrv.db.Create(&cate).Error
 	e = response.CheckErr(err, "Cate添加失败")
 	return

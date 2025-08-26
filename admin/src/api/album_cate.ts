@@ -8,7 +8,7 @@ import { getToken } from '@/utils/auth'
 type album_cate = {
     id?: number
     pid?: number
-    type?: number
+    // type?: number
     name?: string
     isDelete?: number
     createTime?: string
@@ -18,7 +18,7 @@ type album_cate = {
 // 查询
 type album_cate_query = {
     pid?: number
-    type?: number
+    // type?: number
     name?: string
     createTimeStart?: string
     createTimeEnd?: string
@@ -29,7 +29,7 @@ type album_cate_query = {
 type album_cate_edit = {
     id?: number
     pid?: number
-    type?: number
+    // type?: number
     name?: string
 }
 

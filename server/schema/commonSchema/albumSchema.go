@@ -8,9 +8,11 @@ type CommonUploadImageReq struct {
 
 //CommonAlbumListReq 相册文件列表参数
 type CommonAlbumListReq struct {
-	Cid  int    `form:"cid,default=-1"`                          // 类目ID
-	Type int    `form:"type" binding:"omitempty,oneof=10 20 30"` // 文件类型: [10=图片, 20=视频]
-	Name string `form:"name"`                                    // 文件名称
+	Cid int `form:"cid,default=-1"` // 类目ID
+	// Type int    `form:"type" binding:"omitempty,oneof=10 20 30"` // 文件类型: [10=图片, 20=视频]
+	Name string   `form:"name"`  // 文件名称
+	Ext  []string `form:"ext[]"` // 文件扩展
+
 }
 
 //CommonAlbumRenameReq 相册文件重命名参数
@@ -27,14 +29,15 @@ type CommonAlbumMoveReq struct {
 
 //CommonAlbumAddReq 相册文件新增参数
 type CommonAlbumAddReq struct {
-	Cid  uint   `form:"cid" binding:"gte=0"`           // 类目ID
-	Aid  uint   `form:"aid" binding:"gte=0"`           // 管理ID
-	Uid  uint   `form:"uid" binding:"gte=0"`           // 用户ID
-	Type int    `form:"type" binding:"oneof=10 20 30"` // 文件类型: [10=图片, 20=视频,30文件]
-	Name string `form:"name"`                          // 文件名称
-	Uri  string `form:"uri"`                           // 文件路径
-	Ext  string `form:"ext"`                           // 文件扩展
-	Size int64  `form:"size"`                          // 文件大小
+	Cid     uint `form:"cid" binding:"gte=0"`      // 类目ID
+	AdminId uint `form:"admin_id" binding:"gte=0"` // 管理ID
+	// Uid     uint `form:"uid" binding:"gte=0"` // 用户ID
+	// Type int    `form:"type" binding:"oneof=10 20 30"` // 文件类型: [10=图片, 20=视频,30文件]
+	Name string `form:"name"` // 文件名称
+	Uri  string `form:"uri"`  // 文件路径
+	Ext  string `form:"ext"`  // 文件扩展
+	Size int64  `form:"size"` // 文件大小
+	Hash string `form:"hash"`
 }
 
 //CommonAlbumDelReq 相册文件删除参数
@@ -44,15 +47,15 @@ type CommonAlbumDelReq struct {
 
 //CommonCateListReq 相册分类列表参数
 type CommonCateListReq struct {
-	Type int    `form:"type" binding:"omitempty,oneof=10 20 30"` // 分类类型: [10=图片,20=视频,30文件]
-	Name string `form:"name"`                                    // 分类名称
+	// Type int    `form:"type" binding:"omitempty,oneof=10 20 30"` // 分类类型: [10=图片,20=视频,30文件]
+	Name string `form:"name"` // 分类名称
 }
 
 //CommonCateAddReq 相册分类新增参数
 type CommonCateAddReq struct {
-	Pid  uint   `form:"pid" binding:"gte=0"`                    // 父级ID
-	Type int    `form:"type" binding:"required,oneof=10 20 30"` // 分类类型: [10=图片,20=视频,30文件]
-	Name string `form:"name" binding:"required,min=1,max=30"`   // 分类名称
+	Pid uint `form:"pid" binding:"gte=0"` // 父级ID
+	// Type int    `form:"type" binding:"required,oneof=10 20 30"` // 分类类型: [10=图片,20=视频,30文件]
+	Name string `form:"name" binding:"required,min=1,max=30"` // 分类名称
 }
 
 //CommonCateRenameReq 相册分类重命名参数
@@ -68,11 +71,11 @@ type CommonCateDelReq struct {
 
 //CommonUploadFileResp 上传图片返回信息
 type CommonUploadFileResp struct {
-	ID   uint   `json:"id" structs:"id"`     // 主键
-	Cid  uint   `json:"cid" structs:"cid"`   // 类目ID
-	Aid  uint   `json:"aid" structs:"aid"`   // 管理ID
-	Uid  uint   `json:"uid" structs:"uid"`   // 用户ID
-	Type int    `json:"type" structs:"type"` // 文件类型: [10=图片, 20=视频]
+	ID      uint `json:"id" structs:"id"`             // 主键
+	Cid     uint `json:"cid" structs:"cid"`           // 类目ID
+	AdminId uint `json:"admin_id" structs:"admin_id"` // 管理ID
+	Uid     uint `json:"uid" structs:"uid"`           // 用户ID
+	// Type int    `json:"type" structs:"type"` // 文件类型: [10=图片, 20=视频]
 	Name string `json:"name" structs:"name"` // 文件名称
 	Uri  string `json:"url" structs:"url"`   // 文件路径
 	Path string `json:"path" structs:"path"` // 访问地址

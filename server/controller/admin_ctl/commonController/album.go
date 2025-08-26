@@ -1,6 +1,7 @@
 package commonController
 
 import (
+	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/middleware"
@@ -39,7 +40,8 @@ func (ah albumHandler) albumList(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := commonService.AlbumService.AlbumList(page, listReq)
+	var adminId = config.AdminConfig.GetAdminId(c)
+	res, err := commonService.AlbumService.AlbumList(adminId, page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -76,7 +78,8 @@ func (ah albumHandler) cateList(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := commonService.AlbumService.CateList(listReq)
+	var adminId = config.AdminConfig.GetAdminId(c)
+	res, err := commonService.AlbumService.CateList(adminId, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -86,7 +89,8 @@ func (ah albumHandler) cateAdd(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, commonService.AlbumService.CateAdd(addReq))
+	var adminId = config.AdminConfig.GetAdminId(c)
+	response.CheckAndResp(c, commonService.AlbumService.CateAdd(adminId, addReq))
 }
 
 // cateRename 类目命名

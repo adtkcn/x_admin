@@ -85,22 +85,10 @@
             <div class="operate-btn flex">
                 <div class="flex-1 flex">
                     <upload
-                        v-if="type == 'image'"
                         v-perms="['admin:common:upload:image']"
                         class="mr-3"
                         :data="{ cid: cateId }"
-                        :type="type"
-                        :show-progress="true"
-                        @change="refresh"
-                    >
-                        <el-button type="primary">本地上传</el-button>
-                    </upload>
-                    <upload
-                        v-if="type == 'video'"
-                        v-perms="['admin:common:upload:video']"
-                        class="mr-3"
-                        :data="{ cid: cateId }"
-                        :type="type"
+                        :ext="ext"
                         :show-progress="true"
                         @change="refresh"
                     >
@@ -139,7 +127,7 @@
                             <file-item
                                 :uri="row.uri"
                                 file-size="50px"
-                                :type="type"
+                                :ext="row.ext"
                                 @click.stop="handlePreview(row.uri)"
                             ></file-item>
                         </template>
@@ -151,6 +139,9 @@
                             </el-link>
                         </template>
                     </el-table-column>
+                    <el-table-column label="大小" prop="size" min-width="100"> </el-table-column>
+                    <el-table-column label="格式" prop="ext" min-width="100"></el-table-column>
+
                     <el-table-column prop="createTime" label="上传时间" min-width="100" />
                     <el-table-column label="操作" width="150" fixed="right">
                         <template #default="{ row }">
@@ -259,7 +250,7 @@
                                     <file-item
                                         :uri="item.uri"
                                         file-size="100px"
-                                        :type="type"
+                                        :ext="item.ext"
                                     ></file-item>
                                 </del-wrap>
                             </div>
@@ -268,12 +259,14 @@
                 </el-scrollbar>
             </div>
         </div>
-        <preview v-model="showPreview" :url="previewUrl" :type="type" />
+        <preview v-model="showPreview" :url="previewUrl" />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, toRefs, ref, watch } from 'vue'
+import { onMounted, toRefs, ref, watch } from 'vue'
+import type { PropType } from 'vue'
+
 import { useCate, useFile } from './hook'
 import FileItem from './file.vue'
 import Preview from './preview.vue'
@@ -286,10 +279,14 @@ const props = defineProps({
         type: Number,
         default: 1
     },
-    type: {
-        type: String,
-        default: 'image'
+    ext: {
+        type: Array as PropType<string[]>,
+        default: () => []
     },
+    // type: {
+    //     type: String,
+    //     default: 'image'
+    // },
     mode: {
         type: String,
         default: 'picker'
@@ -301,18 +298,18 @@ const props = defineProps({
 })
 const emit = defineEmits(['change'])
 const { limit } = toRefs(props)
-const typeValue = computed<number>(() => {
-    switch (props.type) {
-        case 'image':
-            return 10
-        case 'video':
-            return 20
-        case 'file':
-            return 30
-        default:
-            return 0
-    }
-})
+// const typeValue = computed<number>(() => {
+//     switch (props.type) {
+//         case 'image':
+//             return 10
+//         case 'video':
+//             return 20
+//         case 'file':
+//             return 30
+//         default:
+//             return 0
+//     }
+// })
 // const visible: Ref<boolean> = inject('visible')
 const previewUrl = ref('')
 const showPreview = ref(false)
@@ -325,7 +322,7 @@ const {
     handleDeleteCate,
     getCateLists,
     handleCatSelect
-} = useCate(typeValue.value)
+} = useCate()
 
 const {
     tableRef,
@@ -345,7 +342,7 @@ const {
 
     selectItems,
     handleFileRename
-} = useFile(cateId, typeValue, limit, props.pageSize)
+} = useFile(cateId, props.ext, limit, props.pageSize)
 function handleSelectionChange(val: any[]) {
     console.log('handleSelectionChange', val)
     selectItems(val)
@@ -356,22 +353,12 @@ const getData = async () => {
     treeRef.value?.setCurrentKey(cateId.value)
     getFileList()
 }
-// getData()
+
 const handlePreview = (url: string) => {
     previewUrl.value = url
     showPreview.value = true
 }
-// watch(
-//     () => visible,
-//     (val) => {
-//         if (val) {
-//             getData()
-//         }
-//     },
-//     {
-//         immediate: true
-//     }
-// )
+
 watch(cateId, () => {
     fileParams.name = ''
     refresh()

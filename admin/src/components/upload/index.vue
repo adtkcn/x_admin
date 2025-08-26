@@ -14,7 +14,7 @@
             :on-error="handleError"
             :accept="getAccept"
         >
-            <slot></slot>
+            <slot></slot>{{ getAccept }}
         </el-upload>
         <el-dialog
             v-if="showProgress && fileList.length"
@@ -41,6 +41,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, toRaw, useTemplateRef } from 'vue'
+import type { PropType } from 'vue'
 import useUserStore from '@/stores/modules/user'
 import config from '@/config'
 import feedback from '@/utils/feedback'
@@ -53,6 +54,10 @@ export default defineComponent({
         url: {
             type: String,
             default: ''
+        },
+        ext: {
+            type: Array as PropType<string[]>,
+            default: () => []
         },
         // 上传文件类型
         type: {
@@ -94,7 +99,7 @@ export default defineComponent({
                 action = `${config.baseUrl}${config.urlPrefix}${props.url}`
             }
         } else {
-            action = `${config.baseUrl}${config.urlPrefix}/common/upload/${props.type}`
+            action = `${config.baseUrl}${config.urlPrefix}/common/upload/file`
         }
         const headers = computed(() => ({
             token: userStore.token,
@@ -135,14 +140,15 @@ export default defineComponent({
         }
 
         const getAccept = computed(() => {
-            switch (props.type) {
-                case 'image':
-                    return '.jpg,.png,.gif,.webp,.jpeg,.ico,.bmp'
-                case 'video':
-                    return '.wmv,.avi,.mov,.mp4,.flv,.rmvb'
-                default:
-                    return '*'
+            if (props.ext.length) {
+                // 补充前缀
+                return props.ext
+                    .map((item) => {
+                        return `.${item}`
+                    })
+                    .join(',')
             }
+            return '*'
         })
         return {
             uploadRefs,

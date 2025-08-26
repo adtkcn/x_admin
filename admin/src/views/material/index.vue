@@ -5,13 +5,13 @@
                 <el-tab-pane
                     v-for="item in tabsMap"
                     :label="item.name"
-                    :name="item.type"
-                    :index="item.type"
-                    :key="item.type"
+                    :name="item.name"
+                    :index="item.name"
+                    :key="item.name"
                     lazy
                 >
                     <material
-                        :type="item.type"
+                        :ext="item.ext"
                         mode="page"
                         file-size="120px"
                         :limit="-1"
@@ -31,12 +31,24 @@ defineOptions({
 })
 const tabsMap = [
     {
-        type: 'image',
-        name: '图片'
+        // type: '',
+        name: '全部',
+        ext: []
     },
     {
-        type: 'video',
-        name: '视频'
+        // type: 'image',
+        name: '图片',
+        ext: ['jpg', 'jpeg', 'png', 'gif', 'bmp']
+    },
+    {
+        // type: 'video',
+        name: '视频',
+        ext: ['mp4', 'avi', 'mov']
+    },
+    {
+        // type: 'pdf',
+        name: 'pdf',
+        ext: ['pdf']
     }
 ]
 const activeTab = ref('image')
@@ -47,11 +59,7 @@ const activeTab = ref('image')
     min-width: 700px;
     :deep(.el-tabs) {
         height: calc(100vh - 180px);
-        // display: flex;
-        // flex-direction: column;
-        // .el-tabs__header {
-        //     margin-bottom: 0 !important;
-        // }
+
         .el-tabs__content,
         .el-tab-pane {
             min-height: 0;

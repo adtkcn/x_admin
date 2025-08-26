@@ -15,28 +15,26 @@ func UploadRoute(rg *gin.RouterGroup) {
 	handle := uploadHandler{}
 
 	rg = rg.Group("/common", middleware.TokenAuth())
-	rg.POST("/upload/image", middleware.RecordLog("上传图片", middleware.RequestFile), handle.uploadImage)
-	rg.POST("/upload/video", middleware.RecordLog("上传视频", middleware.RequestFile), handle.uploadVideo)
+	rg.POST("/upload/preUploadFile", middleware.RecordLog("文件预上传", middleware.RequestFile), handle.preUploadFile)
+	rg.POST("/upload/file", middleware.RecordLog("上传文件", middleware.RequestFile), handle.uploadFile)
 }
 
 type uploadHandler struct{}
 
-// uploadImage 上传图片
-func (uh uploadHandler) uploadImage(c *gin.Context) {
-	var uReq commonSchema.CommonUploadImageReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &uReq)) {
-		return
-	}
-	file, ve := util.VerifyUtil.VerifyFile(c, "file")
-	if response.IsFailWithResp(c, ve) {
-		return
-	}
-	res, err := commonService.UploadService.UploadImage(file, uReq.Cid, config.AdminConfig.GetAdminId(c))
-	response.CheckAndRespWithData(c, res, err)
+// 文件预上传
+func (uh uploadHandler) preUploadFile(c *gin.Context) {
+	// md5,fileName,fileSize,cid
+	// 检查MD5是否已存在
+	// 检查名称是否合规安全
+	// 检查文件大小是否超过限制
+	// 检查文件类型是否符合要求
+
+	// 如果文件存在，复制到cid对应目录
+
 }
 
-// uploadVideo 上传视频
-func (uh uploadHandler) uploadVideo(c *gin.Context) {
+// uploadFile 上传文件
+func (uh uploadHandler) uploadFile(c *gin.Context) {
 	var uReq commonSchema.CommonUploadImageReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &uReq)) {
 		return
@@ -45,6 +43,6 @@ func (uh uploadHandler) uploadVideo(c *gin.Context) {
 	if response.IsFailWithResp(c, ve) {
 		return
 	}
-	res, err := commonService.UploadService.UploadVideo(file, uReq.Cid, config.AdminConfig.GetAdminId(c))
+	res, err := commonService.UploadService.UploadFile(file, uReq.Cid, config.AdminConfig.GetAdminId(c))
 	response.CheckAndRespWithData(c, res, err)
 }

@@ -28,12 +28,25 @@ export default defineComponent({
             default: '100px'
         },
         // 文件类型
-        type: {
+        ext: {
             type: String,
-            default: 'image'
+            default: ''
         }
     },
-    emits: ['close']
+    emits: ['close'],
+    computed: {
+        type() {
+            const imageExt = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
+            const videoExt = ['mp4', 'avi', 'mov']
+            if (imageExt.includes(this.ext)) {
+                return 'image'
+            }
+            if (videoExt.includes(this.ext)) {
+                return 'video'
+            }
+            return 'file'
+        }
+    }
 })
 </script>
 
