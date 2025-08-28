@@ -10,6 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type RouteHandlerFunc func(*gin.RouterGroup)
+
+// routeHandlers 全局的路由注册函数切片，用于自动加载路由，通过每个文件的init()收集
+var routeHandlers []RouteHandlerFunc
+
+// Autoload 自动加载所有路由
+func Autoload(rg *gin.RouterGroup) {
+	for _, handler := range routeHandlers {
+		handler(rg)
+	}
+}
+
 func RegisterRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/admin")
@@ -37,13 +49,15 @@ func RegisterRoute(rg *gin.RouterGroup) {
 	systemController.RoleRoute(rg)
 	systemController.LogRoute(rg)
 	generatorController.GenRoute(rg)
-	FlowTemplateRoute(rg)
-	FlowApplyRoute(rg)
-	FlowHistoryRoute(rg)
+	// FlowTemplateRoute(rg)
+	// FlowApplyRoute(rg)
+	// FlowHistoryRoute(rg)
 
-	MonitorProjectRoute(rg)
-	MonitorClientRoute(rg)
-	MonitorErrorRoute(rg)
+	// MonitorProjectRoute(rg)
+	// MonitorClientRoute(rg)
+	// MonitorErrorRoute(rg)
 
-	UserProtocolRoute(rg)
+	// UserProtocolRoute(rg)
+
+	Autoload(rg)
 }

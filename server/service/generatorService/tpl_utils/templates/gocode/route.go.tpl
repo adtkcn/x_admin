@@ -12,8 +12,7 @@ import (
 - 请先提交git避免文件覆盖!!!
 - 下载并解压压缩包后，直接复制server、admin文件夹到项目根目录即可
 
-2. 注册路由
-请在 router/admin/entry.go 文件引入 {{{ toUpperCamelCase .ModuleName }}}Route 注册路由
+2. 注册路由(通过init函数收集路由，Autoload自动注册)
 
 3. 后台手动添加菜单和按钮
 
@@ -47,4 +46,7 @@ func {{{ toUpperCamelCase .ModuleName }}}Route(rg *gin.RouterGroup) {
 
 	r.GET("/{{{ .ModuleName }}}/ExportFile", middleware.RecordLog("{{{ .FunctionName }}}导出"), handle.ExportFile)
 	r.POST("/{{{ .ModuleName }}}/ImportFile",  handle.ImportFile)
+}
+func init() {
+	routeHandlers = append(routeHandlers, {{{ toUpperCamelCase .ModuleName }}}Route)
 }

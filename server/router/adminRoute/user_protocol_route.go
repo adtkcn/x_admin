@@ -13,8 +13,7 @@ import (
 - 请先提交git避免文件覆盖!!!
 - 下载并解压压缩包后，直接复制server、admin文件夹到项目根目录即可
 
-2. 注册路由
-请在 router/admin/entry.go 文件引入 UserProtocolRoute 注册路由
+2. 注册路由(通过init函数收集路由，Autoload自动注册)
 
 3. 后台手动添加菜单和按钮
 admin:user_protocol:add
@@ -59,4 +58,7 @@ func UserProtocolRoute(rg *gin.RouterGroup) {
 
 	r.GET("/user_protocol/ExportFile", middleware.RecordLog("用户协议导出"), handle.ExportFile)
 	r.POST("/user_protocol/ImportFile", handle.ImportFile)
+}
+func init() {
+	routeHandlers = append(routeHandlers, UserProtocolRoute)
 }

@@ -23,6 +23,7 @@ func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 
 	// /api/admin
 	adminRoute.RegisterRoute(api)
+
 	// /api/common/captcha 验证码
 	commonController.CaptchaRoute(api)
 }

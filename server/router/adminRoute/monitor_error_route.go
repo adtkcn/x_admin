@@ -58,3 +58,6 @@ func MonitorErrorRoute(rg *gin.RouterGroup) {
 	r.GET("/monitor_error/ExportFile", middleware.RecordLog("监控-错误列导出"), handle.ExportFile)
 	r.POST("/monitor_error/ImportFile", handle.ImportFile)
 }
+func init() {
+	routeHandlers = append(routeHandlers, MonitorErrorRoute)
+}

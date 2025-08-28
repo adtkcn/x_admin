@@ -81,3 +81,6 @@ func FlowTemplateRoute(rg *gin.RouterGroup) {
 	rg.POST("/flow_template/edit", handle.Edit)
 	rg.POST("/flow_template/del", handle.Del)
 }
+func init() {
+	routeHandlers = append(routeHandlers, FlowApplyRoute, FlowHistoryRoute, FlowTemplateRoute)
+}

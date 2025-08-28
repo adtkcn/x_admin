@@ -61,3 +61,6 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 	r.GET("/monitor_client/ExportFile", middleware.RecordLog("监控-客户端信息导出"), handle.ExportFile)
 	r.POST("/monitor_client/ImportFile", handle.ImportFile)
 }
+func init() {
+	routeHandlers = append(routeHandlers, MonitorClientRoute)
+}
