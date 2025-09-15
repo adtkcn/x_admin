@@ -23,7 +23,7 @@
 
         <div class="toolbar-item" @click="$_saveGraph">导出</div>
         <div>
-            <el-select v-model="linetype" @change="$_changeLineType">
+            <el-select v-model="linetype" @change="$_changeLineType" style="width: 80px">
                 <el-option
                     v-for="item in lineOptions"
                     :key="item.value"
