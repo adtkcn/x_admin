@@ -42,9 +42,9 @@ func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) 
 	if listReq.Content != nil {
 		dbModel = dbModel.Where("content = ?", *listReq.Content)
 	}
-	if listReq.Sort != nil {
-		dbModel = dbModel.Where("sort = ?", *listReq.Sort)
-	}
+	// if listReq.Sort != nil {
+	// 	dbModel = dbModel.Where("sort = ?", *listReq.Sort)
+	// }
 	if listReq.CreateTimeStart != nil {
 		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart)
 	}

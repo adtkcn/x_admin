@@ -32,7 +32,7 @@
                                         v-if="data.id > 0"
                                         :hide-on-click="false"
                                     >
-                                        <span class="muted m-r-10">···</span>
+                                        <span class="p-1 mr-[5px]">···</span>
                                         <template #dropdown>
                                             <el-dropdown-menu>
                                                 <popover-input
@@ -67,26 +67,54 @@
                 </el-scrollbar>
             </div>
 
-            <div class="flex justify-center p-2 border-t border-br">
+            <div class="flex justify-center pt-2 border-t border-br">
                 <popover-input
                     v-perms="['admin:common:album:cateAdd']"
                     @confirm="handleAddCate"
                     size="default"
-                    width="400px"
+                    width="500px"
                     :limit="20"
                     show-limit
                     teleported
                 >
-                    <el-button> 添加分组 </el-button>
+                    <el-button>添加分组</el-button>
                 </popover-input>
             </div>
         </div>
         <div class="material__center flex flex-col">
-            <div class="operate-btn flex">
-                <div class="flex-1 flex">
+            <el-tabs
+                v-if="mode == 'page' && defaultFileType == 'all'"
+                v-model="activeFileType"
+                @tab-change="handleTabChange"
+            >
+                <el-tab-pane
+                    v-for="item in FileTabsMap"
+                    :label="item.name"
+                    :name="item.fileType"
+                    :key="item.fileType"
+                >
+                </el-tab-pane>
+            </el-tabs>
+            <div class="flex flex-col">
+                <div class="operate-btn flex">
+                    <div class="flex-1 flex"></div>
+                    <el-input
+                        class="w-60"
+                        placeholder="请输入名称"
+                        v-model="fileParams.name"
+                        @keyup.enter="refresh"
+                    >
+                        <template #append>
+                            <el-button @click="refresh">
+                                <template #icon>
+                                    <icon name="el-icon-Search" />
+                                </template>
+                            </el-button>
+                        </template>
+                    </el-input>
                     <upload
-                        v-perms="['admin:common:upload:image']"
-                        class="mr-3"
+                        v-perms="['admin:common:upload:file']"
+                        class="ml-3"
                         :data="{ cid: cateId }"
                         :ext="ext"
                         :show-progress="true"
@@ -95,20 +123,6 @@
                         <el-button type="primary">本地上传</el-button>
                     </upload>
                 </div>
-                <el-input
-                    class="w-60"
-                    placeholder="请输入名称"
-                    v-model="fileParams.name"
-                    @keyup.enter="refresh"
-                >
-                    <template #append>
-                        <el-button @click="refresh">
-                            <template #icon>
-                                <icon name="el-icon-Search" />
-                            </template>
-                        </el-button>
-                    </template>
-                </el-input>
             </div>
 
             <div class="material-center__content flex flex-col flex-1 mb-1 min-h-0">
@@ -127,7 +141,6 @@
                             <file-item
                                 :uri="row.uri"
                                 file-size="50px"
-                                :ext="row.ext"
                                 @click.stop="handlePreview(row.uri)"
                             ></file-item>
                         </template>
@@ -140,9 +153,9 @@
                         </template>
                     </el-table-column>
                     <el-table-column label="大小" prop="size" min-width="100"> </el-table-column>
-                    <el-table-column label="格式" prop="ext" min-width="100"></el-table-column>
+                    <el-table-column label="格式" prop="ext" min-width="80"></el-table-column>
 
-                    <el-table-column prop="createTime" label="上传时间" min-width="100" />
+                    <el-table-column prop="createTime" label="上传时间" min-width="160" />
                     <el-table-column label="操作" width="150" fixed="right">
                         <template #default="{ row }">
                             <div class="inline-block" v-perms="['admin:common:album:albumRename']">
@@ -150,7 +163,7 @@
                                     @confirm="handleFileRename($event, row.id)"
                                     size="default"
                                     :value="row.name"
-                                    width="400px"
+                                    width="500px"
                                     :limit="50"
                                     show-limit
                                     teleported
@@ -175,27 +188,10 @@
                         </template>
                     </el-table-column>
                 </el-table>
-
-                <div
-                    class="flex flex-1 justify-center items-center"
-                    v-if="!pager.loading && !pager.lists.length"
-                >
-                    暂无数据~
-                </div>
             </div>
             <div class="material-center__footer flex justify-between items-center mt-2">
                 <div class="flex">
                     <template v-if="mode == 'page'">
-                        <!-- <span class="mr-3">
-                            <el-checkbox
-                                :disabled="!pager.lists.length"
-                                v-model="isCheckAll"
-                                @change="selectAll"
-                                :indeterminate="isIndeterminate"
-                            >
-                                当页全选
-                            </el-checkbox>
-                        </span> -->
                         <el-button
                             v-perms="['admin:common:album:albumDel']"
                             :disabled="!select.length"
@@ -206,9 +202,9 @@
                         <popup
                             v-perms="['admin:common:album:albumMove']"
                             class="ml-3 inline"
-                            @confirm="batchFileMove"
                             :disabled="!select.length"
                             title="移动文件"
+                            @confirm="batchFileMove"
                         >
                             <template #trigger>
                                 <el-button :disabled="!select.length">移动</el-button>
@@ -246,12 +242,8 @@
                     <ul class="select-lists flex flex-col p-t-3">
                         <li class="mb-4" v-for="item in select" :key="item.id">
                             <div class="select-item">
-                                <del-wrap @close="cancelSelete(item.id)">
-                                    <file-item
-                                        :uri="item.uri"
-                                        file-size="100px"
-                                        :ext="item.ext"
-                                    ></file-item>
+                                <del-wrap @close="cancelSelect(item.id)">
+                                    <file-item :uri="item.uri" file-size="100px"></file-item>
                                 </del-wrap>
                             </div>
                         </li>
@@ -264,29 +256,22 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, toRefs, ref, watch } from 'vue'
-import type { PropType } from 'vue'
+import { FileTabsMap } from '@/enums/fileEnums'
+import { onMounted, ref, watch, computed } from 'vue'
+import { FileExt } from '@/enums/fileEnums'
 
 import { useCate, useFile } from './hook'
 import FileItem from './file.vue'
 import Preview from './preview.vue'
 const props = defineProps({
-    fileSize: {
-        type: String,
-        default: '100px'
-    },
     limit: {
         type: Number,
         default: 1
     },
-    ext: {
-        type: Array as PropType<string[]>,
-        default: () => []
+    defaultFileType: {
+        type: String,
+        default: 'all'
     },
-    // type: {
-    //     type: String,
-    //     default: 'image'
-    // },
     mode: {
         type: String,
         default: 'picker'
@@ -297,20 +282,8 @@ const props = defineProps({
     }
 })
 const emit = defineEmits(['change'])
-const { limit } = toRefs(props)
-// const typeValue = computed<number>(() => {
-//     switch (props.type) {
-//         case 'image':
-//             return 10
-//         case 'video':
-//             return 20
-//         case 'file':
-//             return 30
-//         default:
-//             return 0
-//     }
-// })
-// const visible: Ref<boolean> = inject('visible')
+// const { limit } = toRefs(props)
+
 const previewUrl = ref('')
 const showPreview = ref(false)
 const {
@@ -324,6 +297,23 @@ const {
     handleCatSelect
 } = useCate()
 
+const activeFileType = ref(props.defaultFileType)
+
+const ext = computed(() => {
+    if (activeFileType.value) {
+        return FileExt[activeFileType.value]
+    }
+    return []
+})
+const listExt = computed(() => {
+    if (activeFileType.value == 'all') {
+        return []
+    }
+    if (activeFileType.value) {
+        return FileExt[activeFileType.value]
+    }
+    return []
+})
 const {
     tableRef,
     moveId,
@@ -338,15 +328,23 @@ const {
     batchFileMove,
 
     clearSelect,
-    cancelSelete,
+    cancelSelect,
 
     selectItems,
     handleFileRename
-} = useFile(cateId, props.ext, limit, props.pageSize)
+} = useFile(cateId, listExt, props.limit, props.pageSize)
 function handleSelectionChange(val: any[]) {
-    console.log('handleSelectionChange', val)
+    // console.log('handleSelectionChange', val)
+    // if (props.limit && val.length > props.limit) {
+    //     return false
+    // }
     selectItems(val)
-    // multipleSelection.value = val
+}
+const handleTabChange = () => {
+    // activeFileType.value = tab
+    console.log('handleTabChange', activeFileType.value)
+
+    getFileList()
 }
 const getData = async () => {
     await getCateLists()
@@ -386,7 +384,8 @@ watch(
 )
 
 onMounted(() => {
-    props.mode == 'page' && getData()
+    // props.mode == 'page' && getData()
+    getData()
 })
 
 defineExpose({

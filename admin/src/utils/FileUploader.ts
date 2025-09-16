@@ -8,6 +8,7 @@ export interface FileUploaderOptions {
     chunkSize?: number
     onSuccess?: (filePath: string) => void
     onError?: (error: Error) => void
+    onCalculateMD5Progress?: (percent: number) => void
     onUploadProgress?: (
         chunkIndex: number,
         chunkCount: number,
@@ -43,6 +44,10 @@ export default class FileUploader {
         this.startChunkIndex = -1
         this.onError(error)
     }
+    calculateMD5Progress(chunkIndex: number, chunkTotal: number) {
+        const chunkPercent = Math.floor((chunkIndex / chunkTotal) * 100)
+        this.onCalculateMD5Progress(chunkPercent)
+    }
     uploadProgress(chunkIndex: number, chunkLoaded: number, chunkTotal: number) {
         // 计算百分比
         const chunkPercent = Math.floor((chunkLoaded / chunkTotal) * 100)
@@ -52,6 +57,7 @@ export default class FileUploader {
     onChunkSuccess: FileUploaderOptions['onChunkSuccess'] = function () {}
     onChunkError: FileUploaderOptions['onChunkError'] = function () {}
     onError: FileUploaderOptions['onError'] = function () {}
+    onCalculateMD5Progress: FileUploaderOptions['onCalculateMD5Progress'] = function () {}
     onUploadProgress: FileUploaderOptions['onUploadProgress'] = function () {}
 
     /**
@@ -103,21 +109,21 @@ export default class FileUploader {
         this.fileSize = file.size
         this.chunkCount = Math.ceil(this.file.size / this.chunkSize)
     }
-    readerFile(file: File): Promise<ArrayBuffer> {
-        return new Promise((resolve, reject) => {
-            if (!file) {
-                return reject(new Error('读取文件失败'))
-            }
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                resolve(e.target?.result as ArrayBuffer)
-            }
-            reader.onerror = (e) => {
-                reject(e)
-            }
-            reader.readAsArrayBuffer(file)
-        })
-    }
+    // readerFile(file: File): Promise<ArrayBuffer> {
+    //     return new Promise((resolve, reject) => {
+    //         if (!file) {
+    //             return reject(new Error('读取文件失败'))
+    //         }
+    //         const reader = new FileReader()
+    //         reader.onload = (e) => {
+    //             resolve(e.target?.result as ArrayBuffer)
+    //         }
+    //         reader.onerror = (e) => {
+    //             reject(e)
+    //         }
+    //         reader.readAsArrayBuffer(file)
+    //     })
+    // }
     getAbortControllerSignal() {
         const controller = new AbortController()
         this.abortControllers.push(controller)
@@ -148,8 +154,10 @@ export default class FileUploader {
             }
             this.uploading = true
 
-            const arrayBuffer = await this.readerFile(this.file)
-            const fileMd5 = this.getMd5(arrayBuffer)
+            // const arrayBuffer = await this.readerFile(this.file)
+            console.time('SparkMD5')
+            const fileMd5 = await this.calculateMD5(this.file)
+            console.timeEnd('SparkMD5')
             this.fileMd5 = fileMd5 + '_' + this.fileSize
             const isExistFilePath = await this.checkFileExist()
 
@@ -167,19 +175,58 @@ export default class FileUploader {
             this.error(error)
         }
     }
+    /**
+     * 计算文件的MD5值
+     * @param file
+     * @returns
+     */
+    async calculateMD5(file: File) {
+        return new Promise((resolve, reject) => {
+            const spark = new SparkMD5.ArrayBuffer()
+            const reader = new FileReader()
+            const chunkSize = 10 * 1024 * 1024 // 10MB 分块
+            let currentChunk = 0
+            const chunks = Math.ceil(file.size / chunkSize)
 
-    // 检查上传状态
-    getMd5(arrayBuffer: ArrayBuffer): string {
-        if (!this.uploading) {
-            return
-        }
-        console.time('SparkMD5')
-        const spark = new SparkMD5.ArrayBuffer()
-        spark.append(arrayBuffer)
-        const hash = spark.end()
-        console.timeEnd('SparkMD5')
-        return hash
+            reader.onload = function (e) {
+                spark.append(e.target.result) // 添加数组缓冲区
+                currentChunk++
+
+                if (currentChunk < chunks) {
+                    loadNext()
+                } else {
+                    resolve(spark.end())
+                }
+            }
+
+            reader.onerror = function () {
+                reject('文件读取错误')
+            }
+
+            function loadNext() {
+                console.log('md5进度', currentChunk, chunks)
+                this.calculateMD5Progress(currentChunk, chunks)
+
+                const start = currentChunk * chunkSize
+                const end = Math.min(start + chunkSize, file.size)
+                reader.readAsArrayBuffer(file.slice(start, end))
+            }
+
+            loadNext()
+        })
     }
+    // 计算文件的MD5值
+    // getMd5(arrayBuffer: ArrayBuffer): string {
+    //     if (!this.uploading) {
+    //         return
+    //     }
+    //     console.time('SparkMD5')
+    //     const spark = new SparkMD5.ArrayBuffer()
+    //     spark.append(arrayBuffer)
+    //     const hash = spark.end()
+    //     console.timeEnd('SparkMD5')
+    //     return hash
+    // }
     // 检查文件是否存在,可实现秒传
     async checkFileExist(): Promise<string> {
         if (!this.uploading) {

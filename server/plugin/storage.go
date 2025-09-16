@@ -134,7 +134,7 @@ func (sd storageDriver) checkFile(fileName string, fileSize int64) (e error) {
 	} else if util.ToolsUtil.Contains(config.FileConfig.UploadVideoExt, fileExt) {
 		// 视频文件
 		if fileSize > config.FileConfig.UploadVideoSize {
-			return response.Failed.SetMessage("上传视频不能超出限制: " + strconv.FormatInt(config.FileConfig.UploadVideoSize/1024/1024, 10) + "M")
+			return response.Failed.SetMessage("上传音视频不能超出限制: " + strconv.FormatInt(config.FileConfig.UploadVideoSize/1024/1024, 10) + "M")
 		}
 	} else if util.ToolsUtil.Contains(config.FileConfig.UploadFileExt, fileExt) {
 		// 文件

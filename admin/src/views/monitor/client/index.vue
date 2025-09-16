@@ -65,42 +65,6 @@
         </el-card>
         <el-card class="!border-none mt-4" shadow="never">
             <div class="text-right">
-                <!-- <el-button
-                    v-perms="['admin:monitor_client:add']"
-                    type="primary"
-                    @click="handleAdd()"
-                >
-                    <template #icon>
-                        <icon name="el-icon-Plus" />
-                    </template>
-                    新增
-                </el-button>
-                <upload
-                    v-perms="['admin:monitor_client:ImportFile']"
-                    class="ml-3 mr-3"
-                    :url="monitor_client_import_file"
-                    :data="{ cid: 0 }"
-                    type="file"
-                    :show-progress="true"
-                    @change="resetPage"
-                >
-                    <el-button type="primary">
-                        <template #icon>
-                            <icon name="el-icon-Upload" />
-                        </template>
-                        导入
-                    </el-button>
-                </upload>
-                <el-button
-                    v-perms="['admin:monitor_client:ExportFile']"
-                    type="primary"
-                    @click="exportFile"
-                >
-                    <template #icon>
-                        <icon name="el-icon-Download" />
-                    </template>
-                    导出
-                </el-button> -->
                 <el-button
                     v-perms="['admin:monitor_client:delBatch']"
                     type="danger"

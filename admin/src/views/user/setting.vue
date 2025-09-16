@@ -69,11 +69,14 @@
                         />
                     </div>
                 </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="handleSubmit">保存</el-button>
+                </el-form-item>
             </el-form>
         </el-card>
-        <footer-btns>
+        <!-- <footer-btns>
             <el-button type="primary" @click="handleSubmit">保存</el-button>
-        </footer-btns>
+        </footer-btns> -->
     </div>
 </template>
 
@@ -105,7 +108,7 @@ const rules = reactive<object>({
         {
             required: true,
             message: '头像不能为空',
-            trigger: ['change']
+            trigger: ['blur']
         }
     ],
     nickname: [

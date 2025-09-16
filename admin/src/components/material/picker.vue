@@ -1,8 +1,8 @@
 <template>
-    <div class="material-select">
+    <div class="material-picker">
         <popup
             ref="popupRef"
-            width="830px"
+            width="1200px"
             custom-class="body-padding"
             :title="`选择${tipsText}`"
             @confirm="handleConfirm"
@@ -24,7 +24,6 @@
                                     <file-item
                                         :uri="excludeDomain ? getImageUrl(element) : element"
                                         :file-size="size"
-                                        :type="type"
                                     ></file-item>
                                 </del-wrap>
                                 <div class="operation-btns text-xs text-center">
@@ -61,21 +60,21 @@
                     </div>
                 </div>
             </template>
-            <el-scrollbar>
-                <div class="material-wrap">
-                    <material
-                        ref="materialRef"
-                        mode="page"
-                        :type="type"
-                        :file-size="fileSize"
-                        :limit="meterialLimit"
-                        @change="selectChange"
-                    />
-                </div>
-            </el-scrollbar>
+
+            <div class="material-wrap">
+                <material
+                    ref="materialRef"
+                    mode="picker"
+                    defaultFileType="image"
+                    :ext="ext"
+                    :file-size="fileSize"
+                    :limit="materialLimit"
+                    @change="selectChange"
+                />
+            </div>
         </popup>
 
-        <preview v-model="showPreview" :url="previewUrl" :type="type" />
+        <preview v-model="showPreview" :url="previewUrl" />
     </div>
 </template>
 
@@ -88,6 +87,8 @@ import Material from './index.vue'
 import Preview from './preview.vue'
 import useAppStore from '@/stores/modules/app'
 import { useThrottleFn } from '@vueuse/core'
+import { FileExt } from '@/enums/fileEnums'
+
 export default defineComponent({
     components: {
         Popup,
@@ -154,6 +155,10 @@ export default defineComponent({
         const currentIndex = ref(-1)
         const { disabled, limit, modelValue } = toRefs(props)
         const { getImageUrl } = useAppStore()
+
+        const ext = computed(() => {
+            return FileExt[props.type]
+        })
         const tipsText = computed(() => {
             switch (props.type) {
                 case 'image':
@@ -168,7 +173,7 @@ export default defineComponent({
         const showUpload = computed(() => {
             return props.limit - fileList.value.length > 0
         })
-        const meterialLimit: any = computed(() => {
+        const materialLimit: any = computed(() => {
             if (!isAdd.value) {
                 return 1
             }
@@ -240,12 +245,13 @@ export default defineComponent({
         provide('limit', props.limit)
         provide('hiddenUpload', props.hiddenUpload)
         return {
+            ext,
             popupRef,
             materialRef,
             fileList,
             tipsText,
             handleConfirm,
-            meterialLimit,
+            materialLimit,
             showUpload,
             showPopup,
             selectChange,
@@ -261,7 +267,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.material-select {
+.material-picker {
     .material-upload,
     .material-preview {
         position: relative;
@@ -301,7 +307,7 @@ export default defineComponent({
 }
 .material-wrap {
     min-width: 720px;
-    height: 430px;
-    @apply border-t border-b border-br;
+    height: calc(100vh - 170px);
+    border-top: 1px var(--el-border-color) solid;
 }
 </style>

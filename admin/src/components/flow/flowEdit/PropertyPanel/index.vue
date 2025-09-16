@@ -34,6 +34,7 @@ import UserTask from './UserTask.vue'
 import FieldAuth from './FieldAuth.vue'
 import Gateway from './Gateway.vue'
 import type { NodeType, PropertiesType, FormFieldListType, FieldListType } from './property.type'
+
 defineOptions({
     name: 'PropertyPanel'
 })

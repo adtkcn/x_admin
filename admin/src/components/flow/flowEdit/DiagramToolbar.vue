@@ -35,7 +35,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 // import { Sketch } from 'vue-color'
 // import ColorFill from './icon/ColorFill.vue'
 // import ColorText from './icon/ColorText.vue'
@@ -51,7 +51,7 @@ import AreaSelect from './icon/AreaSelect.vue'
 let fileHandle
 
 async function getFile() {
-    ;[fileHandle] = await window.showOpenFilePicker()
+    ;[fileHandle] = await (window as any).showOpenFilePicker()
     console.log('fileHandle', fileHandle)
 }
 
@@ -149,6 +149,8 @@ export default {
             }
         },
         $_changeLineType(value) {
+            console.log('value', value)
+
             const { lf, activeEdges } = this.$props
             const { graphModel } = lf
             lf.setDefaultEdgeType(value)

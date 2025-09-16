@@ -1,6 +1,6 @@
 <template>
     <div v-show="modelValue">
-        <div v-if="type == 'image'">
+        <div v-if="fileType == 'image'">
             <el-image-viewer
                 v-if="previewLists.length"
                 :url-list="previewLists"
@@ -8,8 +8,8 @@
                 @close="handleClose"
             />
         </div>
-        <div v-if="type == 'video'">
-            <el-dialog v-model="visible" width="740px" title="视频预览" :before-close="handleClose">
+        <div v-if="fileType == 'video' || fileType == 'audio'">
+            <el-dialog v-model="visible" width="900px" title="视频预览" :before-close="handleClose">
                 <video-player ref="playerRef" :src="url" width="100%" height="450px" />
             </el-dialog>
         </div>
@@ -18,6 +18,8 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, watch, computed, nextTick } from 'vue'
+import { GetFileType } from '@/enums/fileEnums'
+
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -33,17 +35,8 @@ const props = defineProps({
     // }
 })
 
-const type = computed(() => {
-    const imageExt = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
-    const videoExt = ['mp4', 'avi', 'mov']
-    const ext = props.url.split('.').pop()
-    if (imageExt.includes(ext)) {
-        return 'image'
-    }
-    if (videoExt.includes(ext)) {
-        return 'video'
-    }
-    return 'file'
+const fileType = computed(() => {
+    return GetFileType(props.url)
 })
 
 const playerRef = useTemplateRef('playerRef')

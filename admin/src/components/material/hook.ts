@@ -85,8 +85,8 @@ export function useCate() {
 // 处理文件的钩子函数
 export function useFile(
     cateId: Ref<string | number>,
-    ext: string[],
-    limit: Ref<number>,
+    ext: Ref<string[]>,
+    limit: number,
     size: number
 ) {
     const tableRef = shallowRef()
@@ -99,6 +99,7 @@ export function useFile(
         ext: ext,
         cid: cateId
     })
+
     const { pager, getLists, resetPage } = usePaging({
         fetchFun: fileList,
         params: fileParams,
@@ -141,8 +142,8 @@ export function useFile(
             select.value.splice(index, 1)
             return
         }
-        if (select.value.length == limit.value) {
-            if (limit.value == 1) {
+        if (select.value.length == limit) {
+            if (limit == 1) {
                 select.value = []
                 select.value.push(item)
                 return
@@ -157,7 +158,7 @@ export function useFile(
         select.value = []
     }
 
-    const cancelSelete = (id: number) => {
+    const cancelSelect = (id: number) => {
         select.value = select.value.filter((item: any) => item.id != id)
     }
     const selectItems = (items: any[]) => {
@@ -194,7 +195,7 @@ export function useFile(
         batchFileMove,
         selectFile,
         clearSelect,
-        cancelSelete,
+        cancelSelect,
         selectAll,
         selectItems,
         handleFileRename

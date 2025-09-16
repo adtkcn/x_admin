@@ -20,13 +20,13 @@ var FileConfig = fileConfig{
 	PublicPrefix: "/api/uploads",
 	// 上传文件路径
 	UploadDirectory: "/tmp/uploads/x_admin_go/",
-	UploadImageSize: 10 * 1024 * 1024,   // 10MB
-	UploadVideoSize: 500 * 1024 * 1024,  // 500MB
+	UploadImageSize: 20 * 1024 * 1024,   // 20MB
+	UploadVideoSize: 2000 * 1024 * 1024, // 2000MB
 	UploadFileSize:  1024 * 1024 * 1024, //1GB
 	// 上传图片扩展
 	UploadImageExt: []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp", "avif"},
-	// 上传视频扩展
-	UploadVideoExt: []string{"mp4", "mp3", "avi", "flv", "rmvb", "mov"},
+	// 上传音视频扩展
+	UploadVideoExt: []string{"mp4", "avi", "flv", "wmv", "rmvb", "mov", "mp3", "wav", "flac", "m4a"},
 
 	UploadFileExt: []string{"pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip", "rar", "7z", "txt"},
 }

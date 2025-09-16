@@ -36,7 +36,7 @@ const options = reactive({
     loop: false, //循环播放
     mirror: false, //镜像画面
     ligthOff: false, //关灯模式
-    volume: 0.3, //默认音量大小
+    volume: 1, //默认音量大小
     control: true, //是否显示控制器
     title: '', //视频名称
     poster: '', //封面
@@ -59,7 +59,7 @@ const onPause = (event: any) => {
 }
 
 const onTimeupdate = (event: any) => {
-    console.log(event, '时间更新')
+    // console.log(event, '时间更新')
 }
 const onCanplay = (event: any) => {
     console.log(event, '可以播放')

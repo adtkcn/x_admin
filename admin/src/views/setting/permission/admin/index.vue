@@ -37,7 +37,7 @@
                 class="ml-3 mr-3"
                 :url="adminImportFile"
                 :data="{ cid: 0 }"
-                type="file"
+                :ext="['xlsx']"
                 :show-progress="true"
                 @change="resetPage"
             >

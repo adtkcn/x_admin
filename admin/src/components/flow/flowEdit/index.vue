@@ -22,13 +22,12 @@
 </template>
 
 <script setup lang="ts">
-// Importing necessary functions and components
 import { ref, onMounted, useTemplateRef } from 'vue'
-import LogicFlow from '@logicflow/core'
+import { LogicFlow } from '@logicflow/core'
+
 import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
 import type { NodeType, PropertiesType } from './PropertyPanel/property.type'
-// import '@logicflow/core/dist/style/index.css'
-// import '@logicflow/extension/lib/style/index.css'
+
 import '@logicflow/core/lib/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 
@@ -57,7 +56,7 @@ const props = defineProps({
 })
 
 // Define refs for reactive data and component references
-const lf = ref(null) // Reference to LogicFlow instance
+const lf = ref<LogicFlow>(null) // Reference to LogicFlow instance
 const activeEdges = ref([]) // Reactive array for active edges
 const diagramRef = useTemplateRef<HTMLInputElement>('diagramRef') // Reference to the diagram container
 const PropertyPanelRef = useTemplateRef<InstanceType<typeof PropertyPanel>>('PropertyPanelRef') // Reference to the PropertyPanel component
@@ -69,15 +68,9 @@ onMounted(() => {
 
 // Function to initialize LogicFlow
 function initLogicFlow(data) {
-    // 引入框选插件
-    // LogicFlow.use(SelectionSelect)
-    // LogicFlow.use(Menu)
-    // LogicFlow.use(BpmnElement)
-    // LogicFlow.use(MiniMap)
-    // Creating a new LogicFlow instance
     const logicFlowInstance = new LogicFlow({
         plugins: [SelectionSelect, Menu, MiniMap, BpmnElement],
-        container: diagramRef.value, // Setting the container where LogicFlow will be rendered
+        container: diagramRef.value,
         overlapMode: 1,
         // allowResize: true,
         autoWrap: true,
@@ -106,7 +99,7 @@ function initLogicFlow(data) {
 
     // Setting default edge type and rendering initial data
     logicFlowInstance.setDefaultEdgeType('pro-polyline')
-    logicFlowInstance.extension.menu?.addMenuConfig({
+    ;(logicFlowInstance.extension.menu as Menu).addMenuConfig({
         nodeMenu: [
             {
                 text: '属性配置',
@@ -117,14 +110,14 @@ function initLogicFlow(data) {
         ]
     })
     logicFlowInstance.render(data)
-    logicFlowInstance.extension.miniMap?.show()
+    ;(logicFlowInstance.extension.miniMap as MiniMap).show()
     // Assigning the LogicFlow instance to the 'lf' ref
     lf.value = logicFlowInstance
 
     // Event listener for node clicks
     lf.value.on('node:dbclick', (e) => {
         console.log('dbclick on node', e.data, props.fieldList)
-        PropertyPanelRef.value.open(e.data, props.fieldList)
+        PropertyPanelRef.value.open(e.data as NodeType, props.fieldList)
     })
 }
 
@@ -142,10 +135,7 @@ function setProperties(node: NodeType, item: PropertiesType) {
 
     lf.value.setProperties(node.id, item)
 }
-// function setZIndex(node, type) {
-//     lf.value.setElementZIndex(node.id, type)
-// }
-// Function to import data into the LogicFlow instance
+
 function importData(text) {
     lf.value.renderRawData(text)
 }
@@ -182,9 +172,9 @@ async function getData() {
         formData: any
         treeToList: any
     }>((resolve, reject) => {
-        const data = lf.value.getGraphData()
-        const nodes = data.nodes
-        const edges = data.edges
+        const data: any = lf.value.getGraphData()
+        const nodes = data?.nodes || []
+        const edges = data?.edges || []
 
         let haveMoreChildNode = false
         const sourceNodeIdSum = {} // Node ID -> child nodes mapping

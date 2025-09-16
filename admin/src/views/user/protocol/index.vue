@@ -47,7 +47,7 @@
                     class="ml-3 mr-3"
                     :url="user_protocol_import_file"
                     :data="{ cid: 0 }"
-                    type="file"
+                    :ext="['xlsx']"
                     :show-progress="true"
                     @change="resetPage"
                 >

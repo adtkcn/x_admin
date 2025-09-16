@@ -58,5 +58,6 @@ export default defineComponent({
 <style>
 .svg-icon-container {
     display: inline-block;
+    line-height: 1;
 }
 </style>

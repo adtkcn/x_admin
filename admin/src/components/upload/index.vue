@@ -14,7 +14,7 @@
             :on-error="handleError"
             :accept="getAccept"
         >
-            <slot></slot>{{ getAccept }}
+            <slot></slot>
         </el-upload>
         <el-dialog
             v-if="showProgress && fileList.length"
@@ -58,11 +58,6 @@ export default defineComponent({
         ext: {
             type: Array as PropType<string[]>,
             default: () => []
-        },
-        // 上传文件类型
-        type: {
-            type: String,
-            default: 'image'
         },
         // 是否支持多选
         multiple: {
