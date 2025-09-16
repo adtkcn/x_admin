@@ -116,9 +116,7 @@ export function useFile(
 
     const batchFileDelete = async (id?: number[]) => {
         try {
-            await feedback.confirm(
-                '确认删除后，本地或云存储文件也将同步删除，如文件已被使用，请谨慎操作！'
-            )
+            await feedback.confirm('确认删除记录，不会删除文件')
             const ids = id ? id : select.value.map((item: any) => item.id)
             await fileDelete({ ids })
             getFileList()
