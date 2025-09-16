@@ -15,7 +15,7 @@
                 :model="formData"
                 label-width="60px"
             >
-                <el-scrollbar class="h-[400px] sm:h-[600px]">
+                <el-scrollbar class="h-[400px] sm:h-[500px]">
                     <el-form-item label="权限" prop="menus">
                         <div>
                             <el-checkbox label="展开/折叠" @change="handleExpand" />

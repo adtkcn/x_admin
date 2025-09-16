@@ -10,28 +10,30 @@
                 </el-button>
             </div>
             <div class="mt-4">
-                <div>
-                    <el-table :data="pager.lists" size="large" v-loading="pager.loading">
-                        <el-table-column prop="id" label="ID" min-width="100" />
-                        <el-table-column prop="name" label="名称" min-width="150" />
-                        <el-table-column
-                            prop="remark"
-                            label="备注"
-                            min-width="150"
-                            show-overflow-tooltip
-                        />
-                        <el-table-column prop="sort" label="排序" min-width="100" />
-                        <el-table-column prop="member" label="角色人数" min-width="120" />
-                        <el-table-column label="岗位状态" prop="isDisable" min-width="100">
+                <div style="height: calc(100vh - 270px)">
+                    <vxe-table
+                        :data="pager.lists"
+                        :row-config="{
+                            keyField: 'id'
+                        }"
+                        max-height="100%"
+                        v-loading="pager.loading"
+                    >
+                        <vxe-column field="id" title="ID" min-width="60" />
+                        <vxe-column field="name" title="名称" min-width="150" />
+                        <vxe-column field="remark" title="备注" min-width="150" />
+                        <vxe-column field="sort" title="排序" min-width="100" />
+                        <vxe-column field="member" title="角色人数" min-width="100" />
+                        <vxe-column title="岗位状态" field="isDisable" min-width="80">
                             <template #default="{ row }">
                                 <el-tag class="ml-2" :type="row.isDisable ? 'danger' : 'primary'">
                                     {{ row.isDisable ? '停用' : '正常' }}
                                 </el-tag>
                             </template>
-                        </el-table-column>
+                        </vxe-column>
 
-                        <el-table-column prop="createTime" label="创建时间" min-width="180" />
-                        <el-table-column label="操作" width="190" fixed="right">
+                        <vxe-column field="createTime" title="创建时间" width="150" />
+                        <vxe-column title="操作" width="190" fixed="right">
                             <template #default="{ row }">
                                 <el-button
                                     v-perms="['admin:system:role:edit']"
@@ -58,8 +60,8 @@
                                     删除
                                 </el-button>
                             </template>
-                        </el-table-column>
-                    </el-table>
+                        </vxe-column>
+                    </vxe-table>
                 </div>
                 <div class="flex justify-end mt-4">
                     <pagination v-model="pager" @change="getLists" />

@@ -179,7 +179,7 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
-	if listReq.Role >= 0 {
+	if listReq.Role > 0 {
 		adminModel = adminModel.Where("role = ?", listReq.Role)
 	}
 	// 总数

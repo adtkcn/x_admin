@@ -100,7 +100,7 @@
                     />
                 </el-form-item>
 
-                <el-form-item label="管理员状态" v-if="!isRoot">
+                <el-form-item label="状态" v-if="!isRoot">
                     <el-switch v-model="formData.isDisable" :active-value="0" :inactive-value="1" />
                 </el-form-item>
             </el-form>

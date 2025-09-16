@@ -9,7 +9,7 @@
                     <el-input v-model="formData.nickname" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="管理员角色" class="w-[280px]">
-                    <el-select v-model="formData.role">
+                    <el-select v-model="formData.role" :empty-values="[null, undefined]">
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in optionsData.role"
@@ -56,22 +56,28 @@
                 导出
             </el-button>
 
-            <div class="mt-4">
-                <el-table :data="pager.lists" size="large">
-                    <el-table-column label="ID" prop="id" min-width="60" />
-                    <el-table-column label="头像" min-width="100">
+            <div class="mt-4" style="height: calc(100vh - 360px)">
+                <vxe-table
+                    :data="pager.lists"
+                    :row-config="{
+                        keyField: 'id'
+                    }"
+                    max-height="100%"
+                >
+                    <vxe-column title="ID" field="id" min-width="60" />
+                    <vxe-column title="头像" width="80">
                         <template #default="{ row }">
-                            <el-avatar :size="50" :src="row.avatar"></el-avatar>
+                            <el-avatar :size="40" :src="row.avatar"></el-avatar>
                         </template>
-                    </el-table-column>
-                    <el-table-column label="账号" prop="username" min-width="100" />
-                    <el-table-column label="名称" prop="nickname" min-width="100" />
-                    <el-table-column label="角色" prop="role" min-width="100" />
-                    <el-table-column label="部门" prop="dept" min-width="100" />
-                    <el-table-column label="创建时间" prop="createTime" min-width="180" />
-                    <el-table-column label="最近登录时间" prop="lastLoginTime" min-width="180" />
-                    <el-table-column label="最近登录IP" prop="lastLoginIp" min-width="120" />
-                    <el-table-column label="状态" min-width="100">
+                    </vxe-column>
+                    <vxe-column title="账号" field="username" min-width="100" />
+                    <vxe-column title="名称" field="nickname" min-width="100" />
+                    <vxe-column title="角色" field="role" min-width="100" />
+                    <vxe-column title="部门" field="dept" min-width="100" />
+                    <vxe-column title="创建时间" field="createTime" width="150" />
+                    <vxe-column title="最近登录时间" field="lastLoginTime" width="150" />
+                    <vxe-column title="最近登录IP" field="lastLoginIp" width="120" />
+                    <vxe-column title="状态" width="80">
                         <template #default="{ row }">
                             <el-switch
                                 v-perms="['admin:system:admin:disable']"
@@ -82,8 +88,8 @@
                                 @change="changeStatus($event, row.id)"
                             />
                         </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="120" fixed="right">
+                    </vxe-column>
+                    <vxe-column title="操作" width="120" fixed="right">
                         <template #default="{ row }">
                             <el-button
                                 v-perms="['admin:system:admin:edit']"
@@ -103,8 +109,8 @@
                                 删除
                             </el-button>
                         </template>
-                    </el-table-column>
-                </el-table>
+                    </vxe-column>
+                </vxe-table>
             </div>
             <div class="flex mt-4 justify-end">
                 <pagination v-model="pager" @change="getLists" />
@@ -134,9 +140,9 @@ defineOptions({
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 // 表单数据
 const formData = reactive<any>({
-    //   username: "",
-    //   nickname: "",
-    //   role: "",
+    username: '',
+    nickname: '',
+    role: ''
 })
 const showEdit = ref(false)
 const { pager, getLists, resetParams, resetPage } = usePaging({

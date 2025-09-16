@@ -10,7 +10,7 @@
                 </el-button>
                 <el-button @click="handleExpand"> 展开/收起 </el-button>
             </div>
-            <div style="height: calc(100vh - 200px)">
+            <div class="mt-4" style="height: calc(100vh - 220px)">
                 <vxe-table
                     ref="tableRef"
                     :row-config="rowConfig"
