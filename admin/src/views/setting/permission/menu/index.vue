@@ -1,88 +1,88 @@
 <template>
-    <div class="menu-lists">
-        <el-card class="!border-none" shadow="never">
-            <div>
-                <el-button v-perms="['admin:system:menu:add']" type="primary" @click="handleAdd()">
-                    <template #icon>
-                        <icon name="el-icon-Plus" />
+    <div class="menu-lists p-4 h-full box-border flex flex-col">
+        <div>
+            <el-button v-perms="['admin:system:menu:add']" type="primary" @click="handleAdd()">
+                <template #icon>
+                    <icon name="el-icon-Plus" />
+                </template>
+                新增
+            </el-button>
+            <el-button @click="handleExpand"> 展开/收起 </el-button>
+        </div>
+        <div class="mt-4 flex-1">
+            <vxe-table
+                ref="tableRef"
+                :row-config="rowConfig"
+                :tree-config="treeConfig"
+                :data="lists"
+                :border="'inner'"
+                max-height="100%"
+            >
+                <vxe-column type="seq" width="60"></vxe-column>
+                <vxe-column
+                    field="menuName"
+                    title="菜单名称"
+                    min-width="200"
+                    tree-node
+                ></vxe-column>
+                <vxe-column field="menuType" title="类型" width="60">
+                    <template #default="{ row }">
+                        <div v-if="row.menuType == MenuEnum.CATALOGUE">目录</div>
+                        <div v-else-if="row.menuType == MenuEnum.MENU">菜单</div>
+                        <div v-else-if="row.menuType == MenuEnum.BUTTON">按钮</div>
                     </template>
-                    新增
-                </el-button>
-                <el-button @click="handleExpand"> 展开/收起 </el-button>
-            </div>
-            <div class="mt-4" style="height: calc(100vh - 220px)">
-                <vxe-table
-                    ref="tableRef"
-                    :row-config="rowConfig"
-                    :tree-config="treeConfig"
-                    :data="lists"
-                    max-height="100%"
-                >
-                    <vxe-column type="seq" width="60"></vxe-column>
-                    <vxe-column
-                        field="menuName"
-                        title="菜单名称"
-                        min-width="200"
-                        tree-node
-                    ></vxe-column>
-                    <vxe-column field="menuType" title="类型" width="60">
-                        <template #default="{ row }">
-                            <div v-if="row.menuType == MenuEnum.CATALOGUE">目录</div>
-                            <div v-else-if="row.menuType == MenuEnum.MENU">菜单</div>
-                            <div v-else-if="row.menuType == MenuEnum.BUTTON">按钮</div>
-                        </template>
-                    </vxe-column>
-                    <vxe-column field="menuIcon" title="图标" width="60">
-                        <template #default="{ row }">
-                            <div class="flex">
-                                <icon :name="row.menuIcon" :size="20" />
-                            </div>
-                        </template>
-                    </vxe-column>
-                    <vxe-column field="paths" title="路径" min-width="100"></vxe-column>
-                    <vxe-column field="permsArr" title="权限标识" min-width="120">
-                        <template #default="{ row }">
-                            <span v-if="row.perms" type="info">{{ row.perms }}</span>
-                        </template>
-                    </vxe-column>
-                    <vxe-column field="isDisable" title="状态" width="80">
-                        <template #default="{ row }">
-                            <el-tag v-if="row.isDisable == 0" type="primary">正常</el-tag>
-                            <el-tag v-else type="danger">停用</el-tag>
-                        </template>
-                    </vxe-column>
-                    <vxe-column field="menuSort" title="排序" width="60"></vxe-column>
-                    <vxe-column title="操作" width="160">
-                        <template #default="{ row }">
-                            <el-button
-                                v-perms="['admin:system:menu:add']"
-                                type="primary"
-                                link
-                                @click="handleAdd(row.id)"
-                            >
-                                新增
-                            </el-button>
-                            <el-button
-                                v-perms="['admin:system:menu:edit']"
-                                type="primary"
-                                link
-                                @click="handleEdit(row)"
-                            >
-                                编辑
-                            </el-button>
-                            <el-button
-                                v-perms="['admin:system:menu:del']"
-                                type="danger"
-                                link
-                                @click="handleDelete(row.id)"
-                            >
-                                删除
-                            </el-button>
-                        </template>
-                    </vxe-column>
-                </vxe-table>
-            </div>
-            <!-- <el-table
+                </vxe-column>
+                <vxe-column field="menuIcon" title="图标" width="60">
+                    <template #default="{ row }">
+                        <div class="flex">
+                            <icon :name="row.menuIcon" :size="20" />
+                        </div>
+                    </template>
+                </vxe-column>
+                <vxe-column field="paths" title="路径" min-width="100"></vxe-column>
+                <vxe-column field="permsArr" title="权限标识" min-width="120">
+                    <template #default="{ row }">
+                        <span v-if="row.perms" type="info">{{ row.perms }}</span>
+                    </template>
+                </vxe-column>
+                <vxe-column field="isDisable" title="状态" width="80">
+                    <template #default="{ row }">
+                        <el-tag v-if="row.isDisable == 0" type="primary">正常</el-tag>
+                        <el-tag v-else type="danger">停用</el-tag>
+                    </template>
+                </vxe-column>
+                <vxe-column field="menuSort" title="排序" width="60"></vxe-column>
+                <vxe-column title="操作" width="160">
+                    <template #default="{ row }">
+                        <el-button
+                            v-perms="['admin:system:menu:add']"
+                            type="primary"
+                            link
+                            @click="handleAdd(row.id)"
+                        >
+                            新增
+                        </el-button>
+                        <el-button
+                            v-perms="['admin:system:menu:edit']"
+                            type="primary"
+                            link
+                            @click="handleEdit(row)"
+                        >
+                            编辑
+                        </el-button>
+                        <el-button
+                            v-perms="['admin:system:menu:del']"
+                            type="danger"
+                            link
+                            @click="handleDelete(row.id)"
+                        >
+                            删除
+                        </el-button>
+                    </template>
+                </vxe-column>
+            </vxe-table>
+        </div>
+        <!-- <el-table
                 v-loading="loading"
                 ref="tableRef"
                 class="mt-4"
@@ -157,9 +157,8 @@
                     </template>
                 </el-table-column>
             </el-table> -->
-        </el-card>
-        <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
+    <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
 </template>
 <script lang="ts" setup>
 import { ref, useTemplateRef, nextTick } from 'vue'
@@ -244,3 +243,8 @@ const handleExpand = () => {
 }
 getLists()
 </script>
+<style scoped lang="scss">
+.menu-lists {
+    background-color: white;
+}
+</style>

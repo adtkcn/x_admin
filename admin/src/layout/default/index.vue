@@ -1,15 +1,15 @@
 <template>
-    <div class="layout-default flex h-screen w-full">
+    <div class="layout-default flex h-screen">
         <div class="app-aside" :style="{ width: MainLayoutWidth }">
-            <layout-sidebar />
+            <LayoutSidebar />
         </div>
 
         <div class="flex-1 flex flex-col min-w-0">
             <div class="app-header">
-                <layout-header />
+                <LayoutHeader />
             </div>
             <div class="app-main flex-1 min-h-0">
-                <layout-main />
+                <LayoutMain />
             </div>
         </div>
     </div>
@@ -58,3 +58,9 @@ watch(
     }
 )
 </script>
+
+<style scoped lang="scss">
+.app-header {
+    border-bottom: 8px solid var(--el-bg-color-page);
+}
+</style>

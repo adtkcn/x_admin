@@ -1,5 +1,5 @@
 <template>
-    <div class="app-tabs flex bg-body">
+    <div class="app-tabs flex">
         <div class="flex-1 min-w-0">
             <el-tabs
                 :model-value="currentTab"
@@ -61,12 +61,7 @@ const handleCommand = (command: any) => {
 <style lang="scss" scoped>
 .app-tabs {
     border-top: 1px solid rgba($color: #ccc, $alpha: 0.4);
-    // border-bottom: 4px solid rgba($color: var(--el-bg-color-page), $alpha: 0.4);
-
-    border-bottom-width: 6px;
-    border-bottom-style: solid;
-    border-bottom-color: var(--el-bg-color-page);
-
+    padding: 0 12px;
     :deep(.el-tabs) {
         height: 40px;
         .el-tabs {

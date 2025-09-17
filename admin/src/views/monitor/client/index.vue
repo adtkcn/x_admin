@@ -10,7 +10,11 @@
                 label-position="left"
             >
                 <el-form-item label="项目" prop="ProjectKey" class="w-[270px]">
-                    <el-select v-model="queryParams.ProjectKey" clearable>
+                    <el-select
+                        v-model="queryParams.ProjectKey"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in listAllData.monitor_project_listAll"

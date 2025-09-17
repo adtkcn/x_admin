@@ -15,7 +15,11 @@
                     <el-input v-model="queryParams.flowName" />
                 </el-form-item>
                 <el-form-item label="流程分类" prop="flowGroup" class="w-[280px]">
-                    <el-select v-model="queryParams.flowGroup" clearable>
+                    <el-select
+                        v-model="queryParams.flowGroup"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.flow_group"
@@ -25,20 +29,7 @@
                         />
                     </el-select>
                 </el-form-item>
-                <!-- <el-form-item label="流程描述" prop="flowRemark">
-                    <el-input v-model="queryParams.flowRemark" />
-                </el-form-item> -->
-                <!-- <el-form-item label="状态" prop="status">
-                    <el-select v-model="queryParams.status" clearable>
-                        <el-option label="全部" value="" />
-                        <el-option
-                            v-for="(item, index) in dictData.flow_apply_status"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
-                        />
-                    </el-select>
-                </el-form-item> -->
+
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>

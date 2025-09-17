@@ -25,44 +25,47 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card v-loading="pager.loading" class="mt-4 !border-none" shadow="never">
-            <el-button v-perms="['admin:system:admin:add']" type="primary" @click="handleAdd">
-                <template #icon>
-                    <icon name="el-icon-Plus" />
-                </template>
-                新增
-            </el-button>
-
-            <upload
-                class="ml-3 mr-3"
-                :url="adminImportFile"
-                :data="{ cid: 0 }"
-                :ext="['xlsx']"
-                :show-progress="true"
-                @change="resetPage"
-            >
-                <el-button type="primary">
+        <el-card v-loading="pager.loading" class="mt-2 !border-none" shadow="never">
+            <div>
+                <el-button v-perms="['admin:system:admin:add']" type="primary" @click="handleAdd">
                     <template #icon>
-                        <icon name="el-icon-Upload" />
+                        <icon name="el-icon-Plus" />
                     </template>
-                    导入
+                    新增
                 </el-button>
-            </upload>
 
-            <el-button type="primary" @click="exportFile">
-                <template #icon>
-                    <icon name="el-icon-Download" />
-                </template>
-                导出
-            </el-button>
+                <upload
+                    class="ml-3 mr-3"
+                    :url="adminImportFile"
+                    :data="{ cid: 0 }"
+                    :ext="['xlsx']"
+                    :show-progress="true"
+                    @change="resetPage"
+                >
+                    <el-button type="primary">
+                        <template #icon>
+                            <icon name="el-icon-Upload" />
+                        </template>
+                        导入
+                    </el-button>
+                </upload>
 
-            <div class="mt-4" style="height: calc(100vh - 360px)">
+                <el-button type="primary" @click="exportFile">
+                    <template #icon>
+                        <icon name="el-icon-Download" />
+                    </template>
+                    导出
+                </el-button>
+            </div>
+
+            <div class="mt-4" style="height: calc(100vh - 340px)">
                 <vxe-table
                     :data="pager.lists"
                     :row-config="{
                         keyField: 'id'
                     }"
                     max-height="100%"
+                    :border="'inner'"
                 >
                     <vxe-column title="ID" field="id" min-width="60" />
                     <vxe-column title="头像" width="80">

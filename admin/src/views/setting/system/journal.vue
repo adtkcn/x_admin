@@ -3,7 +3,7 @@
     <div class="journal">
         <el-card class="!border-none" shadow="never">
             <el-form
-                class="ls-form"
+                class="ls-form mb-[-16px]"
                 :model="formData"
                 inline
                 label-width="70px"
@@ -19,7 +19,11 @@
                 </el-form-item>
 
                 <el-form-item label="访问方式" class="w-[360px]">
-                    <el-select v-model="formData.type" placeholder="请选择">
+                    <el-select
+                        v-model="formData.type"
+                        placeholder="请选择"
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option
                             v-for="(item, index) in visitType"
                             :key="index"

@@ -17,6 +17,7 @@
                             keyField: 'id'
                         }"
                         max-height="100%"
+                        :border="'inner'"
                         v-loading="pager.loading"
                     >
                         <vxe-column field="id" title="ID" min-width="60" />

@@ -51,7 +51,6 @@ const settingStore = useSettingStore()
 <style lang="scss">
 .navbar {
     height: var(--navbar-height);
-
     display: flex;
     padding-left: 8px;
     padding-right: 8px;
@@ -61,7 +60,6 @@ const settingStore = useSettingStore()
         display: flex;
         justify-content: center;
         align-items: center;
-        // background-color: var(--el-bg-color-page);
     }
 }
 </style>

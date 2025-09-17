@@ -6,7 +6,7 @@
                     <el-input v-model="queryParams.title" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="栏目名称" class="w-[280px]">
-                    <el-select v-model="queryParams.cid">
+                    <el-select v-model="queryParams.cid" :empty-values="[null, undefined]">
                         <el-option label="全部" value />
                         <el-option
                             v-for="item in optionsData.articleCate"
@@ -17,7 +17,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="文章状态" class="w-[280px]">
-                    <el-select v-model="queryParams.isShow">
+                    <el-select v-model="queryParams.isShow" :empty-values="[null, undefined]">
                         <el-option label="全部" value />
                         <el-option label="显示" :value="1" />
                         <el-option label="隐藏" :value="0" />

@@ -1,23 +1,5 @@
 <template>
     <div class="dept-lists">
-        <!-- <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
-                <el-form-item label="部门名称" prop="name" class="w-[280px]">
-                    <el-input v-model="queryParams.name" clearable @keyup.enter="getLists" />
-                </el-form-item>
-                <el-form-item label="部门状态" prop="isStop" class="w-[280px]">
-                    <el-select v-model="queryParams.isStop">
-                        <el-option label="全部" value />
-                        <el-option label="正常" value="0" />
-                        <el-option label="停用" value="1" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="getLists">查询</el-button>
-                    <el-button @click="resetParams">重置</el-button>
-                </el-form-item>
-            </el-form>
-        </el-card> -->
         <el-card class="!border-none" shadow="never">
             <div>
                 <el-button v-perms="['admin:system:dept:add']" type="primary" @click="handleAdd()">

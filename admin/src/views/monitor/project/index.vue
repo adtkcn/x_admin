@@ -16,7 +16,11 @@
                     <el-input v-model="queryParams.ProjectName" />
                 </el-form-item>
                 <el-form-item label="项目类型" prop="ProjectType" class="w-[280px]">
-                    <el-select v-model="queryParams.ProjectType" clearable>
+                    <el-select
+                        v-model="queryParams.ProjectType"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.project_type"
@@ -27,7 +31,11 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="是否启用" prop="Status" class="w-[280px]">
-                    <el-select v-model="queryParams.Status" clearable>
+                    <el-select
+                        v-model="queryParams.Status"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.status"
