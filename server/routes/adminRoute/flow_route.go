@@ -1,7 +1,7 @@
 package adminRoute
 
 import (
-	"x_admin/controller/admin_ctl/flowController"
+	"x_admin/app/controller/admin_ctl/flowController"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"

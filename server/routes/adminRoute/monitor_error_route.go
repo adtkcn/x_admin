@@ -1,7 +1,7 @@
 package adminRoute
 
 import (
-	"x_admin/controller/admin_ctl/monitorController"
+	"x_admin/app/controller/admin_ctl/monitorController"
 	"x_admin/middleware"
 
 	"github.com/gin-gonic/gin"

@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"x_admin/controller/admin_ctl/commonController"
+	"x_admin/app/controller/admin_ctl/commonController"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/routes/adminRoute"
