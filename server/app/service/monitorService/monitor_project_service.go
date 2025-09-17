@@ -128,7 +128,7 @@ func (service monitorProjectService) Detail(Id int) (res monitorSchema.MonitorPr
 func (service monitorProjectService) Add(addReq monitorSchema.MonitorProjectAddReq) (createId int, e error) {
 	var obj model.MonitorProject
 	convert_util.StructToStruct(addReq, &obj)
-	obj.ProjectKey = util.ToolsUtil.MakeUuid()
+	obj.ProjectKey = util.ToolsUtil.MakeUuidV7()
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {

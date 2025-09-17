@@ -219,25 +219,26 @@ func (gu genUtil) GetTablePriCol(columns []gen_model.GenTableColumn) (res gen_mo
  * @description: Go类型转TS类型
  */
 func (gu genUtil) GoToTsType(s string) string {
-	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+	switch s {
+	case "int", "int8", "int16", "int32", "int64":
 		return "number"
-	} else if s == "float" || s == "float32" || s == "float64" {
+	case "float", "float32", "float64":
 		return "number"
-	} else if s == "string" {
+	case "string":
 		return "string"
-	} else if s == "bool" {
+	case "bool":
 		return "boolean"
-	} else if s == "time.Time" {
+	case "time.Time":
 		return "Date"
-	} else if s == "[]byte" {
+	case "[]byte":
 		return "string"
-	} else if s == "[]string" {
+	case "[]string":
 		return "string[]"
-	} else if s == "[]int" {
+	case "[]int":
 		return "number[]"
-	} else if s == "[]float" {
+	case "[]float":
 		return "number[]"
-	} else if s == "core.NullTime" {
+	case "core.NullTime":
 		return "string"
 	}
 	return "string"
@@ -247,17 +248,18 @@ func (gu genUtil) GoToTsType(s string) string {
  * @description: Go类型转 添加编辑 类型
  */
 func (gu genUtil) GoWithAddEditType(s string) string {
-	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+	switch s {
+	case "int", "int8", "int16", "int32", "int64":
 		return "core.NullInt"
-	} else if s == "float" || s == "float32" || s == "float64" {
+	case "float", "float32", "float64":
 		return "core.NullFloat"
-	} else if s == "string" {
+	case "string":
 		return "*string"
-	} else if s == "bool" {
+	case "bool":
 		return "*int"
-	} else if s == "time.Time" {
+	case "time.Time":
 		return "core.NullTime"
-	} else if s == "core.NullTime" {
+	case "core.NullTime":
 		return "core.NullTime"
 	}
 	return "string"
@@ -267,17 +269,18 @@ func (gu genUtil) GoWithAddEditType(s string) string {
  * @description: Go类型转 添加编辑 类型
  */
 func (gu genUtil) GoWithRespType(s string) string {
-	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
+	switch s {
+	case "int", "int8", "int16", "int32", "int64":
 		return "core.NullInt"
-	} else if s == "float" || s == "float32" || s == "float64" {
+	case "float", "float32", "float64":
 		return "core.NullFloat"
-	} else if s == "string" {
+	case "string":
 		return "string"
-	} else if s == "bool" {
+	case "bool":
 		return "int"
-	} else if s == "time.Time" {
+	case "time.Time":
 		return "core.NullTime"
-	} else if s == "core.NullTime" {
+	case "core.NullTime":
 		return "core.NullTime"
 	}
 	return "string"

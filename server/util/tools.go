@@ -36,9 +36,13 @@ func (tu toolsUtil) RandomString(length int) string {
 	return string(byteList)
 }
 
-// MakeUuid 制作UUID
-func (tu toolsUtil) MakeUuid() string {
-	return strings.ReplaceAll(uuid.New().String(), "-", "")
+// MakeUuidV7 制作UUID v7
+func (tu toolsUtil) MakeUuidV7() string {
+	v7, err := uuid.NewV7()
+	if err != nil {
+		return ""
+	}
+	return strings.ReplaceAll(v7.String(), "-", "")
 }
 
 // MakeMd5 制作MD5
@@ -64,7 +68,7 @@ func (tu toolsUtil) GetFileMD5(file *multipart.FileHeader) (string, error) {
 // MakeToken 生成唯一Token
 func (tu toolsUtil) MakeToken() string {
 	ms := time.Now().UnixMilli()
-	token := tu.MakeMd5(tu.MakeUuid() + strconv.FormatInt(ms, 10) + tu.RandomString(8))
+	token := tu.MakeMd5(tu.MakeUuidV7() + strconv.FormatInt(ms, 10) + tu.RandomString(8))
 	tokenSecret := token + config.AppConfig.Secret
 	return tu.MakeMd5(tokenSecret) + tu.RandomString(6)
 }

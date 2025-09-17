@@ -112,7 +112,7 @@ func (sd storageDriver) buildSaveName(file *multipart.FileHeader) string {
 	name := file.Filename
 	ext := strings.ToLower(path.Ext(name))
 	date := time.Now().Format("20060102")
-	return path.Join(date, util.ToolsUtil.MakeUuid()+ext)
+	return path.Join(date, util.ToolsUtil.MakeUuidV7()+ext)
 }
 
 // getFileExt 获取文件扩展名

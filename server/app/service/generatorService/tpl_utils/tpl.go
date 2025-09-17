@@ -189,9 +189,10 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 		"uniapp/search.vue.tpl",
 		"uniapp/pages.json.tpl",
 	}
-	if genTpl == GenConstants.TplCrud {
+	switch genTpl {
+	case GenConstants.TplCrud:
 		tplPaths = append(tplPaths, "vue/index.vue.tpl")
-	} else if genTpl == GenConstants.TplTree {
+	case GenConstants.TplTree:
 		tplPaths = append(tplPaths, "vue/index-tree.vue.tpl")
 	}
 	return tplPaths
@@ -233,9 +234,9 @@ func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName str
 		"gocode/model.go.tpl": strings.Join([]string{"server/model/", ModuleName, ".go"}, ""),
 		"gocode/route.go.tpl": strings.Join([]string{"server/router/adminRoute/", ModuleName, "_route.go"}, ""),
 
-		"gocode/schema.go.tpl":     strings.Join([]string{"server/schema/", ModuleName, "_schema.go"}, ""),            //"server/schema/%s_schema.go"
-		"gocode/service.go.tpl":    strings.Join([]string{"server/service/", ModuleName, "_service.go"}, ""),          //"server/service/%s_service.go",
-		"gocode/controller.go.tpl": strings.Join([]string{"server/controller/admin_ctl/", ModuleName, "_ctl.go"}, ""), //"server/controller/admin_ctl/%s_ctl.go",
+		"gocode/schema.go.tpl":     strings.Join([]string{"server/app/schema/", ModuleName, "_schema.go"}, ""),            //"server/app/schema/%s_schema.go"
+		"gocode/service.go.tpl":    strings.Join([]string{"server/app/service/", ModuleName, "_service.go"}, ""),          //"server/app/service/%s_service.go",
+		"gocode/controller.go.tpl": strings.Join([]string{"server/app/controller/admin_ctl/", ModuleName, "_ctl.go"}, ""), //"server/app/controller/admin_ctl/%s_ctl.go",
 
 		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", GenUtil.NameToPath(ModuleName), ".ts"}, ""),            // "admin/src/api/%s.ts",
 		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),    // "admin/src/views/%s/edit.vue",

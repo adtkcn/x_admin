@@ -83,7 +83,7 @@ func (service systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds str
 		var perms []system_model.SystemAuthPerm
 		for _, menuIdStr := range strings.Split(menuIds, ",") {
 			menuId, _ := strconv.ParseUint(menuIdStr, 10, 32)
-			perms = append(perms, system_model.SystemAuthPerm{ID: util.ToolsUtil.MakeUuid(), RoleId: roleId, MenuId: uint(menuId)})
+			perms = append(perms, system_model.SystemAuthPerm{ID: util.ToolsUtil.MakeUuidV7(), RoleId: roleId, MenuId: uint(menuId)})
 		}
 		txErr := tx.Create(&perms).Error
 		var te = response.CheckErr(txErr, "BatchSaveByMenuIds Create in tx err")
