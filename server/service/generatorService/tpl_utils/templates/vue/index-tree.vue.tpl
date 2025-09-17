@@ -15,7 +15,7 @@
                 <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" class="w-[280px]">
                     <el-select
                         v-model="queryParams.{{{ (.GoField) }}}"
-                        
+                        :empty-values="[null, undefined]"
                         clearable
                     >
                         {{{- if ne .DictType "" }}}
