@@ -11,7 +11,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
-	"x_admin/router"
+	"x_admin/routes"
 
 	_ "x_admin/docs"
 
@@ -53,7 +53,7 @@ func initRouter() *gin.Engine {
 	// 注册路由
 	apiGroup := r.Group("/api")
 
-	router.RegisterRoute(apiGroup, r)
+	routes.RegisterRoute(apiGroup, r)
 
 	return r
 }

@@ -1,10 +1,10 @@
-package router
+package routes
 
 import (
 	"x_admin/controller/admin_ctl/commonController"
 	"x_admin/core/response"
 	"x_admin/middleware"
-	"x_admin/router/adminRoute"
+	"x_admin/routes/adminRoute"
 
 	"github.com/gin-gonic/gin"
 )
