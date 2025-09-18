@@ -103,7 +103,6 @@ const refresh = () => {
 }
 const closeBox = () => {
     clickShow.value = false
-    refresh()
 }
 const show = () => {
     if (props.mode == 'pop') {

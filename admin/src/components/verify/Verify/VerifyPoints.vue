@@ -100,7 +100,7 @@ export default {
         }
     },
     setup(props, { emit }) {
-        const { mode, captchaType } = toRefs(props)
+        const { captchaType } = toRefs(props)
         const { proxy } = getCurrentInstance()
         const secretKey = ref(''), //后端返回的ase加密秘钥
             checkNum = ref(3), //默认需要点击的字数
@@ -155,11 +155,6 @@ export default {
                             barAreaBorderColor.value = '#5cb85c'
                             text.value = '验证成功'
                             bindingClick.value = false
-                            if (mode.value == 'pop') {
-                                setTimeout(() => {
-                                    refresh()
-                                }, 1500)
-                            }
                             emit('success', { ...data })
                         } else {
                             emit('error')
