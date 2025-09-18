@@ -11,10 +11,9 @@ import (
 func IndexRoute(rg *gin.RouterGroup) {
 	handle := indexHandler{}
 
-	rg = rg.Group("/common", middleware.TokenAuth())
-	rg.GET("/index/console", handle.console)
+	rg = rg.Group("/common")
+	rg.GET("/index/console", middleware.LoginAuth(), handle.console)
 	rg.GET("/index/config", handle.config)
-
 }
 
 type indexHandler struct{}

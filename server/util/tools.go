@@ -10,10 +10,8 @@ import (
 	"mime/multipart"
 	"os"
 	"reflect"
-	"strconv"
 	"strings"
 	"time"
-	"x_admin/config"
 
 	"github.com/google/uuid"
 )
@@ -63,14 +61,6 @@ func (tu toolsUtil) GetFileMD5(file *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(hash.Sum(nil)), nil
-}
-
-// MakeToken 生成唯一Token
-func (tu toolsUtil) MakeToken() string {
-	ms := time.Now().UnixMilli()
-	token := tu.MakeMd5(tu.MakeUuidV7() + strconv.FormatInt(ms, 10) + tu.RandomString(8))
-	tokenSecret := token + config.AppConfig.Secret
-	return tu.MakeMd5(tokenSecret) + tu.RandomString(6)
 }
 
 // Contains 判断src是否包含elem元素

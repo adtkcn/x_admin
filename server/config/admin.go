@@ -15,28 +15,28 @@ var AdminConfig = adminConfig{
 	// #region NotAuth
 	// 免登录验证
 	NotLoginUri: []string{
-		"admin:system:login",        // 登录接口
-		"admin:common:index:config", // 配置接口
+		// "admin:system:login",        // 登录接口
+		// "admin:common:index:config", // 配置接口
 	},
 
-	// 免权限验证
+	// 免接口权限验证
 	NotAuthUri: []string{
-		"admin:system:logout",         // 退出登录
-		"admin:system:menu:menus",     // 系统菜单
-		"admin:system:menu:route",     // 菜单路由
-		"admin:system:admin:upInfo",   // 管理员更新
-		"admin:system:admin:self",     // 管理员信息
-		"admin:system:role:all",       // 所有角色
-		"admin:system:post:all",       // 所有岗位
-		"admin:system:dept:list",      // 所有部门
-		"admin:setting:dict:type:all", // 所有字典类型
-		"admin:setting:dict:data:all", // 所有字典数据
+		// "admin:system:logout",     // 退出登录
+		// "admin:system:menu:menus", // 系统菜单
+		// "admin:system:menu:route", // 菜单路由
+		// "admin:system:admin:upInfo", // 管理员更新
+		// "admin:system:admin:self",     // 管理员信息
+		// "admin:system:role:all", // 所有角色
+		// "admin:system:post:all", // 所有岗位
+		// "admin:system:dept:list", // 所有部门
+		// "admin:setting:dict:type:all", // 所有字典类型
+		// "admin:setting:dict:data:all", // 所有字典数据
 	},
 	// #endregion NotAuth
 	// 演示模式白名单
 	ShowWhitelistUri: []string{
-		"admin:system:login",  // 登录接口
-		"admin:system:logout", // 退出登录
+		// "admin:system:login",  // 登录接口
+		// "admin:system:logout", // 退出登录
 	},
 
 	// 管理员账号id
@@ -52,13 +52,13 @@ var AdminConfig = adminConfig{
 }
 
 type adminConfig struct {
-	// 管理缓存键
+	// 管理缓存键"backstage:manage"
 	BackstageManageKey string
-	// 角色缓存键
+	// 角色缓存键"backstage:roles"
 	BackstageRolesKey string
-	// 令牌缓存键
+	// 令牌缓存键"backstage:token:"
 	BackstageTokenKey string
-	// 令牌的集合
+	// 令牌的集合 "backstage:token:set:"
 	BackstageTokenSet string
 	// 免登录验证
 	NotLoginUri []string

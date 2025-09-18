@@ -13,9 +13,11 @@ import (
 
 func PostRoute(rg *gin.RouterGroup) {
 	handle := postHandler{}
+	notAuth := rg.Group("/system", middleware.LoginAuth())
+	notAuth.GET("/post/all", handle.All)
 
 	rg = rg.Group("/system", middleware.TokenAuth())
-	rg.GET("/post/all", handle.All)
+	// rg.GET("/post/all", handle.All)
 	rg.GET("/post/list", handle.List)
 	rg.GET("/post/detail", handle.Detail)
 	rg.POST("/post/add", handle.Add)

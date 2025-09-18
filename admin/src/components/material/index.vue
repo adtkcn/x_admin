@@ -113,7 +113,6 @@
                         </template>
                     </el-input>
                     <upload
-                        v-perms="['admin:common:upload:file']"
                         class="ml-3"
                         :data="{ cid: cateId }"
                         :ext="ext"

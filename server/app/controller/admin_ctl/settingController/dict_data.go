@@ -21,9 +21,10 @@ func DictDataRoute(rg *gin.RouterGroup) {
 	// authSrv := NewSettingDictDataService(db)
 
 	handle := dictDataHandler{}
+	notAuth := rg.Group("/setting", middleware.LoginAuth())
+	notAuth.GET("/dict/data/all", handle.All)
 
 	rg = rg.Group("/setting", middleware.TokenAuth())
-	rg.GET("/dict/data/all", handle.All)
 	rg.GET("/dict/data/detail", handle.Detail)
 	rg.POST("/dict/data/add", handle.Add)
 	rg.POST("/dict/data/edit", handle.Edit)

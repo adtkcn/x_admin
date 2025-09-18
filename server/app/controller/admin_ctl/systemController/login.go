@@ -6,7 +6,6 @@ import (
 	"x_admin/app/service/commonService"
 	"x_admin/app/service/systemService"
 	"x_admin/core/response"
-	"x_admin/middleware"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +15,7 @@ func LoginRoute(rg *gin.RouterGroup) {
 
 	handle := loginHandler{}
 
-	rg = rg.Group("/system", middleware.TokenAuth())
+	rg = rg.Group("/system")
 	rg.POST("/login", handle.login)
 	rg.POST("/logout", handle.logout)
 }

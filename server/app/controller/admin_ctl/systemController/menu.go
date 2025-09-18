@@ -14,9 +14,11 @@ import (
 
 func MenuRoute(rg *gin.RouterGroup) {
 	handle := menuHandler{}
+	notAuth := rg.Group("/system", middleware.LoginAuth())
+	notAuth.GET("/menu/route", handle.route)
 
 	rg = rg.Group("/system", middleware.TokenAuth())
-	rg.GET("/menu/route", handle.route)
+	// rg.GET("/menu/route", handle.route)
 	rg.GET("/menu/list", handle.List)
 	rg.GET("/menu/detail", handle.Detail)
 	rg.POST("/menu/add", handle.Add)

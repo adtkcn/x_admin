@@ -19,10 +19,13 @@ func DeptRoute(rg *gin.RouterGroup) {
 	// authSrv := system.NewSystemAuthMenuService(db, permSrv)
 
 	handle := deptHandler{}
+	notAuth := rg.Group("/system", middleware.LoginAuth())
+	// notAuth.GET("/dept/all", handle.All)
+	notAuth.GET("/dept/list", handle.List)
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.GET("/dept/all", handle.All)
-	rg.GET("/dept/list", handle.List)
+	// rg.GET("/dept/list", handle.List)
 	rg.GET("/dept/detail", handle.Detail)
 	rg.POST("/dept/add", handle.Add)
 	rg.POST("/dept/edit", handle.Edit)

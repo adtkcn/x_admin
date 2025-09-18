@@ -16,7 +16,7 @@ func AlbumRoute(rg *gin.RouterGroup) {
 
 	handle := albumHandler{}
 
-	rg = rg.Group("/common", middleware.TokenAuth())
+	rg = rg.Group("/common", middleware.LoginAuth())
 
 	rg.GET("/album/albumList", handle.albumList)
 	rg.POST("/album/albumRename", middleware.RecordLog("相册文件重命名"), handle.albumRename)

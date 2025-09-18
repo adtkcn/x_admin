@@ -83,7 +83,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *systemSchema.Syste
 			}
 		}
 	}()
-	token := util.ToolsUtil.MakeToken()
+	token := util.ToolsUtil.MakeUuidV7()
 	adminIdStr := strconv.FormatUint(uint64(sysAdmin.ID), 10)
 
 	// 缓存登录信息

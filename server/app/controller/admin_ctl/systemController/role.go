@@ -14,9 +14,11 @@ import (
 func RoleRoute(rg *gin.RouterGroup) {
 
 	handle := RoleHandler{}
+	notAuth := rg.Group("/system", middleware.LoginAuth())
+	notAuth.GET("/role/all", handle.All)
 
 	rg = rg.Group("/system", middleware.TokenAuth())
-	rg.GET("/role/all", handle.All)
+	// rg.GET("/role/all", handle.All)
 	rg.GET("/role/list", middleware.RecordLog("角色列表"), handle.List)
 	rg.GET("/role/detail", middleware.RecordLog("角色详情"), handle.Detail)
 	rg.POST("/role/add", middleware.RecordLog("角色新增"), handle.Add)

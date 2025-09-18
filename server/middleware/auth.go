@@ -15,129 +15,137 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TokenAuth Token认证中间件
+func Auth(c *gin.Context) response.RespType {
+	// Token是否为空
+	token := c.Request.Header.Get("token")
+	if token == "" { // 从url获取token
+		token = c.Request.URL.Query().Get("token")
+	}
+	if token == "" {
+		return response.TokenEmpty
+	}
+
+	// Token是否过期
+	tokenKey := config.AdminConfig.BackstageTokenKey + token
+	existCnt := util.RedisUtil.Exists(tokenKey)
+	if existCnt < 0 {
+		return response.SystemError
+	} else if existCnt == 0 {
+
+		return response.TokenInvalid
+	}
+
+	// 用户信息缓存
+	uidStr := util.RedisUtil.Get(tokenKey)
+	var uid uint
+	if uidStr != "" {
+		i, err := strconv.ParseUint(uidStr, 10, 32)
+		if err != nil {
+			core.Logger.Errorf("uid读取失败: [%+v]", err)
+			return response.TokenInvalid
+		}
+		uid = uint(i)
+	}
+	// redis管理员信息不存在时缓存
+	if !util.RedisUtil.HExists(config.AdminConfig.BackstageManageKey, uidStr) {
+		err := systemService.AdminService.CacheAdminUserByUid(uid) //缓存管理员
+		if err != nil {
+			core.Logger.Errorf("缓存管理员失败: err=[%+v]", err)
+			return response.SystemError
+		}
+	}
+
+	// 校验用户被删除
+	var adminUser system_model.SystemAuthAdmin
+	err := util.ToolsUtil.JsonToObj(util.RedisUtil.HGet(config.AdminConfig.BackstageManageKey, uidStr), &adminUser)
+	if err != nil {
+		core.Logger.Errorf("TokenAuth Unmarshal err: err=[%+v]", err)
+
+		return response.SystemError
+	}
+	if adminUser.IsDelete == 1 {
+		util.RedisUtil.Del(tokenKey)
+		util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey + uidStr)
+
+		return response.TokenInvalid
+	}
+
+	// 校验用户被禁用
+	if adminUser.IsDisable == 1 {
+		return response.LoginDisableError
+	}
+
+	// 令牌剩余30分钟自动续签
+	if util.RedisUtil.TTL(tokenKey) < 1800 {
+		util.RedisUtil.Expire(tokenKey, 7200)
+	}
+
+	// 单次请求信息保存
+	c.Set(config.AdminConfig.ReqAdminIdKey, uid)
+	c.Set(config.AdminConfig.ReqRoleIdKey, adminUser.Role)
+	c.Set(config.AdminConfig.ReqUsernameKey, adminUser.Username)
+	c.Set(config.AdminConfig.ReqNicknameKey, adminUser.Nickname)
+
+	// 校验角色的权限，redis没有就重新查询
+	roleId := adminUser.Role
+	if !util.RedisUtil.HExists(config.AdminConfig.BackstageRolesKey, roleId) {
+		i, err := strconv.ParseUint(roleId, 10, 32)
+		if err != nil {
+			core.Logger.Errorf("TokenAuth Atoi roleId err: err=[%+v]", err)
+
+			return response.SystemError
+		}
+		err = systemService.PermService.CacheRoleMenusByRoleId(uint(i))
+		if err != nil {
+			core.Logger.Errorf("TokenAuth CacheRoleMenusByRoleId err: err=[%+v]", err)
+			return response.SystemError
+		}
+	}
+	return response.Success
+}
+
+// 仅检查token有效性，获取用户信息，不判断接口权限
+func LoginAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		resp := Auth(c)
+		if resp != response.Success {
+			response.Fail(c, resp)
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+// TokenAuth 检查token有效性，获取用户信息，并判断接口权限
 func TokenAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 路由转权限
-		auths := strings.ReplaceAll(strings.Replace(c.Request.URL.Path, "/api/", "", 1), "/", ":")
+		ApiAuth := strings.ReplaceAll(strings.Replace(c.Request.URL.Path, "/api/", "", 1), "/", ":")
 
 		// 免登录接口
-		if util.ToolsUtil.Contains(config.AdminConfig.NotLoginUri, auths) {
+		if util.ToolsUtil.Contains(config.AdminConfig.NotLoginUri, ApiAuth) {
 			c.Next()
 			return
 		}
-
-		// Token是否为空
-		token := c.Request.Header.Get("token")
-		if token == "" { // 从url获取token
-			token = c.Request.URL.Query().Get("token")
-		}
-		if token == "" {
-			response.Fail(c, response.TokenEmpty)
+		resp := Auth(c)
+		if resp != response.Success {
+			response.Fail(c, resp)
 			c.Abort()
 			return
 		}
-
-		// Token是否过期
-		token = config.AdminConfig.BackstageTokenKey + token
-		existCnt := util.RedisUtil.Exists(token)
-		if existCnt < 0 {
-			response.Fail(c, response.SystemError)
-			c.Abort()
-			return
-		} else if existCnt == 0 {
-			response.Fail(c, response.TokenInvalid)
-			c.Abort()
-			return
-		}
-
-		// 用户信息缓存
-		uidStr := util.RedisUtil.Get(token)
-		var uid uint
-		if uidStr != "" {
-			i, err := strconv.ParseUint(uidStr, 10, 32)
-			if err != nil {
-				core.Logger.Errorf("TokenAuth Atoi uidStr err: err=[%+v]", err)
-				response.Fail(c, response.TokenInvalid)
-				c.Abort()
-				return
-			}
-			uid = uint(i)
-		}
-
-		if !util.RedisUtil.HExists(config.AdminConfig.BackstageManageKey, uidStr) {
-			err := systemService.AdminService.CacheAdminUserByUid(uid)
-			if err != nil {
-				core.Logger.Errorf("TokenAuth CacheAdminUserByUid err: err=[%+v]", err)
-				response.Fail(c, response.SystemError)
-				c.Abort()
-				return
-			}
-		}
-
-		// 校验用户被删除
-		var mapping system_model.SystemAuthAdmin
-		err := util.ToolsUtil.JsonToObj(util.RedisUtil.HGet(config.AdminConfig.BackstageManageKey, uidStr), &mapping)
-		if err != nil {
-			core.Logger.Errorf("TokenAuth Unmarshal err: err=[%+v]", err)
-			response.Fail(c, response.SystemError)
-			c.Abort()
-			return
-		}
-		if mapping.IsDelete == 1 {
-			util.RedisUtil.Del(token)
-			util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey + uidStr)
-			response.Fail(c, response.TokenInvalid)
-			c.Abort()
-			return
-		}
-
-		// 校验用户被禁用
-		if mapping.IsDisable == 1 {
-			response.Fail(c, response.LoginDisableError)
-			c.Abort()
-			return
-		}
-
-		// 令牌剩余30分钟自动续签
-		if util.RedisUtil.TTL(token) < 1800 {
-			util.RedisUtil.Expire(token, 7200)
-		}
-
-		// 单次请求信息保存
-		c.Set(config.AdminConfig.ReqAdminIdKey, uid)
-		c.Set(config.AdminConfig.ReqRoleIdKey, mapping.Role)
-		c.Set(config.AdminConfig.ReqUsernameKey, mapping.Username)
-		c.Set(config.AdminConfig.ReqNicknameKey, mapping.Nickname)
-
 		// 免权限验证接口
-		if util.ToolsUtil.Contains(config.AdminConfig.NotAuthUri, auths) || uid == config.AdminConfig.SuperAdminId {
+		if util.ToolsUtil.Contains(config.AdminConfig.NotAuthUri, ApiAuth) {
 			c.Next()
 			return
 		}
-
-		// 校验角色的权限，redis没有就重新查询
-		roleId := mapping.Role
-		if !util.RedisUtil.HExists(config.AdminConfig.BackstageRolesKey, roleId) {
-			i, err := strconv.ParseUint(roleId, 10, 32)
-			if err != nil {
-				core.Logger.Errorf("TokenAuth Atoi roleId err: err=[%+v]", err)
-				response.Fail(c, response.SystemError)
-				c.Abort()
-				return
-			}
-			err = systemService.PermService.CacheRoleMenusByRoleId(uint(i))
-			if err != nil {
-				core.Logger.Errorf("TokenAuth CacheRoleMenusByRoleId err: err=[%+v]", err)
-				response.Fail(c, response.SystemError)
-				c.Abort()
-				return
-			}
+		if config.AdminConfig.GetAdminId(c) == config.AdminConfig.SuperAdminId {
+			c.Next()
+			return
 		}
-
 		// 验证是否有权限操作
-		menus := util.RedisUtil.HGet(config.AdminConfig.BackstageRolesKey, roleId)
-		if !(menus != "" && util.ToolsUtil.Contains(strings.Split(menus, ","), auths)) {
+		menus := util.RedisUtil.HGet(config.AdminConfig.BackstageRolesKey, config.AdminConfig.GetRoleId(c))
+		if !(menus != "" && util.ToolsUtil.Contains(strings.Split(menus, ","), ApiAuth)) {
 			response.Fail(c, response.NoPermission)
 			c.Abort()
 			return

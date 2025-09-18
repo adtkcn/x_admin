@@ -14,7 +14,7 @@ import (
 func UploadRoute(rg *gin.RouterGroup) {
 	handle := uploadHandler{}
 
-	rg = rg.Group("/common", middleware.TokenAuth())
+	rg = rg.Group("/common", middleware.LoginAuth())
 	rg.POST("/upload/preUploadFile", middleware.RecordLog("文件预上传", middleware.RequestFile), handle.preUploadFile)
 	rg.POST("/upload/file", middleware.RecordLog("上传文件", middleware.RequestFile), handle.uploadFile)
 }

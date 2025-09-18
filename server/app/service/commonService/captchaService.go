@@ -24,7 +24,7 @@ var captchaConfig = captcha_config.Config{
 		YOffset:    8,
 	},
 	BlockPuzzle:    &captcha_config.BlockPuzzleConfig{Offset: 8},
-	CacheExpireSec: 210 * 60, // 缓存有效时间
+	CacheExpireSec: 2 * 60, // 缓存有效时间
 }
 
 // 服务工厂，主要用户注册 获取 缓存和验证服务

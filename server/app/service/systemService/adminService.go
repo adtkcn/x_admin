@@ -504,6 +504,9 @@ func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id uint) (err error) 
 	if err != nil {
 		return
 	}
+	// redis排除缓存
+	admin.Password = ""
+
 	str, err := util.ToolsUtil.ObjToJson(&admin)
 	if err != nil {
 		return

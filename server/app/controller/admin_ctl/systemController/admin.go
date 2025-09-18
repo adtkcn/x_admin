@@ -20,23 +20,25 @@ import (
 func AdminRoute(rg *gin.RouterGroup) {
 
 	handle := AdminHandler{}
+	notAuth := rg.Group("/system", middleware.LoginAuth())
+	notAuth.GET("/admin/self", handle.Self)
+	notAuth.POST("/admin/upInfo", middleware.RecordLog("管理员更新"), handle.UpInfo)
 
-	rg = rg.Group("/system", middleware.TokenAuth())
+	auth := rg.Group("/system", middleware.TokenAuth())
 
-	rg.GET("/admin/self", handle.Self)
-	rg.GET("/admin/list", handle.List)
-	rg.GET("/admin/listAll", handle.ListAll)
-	rg.GET("/admin/ListByDeptId", handle.ListByDeptId)
-	rg.GET("/admin/detail", handle.Detail)
-	rg.POST("/admin/add", middleware.RecordLog("管理员新增"), handle.Add)
-	rg.POST("/admin/edit", middleware.RecordLog("管理员编辑"), handle.Edit)
-	rg.POST("/admin/upInfo", middleware.RecordLog("管理员更新"), handle.UpInfo)
-	rg.POST("/admin/del", middleware.RecordLog("管理员删除"), handle.Del)
-	rg.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handle.Disable)
+	auth.GET("/admin/list", handle.List)
+	auth.GET("/admin/listAll", handle.ListAll)
+	auth.GET("/admin/ListByDeptId", handle.ListByDeptId)
+	auth.GET("/admin/detail", handle.Detail)
+	auth.POST("/admin/add", middleware.RecordLog("管理员新增"), handle.Add)
+	auth.POST("/admin/edit", middleware.RecordLog("管理员编辑"), handle.Edit)
 
-	rg.GET("/admin/ExportFile", middleware.RecordLog("管理员导出"), handle.ExportFile)
+	auth.POST("/admin/del", middleware.RecordLog("管理员删除"), handle.Del)
+	auth.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handle.Disable)
 
-	rg.POST("/admin/ImportFile", handle.ImportFile)
+	auth.GET("/admin/ExportFile", middleware.RecordLog("管理员导出"), handle.ExportFile)
+
+	auth.POST("/admin/ImportFile", handle.ImportFile)
 
 }
 
@@ -182,7 +184,7 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 // @Router			/system/admin/ListByDeptId/{deptId} [get]
 func (ah AdminHandler) ListByDeptId(c *gin.Context) {
 	deptIdStr, bool := c.GetQuery("deptId")
-	if bool == false {
+	if !bool {
 		response.FailWithMsg(c, response.Failed, "deptId不能为空")
 		return
 	}

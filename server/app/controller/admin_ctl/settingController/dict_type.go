@@ -21,14 +21,15 @@ func DictTypeRoute(rg *gin.RouterGroup) {
 	// server := NewSettingDictTypeService(db)
 
 	handle := dictTypeHandler{}
+	notAuth := rg.Group("/setting", middleware.LoginAuth())
+	notAuth.GET("/dict/type/all", handle.All)
 
-	rg = rg.Group("/setting", middleware.TokenAuth())
-	rg.GET("/dict/type/all", handle.All)
-	rg.GET("/dict/type/list", handle.List)
-	rg.GET("/dict/type/detail", handle.Detail)
-	rg.POST("/dict/type/add", handle.Add)
-	rg.POST("/dict/type/edit", handle.Edit)
-	rg.POST("/dict/type/del", handle.Del)
+	auth := rg.Group("/setting", middleware.TokenAuth())
+	auth.GET("/dict/type/list", handle.List)
+	auth.GET("/dict/type/detail", handle.Detail)
+	auth.POST("/dict/type/add", handle.Add)
+	auth.POST("/dict/type/edit", handle.Edit)
+	auth.POST("/dict/type/del", handle.Del)
 }
 
 type dictTypeHandler struct{}
