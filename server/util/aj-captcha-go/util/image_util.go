@@ -112,7 +112,7 @@ func (i *ImageUtil) SetArtText(text string, fontsize int, point vo.PointVO) erro
 	// 设置绘制操作的源图像，通常为 image.Uniform
 	fc.SetSrc(image.NewUniform(color.RGBA{R: uint8(RandomInt(1, 200)), G: uint8(RandomInt(1, 200)), B: uint8(RandomInt(1, 200)), A: 255}))
 	// 设置水印地址
-	pt := freetype.Pt(point.X, point.Y)
+	pt := freetype.Pt(point.X, point.Y+fontsize)
 	// 根据 Pt 的坐标值绘制给定的文本内容
 	_, err := fc.DrawString(text, pt)
 	if err != nil {

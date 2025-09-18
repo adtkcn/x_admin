@@ -2,7 +2,7 @@ package captcha_config
 
 const (
 	// CodeKeyPrefix 缓存key前缀
-	CodeKeyPrefix = "RUNNING:CAPTCHA:%s"
+	CodeKeyPrefix = "x:captcha:%s"
 
 	// BlockPuzzleCaptcha 滑动验证码服务标识
 	BlockPuzzleCaptcha = "blockPuzzle"

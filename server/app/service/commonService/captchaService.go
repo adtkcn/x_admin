@@ -17,7 +17,7 @@ var captchaConfig = captcha_config.Config{
 		Text:     "",
 	},
 	ClickWord: &captcha_config.ClickWordConfig{
-		FontSize:   22,
+		FontSize:   24,
 		FontNum:    3,
 		AllFontNum: 7,
 		XOffset:    8,

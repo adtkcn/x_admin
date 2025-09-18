@@ -222,6 +222,7 @@ func (b *BlockPuzzleCaptchaService) Check(token string, pointJson string) error 
 		return nil
 	}
 
+	cache.Delete(codeKey)
 	return errors.New("验证失败")
 }
 

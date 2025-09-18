@@ -54,15 +54,19 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 	if err != nil {
 		return err
 	}
-	XOffset := c.factory.config.ClickWord.XOffset
-	YOffset := c.factory.config.ClickWord.YOffset
+
 	fontSize := c.factory.config.ClickWord.FontSize
 	for i, pointVO := range cachePoint {
-		targetPoint := userPoint[i]
+		userTargetPoint := userPoint[i]
+		startX := pointVO.X - c.factory.config.ClickWord.XOffset
+		endX := pointVO.X + fontSize + c.factory.config.ClickWord.XOffset
 
-		if targetPoint.X >= pointVO.X-XOffset && targetPoint.X <= pointVO.X+fontSize+XOffset && targetPoint.Y >= pointVO.Y-YOffset && targetPoint.Y <= pointVO.Y+fontSize+YOffset {
+		startY := pointVO.Y - c.factory.config.ClickWord.YOffset
+		endY := pointVO.Y + fontSize + c.factory.config.ClickWord.YOffset
+		if userTargetPoint.X >= startX && userTargetPoint.X <= endX && userTargetPoint.Y >= startY && userTargetPoint.Y <= endY {
 
 		} else {
+			c.factory.GetCache().Delete(codeKey)
 			return errors.New("验证失败")
 		}
 	}
@@ -130,7 +134,7 @@ func (c *ClickWordCaptchaService) getImageData(image *util.ImageUtil) ([]vo.Poin
 	key := util.RandString(16)
 
 	for k, s := range AllWord {
-		fontSize := util.RandomInt(c.factory.config.ClickWord.FontSize-2, c.factory.config.ClickWord.FontSize+2)
+		fontSize := util.RandomInt(c.factory.config.ClickWord.FontSize-3, c.factory.config.ClickWord.FontSize+1)
 
 		point := c.randomWordPoint(image.Width, image.Height, fontSize)
 		point.SetSecretKey(key)
