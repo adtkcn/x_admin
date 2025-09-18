@@ -1,4 +1,4 @@
-package service
+package captcha_service
 
 type CaptchaInterface interface {
 

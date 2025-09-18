@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"x_admin/util/aj-captcha-go/constant"
+	"x_admin/util/aj-captcha-go/captcha_config"
 	"x_admin/util/aj-captcha-go/util"
 )
 
@@ -14,9 +14,9 @@ var templateImageArr []string
 
 func SetUp() {
 
-	backgroundImageRoot := constant.DefaultResourceRoot + constant.DefaultBackgroundImageDirectory
-	templateImageRoot := constant.DefaultResourceRoot + constant.DefaultTemplateImageDirectory
-	clickBackgroundImageRoot := constant.DefaultResourceRoot + constant.DefaultClickBackgroundImageDirectory
+	backgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultBackgroundImageDirectory
+	templateImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultTemplateImageDirectory
+	clickBackgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultClickBackgroundImageDirectory
 
 	err1 := filepath.Walk(backgroundImageRoot, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -59,7 +59,7 @@ func GetBackgroundImage() *util.ImageUtil {
 	if max <= 0 {
 		max = 1
 	}
-	return util.NewImageUtil(backgroundImageArr[util.RandomInt(0, max)], constant.DefaultResourceRoot+constant.DefaultFont)
+	return util.NewImageUtil(backgroundImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
 }
 
 func GetTemplateImage() *util.ImageUtil {
@@ -67,7 +67,7 @@ func GetTemplateImage() *util.ImageUtil {
 	if max <= 0 {
 		max = 1
 	}
-	return util.NewImageUtil(templateImageArr[util.RandomInt(0, max)], constant.DefaultResourceRoot+constant.DefaultFont)
+	return util.NewImageUtil(templateImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
 }
 
 func GetClickBackgroundImage() *util.ImageUtil {
@@ -75,5 +75,5 @@ func GetClickBackgroundImage() *util.ImageUtil {
 	if max <= 0 {
 		max = 1
 	}
-	return util.NewImageUtil(clickBackgroundImageArr[util.RandomInt(0, max)], constant.DefaultResourceRoot+constant.DefaultFont)
+	return util.NewImageUtil(clickBackgroundImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
 }

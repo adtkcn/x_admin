@@ -1,4 +1,4 @@
-package service
+package captcha_service
 
 import (
 	"strconv"

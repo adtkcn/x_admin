@@ -1,4 +1,4 @@
-package constant
+package captcha_config
 
 const (
 	// CodeKeyPrefix 缓存key前缀

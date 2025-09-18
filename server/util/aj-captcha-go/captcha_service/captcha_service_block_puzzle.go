@@ -1,4 +1,4 @@
-package service
+package captcha_service
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"x_admin/util/aj-captcha-go/constant"
+	"x_admin/util/aj-captcha-go/captcha_config"
 	"x_admin/util/aj-captcha-go/model/vo"
 	"x_admin/util/aj-captcha-go/util"
 	img "x_admin/util/aj-captcha-go/util/image"
@@ -35,8 +35,9 @@ func (b *BlockPuzzleCaptchaService) Get() (map[string]interface{}, error) {
 	backgroundImage := img.GetBackgroundImage()
 
 	// 为背景图片设置水印
-	// backgroundImage.SetText(b.factory.config.Watermark.Text, b.factory.config.Watermark.FontSize, b.factory.config.Watermark.Color)
-
+	if b.factory.config.Watermark.Text != "" {
+		backgroundImage.SetText(b.factory.config.Watermark.Text, b.factory.config.Watermark.FontSize, b.factory.config.Watermark.Color)
+	}
 	// 初始化模板图片
 	templateImage := img.GetTemplateImage()
 
@@ -58,7 +59,7 @@ func (b *BlockPuzzleCaptchaService) Get() (map[string]interface{}, error) {
 	data["secretKey"] = b.point.SecretKey
 	data["token"] = util.GetUuid()
 
-	codeKey := fmt.Sprintf(constant.CodeKeyPrefix, data["token"])
+	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, data["token"])
 	jsonPoint, err := json.Marshal(b.point)
 	if err != nil {
 		log.Printf("point json Marshal err: %v", err)
@@ -190,7 +191,7 @@ func (b *BlockPuzzleCaptchaService) generateJigsawPoint(backgroundImage *util.Im
 func (b *BlockPuzzleCaptchaService) Check(token string, pointJson string) error {
 	cache := b.factory.GetCache()
 
-	codeKey := fmt.Sprintf(constant.CodeKeyPrefix, token)
+	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
 
 	cachePointInfo := cache.Get(codeKey)
 
@@ -229,7 +230,7 @@ func (b *BlockPuzzleCaptchaService) Verification(token string, pointJson string)
 	if err != nil {
 		return err
 	}
-	codeKey := fmt.Sprintf(constant.CodeKeyPrefix, token)
+	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
 	b.factory.GetCache().Delete(codeKey)
 	return nil
 }

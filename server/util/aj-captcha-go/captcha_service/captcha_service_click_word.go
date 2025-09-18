@@ -1,11 +1,11 @@
-package service
+package captcha_service
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
-	"x_admin/util/aj-captcha-go/constant"
+	"x_admin/util/aj-captcha-go/captcha_config"
 	"x_admin/util/aj-captcha-go/model/vo"
 	"x_admin/util/aj-captcha-go/util"
 	img "x_admin/util/aj-captcha-go/util/image"
@@ -24,41 +24,10 @@ type ClickWordCaptchaService struct {
 	factory *CaptchaServiceFactory
 }
 
-func (c *ClickWordCaptchaService) Get() (map[string]interface{}, error) {
-	// 初始化背景图片
-	backgroundImage := img.GetClickBackgroundImage()
-
-	pointList, wordList, err := c.getImageData(backgroundImage)
-	if err != nil {
-		return nil, err
-	}
-
-	originalImageBase64, err := backgroundImage.Base64()
-
-	if err != nil {
-		return nil, err
-	}
-
-	data := make(map[string]interface{})
-	data["originalImageBase64"] = originalImageBase64
-	data["wordList"] = wordList
-	data["secretKey"] = pointList[0].SecretKey
-	data["token"] = util.GetUuid()
-
-	codeKey := fmt.Sprintf(constant.CodeKeyPrefix, data["token"])
-	jsonPoint, err := json.Marshal(pointList)
-	if err != nil {
-		log.Printf("point json Marshal err: %v", err)
-		return nil, err
-	}
-
-	c.factory.GetCache().Set(codeKey, string(jsonPoint), c.factory.config.CacheExpireSec)
-	return data, nil
-}
-
+// 校验点击文字验证码
 func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 	cache := c.factory.GetCache()
-	codeKey := fmt.Sprintf(constant.CodeKeyPrefix, token)
+	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
 
 	cachePointInfo := cache.Get(codeKey)
 
@@ -85,11 +54,13 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 	if err != nil {
 		return err
 	}
+	XOffset := c.factory.config.ClickWord.XOffset
+	YOffset := c.factory.config.ClickWord.YOffset
 	fontSize := c.factory.config.ClickWord.FontSize
 	for i, pointVO := range cachePoint {
 		targetPoint := userPoint[i]
 
-		if targetPoint.X >= pointVO.X-15 && targetPoint.X <= pointVO.X+fontSize+15 && targetPoint.Y >= pointVO.Y-15 && targetPoint.Y <= pointVO.Y+fontSize+15 {
+		if targetPoint.X >= pointVO.X-XOffset && targetPoint.X <= pointVO.X+fontSize+XOffset && targetPoint.Y >= pointVO.Y-YOffset && targetPoint.Y <= pointVO.Y+fontSize+YOffset {
 
 		} else {
 			return errors.New("验证失败")
@@ -99,47 +70,82 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 	return nil
 }
 
+// 校验点击文字验证码-并删除
 func (c *ClickWordCaptchaService) Verification(token string, pointJson string) error {
 	err := c.Check(token, pointJson)
 	if err != nil {
 		return err
 	}
-	codeKey := fmt.Sprintf(constant.CodeKeyPrefix, token)
+	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
 	c.factory.GetCache().Delete(codeKey)
 	return nil
 }
 
-func (c *ClickWordCaptchaService) getImageData(image *util.ImageUtil) ([]vo.PointVO, []string, error) {
-	wordCount := c.factory.config.ClickWord.FontNum
+func (c *ClickWordCaptchaService) Get() (map[string]interface{}, error) {
+	// 初始化背景图片
+	backgroundImage := img.GetClickBackgroundImage()
+	// 为背景图片设置水印
+	if c.factory.config.Watermark.Text != "" {
+		backgroundImage.SetText(c.factory.config.Watermark.Text, c.factory.config.Watermark.FontSize, c.factory.config.Watermark.Color)
+	}
+	pointList, wordList, err := c.getImageData(backgroundImage)
+	if err != nil {
+		return nil, err
+	}
 
-	// 某个字不参与校验
-	num := util.RandomInt(1, wordCount)
-	currentWord := c.getRandomWords(wordCount)
+	originalImageBase64, err := backgroundImage.Base64()
+
+	if err != nil {
+		return nil, err
+	}
+
+	data := make(map[string]interface{})
+	data["originalImageBase64"] = originalImageBase64
+	data["wordList"] = wordList
+	data["secretKey"] = pointList[0].SecretKey
+	data["token"] = util.GetUuid()
+
+	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, data["token"])
+	jsonPoint, err := json.Marshal(pointList)
+	if err != nil {
+		log.Printf("point json Marshal err: %v", err)
+		return nil, err
+	}
+
+	c.factory.GetCache().Set(codeKey, string(jsonPoint), c.factory.config.CacheExpireSec)
+	return data, nil
+}
+
+func (c *ClickWordCaptchaService) getImageData(image *util.ImageUtil) ([]vo.PointVO, []string, error) {
+	AllFontNum := c.factory.config.ClickWord.AllFontNum
+	FontNum := c.factory.config.ClickWord.FontNum
+
+	AllWord := c.getRandomWords(AllFontNum)
+	// currentWord := AllWord[:FontNum]
 
 	var pointList []vo.PointVO
 	var wordList []string
 
-	i := 0
-
 	// 构建本次的 secret
 	key := util.RandString(16)
 
-	for _, s := range currentWord {
-		point := c.randomWordPoint(image.Width, image.Height, i, wordCount)
+	for k, s := range AllWord {
+		fontSize := util.RandomInt(c.factory.config.ClickWord.FontSize-2, c.factory.config.ClickWord.FontSize+2)
+
+		point := c.randomWordPoint(image.Width, image.Height, fontSize)
 		point.SetSecretKey(key)
 		// 随机设置文字 TODO 角度未设置
-		err := image.SetArtText(s, c.factory.config.ClickWord.FontSize, point)
-
+		err := image.SetArtText(s, fontSize, point)
 		if err != nil {
 			return nil, nil, err
 		}
 
-		if (num - 1) != i {
+		if k < FontNum {
 			pointList = append(pointList, point)
 			wordList = append(wordList, s)
 		}
-		i++
 	}
+
 	return pointList, wordList, nil
 }
 
@@ -155,7 +161,7 @@ func (c *ClickWordCaptchaService) getRandomWords(count int) []string {
 		word := runesArray[util.RandomInt(0, size-1)]
 		set[string(word)] = true
 		if len(set) >= count {
-			for str, _ := range set {
+			for str := range set {
 				wordList = append(wordList, str)
 			}
 			break
@@ -164,20 +170,9 @@ func (c *ClickWordCaptchaService) getRandomWords(count int) []string {
 	return wordList
 }
 
-func (c *ClickWordCaptchaService) randomWordPoint(width int, height int, i int, count int) vo.PointVO {
-	avgWidth := width / (count + 1)
-	fontSizeHalf := c.factory.config.ClickWord.FontSize / 2
+func (c *ClickWordCaptchaService) randomWordPoint(width int, height int, fontSize int) vo.PointVO {
 
-	var x, y int
-	if avgWidth < fontSizeHalf {
-		x = util.RandomInt(1+fontSizeHalf, width)
-	} else {
-		if i == 0 {
-			x = util.RandomInt(1+fontSizeHalf, avgWidth*(i+1)-fontSizeHalf)
-		} else {
-			x = util.RandomInt(avgWidth*i+fontSizeHalf, avgWidth*(i+1)-fontSizeHalf)
-		}
-	}
-	y = util.RandomInt(c.factory.config.ClickWord.FontSize, height-fontSizeHalf)
+	x := util.RandomInt(fontSize, width-fontSize)
+	y := util.RandomInt(fontSize, height-fontSize)
 	return vo.PointVO{X: x, Y: y}
 }

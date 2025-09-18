@@ -1,12 +1,12 @@
-package service
+package captcha_service
 
 import (
 	"log"
 	"sync"
-	configIns "x_admin/util/aj-captcha-go/config"
+	"x_admin/util/aj-captcha-go/captcha_config"
 )
 
-func NewCaptchaServiceFactory(config *configIns.Config) *CaptchaServiceFactory {
+func NewCaptchaServiceFactory(config *captcha_config.Config) *CaptchaServiceFactory {
 
 	factory := &CaptchaServiceFactory{
 		ServiceMap: make(map[string]CaptchaInterface),
@@ -18,7 +18,7 @@ func NewCaptchaServiceFactory(config *configIns.Config) *CaptchaServiceFactory {
 
 // CaptchaServiceFactory 验证码服务工厂
 type CaptchaServiceFactory struct {
-	config      *configIns.Config
+	config      *captcha_config.Config
 	ServiceMap  map[string]CaptchaInterface
 	ServiceLock sync.RWMutex
 
