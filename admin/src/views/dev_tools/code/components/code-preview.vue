@@ -7,7 +7,7 @@
             top="0px"
             draggable
         >
-            <el-container style="max-height: calc(100vh - 200px)">
+            <el-container style="height: calc(100vh - 200px)">
                 <el-aside
                     width="400px"
                     style="padding: 10px 0; margin-right: 20px; border: 1px solid #dcdfe6"
@@ -19,39 +19,12 @@
                         @node-click="handleNodeClick"
                     />
                 </el-aside>
-                <el-main style="padding: 0; border: 1px solid #dcdfe6">
-                    <div class="flex flex-col h-[100%]">
-                        <!-- <div class="flex">
-                            <div class="flex-1 p-4">{{ showItem.label }}</div>
-                            <div>
-                                <el-button @click="handleCopy(showItem.value)" type="primary" link>
-                                    <template #icon>
-                                        <icon name="el-icon-CopyDocument" />
-                                    </template>
-                                    复制
-                                </el-button>
-                            </div>
-                        </div> -->
-
-                        <div class="flex-1 overflow-auto">
-                            <div style="height: calc(100vh - 200px)">
-                                <highlight-code
-                                    :code="showItem.value"
-                                    lang="javascript"
-                                ></highlight-code>
-                                <!-- <highlightjs
-                                    autodetect
-                                    :code="showItem.value"
-                                    language="javascript"
-                                /> -->
-                            </div>
-                        </div>
-                    </div>
+                <el-main style="padding: 0; overflow: auto">
+                    <highlight-code :code="showItem.value" lang="javascript"></highlight-code>
                 </el-main>
             </el-container>
             <template v-slot:footer>
                 <div>
-                    <!-- {{ showItem.label }} -->
                     <el-button
                         icon="el-icon-CopyDocument"
                         type="primary"
@@ -69,18 +42,6 @@
 import { onMounted, ref, computed } from 'vue'
 import feedback from '@/utils/feedback'
 import useClipboard from 'vue-clipboard3'
-
-// import 'highlight.js/styles/monokai.min.css'
-// import hljs from 'highlight.js/lib/common'
-// import javascript from 'highlight.js/lib/languages/javascript'
-// import go from 'highlight.js/lib/languages/go'
-
-// Then register the languages you need
-// hljs.registerLanguage('javascript', javascript)
-// hljs.registerLanguage('go', go)
-
-// import hljsVuePlugin from '@highlightjs/vue-plugin'
-// const highlightjs = hljsVuePlugin.component
 
 const props = defineProps<{
     modelValue: boolean
@@ -139,9 +100,3 @@ const show = computed<boolean>({
     }
 })
 </script>
-<style lang="scss">
-.code-preview .el-dialog__body {
-    // max-height: calc(100vh - 200px);
-    overflow: auto;
-}
-</style>
