@@ -241,9 +241,11 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 				delColIds = append(delColIds, prevCol.ID)
 			}
 		}
-		txErr := tx.Delete(&gen_model.GenTableColumn{}, "id in ?", delColIds).Error
-		if te := response.CheckErr(txErr, "SyncTable Delete err"); te != nil {
-			return te
+		if len(delColIds) > 0 {
+			txErr := tx.Delete(&gen_model.GenTableColumn{}, "id in ?", delColIds).Error
+			if te := response.CheckErr(txErr, "SyncTable Delete err"); te != nil {
+				return te
+			}
 		}
 		return nil
 	})

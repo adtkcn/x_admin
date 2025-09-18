@@ -73,7 +73,7 @@
                                 <el-button type="primary" link v-perms="['admin:gen:editTable']">
                                     <router-link
                                         :to="{
-                                            path: '/dev_tools/dev_tools/code/edit',
+                                            path: 'code/edit',
                                             query: {
                                                 id: row.id
                                             }
@@ -135,7 +135,7 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <code-preview
+        <CodePreview
             v-if="previewState.show"
             v-model="previewState.show"
             :code="previewState.code"
@@ -153,8 +153,8 @@ import {
     downloadCode
 } from '@/api/tools/code'
 import { usePaging } from '@/hooks/usePaging'
-import DataTable from '../components/data-table.vue'
-import CodePreview from '../components/code-preview.vue'
+import DataTable from './components/data-table.vue'
+import CodePreview from './components/code-preview.vue'
 import feedback from '@/utils/feedback'
 import { streamFileDownload } from '@/utils/file'
 defineOptions({
