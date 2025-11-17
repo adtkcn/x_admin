@@ -57,7 +57,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq schema.{{
 			}
 			{{{- end }}}
 		{{{- end }}}
-    {{{- end }}}
+	{{{- end }}}
     {{{- end }}}
 	{{{- if contains .AllFields "is_delete" }}}
 	dbModel = dbModel.Where("is_delete = ?", 0)
@@ -178,17 +178,17 @@ func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .
 		return
 	}
     // 删除
-    {{{- if contains .AllFields "is_delete" }}}
-    obj.IsDelete = 1
-		{{{- if contains .AllFields "delete_time" }}}
-		obj.DeleteTime = util.NullTimeUtil.Now()
-		{{{- end }}}
-    err = service.db.Save(&obj).Error
-    e = response.CheckErr(err, "删除失败")
-    {{{- else }}}
-    err = service.db.Delete(&obj).Error
-    e = response.CheckErr(err, "删除失败")
-    {{{- end }}}
+	{{{- if contains .AllFields "is_delete" }}}
+	obj.IsDelete = 1
+	{{{- if contains .AllFields "delete_time" }}}
+	obj.DeleteTime = util.NullTimeUtil.Now()
+	{{{- end }}}
+	err = service.db.Save(&obj).Error
+	e = response.CheckErr(err, "删除失败")
+	{{{- else }}}
+	err = service.db.Delete(&obj).Error
+	e = response.CheckErr(err, "删除失败")
+	{{{- end }}}
 	service.CacheUtil.RemoveCache(obj.{{{ toUpperCamelCase .PrimaryKey }}})
 	return
 }

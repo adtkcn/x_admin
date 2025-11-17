@@ -9,14 +9,15 @@
             </el-button>
             <el-button @click="handleExpand"> 展开/收起 </el-button>
         </div>
-        <div class="mt-4 flex-1">
+        <div class="mt-4" style="height: 100%">
             <vxe-table
                 ref="tableRef"
                 :row-config="rowConfig"
                 :tree-config="treeConfig"
                 :data="lists"
                 :border="'inner'"
-                max-height="100%"
+                height="100%"
+                :virtual-y-config="{ enabled: true, gt: 0 }"
             >
                 <vxe-column type="seq" width="60"></vxe-column>
                 <vxe-column
@@ -56,6 +57,7 @@
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:system:menu:add']"
+                            v-show="row.menuType != MenuEnum.BUTTON"
                             type="primary"
                             link
                             @click="handleAdd(row.id)"
@@ -162,8 +164,8 @@
 </template>
 <script lang="ts" setup>
 import { ref, useTemplateRef, nextTick } from 'vue'
-import { menuDelete, menuLists } from '@/api/perms/menu'
-import { arrayToTree } from '@/utils/util'
+import { menuDelete, menuLists, SystemAuthMenuResp } from '@/api/perms/menu'
+// import { arrayToTree } from '@/utils/util'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
@@ -181,21 +183,24 @@ const treeConfig = {
     childrenField: 'children',
     indent: 10,
     reserve: true,
-    lazy: true
+    lazy: true,
+    transform: true,
+
+    parentField: 'pid'
 }
 const tableRef = useTemplateRef<VxeTableInstance<any>>('tableRef')
 const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 let isExpand = false
 const loading = ref(false)
 const showEdit = ref(false)
-const lists = ref([])
+const lists = ref<SystemAuthMenuResp[]>([])
 
 const getLists = async () => {
     loading.value = true
     try {
         const data = await menuLists()
-
-        lists.value = arrayToTree(data)
+        lists.value = data
+        // lists.value = arrayToTree(data)
         //  .map((item: any) => {
         // return item
         // })
