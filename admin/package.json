@@ -16,6 +16,8 @@
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.2",
+        "@form-create/designer": "^3.3.1",
+        "@form-create/element-ui": "^3.2.33",
         "@highlightjs/vue-plugin": "^2.1.0",
         "@logicflow/core": "^2.1.2",
         "@logicflow/extension": "^2.1.3",
@@ -42,7 +44,8 @@
         "vue-router": "^4.5.1",
         "vue3-video-play": "^1.3.2",
         "vuedraggable": "^4.1.0",
-        "vxe-table": "^4.16.11"
+        "vxe-table": "^4.16.11",
+        "vue-virtual-scroller": "2.0.0-beta.8"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.11.0",
