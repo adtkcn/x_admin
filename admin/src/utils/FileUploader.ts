@@ -6,9 +6,25 @@ export interface FileUploaderOptions {
      * 分块大小
      */
     chunkSize?: number
+    /**
+     * 上传成功
+     * @param filePath 上传成功后的文件路径
+     * @returns
+     */
     onSuccess?: (filePath: string) => void
     onError?: (error: Error) => void
+    /**
+     * 计算文件的MD5值进度
+     */
     onCalculateMD5Progress?: (percent: number) => void
+    /**
+     * 上传进度
+     * @param chunkIndex 当前分块索引
+     * @param chunkCount 总分块数
+     * @param chunkLoaded 当前分块已上传大小
+     * @param chunkTotal 当前分块总大小
+     * @param chunkPercent 当前分块上传进度百分比
+     */
     onUploadProgress?: (
         chunkIndex: number,
         chunkCount: number,
@@ -16,7 +32,18 @@ export interface FileUploaderOptions {
         chunkTotal: number,
         chunkPercent: number
     ) => void
+    /**
+     * 分块上传成功
+     * @param chunkIndex 当前分块索引
+     * @returns
+     */
     onChunkSuccess?: (chunkIndex: number) => void
+    /**
+     * 分块上传错误
+     * @param chunkIndex 当前分块索引
+     * @param error 分块上传错误
+     * @returns
+     */
     onChunkError?: (chunkIndex: number, error: Error) => void
 }
 
@@ -44,6 +71,11 @@ export default class FileUploader {
         this.startChunkIndex = -1
         this.onError(error)
     }
+    /**
+     * 计算文件的MD5值进度
+     * @param chunkIndex 当前分块索引
+     * @param chunkTotal 总分块数
+     */
     calculateMD5Progress(chunkIndex: number, chunkTotal: number) {
         const chunkPercent = Math.floor((chunkIndex / chunkTotal) * 100)
         this.onCalculateMD5Progress(chunkPercent)
@@ -74,6 +106,10 @@ export default class FileUploader {
         }
         if (options?.onError) {
             this.onError = options.onError
+        }
+
+        if (options?.onCalculateMD5Progress) {
+            this.onCalculateMD5Progress = options.onCalculateMD5Progress
         }
         if (options?.onUploadProgress) {
             this.onUploadProgress = options.onUploadProgress
@@ -182,17 +218,18 @@ export default class FileUploader {
      */
     async calculateMD5(file: File) {
         return new Promise((resolve, reject) => {
+            const _this = this
             const spark = new SparkMD5.ArrayBuffer()
             const reader = new FileReader()
             const chunkSize = 10 * 1024 * 1024 // 10MB 分块
-            let currentChunk = 0
-            const chunks = Math.ceil(file.size / chunkSize)
+            let chunkIndex = 0
+            const chunkTotal = Math.ceil(file.size / chunkSize)
 
             reader.onload = function (e) {
                 spark.append(e.target.result) // 添加数组缓冲区
-                currentChunk++
+                chunkIndex++
 
-                if (currentChunk < chunks) {
+                if (chunkIndex < chunkTotal) {
                     loadNext()
                 } else {
                     resolve(spark.end())
@@ -204,10 +241,10 @@ export default class FileUploader {
             }
 
             function loadNext() {
-                console.log('md5进度', currentChunk, chunks)
-                this.calculateMD5Progress(currentChunk, chunks)
+                console.log('md5进度', chunkIndex, chunkTotal)
+                _this.calculateMD5Progress(chunkIndex, chunkTotal)
 
-                const start = currentChunk * chunkSize
+                const start = chunkIndex * chunkSize
                 const end = Math.min(start + chunkSize, file.size)
                 reader.readAsArrayBuffer(file.slice(start, end))
             }
