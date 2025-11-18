@@ -107,14 +107,14 @@
                                             >
                                                 <el-dropdown-item command="generate">
                                                     <el-button type="primary" link>
-                                                        生成代码
+                                                        下载代码
                                                     </el-button>
                                                 </el-dropdown-item>
                                             </div>
                                             <div v-perms="['admin:gen:syncTable']">
                                                 <el-dropdown-item command="sync">
                                                     <el-button type="primary" link>
-                                                        同步
+                                                        更新
                                                     </el-button>
                                                 </el-dropdown-item>
                                             </div>
@@ -182,7 +182,7 @@ const handleSelectionChange = (val: any[]) => {
 }
 
 const handleSync = async (id: number) => {
-    await feedback.confirm('确定要同步表结构？')
+    await feedback.confirm('确定要更新表结构？从数据库拉取最新表结构')
     await syncColumn({ id })
     feedback.msgSuccess('操作成功')
 }
