@@ -175,6 +175,26 @@ function updateChart() {
         }
     }, 1000)
 }
+// // 用户 A，加入 room1
+// const wsA = new WebSocket('ws://localhost:8080/api/ws?id=userA&room=room1')
+
+// // 用户 B，加入 room1
+// const wsB = new WebSocket('ws://localhost:8080/api/ws?id=userB&room=room1')
+// // 用户 C，不加入房间
+// const wsC = new WebSocket('ws://localhost:8080/api/ws?id=userC')
+// wsA.onmessage = (event) => {
+//     console.log('用户 A 收到消息:', event.data)
+// }
+
+// // 用户 B，加入 room1
+// wsB.onmessage = (event) => {
+//     console.log('用户 B 收到消息:', event.data)
+// }
+// wsC.onmessage = (event) => {
+//     console.log('用户 C 收到消息:', event.data)
+//     wsC.send('ping')
+// }
+
 onActivated(() => {
     updateChart()
 })

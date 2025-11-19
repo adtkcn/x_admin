@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"x_admin/app/controller"
 	"x_admin/app/controller/admin_ctl/commonController"
 	"x_admin/core/response"
 	"x_admin/middleware"
@@ -20,10 +21,12 @@ func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 		}
 		response.Result(ctx, response.Success, path)
 	})
-
+	// /api/ws  websocket
+	api.GET("/ws", controller.WsHandler)
 	// /api/admin
 	adminRoute.RegisterRoute(api)
 
 	// /api/common/captcha 验证码
 	commonController.CaptchaRoute(api)
+
 }

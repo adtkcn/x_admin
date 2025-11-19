@@ -13,6 +13,7 @@ import (
 	"x_admin/middleware"
 	"x_admin/routes"
 
+	_ "x_admin/app/jobs"
 	_ "x_admin/docs"
 
 	swaggerfiles "github.com/swaggo/files"
@@ -63,9 +64,9 @@ func initServer(router *gin.Engine) *http.Server {
 	return &http.Server{
 		Addr:           ":" + strconv.Itoa(config.AppConfig.Port),
 		Handler:        router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   100 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+		ReadTimeout:    10 * time.Second,  //从连接建立到读取完整请求头和 body的最大时间
+		WriteTimeout:   100 * time.Second, // 从读取完请求到写完响应的最大时间
+		MaxHeaderBytes: 8192,              // 8KB,请求头最大字节数
 	}
 }
 
@@ -103,10 +104,11 @@ func main() {
 
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
-
 	fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
+
 	// 初始化server
 	s := initServer(router)
 	// 运行服务
 	log.Fatalln(s.ListenAndServe().Error())
+
 }
