@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, onDeactivated, onActivated, onMounted } from 'vue'
 import { getWorkbench } from '@/api/app'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'
@@ -161,8 +161,30 @@ const getData = async () => {
     workbenchData.visitorOption.xAxis.data = res.visitor.date
     workbenchData.visitorOption.series[0].data = res.visitor.list
 }
+let timer: any = null
+function updateChart() {
+    clearInterval(timer)
+    timer = setInterval(() => {
+        workbenchData.visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
+        workbenchData.visitorOption.series[0].data.push(Math.floor(Math.random() * 500))
 
-getData()
+        // 保持数据长度在10个
+        if (workbenchData.visitorOption.xAxis.data.length > 20) {
+            workbenchData.visitorOption.xAxis.data.shift()
+            workbenchData.visitorOption.series[0].data.shift()
+        }
+    }, 1000)
+}
+onActivated(() => {
+    updateChart()
+})
+onDeactivated(() => {
+    clearInterval(timer)
+})
+onMounted(() => {
+    getData()
+    updateChart()
+})
 </script>
 
 <style lang="scss" scoped></style>
