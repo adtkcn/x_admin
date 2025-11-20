@@ -105,3 +105,9 @@ func (c *Client) Write() {
 		}
 	}
 }
+
+// 主动关闭连接
+func (c *Client) Close() {
+	c.manager.UnRegister <- c
+	c.conn.Close()
+}

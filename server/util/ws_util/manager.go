@@ -114,3 +114,57 @@ func (m *Manager) SendToAll(message []byte) {
 		}
 	}
 }
+
+// 获取当前在线用户数
+func (m *Manager) GetOnlineCount() int {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+	return len(m.clients)
+}
+
+// 获取房间内的在线用户数
+func (m *Manager) GetRoomOnlineCount(roomID string) int {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	if room, ok := m.rooms[roomID]; ok {
+		return len(room)
+	}
+	return 0
+}
+
+// 关闭所有连接
+func (m *Manager) CloseAll() {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	for _, client := range m.clients {
+		client.Close()
+	}
+}
+
+// 关闭指定房间的所有连接
+func (m *Manager) CloseRoom(roomID string) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if room, ok := m.rooms[roomID]; ok {
+		for clientID := range room {
+			if client, ok := m.clients[clientID]; ok {
+				client.Close()
+			}
+		}
+		delete(m.rooms, roomID)
+	}
+}
+
+// 关闭指定用户的连接
+func (m *Manager) CloseUser(clientID string) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if client, ok := m.clients[clientID]; ok {
+		client.Close()
+		delete(m.clients, clientID)
+	}
+}
