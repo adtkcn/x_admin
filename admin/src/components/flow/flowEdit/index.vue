@@ -40,20 +40,11 @@ defineOptions({
     name: 'flowEdit'
 })
 // Define component props
-const props = defineProps({
-    tabName: {
-        type: String,
-        default: ''
-    },
-    fieldList: {
-        type: Array,
-        default: () => []
-    },
-    conf: {
-        type: Object,
-        default: () => ({})
-    }
-})
+const props = defineProps<{
+    tabName: string
+    fieldList: { id: string; name: string }[]
+    conf: any
+}>()
 
 // Define refs for reactive data and component references
 const lf = ref<LogicFlow>(null) // Reference to LogicFlow instance

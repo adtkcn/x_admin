@@ -42,7 +42,7 @@
                 v-show="activeStep === 'basicSetting'"
                 tabName="basicSetting"
             />
-            <XForm
+            <XForm2
                 ref="formDesign"
                 :conf="mockData.flowFormData"
                 v-show="activeStep === 'formDesign'"
@@ -62,6 +62,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, watch } from 'vue'
 import XForm from './XForm/index.vue'
+import XForm2 from './XForm2/index.vue'
 import FlowEdit from './flowEdit/index.vue'
 import BasicSetting from './BasicSetting/index.vue'
 
@@ -95,7 +96,7 @@ const activeStep = ref('basicSetting')
 const mockData = ref({
     id: '',
     basicSetting: {},
-    flowFormData: {},
+    flowFormData: [],
     flowProcessData: {}
 })
 const fieldList = ref([])
@@ -118,7 +119,7 @@ function reset() {
     mockData.value = {
         id: '',
         basicSetting: {},
-        flowFormData: {},
+        flowFormData: [],
         flowProcessData: {}
     }
     activeStep.value = 'basicSetting'
@@ -133,7 +134,7 @@ function open(data) {
         mockData.value = {
             id: '',
             basicSetting: {},
-            flowFormData: {},
+            flowFormData: [],
             flowProcessData: {}
         }
     }

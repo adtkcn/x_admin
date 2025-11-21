@@ -8,7 +8,7 @@
                     <el-option
                         v-for="item in fieldList"
                         :key="item.id"
-                        :label="item.label"
+                        :label="item.name"
                         :value="item.id"
                     />
                 </el-select>
@@ -57,12 +57,19 @@ import { Close } from '@element-plus/icons-vue'
 // import { VxeTable, VxeColumn, VxeTableInstance } from 'vxe-table'
 // import 'vxe-table/lib/style.css'
 import type { NodeType, PropertiesType, FieldListType } from './property.type'
+const props = withDefaults(
+    defineProps<{
+        node?: NodeType
+        fieldList?: FieldListType[]
+        properties?: PropertiesType
+    }>(),
+    {
+        node: () => ({}),
+        fieldList: () => [],
+        properties: () => ({ gateway: [] })
+    }
+)
 
-const props = defineProps<{
-    node?: NodeType
-    fieldList?: FieldListType[]
-    properties?: PropertiesType
-}>()
 const conditionList = [
     {
         value: '==',
@@ -91,7 +98,7 @@ function getLabel(id) {
         if (item.id === id) {
             return true
         }
-    })?.label
+    })?.name
 }
 function addCondition() {
     // this.selectGateway
