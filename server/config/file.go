@@ -1,16 +1,16 @@
 package config
 
 type fileConfig struct {
-	UploadDirectory string `mapstructure:"UPLOAD_DIRECTORY"` // 文件目录
-	PublicPrefix    string `mapstructure:"PUBLIC_PREFIX"`    // 资源访问前缀
+	UploadDirectory string `mapstructure:"UploadDirectory"` // 文件目录
+	PublicPrefix    string `mapstructure:"PublicPrefix"`    // 资源访问前缀
 
-	UploadImageSize int64 `mapstructure:"UPLOAD_IMAGE_SIZE"` // 上传图片大小限制
-	UploadVideoSize int64 `mapstructure:"UPLOAD_VIDEO_SIZE"` // 上传视频大小限制
-	UploadFileSize  int64 `mapstructure:"UPLOAD_FILE_SIZE"`  // 上传文件大小限制
+	UploadImageSize int64 `mapstructure:"UploadImageSize"` // 上传图片大小限制
+	UploadVideoSize int64 `mapstructure:"UploadVideoSize"` // 上传视频大小限制
+	UploadFileSize  int64 `mapstructure:"UploadFileSize"`  // 上传文件大小限制
 
-	UploadImageExt []string `mapstructure:"UPLOAD_IMAGE_EXT"` // 上传图片扩展
-	UploadVideoExt []string `mapstructure:"UPLOAD_VIDEO_EXT"` // 上传视频扩展
-	UploadFileExt  []string `mapstructure:"UPLOAD_FILE_EXT"`  // 上传文件扩展
+	UploadImageExt []string `mapstructure:"UploadImageExt"` // 上传图片扩展
+	UploadVideoExt []string `mapstructure:"UploadVideoExt"` // 上传视频扩展
+	UploadFileExt  []string `mapstructure:"UploadFileExt"`  // 上传文件扩展
 }
 
 // var uploadImageExtDefault = []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp", "avif"}

@@ -14,6 +14,7 @@ type config struct {
 	REDIS *redisConfig
 	FILE  *fileConfig
 	GeTui *geTuiConfig
+	Email *emailConfig
 }
 
 var Config = loadConfig(config{
@@ -22,6 +23,7 @@ var Config = loadConfig(config{
 	REDIS: &RedisConfig,
 	FILE:  &FileConfig,
 	GeTui: &GeTuiConfig,
+	Email: &EmailConfig,
 })
 
 func loadConfig(config config) config {
@@ -52,4 +54,6 @@ func init() {
 	fmt.Println("DBConfig:", DBConfig)
 	fmt.Println("RedisConfig:", RedisConfig)
 	fmt.Println("FileConfig:", FileConfig)
+	fmt.Println("GeTuiConfig:", GeTuiConfig)
+	fmt.Println("EmailConfig:", EmailConfig)
 }

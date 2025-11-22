@@ -48,9 +48,9 @@ func NewGeTuiService() *geTuiService {
 		authLock: sync.Mutex{},
 
 		// appSecret    : config.GeTuiConfig.APPSECRET,
-		baseURL:      config.GeTuiConfig.HOST + config.GeTuiConfig.APPID,
-		appKey:       config.GeTuiConfig.APPKEY,
-		masterSecret: config.GeTuiConfig.MASTERSECRET,
+		baseURL:      config.GeTuiConfig.Host + config.GeTuiConfig.AppID,
+		appKey:       config.GeTuiConfig.AppKEY,
+		masterSecret: config.GeTuiConfig.MasterSecret,
 		packageName:  config.GeTuiConfig.PackName,
 	}
 }

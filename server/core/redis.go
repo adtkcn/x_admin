@@ -1,7 +1,6 @@
 package core
 
 import (
-	"context"
 	"log"
 	"time"
 	"x_admin/config"
@@ -22,11 +21,11 @@ func initRedis() *redis.Client {
 	opt.ConnMaxLifetime = time.Duration(config.RedisConfig.ConnMaxLifetime) * time.Second
 
 	client := redis.NewClient(opt)
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	_, err = client.Ping(ctx).Result()
-	if err != nil {
-		log.Fatal("initRedis client.Ping err: ", err)
-	}
+	// ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	// defer cancel()
+	// _, err = client.Ping(ctx).Result()
+	// if err != nil {
+	// 	log.Fatal("initRedis client.Ping err: ", err)
+	// }
 	return client
 }

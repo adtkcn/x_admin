@@ -1,13 +1,13 @@
 package config
 
 type appConfig struct {
-	AppName string `mapstructure:"APP_NAME"` // 应用名称
-	Version string `mapstructure:"VERSION"`  // 应用版本
-	Port    int    `mapstructure:"PORT"`     // 应用端口
+	AppName string `mapstructure:"AppName"` // 应用名称
+	Version string `mapstructure:"Version"` // 应用版本
+	Port    int    `mapstructure:"Port"`    // 应用端口
 
-	OssDomain      string `mapstructure:"OSS_DOMAIN"`      // OSS域名
-	GinMode        string `mapstructure:"GIN_MODE"`        // 应用模式: debug,release
-	DisallowModify bool   `mapstructure:"DISALLOW_MODIFY"` // 禁止修改操作 (演示功能,限制POST请求)
+	OssDomain      string `mapstructure:"OssDomain"`      // OSS域名
+	GinMode        string `mapstructure:"GinMode"`        // 应用模式: debug,release
+	DisallowModify bool   `mapstructure:"DisallowModify"` // 禁止修改操作 (演示功能,限制POST请求)
 }
 
 var AppConfig = appConfig{
