@@ -175,6 +175,7 @@
                                     查看
                                 </el-button>
                             </div>
+
                             <div class="inline-block" v-perms="['admin:common:album:albumDel']">
                                 <el-button
                                     type="primary"
@@ -182,6 +183,11 @@
                                     @click.stop="batchFileDelete([row.id])"
                                 >
                                     删除
+                                </el-button>
+                            </div>
+                            <div class="inline-block">
+                                <el-button type="primary" link @click.stop="handlePreview(row.uri)">
+                                    下载（待开发）
                                 </el-button>
                             </div>
                         </template>

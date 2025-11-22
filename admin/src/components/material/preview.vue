@@ -8,9 +8,22 @@
                 @close="handleClose"
             />
         </div>
-        <div v-if="fileType == 'video' || fileType == 'audio'">
-            <el-dialog v-model="visible" width="900px" title="视频预览" :before-close="handleClose">
-                <video-player ref="playerRef" :src="url" width="100%" height="450px" />
+        <div v-else>
+            <el-dialog v-model="visible" width="900px" title="文件预览" :before-close="handleClose">
+                <video-player
+                    v-if="fileType == 'video' || fileType == 'audio'"
+                    ref="playerRef"
+                    :src="url"
+                    width="100%"
+                    height="450px"
+                />
+                <div v-else style="padding: 20px; text-align: center">
+                    <p>
+                        无法预览该文件类型，请下载后查看。<a :href="url" target="_blank" download
+                            >点击下载</a
+                        >
+                    </p>
+                </div>
             </el-dialog>
         </div>
     </div>
