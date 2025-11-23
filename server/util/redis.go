@@ -205,6 +205,34 @@ func (ru redisUtil) Del(keys ...string) bool {
 	return true
 }
 
+// Push 向列表中添加元素,并保留最新的count个元素
+func (ru redisUtil) RPush(key string, value []any, count int64) bool {
+	var ctx = context.Background()
+	pipe := core.Redis.TxPipeline()
+	pipe.RPush(ctx, config.RedisConfig.RedisPrefix+key, value...) // 推到右侧（尾部）
+	if count != 0 {
+		pipe.LTrim(ctx, config.RedisConfig.RedisPrefix+key, -count, -1) // 保留最新的count个元素
+	}
+
+	_, err := pipe.Exec(ctx)
+
+	if err != nil {
+		core.Logger.Errorf("redisUtil.Push err: err=[%+v]", err)
+		return false
+	}
+	return true
+}
+
+// LIndex 获取列表中指定索引的元素
+func (ru redisUtil) LRange(key string, start, stop int64) []string {
+	res, err := ru.redis.LRange(context.Background(), config.RedisConfig.RedisPrefix+key, start, stop).Result()
+	if err != nil {
+		core.Logger.Errorf("redisUtil.LRange err: err=[%+v]", err)
+		return []string{}
+	}
+	return res
+}
+
 // toFullKeys 为keys批量增加前缀
 func (ru redisUtil) toFullKeys(keys []string) (fullKeys []string) {
 	for _, k := range keys {

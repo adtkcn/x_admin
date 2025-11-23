@@ -15,27 +15,30 @@ const (
 )
 
 type Client struct {
-	ID      string
+	UUID    string // 用于单推
+	Uid     string // 用于单推
 	RoomID  string // 用于群推
 	conn    *websocket.Conn
 	send    chan []byte
-	manager *Manager //持有对 Manager 的引用:显式的依赖注入，结构清晰、可测试、可扩展
+	Manager *Manager //持有对 Manager 的引用:显式的依赖注入，结构清晰、可测试、可扩展
 }
 
-func NewClient(id, roomID string, conn *websocket.Conn, manager *Manager) *Client {
+func NewClient(uuid, Uid, roomID string, conn *websocket.Conn, manager *Manager) *Client {
 	return &Client{
-		ID:      id,
+		UUID:    uuid,
+		Uid:     Uid,
 		RoomID:  roomID,
 		conn:    conn,
 		send:    make(chan []byte, 256),
-		manager: manager,
+		Manager: manager,
 	}
 }
 
 // 读取消息（通常用于接收客户端消息，此处简化）
 func (c *Client) Read() {
 	defer func() {
-		c.manager.UnRegister <- c
+		// 从 Manager 中注销客户端
+		c.Manager.UnRegister <- c
 		c.conn.Close()
 	}()
 
@@ -50,7 +53,12 @@ func (c *Client) Read() {
 	for {
 		_, _, err := c.conn.ReadMessage()
 		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			// 处理浏览器主动关闭的情况
+			if websocket.IsCloseError(err,
+				websocket.CloseGoingAway,         // 客户端正在关闭连接
+				websocket.CloseAbnormalClosure) { // 异常关闭
+				log.Printf("WebSocket client %s closed: %v", c.UUID, err)
+			} else {
 				log.Printf("WebSocket read error: %v", err)
 			}
 			break
@@ -108,6 +116,6 @@ func (c *Client) Write() {
 
 // 主动关闭连接
 func (c *Client) Close() {
-	c.manager.UnRegister <- c
+	c.Manager.UnRegister <- c
 	c.conn.Close()
 }

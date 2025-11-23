@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"x_admin/core"
+	"x_admin/util"
 	"x_admin/util/ws_util"
 
 	"github.com/gin-gonic/gin"
@@ -17,10 +18,11 @@ var upgrader = websocket.Upgrader{
 }
 
 func WsHandler(c *gin.Context) {
+	uuid := util.ToolsUtil.MakeUuidV7()
 	// 从查询参数获取用户ID和房间ID（实际项目中应通过认证获取）
-	clientID := c.Query("id")
+	uid := c.Query("uid")
 	roomID := c.Query("room")
-	if clientID == "" {
+	if uid == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "id is required"})
 		return
 	}
@@ -31,13 +33,10 @@ func WsHandler(c *gin.Context) {
 		return
 	}
 
-	client := ws_util.NewClient(clientID, roomID, conn, core.Ws)
+	client := ws_util.NewClient(uuid, uid, roomID, conn, core.Ws)
 	core.Ws.Register <- client
 
 	// 启动读写协程
 	go client.Write()
 	go client.Read()
-}
-func init() {
-	go core.Ws.Start()
 }

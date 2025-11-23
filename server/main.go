@@ -13,7 +13,7 @@ import (
 	"x_admin/middleware"
 	"x_admin/routes"
 
-	_ "x_admin/app/jobs"
+	_ "x_admin/app/corn"
 	_ "x_admin/docs"
 
 	swaggerfiles "github.com/swaggo/files"
