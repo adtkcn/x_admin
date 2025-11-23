@@ -16,24 +16,6 @@ type NullFloat struct {
 
 func DecodeFloat(value any) (any, error) {
 	switch v := value.(type) {
-	// case float64:
-	// 	f := v
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case float32:
-	// 	f := float64(v)
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case int:
-	// 	f := float64(v)
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case int64:
-	// 	f := float64(v)
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case string:
-	// 	if v == "" {
-	// 		return NullFloat{Float: nil, Valid: false}, nil
-	// 	}
-	// 	f, err := strconv.ParseFloat(v, 64)
-	// 	return NullFloat{Float: &f, Valid: true}, err
 	case nil:
 		return NullFloat{Float: nil, Valid: false}, nil
 	case NullFloat:
@@ -57,35 +39,6 @@ func (f *NullFloat) Scan(value interface{}) error {
 	}
 	f.Float, f.Valid = &result, true
 	return nil
-	// switch v := value.(type) {
-	// case float64:
-	// 	f.Float, f.Valid = &v, true
-	// case float32:
-	// 	// 直接用float64(float32(v)), 会丢失精度
-	// 	val, _ := strconv.ParseFloat(fmt.Sprintf("%f", v), 64)
-	// 	f.Float, f.Valid = &val, true
-	// 	// 匹配所有int
-	// case uint, uint8, uint16, uint32, uint64, int8, int16, int, int32, int64:
-	// 	val := float64(v)
-	// 	f.Float, f.Valid = &val, true
-	// case string:
-	// 	if v == "" {
-	// 		f.Float, f.Valid = nil, false
-	// 		return nil
-	// 	}
-	// 	val, err := strconv.ParseFloat(v, 64)
-	// 	if err != nil {
-	// 		f.Float, f.Valid = nil, false
-	// 		return err
-	// 	}
-	// 	f.Float, f.Valid = &val, true
-	// 	return err
-	// case nil:
-	// 	f.Float, f.Valid = nil, false
-	// 	return nil
-	// }
-
-	// return nil
 }
 
 // gorm实现 Valuer
@@ -124,6 +77,11 @@ func (f *NullFloat) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v := x.(type) {
+	case int64:
+		f64 := float64(v)
+		f.Float = &f64
+		f.Valid = true
+		return nil
 	case float64:
 		f.Float = &v
 		f.Valid = true

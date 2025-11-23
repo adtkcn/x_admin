@@ -36,7 +36,10 @@ func (t *NullTime) UnmarshalJSON(bs []byte) error {
 		}
 		return nil
 	}
-	tt, _ := time.ParseInLocation(TimeFormat, date, time.Local)
+	tt, err := time.ParseInLocation(TimeFormat, date, time.Local)
+	if err != nil {
+		return err
+	}
 	*t = NullTime{
 		Time:  &tt,
 		Valid: true,
