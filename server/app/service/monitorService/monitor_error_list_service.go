@@ -29,7 +29,7 @@ type monitorErrorListService struct {
 // Add 错误对应的用户记录新增
 func (service monitorErrorListService) Add(addReq monitorSchema.MonitorErrorListAddReq) (createId int, e error) {
 	var obj model.MonitorErrorList
-	convert_util.StructToStruct(addReq, &obj)
+	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {

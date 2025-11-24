@@ -175,7 +175,7 @@ func (service monitorClientService) ErrorUsers(error_id int) (res []monitorSchem
 // Add 监控-客户端信息新增
 func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq) (createId int, e error) {
 	var obj model.MonitorClient
-	convert_util.StructToStruct(addReq, &obj)
+	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {

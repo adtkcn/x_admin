@@ -127,7 +127,7 @@ func (service monitorProjectService) Detail(Id int) (res monitorSchema.MonitorPr
 // Add 监控项目新增
 func (service monitorProjectService) Add(addReq monitorSchema.MonitorProjectAddReq) (createId int, e error) {
 	var obj model.MonitorProject
-	convert_util.StructToStruct(addReq, &obj)
+	convert_util.Copy(&obj, addReq)
 	obj.ProjectKey = util.ToolsUtil.MakeUuidV7()
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)

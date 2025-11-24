@@ -18,7 +18,7 @@ import (
  * @param cols 列信息
  * @return err
  */
-func GetExcelData(file multipart.File, dst interface{}, cols []Col) (err error) {
+func GetExcelData(file multipart.File, dst any, cols []Col) (err error) {
 	// 创建缓冲区
 	buf := new(bytes.Buffer)
 
@@ -46,14 +46,14 @@ func GetExcelData(file multipart.File, dst interface{}, cols []Col) (err error) 
 // f 获取到的excel对象、dst 导入目标对象【传指针】
 // headIndex 表头的索引，从0开始（用于获取表头名字）
 // startRow 头行行数（从第startRow+1行开始扫）
-func ImportExcel(f *excelize.File, dst interface{}, startRow int, cols []Col) (err error) {
+func ImportExcel(f *excelize.File, dst any, startRow int, cols []Col) (err error) {
 	sheetName := f.GetSheetName(0) // 单个sheet时，默认读取第一个sheet
 	err = importData(f, dst, sheetName, startRow, cols)
 	return
 }
 
 // ImportBySheet 导入数据（读取指定sheet）sheetName Sheet名称
-func ImportBySheet(f *excelize.File, dst interface{}, sheetName string, startRow int, cols []Col) (err error) {
+func ImportBySheet(f *excelize.File, dst any, sheetName string, startRow int, cols []Col) (err error) {
 	// 当需要读取多个sheet时，可以通过下面的方式，来调用 ImportBySheet 这个函数
 	//sheetList := f.GetSheetList()
 	//for _, sheetName := range sheetList {
@@ -64,71 +64,47 @@ func ImportBySheet(f *excelize.File, dst interface{}, sheetName string, startRow
 }
 
 // 解析数据
-func importData(f *excelize.File, dst interface{}, sheetName string, startRow int, cols []Col) (err error) {
+func importData(f *excelize.File, dst any, sheetName string, startRow int, cols []Col) (err error) {
 	rows, err := f.GetRows(sheetName) // 获取所有行
 	if err != nil {
 		err = errors.New(sheetName + "工作表不存在")
 		return
 	}
-	// heads := []string{}
 
-	var data = []map[string]interface{}{}
+	var data = []map[string]any{}
 	for i := 0; i < len(rows); i++ {
 
 		if i < startRow { // 跳过头行
 			continue
 		}
-		var rowMap = map[string]interface{}{}
+		var rowMap = map[string]any{}
 
 		for j := 0; j < len(cols); j++ {
 			col := cols[j]
 			key := col.Key
 			replace := col.Replace
 
-			rowVal := rows[i][j]
+			colVal := rows[i][j]
 			// 先替换，将val替换为key
 			for replaceKey, replaceVal := range replace {
-				if fmt.Sprintf("%v", replaceVal) == rowVal {
-					rowVal = replaceKey
+				if fmt.Sprintf("%v", replaceVal) == colVal {
+					colVal = replaceKey
 					break
 				}
 			}
 			// 再解码
 			if col.Decode != nil {
-				v, e := col.Decode(rowVal)
+				v, e := col.Decode(colVal)
 				if e == nil {
 					rowMap[key] = v
 				}
 			} else {
-				rowMap[key] = rowVal
+				rowMap[key] = colVal
 			}
 		}
 		data = append(data, rowMap)
 
 	}
 	convert_util.MapToStruct(data, dst)
-
-	// 		fmt.Println("Type.Name:", field.Type.Name(), field.Type.Kind())
-	// 		// 根据字段类型设置值
-	// 		switch field.Type.Kind() {
-	// 		case reflect.Int:
-	// 			v, _ := strconv.ParseInt(cellValue, 10, 64)
-	// 			newData.Field(i).SetInt(v)
-	// 		case reflect.Int64:
-	// 			v, _ := strconv.ParseInt(cellValue, 10, 64)
-	// 			newData.Field(i).SetInt(v)
-	// 		case reflect.Uint:
-	// 			v, _ := strconv.ParseUint(cellValue, 10, 64)
-	// 			newData.Field(i).SetUint(v)
-	// 		case reflect.Uint8:
-	// 			v, _ := strconv.ParseUint(cellValue, 10, 64)
-	// 			newData.Field(i).SetUint(v)
-	// 		case reflect.Uint16:
-	// 			v, _ := strconv.ParseUint(cellValue, 10, 64)
-	// 			newData.Field(i).SetUint(v)
-	// 		case reflect.String:
-	// 			newData.Field(i).SetString(cellValue)
-	// 		}
-
 	return
 }

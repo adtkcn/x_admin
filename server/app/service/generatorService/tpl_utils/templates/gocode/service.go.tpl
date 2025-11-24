@@ -133,7 +133,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 // Add {{{ .FunctionName }}}新增
 func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq) (createId int,e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
-	convert_util.StructToStruct(addReq,&obj)
+	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {

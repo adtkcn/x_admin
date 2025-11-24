@@ -13,7 +13,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func ToFloat64(value interface{}) (float64, error) {
+func ToFloat64(value any) (float64, error) {
 	switch v := value.(type) {
 	case float32:
 		return strconv.ParseFloat(fmt.Sprintf("%f", v), 64)
@@ -21,16 +21,16 @@ func ToFloat64(value interface{}) (float64, error) {
 		return convertor.ToFloat(value)
 	}
 }
-func ToInt64(value interface{}) (int64, error) {
+func ToInt64(value any) (int64, error) {
 	return convertor.ToInt(value)
 }
-func ToString(value interface{}) string {
+func ToString(value any) string {
 	return convertor.ToString(value)
 }
 
 // StructToMap 结构体转换成map,深度转换
-func StructToMap(from interface{}) map[string]interface{} {
-	// var m = map[string]interface{}{}
+func StructToMap(from any) map[string]any {
+	// var m = map[string]any{}
 	// mapstructure.Decode(from, &m) //深度转换所有结构体
 
 	m := structs.Map(from) // 需要tag:structs，深度转换
@@ -38,11 +38,10 @@ func StructToMap(from interface{}) map[string]interface{} {
 }
 
 // StructsToMaps 将结构体转换成Map列表
-func StructsToMaps(from interface{}) (data []map[string]interface{}) {
-	var objList []interface{}
+func StructsToMaps(from any) (data []map[string]any) {
+	var objList []any
 	err := copier.Copy(&objList, from)
 	if err != nil {
-		// core.Logger.Errorf("convertUtil.StructsToMaps err: err=[%+v]", err)
 		return nil
 	}
 	for _, v := range objList {
@@ -52,8 +51,8 @@ func StructsToMaps(from interface{}) (data []map[string]interface{}) {
 }
 
 // ShallowStructToMap 将结构体转换成map,浅转换
-func ShallowStructToMap(from interface{}) map[string]interface{} {
-	m := make(map[string]interface{})
+func ShallowStructToMap(from any) map[string]any {
+	m := make(map[string]any)
 	v := reflect.ValueOf(from)
 	t := v.Type()
 
@@ -67,11 +66,10 @@ func ShallowStructToMap(from interface{}) map[string]interface{} {
 }
 
 // ShallowStructsToMaps 将结构体列表转换成Map列表,浅转换
-func ShallowStructsToMaps(from interface{}) (data []map[string]interface{}) {
-	var objList []interface{}
+func ShallowStructsToMaps(from any) (data []map[string]any) {
+	var objList []any
 	err := copier.Copy(&objList, from)
 	if err != nil {
-		// core.Logger.Errorf("convertUtil.StructsToMaps err: err=[%+v]", err)
 		return nil
 	}
 	for _, v := range objList {
@@ -81,20 +79,20 @@ func ShallowStructsToMaps(from interface{}) (data []map[string]interface{}) {
 }
 
 // MapToStruct 将map弱类型转换成结构体
-func MapToStruct(from interface{}, to interface{}) (err error) {
+func MapToStruct(from any, to any) (err error) {
 	err = mapstructure.WeakDecode(from, to) // 需要tag:mapstructure
 	return err
 }
 
 // StructToStruct 将结构体from弱类型转换成结构体to
-func StructToStruct(from interface{}, to interface{}) (err error) {
-	m := StructToMap(from)
-	err = MapToStruct(m, to)
+// func StructToStruct(from any, to any) (err error) {
+// 	m := StructToMap(from)
+// 	err = MapToStruct(m, to)
 
-	return err
-}
+// 	return err
+// }
 
-func Copy(toValue interface{}, fromValue interface{}) interface{} {
+func Copy(toValue any, fromValue any) any {
 	if err := copier.Copy(toValue, fromValue); err != nil {
 		// core.Logger.Errorf("Copy err: err=[%+v]", err)
 		panic("SystemError")
