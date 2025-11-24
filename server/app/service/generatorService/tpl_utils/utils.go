@@ -254,7 +254,7 @@ func (gu genUtil) GoWithAddEditType(s string) string {
 	case "float", "float32", "float64":
 		return "core.NullFloat"
 	case "string":
-		return "*string"
+		return "core.NullString"
 	case "bool":
 		return "*int"
 	case "time.Time":
@@ -275,7 +275,7 @@ func (gu genUtil) GoWithRespType(s string) string {
 	case "float", "float32", "float64":
 		return "core.NullFloat"
 	case "string":
-		return "string"
+		return "core.NullString"
 	case "bool":
 		return "int"
 	case "time.Time":

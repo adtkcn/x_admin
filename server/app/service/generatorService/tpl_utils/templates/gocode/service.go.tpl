@@ -40,20 +40,20 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq schema.{{
 	{{{- if .IsQuery }}}
 	{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
 		{{{- if eq .HtmlType "datetime" }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}Start!= nil {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} >= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}Start)
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue() != nil {
+	dbModel = dbModel.Where("{{{ .ColumnName }}} >= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue())
 			}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}End!= nil {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} <= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}End)
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue() != nil {
+	dbModel = dbModel.Where("{{{ .ColumnName }}} <= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue())
 			}
 		{{{- else }}}
 			{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}!= nil {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} like ?", "%"+*listReq.{{{ toUpperCamelCase .ColumnName }}}+"%")
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
+	dbModel = dbModel.Where("{{{ .ColumnName }}} like ?", "%"+*listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue()+"%")
 			}
 			{{{- else }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}!= nil {
-				dbModel = dbModel.Where("{{{ .ColumnName }}} = ?", *listReq.{{{ toUpperCamelCase .ColumnName }}})
+			if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
+	dbModel = dbModel.Where("{{{ .ColumnName }}} = ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue())
 			}
 			{{{- end }}}
 		{{{- end }}}
@@ -63,6 +63,18 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq schema.{{
 	dbModel = dbModel.Where("is_delete = ?", 0)
 	{{{- end }}}
 	return dbModel
+}
+// 获取更新map
+func (service {{{ toCamelCase .EntityName }}}Service) GetUpdateMap(listReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq) map[string]interface{} {
+	updateMap := make(map[string]interface{})
+	{{{- range .Columns }}}
+	{{{- if .IsEdit }}}
+	if editReq.{{{ toUpperCamelCase .ColumnName }}}.Valid {
+		updateMap["{{{ .ColumnName }}}"] = editReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue()
+	}
+	{{{- end }}}
+	{{{- end }}}
+	return updateMap
 }
 // List {{{ .FunctionName }}}列表
 func (service {{{ toCamelCase .EntityName }}}Service) List(page request.PageReq, listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq) (res response.PageResp, e error) {
@@ -106,7 +118,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) ListAll(listReq schema.{{{
 }
 
 // Detail {{{ .FunctionName }}}详情
-func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKey }}} int) (res schema.{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKey }}} {{{.PrimaryKeyGoType}}}) (res schema.{{{ toUpperCamelCase .EntityName }}}Resp, e error) {
 	var obj = model.{{{ toUpperCamelCase .EntityName }}}{}
 	err := service.CacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
@@ -131,13 +143,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 }
 
 // Add {{{ .FunctionName }}}新增
-func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq) (createId int,e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq) (createId {{{.PrimaryKeyGoType}}},e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
-		return 0,e
+		return "",e
 	}
 	service.CacheUtil.SetCache(obj.{{{ toUpperCamelCase .PrimaryKey }}}, obj)
 	createId = obj.{{{ toUpperCamelCase .PrimaryKey }}}
@@ -155,9 +167,13 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq schema.{{{ to
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	convert_util.Copy(&obj, editReq)
+	// convert_util.Copy(&obj, editReq)
+	updateMap := service.GetUpdateMap(editReq)
+	if len(updateMap) == 0 {
+		return errors.New("没有可更新的字段")
+	}
 
-	err = service.db.Model(&obj).Select("*").Updates(obj).Error
+	err = service.db.Model(&obj).Updates(updateMap).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
@@ -167,7 +183,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq schema.{{{ to
 }
 
 // Del {{{ .FunctionName }}}删除
-func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .PrimaryKey }}} int) (e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Del({{{ toUpperCamelCase .PrimaryKey }}} {{{.PrimaryKeyGoType}}}) (e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
@@ -214,8 +230,10 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetExcelCol() []excel2.Col
 		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: util.NullTimeUtil.DecodeTime },
 		{{{- else if eq .GoType "int" }}}
 			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeInt},
+		{{{- else if eq .GoType "float64" }}}
+			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeFloat},
 		{{{- else }}}
-		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15},
+		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeString},
 		{{{- end }}}
 	{{{- end }}}
 	{{{- end }}}

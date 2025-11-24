@@ -87,11 +87,11 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Success	200			{object}	response.Response{ data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
-	var detailReq schema.{{{ toUpperCamelCase .EntityName }}}DetailReq
+	var detailReq schema.{{{ toUpperCamelCase .EntityName }}}Primarykey
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err, _ := hd.requestGroup.Do("{{{ toUpperCamelCase .EntityName }}}:Detail:"+strconv.Itoa(detailReq.{{{ toUpperCamelCase .PrimaryKey }}}), func() (any, error) {
+	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("{{{ toUpperCamelCase .EntityName }}}:Detail:%v", detailReq.{{{ toUpperCamelCase .PrimaryKey }}}), func() (any, error) {
 		v, err := service.{{{ toUpperCamelCase .EntityName }}}Service.Detail(detailReq.{{{ toUpperCamelCase .PrimaryKey }}})
 		return v, err
 	})
@@ -149,7 +149,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
-	var delReq schema.{{{ toUpperCamelCase .EntityName }}}DelReq
+	var delReq schema.{{{ toUpperCamelCase .EntityName }}}Primarykey
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}

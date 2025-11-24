@@ -52,30 +52,31 @@ type zFile struct {
 
 // TplVars 模板变量
 type TplVars struct {
-	GenTpl          string
-	TableName       string
-	AuthorName      string
-	PackageName     string
-	EntityName      string
-	EntitySnakeName string
-	ModuleName      string
-	FunctionName    string
-	DateFields      []string
-	PrimaryKey      string
-	PrimaryField    string
-	AllFields       []string
-	SubPriCol       gen_model.GenTableColumn
-	SubPriField     string
-	SubTableFields  []string
-	ListFields      []string
-	DetailFields    []string
-	DictFields      []string
-	ListAllFields   []string
-	IsSearch        bool
-	ModelOprMap     map[string]string
-	Table           gen_model.GenTable
-	Columns         []gen_model.GenTableColumn
-	SubColumns      []gen_model.GenTableColumn
+	GenTpl           string
+	TableName        string
+	AuthorName       string
+	PackageName      string
+	EntityName       string
+	EntitySnakeName  string
+	ModuleName       string
+	FunctionName     string
+	DateFields       []string
+	PrimaryKey       string
+	PrimaryField     string
+	PrimaryKeyGoType string
+	AllFields        []string
+	SubPriCol        gen_model.GenTableColumn
+	SubPriField      string
+	SubTableFields   []string
+	ListFields       []string
+	DetailFields     []string
+	DictFields       []string
+	ListAllFields    []string
+	IsSearch         bool
+	ModelOprMap      map[string]string
+	Table            gen_model.GenTable
+	Columns          []gen_model.GenTableColumn
+	SubColumns       []gen_model.GenTableColumn
 	//ModelTypeMap    map[string]string
 }
 
@@ -90,6 +91,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 	subPriField := "id"
 	isSearch := false
 	primaryKey := "id"
+	primaryKeyGoType := "string"
 	primaryField := "id"
 	functionName := "【请填写功能名称】"
 	var allFields []string
@@ -125,6 +127,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		if column.IsPk == 1 {
 			primaryKey = column.GoField
 			primaryField = column.ColumnName
+			primaryKeyGoType = column.GoType
 		}
 		if column.DictType != "" && !util.ToolsUtil.Contains(dictFields, column.DictType) {
 			dictFields = append(dictFields, column.DictType)
@@ -142,30 +145,31 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		functionName = table.FunctionName
 	}
 	return TplVars{
-		GenTpl:          table.GenTpl,
-		TableName:       table.TableName,
-		AuthorName:      table.AuthorName,
-		PackageName:     table.ModuleName,
-		EntityName:      table.EntityName,
-		EntitySnakeName: util.StringUtil.ToSnakeCase(table.EntityName),
-		ModuleName:      table.ModuleName,
-		FunctionName:    functionName,
-		DateFields:      SqlConstants.ColumnTimeName,
-		PrimaryKey:      primaryKey,
-		PrimaryField:    primaryField,
-		AllFields:       allFields,
-		SubPriCol:       oriSubPriCol,
-		SubPriField:     subPriField,
-		SubTableFields:  subTableFields,
-		ListFields:      listFields,
-		DetailFields:    detailFields,
-		DictFields:      dictFields,
-		ListAllFields:   listAllFields,
-		IsSearch:        isSearch,
-		ModelOprMap:     modelOprMap,
-		Table:           table,
-		Columns:         columns,
-		SubColumns:      subColumns,
+		GenTpl:           table.GenTpl,
+		TableName:        table.TableName,
+		AuthorName:       table.AuthorName,
+		PackageName:      table.ModuleName,
+		EntityName:       table.EntityName,
+		EntitySnakeName:  util.StringUtil.ToSnakeCase(table.EntityName),
+		ModuleName:       table.ModuleName,
+		FunctionName:     functionName,
+		DateFields:       SqlConstants.ColumnTimeName,
+		PrimaryKey:       primaryKey,
+		PrimaryField:     primaryField,
+		PrimaryKeyGoType: primaryKeyGoType,
+		AllFields:        allFields,
+		SubPriCol:        oriSubPriCol,
+		SubPriField:      subPriField,
+		SubTableFields:   subTableFields,
+		ListFields:       listFields,
+		DetailFields:     detailFields,
+		DictFields:       dictFields,
+		ListAllFields:    listAllFields,
+		IsSearch:         isSearch,
+		ModelOprMap:      modelOprMap,
+		Table:            table,
+		Columns:          columns,
+		SubColumns:       subColumns,
 	}
 }
 

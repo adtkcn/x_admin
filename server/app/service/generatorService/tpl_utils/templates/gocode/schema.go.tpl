@@ -3,15 +3,23 @@ import (
 	"x_admin/core"
 )
 
+type {{{ toUpperCamelCase .EntityName }}}Primarykey struct {
+    {{{- range .Columns }}}
+    {{{- if .IsPk }}}
+        {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} // {{{ .ColumnComment }}}
+    {{{- end }}}
+    {{{- end }}}
+}
+
 //{{{ toUpperCamelCase .EntityName }}}ListReq {{{ .FunctionName }}}列表参数
 type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
     {{{- range .Columns }}}
     {{{- if .IsQuery }}}
         {{{- if eq .HtmlType "datetime" }}}
-            {{{ toUpperCamelCase .GoField }}}Start *string // 开始{{{ .ColumnComment }}}
-            {{{ toUpperCamelCase .GoField }}}End *string // 结束{{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}}Start core.NullString // 开始{{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}}End core.NullString // 结束{{{ .ColumnComment }}}
         {{{- else }}}
-            {{{ toUpperCamelCase .GoField }}} *{{{.GoType }}} // {{{ .ColumnComment }}}
+            {{{ toUpperCamelCase .GoField }}} {{{goWithAddEditType .GoType }}} // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -30,36 +38,22 @@ type {{{ toUpperCamelCase .EntityName }}}AddReq struct {
 
 //{{{ toUpperCamelCase .EntityName }}}EditReq {{{ .FunctionName }}}编辑参数
 type {{{ toUpperCamelCase .EntityName }}}EditReq struct {
+    {{{ toUpperCamelCase .EntityName }}}Primarykey
+    {{{ toUpperCamelCase .EntityName }}}AddReq
     {{{- range .Columns }}}
     {{{- if .IsEdit }}}
         {{{- if .IsPk }}}
-        {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} // {{{ .ColumnComment }}}
+      //  {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} // {{{ .ColumnComment }}}
         {{{- else }}}
-        {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  // {{{ .ColumnComment }}}
+      //  {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}
 }
 
-//{{{ toUpperCamelCase .EntityName }}}DetailReq {{{ .FunctionName }}}详情参数
-type {{{ toUpperCamelCase .EntityName }}}DetailReq struct {
-    {{{- range .Columns }}}
-    {{{- if .IsPk }}}
-    {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} // {{{ .ColumnComment }}}
-    {{{- end }}}
-    {{{- end }}}
-}
+ 
 
-//{{{ toUpperCamelCase .EntityName }}}DelReq {{{ .FunctionName }}}删除参数
-type {{{ toUpperCamelCase .EntityName }}}DelReq struct {
-    {{{- range .Columns }}}
-    {{{- if .IsPk }}}
-    {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} // {{{ .ColumnComment }}}
-    {{{- end }}}
-    {{{- end }}}
-}
-
-//{{{ toUpperCamelCase .EntityName }}}DelReq {{{ .FunctionName }}}批量删除参数
+//{{{ toUpperCamelCase .EntityName }}}DelBatchReq {{{ .FunctionName }}}批量删除参数
 type {{{ toUpperCamelCase .EntityName }}}DelBatchReq struct {
 	Ids string
 }
