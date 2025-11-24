@@ -15,14 +15,20 @@ const TimeFormat = "2006-01-02 15:04:05"
 
 // NullTime 自定义时间格式
 type NullTime struct {
-	Time  *time.Time
+	Val   *time.Time
 	Valid bool
 	// Format string
 }
 
-//	func (t *NullTime) IsZero() bool {
-//		return t.Valid
-//	}
+func (i *NullTime) UnmarshalText(text []byte) error {
+	return i.Scan(string(text))
+}
+
+// 实现gin框架的参数绑定接口
+func (i *NullTime) UnmarshalParam(param string) error {
+	return i.Scan(param)
+}
+
 func (t *NullTime) UnmarshalJSON(bs []byte) error {
 	var date string
 	err := json.Unmarshal(bs, &date)
@@ -31,8 +37,8 @@ func (t *NullTime) UnmarshalJSON(bs []byte) error {
 	}
 	if date == "" {
 		*t = NullTime{
-			Time:  nil,
-			Valid: false,
+			Val:   nil,
+			Valid: true,
 		}
 		return nil
 	}
@@ -41,7 +47,7 @@ func (t *NullTime) UnmarshalJSON(bs []byte) error {
 		return err
 	}
 	*t = NullTime{
-		Time:  &tt,
+		Val:   &tt,
 		Valid: true,
 	}
 	return nil
@@ -51,10 +57,10 @@ func (t *NullTime) UnmarshalJSON(bs []byte) error {
 // 返回转化后的JSON字符串和错误信息
 func (t NullTime) MarshalJSON() ([]byte, error) {
 	if t.Valid {
-		if t.Time == nil {
+		if t.Val == nil {
 			return json.Marshal(nil)
 		}
-		tt := *t.Time
+		tt := *t.Val
 		tStr := tt.Format(TimeFormat)
 		return json.Marshal(tStr)
 	} else {
@@ -74,18 +80,26 @@ func (t NullTime) Value() (driver.Value, error) {
 // 读取数据gorm调用
 func (t *NullTime) Scan(v any) error {
 	switch val := v.(type) {
+	case nil:
+		t.Val = nil
+		t.Valid = true
+		return nil
+	case string:
+		tt, err := time.ParseInLocation(TimeFormat, val, time.Local)
+		if err != nil {
+			return err
+		}
+		t.Val = &tt
+		t.Valid = true
+		return nil
 	case time.Time:
 		tt := val.Format(TimeFormat)
 		if tt == "0001-01-01 00:00:00" {
-			*t = NullTime{
-				Time:  nil,
-				Valid: false,
-			}
+			t.Val = nil
+			t.Valid = true
 		} else {
-			*t = NullTime{
-				Time:  &val,
-				Valid: true,
-			}
+			t.Val = &val
+			t.Valid = true
 		}
 		return nil
 	}
@@ -96,10 +110,10 @@ func (t NullTime) String() string {
 	if !t.Valid {
 		return ""
 	}
-	if t.Time == nil {
+	if t.Val == nil {
 		return ""
 	}
-	tt := *t.Time
+	tt := *t.Val
 	return tt.Format(TimeFormat)
 }
 
@@ -116,4 +130,18 @@ func (NullTime) GormDBDataType(db *gorm.DB, field *schema.Field) string {
 	// }
 	// return ""
 	return "DATETIME"
+}
+func (i *NullTime) SetValue(value time.Time) {
+	i.Val = &value
+	i.Valid = true
+}
+func (i *NullTime) SetNull() {
+	i.Val = nil
+	i.Valid = true
+}
+func (i *NullTime) IsValid() bool {
+	return i.Valid
+}
+func (i *NullTime) GetValue() *time.Time {
+	return i.Val
 }

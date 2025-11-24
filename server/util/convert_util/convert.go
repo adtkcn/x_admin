@@ -24,6 +24,9 @@ func ToFloat64(value interface{}) (float64, error) {
 func ToInt64(value interface{}) (int64, error) {
 	return convertor.ToInt(value)
 }
+func ToString(value interface{}) string {
+	return convertor.ToString(value)
+}
 
 // StructToMap 结构体转换成map,深度转换
 func StructToMap(from interface{}) map[string]interface{} {

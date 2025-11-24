@@ -9,38 +9,54 @@ import (
 	"x_admin/util/convert_util"
 )
 
-// int类型别名，支持前端传递null，int，string类型
-// 忽略前端null值，接收""值时，返回0
+// 支持前端传递null，int，string类型和不传值
+// 前端传1，“1”都可以，都转换为int64类型: NullInt{Int: 1, Valid: true}
+// 前端null值: NullInt{Int: nil, Valid: true}
+// 前端没传值: NullInt{Int: nil, Valid: false}
+
 type NullInt struct {
-	Int   *int64
-	Valid bool
+	Val   *int64 // 整数或者null
+	Valid bool   // 是否有值
 }
 
 func DecodeInt(value any) (any, error) {
 	switch v := value.(type) {
 	case nil:
-		return NullInt{Int: nil, Valid: false}, nil
+		return NullInt{Val: nil, Valid: false}, nil
 	case NullInt:
 		return v, nil
 	default:
 		result, err := convert_util.ToInt64(value)
 		if err != nil {
-			return NullInt{Int: nil, Valid: false}, err
+			return NullInt{Val: nil, Valid: false}, err
 		}
-		return NullInt{Int: &result, Valid: true}, nil
+		return NullInt{Val: &result, Valid: true}, nil
 	}
 
 }
 
 // gorm实现Scanner
 func (i *NullInt) Scan(value interface{}) error {
-	i.Valid = false
-	if value == nil {
+	// 判断int64、string类型
+	switch v := value.(type) {
+	case nil:
+		i.Valid = true
 		return nil
+	case int64:
+		i.Val, i.Valid = &v, true
+		return nil
+	case string:
+		num, err := strconv.ParseInt(v, 10, 64)
+		if err == nil {
+			i.Val = &num
+			i.Valid = true
+		} else {
+			i.Valid = false
+		}
+		return err
+	default:
+		return fmt.Errorf("不能将类型 %T 转换为 int64", v)
 	}
-	v := value.(int64)
-	i.Int, i.Valid = &v, true
-	return nil
 }
 
 // gorm实现 Valuer
@@ -48,7 +64,7 @@ func (i NullInt) Value() (driver.Value, error) {
 	if !i.Valid {
 		return nil, nil
 	}
-	v := i.Int
+	v := i.Val
 	if v == nil {
 		return nil, nil
 	}
@@ -56,7 +72,7 @@ func (i NullInt) Value() (driver.Value, error) {
 }
 func (i NullInt) String() string {
 	if i.Valid {
-		return strconv.FormatInt(*i.Int, 10)
+		return strconv.FormatInt(*i.Val, 10)
 	} else {
 		return ""
 	}
@@ -65,10 +81,18 @@ func (i NullInt) String() string {
 // 实现json序列化接口
 func (i NullInt) MarshalJSON() ([]byte, error) {
 	if i.Valid {
-		return json.Marshal(i.Int)
+		return json.Marshal(i.Val)
 	} else {
 		return json.Marshal(nil)
 	}
+}
+func (i *NullInt) UnmarshalText(text []byte) error {
+	return i.Scan(string(text))
+}
+
+// 实现gin框架的参数绑定接口
+func (i *NullInt) UnmarshalParam(param string) error {
+	return i.Scan(param)
 }
 
 // 实现json反序列化接口,支持 int64, string，null类型，对于float64类型，判断转换前后是否相等，防止精度丢失
@@ -78,8 +102,10 @@ func (i *NullInt) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v := x.(type) {
+	case nil:
+		i.Valid = true
 	case int64:
-		i.Int = &v
+		i.Val = &v
 		i.Valid = true
 		return nil
 	case float64:
@@ -89,28 +115,41 @@ func (i *NullInt) UnmarshalJSON(data []byte) error {
 			i.Valid = false
 			return errors.New("int64转换失败，" + fmt.Sprintf("%f", v) + "精度丢失")
 		}
-		i.Int = &i64
+		i.Val = &i64
 		i.Valid = true
 		return nil
 	case string:
 		if v == "" {
-			i.Int = nil
+			i.Val = nil
 			i.Valid = true
 			return nil
 		}
 		num, err := strconv.ParseInt(v, 10, 64)
 		if err == nil {
-			i.Int = &num
+			i.Val = &num
 			i.Valid = true
 		} else {
 			i.Valid = false
 		}
 		return err
-	case nil:
-		i.Valid = false
+
 	default:
-		i.Valid = false
+		return fmt.Errorf("不能将类型 %T 转换为 int64", v)
 	}
 
 	return nil
+}
+func (i *NullInt) SetValue(value int64) {
+	i.Val = &value
+	i.Valid = true
+}
+func (i *NullInt) SetNull() {
+	i.Val = nil
+	i.Valid = true
+}
+func (i *NullInt) IsValid() bool {
+	return i.Valid
+}
+func (i *NullInt) GetValue() *int64 {
+	return i.Val
 }

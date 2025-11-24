@@ -83,7 +83,7 @@ func (t nullTimeUtil) Parse(value interface{}) (core.NullTime, error) {
 // ParseTime 时间转时间戳
 func (t nullTimeUtil) ParseTime(date time.Time) core.NullTime {
 	return core.NullTime{
-		Time:  &date,
+		Val:   &date,
 		Valid: true,
 	}
 }
@@ -95,7 +95,7 @@ func (t nullTimeUtil) ParseString(date string) (core.NullTime, error) {
 		return t.Null(), e
 	}
 	return core.NullTime{
-		Time:  &tt,
+		Val:   &tt,
 		Valid: true,
 	}, nil
 }
@@ -103,7 +103,7 @@ func (t nullTimeUtil) ParseString(date string) (core.NullTime, error) {
 // NowTime 当前时间
 func (t nullTimeUtil) Null() core.NullTime {
 	return core.NullTime{
-		Time:  nil,
+		Val:   nil,
 		Valid: true,
 	}
 }
@@ -112,7 +112,7 @@ func (t nullTimeUtil) Null() core.NullTime {
 func (t nullTimeUtil) Now() core.NullTime {
 	now := time.Now()
 	return core.NullTime{
-		Time:  &now,
+		Val:   &now,
 		Valid: true,
 	}
 }
