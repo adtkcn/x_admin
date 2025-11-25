@@ -31,6 +31,7 @@ var TemplateUtil = templateUtil{
 			"nameToPath":        GenUtil.NameToPath,
 			"pathToName":        GenUtil.PathToName,
 			"deletePathPrefix":  GenUtil.DeletePathPrefix,
+			"toSqlType":         GenUtil.ToSqlType,
 		}),
 }
 

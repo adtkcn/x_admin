@@ -1,6 +1,7 @@
 package tpl_utils
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"x_admin/config"
@@ -323,4 +324,13 @@ func (gu genUtil) DeletePathPrefix(s string) string {
 	// 去掉前缀urlPrefix
 	s = strings.Replace(s, "/api/admin", "", 1)
 	return s
+}
+
+// ToSqlType 转换数据库类型
+func (gu genUtil) ToSqlType(t string, len int) string {
+	// 去掉前缀urlPrefix
+	if len > 0 {
+		t += fmt.Sprintf("(%d)", len)
+	}
+	return t
 }
