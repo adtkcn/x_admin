@@ -2,7 +2,7 @@ package settingSchema
 
 import "x_admin/core"
 
-//SettingDictDataResp 字典数据返回信息
+// SettingDictDataResp 字典数据返回信息
 type SettingDictDataResp struct {
 	ID         uint          `json:"id" structs:"id"`                 // 主键
 	TypeId     uint          `json:"typeId" structs:"typeId"`         // 类型
@@ -16,7 +16,7 @@ type SettingDictDataResp struct {
 	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
 }
 
-//SettingDictDataListReq 字典数据列表参数
+// SettingDictDataListReq 字典数据列表参数
 type SettingDictDataListReq struct {
 	DictType string `form:"dictType" binding:"max=200"`               // 字典类型
 	Name     string `form:"name" binding:"max=100"`                   // 键
@@ -24,12 +24,12 @@ type SettingDictDataListReq struct {
 	Status   int8   `form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }
 
-//SettingDictDataDetailReq 字典数据详情参数
+// SettingDictDataDetailReq 字典数据详情参数
 type SettingDictDataDetailReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SettingDictDataAddReq 字典数据新增参数
+// SettingDictDataAddReq 字典数据新增参数
 type SettingDictDataAddReq struct {
 	TypeId uint   `form:"typeId" binding:"required,gt=0"`           // 类型
 	Name   string `form:"name" binding:"required,max=100"`          // 键
@@ -40,7 +40,7 @@ type SettingDictDataAddReq struct {
 	Status int8   `form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }
 
-//SettingDictDataEditReq 字典数据编辑参数
+// SettingDictDataEditReq 字典数据编辑参数
 type SettingDictDataEditReq struct {
 	ID     uint   `form:"id" binding:"required,gt=0"`               // 主键
 	TypeId uint   `form:"typeId" binding:"required,gte=0"`          // 类型
@@ -52,7 +52,7 @@ type SettingDictDataEditReq struct {
 	Status int8   `form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }
 
-//SettingDictDataDelReq 字典数据删除参数
+// SettingDictDataDelReq 字典数据删除参数
 type SettingDictDataDelReq struct {
 	Ids []uint `form:"ids" binding:"required"` // 主键列表
 }

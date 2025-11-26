@@ -1,6 +1,6 @@
 package settingSchema
 
-//SettingWebsiteReq 保存网站信息参数
+// SettingWebsiteReq 保存网站信息参数
 type SettingWebsiteReq struct {
 	Name     string `form:"name"`     // 网站名称
 	Logo     string `form:"logo"`     // 网站图标

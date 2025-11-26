@@ -2,7 +2,7 @@ package config
 
 import "github.com/gin-gonic/gin"
 
-//AdminConfig 后台公共配置
+// AdminConfig 后台公共配置
 var AdminConfig = adminConfig{
 	// 管理缓存键
 	BackstageManageKey: "backstage:manage",

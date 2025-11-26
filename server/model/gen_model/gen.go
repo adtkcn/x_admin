@@ -2,7 +2,7 @@ package gen_model
 
 import "x_admin/core"
 
-//GenTable 代码生成业务实体
+// GenTable 代码生成业务实体
 type GenTable struct {
 	ID           uint   `gorm:"primarykey;comment:'主键'"`
 	TableName    string `gorm:"not null;default:'';comment:'表名称''"`
@@ -23,7 +23,7 @@ type GenTable struct {
 	UpdateTime core.NullTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 }
 
-//GenTableColumn 代码生成表列实体
+// GenTableColumn 代码生成表列实体
 type GenTableColumn struct {
 	ID            uint          `gorm:"primarykey;comment:'列主键'"`
 	TableID       uint          `gorm:"not null;default:0;comment:'表外键'"`

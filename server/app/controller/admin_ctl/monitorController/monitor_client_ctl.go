@@ -28,26 +28,26 @@ type MonitorClientHandler struct {
 // @Summary	监控-客户端信息列表
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		Token			header		string																	true	"token"
-// @Param		PageNo			query		int																		true	"页码"
-// @Param		PageSize		query		int																		true	"每页数量"
-// @Param		ProjectKey		query		string																	false	"项目key"
-// @Param		ClientId		query		string																	false	"sdk生成的客户端id"
-// @Param		UserId			query		string																	false	"用户id"
-// @Param		Os				query		string																	false	"系统"
-// @Param		Browser			query		string																	false	"浏览器"
-// @Param		Country			query		string																	false	"国家"
-// @Param		Province		query		string																	false	"省份"
-// @Param		City			query		string																	false	"城市"
-// @Param		Operator		query		string																	false	"电信运营商"
-// @Param		Ip				query		string																	false	"ip"
-// @Param		Width			query		number																	false	"屏幕"
-// @Param		Height			query		number																	false	"屏幕高度"
-// @Param		Ua				query		string																	false	"ua记录"
-// @Param		CreateTimeStart	query		string																	false	"创建时间"
-// @Param		CreateTimeEnd	query		string																	false	"创建时间"
+// @Param		Token			header		string																					true	"token"
+// @Param		PageNo			query		int																						true	"页码"
+// @Param		PageSize		query		int																						true	"每页数量"
+// @Param		ProjectKey		query		string																					false	"项目key"
+// @Param		ClientId		query		string																					false	"sdk生成的客户端id"
+// @Param		UserId			query		string																					false	"用户id"
+// @Param		Os				query		string																					false	"系统"
+// @Param		Browser			query		string																					false	"浏览器"
+// @Param		Country			query		string																					false	"国家"
+// @Param		Province		query		string																					false	"省份"
+// @Param		City			query		string																					false	"城市"
+// @Param		Operator		query		string																					false	"电信运营商"
+// @Param		Ip				query		string																					false	"ip"
+// @Param		Width			query		number																					false	"屏幕"
+// @Param		Height			query		number																					false	"屏幕高度"
+// @Param		Ua				query		string																					false	"ua记录"
+// @Param		CreateTimeStart	query		string																					false	"创建时间"
+// @Param		CreateTimeEnd	query		string																					false	"创建时间"
 //
-// @Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]MonitorClientResp}}	"成功"
+// @Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]monitorSchema.MonitorClientResp}}	"成功"
 // @Router		/api/admin/monitor_client/list [get]
 func (hd *MonitorClientHandler) List(c *gin.Context) {
 	var page request.PageReq
@@ -65,22 +65,22 @@ func (hd *MonitorClientHandler) List(c *gin.Context) {
 // @Summary	监控-客户端信息列表-所有
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		ProjectKey		query		string											false	"项目key"
-// @Param		ClientId		query		string											false	"sdk生成的客户端id"
-// @Param		UserId			query		string											false	"用户id"
-// @Param		Os				query		string											false	"系统"
-// @Param		Browser			query		string											false	"浏览器"
-// @Param		Country			query		string											false	"国家"
-// @Param		Province		query		string											false	"省份"
-// @Param		City			query		string											false	"城市"
-// @Param		Operator		query		string											false	"电信运营商"
-// @Param		Ip				query		string											false	"ip"
-// @Param		Width			query		number											false	"屏幕"
-// @Param		Height			query		number											false	"屏幕高度"
-// @Param		Ua				query		string											false	"ua记录"
-// @Param		CreateTimeStart	query		string											false	"创建时间"
-// @Param		CreateTimeEnd	query		string											false	"创建时间"
-// @Success	200				{object}	response.Response{ data=[]MonitorClientResp}	"成功"
+// @Param		ProjectKey		query		string														false	"项目key"
+// @Param		ClientId		query		string														false	"sdk生成的客户端id"
+// @Param		UserId			query		string														false	"用户id"
+// @Param		Os				query		string														false	"系统"
+// @Param		Browser			query		string														false	"浏览器"
+// @Param		Country			query		string														false	"国家"
+// @Param		Province		query		string														false	"省份"
+// @Param		City			query		string														false	"城市"
+// @Param		Operator		query		string														false	"电信运营商"
+// @Param		Ip				query		string														false	"ip"
+// @Param		Width			query		number														false	"屏幕"
+// @Param		Height			query		number														false	"屏幕高度"
+// @Param		Ua				query		string														false	"ua记录"
+// @Param		CreateTimeStart	query		string														false	"创建时间"
+// @Param		CreateTimeEnd	query		string														false	"创建时间"
+// @Success	200				{object}	response.Response{ data=[]monitorSchema.MonitorClientResp}	"成功"
 // @Router		/api/admin/monitor_client/listAll [get]
 func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 	var listReq monitorSchema.MonitorClientListReq
@@ -103,9 +103,9 @@ func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
 // @Summary	监控-客户端信息详情
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		Token	header		string										true	"token"
-// @Param		Id		query		number										false	"uuid"
-// @Success	200		{object}	response.Response{ data=MonitorClientResp}	"成功"
+// @Param		Token	header		string														true	"token"
+// @Param		Id		query		number														false	"uuid"
+// @Success	200		{object}	response.Response{ data=monitorSchema.MonitorClientResp}	"成功"
 // @Router		/api/admin/monitor_client/detail [get]
 func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 	var detailReq monitorSchema.MonitorClientDetailReq

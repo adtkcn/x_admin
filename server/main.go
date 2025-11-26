@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,20 +9,18 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
+	"x_admin/docs"
 	"x_admin/middleware"
 	"x_admin/routes"
 
 	_ "x_admin/app/corn"
-	_ "x_admin/docs"
-
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	// _ "x_admin/docs"
 
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed public/static
-var staticFs embed.FS
+// // go:embed public/static
+// var staticFs embed.FS
 
 // initRouter 初始化router
 func initRouter() *gin.Engine {
@@ -34,13 +31,17 @@ func initRouter() *gin.Engine {
 	// 设置上传文件的静态路径路由
 	r.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
 
-	staticHttpFs := http.FS(staticFs)
-	r.GET("/api/static/*filepath", func(c *gin.Context) {
-		filepath := c.Param("filepath")
-		fmt.Println(filepath)
+	// staticHttpFs := http.FS(staticFs)
+	// r.GET("/api/static/*filepath", func(c *gin.Context) {
+	// 	filepath := c.Param("filepath")
+	// 	fmt.Println(filepath)
 
-		c.FileFromFS("public/static"+filepath, staticHttpFs)
-	})
+	// 	c.FileFromFS("public/static"+filepath, staticHttpFs)
+	// })
+
+	// 静态文件路由
+	r.Static("/api/static", "./public/static")
+
 	// 设置中间件
 	r.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 
@@ -82,7 +83,7 @@ func initServer(router *gin.Engine) *http.Server {
 //	@license.name	MIT License
 //	@license.url	https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
 
-//	@host		localhost:8001
+//	@host		localhost:8080
 //	@BasePath	/
 
 //	@securityDefinitions.basic	BasicAuth
@@ -100,11 +101,14 @@ func main() {
 
 	// 初始化router
 	router := initRouter()
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
+	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	router.GET("/swagger/doc.json", func(c *gin.Context) {
+		c.String(200, docs.SwaggerInfo.ReadDoc())
+	})
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
-	fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
+	// fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
+	fmt.Printf("文档: http://localhost:%v/api/static/scalar.html", config.AppConfig.Port)
 
 	// 初始化server
 	s := initServer(router)

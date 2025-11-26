@@ -1,14 +1,15 @@
 package core
 
 import (
+	"os"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 var Logger = initLogger()
 
-//initLogger 初始化zap日志
+// initLogger 初始化zap日志
 func initLogger() *zap.SugaredLogger {
 	zap.NewDevelopmentConfig()
 	cfg := zap.NewProductionEncoderConfig()

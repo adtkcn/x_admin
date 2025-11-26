@@ -1,6 +1,6 @@
 package settingSchema
 
-//SettingStorageEditReq 存储编辑参数
+// SettingStorageEditReq 存储编辑参数
 type SettingStorage struct {
 	Alias     string `form:"alias" binding:"required,oneof=local qiniu qcloud aliyun"` // 别名: [local,qiniu,qcloud,aliyun]
 	Status    int    `form:"status" binding:"oneof=0 1"`                               // 状态: 0/1

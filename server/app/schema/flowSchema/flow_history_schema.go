@@ -2,7 +2,7 @@ package flowSchema
 
 import "x_admin/core"
 
-//FlowHistoryListReq 流程历史列表参数
+// FlowHistoryListReq 流程历史列表参数
 type FlowHistoryListReq struct {
 	ApplyId           int    `form:"applyId"`           // 申请id
 	TemplateId        int    `form:"templateId"`        // 模板id
@@ -18,12 +18,12 @@ type FlowHistoryListReq struct {
 	PassRemark        string `form:"passRemark"`        // 通过备注
 }
 
-//FlowHistoryDetailReq 流程历史详情参数
+// FlowHistoryDetailReq 流程历史详情参数
 type FlowHistoryDetailReq struct {
 	Id int `form:"id"` // 历史id
 }
 
-//FlowHistoryAddReq 流程历史新增参数
+// FlowHistoryAddReq 流程历史新增参数
 type FlowHistoryAddReq struct {
 	ApplyId           int    `form:"applyId"`           // 申请id
 	TemplateId        int    `form:"templateId"`        // 模板id
@@ -39,7 +39,7 @@ type FlowHistoryAddReq struct {
 	PassRemark        string `form:"passRemark"`        // 通过备注
 }
 
-//FlowHistoryEditReq 流程历史新增参数
+// FlowHistoryEditReq 流程历史新增参数
 type FlowHistoryEditReq struct {
 	Id                int    `form:"id"`                // 历史id
 	ApplyId           int    `form:"applyId"`           // 申请id
@@ -56,12 +56,12 @@ type FlowHistoryEditReq struct {
 	PassRemark        string `form:"passRemark"`        // 通过备注
 }
 
-//FlowHistoryDelReq 流程历史新增参数
+// FlowHistoryDelReq 流程历史新增参数
 type FlowHistoryDelReq struct {
 	Id int `form:"id"` // 历史id
 }
 
-//FlowHistoryResp 流程历史返回信息
+// FlowHistoryResp 流程历史返回信息
 type FlowHistoryResp struct {
 	Id                int           `json:"id" structs:"id"`                               // 历史id
 	ApplyId           int           `json:"applyId" structs:"applyId"`                     // 申请id

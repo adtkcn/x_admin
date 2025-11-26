@@ -2,7 +2,7 @@ package model
 
 import "x_admin/core"
 
-//MonitorWeb 错误收集error实体
+// MonitorWeb 错误收集error实体
 type MonitorWeb struct {
 	Id int `gorm:"primarykey;comment:'uuid'"` // uuid
 

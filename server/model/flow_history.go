@@ -2,7 +2,7 @@ package model
 
 import "x_admin/core"
 
-//FlowHistory 流程历史实体
+// FlowHistory 流程历史实体
 type FlowHistory struct {
 	Id int `gorm:"primarykey;comment:'历史id'"` // 历史id
 

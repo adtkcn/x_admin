@@ -2,7 +2,7 @@ package flowSchema
 
 import "x_admin/core"
 
-//FlowApplyListReq 申请流程列表参数
+// FlowApplyListReq 申请流程列表参数
 type FlowApplyListReq struct {
 	TemplateId          int    `form:"templateId"`          // 模板
 	ApplyUserId         int    `form:"applyUserId"`         // 申请人id
@@ -17,12 +17,12 @@ type FlowApplyListReq struct {
 	Status              int    `form:"status"`              // 状态：1待提交，2审批中，3审批完成，4审批失败
 }
 
-//FlowApplyDetailReq 申请流程详情参数
+// FlowApplyDetailReq 申请流程详情参数
 type FlowApplyDetailReq struct {
 	Id int `form:"id"` //
 }
 
-//FlowApplyAddReq 申请流程新增参数
+// FlowApplyAddReq 申请流程新增参数
 type FlowApplyAddReq struct {
 	TemplateId        int    `form:"templateId"`        // 模板
 	ApplyUserId       int    `form:"applyUserId"`       // 申请人id
@@ -37,7 +37,7 @@ type FlowApplyAddReq struct {
 	Status    int    `form:"status"`    // 状态：1待提交，2审批中，3审批完成，4审批失败
 }
 
-//FlowApplyEditReq 申请流程新增参数
+// FlowApplyEditReq 申请流程新增参数
 type FlowApplyEditReq struct {
 	Id int `form:"id"` //
 	// TemplateId          int    `form:"templateId"`          // 模板
@@ -53,12 +53,12 @@ type FlowApplyEditReq struct {
 	Status    int    `form:"status"`    // 状态：1待提交，2审批中，3审批完成，4审批失败
 }
 
-//FlowApplyDelReq 申请流程新增参数
+// FlowApplyDelReq 申请流程新增参数
 type FlowApplyDelReq struct {
 	Id int `form:"id"` //
 }
 
-//FlowApplyResp 申请流程返回信息
+// FlowApplyResp 申请流程返回信息
 type FlowApplyResp struct {
 	Id                  int           `json:"id" structs:"id"`                               //
 	TemplateId          int           `json:"templateId" structs:"templateId"`               // 模板

@@ -1,4 +1,7 @@
+go install github.com/swaggo/swag/cmd/swag@latest
 go mod tidy
+swag fmt
+swag init
 
 xcopy  .\public /S /Y .\bin\linux\public\
 xcopy  .\public /S /Y .\bin\windows\public\

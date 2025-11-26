@@ -2,7 +2,7 @@ package systemSchema
 
 import "x_admin/core"
 
-//SystemAuthRoleSimpleResp 系统角色返回简单信息
+// SystemAuthRoleSimpleResp 系统角色返回简单信息
 type SystemAuthRoleSimpleResp struct {
 	ID         uint          `json:"id" structs:"id"`                 // 主键
 	Name       string        `json:"name" structs:"name"`             // 角色名称
@@ -10,7 +10,7 @@ type SystemAuthRoleSimpleResp struct {
 	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
 }
 
-//SystemAuthRoleResp 系统角色返回信息
+// SystemAuthRoleResp 系统角色返回信息
 type SystemAuthRoleResp struct {
 	ID         uint          `json:"id" structs:"id"`                 // 主键
 	Name       string        `json:"name" structs:"name"`             // 角色名称
@@ -25,12 +25,12 @@ type SystemAuthRoleResp struct {
 
 //
 
-//SystemAuthRoleDetailReq 角色详情参数
+// SystemAuthRoleDetailReq 角色详情参数
 type SystemAuthRoleDetailReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthRoleAddReq 新增角色参数
+// SystemAuthRoleAddReq 新增角色参数
 type SystemAuthRoleAddReq struct {
 	Name      string `form:"name" binding:"required,min=1,max=30"` // 角色名称
 	Sort      int    `form:"sort" binding:"gte=0"`                 // 角色排序
@@ -39,7 +39,7 @@ type SystemAuthRoleAddReq struct {
 	MenuIds   string `form:"menuIds"`                              // 关联菜单
 }
 
-//SystemAuthRoleEditReq 编辑角色参数
+// SystemAuthRoleEditReq 编辑角色参数
 type SystemAuthRoleEditReq struct {
 	ID        uint   `form:"id" binding:"required,gt=0"`           // 主键
 	Name      string `form:"name" binding:"required,min=1,max=30"` // 角色名称
@@ -49,7 +49,7 @@ type SystemAuthRoleEditReq struct {
 	MenuIds   string `form:"menuIds"`                              // 关联菜单
 }
 
-//SystemAuthRoleDelReq 删除角色参数
+// SystemAuthRoleDelReq 删除角色参数
 type SystemAuthRoleDelReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }

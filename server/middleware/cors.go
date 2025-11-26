@@ -1,12 +1,13 @@
 package middleware
 
 import (
+	"time"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
-//Cors CORS（跨域资源共享）中间件
+// Cors CORS（跨域资源共享）中间件
 func Cors() gin.HandlerFunc {
 	return cors.New(cors.Config{
 		AllowOrigins: []string{"*"},

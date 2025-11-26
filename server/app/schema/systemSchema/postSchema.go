@@ -2,19 +2,19 @@ package systemSchema
 
 import "x_admin/core"
 
-//SystemAuthPostListReq 岗位列表参数
+// SystemAuthPostListReq 岗位列表参数
 type SystemAuthPostListReq struct {
 	Code   string `form:"code"`                                     // 岗位编码
 	Name   string `form:"name"`                                     // 岗位名称
 	IsStop int8   `form:"isStop,default=-1" binding:"oneof=-1 0 1"` // 是否停用: [0=否, 1=是]
 }
 
-//SystemAuthPostDetailReq 岗位详情参数
+// SystemAuthPostDetailReq 岗位详情参数
 type SystemAuthPostDetailReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthPostAddReq 岗位新增参数
+// SystemAuthPostAddReq 岗位新增参数
 type SystemAuthPostAddReq struct {
 	Code    string `form:"code" binding:"omitempty,min=1,max=30"` // 岗位编码
 	Name    string `form:"name" binding:"required,min=1,max=30"`  // 岗位名称
@@ -23,7 +23,7 @@ type SystemAuthPostAddReq struct {
 	Sort    int    `form:"sort" binding:"gte=0"`                  // 排序编号
 }
 
-//SystemAuthPostEditReq 岗位编辑参数
+// SystemAuthPostEditReq 岗位编辑参数
 type SystemAuthPostEditReq struct {
 	ID      uint   `form:"id" binding:"required,gt=0"`            // 主键
 	Code    string `form:"code" binding:"omitempty,min=1,max=30"` // 岗位编码
@@ -33,12 +33,12 @@ type SystemAuthPostEditReq struct {
 	Sort    int    `form:"sort" binding:"gte=0"`                  // 排序编号
 }
 
-//SystemAuthPostDelReq 岗位删除参数
+// SystemAuthPostDelReq 岗位删除参数
 type SystemAuthPostDelReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthPostResp 系统岗位返回信息
+// SystemAuthPostResp 系统岗位返回信息
 type SystemAuthPostResp struct {
 	ID         uint          `json:"id" structs:"id"`                 // 主键
 	Code       string        `json:"code" structs:"code"`             // 岗位编号

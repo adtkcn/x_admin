@@ -2,19 +2,19 @@ package systemSchema
 
 import "x_admin/core"
 
-//SystemAuthAdminListReq 管理员列表参数
+// SystemAuthAdminListReq 管理员列表参数
 type SystemAuthAdminListReq struct {
 	Username string `form:"username"`        // 账号
 	Nickname string `form:"nickname"`        // 昵称
 	Role     int    `form:"role,default=-1"` // 角色ID
 }
 
-//SystemAuthAdminDetailReq 管理员详情参数
+// SystemAuthAdminDetailReq 管理员详情参数
 type SystemAuthAdminDetailReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthAdminAddReq 管理员新增参数
+// SystemAuthAdminAddReq 管理员新增参数
 type SystemAuthAdminAddReq struct {
 	DeptId    uint   `form:"deptId" binding:"required,gt=0"`           // 部门ID
 	PostId    uint   `form:"postId" binding:"required,gt=0"`           // 岗位ID
@@ -28,7 +28,7 @@ type SystemAuthAdminAddReq struct {
 
 }
 
-//SystemAuthAdminEditReq 管理员编辑参数
+// SystemAuthAdminEditReq 管理员编辑参数
 type SystemAuthAdminEditReq struct {
 	ID        uint   `form:"id" binding:"required,gt=0"`               // 主键
 	DeptId    uint   `form:"deptId" binding:"required,gt=0"`           // 部门ID
@@ -42,7 +42,7 @@ type SystemAuthAdminEditReq struct {
 	IsDisable uint8  `form:"isDisable" binding:"oneof=0 1"`            // 是否禁用: [0=否, 1=是]
 }
 
-//SystemAuthAdminUpdateReq 管理员更新参数
+// SystemAuthAdminUpdateReq 管理员更新参数
 type SystemAuthAdminUpdateReq struct {
 	Nickname     string `form:"nickname" binding:"required,min=2,max=30"` // 昵称
 	Avatar       string `form:"avatar"`                                   // 头像
@@ -50,17 +50,17 @@ type SystemAuthAdminUpdateReq struct {
 	CurrPassword string `form:"currPassword" binding:""`                  // 密码
 }
 
-//SystemAuthAdminDelReq 管理员删除参数
+// SystemAuthAdminDelReq 管理员删除参数
 type SystemAuthAdminDelReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthAdminDisableReq 管理员状态切换参数
+// SystemAuthAdminDisableReq 管理员状态切换参数
 type SystemAuthAdminDisableReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthAdminResp 管理员返回信息
+// SystemAuthAdminResp 管理员返回信息
 type SystemAuthAdminResp struct {
 	ID            uint          `json:"id" structs:"id"`                                            // 主键
 	Username      string        `json:"username" structs:"username" excel:"name:账号;"`               // 账号
@@ -77,7 +77,7 @@ type SystemAuthAdminResp struct {
 	UpdateTime    core.NullTime `json:"updateTime" structs:"updateTime" excel:"name:更新时间;"`         // 更新时间
 }
 
-//SystemAuthAdminSelfOneResp 当前管理员返回部分信息
+// SystemAuthAdminSelfOneResp 当前管理员返回部分信息
 type SystemAuthAdminSelfOneResp struct {
 	ID            uint          `json:"id" structs:"id"`                       // 主键
 	Username      string        `json:"username" structs:"username"`           // 账号
@@ -92,7 +92,7 @@ type SystemAuthAdminSelfOneResp struct {
 	UpdateTime    core.NullTime `json:"updateTime" structs:"updateTime"`       // 更新时间
 }
 
-//SystemAuthAdminSelfResp 当前系统管理员返回信息
+// SystemAuthAdminSelfResp 当前系统管理员返回信息
 type SystemAuthAdminSelfResp struct {
 	User        SystemAuthAdminSelfOneResp `json:"user" structs:"user"`               // 用户信息
 	Permissions []string                   `json:"permissions" structs:"permissions"` // 权限集合: [[*]=>所有权限, ['article:add']=>部分权限]

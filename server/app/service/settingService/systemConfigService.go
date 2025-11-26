@@ -59,10 +59,10 @@ func (cu systemConfigService) GetMap(db *gorm.DB, cnfType string, name string) (
 }
 
 // Set 设置配置的值
-// @Param db *gorm.DB  GORM 数据库连接实例
-// @Param cnfType string  配置的类型
-// @Param name string  配置的名称
-// @Param val string  要设置的配置值
+// db *gorm.DB  GORM 数据库连接实例
+// cnfType string  配置的类型
+// name string  配置的名称
+// val string  要设置的配置值
 func (cu systemConfigService) Set(db *gorm.DB, cnfType string, name string, val string) (err error) {
 	var config system_model.SystemConfig
 	err = db.Where("type = ? AND name = ?", cnfType, name).First(&config).Error

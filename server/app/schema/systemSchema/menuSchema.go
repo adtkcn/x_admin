@@ -2,12 +2,12 @@ package systemSchema
 
 import "x_admin/core"
 
-//SystemAuthMenuDetailReq 菜单详情参数
+// SystemAuthMenuDetailReq 菜单详情参数
 type SystemAuthMenuDetailReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthMenuAddReq 新增菜单参数
+// SystemAuthMenuAddReq 新增菜单参数
 type SystemAuthMenuAddReq struct {
 	Pid       uint   `form:"pid" binding:"gte=0"`                      // 上级菜单
 	MenuType  string `form:"menuType" binding:"oneof=M C A"`           // 权限类型: [M=目录, C=菜单, A=按钮]
@@ -24,7 +24,7 @@ type SystemAuthMenuAddReq struct {
 	IsDisable uint8  `form:"isDisable" binding:"oneof=0 1"`            // 是否禁用: [0=否, 1=是]
 }
 
-//SystemAuthMenuEditReq 编辑菜单参数
+// SystemAuthMenuEditReq 编辑菜单参数
 type SystemAuthMenuEditReq struct {
 	ID        uint   `form:"id" binding:"required,gt=0"`               // 主键
 	Pid       uint   `form:"pid" binding:"gte=0"`                      // 上级菜单
@@ -42,12 +42,12 @@ type SystemAuthMenuEditReq struct {
 	IsDisable uint8  `form:"isDisable" binding:"oneof=0 1"`            // 是否禁用: [0=否, 1=是]
 }
 
-//SystemAuthMenuDelReq 删除菜单参数
+// SystemAuthMenuDelReq 删除菜单参数
 type SystemAuthMenuDelReq struct {
 	ID uint `form:"id" binding:"required,gt=0"` // 主键
 }
 
-//SystemAuthMenuResp 系统菜单返回信息
+// SystemAuthMenuResp 系统菜单返回信息
 type SystemAuthMenuResp struct {
 	ID         uint                 `json:"id" structs:"id"`                       // 主键
 	Pid        uint                 `json:"pid" structs:"pid"`                     // 上级菜单

@@ -1,6 +1,6 @@
 package tpl_utils
 
-//GenConstants 代码生成常量
+// GenConstants 代码生成常量
 var GenConstants = genConstants{
 	UTF8:      "utf-8", //编码
 	TplCrud:   "crud",  //单表 (增删改查)
@@ -10,7 +10,7 @@ var GenConstants = genConstants{
 	Require:   1,       //需要的
 }
 
-//GoConstants Go相关常量
+// GoConstants Go相关常量
 var GoConstants = goConstants{
 	TypeString: "string",        //字符串类型
 	TypeFloat:  "float64",       //浮点型
@@ -18,7 +18,7 @@ var GoConstants = goConstants{
 	TypeDate:   "core.NullTime", //时间类型
 }
 
-//SqlConstants 数据库相关常量
+// SqlConstants 数据库相关常量
 var SqlConstants = sqlConstants{
 	//数据库字符串类型
 	ColumnTypeStr: []string{"char", "varchar", "nvarchar", "varchar2"},
@@ -45,7 +45,7 @@ var SqlConstants = sqlConstants{
 	ColumnNameNotQuery: []string{"is_delete", "delete_time"}, //"create_time", "update_time",
 }
 
-//HtmlConstants HTML相关常量
+// HtmlConstants HTML相关常量
 var HtmlConstants = htmlConstants{
 	HtmlInput:       "input", //文本框
 	HtmlInputNumber: "number",
