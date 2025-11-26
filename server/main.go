@@ -31,7 +31,7 @@ func initRouter() *gin.Engine {
 	gin.SetMode(config.AppConfig.GinMode)
 	r := gin.New()
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
-	// 设置静态路径
+	// 设置上传文件的静态路径路由
 	r.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
 
 	staticHttpFs := http.FS(staticFs)

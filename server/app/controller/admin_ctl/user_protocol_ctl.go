@@ -1,8 +1,8 @@
 package admin_ctl
 
 import (
+	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 	"x_admin/app/schema"
@@ -17,6 +17,7 @@ import (
 )
 
 type UserProtocolHandler struct {
+	// 防止缓存击穿场景，将大量重复数据库查询合并为一次。
 	requestGroup singleflight.Group
 }
 
@@ -45,6 +46,7 @@ func (hd *UserProtocolHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
+
 	res, err := service.UserProtocolService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
@@ -78,11 +80,11 @@ func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
 // @Success	200		{object}	response.Response{ data=UserProtocolResp}	"成功"
 // @Router		/api/admin/user_protocol/detail [get]
 func (hd *UserProtocolHandler) Detail(c *gin.Context) {
-	var detailReq schema.UserProtocolDetailReq
+	var detailReq schema.UserProtocolPrimarykey
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err, _ := hd.requestGroup.Do("UserProtocol:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
+	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("UserProtocol:Detail:%v", detailReq.Id), func() (any, error) {
 		v, err := service.UserProtocolService.Detail(detailReq.Id)
 		return v, err
 	})
@@ -134,7 +136,7 @@ func (hd *UserProtocolHandler) Edit(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/del [post]
 func (hd *UserProtocolHandler) Del(c *gin.Context) {
-	var delReq schema.UserProtocolDelReq
+	var delReq schema.UserProtocolPrimarykey
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}

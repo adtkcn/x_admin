@@ -8,9 +8,11 @@ import { clearEmpty } from '@/utils/util'
 
 export type type_user_protocol = {
     Id?: number
+    Tag?: string
+    Version?: number
     Title?: string
     Content?: string
-    Sort?: number
+
     IsDelete?: number
     CreateTime?: string
     UpdateTime?: string
@@ -20,7 +22,8 @@ export type type_user_protocol = {
 export type type_user_protocol_query = {
     Title?: string
     Content?: string
-    Sort?: number
+    Version?: number
+
     CreateTimeStart?: string
     CreateTimeEnd?: string
     UpdateTimeStart?: string
@@ -29,9 +32,10 @@ export type type_user_protocol_query = {
 // 添加编辑
 export type type_user_protocol_edit = {
     Id?: number
+    Tag?: string
+    Version?: number
     Title?: string
     Content?: string
-    Sort?: number
 }
 
 // 用户协议列表

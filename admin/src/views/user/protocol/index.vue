@@ -12,6 +12,10 @@
                 <el-form-item label="标题" prop="Title" class="w-[280px]">
                     <el-input v-model="queryParams.Title" />
                 </el-form-item>
+                <el-form-item label="版本" prop="Version" class="w-[280px]">
+                    <el-input v-model="queryParams.Version" />
+                </el-form-item>
+
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
@@ -89,7 +93,8 @@
             >
                 <vxe-column type="checkbox" width="55"></vxe-column>
                 <vxe-column field="Title" title="标题" min-width="130"></vxe-column>
-                <vxe-column field="Sort" title="排序" width="60"></vxe-column>
+                <vxe-column field="Tag" title="标识" min-width="130"></vxe-column>
+                <vxe-column field="Version" title="版本" width="100"></vxe-column>
                 <vxe-column field="CreateTime" title="创建时间" width="180"></vxe-column>
                 <vxe-column field="UpdateTime" title="更新时间" width="180"></vxe-column>
                 <vxe-column title="操作" width="160" fixed="right">
@@ -154,7 +159,7 @@ const showDetails = ref(false)
 const queryParams = reactive<type_user_protocol_query>({
     Title: null,
     Content: null,
-    Sort: null,
+    Version: null,
     CreateTimeStart: null,
     CreateTimeEnd: null,
     UpdateTimeStart: null,

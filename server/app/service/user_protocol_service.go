@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"x_admin/app/schema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -36,29 +37,49 @@ type userProtocolService struct {
 func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.UserProtocol{})
-	if listReq.Title != nil {
-		dbModel = dbModel.Where("title like ?", "%"+*listReq.Title+"%")
+	if listReq.Title.GetValue() != nil {
+		dbModel = dbModel.Where("title like ?", "%"+*listReq.Title.GetValue()+"%")
 	}
-	if listReq.Content != nil {
-		dbModel = dbModel.Where("content = ?", *listReq.Content)
+	if listReq.Content.GetValue() != nil {
+		dbModel = dbModel.Where("content = ?", *listReq.Content.GetValue())
 	}
-	// if listReq.Sort != nil {
-	// 	dbModel = dbModel.Where("sort = ?", *listReq.Sort)
-	// }
-	if listReq.CreateTimeStart != nil {
-		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart)
+	if listReq.Version.GetValue() != nil {
+		dbModel = dbModel.Where("version = ?", *listReq.Version.GetValue())
 	}
-	if listReq.CreateTimeEnd != nil {
-		dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd)
+
+	if listReq.CreateTimeStart.GetValue() != nil {
+		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart.GetValue())
 	}
-	if listReq.UpdateTimeStart != nil {
-		dbModel = dbModel.Where("update_time >= ?", *listReq.UpdateTimeStart)
+	if listReq.CreateTimeEnd.GetValue() != nil {
+		dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd.GetValue())
 	}
-	if listReq.UpdateTimeEnd != nil {
-		dbModel = dbModel.Where("update_time <= ?", *listReq.UpdateTimeEnd)
+	if listReq.UpdateTimeStart.GetValue() != nil {
+		dbModel = dbModel.Where("update_time >= ?", *listReq.UpdateTimeStart.GetValue())
+	}
+	if listReq.UpdateTimeEnd.GetValue() != nil {
+		dbModel = dbModel.Where("update_time <= ?", *listReq.UpdateTimeEnd.GetValue())
 	}
 	dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel
+}
+
+// 获取更新map,原因是可以如果字段为空,则不更新
+func (service userProtocolService) GetUpdateMap(editReq schema.UserProtocolEditReq) map[string]interface{} {
+	updateMap := make(map[string]interface{})
+
+	if editReq.Tag.Valid {
+		updateMap["tag"] = editReq.Tag.GetValue()
+	}
+	if editReq.Title.Valid {
+		updateMap["title"] = editReq.Title.GetValue()
+	}
+	if editReq.Content.Valid {
+		updateMap["content"] = editReq.Content.GetValue()
+	}
+	if editReq.Version.Valid {
+		updateMap["version"] = editReq.Version.GetValue()
+	}
+	return updateMap
 }
 
 // List 用户协议列表
@@ -104,7 +125,7 @@ func (service userProtocolService) ListAll(listReq schema.UserProtocolListReq) (
 }
 
 // Detail 用户协议详情
-func (service userProtocolService) Detail(Id int) (res schema.UserProtocolResp, e error) {
+func (service userProtocolService) Detail(Id string) (res schema.UserProtocolResp, e error) {
 	var obj = model.UserProtocol{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
@@ -123,13 +144,13 @@ func (service userProtocolService) Detail(Id int) (res schema.UserProtocolResp, 
 }
 
 // Add 用户协议新增
-func (service userProtocolService) Add(addReq schema.UserProtocolAddReq) (createId int, e error) {
+func (service userProtocolService) Add(addReq schema.UserProtocolAddReq) (createId string, e error) {
 	var obj model.UserProtocol
-	convert_util.StructToStruct(addReq, &obj)
+	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
-		return 0, e
+		return "", e
 	}
 	service.CacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
@@ -147,9 +168,14 @@ func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e e
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	convert_util.Copy(&obj, editReq)
+	// 不使用结构体是因为没法区分前端是否有值,都会清空，如果全传就无所谓
+	// convert_util.Copy(&obj, editReq)
+	updateMap := service.GetUpdateMap(editReq)
+	if len(updateMap) == 0 {
+		return errors.New("没有可更新的字段")
+	}
 
-	err = service.db.Model(&obj).Select("*").Updates(obj).Error
+	err = service.db.Model(&obj).Updates(updateMap).Error
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
@@ -159,7 +185,7 @@ func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e e
 }
 
 // Del 用户协议删除
-func (service userProtocolService) Del(Id int) (e error) {
+func (service userProtocolService) Del(Id string) (e error) {
 	var obj model.UserProtocol
 	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
 	// 校验
@@ -195,9 +221,10 @@ func (service userProtocolService) DelBatch(Ids []string) (e error) {
 // 获取Excel的列
 func (service userProtocolService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "标题", Key: "Title", Width: 15},
-		{Name: "协议内容", Key: "Content", Width: 15},
-		{Name: "排序", Key: "Sort", Width: 15, Decode: core.DecodeFloat},
+		{Name: "标识", Key: "Tag", Width: 15, Decode: core.DecodeString},
+		{Name: "版本", Key: "Version", Width: 15, Decode: core.DecodeInt},
+		{Name: "标题", Key: "Title", Width: 15, Decode: core.DecodeString},
+		{Name: "协议内容", Key: "Content", Width: 15, Decode: core.DecodeString},
 		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
 		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
 	}

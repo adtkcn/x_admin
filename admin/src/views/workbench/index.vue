@@ -92,10 +92,12 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onDeactivated, onActivated, onMounted } from 'vue'
+import { reactive, onDeactivated, onActivated, onMounted, onUnmounted } from 'vue'
 import { getWorkbench } from '@/api/app'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'
+import feedback from '@/utils/feedback'
+
 defineOptions({
     name: 'workbench'
 })
@@ -161,30 +163,34 @@ const getData = async () => {
     workbenchData.visitorOption.xAxis.data = res.visitor.date
     workbenchData.visitorOption.series[0].data = res.visitor.list
 }
-let timer: any = null
-function updateChart() {
-    clearInterval(timer)
-    timer = setInterval(() => {
-        workbenchData.visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
-        workbenchData.visitorOption.series[0].data.push(Math.floor(Math.random() * 500))
+const timer: any = null
+function updateChart(val) {
+    // clearInterval(timer)
+    // timer = setInterval(() => {
+    workbenchData.visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
+    workbenchData.visitorOption.series[0].data.push(val)
 
-        // 保持数据长度在10个
-        if (workbenchData.visitorOption.xAxis.data.length > 20) {
-            workbenchData.visitorOption.xAxis.data.shift()
-            workbenchData.visitorOption.series[0].data.shift()
-        }
-    }, 1000)
+    // 保持数据长度在10个
+    if (workbenchData.visitorOption.xAxis.data.length > 20) {
+        workbenchData.visitorOption.xAxis.data.shift()
+        workbenchData.visitorOption.series[0].data.shift()
+    }
+    // }, 1000)
 }
 // // 用户 A，加入 room1
-// const wsA = new WebSocket('ws://localhost:8080/api/ws?id=userA&room=room1')
+const wsA = new WebSocket('ws://localhost:8080/api/ws?uid=userA&room=room1')
 
 // // 用户 B，加入 room1
-// const wsB = new WebSocket('ws://localhost:8080/api/ws?id=userB&room=room1')
+// const wsB = new WebSocket('ws://localhost:8080/api/ws?uid=userB&room=room1')
 // // 用户 C，不加入房间
-// const wsC = new WebSocket('ws://localhost:8080/api/ws?id=userC')
-// wsA.onmessage = (event) => {
-//     console.log('用户 A 收到消息:', event.data)
-// }
+// const wsC = new WebSocket('ws://localhost:8080/api/ws?uid=userC')
+wsA.onmessage = (event) => {
+    console.log('用户 A 收到消息:', event.data)
+    // {"onlineCount":9}
+
+    feedback.msgSuccess(event.data)
+    updateChart(JSON.parse(event.data).onlineCount)
+}
 
 // // 用户 B，加入 room1
 // wsB.onmessage = (event) => {
@@ -196,14 +202,21 @@ function updateChart() {
 // }
 
 onActivated(() => {
-    updateChart()
+    // updateChart()
+    console.log('onActivated')
 })
 onDeactivated(() => {
     clearInterval(timer)
 })
 onMounted(() => {
+    console.log('onMounted')
+
     getData()
-    updateChart()
+    // updateChart()
+})
+onUnmounted(() => {
+    console.log('onUnmounted')
+    wsA.close()
 })
 </script>
 

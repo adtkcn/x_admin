@@ -232,7 +232,7 @@ func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 	return buf.String(), nil
 }
 
-// GetFilePaths 获取生成文件相对路径
+// GetFilePaths 获取生成文件相对路径,返回 {文件路径:文件内容}
 func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName string) map[string]string {
 	//模板文件对应的输出文件
 	fmtMap := map[string]string{
