@@ -16,9 +16,9 @@ type FlowApplyHandler struct{}
 // @Summary	申请流程列表
 // @Tags		flow_apply-申请流程
 // @Produce	json
-// @Param		Token				header		string																true	"token"
-// @Param		PageNo				query		int																	true	"页码"
-// @Param		PageSize			query		int																	true	"每页数量"
+// @Param		token				header		string																true	"token"
+// @Param		pageNo				query		int																	true	"页码"
+// @Param		pageSize			query		int																	true	"每页数量"
 // @Param		templateId			query		int																	false	"模板"
 // @Param		applyUserId			query		int																	false	"申请人id"
 // @Param		applyUserNickname	query		string																false	"申请人昵称"
@@ -46,7 +46,7 @@ func (hd FlowApplyHandler) List(c *gin.Context) {
 // @Summary	申请流程详情
 // @Tags		flow_apply-申请流程
 // @Produce	json
-// @Param		Token	header		string									true	"token"
+// @Param		token	header		string									true	"token"
 // @Param		id		query		int										false	"申请id"
 // @Success	200		{object}	response.Response{data=FlowApplyResp}	"成功"
 // @Router		/api/admin/flow/flow_apply/detail [get]
@@ -62,7 +62,7 @@ func (hd FlowApplyHandler) Detail(c *gin.Context) {
 // @Summary	申请流程新增
 // @Tags		flow_apply-申请流程
 // @Produce	json
-// @Param		Token				header		string				true	"token"
+// @Param		token				header		string				true	"token"
 // @Param		templateId			body		int					false	"模板"
 // @Param		applyUserId			body		int					false	"申请人id"
 // @Param		applyUserNickname	body		string				false	"申请人昵称"
@@ -92,7 +92,7 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 // @Summary	申请流程编辑
 // @Tags		flow_apply-申请流程
 // @Produce	json
-// @Param		Token				header		string				true	"token"
+// @Param		token				header		string				true	"token"
 // @Param		id					body		int					false	"申请id"
 // @Param		templateId			body		int					false	"模板"
 // @Param		applyUserId			body		int					false	"申请人id"
@@ -116,7 +116,7 @@ func (hd FlowApplyHandler) Edit(c *gin.Context) {
 // @Summary	申请流程删除
 // @Tags		flow_apply-申请流程
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		id		body		int					false	"申请id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_apply/del [post]

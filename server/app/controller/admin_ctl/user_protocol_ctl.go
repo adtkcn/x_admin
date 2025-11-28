@@ -24,9 +24,9 @@ type UserProtocolHandler struct {
 // @Summary	用户协议列表
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		Token			header		string																			true	"token"
-// @Param		PageNo			query		int																				true	"页码"
-// @Param		PageSize		query		int																				true	"每页数量"
+// @Param		token			header		string																			true	"token"
+// @Param		pageNo			query		int																				true	"页码"
+// @Param		pageSize		query		int																				true	"每页数量"
 // @Param		Title			query		string																			false	"标题"
 // @Param		Content			query		string																			false	"协议内容"
 // @Param		Sort			query		number																			false	"排序"
@@ -75,7 +75,7 @@ func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
 // @Summary	用户协议详情
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		Token	header		string												true	"token"
+// @Param		token	header		string												true	"token"
 // @Param		Id		query		number												false	"Id"
 // @Success	200		{object}	response.Response{ data=schema.UserProtocolResp}	"成功"
 // @Router		/api/admin/user_protocol/detail [get]
@@ -95,7 +95,7 @@ func (hd *UserProtocolHandler) Detail(c *gin.Context) {
 // @Summary	用户协议新增
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Title	body		string				false	"标题"
 // @Param		Content	body		string				false	"协议内容"
 // @Param		Sort	body		number				false	"排序"
@@ -113,7 +113,7 @@ func (hd *UserProtocolHandler) Add(c *gin.Context) {
 // @Summary	用户协议编辑
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Id		body		number				false	"Id"
 // @Param		Title	body		string				false	"标题"
 // @Param		Content	body		string				false	"协议内容"
@@ -131,7 +131,7 @@ func (hd *UserProtocolHandler) Edit(c *gin.Context) {
 // @Summary	用户协议删除
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Id		body		number				false	"Id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/del [post]
@@ -147,7 +147,7 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 // @Tags		user_protocol-用户协议
 //
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/delBatch [post]
@@ -168,7 +168,7 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 // @Summary	用户协议导出
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		Token			header	string	true	"token"
+// @Param		token			header	string	true	"token"
 // @Param		Title			query	string	false	"标题"
 // @Param		Content			query	string	false	"协议内容"
 // @Param		Sort			query	number	false	"排序"

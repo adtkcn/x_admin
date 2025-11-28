@@ -17,9 +17,9 @@ type FlowHistoryHandler struct {
 // @Summary	流程历史列表
 // @Tags		flow_history-流程历史
 // @Produce	json
-// @Param		Token				header		string																true	"token"
-// @Param		PageNo				query		int																	true	"页码"
-// @Param		PageSize			query		int																	true	"每页数量"
+// @Param		token				header		string																true	"token"
+// @Param		pageNo				query		int																	true	"页码"
+// @Param		pageSize			query		int																	true	"每页数量"
 // @Param		applyId				query		int																	false	"申请id"
 // @Param		templateId			query		int																	false	"模板id"
 // @Param		applyUserId			query		int																	false	"申请人id"
@@ -64,7 +64,7 @@ func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 // @Summary	流程历史详情
 // @Tags		flow_history-流程历史
 // @Produce	json
-// @Param		Token	header		string									true	"token"
+// @Param		token	header		string									true	"token"
 // @Param		id		query		int										false	"历史id"
 // @Success	200		{object}	response.Response{data=FlowHistoryResp}	"成功"
 // @Router		/api/admin/flow/flow_history/detail [get]
@@ -80,7 +80,7 @@ func (hd FlowHistoryHandler) Detail(c *gin.Context) {
 // @Summary	流程历史新增
 // @Tags		flow_history-流程历史
 // @Produce	json
-// @Param		Token				header		string				true	"token"
+// @Param		token				header		string				true	"token"
 // @Param		applyId				body		int					false	"申请id"
 // @Param		templateId			body		int					false	"模板id"
 // @Param		applyUserId			body		int					false	"申请人id"
@@ -104,7 +104,7 @@ func (hd FlowHistoryHandler) Add(c *gin.Context) {
 // @Summary	流程历史编辑
 // @Tags		flow_history-流程历史
 // @Produce	json
-// @Param		Token				header		string				true	"token"
+// @Param		token				header		string				true	"token"
 // @Param		id					body		int					false	"历史id"
 // @Param		applyId				body		int					false	"申请id"
 // @Param		templateId			body		int					false	"模板id"
@@ -129,7 +129,7 @@ func (hd FlowHistoryHandler) Edit(c *gin.Context) {
 // @Summary	流程历史删除
 // @Tags		flow_history-流程历史
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		id		body		int					false	"历史id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_history/del [post]

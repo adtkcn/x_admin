@@ -28,9 +28,9 @@ type MonitorClientHandler struct {
 // @Summary	监控-客户端信息列表
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		Token			header		string																					true	"token"
-// @Param		PageNo			query		int																						true	"页码"
-// @Param		PageSize		query		int																						true	"每页数量"
+// @Param		token			header		string																					true	"token"
+// @Param		pageNo			query		int																						true	"页码"
+// @Param		pageSize		query		int																						true	"每页数量"
 // @Param		ProjectKey		query		string																					false	"项目key"
 // @Param		ClientId		query		string																					false	"sdk生成的客户端id"
 // @Param		UserId			query		string																					false	"用户id"
@@ -103,7 +103,7 @@ func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
 // @Summary	监控-客户端信息详情
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		Token	header		string														true	"token"
+// @Param		token	header		string														true	"token"
 // @Param		Id		query		number														false	"uuid"
 // @Success	200		{object}	response.Response{ data=monitorSchema.MonitorClientResp}	"成功"
 // @Router		/api/admin/monitor_client/detail [get]
@@ -123,7 +123,7 @@ func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 // @Summary	监控-客户端信息新增
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		Token		header		string				true	"token"
+// @Param		token		header		string				true	"token"
 // @Param		ProjectKey	body		string				false	"项目key"
 // @Param		ClientId	body		string				false	"sdk生成的客户端id"
 // @Param		UserId		body		string				false	"用户id"
@@ -192,7 +192,7 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 // @Summary	监控-客户端信息删除
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Id		body		number				false	"uuid"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_client/del [post]
@@ -208,7 +208,7 @@ func (hd *MonitorClientHandler) Del(c *gin.Context) {
 // @Tags		monitor_client-监控-客户端信息
 //
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_client/delBatch [post]
@@ -229,7 +229,7 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 // @Summary	监控-客户端信息导出
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		Token			header	string	true	"token"
+// @Param		token			header	string	true	"token"
 // @Param		ProjectKey		query	string	false	"项目key"
 // @Param		ClientId		query	string	false	"sdk生成的客户端id"
 // @Param		UserId			query	string	false	"用户id"

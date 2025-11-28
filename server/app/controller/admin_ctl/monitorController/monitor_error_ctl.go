@@ -26,9 +26,9 @@ type MonitorErrorHandler struct {
 // @Summary	监控-错误列列表
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		Token			header		string																	true	"token"
-// @Param		PageNo			query		int																		true	"页码"
-// @Param		PageSize		query		int																		true	"每页数量"
+// @Param		token			header		string																	true	"token"
+// @Param		pageNo			query		int																		true	"页码"
+// @Param		pageSize		query		int																		true	"每页数量"
 // @Param		ProjectKey		query		string																	false	"项目key"
 // @Param		EventType		query		string																	false	"事件类型"
 // @Param		Path			query		string																	false	"URL地址"
@@ -78,7 +78,7 @@ func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
 // @Summary	监控-错误列详情
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		Token	header		string										true	"token"
+// @Param		token	header		string										true	"token"
 // @Param		Id		query		number										false	"错误id"
 // @Success	200		{object}	response.Response{ data=MonitorErrorResp}	"成功"
 // @Router		/api/admin/monitor_error/detail [get]
@@ -98,7 +98,7 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 // @Summary	监控-错误列新增
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		Token		header		string				true	"token"
+// @Param		token		header		string				true	"token"
 // @Param		ProjectKey	body		string				false	"项目key"
 // @Param		EventType	body		string				false	"事件类型"
 // @Param		Path		body		string				false	"URL地址"
@@ -129,7 +129,7 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 // @Summary	监控-错误列删除
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Id		body		number				false	"错误id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_error/del [post]
@@ -145,7 +145,7 @@ func (hd *MonitorErrorHandler) Del(c *gin.Context) {
 // @Tags		monitor_error-监控-错误列
 //
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_error/delBatch [post]
@@ -166,7 +166,7 @@ func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 // @Summary	监控-错误列导出
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		Token			header	string	true	"token"
+// @Param		token			header	string	true	"token"
 // @Param		ProjectKey		query	string	false	"项目key"
 // @Param		EventType		query	string	false	"事件类型"
 // @Param		Path			query	string	false	"URL地址"

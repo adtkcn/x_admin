@@ -37,7 +37,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -145,7 +145,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -181,7 +181,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -227,7 +227,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -335,21 +335,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -466,7 +466,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -574,7 +574,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -610,7 +610,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -656,7 +656,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -772,21 +772,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -932,7 +932,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1000,7 +1000,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1036,7 +1036,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1070,7 +1070,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1146,21 +1146,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -1254,7 +1254,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1377,7 +1377,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1499,7 +1499,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1535,7 +1535,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1571,7 +1571,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1617,21 +1617,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -1902,7 +1902,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1983,7 +1983,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2059,7 +2059,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2095,7 +2095,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2131,7 +2131,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2177,21 +2177,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -2378,7 +2378,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2459,7 +2459,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2519,7 +2519,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2555,7 +2555,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2591,7 +2591,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2637,7 +2637,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2705,21 +2705,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -2906,7 +2906,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2981,7 +2981,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3033,7 +3033,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3069,7 +3069,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3105,7 +3105,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3151,7 +3151,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3211,21 +3211,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -3833,7 +3833,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "Sort       core.NullFloat // 排序",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -3848,7 +3848,7 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "version": {
                     "description": "版本",
@@ -3871,7 +3871,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.0.1",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "x_admin文档",

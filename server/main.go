@@ -82,12 +82,9 @@ func initServer(router *gin.Engine) *http.Server {
 
 //	@license.name	MIT License
 //	@license.url	https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
-
-//	@host		localhost:8080
 //	@BasePath	/
-
 //	@securityDefinitions.basic	BasicAuth
-
+//
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
@@ -102,13 +99,14 @@ func main() {
 	// 初始化router
 	router := initRouter()
 	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	router.GET("/swagger/doc.json", func(c *gin.Context) {
+	router.GET("/api/swagger/doc.json", func(c *gin.Context) {
+		docs.SwaggerInfo.Host = fmt.Sprintf("localhost:%v", config.AppConfig.Port)
 		c.String(200, docs.SwaggerInfo.ReadDoc())
 	})
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
 	// fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
-	fmt.Printf("文档: http://localhost:%v/api/static/scalar.html", config.AppConfig.Port)
+	fmt.Printf("文档: http://localhost:%v/api/static/api/index.html", config.AppConfig.Port)
 
 	// 初始化server
 	s := initServer(router)

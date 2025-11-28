@@ -16,9 +16,9 @@ type FlowTemplateHandler struct {
 // @Summary	流程模板列表
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		Token			header		string																true	"token"
-// @Param		PageNo			query		int																	true	"页码"
-// @Param		PageSize		query		int																	true	"每页数量"
+// @Param		token			header		string																true	"token"
+// @Param		pageNo			query		int																	true	"页码"
+// @Param		pageSize		query		int																	true	"每页数量"
 // @Param		flowName		query		string																false	"流程名称"
 // @Param		flowGroup		query		int																	false	"流程分类"
 // @Param		flowRemark		query		string																false	"流程描述"
@@ -50,7 +50,7 @@ func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 // @Summary	流程模板详情
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		id		query		int					false	"历史id"
 // @Success	200		{object}	FlowTemplateResp	"成功"
 // @Router		/api/admin/flow/flow_template/detail [get]
@@ -66,7 +66,7 @@ func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 // @Summary	流程模板新增
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		Token			header		string				true	"token"
+// @Param		token			header		string				true	"token"
 // @Param		flowName		body		string				false	"流程名称"
 // @Param		flowGroup		body		int					false	"流程分类"
 // @Param		flowRemark		body		string				false	"流程描述"
@@ -85,7 +85,7 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 // @Summary	流程模板编辑
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		Token			header		string				true	"token"
+// @Param		token			header		string				true	"token"
 // @Param		id				body		int					false	"."
 // @Param		flowName		body		string				false	"流程名称"
 // @Param		flowGroup		body		int					false	"流程分类"
@@ -105,7 +105,7 @@ func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 // @Summary	流程模板删除
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		id		body		int					false	"历史id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_template/del [post]

@@ -23,9 +23,9 @@ type MonitorProjectHandler struct {
 // @Summary	监控项目列表
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		Token			header		string																	true	"token"
-// @Param		PageNo			query		int																		true	"页码"
-// @Param		PageSize		query		int																		true	"每页数量"
+// @Param		token			header		string																	true	"token"
+// @Param		pageNo			query		int																		true	"页码"
+// @Param		pageSize		query		int																		true	"每页数量"
 // @Param		ProjectKey		query		string																	false	"项目uuid"
 // @Param		ProjectName		query		string																	false	"项目名称"
 // @Param		ProjectType		query		string																	false	"项目类型go java web node php 等"
@@ -75,7 +75,7 @@ func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 // @Summary	监控项目详情
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		Token	header		string										true	"token"
+// @Param		token	header		string										true	"token"
 // @Param		Id		query		number										false	"项目id"
 // @Success	200		{object}	response.Response{ data=MonitorProjectResp}	"成功"
 // @Router		/api/admin/monitor_project/detail [get]
@@ -95,7 +95,7 @@ func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 // @Summary	监控项目新增
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		Token		header		string				true	"token"
+// @Param		token		header		string				true	"token"
 // @Param		ProjectKey	body		string				false	"项目uuid"
 // @Param		ProjectName	body		string				false	"项目名称"
 // @Param		ProjectType	body		string				false	"项目类型go java web node php 等"
@@ -114,7 +114,7 @@ func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 // @Summary	监控项目编辑
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		Token		header		string				true	"token"
+// @Param		token		header		string				true	"token"
 // @Param		Id			body		number				false	"项目id"
 // @Param		ProjectKey	body		string				false	"项目uuid"
 // @Param		ProjectName	body		string				false	"项目名称"
@@ -133,7 +133,7 @@ func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 // @Summary	监控项目删除
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Id		body		number				false	"项目id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/del [post]
@@ -149,7 +149,7 @@ func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 // @Tags		monitor_project-监控项目
 //
 // @Produce	json
-// @Param		Token	header		string				true	"token"
+// @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/delBatch [post]
@@ -170,7 +170,7 @@ func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 // @Summary	监控项目导出
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		Token			header	string	true	"token"
+// @Param		token			header	string	true	"token"
 // @Param		ProjectKey		query	string	false	"项目uuid"
 // @Param		ProjectName		query	string	false	"项目名称"
 // @Param		ProjectType		query	string	false	"项目类型go java web node php 等"

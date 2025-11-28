@@ -23,9 +23,9 @@ type {{{ toUpperCamelCase .ModuleName }}}Handler struct {
 //  @Summary	{{{ .FunctionName }}}列表
 //  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
-//  @Param		Token		header		string				true	"token"
-//  @Param		PageNo		query		int					true	"页码"
-//  @Param		PageSize	query		int					true	"每页数量"
+//  @Param		token		header		string				true	"token"
+//  @Param		pageNo		query		int					true	"页码"
+//  @Param		pageSize	query		int					true	"每页数量"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
@@ -78,7 +78,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Summary	{{{ .FunctionName }}}详情
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //	@Produce	json
-//	@Param		Token		header		string				true	"token"
+//	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
 //	@Param		{{{toUpperCamelCase .GoField }}}		query		{{{goToTsType .GoType }}}				false	"{{{ .ColumnComment }}}"
@@ -103,7 +103,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
 //	@Summary	{{{ .FunctionName }}}新增
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //	@Produce	json
-//	@Param		Token		header		string				true	"token"
+//	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsInsert }}}
 //	@Param		{{{toUpperCamelCase .GoField }}}		body		{{{goToTsType .GoType }}}				false	"{{{ .ColumnComment }}}"
@@ -122,7 +122,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
 //	@Summary	{{{ .FunctionName }}}编辑
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //	@Produce	json
-//	@Param		Token		header		string				true	"token"
+//	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsEdit }}}
 //	@Param		{{{toUpperCamelCase .GoField }}}		body		{{{goToTsType .GoType }}}				false	"{{{ .ColumnComment }}}"
@@ -140,7 +140,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
 //	@Summary	{{{ .FunctionName }}}删除
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //	@Produce	json
-//	@Param		Token		header		string				true	"token"
+//	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
 //	@Param		{{{toUpperCamelCase .GoField }}}		body		{{{goToTsType .GoType }}}				false	"{{{ .ColumnComment }}}"
@@ -159,7 +159,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 //	@Summary	{{{ .FunctionName }}}删除-批量
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 // @Produce	json
-// @Param		Token		header		string				true	"token"
+// @Param		token		header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/{{{ .ModuleName }}}/delBatch [post]
@@ -182,7 +182,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 //	@Summary	{{{ .FunctionName }}}导出
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //	@Produce	json
-//	@Param		Token		header		string				true	"token"
+//	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
