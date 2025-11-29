@@ -54,6 +54,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 //	@Summary	{{{ .FunctionName }}}列表-所有
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
+//  @Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
@@ -64,7 +65,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{ data=[]{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{data=[]{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) {
 	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
@@ -84,7 +85,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Param		{{{toUpperCamelCase .GoField }}}		query		{{{goToTsType .GoType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{ data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
 	var detailReq schema.{{{ toUpperCamelCase .EntityName }}}Primarykey
@@ -181,7 +182,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 
 //	@Summary	{{{ .FunctionName }}}导出
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
-//	@Produce	json
+//	@Produce	octet-stream,json
 //	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
@@ -193,6 +194,8 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
+//  @Success	200		{file} string	"成功"
+//  @Failure	500 	{object}	response.Response	"失败"
 //	@Router		/api/admin/{{{ .ModuleName }}}/ExportFile [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Context) {
 	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
@@ -215,6 +218,9 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Contex
 //  @Summary	{{{ .FunctionName }}}导入
 //  @Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 //  @Produce	json
+//  @Param		token		header		string				true	"token"
+//  @Param		file	formData	file	true	"导入文件"
+//  @Success	200		{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/ImportFile [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")

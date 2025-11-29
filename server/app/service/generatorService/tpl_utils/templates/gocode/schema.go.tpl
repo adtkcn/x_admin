@@ -63,9 +63,9 @@ type {{{ toUpperCamelCase .EntityName }}}Resp struct {
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
     {{{- if .IsPk }}}
-        {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} // {{{ .ColumnComment }}}
+        {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `swaggertype:"{{{goToTsType .GoType }}}"`// {{{ .ColumnComment }}}
     {{{- else }}}
-        {{{ toUpperCamelCase .GoField }}} {{{goWithRespType .GoType }}} // {{{ .ColumnComment }}}
+        {{{ toUpperCamelCase .GoField }}} {{{goWithRespType .GoType }}} `swaggertype:"{{{goToTsType .GoType }}}"`// {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}

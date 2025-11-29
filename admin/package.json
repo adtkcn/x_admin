@@ -1,6 +1,6 @@
 {
     "name": "x_admin",
-    "version": "0.0.1",
+    "version": "2.0.0",
     "license": "MIT",
     "type": "module",
     "scripts": {

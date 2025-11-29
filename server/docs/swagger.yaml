@@ -300,17 +300,21 @@ externalDocs:
   url: https://swagger.io/resources/open-api/
 info:
   contact:
-    email: 11675084@qq.com
-    name: API Support
+    email: x@adtk.cn
+    name: xh
     url: http://x.adtk.cn
   description: x_admin是一个完整的后台管理系统
   license:
     name: MIT License
     url: https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
   termsOfService: http://x.adtk.cn
-  title: x_admin文档
-  version: 0.0.1
 paths:
+  /api/admin/apiList:
+    get:
+      responses: {}
+      summary: 获取所有接口
+      tags:
+      - 公共接口
   /api/admin/flow/flow_apply/add:
     post:
       parameters:
@@ -2150,15 +2154,38 @@ paths:
         type: string
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: file
+        "500":
+          description: 失败
+          schema:
+            $ref: '#/definitions/response.Response'
       summary: 用户协议导出
       tags:
       - user_protocol-用户协议
   /api/admin/user_protocol/ImportFile:
     post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 导入文件
+        in: formData
+        name: file
+        required: true
+        type: file
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
       summary: 用户协议导入
       tags:
       - user_protocol-用户协议
@@ -2262,7 +2289,7 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                ' data':
+                data:
                   $ref: '#/definitions/schema.UserProtocolResp'
               type: object
       summary: 用户协议详情
@@ -2361,11 +2388,11 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                ' data':
+                data:
                   allOf:
                   - $ref: '#/definitions/response.PageResp'
                   - properties:
-                      ' lists':
+                      lists:
                         items:
                           $ref: '#/definitions/schema.UserProtocolResp'
                         type: array
@@ -2377,6 +2404,11 @@ paths:
   /api/admin/user_protocol/listAll:
     get:
       parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
       - description: 标题
         in: query
         name: Title
@@ -2414,7 +2446,7 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                ' data':
+                data:
                   items:
                     $ref: '#/definitions/schema.UserProtocolResp'
                   type: array
@@ -2422,6 +2454,34 @@ paths:
       summary: 用户协议列表-所有
       tags:
       - user_protocol-用户协议
+  /api/ws:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 用户ID
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 房间ID
+        in: query
+        name: room
+        required: true
+        type: string
+      responses: {}
+      summary: websocket连接
+      tags:
+      - 公共接口
+  /swagger/doc.json:
+    get:
+      responses: {}
+      summary: swagger文档数据
+      tags:
+      - 公共接口
   /system/admin/ListByDeptId/{deptId}:
     get:
       description: 获取部门的用户
@@ -2439,7 +2499,4 @@ paths:
       summary: 获取部门的用户
       tags:
       - 管理员
-securityDefinitions:
-  BasicAuth:
-    type: basic
 swagger: "2.0"

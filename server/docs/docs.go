@@ -11,9 +11,9 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "termsOfService": "http://x.adtk.cn",
         "contact": {
-            "name": "API Support",
+            "name": "xh",
             "url": "http://x.adtk.cn",
-            "email": "11675084@qq.com"
+            "email": "x@adtk.cn"
         },
         "license": {
             "name": "MIT License",
@@ -24,6 +24,15 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/admin/apiList": {
+            "get": {
+                "tags": [
+                    "公共接口"
+                ],
+                "summary": "获取所有接口",
+                "responses": {}
+            }
+        },
         "/api/admin/flow/flow_apply/add": {
             "post": {
                 "produces": [
@@ -2953,7 +2962,20 @@ const docTemplate = `{
                         "in": "query"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "失败",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/admin/user_protocol/ImportFile": {
@@ -2965,7 +2987,30 @@ const docTemplate = `{
                     "user_protocol-用户协议"
                 ],
                 "summary": "用户协议导入",
-                "responses": {}
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "导入文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/admin/user_protocol/add": {
@@ -3127,7 +3172,7 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
+                                        "data": {
                                             "$ref": "#/definitions/schema.UserProtocolResp"
                                         }
                                     }
@@ -3283,7 +3328,7 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
+                                        "data": {
                                             "allOf": [
                                                 {
                                                     "$ref": "#/definitions/response.PageResp"
@@ -3291,7 +3336,7 @@ const docTemplate = `{
                                                 {
                                                     "type": "object",
                                                     "properties": {
-                                                        " lists": {
+                                                        "lists": {
                                                             "type": "array",
                                                             "items": {
                                                                 "$ref": "#/definitions/schema.UserProtocolResp"
@@ -3319,6 +3364,13 @@ const docTemplate = `{
                 ],
                 "summary": "用户协议列表-所有",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "标题",
@@ -3373,7 +3425,7 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
+                                        "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/definitions/schema.UserProtocolResp"
@@ -3385,6 +3437,47 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/api/ws": {
+            "get": {
+                "tags": [
+                    "公共接口"
+                ],
+                "summary": "websocket连接",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "房间ID",
+                        "name": "room",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/swagger/doc.json": {
+            "get": {
+                "tags": [
+                    "公共接口"
+                ],
+                "summary": "swagger文档数据",
+                "responses": {}
             }
         },
         "/system/admin/ListByDeptId/{deptId}": {
@@ -3857,11 +3950,6 @@ const docTemplate = `{
             }
         }
     },
-    "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
-        }
-    },
     "externalDocs": {
         "description": "OpenAPI",
         "url": "https://swagger.io/resources/open-api/"
@@ -3870,11 +3958,11 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.0.1",
+	Version:          "",
 	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "x_admin文档",
+	Title:            "",
 	Description:      "x_admin是一个完整的后台管理系统",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

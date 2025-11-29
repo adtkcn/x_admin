@@ -307,7 +307,7 @@ func (gu genUtil) GoWithRespType(s string) string {
 
 // 拼接字符串
 func (gu genUtil) GetPageResp(s string) string {
-	return `response.Response{ data=response.PageResp{ lists=[]schema.` + s + `Resp}}`
+	return `response.Response{data=response.PageResp{lists=[]schema.` + s + `Resp}}`
 }
 
 // NameToPath 下划线文件路径

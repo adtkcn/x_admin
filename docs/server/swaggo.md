@@ -1,4 +1,6 @@
-# swag 2024-07-04
+# swag 2025-11-30
+ 
+[swag Go Doc](https://godoc.org/github.com/swaggo/swag)
 
 
 
@@ -28,7 +30,7 @@ Swag将Go的注释转换为Swagger2.0文档。我们为流行的 [Go Web Framewo
     - [将扩展信息添加到结构字段](#将扩展信息添加到结构字段)
     - [对展示的模型重命名](#对展示的模型重命名)
     - [如何使用安全性注释](#如何使用安全性注释)
-- [项目相关](#项目相关)
+
 
 ## 快速开始
 
@@ -79,6 +81,7 @@ OPTIONS:
    --output value, -o value               文件(swagger.json, swagger.yaml and doc.go)输出目录 (默认: "./docs")
    --parseVendor                          是否解析vendor目录里的go源文件，默认不
    --parseDependency                      是否解析依赖目录中的go源文件，默认不
+   --parseDependencyLevel, --pdl          对'--parseDependency'参数进行增强, 是否解析依赖目录中的go源文件, 0 不解析, 1 只解析对象模型, 2 只解析API, 3 对象模型和API都解析 (default: 0)
    --markdownFiles value, --md value      指定API的描述信息所使用的markdown文件所在的目录
    --generatedTime                        是否输出时间到输出文件docs.go的顶部，默认是
    --codeExampleFiles value, --cef value  解析包含用于 x-codeSamples 扩展的代码示例文件的文件夹，默认禁用
@@ -281,13 +284,13 @@ func (c *Controller) ListAccounts(ctx *gin.Context) {
 swag init
 ```
 
-4. 运行程序，然后在浏览器中访问 [here](http://localhost:8080/swagger/index.html) 。将看到Swagger 2.0 Api文档，如下所示：
+4. 运行程序，然后在浏览器中访问 http://localhost:8080/swagger/index.html 。将看到Swagger 2.0 Api文档，如下所示：
 
 ![swagger_index.html](https://raw.githubusercontent.com/swaggo/swag/master/assets/swagger-image.png)
 
 ## 格式化说明
 
-可以针对Swag的注释自动格式化，就像`go fmt`。   
+可以针对Swag的注释自动格式化，就像`go fmt`。
 此处查看格式化结果 [here](https://github.com/swaggo/swag/tree/master/example/celler).
 
 示例：
@@ -405,6 +408,7 @@ Example [celler/controller](https://github.com/swaggo/swag/tree/master/example/c
 | png                   | image/png                         |
 | jpeg                  | image/jpeg                        |
 | gif                   | image/gif                         |
+| event-stream          | text/event-stream                 |
 
 ## 参数类型
 
@@ -475,7 +479,7 @@ type Foo struct {
 | minLength        | `integer` | 参看 https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.2.                                                                                                                                                                                                                                                                                   |
 | enums            | [\*]      | 参看 https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.5.1.                                                                                                                                                                                                                                                                                   |
 | format           | `string`  | 上面提到的[类型](#parameterType)的扩展格式。有关更多详细信息，请参见[数据类型格式](https://swagger.io/specification/v2/#dataTypeFormat)。                                                                                                                                                                                                                             |
-| collectionFormat | `string`  | 指定query数组参数的格式。 可能的值为： <ul><li>`csv` - 逗号分隔值 `foo,bar`.</li> <li>`ssv` - 空格分隔值 `foo bar`. </li><li>`tsv` - 制表符分隔值 `foo\tbar`. </li><li>`pipes` - 管道符分隔值 <code>foo&#124;bar</code>. </li><li>`multi` - 对应于多个参数实例，而不是单个实例 `foo=bar＆foo=baz` 的多个值。这仅对“`query`”或“`formData`”中的参数有效。</li> </ul> 默认值是 `csv`。 |
+| collectionFormat | `string`  | 指定query数组参数的格式。 可能的值为： <ul><li>`csv` - 逗号分隔值 `foo,bar`. <li>`ssv` - 空格分隔值 `foo bar`. <li>`tsv` - 制表符分隔值 `foo\tbar`. <li>`pipes` - 管道符分隔值 <code>foo&#124;bar</code>. <li>`multi` - 对应于多个参数实例，而不是单个实例 `foo=bar＆foo=baz` 的多个值。这仅对“`query`”或“`formData`”中的参数有效。 </ul> 默认值是 `csv`。 |
 
 ### 进一步的
 
@@ -720,6 +724,5 @@ type Resp struct {
 使用AND条件。
 
 ```go
-// @Security ApiKeyAuth
-// @Security OAuth2Application[write, admin]
+// @Security ApiKeyAuth && OAuth2Application[write, admin]
 ```

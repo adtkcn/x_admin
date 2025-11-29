@@ -12,7 +12,7 @@ type appConfig struct {
 
 var AppConfig = appConfig{
 	AppName:        "x_admin",
-	Version:        "1.0.0",
+	Version:        "0.0.0",
 	Port:           8080,
 	GinMode:        "",
 	OssDomain:      "",

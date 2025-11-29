@@ -9,7 +9,6 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
-	"x_admin/docs"
 	"x_admin/middleware"
 	"x_admin/routes"
 
@@ -71,19 +70,16 @@ func initServer(router *gin.Engine) *http.Server {
 	}
 }
 
-//	@title			x_admin文档
-//	@version		0.0.1
 //	@description	x_admin是一个完整的后台管理系统
 //	@termsOfService	http://x.adtk.cn
 
-//	@contact.name	API Support
+//	@contact.name	xh
 //	@contact.url	http://x.adtk.cn
-//	@contact.email	11675084@qq.com
+//	@contact.email	x@adtk.cn
 
-//	@license.name	MIT License
-//	@license.url	https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
-//	@BasePath	/
-//	@securityDefinitions.basic	BasicAuth
+// @license.name				MIT License
+// @license.url				https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
+// @BasePath					/
 //
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
@@ -98,11 +94,7 @@ func main() {
 
 	// 初始化router
 	router := initRouter()
-	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	router.GET("/api/swagger/doc.json", func(c *gin.Context) {
-		docs.SwaggerInfo.Host = fmt.Sprintf("localhost:%v", config.AppConfig.Port)
-		c.String(200, docs.SwaggerInfo.ReadDoc())
-	})
+
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
 	// fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
