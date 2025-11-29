@@ -97,7 +97,8 @@ import { getWorkbench } from '@/api/app'
 import '@/utils/echart'
 import vCharts from 'vue-echarts'
 import feedback from '@/utils/feedback'
-
+import useUserStore from '@/stores/modules/user'
+const userStore = useUserStore()
 defineOptions({
     name: 'workbench'
 })
@@ -178,7 +179,7 @@ function updateChart(val) {
     // }, 1000)
 }
 // // 用户 A，加入 room1
-const wsA = new WebSocket('ws://localhost:8080/api/ws?uid=userA&room=room1')
+const wsA = new WebSocket(`ws://localhost:8080/api/ws?token=${userStore.token}&room=room1`)
 
 // // 用户 B，加入 room1
 // const wsB = new WebSocket('ws://localhost:8080/api/ws?uid=userB&room=room1')

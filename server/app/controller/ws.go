@@ -3,6 +3,8 @@ package controller
 import (
 	"log"
 	"net/http"
+	"strconv"
+	"x_admin/config"
 	"x_admin/core"
 	"x_admin/util"
 	"x_admin/util/ws_util"
@@ -17,13 +19,20 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// @Summary	websocket连接
+// @Tags		公共接口
+// @Router		/api/ws [get]
+// @Param		token	header	string	true	"token"
+// @Param		uid		query	string	true	"用户ID"
+// @Param		room	query	string	true	"房间ID"
+// @Schemes	ws
 func WsHandler(c *gin.Context) {
 	uuid := util.ToolsUtil.MakeUuidV7()
 	// 从查询参数获取用户ID和房间ID（实际项目中应通过认证获取）
-	uid := c.Query("uid")
+	var adminId = config.AdminConfig.GetAdminId(c)
 	roomID := c.Query("room")
-	if uid == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+	if adminId == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "adminId is required"})
 		return
 	}
 
@@ -33,7 +42,7 @@ func WsHandler(c *gin.Context) {
 		return
 	}
 
-	client := ws_util.NewClient(uuid, uid, roomID, conn, core.Ws)
+	client := ws_util.NewClient(uuid, strconv.Itoa(int(adminId)), roomID, conn, core.Ws)
 	core.Ws.Register <- client
 
 	// 启动读写协程

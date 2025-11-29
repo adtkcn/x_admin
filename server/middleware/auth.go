@@ -139,6 +139,7 @@ func TokenAuth() gin.HandlerFunc {
 			c.Next()
 			return
 		}
+		// 超管权限
 		if config.AdminConfig.GetAdminId(c) == config.AdminConfig.SuperAdminId {
 			c.Next()
 			return

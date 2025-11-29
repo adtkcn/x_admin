@@ -1,18 +1,23 @@
 package routes
 
 import (
+	"fmt"
 	"x_admin/app/controller"
 	"x_admin/app/controller/admin_ctl/commonController"
+	"x_admin/config"
 	"x_admin/core/response"
+	"x_admin/docs"
 	"x_admin/middleware"
 	"x_admin/routes/adminRoute"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
+// @Summary	获取所有接口
+// @Tags		公共接口
+// @Router		/api/admin/apiList [get]
+func apiList(api *gin.RouterGroup, rootRouter *gin.Engine) {
 
-	// /api/admin/apiList 获取所有接口
 	api.GET("/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
 		var path = []string{}
 		for _, route := range rootRouter.Routes() {
@@ -21,8 +26,35 @@ func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 		}
 		response.Result(ctx, response.Success, path)
 	})
-	// /api/ws  websocket
-	api.GET("/ws", controller.WsHandler)
+}
+
+// @Summary	swagger文档数据
+// @Tags		公共接口
+// @Router		/swagger/doc.json [get]
+func swaggerJson(api *gin.RouterGroup) {
+	api.GET("/swagger/doc.json", func(c *gin.Context) {
+		// 获取域名和端口号
+		host := c.Request.Host
+		// port := c.Request.Port
+		// docs.SwaggerInfo.Host = fmt.Sprintf("%v:%v", host, config.AppConfig.Port)
+		docs.SwaggerInfo.Host = fmt.Sprintf("%v", host)
+		docs.SwaggerInfo.Title = config.AppConfig.AppName
+		docs.SwaggerInfo.Version = config.AppConfig.Version
+		c.String(200, docs.SwaggerInfo.ReadDoc())
+	})
+}
+
+func wsHandler(api *gin.RouterGroup) {
+	api.GET("/ws", middleware.LoginAuth(), controller.WsHandler)
+}
+
+func RegisterRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
+
+	apiList(api, rootRouter)
+
+	swaggerJson(api)
+
+	wsHandler(api)
 	// /api/admin
 	adminRoute.RegisterRoute(api)
 
