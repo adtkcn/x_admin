@@ -7,17 +7,17 @@ vue
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+defineOptions({
+    name: 'IframeComponent'
+})
 const route = useRoute()
 const url = computed(() => {
     return route.query.url as string
 })
 
-// const props = defineProps({
-//     url: {
-//         type: String,
-//         default: ''
-//     }
+// onMounted(() => {
+//     console.log(url.value)
 // })
 </script>

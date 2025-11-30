@@ -33,8 +33,8 @@ export function createRouteRecord(route: any, firstRoute: boolean): RouteRecordR
         if (route.params) {
             // console.log(route.params)
             // query =
-            query = qs.stringify(JSON.parse(route.params))
-            // console.log(query)
+            query = decodeURIComponent(qs.stringify(JSON.parse(route.params)))
+            console.log(query)
         }
     } catch (error) {
         // console.error(error)
