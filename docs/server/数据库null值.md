@@ -1,51 +1,38 @@
-# 数据库null值
+## 数据库null值
 
-问题点：数据库在int,string等类型时，同时可能允许null值，但是go中int不允许null值，读取等操作可能报错。
+问题点：数据库在int,string等类型时，同时可能允许null值，但是go中int,string等类型不允许null值，数据类型不一致就会报错。
 
-注：数据库应尽量避免允许null值，避免不了时使用：https://github.com/guregu/null
-
-相关解读：https://blog.csdn.net/qq_15437667/article/details/78780945
-
-第三方库：https://pkg.go.dev/database/sql#NullInt64
-```go
-// 示例
-type NullInt64 struct {
-	Int64 int64
-	Valid bool // Valid is true if Int64 is not NULL
-}
-func (n *NullInt64) Scan(value any) error
-func (n NullInt64) Value() (driver.Value, error)
+## 解决方法，自定义结构体实现以下接口
+用于Gorm等数据库插件的扫描和写入数据库。
+```
+func (i *NullString) Scan(value any) error
+func (i NullString) Value() (driver.Value, error)
+```
+可以实现JSON序列化和反序列化。
+```
+func (i NullString) MarshalJSON() ([]byte, error)
+func (i *NullString) UnmarshalJSON(data []byte) error
+```
+用于gin框架的地址栏param参数绑定接口
+```
+func (i *NullString) UnmarshalParam(param string) error 
+```
+用于fmt等格式化输出（可选）
+```
+func (i NullString) String() string
 ```
 
-第三方库（继承database/sql并补充json等）：https://github.com/guregu/null
-```go
-// 示例
-type Int struct {
-	sql.NullInt64
-}
-func (i *Int) UnmarshalJSON(data []byte) error {
-	err := internal.UnmarshalIntJSON(data, &i.Int64, &i.Valid, 64, strconv.ParseInt)
-	if err != nil {
-		return err
-	}
-	i.Valid = i.Int64 != 0
-	return nil
-}
-func (i Int) MarshalJSON() ([]byte, error) {
-	n := i.Int64
-	if !i.Valid {
-		n = 0
-	}
-	return []byte(strconv.FormatInt(n, 10)), nil
-}
 
-```
-
-### 自带了三个可为null类型：
-1. 相对于guregu/null的优点
-2. NullFloat、NullInt：支持前端传递null、字符串数字、数字
+### 扩展了四个可为null类型：
+1. NullFloat、NullInt：支持前端传递null、字符串数字、数字
 ```go
 core.NullFloat
 core.NullInt
+core.NullString
 core.NullTime
 ```
+
+### 参考：
+1. https://blog.csdn.net/qq_15437667/article/details/78780945
+2. https://pkg.go.dev/database/sql#NullInt64
+3. https://github.com/guregu/null

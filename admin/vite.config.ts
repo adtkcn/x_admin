@@ -108,8 +108,8 @@ export default ({ mode }) => {
             host: '0.0.0.0',
             port: 5180,
             proxy: {
-                '/api': {
-                    target: env.VITE_APP_BASE_URL,
+                '/api/': {
+                    target: env.VITE_APP_BASE_URL + '/',
                     changeOrigin: true,
                     ws: true
                 }

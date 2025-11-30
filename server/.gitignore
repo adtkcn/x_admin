@@ -1,6 +1,7 @@
 ### Go ###
 # Binaries for programs and plugins
 *.exe
+!upx.exe
 *.exe~
 *.dll
 *.so

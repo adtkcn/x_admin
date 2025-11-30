@@ -479,7 +479,7 @@ type Foo struct {
 | minLength        | `integer` | 参看 https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.2.                                                                                                                                                                                                                                                                                   |
 | enums            | [\*]      | 参看 https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.5.1.                                                                                                                                                                                                                                                                                   |
 | format           | `string`  | 上面提到的[类型](#parameterType)的扩展格式。有关更多详细信息，请参见[数据类型格式](https://swagger.io/specification/v2/#dataTypeFormat)。                                                                                                                                                                                                                             |
-| collectionFormat | `string`  | 指定query数组参数的格式。 可能的值为： <ul><li>`csv` - 逗号分隔值 `foo,bar`. <li>`ssv` - 空格分隔值 `foo bar`. <li>`tsv` - 制表符分隔值 `foo\tbar`. <li>`pipes` - 管道符分隔值 <code>foo&#124;bar</code>. <li>`multi` - 对应于多个参数实例，而不是单个实例 `foo=bar＆foo=baz` 的多个值。这仅对“`query`”或“`formData`”中的参数有效。 </ul> 默认值是 `csv`。 |
+| collectionFormat | `string`  | 指定query数组参数的格式。 可能的值为： <ul><li>`csv` - 逗号分隔值 `foo,bar`.</li> <li>`ssv` - 空格分隔值 `foo bar`. </li><li>`tsv` - 制表符分隔值 `foo\tbar`. </li><li>`pipes` - 管道符分隔值 <code>foo&#124;bar</code>. </li><li>`multi` - 对应于多个参数实例，而不是单个实例 `foo=bar＆foo=baz` 的多个值。这仅对“`query`”或“`formData`”中的参数有效。</li> </ul> 默认值是 `csv`。 |
 
 ### 进一步的
 
@@ -714,15 +714,4 @@ type Resp struct {
 // @scope.write Grants write access
 // @scope.admin Grants read and write access to administrative information
 ```
-
-每个API操作。
-
-```go
-// @Security ApiKeyAuth
-```
-
-使用AND条件。
-
-```go
-// @Security ApiKeyAuth && OAuth2Application[write, admin]
-```
+ 
