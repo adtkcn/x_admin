@@ -61,9 +61,11 @@
 
 <script setup lang="ts">
 import { ref, useTemplateRef, watch } from 'vue'
-import XForm from './XForm/index.vue'
-import XForm2 from './XForm2/index.vue'
-import FlowEdit from './flowEdit/index.vue'
+// import XForm from './XForm/index.vue'
+// import XForm2 from './XForm2/index.vue'
+const XForm2 = () => import('./XForm2/index.vue')
+// import FlowEdit from './flowEdit/index.vue'
+const FlowEdit = () => import('./flowEdit/index.vue')
 import BasicSetting from './BasicSetting/index.vue'
 
 import feedback from '@/utils/feedback'
@@ -89,7 +91,7 @@ const props = defineProps({
 })
 
 const basicSetting = useTemplateRef<InstanceType<typeof BasicSetting>>('basicSetting')
-const formDesign = useTemplateRef<InstanceType<typeof XForm>>('formDesign')
+const formDesign = useTemplateRef<InstanceType<typeof XForm2>>('formDesign')
 const flowEdit = useTemplateRef<InstanceType<typeof FlowEdit>>('flowEdit')
 const dialogVisible = ref(false)
 const activeStep = ref('basicSetting')

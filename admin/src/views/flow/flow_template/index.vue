@@ -102,7 +102,7 @@ import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
-import Approver from '@/components/flow/Approver.vue'
+const Approver = () => import('@/components/flow/Approver.vue')
 
 defineOptions({
     name: 'flow_template'

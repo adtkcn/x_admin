@@ -11,7 +11,7 @@ import ElementPlus from 'element-plus'
 import { VxeTable, VxeColumn } from 'vxe-table'
 import 'vxe-table/lib/style.css'
 
-import VForm3 from 'vform3-builds' //引入VForm3库
+// import VForm3 from 'vform3-builds' //引入VForm3库
 
 // import { Base, Web } from '../../x_err_sdk/web/index'
 // const xErr = new Base(
@@ -27,7 +27,7 @@ import VForm3 from 'vform3-builds' //引入VForm3库
 const app = createApp(App)
 app.use(install)
 app.use(ElementPlus)
-app.use(VForm3)
+// app.use(VForm3)
 app.use(VxeTable)
 app.use(VxeColumn)
 
