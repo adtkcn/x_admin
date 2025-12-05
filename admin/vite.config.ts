@@ -14,11 +14,12 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 // import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
-export default ({ mode }) => {
+
+export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd())
     console.log(env)
 
-    return defineConfig({
+    return {
         experimental: {
             enableNativePlugin: true // 启用 Rust 原生插件（如 alias/resolve）
         },
@@ -156,5 +157,5 @@ export default ({ mode }) => {
                 '@': fileURLToPath(new URL('./src', import.meta.url))
             }
         }
-    })
-}
+    }
+})
