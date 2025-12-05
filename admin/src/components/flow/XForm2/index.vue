@@ -17,18 +17,26 @@ function setData(json: any[]) {
     // 使用 setRule和 setOptions方法回显数据。
 }
 function getFieldWidgets() {
-    // const fieldList = designerRef.value.getFieldWidgets()
-    // console.log('getFieldWidgets', fieldList)
-    // return fieldList
-
     const description = designerRef.value.getDescription()
+    console.log('description', description)
     const fieldList: { id: string; name: string }[] = []
-    description.forEach((item) => {
-        fieldList.push({
-            id: item.field,
-            name: item.title
+    function deepChild(item: any) {
+        if (item.children) {
+            item.children.forEach((child: any) => {
+                deepChild(child)
+            })
+        } else {
+            fieldList.push({
+                id: item.field,
+                name: item.title
+            })
+        }
+    }
+    description &&
+        description.forEach((item) => {
+            deepChild(item)
         })
-    })
+
     console.log('getFieldWidgets', fieldList)
     return fieldList
 }

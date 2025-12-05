@@ -91,7 +91,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive } from 'vue'
+import { ref, shallowRef, reactive, defineAsyncComponent } from 'vue'
 import {
     flow_template_delete,
     flow_template_lists,
@@ -102,7 +102,7 @@ import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
-const Approver = () => import('@/components/flow/Approver.vue')
+const Approver = defineAsyncComponent(() => import('@/components/flow/Approver.vue'))
 
 defineOptions({
     name: 'flow_template'

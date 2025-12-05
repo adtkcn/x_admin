@@ -106,12 +106,12 @@ const { dictData } = useDictData<{
 // const handleOpen = async (row) => {
 //     ApproveRef.value?.open(toRaw(row))
 // }
-const OpenViewForm = async (row: any) => {
-    const applyDetail = await flow_apply_detail({ id: row.applyId })
+const OpenViewForm = async (history_row: type_flow_history) => {
+    const applyDetail = await flow_apply_detail({ id: history_row.applyId })
 
     let form_data = {}
     try {
-        form_data = JSON.parse(row.formValue)
+        form_data = JSON.parse(history_row.formValue)
     } catch (error) {
         // 解析失败
     }
@@ -124,7 +124,7 @@ const OpenViewForm = async (row: any) => {
 
     console.log(applyDetail, form_data, form_json)
 
-    viewFormRef.value?.open(applyDetail, row, form_json, form_data)
+    viewFormRef.value?.open(applyDetail, history_row, form_json, form_data)
 }
 const SaveViewForm = (historyId, form_data) => {
     return new Promise((resolve, reject) => {

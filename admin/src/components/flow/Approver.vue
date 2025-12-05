@@ -35,7 +35,7 @@
             </header>
         </template>
 
-        <div class="page__content" v-if="mockData">
+        <div class="page__content" v-if="dialogVisible">
             <BasicSetting
                 ref="basicSetting"
                 :conf="mockData.basicSetting"
@@ -60,12 +60,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef, watch } from 'vue'
+import { ref, useTemplateRef, watch, defineAsyncComponent } from 'vue'
 // import XForm from './XForm/index.vue'
 // import XForm2 from './XForm2/index.vue'
-const XForm2 = () => import('./XForm2/index.vue')
+const XForm2 = defineAsyncComponent(() => import('./XForm2/index.vue'))
 // import FlowEdit from './flowEdit/index.vue'
-const FlowEdit = () => import('./flowEdit/index.vue')
+const FlowEdit = defineAsyncComponent(() => import('./flowEdit/index.vue'))
 import BasicSetting from './BasicSetting/index.vue'
 
 import feedback from '@/utils/feedback'

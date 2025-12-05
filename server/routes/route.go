@@ -45,9 +45,9 @@ func swaggerJson(api *gin.RouterGroup) {
 }
 
 // @Summary	ws通用接口
-// @schemes 	ws
+// @schemes	ws
 // @Tags		公共接口
-// @Success 101 {string} string "协议切换成功"
+// @Success	101	{string}	string	"ws连接成功"
 // @Router		/api/ws [get]
 func wsHandler(api *gin.RouterGroup) {
 	api.GET("/ws", middleware.LoginAuth(), controller.WsHandler)

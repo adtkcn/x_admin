@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, useTemplateRef } from 'vue'
+import { ref, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
 import { LogicFlow } from '@logicflow/core'
 
 import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
@@ -56,7 +56,14 @@ const PropertyPanelRef = useTemplateRef<InstanceType<typeof PropertyPanel>>('Pro
 onMounted(() => {
     initLogicFlow(props.conf)
 })
-
+// Lifecycle hook to clean up LogicFlow when the component is unmounted
+onBeforeUnmount(() => {
+    if (lf.value) {
+        console.log('卸载LogicFlow')
+        lf.value.destroy()
+        lf.value = null
+    }
+})
 // Function to initialize LogicFlow
 function initLogicFlow(data) {
     const logicFlowInstance = new LogicFlow({
