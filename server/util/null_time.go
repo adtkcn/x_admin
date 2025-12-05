@@ -84,7 +84,7 @@ func (t nullTimeUtil) Parse(value interface{}) (core.NullTime, error) {
 func (t nullTimeUtil) ParseTime(date time.Time) core.NullTime {
 	return core.NullTime{
 		Val:   &date,
-		Valid: true,
+		Exist: true,
 	}
 }
 
@@ -96,7 +96,7 @@ func (t nullTimeUtil) ParseString(date string) (core.NullTime, error) {
 	}
 	return core.NullTime{
 		Val:   &tt,
-		Valid: true,
+		Exist: true,
 	}, nil
 }
 
@@ -104,7 +104,7 @@ func (t nullTimeUtil) ParseString(date string) (core.NullTime, error) {
 func (t nullTimeUtil) Null() core.NullTime {
 	return core.NullTime{
 		Val:   nil,
-		Valid: true,
+		Exist: true,
 	}
 }
 
@@ -113,6 +113,6 @@ func (t nullTimeUtil) Now() core.NullTime {
 	now := time.Now()
 	return core.NullTime{
 		Val:   &now,
-		Valid: true,
+		Exist: true,
 	}
 }

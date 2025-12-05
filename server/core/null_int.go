@@ -10,27 +10,27 @@ import (
 )
 
 // 支持前端传递null，int，string类型和不传值
-// 前端传1，“1”都可以，都转换为int64类型: NullInt{Int: 1, Valid: true}
-// 前端null值: NullInt{Int: nil, Valid: true}
-// 前端没传值: NullInt{Int: nil, Valid: false}
+// 前端传1，“1”都可以，都转换为int64类型: NullInt{Int: 1, Exist: true}
+// 前端null值: NullInt{Int: nil, Exist: true}
+// 前端没传值: NullInt{Int: nil, Exist: false}
 
 type NullInt struct {
 	Val   *int64 // 整数或者null
-	Valid bool   // 是否有值
+	Exist bool   // 是否有值
 }
 
 func DecodeInt(value any) (any, error) {
 	switch v := value.(type) {
 	case nil:
-		return NullInt{Val: nil, Valid: false}, nil
+		return NullInt{Val: nil, Exist: false}, nil
 	case NullInt:
 		return v, nil
 	default:
 		result, err := convert_util.ToInt64(value)
 		if err != nil {
-			return NullInt{Val: nil, Valid: false}, err
+			return NullInt{Val: nil, Exist: false}, err
 		}
-		return NullInt{Val: &result, Valid: true}, nil
+		return NullInt{Val: &result, Exist: true}, nil
 	}
 
 }
@@ -40,18 +40,18 @@ func (i *NullInt) Scan(value interface{}) error {
 	// 判断int64、string类型
 	switch v := value.(type) {
 	case nil:
-		i.Valid = true
+		i.Exist = true
 		return nil
 	case int64:
-		i.Val, i.Valid = &v, true
+		i.Val, i.Exist = &v, true
 		return nil
 	case string:
 		num, err := strconv.ParseInt(v, 10, 64)
 		if err == nil {
 			i.Val = &num
-			i.Valid = true
+			i.Exist = true
 		} else {
-			i.Valid = false
+			i.Exist = false
 		}
 		return err
 	default:
@@ -61,7 +61,7 @@ func (i *NullInt) Scan(value interface{}) error {
 
 // gorm实现 Valuer
 func (i NullInt) Value() (driver.Value, error) {
-	if !i.Valid {
+	if !i.Exist {
 		return nil, nil
 	}
 	v := i.Val
@@ -71,7 +71,7 @@ func (i NullInt) Value() (driver.Value, error) {
 	return *v, nil
 }
 func (i NullInt) String() string {
-	if i.Valid {
+	if i.Exist {
 		return strconv.FormatInt(*i.Val, 10)
 	} else {
 		return ""
@@ -80,7 +80,7 @@ func (i NullInt) String() string {
 
 // 实现json序列化接口
 func (i NullInt) MarshalJSON() ([]byte, error) {
-	if i.Valid {
+	if i.Exist {
 		return json.Marshal(i.Val)
 	} else {
 		return json.Marshal(nil)
@@ -103,52 +103,52 @@ func (i *NullInt) UnmarshalJSON(data []byte) error {
 	}
 	switch v := x.(type) {
 	case nil:
-		i.Valid = true
+		i.Exist = true
+		return nil
 	case int64:
 		i.Val = &v
-		i.Valid = true
+		i.Exist = true
 		return nil
 	case float64:
 		i64 := int64(v)
 		// 判断转换前后是否相等，防止精度丢失
 		if float64(i64) != v {
-			i.Valid = false
+			i.Exist = false
 			return errors.New("int64转换失败，" + fmt.Sprintf("%f", v) + "精度丢失")
 		}
 		i.Val = &i64
-		i.Valid = true
+		i.Exist = true
 		return nil
 	case string:
 		if v == "" {
 			i.Val = nil
-			i.Valid = true
+			i.Exist = true
 			return nil
 		}
 		num, err := strconv.ParseInt(v, 10, 64)
 		if err == nil {
 			i.Val = &num
-			i.Valid = true
+			i.Exist = true
 		} else {
-			i.Valid = false
+			i.Exist = false
 		}
 		return err
 
 	default:
-		return fmt.Errorf("不能将类型 %T 转换为 int64", v)
+		return fmt.Errorf("不能将类型 %T 转换为 int64, 值为 %v", v, v)
 	}
 
-	return nil
 }
 func (i *NullInt) SetValue(value int64) {
 	i.Val = &value
-	i.Valid = true
+	i.Exist = true
 }
 func (i *NullInt) SetNull() {
 	i.Val = nil
-	i.Valid = true
+	i.Exist = true
 }
-func (i *NullInt) IsValid() bool {
-	return i.Valid
+func (i *NullInt) IsExists() bool {
+	return i.Exist
 }
 func (i *NullInt) GetValue() *int64 {
 	return i.Val

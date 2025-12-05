@@ -16,7 +16,7 @@ const TimeFormat = "2006-01-02 15:04:05"
 // NullTime 自定义时间格式
 type NullTime struct {
 	Val   *time.Time
-	Valid bool
+	Exist bool
 	// Format string
 }
 
@@ -38,7 +38,7 @@ func (t *NullTime) UnmarshalJSON(bs []byte) error {
 	if date == "" {
 		*t = NullTime{
 			Val:   nil,
-			Valid: true,
+			Exist: true,
 		}
 		return nil
 	}
@@ -48,7 +48,7 @@ func (t *NullTime) UnmarshalJSON(bs []byte) error {
 	}
 	*t = NullTime{
 		Val:   &tt,
-		Valid: true,
+		Exist: true,
 	}
 	return nil
 }
@@ -56,7 +56,7 @@ func (t *NullTime) UnmarshalJSON(bs []byte) error {
 // MarshalJSON 将NullTime类型的时间转化为JSON字符串格式
 // 返回转化后的JSON字符串和错误信息
 func (t NullTime) MarshalJSON() ([]byte, error) {
-	if t.Valid {
+	if t.Exist {
 		if t.Val == nil {
 			return json.Marshal(nil)
 		}
@@ -82,7 +82,7 @@ func (t *NullTime) Scan(v any) error {
 	switch val := v.(type) {
 	case nil:
 		t.Val = nil
-		t.Valid = true
+		t.Exist = true
 		return nil
 	case string:
 		tt, err := time.ParseInLocation(TimeFormat, val, time.Local)
@@ -90,24 +90,26 @@ func (t *NullTime) Scan(v any) error {
 			return err
 		}
 		t.Val = &tt
-		t.Valid = true
+		t.Exist = true
 		return nil
 	case time.Time:
 		tt := val.Format(TimeFormat)
 		if tt == "0001-01-01 00:00:00" {
 			t.Val = nil
-			t.Valid = true
+			t.Exist = true
 		} else {
 			t.Val = &val
-			t.Valid = true
+			t.Exist = true
 		}
 		return nil
+	default:
+		return fmt.Errorf("不能将类型 %T 转换为 time.Time, 值为 %v", v, v)
 	}
-	return fmt.Errorf("NullTime cant convert %s", v)
+	// return fmt.Errorf("NullTime cant convert %s", v)
 }
 
 func (t NullTime) String() string {
-	if !t.Valid {
+	if !t.Exist {
 		return ""
 	}
 	if t.Val == nil {
@@ -133,14 +135,14 @@ func (NullTime) GormDBDataType(db *gorm.DB, field *schema.Field) string {
 }
 func (i *NullTime) SetValue(value time.Time) {
 	i.Val = &value
-	i.Valid = true
+	i.Exist = true
 }
 func (i *NullTime) SetNull() {
 	i.Val = nil
-	i.Valid = true
+	i.Exist = true
 }
-func (i *NullTime) IsValid() bool {
-	return i.Valid
+func (i *NullTime) IsExists() bool {
+	return i.Exist
 }
 func (i *NullTime) GetValue() *time.Time {
 	return i.Val

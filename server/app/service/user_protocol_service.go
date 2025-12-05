@@ -67,16 +67,16 @@ func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) 
 func (service userProtocolService) GetUpdateMap(editReq schema.UserProtocolEditReq) map[string]interface{} {
 	updateMap := make(map[string]interface{})
 
-	if editReq.Tag.Valid {
+	if editReq.Tag.IsExists() {
 		updateMap["tag"] = editReq.Tag.GetValue()
 	}
-	if editReq.Title.Valid {
+	if editReq.Title.IsExists() {
 		updateMap["title"] = editReq.Title.GetValue()
 	}
-	if editReq.Content.Valid {
+	if editReq.Content.IsExists() {
 		updateMap["content"] = editReq.Content.GetValue()
 	}
-	if editReq.Version.Valid {
+	if editReq.Version.IsExists() {
 		updateMap["version"] = editReq.Version.GetValue()
 	}
 	return updateMap
@@ -180,7 +180,7 @@ func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e e
 		return
 	}
 	service.CacheUtil.RemoveCache(obj.Id)
-	service.Detail(obj.Id)
+	// service.Detail(obj.Id)
 	return
 }
 

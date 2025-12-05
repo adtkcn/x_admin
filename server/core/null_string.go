@@ -7,24 +7,24 @@ import (
 )
 
 // 支持前端传递null，int，string类型和不传值
-// 前端传1，“1”都可以，都转换为int64类型: NullString{Int: "1", Valid: true}
-// 前端null值: NullString{Int: nil, Valid: true}
-// 前端没传值: NullString{Int: nil, Valid: false}
+// 前端传1，“1”都可以，都转换为int64类型: NullString{Int: "1", Exist: true}
+// 前端null值: NullString{Int: nil, Exist: true}
+// 前端没传值: NullString{Int: nil, Exist: false}
 type NullString struct {
 	Val   *string //解析行为默认""而不是nil
-	Valid bool
+	Exist bool
 }
 
 func DecodeString(value any) (any, error) {
 	switch v := value.(type) {
 	case nil:
 		var s string
-		return NullString{Val: &s, Valid: true}, nil
+		return NullString{Val: &s, Exist: true}, nil
 	case NullString:
 		return v, nil
 	default:
 		result := convert_util.ToString(v)
-		return NullString{Val: &result, Valid: true}, nil
+		return NullString{Val: &result, Exist: true}, nil
 	}
 }
 
@@ -35,15 +35,15 @@ func (i *NullString) Scan(value any) error {
 	case nil:
 		var s string
 		i.Val = &s
-		i.Valid = true
+		i.Exist = true
 		return nil
 	case string:
-		i.Val, i.Valid = &v, true
+		i.Val, i.Exist = &v, true
 		return nil
 
 	default:
 		result := convert_util.ToString(v)
-		i.Val, i.Valid = &result, true
+		i.Val, i.Exist = &result, true
 		return nil
 		// return fmt.Errorf("类型转换失败，期望string类型，实际类型为%T，值为%v", value, value)
 	}
@@ -51,7 +51,7 @@ func (i *NullString) Scan(value any) error {
 
 // gorm实现 Valuer
 func (i NullString) Value() (driver.Value, error) {
-	if !i.Valid {
+	if !i.Exist {
 		return nil, nil
 	}
 	v := i.Val
@@ -71,7 +71,7 @@ func (i *NullString) UnmarshalParam(param string) error {
 
 // 实现json序列化接口
 func (i NullString) MarshalJSON() ([]byte, error) {
-	if i.Valid {
+	if i.Exist {
 		return json.Marshal(i.Val)
 	} else {
 		return json.Marshal(nil)
@@ -88,14 +88,17 @@ func (i *NullString) UnmarshalJSON(data []byte) error {
 	case nil:
 		var s string
 		i.Val = &s
-		i.Valid = true
+		i.Exist = true
+
+		return nil
 	default:
 		result := convert_util.ToString(v)
 		i.Val = &result
-		i.Valid = true
+		i.Exist = true
+
+		return nil
 	}
 
-	return nil
 }
 
 func (i NullString) String() string {
@@ -107,15 +110,15 @@ func (i NullString) String() string {
 }
 func (i *NullString) SetValue(value string) {
 	i.Val = &value
-	i.Valid = true
+	i.Exist = true
 }
 func (i *NullString) SetNull() {
 	var s string
 	i.Val = &s
-	i.Valid = true
+	i.Exist = true
 }
-func (i *NullString) IsValid() bool {
-	return i.Valid
+func (i *NullString) IsExists() bool {
+	return i.Exist
 }
 func (i *NullString) GetValue() *string {
 	return i.Val

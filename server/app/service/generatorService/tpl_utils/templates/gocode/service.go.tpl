@@ -69,7 +69,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetUpdateMap(listReq schem
 	updateMap := make(map[string]interface{})
 	{{{- range .Columns }}}
 	{{{- if .IsEdit }}}
-	if editReq.{{{ toUpperCamelCase .ColumnName }}}.Valid {
+	if editReq.{{{ toUpperCamelCase .ColumnName }}}.IsExists() {
 		updateMap["{{{ .ColumnName }}}"] = editReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue()
 	}
 	{{{- end }}}
@@ -178,7 +178,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Edit(editReq schema.{{{ to
 		return
 	}
 	service.CacheUtil.RemoveCache(obj.Id)
-	service.Detail(obj.Id)
+	// service.Detail(obj.Id)
 	return
 }
 

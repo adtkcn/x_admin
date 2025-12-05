@@ -3,31 +3,32 @@ package core
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"x_admin/util/convert_util"
 )
 
 // 支持前端传递null，int，float，string类型和不传值
-// 前端传1，“1”都可以，都转换为float64类型: NullFloat{Float: 1.0, Valid: true}
-// 前端null值: NullFloat{Float: nil, Valid: true}
-// 前端没传值: NullFloat{Float: nil, Valid: false}
+// 前端传1，“1”都可以，都转换为float64类型: NullFloat{Float: 1.0, Exist: true}
+// 前端null值: NullFloat{Float: nil, Exist: true}
+// 前端没传值: NullFloat{Float: nil, Exist: false}
 type NullFloat struct {
 	Val   *float64
-	Valid bool // 是否有值
+	Exist bool // 是否有值
 }
 
 func DecodeFloat(value any) (any, error) {
 	switch v := value.(type) {
 	case nil:
-		return NullFloat{Val: nil, Valid: false}, nil
+		return NullFloat{Val: nil, Exist: false}, nil
 	case NullFloat:
 		return v, nil
 	default:
 		result, err := convert_util.ToFloat64(value)
 		if err != nil {
-			return NullFloat{Val: nil, Valid: false}, err
+			return NullFloat{Val: nil, Exist: false}, err
 		}
-		return NullFloat{Val: &result, Valid: true}, nil
+		return NullFloat{Val: &result, Exist: true}, nil
 	}
 }
 
@@ -38,13 +39,13 @@ func (f *NullFloat) Scan(value interface{}) error {
 	if err != nil {
 		return err
 	}
-	f.Val, f.Valid = &result, true
+	f.Val, f.Exist = &result, true
 	return nil
 }
 
 // gorm实现 Valuer
 func (f NullFloat) Value() (driver.Value, error) {
-	if !f.Valid {
+	if !f.Exist {
 		return nil, nil
 	}
 	v := f.Val
@@ -55,7 +56,7 @@ func (f NullFloat) Value() (driver.Value, error) {
 }
 
 func (f NullFloat) String() string {
-	if f.Valid {
+	if f.Exist {
 		return strconv.FormatFloat(*f.Val, 'f', -1, 64)
 	} else {
 		return ""
@@ -73,7 +74,7 @@ func (i *NullFloat) UnmarshalParam(param string) error {
 
 // 实现json序列化接口
 func (f NullFloat) MarshalJSON() ([]byte, error) {
-	if f.Valid {
+	if f.Exist {
 		return json.Marshal(f.Val)
 	} else {
 		return json.Marshal(nil)
@@ -88,48 +89,47 @@ func (f *NullFloat) UnmarshalJSON(data []byte) error {
 	}
 	switch v := x.(type) {
 	case nil:
-		f.Valid = true
+		f.Exist = true
+		return nil
 	case int64:
 		f64 := float64(v)
 		f.Val = &f64
-		f.Valid = true
+		f.Exist = true
 		return nil
 	case float64:
 		f.Val = &v
-		f.Valid = true
+		f.Exist = true
 		return nil
 	case string:
 		if v == "" {
 			f.Val = nil
-			f.Valid = true
+			f.Exist = true
 			return nil
 		}
 		num, err := strconv.ParseFloat(v, 64)
 		if err == nil {
 			f.Val = &num
-			f.Valid = true
+			f.Exist = true
 		} else {
-			f.Valid = false
+			f.Exist = false
 		}
 		return err
 
 	default:
-		f.Valid = false
+		return fmt.Errorf("不能将类型 %T 转换为 float64, 值为 %v", v, v)
 	}
-
-	return nil
 }
 
 func (i *NullFloat) SetValue(value float64) {
 	i.Val = &value
-	i.Valid = true
+	i.Exist = true
 }
 func (i *NullFloat) SetNull() {
 	i.Val = nil
-	i.Valid = true
+	i.Exist = true
 }
-func (i *NullFloat) IsValid() bool {
-	return i.Valid
+func (i *NullFloat) IsExists() bool {
+	return i.Exist
 }
 func (i *NullFloat) GetValue() *float64 {
 	return i.Val
