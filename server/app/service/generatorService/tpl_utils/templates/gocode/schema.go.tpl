@@ -38,14 +38,12 @@ type {{{ toUpperCamelCase .EntityName }}}AddReq struct {
 
 //{{{ toUpperCamelCase .EntityName }}}EditReq {{{ .FunctionName }}}编辑参数
 type {{{ toUpperCamelCase .EntityName }}}EditReq struct {
-    {{{ toUpperCamelCase .EntityName }}}Primarykey
-    {{{ toUpperCamelCase .EntityName }}}AddReq
     {{{- range .Columns }}}
     {{{- if .IsEdit }}}
         {{{- if .IsPk }}}
-      //  {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} // {{{ .ColumnComment }}}
+    {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} // {{{ .ColumnComment }}}
         {{{- else }}}
-      //  {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  // {{{ .ColumnComment }}}
+    {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}

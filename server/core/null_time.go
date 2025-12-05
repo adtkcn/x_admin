@@ -20,6 +20,33 @@ type NullTime struct {
 	// Format string
 }
 
+// func DecodeNulLTime(value any) (any, error) {
+// 	switch v := value.(type) {
+// 	case string:
+// 		if v == "" {
+// 			return NullTime{
+// 				Val:   nil,
+// 				Exist: true,
+// 			}, nil
+// 		}
+// 		tt, e := time.ParseInLocation(TimeFormat, v, time.Local)
+// 		if e != nil {
+// 			return NullTime{}, e
+// 		}
+// 		return NullTime{
+// 			Val:   &tt,
+// 			Exist: true,
+// 		}, nil
+// 	case time.Time:
+// 		return NullTime{
+// 			Val:   &v,
+// 			Exist: true,
+// 		}, nil
+
+//		default:
+//			return NullTime{}, errors.New("时间格式错误")
+//		}
+//	}
 func (i *NullTime) UnmarshalText(text []byte) error {
 	return i.Scan(string(text))
 }

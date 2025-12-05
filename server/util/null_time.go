@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"time"
 	"x_admin/core"
 )
@@ -22,47 +23,24 @@ func (t nullTimeUtil) DecodeTime(value any) (any, error) {
 	return tt, e
 }
 
-// EncodeTime 时间编码
-func (t nullTimeUtil) EncodeTime(value any) any {
-	var str = ""
-	switch v := value.(type) {
-	case map[string]interface{}:
-		val := v["Time"]
-		switch tt := val.(type) {
-		case *string:
-			ttt, _ := t.Parse(*tt)
-			str = ttt.String()
-		case *time.Time:
-			if tt != nil {
-				ttt, _ := t.Parse(*tt)
-				str = ttt.String()
-			} else {
-				str = ""
-			}
-		}
-
-	}
-	return str
-}
-
 // ToUnix 时间戳转时间戳
-func (t nullTimeUtil) ToUnix(date any) int64 {
-	switch v := date.(type) {
-	case string:
-		if v == "" {
-			return 0
-		}
-		tt, e := time.Parse(t.TimeFormat, v)
-		if e != nil {
-			return 0
-		}
-		return time.Time(tt).Unix()
-	case time.Time:
-		return v.Unix()
-	default:
-		return 0
-	}
-}
+// func (t nullTimeUtil) ToUnix(date any) int64 {
+// 	switch v := date.(type) {
+// 	case string:
+// 		if v == "" {
+// 			return 0
+// 		}
+// 		tt, e := time.Parse(t.TimeFormat, v)
+// 		if e != nil {
+// 			return 0
+// 		}
+// 		return time.Time(tt).Unix()
+// 	case time.Time:
+// 		return v.Unix()
+// 	default:
+// 		return 0
+// 	}
+// }
 
 // Parse 时间戳转时间
 func (t nullTimeUtil) Parse(value interface{}) (core.NullTime, error) {
@@ -76,7 +54,7 @@ func (t nullTimeUtil) Parse(value interface{}) (core.NullTime, error) {
 	case core.NullTime:
 		return v, nil
 	default:
-		return t.Null(), nil
+		return t.Null(), errors.New("时间格式错误")
 	}
 }
 
@@ -104,7 +82,7 @@ func (t nullTimeUtil) ParseString(date string) (core.NullTime, error) {
 func (t nullTimeUtil) Null() core.NullTime {
 	return core.NullTime{
 		Val:   nil,
-		Exist: true,
+		Exist: false,
 	}
 }
 

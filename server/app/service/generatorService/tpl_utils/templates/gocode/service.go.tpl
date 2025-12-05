@@ -65,7 +65,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq schema.{{
 	return dbModel
 }
 // 获取更新map
-func (service {{{ toCamelCase .EntityName }}}Service) GetUpdateMap(listReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq) map[string]interface{} {
+func (service {{{ toCamelCase .EntityName }}}Service) GetUpdateMap(editReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq) map[string]interface{} {
 	updateMap := make(map[string]interface{})
 	{{{- range .Columns }}}
 	{{{- if .IsEdit }}}

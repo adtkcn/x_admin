@@ -30,7 +30,7 @@ func apiList(api *gin.RouterGroup, rootRouter *gin.Engine) {
 
 // @Summary	swagger文档数据
 // @Tags		公共接口
-// @Router		/swagger/doc.json [get]
+// @Router		/api/swagger/doc.json [get]
 func swaggerJson(api *gin.RouterGroup) {
 	api.GET("/swagger/doc.json", func(c *gin.Context) {
 		// 获取域名和端口号
@@ -44,6 +44,11 @@ func swaggerJson(api *gin.RouterGroup) {
 	})
 }
 
+// @Summary	ws通用接口
+// @schemes 	ws
+// @Tags		公共接口
+// @Success 101 {string} string "协议切换成功"
+// @Router		/api/ws [get]
 func wsHandler(api *gin.RouterGroup) {
 	api.GET("/ws", middleware.LoginAuth(), controller.WsHandler)
 }

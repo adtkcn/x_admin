@@ -3439,45 +3439,62 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/ws": {
-            "get": {
-                "tags": [
-                    "公共接口"
-                ],
-                "summary": "websocket连接",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户ID",
-                        "name": "uid",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "房间ID",
-                        "name": "room",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/swagger/doc.json": {
+        "/api/swagger/doc.json": {
             "get": {
                 "tags": [
                     "公共接口"
                 ],
                 "summary": "swagger文档数据",
                 "responses": {}
+            }
+        },
+        "/api/ws": {
+            "get": {
+                "tags": [
+                    "公共接口"
+                ],
+                "summary": "ws通用接口",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "\"websocket\"",
+                        "description": "请求协议升级",
+                        "name": "Upgrade",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "\"Upgrade\"",
+                        "description": "升级连接类型",
+                        "name": "Connection",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "WebSocket握手密钥",
+                        "name": "Sec-WebSocket-Key",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "\"13\"",
+                        "description": "WebSocket协议版本",
+                        "name": "Sec-WebSocket-Version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "101": {
+                        "description": "协议切换成功",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/system/admin/ListByDeptId/{deptId}": {
@@ -3511,25 +3528,25 @@ const docTemplate = `{
         "core.NullInt": {
             "type": "object",
             "properties": {
+                "exist": {
+                    "description": "是否有值",
+                    "type": "boolean"
+                },
                 "val": {
                     "description": "整数或者null",
                     "type": "integer",
                     "format": "int64"
-                },
-                "valid": {
-                    "description": "是否有值",
-                    "type": "boolean"
                 }
             }
         },
         "core.NullTime": {
             "type": "object",
             "properties": {
+                "exist": {
+                    "type": "boolean"
+                },
                 "val": {
                     "type": "string"
-                },
-                "valid": {
-                    "type": "boolean"
                 }
             }
         },
@@ -3925,7 +3942,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "createTime": {
-                    "description": "Sort       core.NullFloat // 排序",
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "id": {
@@ -3945,7 +3962,7 @@ const docTemplate = `{
                 },
                 "version": {
                     "description": "版本",
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         }

@@ -2,20 +2,20 @@ basePath: /
 definitions:
   core.NullInt:
     properties:
+      exist:
+        description: 是否有值
+        type: boolean
       val:
         description: 整数或者null
         format: int64
         type: integer
-      valid:
-        description: 是否有值
-        type: boolean
     type: object
   core.NullTime:
     properties:
+      exist:
+        type: boolean
       val:
         type: string
-      valid:
-        type: boolean
     type: object
   flowSchema.FlowApplyResp:
     properties:
@@ -278,7 +278,7 @@ definitions:
         description: 协议内容
         type: string
       createTime:
-        description: Sort       core.NullFloat // 排序
+        description: 创建时间
         type: string
       id:
         type: string
@@ -293,7 +293,7 @@ definitions:
         type: string
       version:
         description: 版本
-        type: integer
+        type: number
     type: object
 externalDocs:
   description: OpenAPI
@@ -2454,32 +2454,44 @@ paths:
       summary: 用户协议列表-所有
       tags:
       - user_protocol-用户协议
-  /api/ws:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 用户ID
-        in: query
-        name: uid
-        required: true
-        type: string
-      - description: 房间ID
-        in: query
-        name: room
-        required: true
-        type: string
-      responses: {}
-      summary: websocket连接
-      tags:
-      - 公共接口
-  /swagger/doc.json:
+  /api/swagger/doc.json:
     get:
       responses: {}
       summary: swagger文档数据
+      tags:
+      - 公共接口
+  /api/ws:
+    get:
+      parameters:
+      - default: '"websocket"'
+        description: 请求协议升级
+        in: header
+        name: Upgrade
+        required: true
+        type: string
+      - default: '"Upgrade"'
+        description: 升级连接类型
+        in: header
+        name: Connection
+        required: true
+        type: string
+      - description: WebSocket握手密钥
+        in: header
+        name: Sec-WebSocket-Key
+        required: true
+        type: string
+      - default: '"13"'
+        description: WebSocket协议版本
+        in: header
+        name: Sec-WebSocket-Version
+        required: true
+        type: string
+      responses:
+        "101":
+          description: 协议切换成功
+          schema:
+            type: string
+      summary: ws通用接口
       tags:
       - 公共接口
   /system/admin/ListByDeptId/{deptId}:

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"strconv"
 	"time"
 	"x_admin/config"
@@ -16,6 +18,8 @@ import (
 	// _ "x_admin/docs"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 // // go:embed public/static
@@ -23,6 +27,7 @@ import (
 
 // initRouter 初始化router
 func initRouter() *gin.Engine {
+
 	// 初始化gin
 	gin.SetMode(config.AppConfig.GinMode)
 	r := gin.New()
@@ -70,6 +75,15 @@ func initServer(router *gin.Engine) *http.Server {
 	}
 }
 
+// ValidateValuer 将 NullInt等类型 转换为底层值（int64 或 nil）
+func ValidateValuer(field reflect.Value) interface{} {
+	if valuer, ok := field.Interface().(driver.Valuer); ok {
+		val, _ := valuer.Value()
+		return val // 返回 int64 或 nil
+	}
+	return nil
+}
+
 //	@description	x_admin是一个完整的后台管理系统
 //	@termsOfService	http://x.adtk.cn
 
@@ -84,6 +98,11 @@ func initServer(router *gin.Engine) *http.Server {
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
+	// 注册自定义类型的验证器
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterCustomTypeFunc(ValidateValuer, core.NullString{}, core.NullInt{}, core.NullFloat{}, core.NullTime{})
+	}
+
 	// 刷新日志缓冲
 	defer core.Logger.Sync()
 	// 程序结束前关闭数据库连接
@@ -98,7 +117,7 @@ func main() {
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
 	// fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
-	fmt.Printf("文档: http://localhost:%v/api/static/api/index.html", config.AppConfig.Port)
+	fmt.Printf("文档: http://localhost:%v/api/static/api/index.html\n", config.AppConfig.Port)
 
 	// 初始化server
 	s := initServer(router)
