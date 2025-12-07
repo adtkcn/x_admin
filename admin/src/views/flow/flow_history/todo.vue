@@ -69,7 +69,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
 import type { type_flow_history } from '@/api/flow/flow_history'
@@ -78,7 +78,8 @@ import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
 import ApplySubmit from './components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
+// import ViewForm from './components/ViewForm.vue'
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 import Back from './components/Back.vue'
 const userStore = useUserStore()
 

@@ -79,10 +79,12 @@
                 <template #header>
                     <span>访问量趋势图</span>
                 </template>
+
                 <div>
-                    <v-charts
-                        style="height: 350px"
-                        :option="workbenchData.visitorOption"
+                    <echart-component
+                        ref="visitorChartRef"
+                        height="350px"
+                        :option="visitorOption"
                         :autoresize="true"
                     />
                 </div>
@@ -92,12 +94,14 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onDeactivated, onActivated, onMounted, onUnmounted } from 'vue'
+import { reactive, onDeactivated, onActivated, onMounted, useTemplateRef, onUnmounted } from 'vue'
 import { getWorkbench } from '@/api/app'
-import '@/utils/echart'
-import vCharts from 'vue-echarts'
+
 import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
+
+import type { ECOption } from '@/utils/echart'
+
 const userStore = useUserStore()
 defineOptions({
     name: 'workbench'
@@ -118,37 +122,36 @@ const workbenchData: any = reactive({
     today: {}, // 今日数据
 
     visitor: [], // 访问量
-    article: [], // 文章阅读量
-
-    visitorOption: {
-        xAxis: {
-            type: 'category',
-            data: [0]
-        },
-        yAxis: {
-            type: 'value'
-        },
-        legend: {
-            data: ['访问量']
-        },
-        itemStyle: {
-            // 点的颜色。
-            color: 'red'
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        series: [
-            {
-                name: '访问量',
-                data: [0],
-                type: 'line',
-                smooth: true
-            }
-        ]
-    }
+    article: [] // 文章阅读量
 })
-
+const visitorOption = {
+    xAxis: {
+        type: 'category',
+        data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    legend: {
+        data: ['访问量']
+    },
+    itemStyle: {
+        // 点的颜色。
+        color: 'red'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    series: [
+        {
+            name: '访问量',
+            data: [],
+            type: 'line',
+            smooth: true
+        }
+    ]
+}
+const visitorChartRef = useTemplateRef('visitorChartRef')
 // 获取工作台主页数据
 const getData = async () => {
     const res = await getWorkbench()
@@ -156,27 +159,22 @@ const getData = async () => {
     workbenchData.today = res.today
     workbenchData.visitor = res.visitor
 
-    // 清空echarts 数据
-    workbenchData.visitorOption.xAxis.data = []
-    workbenchData.visitorOption.series[0].data = []
-
     // 写入从后台拿来的数据
-    workbenchData.visitorOption.xAxis.data = res.visitor.date
-    workbenchData.visitorOption.series[0].data = res.visitor.list
+    visitorOption.xAxis.data = res.visitor.date
+    visitorOption.series[0].data = res.visitor.list
+    visitorChartRef.value?.setOption(visitorOption as ECOption)
 }
 const timer: any = null
 function updateChart(val) {
-    // clearInterval(timer)
-    // timer = setInterval(() => {
-    workbenchData.visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
-    workbenchData.visitorOption.series[0].data.push(val)
+    visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
+    visitorOption.series[0].data.push(val)
 
     // 保持数据长度在10个
-    if (workbenchData.visitorOption.xAxis.data.length > 20) {
-        workbenchData.visitorOption.xAxis.data.shift()
-        workbenchData.visitorOption.series[0].data.shift()
+    if (visitorOption.xAxis.data.length > 20) {
+        visitorOption.xAxis.data.shift()
+        visitorOption.series[0].data.shift()
     }
-    // }, 1000)
+    visitorChartRef.value?.setOption(visitorOption as ECOption)
 }
 // // 用户 A，加入 room1
 const wsA = new WebSocket(`ws://localhost:8080/api/ws?token=${userStore.token}&room=room1`)
@@ -191,6 +189,9 @@ wsA.onmessage = (event) => {
 
     feedback.msgSuccess(event.data)
     updateChart(JSON.parse(event.data).onlineCount)
+}
+wsA.onerror = (error) => {
+    console.error('用户 A 连接错误:', error)
 }
 
 // // 用户 B，加入 room1

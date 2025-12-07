@@ -5,7 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-import MaterialComponent from '@/components/material/index.vue'
+// import MaterialComponent from '@/components/material/index.vue'
+import { defineAsyncComponent } from 'vue'
+const MaterialComponent = defineAsyncComponent(() => import('@/components/material/index.vue'))
 
 defineOptions({
     name: 'materialCenter'

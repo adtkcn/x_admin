@@ -3,7 +3,7 @@
         <div class="flex-1 flex items-center justify-center">
             <div class="login-card flex rounded-md">
                 <div class="flex-1 h-full hidden md:inline-block">
-                    <image-contain :src="config.webBackdrop" :width="400" height="100%" />
+                    <ImageContain :src="config.webBackdrop" :width="400" height="100%" />
                 </div>
                 <div
                     class="login-form bg-body flex flex-col justify-center px-10 py-10 md:w-[400px] w-[375px] flex-none mx-auto"
@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, useTemplateRef } from 'vue'
+import { computed, onMounted, reactive, useTemplateRef, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { InputInstance, FormInstance } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
@@ -113,8 +113,8 @@ import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
 import { encryptPassword } from '@/utils/util'
-import Verify from '@/components/verify/Verify.vue'
-import ImageContain from '@/components/image-contain/index.vue'
+const Verify = defineAsyncComponent(() => import('@/components/verify/Verify.vue'))
+const ImageContain = defineAsyncComponent(() => import('@/components/image-contain/index.vue'))
 // const verifyRef = ref(null)
 const verifyRef = useTemplateRef<InstanceType<typeof Verify>>('verifyRef')
 const onShowCaptcha = () => {

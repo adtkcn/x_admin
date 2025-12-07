@@ -118,7 +118,10 @@
                 <div>
                     <div class="mb-10">命令统计</div>
                     <div class="flex h-[300px] items-center">
-                        <v-charts autoresize :option="chartOptions.commandChartOption" />
+                        <echart-component
+                            :option="chartOptions.commandChartOption"
+                            :autoresize="true"
+                        />
                     </div>
                 </div>
             </el-card>
@@ -128,7 +131,10 @@
                 <div>
                     <div class="mb-10">内存信息</div>
                     <div class="flex h-[300px] items-center">
-                        <v-charts autoresize :option="chartOptions.memoryChartOption" />
+                        <echart-component
+                            :option="chartOptions.memoryChartOption"
+                            :autoresize="true"
+                        />
                     </div>
                 </div>
             </el-card>
@@ -138,8 +144,7 @@
 
 <script setup lang="ts">
 import { systemCache } from '@/api/setting/system'
-import '@/utils/echart'
-import vCharts from 'vue-echarts'
+
 import { reactive, ref } from 'vue'
 // import { ElTable } from 'element-plus'
 defineOptions({

@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
+import { ref, onMounted, onBeforeUnmount, useTemplateRef, defineAsyncComponent } from 'vue'
 import { LogicFlow } from '@logicflow/core'
 
 import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
@@ -31,9 +31,12 @@ import type { NodeType, PropertiesType } from './PropertyPanel/property.type'
 import '@logicflow/core/lib/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 
-import DiagramToolbar from './DiagramToolbar.vue'
-import DiagramSidebar from './DiagramSidebar.vue'
-import PropertyPanel from './PropertyPanel/index.vue'
+// import DiagramToolbar from './DiagramToolbar.vue'
+// import DiagramSidebar from './DiagramSidebar.vue'
+// import PropertyPanel from './PropertyPanel/index.vue'
+const DiagramToolbar = defineAsyncComponent(() => import('./DiagramToolbar.vue'))
+const DiagramSidebar = defineAsyncComponent(() => import('./DiagramSidebar.vue'))
+const PropertyPanel = defineAsyncComponent(() => import('./PropertyPanel/index.vue'))
 import { registerCustomElement } from './node'
 
 defineOptions({

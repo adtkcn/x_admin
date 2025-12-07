@@ -92,7 +92,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent } from 'vue'
 import {
     flow_apply_delete,
     flow_apply_lists,
@@ -105,9 +105,8 @@ import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 
-import ApplySubmit from './components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
-
+const ApplySubmit = defineAsyncComponent(() => import('./components/apply_submit.vue'))
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 defineOptions({
     name: 'flow_apply'
 })

@@ -68,7 +68,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list } from '@/api/flow/flow_history'
 import type { type_flow_apply } from '@/api/flow/flow_apply'
@@ -76,9 +76,7 @@ import type { type_flow_apply } from '@/api/flow/flow_apply'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import useUserStore from '@/stores/modules/user'
-// import ApplySubmit from '@/views/flow/flow_apply/components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
-
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 const userStore = useUserStore()
 
 defineOptions({

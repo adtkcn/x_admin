@@ -63,7 +63,7 @@
 import { ref, useTemplateRef, watch, defineAsyncComponent } from 'vue'
 // import XForm from './XForm/index.vue'
 // import XForm2 from './XForm2/index.vue'
-const XForm2 = defineAsyncComponent(() => import('./XForm2/index.vue'))
+const XForm2 = defineAsyncComponent(() => import('./XForm/index.vue'))
 // import FlowEdit from './flowEdit/index.vue'
 const FlowEdit = defineAsyncComponent(() => import('./flowEdit/index.vue'))
 import BasicSetting from './BasicSetting/index.vue'

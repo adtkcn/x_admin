@@ -8,13 +8,13 @@
         draggable
         :title="applyDetail.flowName"
     >
-        <formCreate
+        <FormCreate
             v-if="dialogVisible"
             :rule="formJson"
             v-model="formData"
             v-model:api="api"
             :option="options"
-        ></formCreate>
+        ></FormCreate>
         <!-- <v-form-render
             :form-json="formJson"
             :form-data="formData"
@@ -36,8 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import formCreate from '@form-create/element-ui'
+import { ref, defineAsyncComponent } from 'vue'
+const FormCreate = defineAsyncComponent(() => import('@form-create/element-ui'))
 import type { Api } from '@form-create/element-ui'
 
 // import { flow_apply_detail } from '@/api/flow/flow_apply'

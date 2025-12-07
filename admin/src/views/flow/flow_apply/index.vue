@@ -127,7 +127,7 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup
+        <EditPopup
             v-if="showEdit"
             ref="editRef"
             :dict-data="dictData"
@@ -144,7 +144,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, shallowRef, nextTick } from 'vue'
+import { ref, reactive, shallowRef, nextTick, defineAsyncComponent } from 'vue'
 import {
     flow_apply_delete,
     flow_apply_lists,
@@ -158,10 +158,10 @@ import { useDictData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
-import EditPopup from './edit.vue'
+const EditPopup = defineAsyncComponent(() => import('./edit.vue'))
 
-import ApplySubmit from './components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
+const ApplySubmit = defineAsyncComponent(() => import('./components/apply_submit.vue'))
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 
 import useUserStore from '@/stores/modules/user'
 

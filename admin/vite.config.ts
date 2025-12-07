@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
         },
         optimizeDeps: {
             // 依赖预构建，避免开发刷新
-            include: ['@wangeditor/editor-for-vue', 'vuedraggable', 'vue-echarts', 'crypto-js']
+            include: ['@wangeditor/editor-for-vue', 'vuedraggable', 'crypto-js']
         },
 
         base: '/',
@@ -42,63 +42,51 @@ export default defineConfig(({ mode }) => {
                             },
                             {
                                 name: 'vue-router',
-                                test: /node_modules\/vue-router/
+                                test: /node_modules\/vue-router\//
                             },
                             {
                                 name: 'element-plus',
-                                test: /node_modules\/element-plus/
+                                test: /node_modules\/element-plus\//
                             },
                             {
                                 name: 'axios',
-                                test: /node_modules\/axios/
+                                test: /node_modules\/axios\//
                             },
                             {
                                 name: 'dayjs',
-                                test: /node_modules\/dayjs/
+                                test: /node_modules\/dayjs\//
                             },
                             // vuedraggable
                             {
                                 name: 'vuedraggable',
-                                test: /node_modules\/vuedraggable/
+                                test: /node_modules\/vuedraggable\//
                             },
                             // vue3-video-play
                             {
                                 name: 'vue3-video-play',
-                                test: /node_modules\/vue3-video-play/
+                                test: /node_modules\/vue3-video-play\//
                             },
                             // echarts
                             {
                                 name: 'echarts',
-                                test: /node_modules\/echarts/
+                                test: /node_modules\/echarts\//
                             },
                             // highlight.js
                             {
                                 name: 'highlight.js',
-                                test: /node_modules\/highlight\.js/
+                                test: /node_modules\/highlight\.js\//
                             },
                             // lodash-es
                             {
                                 name: 'lodash-es',
-                                test: /node_modules\/lodash-es/
+                                test: /node_modules\/lodash-es\//
                             },
                             // @wangeditor/editor
                             {
                                 name: '@wangeditor/editor',
-                                test: /node_modules\/@wangeditor/
+                                test: /node_modules\/@wangeditor\//
                             }
                         ]
-                        // vue: ['vue'],
-                        // 'vue-router': ['vue-router'],
-                        // pinia: ['pinia'],
-                        // axios: ['axios'],
-                        // dayjs: ['dayjs'],
-                        // // echarts: ['echarts'],
-                        // // 'highlight.js': ['highlight.js'],
-                        // 'element-plus': ['element-plus']
-
-                        // // 'lodash-es': ['lodash-es'],
-                        // // vuedraggable: ['vuedraggable'],
-                        // // 'vform3-builds': ['vform3-builds']
                     }
                 }
             }

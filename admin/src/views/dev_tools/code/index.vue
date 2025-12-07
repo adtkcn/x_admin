@@ -144,7 +144,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onActivated } from 'vue'
+import { ref, reactive, onActivated, defineAsyncComponent } from 'vue'
 import {
     generateTable,
     syncColumn,
@@ -153,8 +153,8 @@ import {
     downloadCode
 } from '@/api/tools/code'
 import { usePaging } from '@/hooks/usePaging'
-import DataTable from './components/data-table.vue'
-import CodePreview from './components/code-preview.vue'
+const DataTable = defineAsyncComponent(() => import('./components/data-table.vue'))
+const CodePreview = defineAsyncComponent(() => import('./components/code-preview.vue'))
 import feedback from '@/utils/feedback'
 import { streamFileDownload } from '@/utils/file'
 defineOptions({

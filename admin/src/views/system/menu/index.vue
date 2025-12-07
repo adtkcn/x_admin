@@ -160,7 +160,7 @@
                 </el-table-column>
             </el-table> -->
     </div>
-    <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+    <EditPopup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
 </template>
 <script lang="ts" setup>
 import { ref, useTemplateRef, nextTick } from 'vue'

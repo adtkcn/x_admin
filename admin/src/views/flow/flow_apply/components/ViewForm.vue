@@ -7,13 +7,13 @@
         :destroy-on-close="true"
         :title="applyDetail.flowName"
     >
-        <formCreate
+        <FormCreate
             v-if="dialogVisible"
             :rule="formJson"
             v-model="formData"
             v-model:api="api"
             :option="options"
-        ></formCreate>
+        ></FormCreate>
 
         <!-- <v-form-render
             :form-json="formJson"
@@ -48,8 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import formCreate from '@form-create/element-ui'
+import { computed, ref, defineAsyncComponent } from 'vue'
+// import formCreate from '@form-create/element-ui'
+const FormCreate = defineAsyncComponent(() => import('@form-create/element-ui'))
 import type { Api } from '@form-create/element-ui'
 import { useDictData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'

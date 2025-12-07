@@ -256,18 +256,19 @@
                 </el-scrollbar>
             </div>
         </div>
-        <preview v-model="showPreview" :url="previewUrl" />
+        <Preview v-model="showPreview" :url="previewUrl" />
     </div>
 </template>
 
 <script lang="ts" setup>
 import { FileTabsMap } from '@/enums/fileEnums'
-import { onMounted, ref, watch, computed } from 'vue'
+import { onMounted, ref, watch, computed, defineAsyncComponent } from 'vue'
 import { FileExt } from '@/enums/fileEnums'
 
 import { useCate, useFile } from './hook'
 import FileItem from './file.vue'
-import Preview from './preview.vue'
+// import Preview from './preview.vue'
+const Preview = defineAsyncComponent(() => import('./preview.vue'))
 const props = defineProps({
     limit: {
         type: Number,
