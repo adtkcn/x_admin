@@ -11,7 +11,7 @@ import Components from 'unplugin-vue-components/vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // import viteCompression from 'vite-plugin-compression'
-// import { visualizer } from 'rollup-plugin-visualizer'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 
@@ -31,23 +31,39 @@ export default defineConfig(({ mode }) => {
         base: '/',
         build: {
             sourcemap: true,
-            rollupOptions: {
+            rolldownOptions: {
                 external: ['XErr'],
                 output: {
                     advancedChunks: {
                         groups: [
                             {
-                                name: 'vue',
-                                test: /node_modules\/vue\//
+                                name: 'vue_vue-router_pinia',
+                                test: /node_modules\/(vue|vue-router|pinia)\//
                             },
+                            // {
+                            //     name: 'vue-router',
+                            //     test: /node_modules\/vue-router\//
+                            // },
+                            // pinia
+                            // {
+                            //     name: 'pinia',
+                            //     test: /node_modules\/pinia\//
+                            // },
+                            // @vueuse/core
                             {
-                                name: 'vue-router',
-                                test: /node_modules\/vue-router\//
+                                name: '@vueuse',
+                                test: /node_modules\/@vueuse\//
+                            },
+
+                            {
+                                name: 'element-plus-icons-vue',
+                                test: /node_modules\/@element-plus\/icons-vue\//
                             },
                             {
                                 name: 'element-plus',
                                 test: /node_modules\/element-plus\//
                             },
+
                             {
                                 name: 'axios',
                                 test: /node_modules\/axios\//
@@ -66,6 +82,12 @@ export default defineConfig(({ mode }) => {
                                 name: 'vue3-video-play',
                                 test: /node_modules\/vue3-video-play\//
                             },
+
+                            // zrender
+                            {
+                                name: 'zrender',
+                                test: /node_modules\/zrender\//
+                            },
                             // echarts
                             {
                                 name: 'echarts',
@@ -81,10 +103,40 @@ export default defineConfig(({ mode }) => {
                                 name: 'lodash-es',
                                 test: /node_modules\/lodash-es\//
                             },
+                            // @logicflow/core
+                            {
+                                name: '@logicflow/core',
+                                test: /node_modules\/@logicflow\/core\//
+                            },
+                            // @logicflow/extension
+                            {
+                                name: '@logicflow/extension',
+                                test: /node_modules\/@logicflow\/extension\//
+                            },
                             // @wangeditor/editor
                             {
                                 name: '@wangeditor/editor',
                                 test: /node_modules\/@wangeditor\//
+                            },
+                            // xe-utils
+                            {
+                                name: 'xe-utils',
+                                test: /node_modules\/xe-utils\//
+                            },
+                            // vxe-table
+                            {
+                                name: 'vxe-table',
+                                test: /node_modules\/vxe-table\//
+                            },
+                            // spark-md5
+                            {
+                                name: 'spark-md5',
+                                test: /node_modules\/spark-md5\//
+                            },
+                            // crypto-js
+                            {
+                                name: 'crypto-js',
+                                test: /node_modules\/crypto-js\//
                             }
                         ]
                     }
@@ -125,20 +177,20 @@ export default defineConfig(({ mode }) => {
                 // 配置路劲在你的src里的svg存放文件
                 iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
                 symbolId: 'local-icon-[dir]-[name]'
-            })
+            }),
             // viteCompression({
             //     algorithm: 'gzip'
             // })
             // viteCompression({
             //     algorithm: 'brotliCompress'
             // })
-            // visualizer({
-            //     gzipSize: false,
-            //     brotliSize: false,
-            //     emitFile: false,
-            //     filename: 'test.html', //分析图生成的文件名
-            //     open: true
-            // })
+            visualizer({
+                gzipSize: false,
+                brotliSize: false,
+                emitFile: false,
+                filename: 'test.html', //分析图生成的文件名
+                open: true
+            })
         ],
         resolve: {
             alias: {

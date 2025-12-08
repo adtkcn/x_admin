@@ -13,6 +13,8 @@
                 padding: 0;
             }
         </style>
+
+        <link rel="stylesheet" preload href="/loading.css" />
         <script src="/XErr.umd.js"></script>
         <script>
             // const xErr = new XErr.Base(
@@ -25,8 +27,6 @@
             // )
             // xErr.SetUid(2) //设置用户ID
         </script>
-
-        <link rel="stylesheet" href="/src/styles/loading.scss" />
     </head>
     <body>
         <div id="app">
@@ -72,6 +72,6 @@
                 </div>
             </div>
         </div>
-        <script type="module" src="/src/main.ts"></script>
+        <script type="module" defer src="/src/main.ts"></script>
     </body>
 </html>
