@@ -29,7 +29,8 @@ export type ECOption = ComposeOption<
 import {
     BarChart,
     LineChart,
-    PieChart
+    PieChart,
+    GaugeChart
     // MapChart,//地图
     // PictorialBarChart,//象形柱状图
     // RadarChart,//雷达图
@@ -71,6 +72,7 @@ echarts.use([
     BarChart,
     LineChart,
     PieChart,
+    GaugeChart,
     // MapChart,
     // RadarChart,
     // PictorialBarChart,

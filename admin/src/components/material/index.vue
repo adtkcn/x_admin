@@ -155,9 +155,12 @@
                     <el-table-column label="格式" prop="ext" min-width="80"></el-table-column>
 
                     <el-table-column prop="createTime" label="上传时间" min-width="160" />
-                    <el-table-column label="操作" width="150" fixed="right">
+                    <el-table-column label="操作" width="190" fixed="right">
                         <template #default="{ row }">
-                            <div class="inline-block" v-perms="['admin:common:album:albumRename']">
+                            <div
+                                class="inline-block mr-2"
+                                v-perms="['admin:common:album:albumRename']"
+                            >
                                 <popover-input
                                     @confirm="handleFileRename($event, row.id)"
                                     size="default"
@@ -167,28 +170,29 @@
                                     show-limit
                                     teleported
                                 >
-                                    <el-button type="primary" link> 重命名 </el-button>
+                                    <el-link type="primary" link> 重命名 </el-link>
                                 </popover-input>
                             </div>
-                            <div class="inline-block">
-                                <el-button type="primary" link @click.stop="handlePreview(row.uri)">
+                            <div class="inline-block mr-2">
+                                <el-link type="primary" link @click.stop="handlePreview(row.uri)">
                                     查看
-                                </el-button>
+                                </el-link>
                             </div>
 
-                            <div class="inline-block" v-perms="['admin:common:album:albumDel']">
-                                <el-button
+                            <div
+                                class="inline-block mr-2"
+                                v-perms="['admin:common:album:albumDel']"
+                            >
+                                <el-link
                                     type="primary"
                                     link
                                     @click.stop="batchFileDelete([row.id])"
                                 >
                                     删除
-                                </el-button>
+                                </el-link>
                             </div>
-                            <div class="inline-block">
-                                <el-button type="primary" link @click.stop="handlePreview(row.uri)">
-                                    下载（待开发）
-                                </el-button>
+                            <div class="inline-block mr-2">
+                                <el-link type="primary" :href="row.uri" download>下载</el-link>
                             </div>
                         </template>
                     </el-table-column>

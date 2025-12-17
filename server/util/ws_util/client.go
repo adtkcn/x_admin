@@ -51,7 +51,7 @@ func (c *Client) Read() {
 	})
 
 	for {
-		_, _, err := c.conn.ReadMessage()
+		messageType, data, err := c.conn.ReadMessage()
 		if err != nil {
 			// 处理浏览器主动关闭的情况
 			if websocket.IsCloseError(err,
@@ -63,6 +63,13 @@ func (c *Client) Read() {
 			}
 			break
 		}
+		msg := string(data)
+		if msg == "ping" {
+			// 回复客户端的 Ping 消息
+			c.conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+			continue
+		}
+		log.Printf("WebSocket message:%d, %s", messageType, msg)
 		// 可在此处理客户端发来的消息（如聊天内容）
 	}
 }
@@ -83,7 +90,7 @@ func (c *Client) Write() {
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-			// ✅ 关键：每次只写一条消息，不合并
+			// 消息，不合并
 			err := c.conn.WriteMessage(websocket.TextMessage, message)
 			if err != nil {
 				return

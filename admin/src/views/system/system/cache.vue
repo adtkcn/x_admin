@@ -4,111 +4,65 @@
         <el-card class="!border-none" shadow="never">
             <div>
                 <div class="mb-4 lg">基本信息</div>
-
-                <div class="el-table--enable-row-transition el-table--large el-table">
-                    <el-scrollbar>
-                        <table class="el-table__body" cellspacing="0">
-                            <tbody>
-                                <tr class="el-table__row">
-                                    <td class="el-table__cell">
-                                        <div class="cell">Redis版本</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">{{ baseInfo.redis_version }}</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">运行模式</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">
-                                            {{
-                                                baseInfo.redis_mode == 'standalone'
-                                                    ? '单机'
-                                                    : '集群'
-                                            }}
-                                        </div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">端口</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">{{ baseInfo.tcp_port }}</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">客户端数</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">{{ baseInfo.connected_clients }}</div>
-                                    </td>
-                                </tr>
-                                <tr class="el-table__row">
-                                    <td class="el-table__cell">
-                                        <div class="cell">运行时间(天)</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">{{ baseInfo.uptime_in_days }}</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">使用内存</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">
-                                            {{ baseInfo.used_memory_human }}
-                                        </div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">使用CPU</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">
-                                            {{ baseInfo.used_cpu_user_children }}
-                                        </div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">内存配置</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">{{ baseInfo.maxmemory_human }}</div>
-                                    </td>
-                                </tr>
-                                <tr class="el-table__row">
-                                    <td class="el-table__cell">
-                                        <div class="cell">AOF是否开启</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">
-                                            {{ baseInfo.aof_enabled == 0 ? '开启' : '关闭' }}
-                                        </div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">RDB是否成功</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">
-                                            {{ baseInfo.aof_enabled == 'ok' ? '成功' : '失败' }}
-                                        </div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">Key数量</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">{{ baseInfo.dbSize }}</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">网络入口/出口</div>
-                                    </td>
-                                    <td class="el-table__cell">
-                                        <div class="cell">
-                                            {{ baseInfo.instantaneous_input_kbps }}
-                                            /
-                                            {{ baseInfo.instantaneous_output_kbps }}
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </el-scrollbar>
-                </div>
+                <el-row :gutter="20">
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">Redis版本</div>
+                        <div class="info-value">{{ baseInfo.redis_version }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">运行模式</div>
+                        <div class="info-value">
+                            {{ baseInfo.redis_mode == 'standalone' ? '单机' : '集群' }}
+                        </div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">端口</div>
+                        <div class="info-value">{{ baseInfo.tcp_port }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">客户端数</div>
+                        <div class="info-value">{{ baseInfo.connected_clients }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">运行时间(天)</div>
+                        <div class="info-value">{{ baseInfo.uptime_in_days }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">使用内存</div>
+                        <div class="info-value">{{ baseInfo.used_memory_human }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">使用CPU</div>
+                        <div class="info-value">{{ baseInfo.used_cpu_user_children }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">内存配置</div>
+                        <div class="info-value">{{ baseInfo.maxmemory_human }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">AOF是否开启</div>
+                        <div class="info-value">
+                            {{ baseInfo.aof_enabled == 0 ? '开启' : '关闭' }}
+                        </div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">RDB是否成功</div>
+                        <div class="info-value">
+                            {{ baseInfo.aof_enabled == 'ok' ? '成功' : '失败' }}
+                        </div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">Key数量</div>
+                        <div class="info-value">{{ baseInfo.dbSize }}</div>
+                    </el-col>
+                    <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
+                        <div class="info-label">网络入/出口</div>
+                        <div class="info-value">
+                            {{ baseInfo.instantaneous_input_kbps }} /
+                            {{ baseInfo.instantaneous_output_kbps }}
+                        </div>
+                    </el-col>
+                </el-row>
             </div>
         </el-card>
 
@@ -131,6 +85,7 @@
                 <div>
                     <div class="mb-10">内存信息</div>
                     <div class="flex h-[300px] items-center">
+                        <!-- {{ chartOptions.memoryChartOption }} -->
                         <echart-component
                             :option="chartOptions.memoryChartOption"
                             :autoresize="true"
@@ -264,5 +219,21 @@ getSystemCache()
 <style scoped>
 .el-table .el-table__cell {
     min-width: 120px;
+}
+.info-item {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #ebeef5;
+}
+
+.info-label {
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #303133;
+    width: 110px;
+}
+
+.info-value {
+    color: #949597;
 }
 </style>

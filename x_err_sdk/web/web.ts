@@ -64,6 +64,11 @@ class Web implements IErrorEvent {
   }
   private callback(err: LogWithError): void {}
   private listenError = (err: any) => {
+    // 过滤ResizeObserver相关错误
+    if (err&&err.message && err.message.includes("ResizeObserver")) {
+      return;
+    }
+
     console.error([err]);
     let target = err.target;
     if (target?.localName) {

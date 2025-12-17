@@ -44,6 +44,7 @@ import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import { shallowRef, ref, computed, reactive } from 'vue'
 import type { PropType } from 'vue'
+import dayjs from 'dayjs'
 defineProps({
     dictData: {
         type: Object as PropType<Record<string, any[]>>,
@@ -152,7 +153,7 @@ function handleTemplateChange(id: number) {
     console.log(id)
     flow_template.value.find((item: any) => {
         if (item.id == id) {
-            formData.flowName = item.flowName
+            formData.flowName = item.flowName + '_' + dayjs().format('YYYY-MM-DD-HHmm')
             // formData.flowGroup = item.flowGroup
             // formData.flowRemark = item.flowRemark
             // formData.flowFormData = item.flowFormData

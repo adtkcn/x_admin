@@ -14,7 +14,7 @@
         </div>
         <el-dropdown @command="handleCommand">
             <span class="flex items-center px-3">
-                <icon :size="16" name="el-icon-arrow-down" />
+                <icon :size="16" name="el-icon-ArrowDown" />
             </span>
             <template #dropdown>
                 <el-dropdown-menu>

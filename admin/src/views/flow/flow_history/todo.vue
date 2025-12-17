@@ -80,7 +80,9 @@ import useUserStore from '@/stores/modules/user'
 import ApplySubmit from './components/apply_submit.vue'
 // import ViewForm from './components/ViewForm.vue'
 const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
-import Back from './components/Back.vue'
+// import Back from './components/Back.vue'
+const Back = defineAsyncComponent(() => import('./components/Back.vue'))
+
 const userStore = useUserStore()
 
 defineOptions({
@@ -162,6 +164,7 @@ const closeBack = () => {
     console.log('closeBack')
 
     viewFormRef.value?.closeFn()
+    getLists()
 }
 
 getLists()

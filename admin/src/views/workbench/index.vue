@@ -97,7 +97,8 @@
 import { reactive, onDeactivated, onActivated, onMounted, useTemplateRef, onUnmounted } from 'vue'
 import { getWorkbench } from '@/api/app'
 
-import feedback from '@/utils/feedback'
+// import feedback from '@/utils/feedback'
+import { useWebSocket } from '@vueuse/core'
 import useUserStore from '@/stores/modules/user'
 
 import type { ECOption } from '@/utils/echart'
@@ -164,7 +165,7 @@ const getData = async () => {
     visitorOption.series[0].data = res.visitor.list
     visitorChartRef.value?.setOption(visitorOption as ECOption)
 }
-const timer: any = null
+
 function updateChart(val) {
     visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
     visitorOption.series[0].data.push(val)
@@ -176,49 +177,57 @@ function updateChart(val) {
     }
     visitorChartRef.value?.setOption(visitorOption as ECOption)
 }
-// // 用户 A，加入 room1
-const wsA = new WebSocket(`ws://localhost:8080/api/ws?token=${userStore.token}&room=room1`)
 
-// // 用户 B，加入 room1
-// const wsB = new WebSocket('ws://localhost:8080/api/ws?uid=userB&room=room1')
-// // 用户 C，不加入房间
-// const wsC = new WebSocket('ws://localhost:8080/api/ws?uid=userC')
-wsA.onmessage = (event) => {
-    console.log('用户 A 收到消息:', event.data)
-    // {"onlineCount":9}
-
-    feedback.msgSuccess(event.data)
-    updateChart(JSON.parse(event.data).onlineCount)
+// 定义你的消息类型
+interface ChatMessage {
+    onlineCount: number
 }
-wsA.onerror = (error) => {
-    console.error('用户 A 连接错误:', error)
-}
+const ws = useWebSocket(`ws://localhost:8080/api/ws?token=${userStore.token}&room=room1`, {
+    heartbeat: {
+        message: 'ping',
+        interval: 10000,
+        pongTimeout: 1000
+    },
+    autoReconnect: true,
 
-// // 用户 B，加入 room1
-// wsB.onmessage = (event) => {
-//     console.log('用户 B 收到消息:', event.data)
-// }
-// wsC.onmessage = (event) => {
-//     console.log('用户 C 收到消息:', event.data)
-//     wsC.send('ping')
-// }
+    onMessage(ws, e) {
+        if (e.data === 'pong') {
+            console.log('Received pong message')
+            return
+        }
+        try {
+            const data = JSON.parse(e.data) as ChatMessage
+            updateChart(data.onlineCount)
+        } catch (error) {
+            console.error('JSON parse error:', error)
+            return
+        }
+    },
+    onError: (ws, event) => {
+        console.error('WebSocket error:', event)
+    },
 
+    onDisconnected: (ws, event) => {
+        console.log('WebSocket closed:', event)
+    }
+})
+// setInterval(() => {
+//     ws.send('ping')
+// }, 1000)
 onActivated(() => {
-    // updateChart()
     console.log('onActivated')
 })
 onDeactivated(() => {
-    clearInterval(timer)
+    // ws.close()
 })
 onMounted(() => {
     console.log('onMounted')
-
+    // ws.connect()
     getData()
     // updateChart()
 })
 onUnmounted(() => {
     console.log('onUnmounted')
-    wsA.close()
 })
 </script>
 

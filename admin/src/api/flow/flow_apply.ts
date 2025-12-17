@@ -13,7 +13,7 @@ export type type_flow_apply = {
     flowProcessData?: string
     flowProcessDataList?: string
     formValue?: string
-    status?: number
+    status?: number // 状态：1待提交，2审批中，3审批完成，4审批失败
     isDelete?: number
     createTime?: string
     updateTime?: string
