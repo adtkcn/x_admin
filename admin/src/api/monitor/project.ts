@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_project = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     ProjectName?: string
     ProjectType?: string
@@ -30,7 +30,7 @@ export type type_monitor_project_query = {
 }
 // 添加编辑
 export type type_monitor_project_edit = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     ProjectName?: string
     ProjectType?: string

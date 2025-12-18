@@ -2,9 +2,9 @@ import request from '@/utils/request/index'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_history = {
-    id?: number
-    applyId?: number
-    templateId?: number
+    id?: string
+    applyId?: string
+    templateId?: string
     applyUserId?: number
     applyUserNickname?: string
     approverId?: number
@@ -21,8 +21,8 @@ export type type_flow_history = {
 }
 // 查询
 export type type_flow_history_query = {
-    applyId?: number
-    templateId?: number
+    applyId?: string
+    templateId?: string
     applyUserId?: number
     applyUserNickname?: string
     approverId?: number
@@ -40,9 +40,9 @@ export type type_flow_history_query = {
 }
 // 添加编辑
 export type type_flow_history_edit = {
-    id?: number
-    applyId?: number
-    templateId?: number
+    id?: string
+    applyId?: string
+    templateId?: string
     applyUserId?: number
     applyUserNickname?: string
     approverId?: number

@@ -2,8 +2,8 @@ import request from '@/utils/request'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_apply = {
-    id?: number
-    templateId?: number
+    id?: string
+    templateId?: string
     applyUserId?: number
     applyUserNickname?: string
     flowName?: string
@@ -21,7 +21,7 @@ export type type_flow_apply = {
 }
 // 查询
 export type type_flow_apply_query = {
-    templateId?: number
+    templateId?: string
     applyUserId?: number
     applyUserNickname?: string
     flowName?: string
@@ -39,8 +39,8 @@ export type type_flow_apply_query = {
 }
 // 添加编辑
 export type type_flow_apply_edit = {
-    id?: number
-    templateId?: number
+    id?: string
+    templateId?: string
     applyUserId?: number
     applyUserNickname?: string
     flowName?: string

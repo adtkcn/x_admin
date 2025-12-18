@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_client = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     ClientId?: string
     UserId?: string
@@ -41,7 +41,7 @@ export type type_monitor_client_query = {
 }
 // 添加编辑
 export type type_monitor_client_edit = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     ClientId?: string
     UserId?: string
