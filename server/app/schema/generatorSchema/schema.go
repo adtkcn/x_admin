@@ -21,7 +21,7 @@ type ListTableReq struct {
 
 // DetailTableReq 生成详情参数
 type DetailTableReq struct {
-	ID uint `form:"id" binding:"required,gt=0"` // 主键
+	ID string `form:"id" binding:"required"` // 主键
 }
 
 // ImportTableReq 导入表结构参数
@@ -31,13 +31,13 @@ type ImportTableReq struct {
 
 // SyncTableReq 同步表结构参数
 type SyncTableReq struct {
-	ID uint `form:"id" binding:"required,gt=0"` // 主键
+	ID string `form:"id" binding:"required"` // 主键
 }
 
 // EditColumn 表编辑列
 type EditColumn struct {
-	ID      uint `form:"id" binding:"required,gt=0"`      // 主键
-	TableID uint `form:"tableId" binding:"required,gt=0"` // 表ID
+	ID      string `form:"id" binding:"required"`      // 主键
+	TableID string `form:"tableId" binding:"required"` // 表ID
 
 	ColumnName   string `form:"columnName" binding:"required,max=200"` // 列名称
 	ColumnLength uint   `form:"columnLength" binding:"required,max=5"` // 列长度
@@ -67,7 +67,7 @@ type EditColumn struct {
 
 // EditTableReq 编辑表结构参数
 type EditTableReq struct {
-	ID           uint   `form:"id" binding:"required,gt=0"`                    // 主键
+	ID           string `form:"id" binding:"required"`                         // 主键
 	TableName    string `form:"tableName" binding:"required,min=1,max=200"`    // 表名称
 	EntityName   string `form:"entityName" binding:"required,min=1,max=200"`   // 实体名称
 	TableComment string `form:"tableComment" binding:"required,min=1,max=200"` // 表描述
@@ -87,12 +87,12 @@ type EditTableReq struct {
 
 // DelTableReq 删除表结构参数
 type DelTableReq struct {
-	Ids []uint `form:"ids" binding:"required"` // 主键
+	Ids []string `form:"ids" binding:"required"` // 主键
 }
 
 // PreviewCodeReq 预览代码参数
 type PreviewCodeReq struct {
-	ID uint `form:"id" binding:"required,gt=0"` // 主键
+	ID string `form:"id" binding:"required"` // 主键
 }
 
 // GenCodeReq 生成代码参数
@@ -115,7 +115,7 @@ type DbTableResp struct {
 
 // GenTableResp 生成表返回信息
 type GenTableResp struct {
-	ID uint `json:"id" structs:"id"` // 主键
+	ID string `json:"id" structs:"id"` // 主键
 
 	TableName    string        `json:"tableName" structs:"tableName"`       // 表名称
 	TableComment string        `json:"tableComment" structs:"tableComment"` // 表描述
@@ -125,7 +125,7 @@ type GenTableResp struct {
 
 // GenTableBaseResp 生成表基本返回信息
 type GenTableBaseResp struct {
-	ID           uint          `json:"id" structs:"id"`                     // 主键
+	ID           string        `json:"id" structs:"id"`                     // 主键
 	TableName    string        `json:"tableName" structs:"tableName"`       // 表的名称
 	TableComment string        `json:"tableComment" structs:"tableComment"` // 表的描述
 	EntityName   string        `json:"entityName" structs:"entityName"`     // 实体名称
@@ -150,8 +150,8 @@ type GenTableGenResp struct {
 
 // GenColumnResp 生成列返回信息
 type GenColumnResp struct {
-	ID      uint `json:"id" structs:"id"`           // 字段主键
-	TableID uint `json:"tableId" structs:"tableId"` // 归属表主键
+	ID      string `json:"id" structs:"id"`           // 字段主键
+	TableID string `json:"tableId" structs:"tableId"` // 归属表主键
 
 	ColumnName    string `json:"columnName" structs:"columnName"`       // 字段名称
 	ColumnComment string `json:"columnComment" structs:"columnComment"` // 字段描述

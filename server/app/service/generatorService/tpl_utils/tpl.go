@@ -106,7 +106,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 	for _, column := range oriSubCols {
 		oriSubColNames = append(oriSubColNames, column.ColumnName)
 	}
-	if oriSubPriCol.ID > 0 {
+	if oriSubPriCol.ID != "" {
 		subPriField = oriSubPriCol.ColumnName
 		subColumns = append(subColumns, oriSubPriCol)
 	}

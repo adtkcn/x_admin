@@ -76,7 +76,7 @@ func (gu genUtil) InitTable(table gen_model.GenTable) gen_model.GenTable {
 }
 
 // InitColumn 初始化字段列
-func (gu genUtil) InitColumn(tableId uint, column gen_model.GenTableColumn) gen_model.GenTableColumn {
+func (gu genUtil) InitColumn(tableId string, column gen_model.GenTableColumn) gen_model.GenTableColumn {
 	columnType := gu.GetDbType(column.ColumnType)
 	columnLen := gu.GetColumnLength(column.ColumnType)
 	col := gen_model.GenTableColumn{

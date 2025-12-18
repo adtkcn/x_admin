@@ -98,7 +98,7 @@ func (genSrv generateService) List(page request.PageReq, listReq generatorSchema
 }
 
 // Detail 生成详情
-func (genSrv generateService) Detail(id uint) (res generatorSchema.GenTableDetailResp, e error) {
+func (genSrv generateService) Detail(id string) (res generatorSchema.GenTableDetailResp, e error) {
 	var genTb gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTb).Error
 	if e = response.CheckErrDBNotRecord(err, "查询的数据不存在!"); e != nil {
@@ -167,7 +167,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 }
 
 // SyncTable 同步表结构
-func (genSrv generateService) SyncTable(id uint) (e error) {
+func (genSrv generateService) SyncTable(id string) (e error) {
 	//旧数据
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
@@ -235,7 +235,7 @@ func (genSrv generateService) SyncTable(id uint) (e error) {
 		for i := 0; i < len(columns); i++ {
 			colNames[i] = columns[i].ColumnName
 		}
-		delColIds := make([]uint, 0)
+		delColIds := make([]string, 0)
 		for _, prevCol := range prevColMap {
 			if !util.ToolsUtil.Contains(colNames, prevCol.ColumnName) {
 				delColIds = append(delColIds, prevCol.ID)
@@ -295,7 +295,7 @@ func (genSrv generateService) EditTable(editReq generatorSchema.EditTableReq) (e
 }
 
 // DelTable 删除表结构
-func (genSrv generateService) DelTable(ids []uint) (e error) {
+func (genSrv generateService) DelTable(ids []string) (e error) {
 	err := genSrv.db.Transaction(func(tx *gorm.DB) error {
 		txErr := tx.Delete(&gen_model.GenTable{}, "id in ?", ids).Error
 		if te := response.CheckErr(txErr, "DelTable Delete GenTable err"); te != nil {
@@ -360,7 +360,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (re
 }
 
 // PreviewCode 预览代码
-func (genSrv generateService) PreviewCode(id uint) (res map[string]string, e error) {
+func (genSrv generateService) PreviewCode(id string) (res map[string]string, e error) {
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
 	if e = response.CheckErrDBNotRecord(err, "记录丢失！"); e != nil {
