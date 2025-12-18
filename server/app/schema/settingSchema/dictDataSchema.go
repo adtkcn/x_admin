@@ -4,8 +4,8 @@ import "x_admin/core"
 
 // SettingDictDataResp 字典数据返回信息
 type SettingDictDataResp struct {
-	ID         uint          `json:"id" structs:"id"`                 // 主键
-	TypeId     uint          `json:"typeId" structs:"typeId"`         // 类型
+	ID         string        `json:"id" structs:"id"`                 // 主键
+	TypeId     string        `json:"typeId" structs:"typeId"`         // 类型
 	Name       string        `json:"name" structs:"name"`             // 键
 	Value      string        `json:"value" structs:"value"`           // 值
 	Color      string        `json:"color" structs:"color"`           // 颜色
@@ -26,12 +26,12 @@ type SettingDictDataListReq struct {
 
 // SettingDictDataDetailReq 字典数据详情参数
 type SettingDictDataDetailReq struct {
-	ID uint `form:"id" binding:"required,gt=0"` // 主键
+	ID string `form:"id" binding:"required"` // 主键
 }
 
 // SettingDictDataAddReq 字典数据新增参数
 type SettingDictDataAddReq struct {
-	TypeId uint   `form:"typeId" binding:"required,gt=0"`           // 类型
+	TypeId string `form:"typeId" binding:"required"`                // 类型
 	Name   string `form:"name" binding:"required,max=100"`          // 键
 	Value  string `form:"value" binding:"required,max=200"`         // 值
 	Color  string `form:"color"`                                    // 颜色
@@ -42,8 +42,8 @@ type SettingDictDataAddReq struct {
 
 // SettingDictDataEditReq 字典数据编辑参数
 type SettingDictDataEditReq struct {
-	ID     uint   `form:"id" binding:"required,gt=0"`               // 主键
-	TypeId uint   `form:"typeId" binding:"required,gte=0"`          // 类型
+	ID     string `form:"id" binding:"required"`                    // 主键
+	TypeId string `form:"typeId" binding:"required"`                // 类型
 	Name   string `form:"name" binding:"required,max=100"`          // 键
 	Value  string `form:"value" binding:"required,max=200"`         // 值
 	Color  string `form:"color"`                                    // 颜色
@@ -54,5 +54,5 @@ type SettingDictDataEditReq struct {
 
 // SettingDictDataDelReq 字典数据删除参数
 type SettingDictDataDelReq struct {
-	Ids []uint `form:"ids" binding:"required"` // 主键列表
+	Ids []string `form:"ids" binding:"required"` // 主键列表
 }

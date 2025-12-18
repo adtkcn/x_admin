@@ -11,7 +11,7 @@ type SettingDictTypeListReq struct {
 
 // SettingDictTypeDetailReq 字典类型详情参数
 type SettingDictTypeDetailReq struct {
-	ID uint `form:"id" binding:"required,gt=0"` // 主键
+	ID string `form:"id" binding:"required"` // 主键
 }
 
 // SettingDictTypeAddReq 字典类型新增参数
@@ -24,7 +24,7 @@ type SettingDictTypeAddReq struct {
 
 // SettingDictTypeEditReq 字典类型编辑参数
 type SettingDictTypeEditReq struct {
-	ID         uint   `form:"id" binding:"required,gt=0"`              // 主键
+	ID         string `form:"id" binding:"required"`                   // 主键
 	DictName   string `form:"dictName" binding:"required,max=200"`     // 字典名称
 	DictType   string `form:"dictType" binding:"required,max=200"`     // 字典类型
 	DictRemark string `form:"dictRemark" binding:"max=200"`            // 字典备注
@@ -33,12 +33,12 @@ type SettingDictTypeEditReq struct {
 
 // SettingDictTypeDelReq 字典类型删除参数
 type SettingDictTypeDelReq struct {
-	Ids []uint `form:"ids" binding:"required"` // 主键列表
+	Ids []string `form:"ids" binding:"required"` // 主键列表
 }
 
 // SettingDictTypeResp 字典类型返回信息
 type SettingDictTypeResp struct {
-	ID         uint          `json:"id" structs:"id"`                 // 主键
+	ID         string        `json:"id" structs:"id"`                 // 主键
 	DictName   string        `json:"dictName" structs:"dictName"`     // 字典名称
 	DictType   string        `json:"dictType" structs:"dictType"`     // 字典类型
 	DictRemark string        `json:"dictRemark" structs:"dictRemark"` // 字典备注

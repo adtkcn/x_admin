@@ -15,7 +15,7 @@ import (
 type ISettingDictDataService interface {
 	All(allReq settingSchema.SettingDictDataListReq) (res []settingSchema.SettingDictDataResp, e error)
 	// List(page request.PageReq, listReq SettingDictDataListReq) (res response.PageResp, e error)
-	Detail(id uint) (res settingSchema.SettingDictDataResp, e error)
+	Detail(id string) (res settingSchema.SettingDictDataResp, e error)
 	Add(addReq settingSchema.SettingDictDataAddReq) (e error)
 	Edit(editReq settingSchema.SettingDictDataEditReq) (e error)
 	Del(delReq settingSchema.SettingDictDataDelReq) (e error)
@@ -65,7 +65,7 @@ func (ddSrv settingDictDataService) All(allReq settingSchema.SettingDictDataList
 }
 
 // Detail 字典数据详情
-func (ddSrv settingDictDataService) Detail(id uint) (res settingSchema.SettingDictDataResp, e error) {
+func (ddSrv settingDictDataService) Detail(id string) (res settingSchema.SettingDictDataResp, e error) {
 	var dd setting_model.DictData
 	err := ddSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dd).Error
 	if e = response.CheckErrDBNotRecord(err, "字典数据不存在！"); e != nil {

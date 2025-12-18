@@ -16,7 +16,7 @@ import (
 type ISettingDictTypeService interface {
 	All() (res []settingSchema.SettingDictTypeResp, e error)
 	List(page request.PageReq, listReq settingSchema.SettingDictTypeListReq) (res response.PageResp, e error)
-	Detail(id uint) (res settingSchema.SettingDictTypeResp, e error)
+	Detail(id string) (res settingSchema.SettingDictTypeResp, e error)
 	Add(addReq settingSchema.SettingDictTypeAddReq) (e error)
 	Edit(editReq settingSchema.SettingDictTypeEditReq) (e error)
 	Del(delReq settingSchema.SettingDictTypeDelReq) (e error)
@@ -82,7 +82,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq settingSc
 }
 
 // Detail 字典类型详情
-func (dtSrv settingDictTypeService) Detail(id uint) (res settingSchema.SettingDictTypeResp, e error) {
+func (dtSrv settingDictTypeService) Detail(id string) (res settingSchema.SettingDictTypeResp, e error) {
 	var dt setting_model.DictType
 	err := dtSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dt).Error
 	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {

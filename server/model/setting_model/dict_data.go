@@ -3,13 +3,15 @@ package setting_model
 import (
 	"x_admin/core"
 
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
 )
 
 // DictData 字典数据实体
 type DictData struct {
-	ID         uint                  `gorm:"primarykey;comment:'主键'"`
-	TypeId     uint                  `gorm:"not null;default:0;comment:'类型'"`
+	ID         string                `gorm:"primarykey;comment:'主键'"`
+	TypeId     string                `gorm:"not null;default:'';comment:'类型'"`
 	Name       string                `gorm:"not null;default:'';comment:'键名''"`
 	Value      string                `gorm:"not null;default:'';comment:'数值'"`
 	Color      string                `gorm:"default:'';comment:'颜色'"`
@@ -20,4 +22,14 @@ type DictData struct {
 	CreateTime core.NullTime         `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 	UpdateTime core.NullTime         `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 	DeleteTime core.NullTime         `gorm:"default:null;comment:'删除时间'"`
+}
+
+// BeforeCreate 在创建前生成UUIDv7
+func (m *DictData) BeforeCreate(tx *gorm.DB) (err error) {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	m.ID = id.String()
+	return nil
 }
