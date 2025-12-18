@@ -32,12 +32,12 @@ type MonitorErrorAddReq struct {
 
 // MonitorErrorDetailReq 监控-错误列详情参数
 type MonitorErrorDetailReq struct {
-	Id int // 错误id
+	Id string // 错误id
 }
 
 // MonitorErrorDelReq 监控-错误列删除参数
 type MonitorErrorDelReq struct {
-	Id int // 错误id
+	Id string // 错误id
 }
 
 // MonitorErrorDelReq 监控-错误列批量删除参数
@@ -47,7 +47,7 @@ type MonitorErrorDelBatchReq struct {
 
 // MonitorErrorResp 监控-错误列返回信息
 type MonitorErrorResp struct {
-	Id         int           // 错误id
+	Id         string        // 错误id
 	ProjectKey string        // 项目key
 	EventType  string        // 事件类型
 	Path       string        // URL地址

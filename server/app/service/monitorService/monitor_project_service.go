@@ -106,7 +106,7 @@ func (service monitorProjectService) ListAll(listReq monitorSchema.MonitorProjec
 }
 
 // Detail 监控项目详情
-func (service monitorProjectService) Detail(Id int) (res monitorSchema.MonitorProjectResp, e error) {
+func (service monitorProjectService) Detail(Id string) (res monitorSchema.MonitorProjectResp, e error) {
 	var obj = model.MonitorProject{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
@@ -125,14 +125,14 @@ func (service monitorProjectService) Detail(Id int) (res monitorSchema.MonitorPr
 }
 
 // Add 监控项目新增
-func (service monitorProjectService) Add(addReq monitorSchema.MonitorProjectAddReq) (createId int, e error) {
+func (service monitorProjectService) Add(addReq monitorSchema.MonitorProjectAddReq) (createId string, e error) {
 	var obj model.MonitorProject
 	convert_util.Copy(&obj, addReq)
 	obj.ProjectKey = util.ToolsUtil.MakeUuidV7()
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
-		return 0, e
+		return "", e
 	}
 	service.CacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
@@ -162,7 +162,7 @@ func (service monitorProjectService) Edit(editReq monitorSchema.MonitorProjectEd
 }
 
 // Del 监控项目删除
-func (service monitorProjectService) Del(Id int) (e error) {
+func (service monitorProjectService) Del(Id string) (e error) {
 	var obj model.MonitorProject
 	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
 	// 校验

@@ -145,7 +145,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res monit
 }
 
 // Detail 监控-客户端信息详情
-func (service monitorClientService) Detail(Id int) (res monitorSchema.MonitorClientResp, e error) {
+func (service monitorClientService) Detail(Id string) (res monitorSchema.MonitorClientResp, e error) {
 	var obj = model.MonitorClient{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
@@ -164,7 +164,7 @@ func (service monitorClientService) Detail(Id int) (res monitorSchema.MonitorCli
 }
 
 // ErrorUser 监控-客户端信息详情
-func (service monitorClientService) ErrorUsers(error_id int) (res []monitorSchema.MonitorClientResp, e error) {
+func (service monitorClientService) ErrorUsers(error_id string) (res []monitorSchema.MonitorClientResp, e error) {
 	var obj = []monitorSchema.MonitorClientResp{}
 	service.db.Raw("SELECT client.*,list.width,list.height,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.cid where list.eid = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
 
@@ -173,13 +173,13 @@ func (service monitorClientService) ErrorUsers(error_id int) (res []monitorSchem
 }
 
 // Add 监控-客户端信息新增
-func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq) (createId int, e error) {
+func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq) (createId string, e error) {
 	var obj model.MonitorClient
 	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
-		return 0, e
+		return "", e
 	}
 	service.CacheUtil.SetCache(obj.Id, obj)
 	service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
@@ -188,7 +188,7 @@ func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq
 }
 
 // Del 监控-客户端信息删除
-func (service monitorClientService) Del(Id int) (e error) {
+func (service monitorClientService) Del(Id string) (e error) {
 	var obj model.MonitorClient
 	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
 	// 校验

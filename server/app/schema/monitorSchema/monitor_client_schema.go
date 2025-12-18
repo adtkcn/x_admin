@@ -41,7 +41,7 @@ type MonitorClientAddReq struct {
 
 // MonitorClientEditReq 监控-客户端信息编辑参数
 type MonitorClientEditReq struct {
-	Id         int     // uuid
+	Id         string  // uuid
 	ProjectKey *string // 项目key
 	ClientId   *string // sdk生成的客户端id
 	UserId     *string // 用户id
@@ -57,12 +57,12 @@ type MonitorClientEditReq struct {
 
 // MonitorClientDetailReq 监控-客户端信息详情参数
 type MonitorClientDetailReq struct {
-	Id int // uuid
+	Id string // uuid
 }
 
 // MonitorClientDelReq 监控-客户端信息删除参数
 type MonitorClientDelReq struct {
-	Id int // uuid
+	Id string // uuid
 }
 
 // MonitorClientDelReq 监控-客户端信息批量删除参数
@@ -72,7 +72,7 @@ type MonitorClientDelBatchReq struct {
 
 // MonitorClientResp 监控-客户端信息返回信息
 type MonitorClientResp struct {
-	Id         int           // uuid
+	Id         string        // uuid
 	ProjectKey string        // 项目key
 	ClientId   string        // sdk生成的客户端id
 	UserId     string        // 用户id

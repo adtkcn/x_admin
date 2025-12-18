@@ -2,7 +2,6 @@ package monitorService
 
 import (
 	"errors"
-	"strconv"
 
 	"x_admin/app/schema/monitorSchema"
 	"x_admin/core"
@@ -109,7 +108,7 @@ func (service monitorErrorService) ListAll(listReq monitorSchema.MonitorErrorLis
 }
 
 // Detail 监控-错误列详情
-func (service monitorErrorService) Detail(Id int) (res monitorSchema.MonitorErrorResp, e error) {
+func (service monitorErrorService) Detail(Id string) (res monitorSchema.MonitorErrorResp, e error) {
 	var obj = model.MonitorError{}
 
 	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
@@ -144,7 +143,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res monitorSchema.Mo
 }
 
 // Add 监控-错误列新增
-func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) (createId int, err error) {
+func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) (createId string, err error) {
 
 	var obj model.MonitorError
 	convert_util.Copy(&obj, addReq)
@@ -159,7 +158,7 @@ func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) 
 		err := service.db.Create(&obj).Error
 		err = response.CheckMysqlErr(err)
 		if err != nil {
-			return 0, err
+			return "", err
 		}
 		createId = obj.Id
 
@@ -169,12 +168,12 @@ func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) 
 	}
 	client, err := MonitorClientService.DetailByClientId(addReq.ClientId)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	_, err = MonitorErrorListService.Add(monitorSchema.MonitorErrorListAddReq{
-		Eid:    strconv.Itoa(createId),
-		Cid:    strconv.Itoa(client.Id),
+		Eid:    createId,
+		Cid:    client.Id,
 		Width:  addReq.Width,
 		Height: addReq.Height,
 		// ClientId:   addReq.ClientId,
@@ -185,7 +184,7 @@ func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) 
 }
 
 // Del 监控-错误列删除
-func (service monitorErrorService) Del(Id int) (e error) {
+func (service monitorErrorService) Del(Id string) (e error) {
 	var obj model.MonitorError
 	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
 	// 校验

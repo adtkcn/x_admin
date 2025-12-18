@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 	. "x_admin/app/schema/monitorSchema"
@@ -87,7 +86,7 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err, _ := hd.requestGroup.Do("MonitorError:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
+	res, err, _ := hd.requestGroup.Do("MonitorError:Detail:"+detailReq.Id, func() (any, error) {
 		v, err := monitorService.MonitorErrorService.Detail(detailReq.Id)
 		return v, err
 	})

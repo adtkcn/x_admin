@@ -15,7 +15,7 @@ type MonitorErrorListAddReq struct {
 
 // MonitorErrorListResp 错误对应的用户记录返回信息
 type MonitorErrorListResp struct {
-	Id     int          // 项目id
+	Id     string       // 项目id
 	Eid    string       // 错误id
 	Cid    string       // 客户端id
 	Width  core.NullInt // 屏幕

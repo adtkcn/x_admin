@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 	"x_admin/app/schema/monitorSchema"
@@ -112,7 +111,7 @@ func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err, _ := hd.requestGroup.Do("MonitorClient:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
+	res, err, _ := hd.requestGroup.Do("MonitorClient:Detail:"+detailReq.Id, func() (any, error) {
 		v, err := monitorService.MonitorClientService.Detail(detailReq.Id)
 		return v, err
 	})

@@ -2,7 +2,6 @@ package monitorController
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 	. "x_admin/app/schema/monitorSchema"
@@ -84,7 +83,7 @@ func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err, _ := hd.requestGroup.Do("MonitorProject:Detail:"+strconv.Itoa(detailReq.Id), func() (any, error) {
+	res, err, _ := hd.requestGroup.Do("MonitorProject:Detail:"+detailReq.Id, func() (any, error) {
 		v, err := monitorService.MonitorProjectService.Detail(detailReq.Id)
 		return v, err
 	})

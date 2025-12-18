@@ -26,7 +26,7 @@ type MonitorProjectAddReq struct {
 
 // MonitorProjectEditReq 监控项目编辑参数
 type MonitorProjectEditReq struct {
-	Id          int          // 项目id
+	Id          string       // 项目id
 	ProjectKey  *string      // 项目uuid
 	ProjectName *string      // 项目名称
 	ProjectType *string      // 项目类型go java web node php 等
@@ -35,12 +35,12 @@ type MonitorProjectEditReq struct {
 
 // MonitorProjectDetailReq 监控项目详情参数
 type MonitorProjectDetailReq struct {
-	Id int // 项目id
+	Id string // 项目id
 }
 
 // MonitorProjectDelReq 监控项目删除参数
 type MonitorProjectDelReq struct {
-	Id int // 项目id
+	Id string // 项目id
 }
 
 // MonitorProjectDelReq 监控项目批量删除参数
@@ -50,7 +50,7 @@ type MonitorProjectDelBatchReq struct {
 
 // MonitorProjectResp 监控项目返回信息
 type MonitorProjectResp struct {
-	Id          int           // 项目id
+	Id          string        // 项目id
 	ProjectKey  string        // 项目uuid
 	ProjectName string        // 项目名称
 	ProjectType string        // 项目类型go java web node php 等
