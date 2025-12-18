@@ -1,6 +1,8 @@
 <template>
     <div class="menu-lists p-4 h-full box-border flex flex-col">
         <div>
+            <el-input v-model="menuName" style="width: 240px" placeholder="Please input" />
+
             <el-button v-perms="['admin:system:menu:add']" type="primary" @click="handleAdd()">
                 <template #icon>
                     <icon name="el-icon-Plus" />
@@ -163,7 +165,7 @@
     <EditPopup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
 </template>
 <script lang="ts" setup>
-import { ref, useTemplateRef, nextTick } from 'vue'
+import { ref, useTemplateRef, nextTick, computed } from 'vue'
 import { menuDelete, menuLists, SystemAuthMenuResp } from '@/api/perms/menu'
 // import { arrayToTree } from '@/utils/util'
 import { MenuEnum } from '@/enums/appEnums'
@@ -190,11 +192,17 @@ const treeConfig = {
 }
 const tableRef = useTemplateRef<VxeTableInstance<any>>('tableRef')
 const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
-let isExpand = false
+
 const loading = ref(false)
 const showEdit = ref(false)
 const lists = ref<SystemAuthMenuResp[]>([])
-
+const menuName = ref('')
+// const filterList = computed(() => {
+//     if (!menuName.value) {
+//         return lists.value
+//     }
+//     return lists.value.filter((item) => item.menuName.includes(menuName.value))
+// })
 const getLists = async () => {
     loading.value = true
     try {
@@ -235,6 +243,7 @@ const handleDelete = async (id: number) => {
     getLists()
 }
 
+let isExpand = false
 const handleExpand = () => {
     const $table = tableRef.value
     if ($table) {

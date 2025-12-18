@@ -62,7 +62,7 @@
                 </el-button>
                 <el-button @click="handleExpand"> 展开/折叠 </el-button>
             </div>
-            <el-table
+            <vxe-table
                 v-loading="loading"
                 ref="tableRef"
                 class="mt-4"
@@ -74,19 +74,19 @@
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (.GoField) }}}" />
                     </template>
-                </el-table-column>
+                </vxe-column>
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
                         <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (.GoField) }}}" labelKey='{{{toUpperCamelCase .PrimaryKey }}}' valueKey='{{{toUpperCamelCase .PrimaryKey }}}' />
                     </template>
-                </el-table-column>
+                </vxe-column>
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
@@ -97,13 +97,13 @@
                             hide-on-click-modal
                         />
                     </template>
-                </el-table-column>
+                </vxe-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" min-width="100" />
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
-                <el-table-column label="操作" width="160" fixed="right">
+                <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll',{{{ end }}}'admin:{{{ .ModuleName }}}:detail']"
@@ -136,8 +136,8 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
         </el-card>
         <edit-popup
             v-if="showEdit"
@@ -174,16 +174,35 @@ import EditPopup from './edit.vue'
 import DetailsPopup from './details.vue'
 import feedback from '@/utils/feedback'
 
+import { VxeTableInstance } from 'vxe-table'
+
 import { useDictData,useListAllData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'
 
-import type { ElTable } from 'element-plus'
+//import type { ElTable } from 'element-plus'
 defineOptions({
     name:"{{{ .ModuleName }}}"
 })
-const tableRef = shallowRef<InstanceType<typeof ElTable>>()
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-let isExpand = false
+//const tableRef = shallowRef<InstanceType<typeof ElTable>>()
+//const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+
+const rowConfig = {
+    keyField: '{{{ .Table.TreePrimary }}}'
+}
+const treeConfig = {
+    rowField: '{{{ .Table.TreePrimary }}}',
+    childrenField: 'children',
+    indent: 10,
+    reserve: true,
+    lazy: true,
+    transform: true,
+
+    parentField: '{{{ .Table.TreeParent }}}'
+}
+
+const tableRef = useTemplateRef<VxeTableInstance<any>>('tableRef')
+const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
+
 const showEdit = ref(false)
 
 const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
@@ -261,23 +280,22 @@ const viewDetails = async (data: any) => {
     detailsRef.value?.open()
     detailsRef.value?.getDetail(data)
 }
-const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
+const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: {{{goToTsType .PrimaryKeyGoType}}}) => {
     await feedback.confirm('确定要删除？')
     await {{{ .ModuleName }}}_delete({ {{{toUpperCamelCase .PrimaryKey }}} })
     feedback.msgSuccess('删除成功')
     getLists()
 }
 
+let isExpand = false
 const handleExpand = () => {
-    isExpand = !isExpand
-    toggleExpand(lists.value, isExpand)
-}
-
-const toggleExpand = (children: any[], unfold = true) => {
-    for (const key in children) {
-        tableRef.value?.toggleRowExpansion(children[key], unfold)
-        if (children[key].children) {
-            toggleExpand(children[key].children!, unfold)
+    const $table = tableRef.value
+    if ($table) {
+        isExpand = !isExpand
+        if (isExpand) {
+            $table.setAllTreeExpand(true)
+        } else {
+            $table.clearTreeExpand()
         }
     }
 }
