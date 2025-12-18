@@ -143,7 +143,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res monitorSchema.Mo
 }
 
 // Add 监控-错误列新增
-func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) (createId string, err error) {
+func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq, addListReq monitorSchema.MonitorErrorListAddReq) (createId string, err error) {
 
 	var obj model.MonitorError
 	convert_util.Copy(&obj, addReq)
@@ -166,19 +166,9 @@ func (service monitorErrorService) Add(addReq monitorSchema.MonitorErrorAddReq) 
 	} else {
 		createId = errorDetails.Id
 	}
-	client, err := MonitorClientService.DetailByClientId(addReq.ClientId)
-	if err != nil {
-		return "", err
-	}
 
-	_, err = MonitorErrorListService.Add(monitorSchema.MonitorErrorListAddReq{
-		Eid:    createId,
-		Cid:    client.Id,
-		Width:  addReq.Width,
-		Height: addReq.Height,
-		// ClientId:   addReq.ClientId,
-		// ProjectKey: addReq.ProjectKey,
-	})
+	addListReq.ErrorId = createId
+	_, err = MonitorErrorListService.Add(addListReq)
 
 	return createId, err
 }

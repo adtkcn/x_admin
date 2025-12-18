@@ -2,7 +2,6 @@ package monitorController
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -147,41 +146,29 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	var addReq monitorSchema.MonitorClientAddReq
 	json.Unmarshal([]byte(data), &addReq)
 
-	lastClient, err := monitorService.MonitorClientService.DetailByClientId(*addReq.ClientId)
+	_, err = monitorService.MonitorClientService.DetailByClientId(*addReq.ClientId)
 
-	uaStr := c.GetHeader("user-agent")
-	ip := c.ClientIP()
-
-	if err == nil {
-		last := lastClient.UserId + "_" + lastClient.Ip + "_" + lastClient.Ua
-		newStr := *addReq.UserId + "_" + ip + "_" + uaStr
-		if last == newStr {
-			// 前后数据一样，不用创建新的数据
-			fmt.Println("前后用户端数据一样，不用创建新的数据")
-			c.Data(200, "image/gif", img_util.EmptyGif())
-			return
-		} else {
-			// 新建的话，需要清除lastClient对应的缓存
-			monitorService.MonitorClientService.CacheUtil.RemoveCache("ClientId:" + lastClient.ClientId)
-		}
+	if err != nil {
+		response.FailWithMsg(c, response.SystemError, err.Error())
+		return
 	}
-
+	uaStr := c.GetHeader("user-agent")
 	if uaStr != "" {
 		ua := util.UAParser.Parse(uaStr)
 		addReq.Ua = &uaStr
 		addReq.Os = &ua.Os.Family
 		addReq.Browser = &ua.UserAgent.Family
 	}
-
-	addReq.Ip = &ip
-	if ip != "" && ip != "127.0.0.1" {
-		regionInfo := util.IpUtil.Parse(ip)
-		// regionInfo := util.IpUtil.Parse("118.24.157.190")
-		addReq.City = &regionInfo.City
-		addReq.Country = &regionInfo.Country
-		addReq.Operator = &regionInfo.Operator
-		addReq.Province = &regionInfo.Province
-	}
+	// ip := c.ClientIP()
+	// addReq.Ip = &ip
+	// if ip != "" && ip != "127.0.0.1" {
+	// 	regionInfo := util.IpUtil.Parse(ip)
+	// 	// regionInfo := util.IpUtil.Parse("118.24.157.190")
+	// 	addReq.City = &regionInfo.City
+	// 	addReq.Country = &regionInfo.Country
+	// 	addReq.Operator = &regionInfo.Operator
+	// 	addReq.Province = &regionInfo.Province
+	// }
 
 	monitorService.MonitorClientService.Add(addReq)
 

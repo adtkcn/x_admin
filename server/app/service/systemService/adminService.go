@@ -3,7 +3,6 @@ package systemService
 import (
 	"fmt"
 
-	"strconv"
 	"strings"
 	"time"
 
@@ -41,7 +40,7 @@ func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin sy
 }
 
 // Self 当前管理员
-func (adminSrv systemAuthAdminService) Self(adminId uint) (res systemSchema.SystemAuthAdminSelfResp, e error) {
+func (adminSrv systemAuthAdminService) Self(adminId string) (res systemSchema.SystemAuthAdminSelfResp, e error) {
 	// 管理员信息
 	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&sysAdmin).Error
@@ -50,10 +49,14 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res systemSchema.Syst
 	}
 	// 角色权限
 	var auths []string
-	if adminId > 1 {
-		roleId, _ := strconv.ParseUint(sysAdmin.Role, 10, 32)
-		var menuIds []uint
-		if menuIds, e = PermService.SelectMenuIdsByRoleId(uint(roleId)); e != nil {
+	if adminId == config.AdminConfig.SuperAdminId {
+		auths = append(auths, "*")
+	} else if adminId == "" {
+		return systemSchema.SystemAuthAdminSelfResp{}, response.SystemError.SetMessage("管理员id不能为空")
+	} else {
+		roleId := sysAdmin.Role
+		var menuIds []string
+		if menuIds, e = PermService.SelectMenuIdsByRoleId(roleId); e != nil {
 			return
 		}
 		if len(menuIds) > 0 {
@@ -73,31 +76,26 @@ func (adminSrv systemAuthAdminService) Self(adminId uint) (res systemSchema.Syst
 				}
 			}
 		}
-		// if len(auths) > 0 {
-		// 	auths = append(auths, "")
-		// }
-	} else {
-		auths = append(auths, "*")
 	}
 	var admin systemSchema.SystemAuthAdminSelfOneResp
 	convert_util.Copy(&admin, sysAdmin)
-	admin.Dept = strconv.FormatUint(uint64(sysAdmin.DeptId), 10)
+	admin.Dept = sysAdmin.DeptId
 	admin.Avatar = util.UrlUtil.ToAbsoluteUrl(sysAdmin.Avatar)
 	return systemSchema.SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
 }
 
 // 获取管理员列表-
-func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId, postId int) (res []systemSchema.SystemAuthAdminResp, e error) {
+func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId, postId string) (res []systemSchema.SystemAuthAdminResp, e error) {
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
 	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
-	if userId > 0 {
+	if userId != "" {
 		adminModel.Where("admin.id =?", userId)
 	}
-	if deptId > 0 {
+	if deptId != "" {
 		adminModel.Where("admin.dept_id =?", deptId)
 	}
-	if postId > 0 {
+	if postId != "" {
 		adminModel.Where("admin.post_id =?", postId)
 	}
 	// 数据
@@ -108,7 +106,7 @@ func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId
 	}
 	for i := 0; i < len(adminResp); i++ {
 		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == 1 {
+		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
 			adminResp[i].Role = "系统管理员"
 		}
 	}
@@ -132,7 +130,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAut
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
-	if listReq.Role >= 0 {
+	if listReq.Role != "" {
 		adminModel = adminModel.Where("role = ?", listReq.Role)
 	}
 	// 数据
@@ -143,7 +141,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAut
 	}
 	for i := 0; i < len(adminResp); i++ {
 		// adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == 1 {
+		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
 			adminResp[i].Role = "系统管理员"
 		}
 	}
@@ -179,7 +177,7 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
-	if listReq.Role > 0 {
+	if listReq.Role != "" {
 		adminModel = adminModel.Where("role = ?", listReq.Role)
 	}
 	// 总数
@@ -196,7 +194,7 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	}
 	for i := 0; i < len(adminResp); i++ {
 		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == 1 {
+		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
 			adminResp[i].Role = "系统管理员"
 		}
 	}
@@ -227,7 +225,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
-	if listReq.Role >= 0 {
+	if listReq.Role != "" {
 		adminModel = adminModel.Where("role = ?", listReq.Role)
 	}
 
@@ -239,7 +237,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 	}
 	for i := 0; i < len(adminResp); i++ {
 		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == 1 {
+		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
 			adminResp[i].Role = "系统管理员"
 		}
 	}
@@ -247,7 +245,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 }
 
 // Detail 管理员详细
-func (adminSrv systemAuthAdminService) Detail(id uint) (res systemSchema.SystemAuthAdminResp, e error) {
+func (adminSrv systemAuthAdminService) Detail(id string) (res systemSchema.SystemAuthAdminResp, e error) {
 	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&sysAdmin).Error
 	if e = response.CheckErrDBNotRecord(err, "账号已不存在！"); e != nil {
@@ -259,7 +257,7 @@ func (adminSrv systemAuthAdminService) Detail(id uint) (res systemSchema.SystemA
 	convert_util.Copy(&res, sysAdmin)
 	res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 	if res.Dept == "" {
-		res.Dept = strconv.FormatUint(uint64(res.DeptId), 10)
+		res.Dept = res.DeptId
 	}
 	return
 }
@@ -298,7 +296,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 	}
 	salt := util.ToolsUtil.RandomString(5)
 	convert_util.Copy(&sysAdmin, addReq)
-	sysAdmin.Role = strconv.FormatUint(uint64(addReq.Role), 10)
+	sysAdmin.Role = addReq.Role
 	sysAdmin.Salt = salt
 	sysAdmin.Password = util.ToolsUtil.MakeMd5(strings.Trim(addReq.Password, " ") + salt)
 	if addReq.Avatar == "" {
@@ -340,7 +338,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 		return response.AssertArgumentError.SetMessage("昵称已存在换一个吧！")
 	}
 	// 检查role
-	if editReq.Role > 0 && editReq.ID != 1 {
+	if editReq.Role != "" && editReq.ID != config.AdminConfig.SuperAdminId {
 		if _, e = RoleService.Detail(editReq.Role); e != nil {
 			return
 		}
@@ -350,11 +348,11 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	delete(adminMap, "ID")
 	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(editReq.Avatar)
 	role := editReq.Role
-	if editReq.ID == 1 {
-		role = 0
+	if editReq.ID == config.AdminConfig.SuperAdminId {
+		role = "0"
 	}
-	adminMap["Role"] = strconv.FormatUint(uint64(role), 10)
-	if editReq.ID == 1 {
+	adminMap["Role"] = role
+	if editReq.ID == config.AdminConfig.SuperAdminId {
 		delete(adminMap, "Username")
 	}
 	if editReq.Password != "" {
@@ -378,7 +376,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	if editReq.Password != "" && editReq.ID == adminId {
 		token := c.Request.Header.Get("token")
 		util.RedisUtil.Del(config.AdminConfig.BackstageTokenKey + token)
-		adminSetKey := config.AdminConfig.BackstageTokenSet + strconv.FormatUint(uint64(adminId), 10)
+		adminSetKey := config.AdminConfig.BackstageTokenSet + adminId
 		ts := util.RedisUtil.SGet(adminSetKey)
 		if len(ts) > 0 {
 			var tokenKeys []string
@@ -394,7 +392,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 }
 
 // Update 管理员更新
-func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSchema.SystemAuthAdminUpdateReq, adminId uint) (e error) {
+func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSchema.SystemAuthAdminUpdateReq, adminId string) (e error) {
 	// 检查id
 	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&admin).Error
@@ -437,7 +435,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 	if updateReq.Password != "" {
 		token := c.Request.Header.Get("token")
 		util.RedisUtil.Del(config.AdminConfig.BackstageTokenKey + token)
-		adminSetKey := config.AdminConfig.BackstageTokenSet + strconv.FormatUint(uint64(adminId), 10)
+		adminSetKey := config.AdminConfig.BackstageTokenSet + adminId
 		ts := util.RedisUtil.SGet(adminSetKey)
 		if len(ts) > 0 {
 			var tokenKeys []string
@@ -453,7 +451,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 }
 
 // Del 管理员删除
-func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
+func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) {
 	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&admin).Error
 	if e = response.CheckErrDBNotRecord(err, "账号已不存在!"); e != nil {
@@ -462,7 +460,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
-	if id == 1 {
+	if id == config.AdminConfig.SuperAdminId {
 		return response.AssertArgumentError.SetMessage("系统管理员不允许删除!")
 	}
 	if id == config.AdminConfig.GetAdminId(c) {
@@ -474,13 +472,13 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id uint) (e error) {
 }
 
 // Disable 管理员状态切换
-func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id uint) (e error) {
+func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id string) (e error) {
 	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).Find(&admin).Error
 	if e = response.CheckErr(err, "Disable Find err"); e != nil {
 		return
 	}
-	if admin.ID == 0 {
+	if admin.ID == "" {
 		return response.AssertArgumentError.SetMessage("账号已不存在!")
 	}
 	if id == config.AdminConfig.GetAdminId(c) {
@@ -498,7 +496,7 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id uint) (e error
 }
 
 // CacheAdminUserByUid 缓存管理员
-func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id uint) (err error) {
+func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id string) (err error) {
 	var admin system_model.SystemAuthAdmin
 	err = adminSrv.db.Where("id = ?", id).Limit(1).First(&admin).Error
 	if err != nil {
@@ -511,6 +509,6 @@ func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id uint) (err error) 
 	if err != nil {
 		return
 	}
-	util.RedisUtil.HSet(config.AdminConfig.BackstageManageKey, strconv.FormatUint(uint64(admin.ID), 10), str, 0)
+	util.RedisUtil.HSet(config.AdminConfig.BackstageManageKey, admin.ID, str, 0)
 	return nil
 }

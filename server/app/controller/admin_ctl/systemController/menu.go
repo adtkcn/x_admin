@@ -1,7 +1,6 @@
 package systemController
 
 import (
-	"strconv"
 	. "x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/config"
@@ -32,8 +31,8 @@ type menuHandler struct {
 // route 菜单路由
 func (mh menuHandler) route(c *gin.Context) {
 	roleId := config.AdminConfig.GetRoleId(c)
-	id, _ := strconv.ParseUint(roleId, 10, 64)
-	res, err := systemService.MenuService.SelectMenuByRoleId(c, uint(id))
+
+	res, err := systemService.MenuService.SelectMenuByRoleId(c, roleId)
 	response.CheckAndRespWithData(c, res, err)
 }
 

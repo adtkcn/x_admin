@@ -5,7 +5,7 @@ import "x_admin/core"
 // FlowApplyListReq 申请流程列表参数
 type FlowApplyListReq struct {
 	TemplateId          string `form:"templateId"`          // 模板
-	ApplyUserId         int    `form:"applyUserId"`         // 申请人id
+	ApplyUserId         string `form:"applyUserId"`         // 申请人id
 	ApplyUserNickname   string `form:"applyUserNickname"`   // 申请人昵称
 	FlowName            string `form:"flowName"`            // 流程名称
 	FlowGroup           int    `form:"flowGroup"`           // 流程分类
@@ -25,7 +25,7 @@ type FlowApplyDetailReq struct {
 // FlowApplyAddReq 申请流程新增参数
 type FlowApplyAddReq struct {
 	TemplateId        string `form:"templateId"`        // 模板
-	ApplyUserId       int    `form:"applyUserId"`       // 申请人id
+	ApplyUserId       string `form:"applyUserId"`       // 申请人id
 	ApplyUserNickname string `form:"applyUserNickname"` // 申请人昵称
 	FlowName          string `form:"flowName"`          // 流程名称
 	// FlowGroup           int    `form:"flowGroup"`           // 流程分类
@@ -62,7 +62,7 @@ type FlowApplyDelReq struct {
 type FlowApplyResp struct {
 	Id                  string        `json:"id" structs:"id"`                               //
 	TemplateId          string        `json:"templateId" structs:"templateId"`               // 模板
-	ApplyUserId         int           `json:"applyUserId" structs:"applyUserId"`             // 申请人id
+	ApplyUserId         string        `json:"applyUserId" structs:"applyUserId"`             // 申请人id
 	ApplyUserNickname   string        `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
 	FlowName            string        `json:"flowName" structs:"flowName"`                   // 流程名称
 	FlowGroup           int           `json:"flowGroup" structs:"flowGroup"`                 // 流程分类

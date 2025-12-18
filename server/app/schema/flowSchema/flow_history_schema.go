@@ -66,9 +66,9 @@ type FlowHistoryResp struct {
 	Id                string        `json:"id" structs:"id"`                               // 历史id
 	ApplyId           string        `json:"applyId" structs:"applyId"`                     // 申请id
 	TemplateId        string        `json:"templateId" structs:"templateId"`               // 模板id
-	ApplyUserId       int           `json:"applyUserId" structs:"applyUserId"`             // 申请人id
+	ApplyUserId       string        `json:"applyUserId" structs:"applyUserId"`             // 申请人id
 	ApplyUserNickname string        `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
-	ApproverId        int           `json:"approverId" structs:"approverId"`               // 审批人id
+	ApproverId        string        `json:"approverId" structs:"approverId"`               // 审批人id
 	ApproverNickname  string        `json:"approverNickname" structs:"approverNickname"`   // 审批用户昵称
 	NodeId            string        `json:"nodeId" structs:"nodeId"`                       // 节点
 	NodeType          string        `json:"nodeType" structs:"nodeType"`                   // 节点类型
@@ -92,10 +92,10 @@ type FlowTree struct {
 	Label string `json:"label"`
 	Type  string `json:"type"`
 
-	UserType int `json:"userType"` // 用户类型,1指定部门、岗位,2用户部门负责人,3指定审批人
-	UserId   int `json:"userId"`
-	DeptId   int `json:"deptId"`
-	PostId   int `json:"postId"`
+	UserType int    `json:"userType"` // 用户类型,1指定部门、岗位,2用户部门负责人,3指定审批人
+	UserId   string `json:"userId"`
+	DeptId   string `json:"deptId"`
+	PostId   string `json:"postId"`
 
 	FieldAuth map[string]int `json:"fieldAuth"`
 
@@ -114,7 +114,7 @@ type PassReq struct {
 
 	// CurrentNodeId   string `form:"currentNodeId"` // 流程里的节点id
 	// FormValue       string `form:"formValue"`
-	NextNodeAdminId int    `form:"nextNodeAdminId"` // 下一个节点的审批用户id
+	NextNodeAdminId string `form:"nextNodeAdminId"` // 下一个节点的审批用户id
 	PassRemark      string `form:"passRemark"`      // 通过备注
 }
 type BackReq struct {

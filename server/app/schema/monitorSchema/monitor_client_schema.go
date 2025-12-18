@@ -8,15 +8,15 @@ import (
 type MonitorClientListReq struct {
 	ProjectKey *string // 项目key
 	ClientId   *string // sdk生成的客户端id
-	UserId     *string // 用户id
-	Os         *string // 系统
-	Browser    *string // 浏览器
+	// UserId     *string // 用户id
+	Os      *string // 系统
+	Browser *string // 浏览器
 
-	Country  *string // 国家
-	Province *string // 省份
-	City     *string // 城市
-	Operator *string // 电信运营商
-	Ip       *string // ip
+	// Country  *string // 国家
+	// Province *string // 省份
+	// City     *string // 城市
+	// Operator *string // 电信运营商
+	// Ip       *string // ip
 
 	Ua              *string // ua记录
 	CreateTimeStart *string // 开始创建时间
@@ -27,15 +27,15 @@ type MonitorClientListReq struct {
 type MonitorClientAddReq struct {
 	ProjectKey *string // 项目key
 	ClientId   *string // sdk生成的客户端id
-	UserId     *string // 用户id
-	Os         *string // 系统
-	Browser    *string // 浏览器
-	Country    *string // 国家
-	Province   *string // 省份
-	City       *string // 城市
-	Operator   *string // 电信运营商
-	Ip         *string // ip
-	Ua         *string // ua记录
+	// UserId     *string // 用户id
+	Os      *string // 系统
+	Browser *string // 浏览器
+	// Country    *string // 国家
+	// Province   *string // 省份
+	// City       *string // 城市
+	// Operator   *string // 电信运营商
+	// Ip         *string // ip
+	Ua *string // ua记录
 
 }
 
@@ -44,15 +44,15 @@ type MonitorClientEditReq struct {
 	Id         string  // uuid
 	ProjectKey *string // 项目key
 	ClientId   *string // sdk生成的客户端id
-	UserId     *string // 用户id
-	Os         *string // 系统
-	Browser    *string // 浏览器
-	Country    *string // 国家
-	Province   *string // 省份
-	City       *string // 城市
-	Operator   *string // 电信运营商
-	Ip         *string // ip
-	Ua         *string // ua记录
+	// UserId     *string // 用户id
+	Os      *string // 系统
+	Browser *string // 浏览器
+	// Country    *string // 国家
+	// Province   *string // 省份
+	// City       *string // 城市
+	// Operator   *string // 电信运营商
+	// Ip         *string // ip
+	Ua *string // ua记录
 }
 
 // MonitorClientDetailReq 监控-客户端信息详情参数

@@ -29,6 +29,7 @@
                         :default-expand-all="true"
                         placeholder="请选择父级菜单"
                         check-strictly
+                        :empty-values="[undefined, null]"
                     />
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="menuName">
@@ -225,7 +226,7 @@ const querySearch = (queryString: string, cb: any) => {
 const formData = reactive({
     id: '',
     //父级id
-    pid: 0,
+    pid: '0',
     //类型
     menuType: MenuEnum.CATALOGUE,
     //图标
@@ -287,7 +288,7 @@ const menuOptions = ref<any[]>([])
 
 const getMenu = async () => {
     const data: any = await menuLists()
-    const menu: any = { id: 0, menuName: '顶级', children: [] }
+    const menu: any = { id: '0', menuName: '顶级', children: [] }
     menu.children = arrayToTree(data.filter((item) => item.menuType != MenuEnum.BUTTON))
     menuOptions.value.push(menu)
 }

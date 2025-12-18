@@ -29,8 +29,8 @@ type CommonAlbumMoveReq struct {
 
 // CommonAlbumAddReq 相册文件新增参数
 type CommonAlbumAddReq struct {
-	Cid     string `form:"cid"`                      // 类目ID
-	AdminId uint   `form:"admin_id" binding:"gte=0"` // 管理ID
+	Cid     string `form:"cid"`      // 类目ID
+	AdminId string `form:"admin_id"` // 管理ID
 	// Uid     uint `form:"uid" binding:"gte=0"` // 用户ID
 	// Type int    `form:"type" binding:"oneof=10 20 30"` // 文件类型: [10=图片, 20=视频,30文件]
 	Name string `form:"name"` // 文件名称
@@ -73,7 +73,7 @@ type CommonCateDelReq struct {
 type CommonUploadFileResp struct {
 	ID      string `json:"id" structs:"id"`             // 主键
 	Cid     string `json:"cid" structs:"cid"`           // 类目ID
-	AdminId uint   `json:"admin_id" structs:"admin_id"` // 管理ID
+	AdminId string `json:"admin_id" structs:"admin_id"` // 管理ID
 	Uid     uint   `json:"uid" structs:"uid"`           // 用户ID
 	Name    string `json:"name" structs:"name"`         // 文件名称
 	Uri     string `json:"url" structs:"url"`           // 文件路径

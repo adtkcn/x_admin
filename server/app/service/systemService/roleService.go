@@ -1,7 +1,6 @@
 package systemService
 
 import (
-	"strconv"
 	"strings"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/config"
@@ -58,7 +57,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 	var roleResp []systemSchema.SystemAuthRoleResp
 	convert_util.Copy(&roleResp, roles)
 	for i := 0; i < len(roleResp); i++ {
-		roleResp[i].Menus = []uint{}
+		roleResp[i].Menus = []string{}
 		roleResp[i].Member = roleSrv.getMemberCnt(roleResp[i].ID)
 	}
 	return response.PageResp{
@@ -70,7 +69,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 }
 
 // Detail 角色详情
-func (roleSrv systemAuthRoleService) Detail(id uint) (res systemSchema.SystemAuthRoleResp, e error) {
+func (roleSrv systemAuthRoleService) Detail(id string) (res systemSchema.SystemAuthRoleResp, e error) {
 	var role system_model.SystemAuthRole
 	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&role).Error
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
@@ -86,7 +85,7 @@ func (roleSrv systemAuthRoleService) Detail(id uint) (res systemSchema.SystemAut
 }
 
 // getMemberCnt 根据角色ID获取成员数量
-func (roleSrv systemAuthRoleService) getMemberCnt(roleId uint) (count int64) {
+func (roleSrv systemAuthRoleService) getMemberCnt(roleId string) (count int64) {
 	roleSrv.db.Model(&system_model.SystemAuthAdmin{}).Where(
 		"role = ? AND is_delete = ?", roleId, 0).Count(&count)
 	return
@@ -158,7 +157,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 }
 
 // Del 删除角色
-func (roleSrv systemAuthRoleService) Del(id uint) (e error) {
+func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&system_model.SystemAuthRole{}).Error
 	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
@@ -179,7 +178,7 @@ func (roleSrv systemAuthRoleService) Del(id uint) (e error) {
 		if te = PermService.BatchDeleteByRoleId(id, tx); te != nil {
 			return te
 		}
-		util.RedisUtil.HDel(config.AdminConfig.BackstageRolesKey, strconv.FormatUint(uint64(id), 10))
+		util.RedisUtil.HDel(config.AdminConfig.BackstageRolesKey, id)
 		return nil
 	})
 	e = response.CheckErr(err, "Del Transaction err")

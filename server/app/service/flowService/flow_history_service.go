@@ -9,6 +9,7 @@ import (
 	"x_admin/app/schema/flowSchema"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
+	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -198,7 +199,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []systemSchem
 	var userId = userTask.UserId
 	var deptId = userTask.DeptId
 	var postId = userTask.PostId
-	if userType == 0 && userId == 0 && deptId == 0 && postId == 0 {
+	if userType == 0 && userId == "" && deptId == "" && postId == "" {
 		// return nil, errors.New("未设置审批人")
 
 		// 未设置审批人时默认为2用户部门负责人
@@ -210,35 +211,35 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []systemSchem
 
 	where := map[string]interface{}{}
 	if userType == 1 {
-		if deptId > 0 {
+		if deptId != "" {
 			where["admin.dept_id"] = deptId
 			// adminModel.Or("admin.dept_id =?", deptId)
 		}
-		if postId > 0 {
+		if postId != "" {
 			where["admin.post_id"] = postId
 			// adminModel.Or("admin.post_id =?", postId)
 		}
 	} else if userType == 2 {
 		// 申请人所在的部门负责人
 
-		applyUser, err := systemService.AdminService.Detail(uint(applyDetail.ApplyUserId))
+		applyUser, err := systemService.AdminService.Detail(applyDetail.ApplyUserId)
 		if err != nil {
 			return nil, err
 		}
-		if applyUser.DeptId == 0 {
+		if applyUser.DeptId == "" {
 			return nil, errors.New("申请人没有绑定部门")
 		}
 		deptDetails, err := systemService.DeptService.Detail(applyUser.DeptId)
 		if err != nil {
 			return nil, err
 		}
-		if deptDetails.DutyId == 0 {
+		if deptDetails.DutyId == "" {
 			return nil, errors.New(deptDetails.Name + "部门没有绑定负责人")
 		}
 		where["admin.id"] = deptDetails.DutyId
 
 	} else if userType == 3 {
-		if userId > 0 {
+		if userId != "" {
 			where["admin.id"] = userId
 			// adminModel.Or("admin.id =?", userId)
 		}
@@ -252,7 +253,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []systemSchem
 	}
 	for i := 0; i < len(adminResp); i++ {
 		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == 1 {
+		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
 			adminResp[i].Role = "系统管理员"
 		}
 	}
@@ -291,25 +292,25 @@ func (service flowHistoryService) Pass(pass flowSchema.PassReq) (e error) {
 			ApplyUserId:       applyDetail.ApplyUserId,
 			TemplateId:        applyDetail.TemplateId,
 			ApplyUserNickname: applyDetail.ApplyUserNickname,
-			ApproverId:        0,
+			ApproverId:        "",
 			ApproverNickname:  "",
 		}
 		if v.Type == "bpmn:startEvent" {
-			flow.ApproverId = 0
+			flow.ApproverId = ""
 			flow.PassStatus = 2 //2通过
 		} else if v.Type == "bpmn:exclusiveGateway" {
-			flow.ApproverId = 0
+			flow.ApproverId = ""
 			flow.PassStatus = 2
 			// 发邮件之类的，待完善
 		} else if v.Type == "bpmn:serviceTask" {
-			flow.ApproverId = 0
+			flow.ApproverId = ""
 			flow.PassStatus = 1 //1待处理,异步任务可以失败
 			// 发邮件之类的，待完善
 		} else if v.Type == "bpmn:userTask" {
 			isUserTask = true
 			flow.PassStatus = 1 //1待处理
 			flow.ApproverId = pass.NextNodeAdminId
-			Approver, err := systemService.AdminService.Detail(uint(pass.NextNodeAdminId))
+			Approver, err := systemService.AdminService.Detail(pass.NextNodeAdminId)
 			if err != nil {
 				return err
 			} else {
@@ -318,7 +319,7 @@ func (service flowHistoryService) Pass(pass flowSchema.PassReq) (e error) {
 
 		} else if v.Type == "bpmn:endEvent" {
 			isEndTask = true
-			flow.ApproverId = 0
+			flow.ApproverId = ""
 			flow.PassStatus = 2 //2通过
 		}
 		flows = append(flows, flow)
@@ -401,7 +402,7 @@ func (service flowHistoryService) Back(back flowSchema.BackReq) (e error) {
 				TemplateId:        FirstHistory.TemplateId,
 				ApplyUserId:       FirstHistory.ApplyUserId,
 				ApplyUserNickname: FirstHistory.ApplyUserNickname,
-				ApproverId:        0,
+				ApproverId:        "",
 				ApproverNickname:  "",
 				PassStatus:        1, //
 				PassRemark:        "",

@@ -144,7 +144,7 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 }
 
 // Add 用户协议新增
-func (service userProtocolService) Add(addReq schema.UserProtocolAddReq, adminId uint) (createId string, e error) {
+func (service userProtocolService) Add(addReq schema.UserProtocolAddReq, adminId string) (createId string, e error) {
 	var obj model.UserProtocol
 	convert_util.Copy(&obj, addReq)
 	obj.CreateBy = adminId

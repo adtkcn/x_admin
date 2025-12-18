@@ -9,17 +9,17 @@ type arrayUtil struct{}
 func (au arrayUtil) ListToTree(arr []map[string]interface{}, id string, pid string, child string) (mapList []interface{}) {
 	mapList = []interface{}{}
 	// 遍历以id_为key生成map
-	idValMap := make(map[uint]interface{})
+	idValMap := make(map[string]interface{})
 	for _, m := range arr {
 		if idVal, ok := m[id]; ok {
-			idValMap[idVal.(uint)] = m
+			idValMap[idVal.(string)] = m
 		}
 	}
 	// 遍历
 	for _, m := range arr {
 		// 获取父节点
 		if pidVal, ok := m[pid]; ok {
-			if pNode, pok := idValMap[pidVal.(uint)]; pok {
+			if pNode, pok := idValMap[pidVal.(string)]; pok {
 				// 有父节点则添加到父节点子集
 				if cVal, cok := pNode.(map[string]interface{})[child]; cok {
 					if cVal == nil {

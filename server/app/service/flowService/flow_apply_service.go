@@ -37,7 +37,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flowSchema.Fl
 	if listReq.TemplateId != "" {
 		dbModel = dbModel.Where("template_id = ?", listReq.TemplateId)
 	}
-	if listReq.ApplyUserId > 0 {
+	if listReq.ApplyUserId != "" {
 		dbModel = dbModel.Where("apply_user_id = ?", listReq.ApplyUserId)
 	}
 	if listReq.ApplyUserNickname != "" {

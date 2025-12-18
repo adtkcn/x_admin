@@ -83,7 +83,7 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 	var Nickname = config.AdminConfig.GetNickname(c)
 	var AdminId = config.AdminConfig.GetAdminId(c)
 	addReq.ApplyUserNickname = Nickname
-	addReq.ApplyUserId = int(AdminId)
+	addReq.ApplyUserId = AdminId
 	addReq.Status = 1
 
 	response.CheckAndResp(c, flowService.ApplyService.Add(addReq))

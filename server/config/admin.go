@@ -39,8 +39,8 @@ var AdminConfig = adminConfig{
 		// "admin:system:logout", // 退出登录
 	},
 
-	// 管理员账号id
-	SuperAdminId: 1,
+	// 管理员账号id:1
+	SuperAdminId: "1",
 	// 管理员账号key
 	ReqAdminIdKey: "admin_id",
 	// 角色key
@@ -66,8 +66,8 @@ type adminConfig struct {
 	NotAuthUri []string
 	// 演示模式白名单
 	ShowWhitelistUri []string
-	// 管理员账号id
-	SuperAdminId uint
+	// 管理员账号id:1
+	SuperAdminId string
 	// 管理员账号key
 	ReqAdminIdKey string
 	// 角色key
@@ -78,12 +78,12 @@ type adminConfig struct {
 	ReqNicknameKey string
 }
 
-func (cnf adminConfig) GetAdminId(c *gin.Context) uint {
+func (cnf adminConfig) GetAdminId(c *gin.Context) string {
 	adminId, ok := c.Get(cnf.ReqAdminIdKey)
 	if !ok {
-		return 0
+		return ""
 	}
-	return adminId.(uint)
+	return adminId.(string)
 }
 
 func (cnf adminConfig) GetRoleId(c *gin.Context) string {

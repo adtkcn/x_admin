@@ -42,30 +42,30 @@ func (service monitorClientService) GetModel(listReq monitorSchema.MonitorClient
 	if listReq.ClientId != nil {
 		dbModel = dbModel.Where("client_id = ?", *listReq.ClientId)
 	}
-	if listReq.UserId != nil {
-		dbModel = dbModel.Where("user_id = ?", *listReq.UserId)
-	}
+	// if listReq.UserId != nil {
+	// 	dbModel = dbModel.Where("user_id = ?", *listReq.UserId)
+	// }
 	if listReq.Os != nil {
 		dbModel = dbModel.Where("os = ?", *listReq.Os)
 	}
 	if listReq.Browser != nil {
 		dbModel = dbModel.Where("browser = ?", *listReq.Browser)
 	}
-	if listReq.Country != nil {
-		dbModel = dbModel.Where("country = ?", *listReq.Country)
-	}
-	if listReq.Province != nil {
-		dbModel = dbModel.Where("province = ?", *listReq.Province)
-	}
-	if listReq.City != nil {
-		dbModel = dbModel.Where("city = ?", *listReq.City)
-	}
-	if listReq.Operator != nil {
-		dbModel = dbModel.Where("operator = ?", *listReq.Operator)
-	}
-	if listReq.Ip != nil {
-		dbModel = dbModel.Where("ip = ?", *listReq.Ip)
-	}
+	// if listReq.Country != nil {
+	// 	dbModel = dbModel.Where("country = ?", *listReq.Country)
+	// }
+	// if listReq.Province != nil {
+	// 	dbModel = dbModel.Where("province = ?", *listReq.Province)
+	// }
+	// if listReq.City != nil {
+	// 	dbModel = dbModel.Where("city = ?", *listReq.City)
+	// }
+	// if listReq.Operator != nil {
+	// 	dbModel = dbModel.Where("operator = ?", *listReq.Operator)
+	// }
+	// if listReq.Ip != nil {
+	// 	dbModel = dbModel.Where("ip = ?", *listReq.Ip)
+	// }
 
 	if listReq.Ua != nil {
 		dbModel = dbModel.Where("ua = ?", *listReq.Ua)
@@ -166,7 +166,7 @@ func (service monitorClientService) Detail(Id string) (res monitorSchema.Monitor
 // ErrorUser 监控-客户端信息详情
 func (service monitorClientService) ErrorUsers(error_id string) (res []monitorSchema.MonitorClientResp, e error) {
 	var obj = []monitorSchema.MonitorClientResp{}
-	service.db.Raw("SELECT client.*,list.width,list.height,list.create_time AS create_time from x_monitor_error_list as list right join x_monitor_client as client on client.id = list.cid where list.eid = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
+	service.db.Raw("SELECT client.os,client.browser,client.ua,list.* from x_monitor_error_list as list left join x_monitor_client as client on client.client_id = list.client_id where list.error_id = ? Order by list.id DESC LIMIT 0,20", error_id).Scan(&obj)
 
 	convert_util.Copy(&res, obj)
 	return

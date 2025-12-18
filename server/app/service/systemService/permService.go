@@ -1,7 +1,6 @@
 package systemService
 
 import (
-	"strconv"
 	"strings"
 	"x_admin/config"
 	"x_admin/core"
@@ -26,16 +25,16 @@ type systemAuthPermService struct {
 }
 
 // SelectMenuIdsByRoleId 根据角色ID获取菜单ID
-func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId uint) (menuIds []uint, e error) {
+func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId string) (menuIds []string, e error) {
 	var role system_model.SystemAuthRole
 	err := service.db.Where("id = ? AND is_disable = ?", roleId, 0).Limit(1).First(&role).Error
 	if e = response.CheckErr(err, "角色不存在"); e != nil {
-		return []uint{}, e
+		return []string{}, e
 	}
 	var perms []system_model.SystemAuthPerm
 	err = service.db.Where("role_id = ?", role.ID).Find(&perms).Error
 	if e = response.CheckErr(err, "查询角色的菜单失败"); e != nil {
-		return []uint{}, e
+		return []string{}, e
 	}
 	for _, perm := range perms {
 		menuIds = append(menuIds, perm.MenuId)
@@ -44,13 +43,13 @@ func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId uint) (menuIds
 }
 
 // CacheRoleMenusByRoleId 缓存角色菜单
-func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e error) {
+func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId string) (e error) {
 	var perms []system_model.SystemAuthPerm
 	err := service.db.Where("role_id = ?", roleId).Find(&perms).Error
 	if e = response.CheckErr(err, "查询角色的菜单失败"); e != nil {
 		return
 	}
-	var menuIds []uint
+	var menuIds []string
 	for _, perm := range perms {
 		menuIds = append(menuIds, perm.MenuId)
 	}
@@ -67,12 +66,12 @@ func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId uint) (e erro
 			menuArray = append(menuArray, strings.Trim(menu.Perms, ""))
 		}
 	}
-	util.RedisUtil.HSet(config.AdminConfig.BackstageRolesKey, strconv.FormatUint(uint64(roleId), 10), strings.Join(menuArray, ","), 0)
+	util.RedisUtil.HSet(config.AdminConfig.BackstageRolesKey, roleId, strings.Join(menuArray, ","), 0)
 	return
 }
 
 // BatchSaveByMenuIds 批量写入角色菜单
-func (service systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds string, db *gorm.DB) (e error) {
+func (service systemAuthPermService) BatchSaveByMenuIds(roleId string, menuIds string, db *gorm.DB) (e error) {
 	if menuIds == "" {
 		return
 	}
@@ -81,9 +80,9 @@ func (service systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds str
 	}
 	err := db.Transaction(func(tx *gorm.DB) error {
 		var perms []system_model.SystemAuthPerm
-		for _, menuIdStr := range strings.Split(menuIds, ",") {
-			menuId, _ := strconv.ParseUint(menuIdStr, 10, 32)
-			perms = append(perms, system_model.SystemAuthPerm{ID: util.ToolsUtil.MakeUuidV7(), RoleId: roleId, MenuId: uint(menuId)})
+		for _, menuId := range strings.Split(menuIds, ",") {
+
+			perms = append(perms, system_model.SystemAuthPerm{ID: util.ToolsUtil.MakeUuidV7(), RoleId: roleId, MenuId: menuId})
 		}
 		txErr := tx.Create(&perms).Error
 		var te = response.CheckErr(txErr, "BatchSaveByMenuIds Create in tx err")
@@ -94,7 +93,7 @@ func (service systemAuthPermService) BatchSaveByMenuIds(roleId uint, menuIds str
 }
 
 // BatchDeleteByRoleId 批量删除角色菜单(根据角色ID)
-func (service systemAuthPermService) BatchDeleteByRoleId(roleId uint, db *gorm.DB) (e error) {
+func (service systemAuthPermService) BatchDeleteByRoleId(roleId string, db *gorm.DB) (e error) {
 	if db == nil {
 		db = service.db
 	}
@@ -104,7 +103,7 @@ func (service systemAuthPermService) BatchDeleteByRoleId(roleId uint, db *gorm.D
 }
 
 // BatchDeleteByMenuId 批量删除角色菜单(根据菜单ID)
-func (service systemAuthPermService) BatchDeleteByMenuId(menuId uint) (e error) {
+func (service systemAuthPermService) BatchDeleteByMenuId(menuId string) (e error) {
 	err := service.db.Delete(&system_model.SystemAuthPerm{}, "menu_id = ?", menuId).Error
 	e = response.CheckErr(err, "BatchDeleteByMenuId Delete err")
 	return

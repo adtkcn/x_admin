@@ -97,6 +97,7 @@ class Base {
       ...data,
       ProjectKey: this.Pid,
       ClientId: this.client_id,
+      UserId: this.Uid,
     });
 
     if (this.MessageList.length > 5) {

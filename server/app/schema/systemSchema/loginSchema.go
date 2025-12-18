@@ -28,7 +28,7 @@ type SystemLogoutReq struct {
 
 // SystemLogLoginResp 登录日志返回信息
 type SystemLogLoginResp struct {
-	ID         uint          `json:"id" structs:"id"`                 // 主键
+	ID         string        `json:"id" structs:"id"`                 // 主键
 	Username   string        `json:"username" structs:"username"`     // 登录账号
 	Ip         string        `json:"ip" structs:"ip"`                 // 来源IP
 	Os         string        `json:"os" structs:"os"`                 // 操作系统

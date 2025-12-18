@@ -2,7 +2,6 @@ package systemController
 
 import (
 	"net/http"
-	"strconv"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/config"
@@ -183,19 +182,12 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 // @Success		200		{object}	response.Response	"{"code": 200, "data": []}"
 // @Router			/system/admin/ListByDeptId/{deptId} [get]
 func (ah AdminHandler) ListByDeptId(c *gin.Context) {
-	deptIdStr, bool := c.GetQuery("deptId")
+	deptId, bool := c.GetQuery("deptId")
 	if !bool {
 		response.FailWithMsg(c, response.Failed, "deptId不能为空")
 		return
 	}
-	deptId, err := strconv.Atoi(deptIdStr)
-	if err != nil {
-		response.FailWithMsg(c, response.Failed, "deptId参数错误")
-		return
-	}
-	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &deptId)) {
-	// return
-	// }
-	res, err := systemService.AdminService.ListByUserIdOrDeptIdPostId(0, deptId, 0)
+
+	res, err := systemService.AdminService.ListByUserIdOrDeptIdPostId("", deptId, "")
 	response.CheckAndRespWithData(c, res, err)
 }

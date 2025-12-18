@@ -28,7 +28,7 @@ type albumService struct {
 }
 
 // AlbumList 相册文件列表
-func (albSrv albumService) AlbumList(adminId uint, page request.PageReq, listReq commonSchema.CommonAlbumListReq) (res response.PageResp, e error) {
+func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listReq commonSchema.CommonAlbumListReq) (res response.PageResp, e error) {
 
 	// 分页信息
 	limit := page.PageSize
@@ -154,7 +154,7 @@ func (albSrv albumService) AlbumDel(ids []string) (e error) {
 }
 
 // CateList 相册分类列表
-func (albSrv albumService) CateList(adminId uint, listReq commonSchema.CommonCateListReq) (mapList []commonSchema.CommonCateListResp, e error) {
+func (albSrv albumService) CateList(adminId string, listReq commonSchema.CommonCateListReq) (mapList []commonSchema.CommonCateListResp, e error) {
 
 	var cates []common_model.AlbumCate
 	cateModel := albSrv.db.Where("is_delete = ?", 0).Order("id desc")
@@ -175,7 +175,7 @@ func (albSrv albumService) CateList(adminId uint, listReq commonSchema.CommonCat
 }
 
 // CateAdd 分类新增
-func (albSrv albumService) CateAdd(adminId uint, addReq commonSchema.CommonCateAddReq) (e error) {
+func (albSrv albumService) CateAdd(adminId string, addReq commonSchema.CommonCateAddReq) (e error) {
 
 	var cate common_model.AlbumCate
 	// 查询分类是否存在

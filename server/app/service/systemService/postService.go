@@ -11,15 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type ISystemAuthPostService interface {
-// 	All() (res []SystemAuthPostResp, e error)
-// 	List(page request.PageReq, listReq SystemAuthPostListReq) (res response.PageResp, e error)
-// 	Detail(id uint) (res SystemAuthPostResp, e error)
-// 	Add(addReq SystemAuthPostAddReq) (e error)
-// 	Edit(editReq SystemAuthPostEditReq) (e error)
-// 	Del(id uint) (e error)
-// }
-
 var PostService = NewSystemAuthPostService()
 
 // NewSystemAuthPostService 初始化
@@ -84,7 +75,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq systemSc
 }
 
 // Detail 部门详情
-func (service systemAuthPostService) Detail(id uint) (res systemSchema.SystemAuthPostResp, e error) {
+func (service systemAuthPostService) Detail(id string) (res systemSchema.SystemAuthPostResp, e error) {
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&post).Error
 	if e = response.CheckErrDBNotRecord(err, "岗位不存在!"); e != nil {
@@ -139,7 +130,7 @@ func (service systemAuthPostService) Edit(editReq systemSchema.SystemAuthPostEdi
 }
 
 // Del 部门删除
-func (service systemAuthPostService) Del(id uint) (e error) {
+func (service systemAuthPostService) Del(id string) (e error) {
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&post).Error
 	// 校验

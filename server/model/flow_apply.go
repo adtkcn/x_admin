@@ -12,7 +12,7 @@ import (
 type FlowApply struct {
 	Id                  string                `gorm:"primarykey;type:char(36);comment:'申请id'"` // 申请id
 	TemplateId          string                `gorm:"comment:'模板'"`                            // 模板
-	ApplyUserId         int                   `gorm:"comment:'申请人id'"`                         // 申请人id
+	ApplyUserId         string                `gorm:"comment:'申请人id'"`                         // 申请人id
 	ApplyUserNickname   string                `gorm:"comment:'申请人昵称'"`                         // 申请人昵称
 	FlowName            string                `gorm:"comment:'流程名称'"`                          // 流程名称
 	FlowGroup           int                   `gorm:"comment:'流程分类'"`                          // 流程分类

@@ -11,15 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type ISystemAuthDeptService interface {
-// 	All() (res []systemSchema.SystemAuthDeptResp, e error)
-// 	List(listReq SystemAuthDeptListReq) (mapList []interface{}, e error)
-// 	Detail(id uint) (res systemSchema.SystemAuthDeptResp, e error)
-// 	Add(addReq SystemAuthDeptAddReq) (e error)
-// 	Edit(editReq SystemAuthDeptEditReq) (e error)
-// 	Del(id uint) (e error)
-// }
-
 var DeptService = NewSystemAuthDeptService()
 
 // NewSystemAuthDeptService 初始化
@@ -64,7 +55,7 @@ func (service systemAuthDeptService) List(listReq systemSchema.SystemAuthDeptLis
 }
 
 // Detail 部门详情
-func (service systemAuthDeptService) Detail(id uint) (res systemSchema.SystemAuthDeptResp, e error) {
+func (service systemAuthDeptService) Detail(id string) (res systemSchema.SystemAuthDeptResp, e error) {
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dept).Error
 	if e = response.CheckErrDBNotRecord(err, "部门已不存在!"); e != nil {
@@ -79,8 +70,8 @@ func (service systemAuthDeptService) Detail(id uint) (res systemSchema.SystemAut
 
 // Add 部门新增
 func (service systemAuthDeptService) Add(addReq systemSchema.SystemAuthDeptAddReq) (e error) {
-	if addReq.Pid == 0 {
-		r := service.db.Where("pid = ? AND is_delete = ?", 0, 0).Limit(1).Find(&system_model.SystemAuthDept{})
+	if addReq.Pid == "" {
+		r := service.db.Where("pid = ? AND is_delete = ?", "", 0).Limit(1).Find(&system_model.SystemAuthDept{})
 		if e = response.CheckErr(r.Error, "Add Find err"); e != nil {
 			return
 		}
@@ -106,7 +97,7 @@ func (service systemAuthDeptService) Edit(editReq systemSchema.SystemAuthDeptEdi
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
-	if dept.Pid == 0 && editReq.Pid > 0 {
+	if dept.Pid == "" && editReq.Pid != "" {
 		return response.AssertArgumentError.SetMessage("顶级部门不能修改上级!")
 	}
 	if editReq.ID == editReq.Pid {
@@ -120,7 +111,7 @@ func (service systemAuthDeptService) Edit(editReq systemSchema.SystemAuthDeptEdi
 }
 
 // Del 部门删除
-func (service systemAuthDeptService) Del(id uint) (e error) {
+func (service systemAuthDeptService) Del(id string) (e error) {
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dept).Error
 	// 校验
@@ -130,7 +121,7 @@ func (service systemAuthDeptService) Del(id uint) (e error) {
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
 		return
 	}
-	if dept.Pid == 0 {
+	if dept.Pid == "" {
 		return response.AssertArgumentError.SetMessage("顶级部门不能删除!")
 	}
 	r := service.db.Where("pid = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthDept{})

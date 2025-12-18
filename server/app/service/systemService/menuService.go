@@ -13,15 +13,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type ISystemAuthMenuService interface {
-// 	SelectMenuByRoleId(c *gin.Context, roleId uint) (mapList []interface{}, e error)
-// 	List() (res []interface{}, e error)
-// 	Detail(id uint) (res SystemAuthMenuResp, e error)
-// 	Add(addReq SystemAuthMenuAddReq) (e error)
-// 	Edit(editReq SystemAuthMenuEditReq) (e error)
-// 	Del(id uint) (e error)
-// }
-
 var MenuService = NewSystemAuthMenuService()
 
 // NewSystemAuthMenuService 初始化
@@ -36,17 +27,17 @@ type systemAuthMenuService struct {
 }
 
 // SelectMenuByRoleId 根据角色ID获取菜单
-func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId uint) (mapList []interface{}, e error) {
+func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId string) (mapList []interface{}, e error) {
 	adminId := config.AdminConfig.GetAdminId(c)
-	var menuIds []uint
+	var menuIds []string
 	// 超管
 	if adminId == config.AdminConfig.SuperAdminId {
-		menuIds = []uint{0}
+		menuIds = []string{"0"}
 	} else if menuIds, e = PermService.SelectMenuIdsByRoleId(roleId); e != nil {
 		return
 	}
 	if len(menuIds) == 0 {
-		menuIds = []uint{0}
+		menuIds = []string{"0"}
 	}
 	chain := menuSrv.db.Where("menu_type in ? AND is_disable = ?", []string{"M", "C"}, 0)
 	if adminId != config.AdminConfig.SuperAdminId {
@@ -77,7 +68,7 @@ func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 }
 
 // Detail 菜单详情
-func (menuSrv systemAuthMenuService) Detail(id uint) (res systemSchema.SystemAuthMenuResp, e error) {
+func (menuSrv systemAuthMenuService) Detail(id string) (res systemSchema.SystemAuthMenuResp, e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
@@ -121,7 +112,7 @@ func (menuSrv systemAuthMenuService) Edit(editReq systemSchema.SystemAuthMenuEdi
 }
 
 // Del 删除菜单
-func (menuSrv systemAuthMenuService) Del(id uint) (e error) {
+func (menuSrv systemAuthMenuService) Del(id string) (e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
 	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {

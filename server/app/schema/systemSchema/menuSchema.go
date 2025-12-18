@@ -4,12 +4,12 @@ import "x_admin/core"
 
 // SystemAuthMenuDetailReq 菜单详情参数
 type SystemAuthMenuDetailReq struct {
-	ID uint `form:"id" binding:"required,gt=0"` // 主键
+	ID string `form:"id" binding:"required"` // 主键
 }
 
 // SystemAuthMenuAddReq 新增菜单参数
 type SystemAuthMenuAddReq struct {
-	Pid       uint   `form:"pid" binding:"gte=0"`                      // 上级菜单
+	Pid       string `form:"pid"`                                      // 上级菜单
 	MenuType  string `form:"menuType" binding:"oneof=M C A"`           // 权限类型: [M=目录, C=菜单, A=按钮]
 	MenuName  string `form:"menuName" binding:"required,min=1,max=30"` // 菜单名称
 	MenuIcon  string `form:"menuIcon" binding:"max=100"`               // 菜单图标
@@ -26,8 +26,8 @@ type SystemAuthMenuAddReq struct {
 
 // SystemAuthMenuEditReq 编辑菜单参数
 type SystemAuthMenuEditReq struct {
-	ID        uint   `form:"id" binding:"required,gt=0"`               // 主键
-	Pid       uint   `form:"pid" binding:"gte=0"`                      // 上级菜单
+	ID        string `form:"id" binding:"required"`                    // 主键
+	Pid       string `form:"pid"`                                      // 上级菜单
 	MenuType  string `form:"menuType" binding:"oneof=M C A"`           // 权限类型: [M=目录, C=菜单, A=按钮]
 	MenuName  string `form:"menuName" binding:"required,min=1,max=30"` // 菜单名称
 	MenuIcon  string `form:"menuIcon" binding:"max=100"`               // 菜单图标
@@ -44,13 +44,13 @@ type SystemAuthMenuEditReq struct {
 
 // SystemAuthMenuDelReq 删除菜单参数
 type SystemAuthMenuDelReq struct {
-	ID uint `form:"id" binding:"required,gt=0"` // 主键
+	ID string `form:"id" binding:"required"` // 主键
 }
 
 // SystemAuthMenuResp 系统菜单返回信息
 type SystemAuthMenuResp struct {
-	ID         uint                 `json:"id" structs:"id"`                       // 主键
-	Pid        uint                 `json:"pid" structs:"pid"`                     // 上级菜单
+	ID         string               `json:"id" structs:"id"`                       // 主键
+	Pid        string               `json:"pid" structs:"pid"`                     // 上级菜单
 	MenuType   string               `json:"menuType" structs:"menuType"`           // 权限类型: [M=目录, C=菜单, A=按钮]
 	MenuName   string               `json:"menuName" structs:"menuName"`           // 菜单名称
 	MenuIcon   string               `json:"menuIcon" structs:"menuIcon"`           // 菜单图标

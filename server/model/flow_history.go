@@ -15,11 +15,11 @@ type FlowHistory struct {
 
 	TemplateId string `gorm:"comment:'模板id'"` // 模板id
 
-	ApplyUserId int `gorm:"comment:'申请人id'"` // 申请人id
+	ApplyUserId string `gorm:"comment:'申请人id'"` // 申请人id
 
 	ApplyUserNickname string `gorm:"comment:'申请人昵称'"` // 申请人昵称
 
-	ApproverId int `gorm:"comment:'审批人id'"` // 审批人id
+	ApproverId string `gorm:"comment:'审批人id'"` // 审批人id
 
 	ApproverNickname string `gorm:"comment:'审批用户昵称'"` // 审批用户昵称
 

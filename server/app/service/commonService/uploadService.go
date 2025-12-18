@@ -24,7 +24,7 @@ type uploadService struct{}
 // UploadFile 上传
 // cid 分类id
 // AdminId 用户id
-func (upSrv uploadService) UploadFile(file *multipart.FileHeader, cid string, AdminId uint) (res commonSchema.CommonUploadFileResp, e error) {
+func (upSrv uploadService) UploadFile(file *multipart.FileHeader, cid string, adminId string) (res commonSchema.CommonUploadFileResp, e error) {
 	var upRes *plugin.UploadFile
 	if upRes, e = plugin.StorageDriver.Upload(file); e != nil {
 		return
@@ -45,7 +45,7 @@ func (upSrv uploadService) UploadFile(file *multipart.FileHeader, cid string, Ad
 
 	var addReq commonSchema.CommonAlbumAddReq
 	convert_util.Copy(&addReq, upRes)
-	addReq.AdminId = AdminId //管理员
+	addReq.AdminId = adminId //管理员
 	addReq.Cid = cid         // 分类id
 	addReq.Hash = md5
 

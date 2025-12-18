@@ -9,7 +9,7 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                <el-form-item label="上级部门" prop="pid" v-if="formData.pid !== 0">
+                <el-form-item label="上级部门" prop="pid" v-if="formData.pid !== '0'">
                     <el-tree-select
                         class="flex-1"
                         v-model="formData.pid"
@@ -41,7 +41,7 @@
                         placeholder="请选择上级部门"
                         @change="dutyChange"
                     >
-                        <el-option label="请先给管理员绑定部门" :value="0" />
+                        <el-option label="请先给管理员绑定部门" value="" />
 
                         <el-option
                             v-for="item in DeptUsers"
@@ -85,9 +85,9 @@ const popupTitle = computed(() => {
 })
 const formData = reactive({
     id: '',
-    pid: '' as string | number,
+    pid: '' as string,
     name: '',
-    dutyId: 0,
+    dutyId: '',
     duty: '',
     mobile: '',
     sort: 0,
@@ -95,11 +95,11 @@ const formData = reactive({
 })
 const DeptUsers = ref([])
 // 部门下的管理员
-async function getDeptUsers(deptId: number) {
+async function getDeptUsers(deptId: string) {
     const users = await adminListByDeptId({ deptId: deptId })
     DeptUsers.value = users
 }
-function dutyChange(id: number) {
+function dutyChange(id: string) {
     console.log('params', id)
     if (id) {
         const duty = DeptUsers.value.find((item) => item.id == id)

@@ -3,7 +3,6 @@ package controller
 import (
 	"log"
 	"net/http"
-	"strconv"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/util"
@@ -31,7 +30,7 @@ func WsHandler(c *gin.Context) {
 	// 从查询参数获取用户ID和房间ID（实际项目中应通过认证获取）
 	var adminId = config.AdminConfig.GetAdminId(c)
 	roomID := c.Query("room")
-	if adminId == 0 {
+	if adminId == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "adminId is required"})
 		return
 	}
@@ -42,7 +41,7 @@ func WsHandler(c *gin.Context) {
 		return
 	}
 
-	client := ws_util.NewClient(uuid, strconv.Itoa(int(adminId)), roomID, conn, core.Ws)
+	client := ws_util.NewClient(uuid, adminId, roomID, conn, core.Ws)
 	core.Ws.Register <- client
 
 	// 启动读写协程

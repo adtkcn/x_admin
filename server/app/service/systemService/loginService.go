@@ -3,7 +3,6 @@ package systemService
 import (
 	"errors"
 	"runtime/debug"
-	"strconv"
 
 	"x_admin/app/schema/systemSchema"
 	"x_admin/config"
@@ -34,21 +33,21 @@ type systemLoginService struct {
 func (loginSrv systemLoginService) Login(c *gin.Context, req *systemSchema.SystemLoginReq) (res systemSchema.SystemLoginResp, e error) {
 	sysAdmin, err := AdminService.FindByUsername(req.Username)
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		if e = loginSrv.RecordLoginLog(c, 0, req.Username, response.LoginAccountError.Msg()); e != nil {
+		if e = loginSrv.RecordLoginLog(c, "", req.Username, response.LoginAccountError.Msg()); e != nil {
 			return
 		}
 		e = response.LoginAccountError
 		return
 	} else if err != nil {
 		core.Logger.Errorf("Login FindByUsername err: err=[%+v]", err)
-		if e = loginSrv.RecordLoginLog(c, 0, req.Username, response.Failed.Msg()); e != nil {
+		if e = loginSrv.RecordLoginLog(c, "", req.Username, response.Failed.Msg()); e != nil {
 			return
 		}
 		e = response.Failed
 		return
 	}
 	if sysAdmin.IsDelete == 1 {
-		if e = loginSrv.RecordLoginLog(c, 0, req.Username, response.LoginAccountError.Msg()); e != nil {
+		if e = loginSrv.RecordLoginLog(c, "", req.Username, response.LoginAccountError.Msg()); e != nil {
 			return
 		}
 		e = response.LoginAccountError
@@ -84,7 +83,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *systemSchema.Syste
 		}
 	}()
 	token := util.ToolsUtil.MakeUuidV7()
-	adminIdStr := strconv.FormatUint(uint64(sysAdmin.ID), 10)
+	adminIdStr := sysAdmin.ID
 
 	// 缓存登录信息
 	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, adminIdStr, 7200)
@@ -116,7 +115,7 @@ func (loginSrv systemLoginService) Logout(req *systemSchema.SystemLogoutReq) (e 
 }
 
 // RecordLoginLog 记录登录日志
-func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId uint, username string, errStr string) (e error) {
+func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId string, username string, errStr string) (e error) {
 	ua := util.UAParser.Parse(c.GetHeader("user-agent"))
 	var status uint8
 	if errStr == "" {

@@ -7,7 +7,7 @@
                 :model="queryParams"
                 :inline="true"
                 label-width="90px"
-                label-position="left"
+                label-position="right"
             >
                 <el-form-item label="项目" prop="ProjectKey" class="w-[270px]">
                     <el-select
@@ -27,16 +27,16 @@
                 <!-- <el-form-item label="客户端id" prop="ClientId" class="w-[270px]">
                     <el-input v-model="queryParams.ClientId" />
                 </el-form-item> -->
-                <el-form-item label="用户id" prop="UserId" class="w-[270px]">
+                <!-- <el-form-item label="用户id" prop="UserId" class="w-[270px]">
                     <el-input v-model="queryParams.UserId" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="系统" prop="Os" class="w-[270px]">
                     <el-input v-model="queryParams.Os" />
                 </el-form-item>
                 <el-form-item label="浏览器" prop="Browser" class="w-[270px]">
                     <el-input v-model="queryParams.Browser" />
                 </el-form-item>
-                <el-form-item label="国家" prop="Country" class="w-[270px]">
+                <!-- <el-form-item label="国家" prop="Country" class="w-[270px]">
                     <el-input v-model="queryParams.Country" />
                 </el-form-item>
                 <el-form-item label="省份" prop="Province" class="w-[270px]">
@@ -50,7 +50,7 @@
                 </el-form-item>
                 <el-form-item label="ip" prop="Ip" class="w-[270px]">
                     <el-input v-model="queryParams.Ip" />
-                </el-form-item>
+                </el-form-item> -->
                 <!-- <el-form-item label="ua记录" prop="Ua" class="w-[270px]">
                     <el-input v-model="queryParams.Ua" />
                 </el-form-item> -->
@@ -96,8 +96,8 @@
                         />
                     </template>
                 </el-table-column>
-                <!-- <el-table-column label="客户端id" prop="ClientId" min-width="130" /> -->
-                <el-table-column label="用户id" prop="UserId">
+                <el-table-column label="客户端id" prop="ClientId" min-width="130" />
+                <!-- <el-table-column label="客户端ID：" prop="UserId">
                     <template #default="{ row }">
                         <el-popover
                             placement="top-start"
@@ -106,13 +106,13 @@
                             :content="row.ClientId"
                         >
                             <template #reference>
-                                <el-link type="primary">{{ row.UserId }}</el-link>
+                                <el-link type="primary">{{ row.UserId || '无' }}</el-link>
                             </template>
                             <div>用 户 ID ：{{ row.UserId }}</div>
                             <div>客户端ID：{{ row.ClientId }}</div>
                         </el-popover>
                     </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <el-table-column label="浏览器" prop="Browser" min-width="150">
                     <template #default="{ row }">
@@ -129,16 +129,16 @@
                         </el-popover>
                     </template>
                 </el-table-column>
-                <el-table-column label="IP" prop="Ip" width="145" />
+                <!-- <el-table-column label="IP" prop="Ip" width="145" />
                 <el-table-column label="区域" min-width="150">
                     <template #default="{ row }">
                         {{ row.Country }}{{ row.Province }}{{ row.City }}
                     </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <!-- <el-table-column label="省份" prop="Province" />
                 <el-table-column label="城市" prop="City" /> -->
-                <el-table-column label="运营商" prop="Operator" />
+                <!-- <el-table-column label="运营商" prop="Operator" /> -->
 
                 <!-- <el-table-column label="ua记录" prop="Ua" min-width="380" /> -->
                 <el-table-column label="创建时间" prop="CreateTime" width="180" />

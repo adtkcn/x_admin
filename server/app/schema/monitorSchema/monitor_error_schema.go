@@ -22,6 +22,7 @@ type MonitorErrorListReq struct {
 type MonitorErrorAddReq struct {
 	ProjectKey string       // 项目key
 	ClientId   string       // sdk生成的客户端id
+	UserId     string       // 用户id
 	EventType  *string      // 事件类型
 	Path       *string      // URL地址
 	Message    *string      // 错误消息

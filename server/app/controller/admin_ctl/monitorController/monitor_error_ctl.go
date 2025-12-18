@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"x_admin/app/schema/monitorSchema"
 	. "x_admin/app/schema/monitorSchema"
 	"x_admin/app/service/monitorService"
 	"x_admin/core/request"
@@ -116,12 +117,28 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 	var addReq []MonitorErrorAddReq
 	json.Unmarshal([]byte(data), &addReq)
 
-	// if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
-	// 	return
-	// }
+	ip := c.ClientIP()
+	regionInfo := util.IpUtil.Parse(ip)
+
 	for i := 0; i < len(addReq); i++ {
-		monitorService.MonitorErrorService.Add(addReq[i])
+		var ListAddReq = monitorSchema.MonitorErrorListAddReq{
+			ClientId: addReq[i].ClientId,
+			UserId:   addReq[i].UserId,
+			Width:    addReq[i].Width,
+			Height:   addReq[i].Height,
+		}
+		// if ip != "" && ip != "127.0.0.1" {
+		// regionInfo := util.IpUtil.Parse("118.24.157.190")
+
+		ListAddReq.Ip = ip
+		ListAddReq.City = regionInfo.City
+		ListAddReq.Country = regionInfo.Country
+		ListAddReq.Operator = regionInfo.Operator
+		ListAddReq.Province = regionInfo.Province
+		// }
+		monitorService.MonitorErrorService.Add(addReq[i], ListAddReq)
 	}
+
 	c.Data(200, "image/gif", img_util.EmptyGif())
 }
 
