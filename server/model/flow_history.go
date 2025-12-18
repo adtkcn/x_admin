@@ -1,14 +1,19 @@
 package model
 
-import "x_admin/core"
+import (
+	"x_admin/core"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 // FlowHistory 流程历史实体
 type FlowHistory struct {
-	Id int `gorm:"primarykey;comment:'历史id'"` // 历史id
+	Id string `gorm:"primarykey;type:char(36);comment:'历史id'"` // 历史id
 
-	ApplyId int `gorm:"comment:'申请id'"` // 申请id
+	ApplyId string `gorm:"comment:'申请id'"` // 申请id
 
-	TemplateId int `gorm:"comment:'模板id'"` // 模板id
+	TemplateId string `gorm:"comment:'模板id'"` // 模板id
 
 	ApplyUserId int `gorm:"comment:'申请人id'"` // 申请人id
 
@@ -34,4 +39,14 @@ type FlowHistory struct {
 
 	DeleteTime core.NullTime `gorm:"default:null;comment:'删除时间'"` // 删除时间
 
+}
+
+// 自动在创建时设置 UUIDv7
+func (u *FlowHistory) BeforeCreate(tx *gorm.DB) error {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	u.Id = id.String()
+	return nil
 }

@@ -4,9 +4,9 @@ import "x_admin/core"
 
 // FlowHistoryListReq 流程历史列表参数
 type FlowHistoryListReq struct {
-	ApplyId           int    `form:"applyId"`           // 申请id
-	TemplateId        int    `form:"templateId"`        // 模板id
-	ApplyUserId       int    `form:"applyUserId"`       // 申请人id
+	ApplyId           string `form:"applyId"`           // 申请id
+	TemplateId        string `form:"templateId"`        // 模板id
+	ApplyUserId       string `form:"applyUserId"`       // 申请人id
 	ApplyUserNickname string `form:"applyUserNickname"` // 申请人昵称
 	ApproverId        int    `form:"approverId"`        // 审批人id
 	ApproverNickname  string `form:"approverNickname"`  // 审批用户昵称
@@ -20,13 +20,13 @@ type FlowHistoryListReq struct {
 
 // FlowHistoryDetailReq 流程历史详情参数
 type FlowHistoryDetailReq struct {
-	Id int `form:"id"` // 历史id
+	Id string `form:"id"` // 历史id
 }
 
 // FlowHistoryAddReq 流程历史新增参数
 type FlowHistoryAddReq struct {
-	ApplyId           int    `form:"applyId"`           // 申请id
-	TemplateId        int    `form:"templateId"`        // 模板id
+	ApplyId           string `form:"applyId"`           // 申请id
+	TemplateId        string `form:"templateId"`        // 模板id
 	ApplyUserId       int    `form:"applyUserId"`       // 申请人id
 	ApplyUserNickname string `form:"applyUserNickname"` // 申请人昵称
 	ApproverId        int    `form:"approverId"`        // 审批人id
@@ -41,9 +41,9 @@ type FlowHistoryAddReq struct {
 
 // FlowHistoryEditReq 流程历史新增参数
 type FlowHistoryEditReq struct {
-	Id                int    `form:"id"`                // 历史id
-	ApplyId           int    `form:"applyId"`           // 申请id
-	TemplateId        int    `form:"templateId"`        // 模板id
+	Id                string `form:"id"`                // 历史id
+	ApplyId           string `form:"applyId"`           // 申请id
+	TemplateId        string `form:"templateId"`        // 模板id
 	ApplyUserId       int    `form:"applyUserId"`       // 申请人id
 	ApplyUserNickname string `form:"applyUserNickname"` // 申请人昵称
 	ApproverId        int    `form:"approverId"`        // 审批人id
@@ -63,9 +63,9 @@ type FlowHistoryDelReq struct {
 
 // FlowHistoryResp 流程历史返回信息
 type FlowHistoryResp struct {
-	Id                int           `json:"id" structs:"id"`                               // 历史id
-	ApplyId           int           `json:"applyId" structs:"applyId"`                     // 申请id
-	TemplateId        int           `json:"templateId" structs:"templateId"`               // 模板id
+	Id                string        `json:"id" structs:"id"`                               // 历史id
+	ApplyId           string        `json:"applyId" structs:"applyId"`                     // 申请id
+	TemplateId        string        `json:"templateId" structs:"templateId"`               // 模板id
 	ApplyUserId       int           `json:"applyUserId" structs:"applyUserId"`             // 申请人id
 	ApplyUserNickname string        `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
 	ApproverId        int           `json:"approverId" structs:"approverId"`               // 审批人id
@@ -104,13 +104,13 @@ type FlowTree struct {
 	Children *[]FlowTree `json:"children"`
 }
 type NextNodeReq struct {
-	ApplyId int `form:"applyId"` // 申请id
+	ApplyId string `form:"applyId"` // 申请id
 	// CurrentNodeId   string `form:"currentNodeId"` // 流程里的节点id
 	// FormValue       string `form:"formValue"`
 	// NextNodeAdminId int `form:"nextNodeAdminId"` // 下一个节点的审批用户id
 }
 type PassReq struct {
-	ApplyId int `form:"applyId"` // 申请id
+	ApplyId string `form:"applyId"` // 申请id
 
 	// CurrentNodeId   string `form:"currentNodeId"` // 流程里的节点id
 	// FormValue       string `form:"formValue"`
@@ -118,8 +118,8 @@ type PassReq struct {
 	PassRemark      string `form:"passRemark"`      // 通过备注
 }
 type BackReq struct {
-	ApplyId int `form:"applyId"` // 申请id
+	ApplyId string `form:"applyId"` // 申请id
 	// Type      int    `form:"type"`      //驳回类型：1申请人，2审批节点
-	HistoryId int    `form:"historyId"` //审批节点
+	HistoryId string `form:"historyId"` //审批节点
 	Remark    string `form:"Remark"`    // 备注
 }

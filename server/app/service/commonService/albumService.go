@@ -38,7 +38,7 @@ func (albSrv albumService) AlbumList(adminId uint, page request.PageReq, listReq
 
 	albumModel = albumModel.Where("admin_id = ?", adminId)
 
-	if listReq.Cid > 0 {
+	if listReq.Cid != "" && listReq.Cid != "0" {
 		albumModel = albumModel.Where("cid = ?", listReq.Cid)
 	}
 	if listReq.Name != "" {
@@ -82,7 +82,7 @@ func (albSrv albumService) AlbumList(adminId uint, page request.PageReq, listReq
 }
 
 // AlbumRename 相册文件重命名
-func (albSrv albumService) AlbumRename(id uint, name string) (e error) {
+func (albSrv albumService) AlbumRename(id string, name string) (e error) {
 	var album common_model.Album
 	err := albSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&album).Error
 	if e = response.CheckErrDBNotRecord(err, "文件丢失！"); e != nil {
@@ -98,7 +98,7 @@ func (albSrv albumService) AlbumRename(id uint, name string) (e error) {
 }
 
 // AlbumMove 相册文件移动
-func (albSrv albumService) AlbumMove(ids []uint, cid int) (e error) {
+func (albSrv albumService) AlbumMove(ids []string, cid string) (e error) {
 	var albums []common_model.Album
 	err := albSrv.db.Where("id in ? AND is_delete = ?", ids, 0).Find(&albums).Error
 	if e = response.CheckErr(err, "AlbumMove Find err"); e != nil {
@@ -107,7 +107,7 @@ func (albSrv albumService) AlbumMove(ids []uint, cid int) (e error) {
 	if len(albums) == 0 {
 		return response.AssertArgumentError.SetMessage("文件丢失！")
 	}
-	if cid > 0 {
+	if cid != "" {
 		err = albSrv.db.Where("id = ? AND is_delete = ?", cid, 0).Limit(1).First(&common_model.AlbumCate{}).Error
 		if e = response.CheckErrDBNotRecord(err, "类目已不存在！"); e != nil {
 			return
@@ -122,7 +122,7 @@ func (albSrv albumService) AlbumMove(ids []uint, cid int) (e error) {
 }
 
 // AlbumAdd 相册文件新增
-func (albSrv albumService) AlbumAdd(addReq commonSchema.CommonAlbumAddReq) (res uint, e error) {
+func (albSrv albumService) AlbumAdd(addReq commonSchema.CommonAlbumAddReq) (res string, e error) {
 	var alb common_model.Album
 	//var params map[string]interface{}
 	//if err := mapstructure.Decode(params, &alb); err != nil {
@@ -138,7 +138,7 @@ func (albSrv albumService) AlbumAdd(addReq commonSchema.CommonAlbumAddReq) (res 
 }
 
 // AlbumDel 相册文件删除
-func (albSrv albumService) AlbumDel(ids []uint) (e error) {
+func (albSrv albumService) AlbumDel(ids []string) (e error) {
 	var albums []common_model.Album
 	err := albSrv.db.Where("id in ? AND is_delete = ?", ids, 0).Find(&albums).Error
 	if e = response.CheckErr(err, "相册文件查找失败"); e != nil {
@@ -180,7 +180,7 @@ func (albSrv albumService) CateAdd(adminId uint, addReq commonSchema.CommonCateA
 	var cate common_model.AlbumCate
 	// 查询分类是否存在
 	albSrv.db.Where("admin_id = ? AND pid=? AND name = ? AND is_delete = ?", adminId, addReq.Pid, addReq.Name, 0).Limit(1).First(&cate)
-	if cate.ID > 0 {
+	if cate.ID != "" {
 		return response.AssertArgumentError.SetMessage("分类已存在！")
 	}
 
@@ -193,7 +193,7 @@ func (albSrv albumService) CateAdd(adminId uint, addReq commonSchema.CommonCateA
 }
 
 // CateRename 分类重命名
-func (albSrv albumService) CateRename(id uint, name string) (e error) {
+func (albSrv albumService) CateRename(id string, name string) (e error) {
 	var cate common_model.AlbumCate
 	err := albSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&cate).Error
 	if e = response.CheckErrDBNotRecord(err, "分类已不存在！"); e != nil {
@@ -205,7 +205,7 @@ func (albSrv albumService) CateRename(id uint, name string) (e error) {
 	var cate2 common_model.AlbumCate
 	// 查询分类是否存在
 	albSrv.db.Where("admin_id = ? AND pid=? AND name = ? AND is_delete = ? AND id <> ?", cate.AdminId, cate.Pid, name, 0, cate.ID).Limit(1).First(&cate2)
-	if cate2.ID > 0 {
+	if cate2.ID != "" {
 		return response.AssertArgumentError.SetMessage("分类“" + name + "”已存在！")
 	}
 
@@ -216,7 +216,7 @@ func (albSrv albumService) CateRename(id uint, name string) (e error) {
 }
 
 // CateDel 分类删除
-func (albSrv albumService) CateDel(id uint) (e error) {
+func (albSrv albumService) CateDel(id string) (e error) {
 	var cate common_model.AlbumCate
 	err := albSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&cate).Error
 	if e = response.CheckErrDBNotRecord(err, "分类已不存在！"); e != nil {

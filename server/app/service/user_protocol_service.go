@@ -144,9 +144,10 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 }
 
 // Add 用户协议新增
-func (service userProtocolService) Add(addReq schema.UserProtocolAddReq) (createId string, e error) {
+func (service userProtocolService) Add(addReq schema.UserProtocolAddReq, adminId uint) (createId string, e error) {
 	var obj model.UserProtocol
 	convert_util.Copy(&obj, addReq)
+	obj.CreateBy = adminId
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {

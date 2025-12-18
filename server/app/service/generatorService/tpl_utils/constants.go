@@ -36,9 +36,9 @@ var SqlConstants = sqlConstants{
 	//时间日期字段名
 	ColumnTimeName: []string{"create_time", "update_time", "delete_time", "start_time", "end_time", "client_time"},
 	//页面不需要插入字段
-	ColumnNameNotAdd: []string{"id", "is_delete", "create_time", "update_time", "delete_time"},
+	ColumnNameNotAdd: []string{"id", "is_delete", "create_time", "update_time", "delete_time", "created_by"},
 	//页面不需要编辑字段
-	ColumnNameNotEdit: []string{"is_delete", "create_time", "update_time", "delete_time"},
+	ColumnNameNotEdit: []string{"is_delete", "create_time", "update_time", "delete_time", "created_by"},
 	//页面不需要列表字段
 	ColumnNameNotList: []string{"id", "is_delete", "delete_time"},
 	//页面不需要查询字段

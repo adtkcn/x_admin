@@ -43,7 +43,7 @@ export function useCate() {
     const handleAddCate = async (value: string) => {
         await fileCateAdd({
             name: value,
-            pid: 0
+            pid: ''
         })
         getCateLists()
     }

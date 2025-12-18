@@ -4,7 +4,7 @@ import "x_admin/core"
 
 // FlowApplyListReq 申请流程列表参数
 type FlowApplyListReq struct {
-	TemplateId          int    `form:"templateId"`          // 模板
+	TemplateId          string `form:"templateId"`          // 模板
 	ApplyUserId         int    `form:"applyUserId"`         // 申请人id
 	ApplyUserNickname   string `form:"applyUserNickname"`   // 申请人昵称
 	FlowName            string `form:"flowName"`            // 流程名称
@@ -19,12 +19,12 @@ type FlowApplyListReq struct {
 
 // FlowApplyDetailReq 申请流程详情参数
 type FlowApplyDetailReq struct {
-	Id int `form:"id"` //
+	Id string `form:"id"` //
 }
 
 // FlowApplyAddReq 申请流程新增参数
 type FlowApplyAddReq struct {
-	TemplateId        int    `form:"templateId"`        // 模板
+	TemplateId        string `form:"templateId"`        // 模板
 	ApplyUserId       int    `form:"applyUserId"`       // 申请人id
 	ApplyUserNickname string `form:"applyUserNickname"` // 申请人昵称
 	FlowName          string `form:"flowName"`          // 流程名称
@@ -39,7 +39,7 @@ type FlowApplyAddReq struct {
 
 // FlowApplyEditReq 申请流程新增参数
 type FlowApplyEditReq struct {
-	Id int `form:"id"` //
+	Id string `form:"id"` //
 	// TemplateId          int    `form:"templateId"`          // 模板
 	// ApplyUserId         int    `form:"applyUserId"`         // 申请人id
 	// ApplyUserNickname   string `form:"applyUserNickname"`   // 申请人昵称
@@ -60,8 +60,8 @@ type FlowApplyDelReq struct {
 
 // FlowApplyResp 申请流程返回信息
 type FlowApplyResp struct {
-	Id                  int           `json:"id" structs:"id"`                               //
-	TemplateId          int           `json:"templateId" structs:"templateId"`               // 模板
+	Id                  string        `json:"id" structs:"id"`                               //
+	TemplateId          string        `json:"templateId" structs:"templateId"`               // 模板
 	ApplyUserId         int           `json:"applyUserId" structs:"applyUserId"`             // 申请人id
 	ApplyUserNickname   string        `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
 	FlowName            string        `json:"flowName" structs:"flowName"`                   // 流程名称

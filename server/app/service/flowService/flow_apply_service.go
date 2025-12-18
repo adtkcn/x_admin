@@ -34,7 +34,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flowSchema.Fl
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
 	dbModel := service.db.Model(&model.FlowApply{})
-	if listReq.TemplateId > 0 {
+	if listReq.TemplateId != "" {
 		dbModel = dbModel.Where("template_id = ?", listReq.TemplateId)
 	}
 	if listReq.ApplyUserId > 0 {
@@ -85,7 +85,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flowSchema.Fl
 }
 
 // Detail 申请流程详情
-func (service flowApplyService) Detail(id int) (res flowSchema.FlowApplyResp, e error) {
+func (service flowApplyService) Detail(id string) (res flowSchema.FlowApplyResp, e error) {
 	var obj model.FlowApply
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {

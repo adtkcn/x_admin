@@ -40,13 +40,13 @@ func (service flowHistoryService) List(page request.PageReq, listReq flowSchema.
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
 	dbModel := service.db.Model(&model.FlowHistory{})
-	if listReq.ApplyId > 0 {
+	if listReq.ApplyId != "" {
 		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
 	}
-	if listReq.TemplateId > 0 {
+	if listReq.TemplateId != "" {
 		dbModel = dbModel.Where("template_id = ?", listReq.TemplateId)
 	}
-	if listReq.ApplyUserId > 0 {
+	if listReq.ApplyUserId != "" {
 		dbModel = dbModel.Where("apply_user_id = ?", listReq.ApplyUserId)
 	}
 	if listReq.ApplyUserNickname != "" {
@@ -97,7 +97,7 @@ func (service flowHistoryService) ListAll(listReq flowSchema.FlowHistoryListReq)
 
 	// 查询
 	dbModel := service.db.Model(&model.FlowHistory{})
-	if listReq.ApplyId > 0 {
+	if listReq.ApplyId != "" {
 		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
 	}
 	if listReq.PassStatus > 0 {
@@ -117,7 +117,7 @@ func (service flowHistoryService) ListAll(listReq flowSchema.FlowHistoryListReq)
 }
 
 // Detail 流程历史详情
-func (service flowHistoryService) Detail(id int) (res flowSchema.FlowHistoryResp, e error) {
+func (service flowHistoryService) Detail(id string) (res flowSchema.FlowHistoryResp, e error) {
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
@@ -177,7 +177,7 @@ func (service flowHistoryService) Del(id int) (e error) {
 /**
 * 获取节点的审批用户
  */
-func (service flowHistoryService) GetApprover(ApplyId int) (res []systemSchema.SystemAuthAdminResp, e error) {
+func (service flowHistoryService) GetApprover(ApplyId string) (res []systemSchema.SystemAuthAdminResp, e error) {
 	nextNodes, applyDetail, _, err := service.GetNextNode(ApplyId)
 	if err != nil {
 		return nil, err
@@ -272,7 +272,7 @@ func (service flowHistoryService) Pass(pass flowSchema.PassReq) (e error) {
 	isEndTask := false  // 是否是最后一个节点
 
 	FormValue := applyDetail.FormValue
-	if LastHistory.Id != 0 {
+	if LastHistory.Id != "" {
 		FormValue = LastHistory.FormValue
 	}
 	var flows = []model.FlowHistory{}
@@ -333,7 +333,7 @@ func (service flowHistoryService) Pass(pass flowSchema.PassReq) (e error) {
 			return err
 		}
 		// LastHistory
-		if LastHistory.Id > 0 {
+		if LastHistory.Id != "" {
 			LastHistory.PassStatus = 2
 			LastHistory.PassRemark = pass.PassRemark
 			err = tx.Save(&LastHistory).Error
@@ -375,7 +375,7 @@ func (service flowHistoryService) Back(back flowSchema.BackReq) (e error) {
 	}
 
 	// 驳回到申请人，最后一条改驳回状态，驳回备注，新加一条
-	if back.HistoryId == 0 {
+	if back.HistoryId == "" {
 
 		var applyDetail, err = ApplyService.Detail(back.ApplyId)
 		if err != nil {
@@ -466,7 +466,7 @@ func (service flowHistoryService) Back(back flowSchema.BackReq) (e error) {
 /**
  * 获取下一批流程，直到审批或结束节点
  */
-func (service flowHistoryService) GetNextNode(ApplyId int) (res []flowSchema.FlowTree, apply flowSchema.FlowApplyResp, LastHistory model.FlowHistory, e error) {
+func (service flowHistoryService) GetNextNode(ApplyId string) (res []flowSchema.FlowTree, apply flowSchema.FlowApplyResp, LastHistory model.FlowHistory, e error) {
 	var applyDetail, err = ApplyService.Detail(ApplyId)
 
 	if e = response.CheckErr(err, "获取审批申请失败"); e != nil {

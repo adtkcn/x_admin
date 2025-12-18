@@ -7,6 +7,7 @@ import (
 	"time"
 	"x_admin/app/schema"
 	"x_admin/app/service"
+	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -107,7 +108,10 @@ func (hd *UserProtocolHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	createId, e := service.UserProtocolService.Add(addReq)
+	// 添加创建人
+	var adminId = config.AdminConfig.GetAdminId(c)
+
+	createId, e := service.UserProtocolService.Add(addReq, adminId)
 	response.CheckAndRespWithData(c, createId, e)
 }
 
