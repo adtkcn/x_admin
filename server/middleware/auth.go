@@ -42,7 +42,7 @@ func Auth(c *gin.Context) response.RespType {
 
 	// redis管理员信息不存在时缓存
 	if !util.RedisUtil.HExists(config.AdminConfig.BackstageManageKey, uid) {
-		err := systemService.AdminService.CacheAdminUserByUid(uid) //缓存管理员
+		err := systemService.AdminService.CacheAdminUserByUid(uid) //缓存管理员信息
 		if err != nil {
 			core.Logger.Errorf("缓存管理员失败: err=[%+v]", err)
 			return response.SystemError
@@ -59,7 +59,7 @@ func Auth(c *gin.Context) response.RespType {
 	}
 	if adminUser.IsDelete == 1 {
 		util.RedisUtil.Del(tokenKey)
-		util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey + uid)
+		util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey, uid)
 
 		return response.TokenInvalid
 	}
@@ -76,25 +76,23 @@ func Auth(c *gin.Context) response.RespType {
 
 	// 单次请求信息保存
 	c.Set(config.AdminConfig.ReqAdminIdKey, uid)
-	c.Set(config.AdminConfig.ReqRoleIdKey, adminUser.Role)
+	c.Set(config.AdminConfig.ReqRoleIdKey, adminUser.RoleId)
 	c.Set(config.AdminConfig.ReqUsernameKey, adminUser.Username)
 	c.Set(config.AdminConfig.ReqNicknameKey, adminUser.Nickname)
 
 	// 校验角色的权限，redis没有就重新查询
-	roleId := adminUser.Role
-	if roleId == "" {
-		core.Logger.Errorf("TokenAuth roleId is empty")
+	roleId := adminUser.RoleId
+	if roleId != "" {
+		if !util.RedisUtil.HExists(config.AdminConfig.BackstageRolesKey, roleId) {
 
-		return response.SystemError
-	}
-	if !util.RedisUtil.HExists(config.AdminConfig.BackstageRolesKey, roleId) {
-
-		err = systemService.PermService.CacheRoleMenusByRoleId(roleId)
-		if err != nil {
-			core.Logger.Errorf("TokenAuth CacheRoleMenusByRoleId err: err=[%+v]", err)
-			return response.SystemError
+			err = systemService.PermService.CacheRoleMenusByRoleId(roleId)
+			if err != nil {
+				core.Logger.Errorf("Auth 缓存角色失败 err: [%+v]", err)
+				return response.SystemError
+			}
 		}
 	}
+
 	return response.Success
 }
 

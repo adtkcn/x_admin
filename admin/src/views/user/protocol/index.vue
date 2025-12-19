@@ -50,7 +50,6 @@
                     v-perms="['admin:user_protocol:ImportFile']"
                     class="ml-3 mr-3"
                     :url="user_protocol_import_file"
-                    :data="{ cid: 0 }"
                     :ext="['xlsx']"
                     :show-progress="true"
                     @change="resetPage"

@@ -30,9 +30,10 @@ type menuHandler struct {
 
 // route 菜单路由
 func (mh menuHandler) route(c *gin.Context) {
+	adminId := config.AdminConfig.GetAdminId(c)
 	roleId := config.AdminConfig.GetRoleId(c)
 
-	res, err := systemService.MenuService.SelectMenuByRoleId(c, roleId)
+	res, err := systemService.MenuService.SelectMenuByRoleId(adminId, roleId)
 	response.CheckAndRespWithData(c, res, err)
 }
 

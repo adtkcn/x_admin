@@ -65,7 +65,12 @@ func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
 			e = response.ParamsValidError.SetData(err.Error())
 			return
 		}
-		e = response.ParamsValidError.SetData(errs.Translate(trans))
+		var mapInfo = errs.Translate(trans)
+		var msg = []string{}
+		for _, v := range mapInfo {
+			msg = append(msg, v)
+		}
+		e = response.ParamsValidError.SetData(msg)
 		return
 	}
 	return

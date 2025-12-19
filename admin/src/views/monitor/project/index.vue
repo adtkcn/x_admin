@@ -79,7 +79,6 @@
                     v-perms="['admin:monitor_project:ImportFile']"
                     class="ml-3 mr-3"
                     :url="monitor_project_import_file"
-                    :data="{ cid: 0 }"
                     :ext="['xlsx']"
                     :show-progress="true"
                     @change="resetPage"

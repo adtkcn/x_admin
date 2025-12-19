@@ -119,9 +119,9 @@ export default defineComponent({
                 feedback.msgError(response.message)
             }
         }
-        const handleError = (event: any, file: any) => {
+        const handleError = (error: Error, file: any) => {
             feedback.msgError(`${file.name}文件上传失败`)
-            uploadRefs.value?.abort(file)
+            // uploadRefs.value?.abort(file)
             visible.value = false
             emit('change')
             emit('error')

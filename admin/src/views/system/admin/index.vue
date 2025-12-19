@@ -9,7 +9,7 @@
                     <el-input v-model="formData.nickname" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="管理员角色" class="w-[280px]">
-                    <el-select v-model="formData.role" :empty-values="[null, undefined]">
+                    <el-select v-model="formData.roleId" :empty-values="[null, undefined]">
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in optionsData.role"
@@ -37,7 +37,6 @@
                 <upload
                     class="ml-3 mr-3"
                     :url="adminImportFile"
-                    :data="{ cid: 0 }"
                     :ext="['xlsx']"
                     :show-progress="true"
                     @change="resetPage"
@@ -67,7 +66,6 @@
                     max-height="100%"
                     :border="'inner'"
                 >
-                    <vxe-column title="ID" field="id" min-width="60" />
                     <vxe-column title="头像" width="80">
                         <template #default="{ row }">
                             <el-avatar :size="40" :src="row.avatar"></el-avatar>
@@ -138,14 +136,14 @@ import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 defineOptions({
-    name: 'admin'
+    name: 'SystemAdmin'
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 // 表单数据
 const formData = reactive<any>({
     username: '',
     nickname: '',
-    role: ''
+    roleId: ''
 })
 const showEdit = ref(false)
 const { pager, getLists, resetParams, resetPage } = usePaging({

@@ -36,7 +36,7 @@ type userProtocolService struct {
 // List 用户协议列表
 func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.UserProtocol{})
+	dbModel := service.db.Model(&model.UserProtocol{}).Preload("Created")
 	if listReq.Title.GetValue() != nil {
 		dbModel = dbModel.Where("title like ?", "%"+*listReq.Title.GetValue()+"%")
 	}
@@ -147,7 +147,7 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 func (service userProtocolService) Add(addReq schema.UserProtocolAddReq, adminId string) (createId string, e error) {
 	var obj model.UserProtocol
 	convert_util.Copy(&obj, addReq)
-	obj.CreateBy = adminId
+	obj.CreatedBy = adminId
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {

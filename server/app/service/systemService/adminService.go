@@ -53,8 +53,8 @@ func (adminSrv systemAuthAdminService) Self(adminId string) (res systemSchema.Sy
 		auths = append(auths, "*")
 	} else if adminId == "" {
 		return systemSchema.SystemAuthAdminSelfResp{}, response.SystemError.SetMessage("管理员id不能为空")
-	} else {
-		roleId := sysAdmin.Role
+	} else if sysAdmin.RoleId != "" {
+		roleId := sysAdmin.RoleId
 		var menuIds []string
 		if menuIds, e = PermService.SelectMenuIdsByRoleId(roleId); e != nil {
 			return
@@ -120,7 +120,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAut
 	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
 	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
 	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
-		fmt.Sprintf("LEFT JOIN %s ON admin.role = %s.id", roleTbName, roleTbName)).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.role_id = %s.id", roleTbName, roleTbName)).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
 	// 条件
@@ -130,8 +130,8 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAut
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
-	if listReq.Role != "" {
-		adminModel = adminModel.Where("role = ?", listReq.Role)
+	if listReq.RoleId != "" {
+		adminModel = adminModel.Where("role_id = ?", listReq.RoleId)
 	}
 	// 数据
 	var adminResp []systemSchema.SystemAuthAdminResp
@@ -167,7 +167,7 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
 	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
 	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
-		fmt.Sprintf("LEFT JOIN %s ON admin.role = %s.id", roleTbName, roleTbName)).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.role_id = %s.id", roleTbName, roleTbName)).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
 	// 条件
@@ -177,8 +177,8 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
-	if listReq.Role != "" {
-		adminModel = adminModel.Where("role = ?", listReq.Role)
+	if listReq.RoleId != "" {
+		adminModel = adminModel.Where("role_id = ?", listReq.RoleId)
 	}
 	// 总数
 	var count int64
@@ -215,7 +215,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
 	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
 	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
-		fmt.Sprintf("LEFT JOIN %s ON admin.role = %s.id", roleTbName, roleTbName)).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.role_id = %s.id", roleTbName, roleTbName)).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
 	// 条件
@@ -225,8 +225,8 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
-	if listReq.Role != "" {
-		adminModel = adminModel.Where("role = ?", listReq.Role)
+	if listReq.RoleId != "" {
+		adminModel = adminModel.Where("role_id = ?", listReq.RoleId)
 	}
 
 	// 数据
@@ -284,7 +284,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 		return response.AssertArgumentError.SetMessage("昵称已存在换一个吧！")
 	}
 	var roleResp systemSchema.SystemAuthRoleResp
-	if roleResp, e = RoleService.Detail(addReq.Role); e != nil {
+	if roleResp, e = RoleService.Detail(addReq.RoleId); e != nil {
 		return
 	}
 	if roleResp.IsDisable > 0 {
@@ -296,7 +296,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 	}
 	salt := util.ToolsUtil.RandomString(5)
 	convert_util.Copy(&sysAdmin, addReq)
-	sysAdmin.Role = addReq.Role
+	sysAdmin.RoleId = addReq.RoleId
 	sysAdmin.Salt = salt
 	sysAdmin.Password = util.ToolsUtil.MakeMd5(strings.Trim(addReq.Password, " ") + salt)
 	if addReq.Avatar == "" {
@@ -338,8 +338,8 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 		return response.AssertArgumentError.SetMessage("昵称已存在换一个吧！")
 	}
 	// 检查role
-	if editReq.Role != "" && editReq.ID != config.AdminConfig.SuperAdminId {
-		if _, e = RoleService.Detail(editReq.Role); e != nil {
+	if editReq.RoleId != "" && editReq.ID != config.AdminConfig.SuperAdminId {
+		if _, e = RoleService.Detail(editReq.RoleId); e != nil {
 			return
 		}
 	}
@@ -347,11 +347,11 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	adminMap := structs.Map(editReq)
 	delete(adminMap, "ID")
 	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(editReq.Avatar)
-	role := editReq.Role
+	roleId := editReq.RoleId
 	if editReq.ID == config.AdminConfig.SuperAdminId {
-		role = "0"
+		roleId = "0"
 	}
-	adminMap["Role"] = role
+	adminMap["RoleId"] = roleId
 	if editReq.ID == config.AdminConfig.SuperAdminId {
 		delete(adminMap, "Username")
 	}

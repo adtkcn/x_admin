@@ -20,7 +20,6 @@
                         :border="'inner'"
                         v-loading="pager.loading"
                     >
-                        <vxe-column field="id" title="ID" min-width="60" />
                         <vxe-column field="name" title="名称" min-width="150" />
                         <vxe-column field="remark" title="备注" min-width="150" />
                         <vxe-column field="sort" title="排序" min-width="100" />

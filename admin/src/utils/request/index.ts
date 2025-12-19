@@ -65,9 +65,16 @@ const axiosHooks: AxiosHooks = {
         switch (code) {
             case RequestCodeEnum.SUCCESS:
                 return data
-
-            case RequestCodeEnum.PARAMS_TYPE_ERROR:
             case RequestCodeEnum.PARAMS_VALID_ERROR:
+                // 参数校验错误
+                if (Array.isArray(data)) {
+                    message && feedback.msgError(data.join('、'))
+                } else {
+                    message && feedback.msgError(message)
+                }
+
+                return Promise.reject(data)
+            case RequestCodeEnum.PARAMS_TYPE_ERROR:
             case RequestCodeEnum.REQUEST_METHOD_ERROR:
             case RequestCodeEnum.ASSERT_ARGUMENT_ERROR:
             case RequestCodeEnum.ASSERT_MYBATIS_ERROR:

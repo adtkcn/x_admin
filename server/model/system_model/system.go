@@ -37,7 +37,7 @@ type SystemAuthAdmin struct {
 	Nickname      string                `gorm:"not null;default:'';comment:'用户昵称'"`
 	Password      string                `gorm:"not null;default:'';comment:'用户密码'"`
 	Avatar        string                `gorm:"not null;default:'';comment:'用户头像'"`
-	Role          string                `gorm:"not null;default:'';comment:'角色主键'"`
+	RoleId        string                `gorm:"not null;default:'';comment:'角色主键'"`
 	Salt          string                `gorm:"not null;default:'';comment:'加密盐巴'"`
 	Sort          uint16                `gorm:"not null;default:0;comment:'排序编号'"`
 	IsDisable     uint8                 `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`

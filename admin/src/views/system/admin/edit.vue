@@ -28,6 +28,25 @@
                 <el-form-item label="名称" prop="nickname">
                     <el-input v-model="formData.nickname" placeholder="请输入名称" clearable />
                 </el-form-item>
+
+                <el-form-item label="角色" prop="roleId">
+                    <el-select
+                        v-model="formData.roleId"
+                        :disabled="isRoot"
+                        class="flex-1"
+                        clearable
+                        placeholder="请选择角色"
+                    >
+                        <el-option v-if="isRoot" label="系统管理员" :value="0" />
+                        <el-option
+                            v-for="(item, index) in optionsData.role"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.id"
+                        />
+                    </el-select>
+                </el-form-item>
+
                 <el-form-item label="归属部门" prop="deptId">
                     <el-tree-select
                         class="flex-1"
@@ -57,24 +76,6 @@
                         <!-- multiple -->
                         <el-option
                             v-for="(item, index) in optionsData.post"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.id"
-                        />
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item label="角色" prop="role">
-                    <el-select
-                        v-model="formData.role"
-                        :disabled="isRoot"
-                        class="flex-1"
-                        clearable
-                        placeholder="请选择角色"
-                    >
-                        <el-option v-if="isRoot" label="系统管理员" :value="0" />
-                        <el-option
-                            v-for="(item, index) in optionsData.role"
                             :key="index"
                             :label="item.name"
                             :value="item.id"
@@ -133,7 +134,7 @@ const formData = reactive({
     nickname: '',
     deptId: '',
     postId: '',
-    role: '',
+    roleId: '',
     avatar: '',
     password: '',
     passwordConfirm: '',
@@ -143,7 +144,7 @@ const formData = reactive({
 })
 
 const isRoot = computed(() => {
-    return formData.role == '0'
+    return formData.roleId == '0'
 })
 
 const passwordConfirmValidator = (rule: object, value: string, callback: any) => {
@@ -161,13 +162,13 @@ const formRules = reactive({
             trigger: ['blur']
         }
     ],
-    avatar: [
-        {
-            required: true,
-            message: '请上传头像',
-            trigger: ['blur']
-        }
-    ],
+    // avatar: [
+    //     {
+    //         required: true,
+    //         message: '请上传头像',
+    //         trigger: ['blur']
+    //     }
+    // ],
     nickname: [
         {
             required: true,
@@ -175,27 +176,27 @@ const formRules = reactive({
             trigger: ['blur']
         }
     ],
-    role: [
-        {
-            required: true,
-            message: '请选择角色',
-            trigger: ['blur']
-        }
-    ],
-    deptId: [
-        {
-            required: true,
-            message: '请输入名称',
-            trigger: ['blur']
-        }
-    ],
-    postId: [
-        {
-            required: true,
-            message: '请输入名称',
-            trigger: ['blur']
-        }
-    ],
+    // roleId: [
+    //     {
+    //         required: true,
+    //         message: '请选择角色',
+    //         trigger: ['blur']
+    //     }
+    // ],
+    // deptId: [
+    //     {
+    //         required: true,
+    //         message: '请输入名称',
+    //         trigger: ['blur']
+    //     }
+    // ],
+    // postId: [
+    //     {
+    //         required: true,
+    //         message: '请输入名称',
+    //         trigger: ['blur']
+    //     }
+    // ],
     password: [
         {
             required: true,
@@ -263,17 +264,10 @@ const setFormData = async (row: any) => {
         console.log('key', key)
 
         if (data[key] != null && data[key] != undefined) {
-            //后端返回string类型做处理
-            if (key === 'role') {
-                //@ts-ignore
-                formData[key] = Number(data[key])
-                continue
-            }
-            //@ts-ignore
             formData[key] = data[key]
         }
-        Number(formData.deptId) == 0 && (formData.deptId = '')
-        Number(formData.postId) == 0 && (formData.postId = '')
+        // Number(formData.deptId) == 0 && (formData.deptId = '')
+        // Number(formData.postId) == 0 && (formData.postId = '')
     }
     formRules.password = []
     formRules.passwordConfirm = [

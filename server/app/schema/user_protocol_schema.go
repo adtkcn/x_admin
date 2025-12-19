@@ -2,6 +2,7 @@ package schema
 
 import (
 	"x_admin/core"
+	"x_admin/model/system_model"
 )
 
 type UserProtocolPrimarykey struct {
@@ -56,10 +57,12 @@ type UserProtocolDelBatchReq struct {
 // UserProtocolResp 用户协议返回信息
 type UserProtocolResp struct {
 	UserProtocolPrimarykey
-	Tag        core.NullString `swaggertype:"string"` // 标识
-	Version    core.NullInt    `swaggertype:"number"` // 版本
-	Title      core.NullString `swaggertype:"string"` // 标题
-	Content    core.NullString `swaggertype:"string"` // 协议内容
-	CreateTime core.NullTime   `swaggertype:"string"` // 创建时间
-	UpdateTime core.NullTime   `swaggertype:"string"` // 更新时间
+	Tag        core.NullString              `swaggertype:"string"` // 标识
+	Version    core.NullInt                 `swaggertype:"number"` // 版本
+	Title      core.NullString              `swaggertype:"string"` // 标题
+	Content    core.NullString              `swaggertype:"string"` // 协议内容
+	CreateTime core.NullTime                `swaggertype:"string"` // 创建时间
+	UpdateTime core.NullTime                `swaggertype:"string"` // 更新时间
+	CreatedBy  string                       `swaggertype:"string"` // 创建人
+	Created    system_model.SystemAuthAdmin `swaggertype:"string"` // 创建人
 }

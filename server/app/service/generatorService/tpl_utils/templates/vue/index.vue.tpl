@@ -66,7 +66,6 @@
                     v-perms="['admin:{{{ .ModuleName }}}:ImportFile']"
                     class="ml-3 mr-3"
                     :url="{{{.ModuleName}}}_import_file"
-                    :data="{ cid: 0 }"
                     :ext="['xlsx']"
                     :show-progress="true"
                     @change="resetPage"

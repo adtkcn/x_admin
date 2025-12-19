@@ -1,6 +1,7 @@
 package systemService
 
 import (
+	"errors"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/config"
 	"x_admin/core"
@@ -9,7 +10,6 @@ import (
 	"x_admin/util"
 	"x_admin/util/convert_util"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -27,30 +27,31 @@ type systemAuthMenuService struct {
 }
 
 // SelectMenuByRoleId 根据角色ID获取菜单
-func (menuSrv systemAuthMenuService) SelectMenuByRoleId(c *gin.Context, roleId string) (mapList []interface{}, e error) {
-	adminId := config.AdminConfig.GetAdminId(c)
-	var menuIds []string
+func (menuSrv systemAuthMenuService) SelectMenuByRoleId(adminId string, roleId string) (menuList []interface{}, e error) {
+	// adminId := config.AdminConfig.GetAdminId(c)
+	var menuIds = []string{}
 	// 超管
-	if adminId == config.AdminConfig.SuperAdminId {
-		menuIds = []string{"0"}
-	} else if menuIds, e = PermService.SelectMenuIdsByRoleId(roleId); e != nil {
-		return
+	if adminId != config.AdminConfig.SuperAdminId {
+		if menuIds, e = PermService.SelectMenuIdsByRoleId(roleId); e != nil {
+			return
+		}
+		if len(menuIds) == 0 {
+			return menuList, errors.New("角色未绑定菜单")
+		}
 	}
-	if len(menuIds) == 0 {
-		menuIds = []string{"0"}
-	}
+
 	chain := menuSrv.db.Where("menu_type in ? AND is_disable = ?", []string{"M", "C"}, 0)
 	if adminId != config.AdminConfig.SuperAdminId {
 		chain = chain.Where("id in ?", menuIds)
 	}
 	var menus []system_model.SystemAuthMenu
 	err := chain.Order("menu_sort desc, id").Find(&menus).Error
-	if e = response.CheckErr(err, "SelectMenuByRoleId Find err"); e != nil {
+	if e = response.CheckErr(err, "RoleId查询菜单失败"); e != nil {
 		return
 	}
 	var menuResps []systemSchema.SystemAuthMenuResp
 	convert_util.Copy(&menuResps, menus)
-	mapList = util.ArrayUtil.ListToTree(
+	menuList = util.ArrayUtil.ListToTree(
 		convert_util.StructsToMaps(menuResps), "id", "pid", "children")
 	return
 }

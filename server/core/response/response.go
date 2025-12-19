@@ -94,7 +94,16 @@ func Result(c *gin.Context, resp RespType, data interface{}) {
 	if resp != Success {
 		c.Error(resp)
 	}
-	c.JSON(http.StatusOK, Response{
+	var StatusOK = http.StatusOK
+	switch resp.code {
+	case 500:
+		StatusOK = http.StatusInternalServerError
+	case 404:
+		StatusOK = http.StatusNotFound
+	default:
+		StatusOK = http.StatusOK
+	}
+	c.JSON(StatusOK, Response{
 		Code:    resp.code,
 		Message: resp.message,
 		Data:    data,
