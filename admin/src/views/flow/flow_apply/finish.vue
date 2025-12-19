@@ -92,7 +92,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive, defineAsyncComponent } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import {
     flow_apply_delete,
     flow_apply_lists,
@@ -180,5 +180,13 @@ const SaveViewForm = (id, form_data) => {
             })
     })
 }
-getLists()
+
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
 </script>

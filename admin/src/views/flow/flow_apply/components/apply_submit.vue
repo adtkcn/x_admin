@@ -133,7 +133,7 @@ function submit() {
     }
     flow_history_pass({
         applyId: formData.id,
-        nextNodeAdminId: formData.applyUserId || 0,
+        nextNodeAdminId: formData.applyUserId || '',
         passRemark: formData.passRemark
     }).then(() => {
         BeforeClose()

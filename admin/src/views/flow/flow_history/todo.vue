@@ -69,7 +69,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive, defineAsyncComponent } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
 import type { type_flow_history } from '@/api/flow/flow_history'
@@ -167,5 +167,12 @@ const closeBack = () => {
     getLists()
 }
 
-getLists()
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
 </script>

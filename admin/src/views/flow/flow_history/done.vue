@@ -68,7 +68,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive, defineAsyncComponent } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list } from '@/api/flow/flow_history'
 import type { type_flow_apply } from '@/api/flow/flow_apply'
@@ -124,5 +124,12 @@ const OpenViewForm = async (row: any) => {
     viewFormRef.value?.open(applyDetail, row, form_json, form_data)
 }
 
-getLists()
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
 </script>
