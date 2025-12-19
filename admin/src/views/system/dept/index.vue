@@ -96,7 +96,7 @@ const getLists = async () => {
     const list = await deptAll(queryParams)
     // 根据id和pid处理层级关系
 
-    lists.value = arrayToTree(list, '0')
+    lists.value = arrayToTree(list, '')
     console.log('lists', lists)
 
     loading.value = false
