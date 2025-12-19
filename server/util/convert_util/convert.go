@@ -1,6 +1,7 @@
 package convert_util
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -8,9 +9,7 @@ import (
 
 	"github.com/duke-git/lancet/v2/convertor"
 
-	"github.com/fatih/structs"
 	"github.com/jinzhu/copier"
-	"github.com/mitchellh/mapstructure"
 )
 
 func ToFloat64(value any) (float64, error) {
@@ -28,26 +27,35 @@ func ToString(value any) string {
 	return convertor.ToString(value)
 }
 
-// StructToMap 结构体转换成map,深度转换
-func StructToMap(from any) map[string]any {
-	// var m = map[string]any{}
-	// mapstructure.Decode(from, &m) //深度转换所有结构体
+// StructToMap 使用 JSON 中转，确保调用 MarshalJSON
+func StructToMap(v any) (map[string]any, error) {
+	// 第一步：序列化为 JSON
+	data, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
 
-	m := structs.Map(from) // 需要tag:structs，深度转换
-	return m
+	// 第二步：反序列化为 map
+	var result map[string]any
+	err = json.Unmarshal(data, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // StructsToMaps 将结构体转换成Map列表
-func StructsToMaps(from any) (data []map[string]any) {
-	var objList []any
-	err := copier.Copy(&objList, from)
-	if err != nil {
-		return nil
+func StructsToMaps[T any](from []T) (data []map[string]any, err error) {
+	for _, v := range from {
+		// 忽略错误
+		m, err := StructToMap(v)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, m)
 	}
-	for _, v := range objList {
-		data = append(data, StructToMap(v))
-	}
-	return data
+	return data, nil
 }
 
 // ShallowStructToMap 将结构体转换成map,浅转换
@@ -78,19 +86,17 @@ func ShallowStructsToMaps(from any) (data []map[string]any) {
 	return data
 }
 
-// MapToStruct 将map弱类型转换成结构体
+// MapToStruct 将map类型转换成结构体
 func MapToStruct(from any, to any) (err error) {
-	err = mapstructure.WeakDecode(from, to) // 需要tag:mapstructure
+	// err = mapstructure.WeakDecode(from, to) // 需要tag:mapstructure
+
+	jsonData, err := json.Marshal(from)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(jsonData, to)
 	return err
 }
-
-// StructToStruct 将结构体from弱类型转换成结构体to
-// func StructToStruct(from any, to any) (err error) {
-// 	m := StructToMap(from)
-// 	err = MapToStruct(m, to)
-
-// 	return err
-// }
 
 func Copy(toValue any, fromValue any) any {
 	if err := copier.Copy(toValue, fromValue); err != nil {

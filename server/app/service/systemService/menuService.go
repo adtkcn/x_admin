@@ -51,8 +51,12 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(adminId string, roleId s
 	}
 	var menuResps []systemSchema.SystemAuthMenuResp
 	convert_util.Copy(&menuResps, menus)
+	m, err := convert_util.StructsToMaps(menuResps)
+	if e = response.CheckErr(err, "转换菜单失败"); e != nil {
+		return
+	}
 	menuList = util.ArrayUtil.ListToTree(
-		convert_util.StructsToMaps(menuResps), "id", "pid", "children")
+		m, "id", "pid", "children")
 	return
 }
 
