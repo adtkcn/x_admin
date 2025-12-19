@@ -137,7 +137,7 @@ func (service flowApplyService) Edit(editReq flowSchema.FlowApplyEditReq) (e err
 }
 
 // Del 申请流程删除
-func (service flowApplyService) Del(id int) (e error) {
+func (service flowApplyService) Del(id string) (e error) {
 	var obj model.FlowApply
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
 	// 校验

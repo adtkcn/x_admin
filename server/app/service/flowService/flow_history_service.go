@@ -53,7 +53,7 @@ func (service flowHistoryService) List(page request.PageReq, listReq flowSchema.
 	if listReq.ApplyUserNickname != "" {
 		dbModel = dbModel.Where("apply_user_nickname like ?", "%"+listReq.ApplyUserNickname+"%")
 	}
-	if listReq.ApproverId > 0 {
+	if listReq.ApproverId != "" {
 		dbModel = dbModel.Where("approver_id = ?", listReq.ApproverId)
 	}
 	if listReq.ApproverNickname != "" {
@@ -159,7 +159,7 @@ func (service flowHistoryService) Edit(editReq flowSchema.FlowHistoryEditReq) (e
 }
 
 // Del 流程历史删除
-func (service flowHistoryService) Del(id int) (e error) {
+func (service flowHistoryService) Del(id string) (e error) {
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	// 校验

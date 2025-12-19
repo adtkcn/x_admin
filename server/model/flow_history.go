@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/plugin/soft_delete"
 )
 
 // FlowHistory 流程历史实体
@@ -33,11 +34,10 @@ type FlowHistory struct {
 
 	PassRemark string `gorm:"comment:'通过备注'"` // 通过备注
 
-	UpdateTime core.NullTime `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
-
-	CreateTime core.NullTime `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
-
-	DeleteTime core.NullTime `gorm:"default:null;comment:'删除时间'"` // 删除时间
+	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
+	UpdateTime core.NullTime         `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
+	CreateTime core.NullTime         `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
+	DeleteTime core.NullTime         `gorm:"default:null;comment:'删除时间'"`   // 删除时间
 
 }
 
