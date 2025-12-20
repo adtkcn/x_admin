@@ -68,7 +68,12 @@
         <el-card class="!border-none mt-4" shadow="never" v-loading="pager.loading">
             <div>
                 <el-table :data="pager.lists" size="large" max-height="calc(100vh - 200px)">
-                    <el-table-column label="ID" prop="id" />
+                    <el-table-column
+                        label="序号"
+                        type="index"
+                        :index="handleIndex"
+                        min-width="60"
+                    />
                     <el-table-column label="操作" prop="title" min-width="120" />
                     <el-table-column label="管理员" prop="username" min-width="120" />
                     <el-table-column label="访问链接" prop="url" min-width="240">
@@ -121,7 +126,7 @@ const visitType = ref<Array<any>>([
     }
 ])
 
-const { pager, getLists, resetParams, resetPage } = usePaging<SystemLogResp>({
+const { pager, getLists, resetParams, resetPage, handleIndex } = usePaging<SystemLogResp>({
     fetchFun: systemLogLists,
     params: formData.value
 })

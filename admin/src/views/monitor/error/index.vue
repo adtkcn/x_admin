@@ -57,10 +57,10 @@
                 size="large"
                 v-loading="pager.loading"
                 :data="pager.lists"
-                max-height="calc(100vh - 200px)"
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
+                <el-table-column label="序号" type="index" :index="handleIndex" min-width="60" />
                 <el-table-column label="项目" prop="ProjectKey" min-width="80">
                     <template #default="{ row }">
                         <dict-value
@@ -153,7 +153,7 @@ const queryParams = reactive<type_monitor_error_query>({
     CreateTimeEnd: null
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_error>({
+const { pager, getLists, resetPage, resetParams, handleIndex } = usePaging<type_monitor_error>({
     fetchFun: monitor_error_list,
     params: queryParams
 })

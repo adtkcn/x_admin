@@ -65,10 +65,16 @@ export function usePaging<T>(options: Options) {
 
         resetPage()
     }
+    // 计算真实序号的函数
+    const handleIndex = (index: number) => {
+        // index 是当前页的索引（从 0 开始）
+        return (pager.page - 1) * pager.size + index + 1
+    }
     return {
         pager,
         getLists,
         resetParams,
-        resetPage
+        resetPage,
+        handleIndex
     }
 }
