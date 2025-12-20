@@ -27,7 +27,7 @@ type systemAuthMenuService struct {
 }
 
 // SelectMenuByRoleId 根据角色ID获取菜单
-func (menuSrv systemAuthMenuService) SelectMenuByRoleId(adminId string, roleId string) (menuList []interface{}, e error) {
+func (menuSrv systemAuthMenuService) SelectMenuByRoleId(adminId string, roleId string) (menuList []*systemSchema.SystemAuthMenuResp, e error) {
 	// adminId := config.AdminConfig.GetAdminId(c)
 	var menuIds = []string{}
 	// 超管
@@ -49,15 +49,22 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(adminId string, roleId s
 	if e = response.CheckErr(err, "RoleId查询菜单失败"); e != nil {
 		return
 	}
-	var menuResps []systemSchema.SystemAuthMenuResp
+	var menuResps []*systemSchema.SystemAuthMenuResp
 	convert_util.Copy(&menuResps, menus)
-	m, err := convert_util.StructsToMaps(menuResps)
-	if e = response.CheckErr(err, "转换菜单失败"); e != nil {
-		return
-	}
-	menuList = util.ArrayUtil.ListToTree(
-		m, "id", "pid", "children")
-	return
+
+	// m, err := convert_util.StructsToMaps(menuResps)
+	// if e = response.CheckErr(err, "转换菜单失败"); e != nil {
+	// 	return
+	// }
+	// start := time.Now() // 记录开始时间
+	// menuList = util.ArrayUtil.ListToTree(
+	// 	m, "id", "pid", "children")
+	// elapsed := time.Since(start) // 计算耗时
+	// fmt.Printf("耗时: %v\n", elapsed.Microseconds())
+
+	trees := util.ListToTree(menuResps, "0")
+
+	return trees, nil
 }
 
 // List 菜单列表

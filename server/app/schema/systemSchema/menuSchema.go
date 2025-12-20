@@ -49,21 +49,27 @@ type SystemAuthMenuDelReq struct {
 
 // SystemAuthMenuResp 系统菜单返回信息
 type SystemAuthMenuResp struct {
-	ID         string               `json:"id" structs:"id"`                       // 主键
-	Pid        string               `json:"pid" structs:"pid"`                     // 上级菜单
-	MenuType   string               `json:"menuType" structs:"menuType"`           // 权限类型: [M=目录, C=菜单, A=按钮]
-	MenuName   string               `json:"menuName" structs:"menuName"`           // 菜单名称
-	MenuIcon   string               `json:"menuIcon" structs:"menuIcon"`           // 菜单图标
-	MenuSort   uint16               `json:"menuSort" structs:"menuSort"`           // 菜单排序
-	Perms      string               `json:"perms" structs:"perms"`                 // 权限标识
-	Paths      string               `json:"paths" structs:"paths"`                 // 路由地址
-	Component  string               `json:"component" structs:"component"`         // 前端组件
-	Selected   string               `json:"selected" structs:"selected"`           // 选中路径
-	Params     string               `json:"params" structs:"params"`               // 路由参数
-	IsCache    uint8                `json:"isCache" structs:"isCache"`             // 是否缓存: [0=否, 1=是]
-	IsShow     uint8                `json:"isShow" structs:"isShow"`               // 是否显示: [0=否, 1=是]
-	IsDisable  uint8                `json:"isDisable" structs:"isDisable"`         // 是否禁用: [0=否, 1=是]
-	CreateTime core.NullTime        `json:"createTime" structs:"createTime"`       // 创建时间
-	UpdateTime core.NullTime        `json:"updateTime" structs:"updateTime"`       // 更新时间
-	Children   []SystemAuthMenuResp `json:"children,omitempty" structs:"children"` // 子集
+	ID         string                `json:"id" structs:"id"`                       // 主键
+	Pid        string                `json:"pid" structs:"pid"`                     // 上级菜单
+	MenuType   string                `json:"menuType" structs:"menuType"`           // 权限类型: [M=目录, C=菜单, A=按钮]
+	MenuName   string                `json:"menuName" structs:"menuName"`           // 菜单名称
+	MenuIcon   string                `json:"menuIcon" structs:"menuIcon"`           // 菜单图标
+	MenuSort   uint16                `json:"menuSort" structs:"menuSort"`           // 菜单排序
+	Perms      string                `json:"perms" structs:"perms"`                 // 权限标识
+	Paths      string                `json:"paths" structs:"paths"`                 // 路由地址
+	Component  string                `json:"component" structs:"component"`         // 前端组件
+	Selected   string                `json:"selected" structs:"selected"`           // 选中路径
+	Params     string                `json:"params" structs:"params"`               // 路由参数
+	IsCache    uint8                 `json:"isCache" structs:"isCache"`             // 是否缓存: [0=否, 1=是]
+	IsShow     uint8                 `json:"isShow" structs:"isShow"`               // 是否显示: [0=否, 1=是]
+	IsDisable  uint8                 `json:"isDisable" structs:"isDisable"`         // 是否禁用: [0=否, 1=是]
+	CreateTime core.NullTime         `json:"createTime" structs:"createTime"`       // 创建时间
+	UpdateTime core.NullTime         `json:"updateTime" structs:"updateTime"`       // 更新时间
+	Children   []*SystemAuthMenuResp `json:"children,omitempty" structs:"children"` // 子集
+}
+
+func (n *SystemAuthMenuResp) GetID() string       { return n.ID }
+func (n *SystemAuthMenuResp) GetParentID() string { return n.Pid }
+func (n *SystemAuthMenuResp) SetChildren(children []*SystemAuthMenuResp) {
+	n.Children = children
 }
