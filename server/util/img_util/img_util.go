@@ -1,38 +1,21 @@
 package img_util
 
-import (
-	"bytes"
-	"image"
-	"image/color"
-	"image/gif"
-)
-
 func EmptyGif() []byte {
-	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
 
-	// 设置像素颜色为黑色
-	img.Set(0, 0, color.Black)
-
-	// 创建GIF动画
-	g := &gif.GIF{
-		Image: []*image.Paletted{imageToPaletted(img)},
-		Delay: []int{0}, // 延迟时间，单位是10毫秒
+	return []byte{
+		0x47, 0x49, 0x46, 0x38, 0x39, 0x61, // GIF89a
+		0x01, 0x00, 0x01, 0x00, // width=1, height=1
+		0x80, 0x00, 0x00, // global color table
+		0xff, 0xff, 0xff, // background color (white)
+		0x00, 0x00, 0x00, // palette: black
+		0x2c,                   // image descriptor
+		0x00, 0x00, 0x00, 0x00, // x=0, y=0
+		0x01, 0x00, 0x01, 0x00, // width=1, height=1
+		0x00,       // no local color table
+		0x02,       // LZW min code size
+		0x02,       // image data size
+		0x4c, 0x01, // image data
+		0x3b, // trailer
 	}
-	var buffer bytes.Buffer
 
-	// 编码GIF到缓冲区
-	gif.EncodeAll(&buffer, g)
-	return buffer.Bytes()
-}
-
-// 将image.Image转换为*image.Paletted
-func imageToPaletted(img image.Image) *image.Paletted {
-	b := img.Bounds()
-	pm := image.NewPaletted(b, color.Palette{color.Black})
-	for y := b.Min.Y; y < b.Max.Y; y++ {
-		for x := b.Min.X; x < b.Max.X; x++ {
-			pm.Set(x, y, img.At(x, y))
-		}
-	}
-	return pm
 }
