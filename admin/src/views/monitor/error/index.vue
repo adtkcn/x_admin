@@ -6,7 +6,7 @@
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
-                label-width="70px"
+                label-width="90px"
                 label-position="right"
             >
                 <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
@@ -60,8 +60,8 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
-                <el-table-column label="序号" type="index" :index="handleIndex" min-width="60" />
-                <el-table-column label="项目" prop="ProjectKey" min-width="80">
+                <el-table-column label="序号" type="index" :index="handleIndex" width="80" />
+                <el-table-column label="项目" prop="ProjectKey">
                     <template #default="{ row }">
                         <dict-value
                             :options="listAllData.monitor_project_listAll"
@@ -71,9 +71,9 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column label="事件类型" prop="EventType" width="130" />
-                <el-table-column label="URL地址" prop="Path" min-width="130" />
-                <el-table-column label="错误消息" prop="Message" min-width="130" />
+                <el-table-column label="事件类型" prop="EventType" width="170" />
+                <!-- <el-table-column label="URL地址" prop="Path" min-width="130" /> -->
+                <el-table-column label="错误消息" prop="Message" min-width="150" />
 
                 <!-- <el-table-column label="md5" prop="Md5" min-width="130" /> -->
                 <el-table-column label="创建时间" prop="CreateTime" width="170" />

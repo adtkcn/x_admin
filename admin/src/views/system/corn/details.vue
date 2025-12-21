@@ -7,32 +7,30 @@
             width="550px"
             :clickModalClose="true"
             :confirmButtonText="false"
-  
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
-                        <el-form-item label="任务名称" prop="TaskName">
-                            <span v-text="formData.TaskName"></span>
-                        </el-form-item>
-                        <el-form-item label="任务编码" prop="TaskCode">
-                            <span v-text="formData.TaskCode"></span>
-                        </el-form-item>
-                        <el-form-item label="corn表达式" prop="CornExpr">
-                            <span v-text="formData.CornExpr"></span>
-                        </el-form-item>
-                        <el-form-item label="禁用" prop="Disabled">
-                            <span v-text="formData.Disabled"></span>
-                        </el-form-item>
-            
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
+                <el-form-item label="任务名称" prop="TaskName">
+                    <span v-text="formData.TaskName"></span>
+                </el-form-item>
+                <el-form-item label="任务编码" prop="TaskCode">
+                    <span v-text="formData.TaskCode"></span>
+                </el-form-item>
+                <el-form-item label="corn表达式" prop="CornExpr">
+                    <span v-text="formData.CornExpr"></span>
+                </el-form-item>
+                <el-form-item label="禁用" prop="Disabled">
+                    <span v-text="formData.Disabled"></span>
+                </el-form-item>
             </el-form>
         </popup>
     </div>
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import {  system_corn_detail } from '@/api/system/corn'
+import { system_corn_detail } from '@/api/system/corn'
 import Popup from '@/components/popup/index.vue'
- 
+
 import { ref, shallowRef, computed, reactive } from 'vue'
 import type { PropType } from 'vue'
 defineProps({
@@ -40,7 +38,7 @@ defineProps({
         type: Object as PropType<Record<string, any[]>>,
         default: () => ({})
     },
-    listAllData:{
+    listAllData: {
         type: Object as PropType<Record<string, any[]>>,
         default: () => ({})
     }
@@ -58,7 +56,7 @@ const formData = reactive({
     TaskName: null,
     TaskCode: null,
     CornExpr: null,
-    Disabled: null,
+    Disabled: null
 })
 
 const formRules = {
@@ -96,17 +94,17 @@ const formRules = {
             message: '请输入禁用',
             trigger: ['blur']
         }
-    ],
+    ]
 }
 
 const open = () => {
     popupRef.value?.open()
 }
 const getDetail = async (row: Record<string, any>) => {
-     try {
+    try {
         const data = await system_corn_detail(row.Id)
         setFormData(data)
-     } catch (error) {}
+    } catch (error) {}
 }
 const setFormData = async (data: Record<string, any>) => {
     for (const key in formData) {
@@ -127,4 +125,3 @@ defineExpose({
     getDetail
 })
 </script>
- 

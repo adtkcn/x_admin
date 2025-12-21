@@ -30,7 +30,7 @@ type SystemCornHandler struct {
 //		@Param TaskName query string false "任务名称"
 //		@Param TaskCode query string false "任务编码"
 //		@Param CornExpr query string false "corn表达式"
-//		@Param Disabled query number false "禁用"
+//		@Param Status query number false "状态"
 //		@Param CreatedBy query string false "创建人"
 //		@Param CreateTimeStart  query string false "创建时间"
 //		@Param CreateTimeEnd  query string false "创建时间"
@@ -59,7 +59,7 @@ func (hd *SystemCornHandler) List(c *gin.Context) {
 //		@Param TaskName query string false "任务名称"
 //		@Param TaskCode query string false "任务编码"
 //		@Param CornExpr query string false "corn表达式"
-//		@Param Disabled query number false "禁用"
+//		@Param Status query number false "状态"
 //		@Param CreatedBy query string false "创建人"
 //		@Param CreateTimeStart  query string false "创建时间"
 //		@Param CreateTimeEnd  query string false "创建时间"
@@ -103,7 +103,7 @@ func (hd *SystemCornHandler) Detail(c *gin.Context) {
 // @Param		TaskName		body		string				false	"任务名称"
 // @Param		TaskCode		body		string				false	"任务编码"
 // @Param		CornExpr		body		string				false	"corn表达式"
-// @Param		Disabled		body		number				false	"禁用"
+// @Param		Status		body		number				false	"状态"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/add [post]
 func (hd *SystemCornHandler) Add(c *gin.Context) {
@@ -124,7 +124,7 @@ func (hd *SystemCornHandler) Add(c *gin.Context) {
 // @Param		TaskName		body		string				false	"任务名称"
 // @Param		TaskCode		body		string				false	"任务编码"
 // @Param		CornExpr		body		string				false	"corn表达式"
-// @Param		Disabled		body		number				false	"禁用"
+// @Param		Status		body		number				false	"状态"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/edit [post]
 func (hd *SystemCornHandler) Edit(c *gin.Context) {
@@ -179,7 +179,7 @@ func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 //		@Param TaskName query string false "任务名称"
 //		@Param TaskCode query string false "任务编码"
 //		@Param CornExpr query string false "corn表达式"
-//		@Param Disabled query number false "禁用"
+//		@Param Status query number false "状态"
 //		@Param CreatedBy query string false "创建人"
 //		@Param CreateTimeStart  query string false "创建时间"
 //		@Param CreateTimeEnd  query string false "创建时间"

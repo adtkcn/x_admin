@@ -65,39 +65,46 @@ type SystemAuthAdminDisableReq struct {
 
 // SystemAuthAdminResp 管理员返回信息
 type SystemAuthAdminResp struct {
-	ID            string        `json:"id" structs:"id"`                                            // 主键
-	Username      string        `json:"username" structs:"username" excel:"name:账号;"`               // 账号
-	Nickname      string        `json:"nickname" structs:"nickname" excel:"name:昵称;"`               // 昵称
-	Avatar        string        `json:"avatar" structs:"avatar" excel:"name:头像;"`                   // 头像
-	Role          string        `json:"role" structs:"role" excel:"name:角色;"`                       // 角色
-	DeptId        string        `json:"deptId" structs:"deptId" excel:"name:部门ID;"`                 // 部门ID
-	PostId        string        `json:"postId" structs:"postId" excel:"name:岗位ID;"`                 // 岗位ID
-	RoleId        string        `json:"roleId" structs:"roleId" excel:"name:角色ID;"`                 // 角色ID
-	Dept          string        `json:"dept" structs:"dept" excel:"name:部门;"`                       // 部门
-	IsDisable     uint8         `json:"isDisable" structs:"isDisable" excel:"name:是否禁用;"`           // 是否禁用: [0=否, 1=是]
-	LastLoginIp   string        `json:"lastLoginIp" structs:"lastLoginIp" excel:"name:最后登录IP;"`     // 最后登录IP
-	LastLoginTime core.NullTime `json:"lastLoginTime" structs:"lastLoginTime" excel:"name:最后登录时间;"` // 最后登录时间
-	CreateTime    core.NullTime `json:"createTime" structs:"createTime" excel:"name:创建时间;"`         // 创建时间
-	UpdateTime    core.NullTime `json:"updateTime" structs:"updateTime" excel:"name:更新时间;"`         // 更新时间
+	ID            string        `json:"id"`                                 // 主键
+	Username      string        `json:"username" excel:"name:账号;"`          // 账号
+	Nickname      string        `json:"nickname" excel:"name:昵称;"`          // 昵称
+	Avatar        string        `json:"avatar" excel:"name:头像;"`            // 头像
+	Role          string        `json:"role" excel:"name:角色;"`              // 角色
+	DeptId        string        `json:"deptId" excel:"name:部门ID;"`          // 部门ID
+	PostId        string        `json:"postId" excel:"name:岗位ID;"`          // 岗位ID
+	RoleId        string        `json:"roleId" excel:"name:角色ID;"`          // 角色ID
+	Dept          string        `json:"dept" excel:"name:部门;"`              // 部门
+	IsDisable     uint8         `json:"isDisable" excel:"name:是否禁用;"`       // 是否禁用: [0=否, 1=是]
+	LastLoginIp   string        `json:"lastLoginIp" excel:"name:最后登录IP;"`   // 最后登录IP
+	LastLoginTime core.NullTime `json:"lastLoginTime" excel:"name:最后登录时间;"` // 最后登录时间
+	CreateTime    core.NullTime `json:"createTime" excel:"name:创建时间;"`      // 创建时间
+	UpdateTime    core.NullTime `json:"updateTime" excel:"name:更新时间;"`      // 更新时间
 }
 
 // SystemAuthAdminSelfOneResp 当前管理员返回部分信息
 type SystemAuthAdminSelfOneResp struct {
-	ID            string        `json:"id" structs:"id"`                       // 主键
-	Username      string        `json:"username" structs:"username"`           // 账号
-	Nickname      string        `json:"nickname" structs:"nickname"`           // 昵称
-	Avatar        string        `json:"avatar" structs:"avatar"`               // 头像
-	Role          string        `json:"role" structs:"role"`                   // 角色
-	Dept          string        `json:"dept" structs:"dept"`                   // 部门
-	IsDisable     uint8         `json:"isDisable" structs:"isDisable"`         // 是否禁用: [0=否, 1=是]
-	LastLoginIp   string        `json:"lastLoginIp" structs:"lastLoginIp"`     // 最后登录IP
-	LastLoginTime core.NullTime `json:"lastLoginTime" structs:"lastLoginTime"` // 最后登录时间
-	CreateTime    core.NullTime `json:"createTime" structs:"createTime"`       // 创建时间
-	UpdateTime    core.NullTime `json:"updateTime" structs:"updateTime"`       // 更新时间
+	ID            string        `json:"id"`            // 主键
+	Username      string        `json:"username"`      // 账号
+	Nickname      string        `json:"nickname"`      // 昵称
+	Avatar        string        `json:"avatar"`        // 头像
+	Role          string        `json:"role"`          // 角色
+	Dept          string        `json:"dept"`          // 部门
+	IsDisable     uint8         `json:"isDisable"`     // 是否禁用: [0=否, 1=是]
+	LastLoginIp   string        `json:"lastLoginIp"`   // 最后登录IP
+	LastLoginTime core.NullTime `json:"lastLoginTime"` // 最后登录时间
+	CreateTime    core.NullTime `json:"createTime"`    // 创建时间
+	UpdateTime    core.NullTime `json:"updateTime"`    // 更新时间
 }
 
 // SystemAuthAdminSelfResp 当前系统管理员返回信息
 type SystemAuthAdminSelfResp struct {
-	User        SystemAuthAdminSelfOneResp `json:"user" structs:"user"`               // 用户信息
-	Permissions []string                   `json:"permissions" structs:"permissions"` // 权限集合: [[*]=>所有权限, ['article:add']=>部分权限]
+	User        SystemAuthAdminSelfOneResp `json:"user"`        // 用户信息
+	Permissions []string                   `json:"permissions"` // 权限集合: [[*]=>所有权限, ['article:add']=>部分权限]
+}
+
+type SystemAuthAdminSimpleInfo struct {
+	ID string `json:"id"` // 主键
+	// Username string `json:"username"` // 账号
+	Nickname string `json:"nickname"` // 昵称
+	Avatar   string `json:"avatar"`   // 头像
 }

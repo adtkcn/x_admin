@@ -15,7 +15,10 @@ type {{{ toUpperCamelCase .EntityName }}}Primarykey struct {
 type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
     {{{- range .Columns }}}
     {{{- if .IsQuery }}}
-        {{{- if eq .HtmlType "datetime" }}}
+        {{{- if eq .ColumnName "created_by" }}}
+            {{{ toUpperCamelCase .GoField }}} {{{goWithAddEditType .GoType }}} // {{{ .ColumnComment }}}
+            Nickname core.NullString // 创建人昵称
+        {{{- else if eq .HtmlType "datetime" }}}
             {{{ toUpperCamelCase .GoField }}}Start core.NullString // 开始{{{ .ColumnComment }}}
             {{{ toUpperCamelCase .GoField }}}End core.NullString // 结束{{{ .ColumnComment }}}
         {{{- else }}}
@@ -31,7 +34,7 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
 type {{{ toUpperCamelCase .EntityName }}}AddReq struct {
     {{{- range .Columns }}}
     {{{- if .IsInsert }}}
-    {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  // {{{ .ColumnComment }}}
+    {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}} `binding:"{{{ if eq .IsRequired 1 }}}required;{{{ end }}}"`  // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }

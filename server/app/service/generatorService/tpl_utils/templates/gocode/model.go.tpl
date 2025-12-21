@@ -10,16 +10,19 @@ import (
 type {{{ toUpperCamelCase .EntityName }}} struct {
 {{{- range .Columns }}}
 {{{- if not (contains $.SubTableFields .ColumnName) }}}
-    {{{- if eq .GoField "is_delete" }}}
+    {{{- if eq .ColumnName "created_by" }}}
+        CreatedBy   {{{goWithRespType .GoType }}}                    `gorm:"column:created_by;type:{{{toSqlType .ColumnType .ColumnLength}}};comment:'{{{ .ColumnComment }}}'"`
+	    CreatedUser system_model.SystemAuthAdminSimple `gorm:"foreignKey:CreatedBy"`
+    {{{- else if eq .ColumnName "is_delete" }}}
         IsDelete soft_delete.DeletedAt `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
     {{{- else }}}
-    {{{- if eq .GoType "core.NullTime" }}}
-        {{{ toUpperCamelCase .GoField }}} core.NullTime `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};{{{ if eq .GoField "create_time" }}}autoCreateTime;{{{ else }}}{{{if eq .GoField "update_time"}}}autoUpdateTime;{{{ end }}}{{{ end }}}comment:'{{{ .ColumnComment }}}'"`
-    {{{- else if .IsPk }}}
-        {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};primarykey;{{{ if .IsIncrement}}}autoIncrement;{{{end}}}comment:'{{{ .ColumnComment }}}'"`
-    {{{- else }}}
-        {{{ toUpperCamelCase .GoField }}} {{{goWithRespType .GoType }}} `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};comment:'{{{ .ColumnComment }}}'"`
-    {{{- end }}}
+        {{{- if eq .GoType "core.NullTime" }}}
+            {{{ toUpperCamelCase .GoField }}} core.NullTime `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};{{{ if eq .GoField "create_time" }}}autoCreateTime;{{{ else }}}{{{if eq .GoField "update_time"}}}autoUpdateTime;{{{ end }}}{{{ end }}}comment:'{{{ .ColumnComment }}}'"`
+        {{{- else if .IsPk }}}
+            {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};primarykey;{{{ if .IsIncrement}}}autoIncrement;{{{end}}}comment:'{{{ .ColumnComment }}}'"`
+        {{{- else }}}
+            {{{ toUpperCamelCase .GoField }}} {{{goWithRespType .GoType }}} `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};comment:'{{{ .ColumnComment }}}'"`
+        {{{- end }}}
     {{{- end }}}
 
 {{{- end }}}

@@ -10,7 +10,7 @@
   
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
             {{{- if and .Table.TreePrimary .Table.TreeParent }}}
                 <el-form-item label="父级" prop="{{{ (toUpperCamelCase .Table.TreeParent) }}}">
                     <el-tree-select

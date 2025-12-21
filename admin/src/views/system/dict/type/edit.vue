@@ -13,7 +13,7 @@
                 ref="formRef"
                 :rules="rules"
                 :model="formData"
-                label-width="84px"
+                label-width="110px"
             >
                 <el-form-item label="字典名称" prop="dictName">
                     <el-input v-model="formData.dictName" placeholder="请输入字典名称" clearable />

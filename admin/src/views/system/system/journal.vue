@@ -6,7 +6,7 @@
                 class="ls-form mb-[-16px]"
                 :model="formData"
                 inline
-                label-width="70px"
+                label-width="90px"
                 label-position="left"
             >
                 <el-form-item label="管理员" class="w-[360px]">

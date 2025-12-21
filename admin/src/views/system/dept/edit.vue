@@ -8,7 +8,7 @@
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
                 <el-form-item label="上级部门" prop="pid" v-if="formData.pid !== ''">
                     <el-tree-select
                         class="flex-1"

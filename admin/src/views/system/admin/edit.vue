@@ -8,7 +8,7 @@
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
                 <el-form-item label="账号" prop="username">
                     <el-input
                         v-model="formData.username"
@@ -61,6 +61,7 @@
                                 return !!data.isStop
                             }
                         }"
+                        :disabled="isRoot"
                         check-strictly
                         :default-expand-all="true"
                         placeholder="请选择上级部门"
@@ -72,6 +73,7 @@
                         clearable
                         v-model="formData.postId"
                         placeholder="请选择岗位"
+                        :disabled="isRoot"
                     >
                         <!-- multiple -->
                         <el-option
@@ -144,7 +146,7 @@ const formData = reactive({
 })
 
 const isRoot = computed(() => {
-    return formData.roleId == '0'
+    return formData.id == '1'
 })
 
 const passwordConfirmValidator = (rule: object, value: string, callback: any) => {

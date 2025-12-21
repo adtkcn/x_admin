@@ -1,20 +1,30 @@
 <template>
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true" label-width="70px"
-                label-position="left">
+            <el-form
+                ref="formRef"
+                class="mb-[-16px]"
+                :model="queryParams"
+                :inline="true"
+                label-width="90px"
+                label-position="left"
+            >
                 <el-form-item label="任务名称" prop="TaskName" class="w-[280px]">
-                    <el-input  v-model="queryParams.TaskName" />
+                    <el-input v-model="queryParams.TaskName" />
                 </el-form-item>
                 <el-form-item label="任务编码" prop="TaskCode" class="w-[280px]">
-                    <el-input  v-model="queryParams.TaskCode" />
+                    <el-input v-model="queryParams.TaskCode" />
                 </el-form-item>
                 <el-form-item label="corn表达式" prop="CornExpr" class="w-[280px]">
-                    <el-input  v-model="queryParams.CornExpr" />
+                    <el-input v-model="queryParams.CornExpr" />
                 </el-form-item>
                 <el-form-item label="创建人" prop="CreatedBy" class="w-[280px]">
-                    <el-input  v-model="queryParams.CreatedBy" />
+                    <el-input v-model="queryParams.CreatedBy" />
                 </el-form-item>
+                <el-form-item label="创建人名称" prop="Nickname" class="w-[280px]">
+                    <el-input v-model="queryParams.Nickname" />
+                </el-form-item>
+
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
@@ -41,7 +51,7 @@
                     </template>
                     新增
                 </el-button>
-                    <upload
+                <upload
                     v-perms="['admin:system_corn:ImportFile']"
                     class="ml-3 mr-3"
                     :url="system_corn_import_file"
@@ -56,7 +66,11 @@
                         导入
                     </el-button>
                 </upload>
-                <el-button v-perms="['admin:system_corn:ExportFile']" type="primary" @click="exportFile">
+                <el-button
+                    v-perms="['admin:system_corn:ExportFile']"
+                    type="primary"
+                    @click="exportFile"
+                >
                     <template #icon>
                         <icon name="el-icon-Download" />
                     </template>
@@ -82,8 +96,12 @@
                 <el-table-column label="任务名称" prop="TaskName" min-width="130" />
                 <el-table-column label="任务编码" prop="TaskCode" min-width="130" />
                 <el-table-column label="corn表达式" prop="CornExpr" min-width="130" />
-                <el-table-column label="禁用" prop="Disabled" min-width="130" />
-                <el-table-column label="创建人" prop="CreatedBy" min-width="130" />
+                <el-table-column label="状态" prop="Status" min-width="130">
+                    <template #default="{ row }">
+                        <dict-value :options="dictData.status" :value="row.Status" />
+                    </template>
+                </el-table-column>
+                <el-table-column label="创建人" prop="CreatedUser.nickname" min-width="130" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
                 <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
                 <el-table-column label="操作" width="160" fixed="right">
@@ -93,9 +111,10 @@
                             type="primary"
                             link
                             @click="viewDetails(row)"
-                        >详情</el-button>
+                            >详情</el-button
+                        >
                         <el-button
-                            v-perms="['admin:system_corn:edit','admin:system_corn:detail']"
+                            v-perms="['admin:system_corn:edit', 'admin:system_corn:detail']"
                             type="primary"
                             link
                             @click="handleEdit(row)"
@@ -117,35 +136,32 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <EditPopup
-            v-if="showEdit"
-            ref="editRef"
-            @success="getLists"
-            @close="showEdit = false"
-        />
-        <DetailsPopup
-            v-if="showDetails"
-            ref="detailsRef"
-            @close="showDetails = false"
-        />
-        
+        <EditPopup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <DetailsPopup v-if="showDetails" ref="detailsRef" @close="showDetails = false" />
     </div>
 </template>
 <script lang="ts" setup>
-import { ref,reactive,shallowRef,nextTick  } from 'vue'
-import { system_corn_delete,system_corn_delete_batch, system_corn_list,system_corn_import_file, system_corn_export_file } from '@/api/system/corn'
-import type { type_system_corn,type_system_corn_query	} from "@/api/system/corn";
+import { ref, reactive, shallowRef, nextTick } from 'vue'
+import {
+    system_corn_delete,
+    system_corn_delete_batch,
+    system_corn_list,
+    system_corn_import_file,
+    system_corn_export_file
+} from '@/api/system/corn'
+import type { type_system_corn, type_system_corn_query } from '@/api/system/corn'
 
-
-import { useDictData,useListAllData } from '@/hooks/useDictOptions'
+import { useDictData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'
-
+const { dictData } = useDictData<{
+    status: type_dict[]
+}>(['status'])
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
 import DetailsPopup from './details.vue'
 defineOptions({
-    name:"system_corn"
+    name: 'system_corn'
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
@@ -155,19 +171,18 @@ const queryParams = reactive<type_system_corn_query>({
     TaskName: null,
     TaskCode: null,
     CornExpr: null,
-    Disabled: null,
+    Status: null,
     CreatedBy: null,
     CreateTimeStart: null,
     CreateTimeEnd: null,
     UpdateTimeStart: null,
-    UpdateTimeEnd: null,
+    UpdateTimeEnd: null
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_system_corn>({
     fetchFun: system_corn_list,
     params: queryParams
 })
-
 
 const handleAdd = async () => {
     showEdit.value = true
@@ -196,7 +211,7 @@ const handleSelectionChange = (val: type_system_corn[]) => {
 const handleDelete = async (Id: number) => {
     try {
         await feedback.confirm('确定要删除？')
-        await system_corn_delete( Id )
+        await system_corn_delete(Id)
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {}

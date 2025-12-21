@@ -35,35 +35,41 @@ type systemCornService struct {
 // List 定时任务列表
 func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.SystemCorn{})
+	dbModel := service.db.Model(&model.SystemCorn{}).Joins("CreatedUser")
+	tableName := core.DBTableName(&model.SystemCorn{})
 	if listReq.TaskName.GetValue() != nil {
-		dbModel = dbModel.Where("task_name like ?", "%"+*listReq.TaskName.GetValue()+"%")
+		dbModel = dbModel.Where(tableName+".task_name like ?", "%"+*listReq.TaskName.GetValue()+"%")
 	}
+
 	if listReq.TaskCode.GetValue() != nil {
-		dbModel = dbModel.Where("task_code = ?", *listReq.TaskCode.GetValue())
+		dbModel = dbModel.Where(tableName+".task_code = ?", *listReq.TaskCode.GetValue())
 	}
 	if listReq.CornExpr.GetValue() != nil {
-		dbModel = dbModel.Where("corn_expr = ?", *listReq.CornExpr.GetValue())
+		dbModel = dbModel.Where(tableName+".corn_expr = ?", *listReq.CornExpr.GetValue())
 	}
-	if listReq.Disabled.GetValue() != nil {
-		dbModel = dbModel.Where("disabled = ?", *listReq.Disabled.GetValue())
+	if listReq.Status.GetValue() != nil {
+		dbModel = dbModel.Where(tableName+".Status = ?", *listReq.Status.GetValue())
 	}
 	if listReq.CreatedBy.GetValue() != nil {
-		dbModel = dbModel.Where("created_by = ?", *listReq.CreatedBy.GetValue())
+		dbModel = dbModel.Where(tableName+".created_by = ?", *listReq.CreatedBy.GetValue())
 	}
+	if listReq.Nickname.GetValue() != nil {
+		dbModel = dbModel.Where("CreatedUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
+	}
+
 	if listReq.CreateTimeStart.GetValue() != nil {
-		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart.GetValue())
+		dbModel = dbModel.Where(tableName+".create_time >= ?", *listReq.CreateTimeStart.GetValue())
 	}
 	if listReq.CreateTimeEnd.GetValue() != nil {
-		dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd.GetValue())
+		dbModel = dbModel.Where(tableName+".create_time <= ?", *listReq.CreateTimeEnd.GetValue())
 	}
 	if listReq.UpdateTimeStart.GetValue() != nil {
-		dbModel = dbModel.Where("update_time >= ?", *listReq.UpdateTimeStart.GetValue())
+		dbModel = dbModel.Where(tableName+".update_time >= ?", *listReq.UpdateTimeStart.GetValue())
 	}
 	if listReq.UpdateTimeEnd.GetValue() != nil {
-		dbModel = dbModel.Where("update_time <= ?", *listReq.UpdateTimeEnd.GetValue())
+		dbModel = dbModel.Where(tableName+".update_time <= ?", *listReq.UpdateTimeEnd.GetValue())
 	}
-	dbModel = dbModel.Where("is_delete = ?", 0)
+	// dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel
 }
 
@@ -82,8 +88,8 @@ func (service systemCornService) GetUpdateMap(editReq schema.SystemCornEditReq) 
 	if editReq.CornExpr.IsExists() {
 		updateMap["corn_expr"] = editReq.CornExpr.GetValue()
 	}
-	if editReq.Disabled.IsExists() {
-		updateMap["disabled"] = editReq.Disabled.GetValue()
+	if editReq.Status.IsExists() {
+		updateMap["Status"] = editReq.Status.GetValue()
 	}
 	return updateMap
 }
@@ -135,7 +141,7 @@ func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e
 	var obj = model.SystemCorn{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
-		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
+		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedUser").Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -228,7 +234,7 @@ func (service systemCornService) GetExcelCol() []excel2.Col {
 		{Name: "任务名称", Key: "TaskName", Width: 15, Decode: core.DecodeString},
 		{Name: "任务编码", Key: "TaskCode", Width: 15, Decode: core.DecodeString},
 		{Name: "corn表达式", Key: "CornExpr", Width: 15, Decode: core.DecodeString},
-		{Name: "禁用", Key: "Disabled", Width: 15, Decode: core.DecodeInt},
+		{Name: "禁用", Key: "Status", Width: 15, Decode: core.DecodeInt},
 		{Name: "创建人", Key: "CreatedBy", Width: 15, Decode: core.DecodeString},
 		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
 		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},

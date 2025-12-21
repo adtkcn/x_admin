@@ -1,7 +1,7 @@
 <template>
     <div class="index-lists">
         <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true" label-width="70px"
+            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true" label-width="90px"
                 label-position="left">
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
@@ -100,6 +100,7 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
+                <el-table-column label="序号" type="index" :index="handleIndex" min-width="60" />
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
@@ -223,7 +224,7 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- end }}}
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging<type_{{{ .ModuleName }}}>({
+const { pager, getLists, resetPage, resetParams, handleIndex } = usePaging<type_{{{ .ModuleName }}}>({
     fetchFun: {{{ .ModuleName }}}_list,
     params: queryParams
 })

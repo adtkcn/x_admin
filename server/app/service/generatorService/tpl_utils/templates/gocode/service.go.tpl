@@ -37,32 +37,40 @@ type {{{ toCamelCase .EntityName }}}Service struct {
 // List {{{ .FunctionName }}}列表
 func (service {{{ toCamelCase .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.{{{ toUpperCamelCase .EntityName }}}{})
+	dbModel := service.db.Model(&model.{{{ toUpperCamelCase .EntityName }}}{}).Joins("CreatedUser")
+	tableName := core.DBTableName(&model.{{{ toUpperCamelCase .EntityName }}}{})
 	{{{- range .Columns }}}
 	{{{- if .IsQuery }}}
-	{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
-		{{{- if eq .HtmlType "datetime" }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue() != nil {
-	dbModel = dbModel.Where("{{{ .ColumnName }}} >= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue())
-			}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue() != nil {
-	dbModel = dbModel.Where("{{{ .ColumnName }}} <= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue())
-			}
-		{{{- else }}}
-			{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
-	dbModel = dbModel.Where("{{{ .ColumnName }}} like ?", "%"+*listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue()+"%")
-			}
+		{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
+			{{{- if eq .ColumnName "created_by" }}}
+	if listReq.CreatedBy.GetValue() != nil {
+		dbModel = dbModel.Where(tableName+".created_by = ?", *listReq.CreatedBy.GetValue())
+	}
+	if listReq.Nickname.GetValue() != nil {
+		dbModel = dbModel.Where("CreatedUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
+	}
+			{{{- else if eq .HtmlType "datetime" }}}
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue() != nil {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} >= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue())
+	}
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue() != nil {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} <= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue())
+	}
 			{{{- else }}}
-			if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
-	dbModel = dbModel.Where("{{{ .ColumnName }}} = ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue())
-			}
+			{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} like ?", "%"+*listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue()+"%")
+	}
+			{{{- else }}}
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} = ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue())
+	}
 			{{{- end }}}
 		{{{- end }}}
 	{{{- end }}}
     {{{- end }}}
 	{{{- if contains .AllFields "is_delete" }}}
-	dbModel = dbModel.Where("is_delete = ?", 0)
+	dbModel = dbModel.Where(tableName+".is_delete = ?", 0)
 	{{{- end }}}
 	return dbModel
 }
@@ -130,7 +138,7 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 	var obj = model.{{{ toUpperCamelCase .EntityName }}}{}
 	err := service.CacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
-		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Preload("CreatedUser").Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -240,18 +248,17 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetExcelCol() []excel2.Col
 	{{{- range .Columns }}}
 	{{{- if and (.IsList) (not .IsPk) }}}
 		{{{- if eq .HtmlType "datetime" }}}
-		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: util.NullTimeUtil.DecodeTime },
+	{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: util.NullTimeUtil.DecodeTime },
 		{{{- else if eq .GoType "int" }}}
-			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeInt},
+	{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeInt},
 		{{{- else if eq .GoType "float64" }}}
-			{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeFloat},
+	{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeFloat},
 		{{{- else }}}
-		{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeString},
+	{Name: "{{{.ColumnComment}}}", Key: "{{{ toUpperCamelCase .GoField }}}", Width: 15, Decode: core.DecodeString},
 		{{{- end }}}
 	{{{- end }}}
 	{{{- end }}}
 	}
-	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols
 }
 

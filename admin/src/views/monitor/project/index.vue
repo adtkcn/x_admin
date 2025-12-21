@@ -6,7 +6,7 @@
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
-                label-width="70px"
+                label-width="90px"
                 label-position="left"
             >
                 <el-form-item label="项目key" prop="ProjectKey" class="w-[280px]">

@@ -6,7 +6,7 @@
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
-                label-width="70px"
+                label-width="90px"
                 label-position="left"
             >
                 <el-form-item label="标题" prop="Title" class="w-[280px]">
@@ -94,6 +94,8 @@
                 <vxe-column field="Title" title="标题" min-width="130"></vxe-column>
                 <vxe-column field="Tag" title="标识" min-width="130"></vxe-column>
                 <vxe-column field="Version" title="版本" width="100"></vxe-column>
+                <vxe-column field="CreatedUser.nickname" title="创建人" width="120"></vxe-column>
+
                 <vxe-column field="CreateTime" title="创建时间" width="180"></vxe-column>
                 <vxe-column field="UpdateTime" title="更新时间" width="180"></vxe-column>
                 <vxe-column title="操作" width="160" fixed="right">

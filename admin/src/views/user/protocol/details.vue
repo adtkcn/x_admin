@@ -9,7 +9,7 @@
             :confirmButtonText="false"
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
                 <el-form-item label="标题" prop="Title">
                     <span v-text="formData.Title"></span>
                 </el-form-item>

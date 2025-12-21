@@ -9,7 +9,7 @@
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
                 <el-form-item label="标识" prop="Tag" borderBottom>
                     <el-input v-model="formData.Tag" placeholder="请输入标识" />
                 </el-form-item>
