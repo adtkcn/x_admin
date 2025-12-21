@@ -87,7 +87,7 @@ func ShallowStructsToMaps(from any) (data []map[string]any) {
 }
 
 // MapToStruct 将map类型转换成结构体
-func MapToStruct(from any, to any) (err error) {
+func MapToStruct[F any, T any](from F, to T) (err error) {
 	// err = mapstructure.WeakDecode(from, to) // 需要tag:mapstructure
 
 	jsonData, err := json.Marshal(from)

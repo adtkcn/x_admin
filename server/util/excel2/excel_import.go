@@ -18,7 +18,7 @@ import (
  * @param cols 列信息
  * @return err
  */
-func GetExcelData(file multipart.File, dst any, cols []Col) (err error) {
+func GetExcelData[T any](file multipart.File, dst T, cols []Col) (err error) {
 	// 创建缓冲区
 	buf := new(bytes.Buffer)
 
@@ -46,25 +46,14 @@ func GetExcelData(file multipart.File, dst any, cols []Col) (err error) {
 // f 获取到的excel对象、dst 导入目标对象【传指针】
 // headIndex 表头的索引，从0开始（用于获取表头名字）
 // startRow 头行行数（从第startRow+1行开始扫）
-func ImportExcel(f *excelize.File, dst any, startRow int, cols []Col) (err error) {
+func ImportExcel[T any](f *excelize.File, dst T, startRow int, cols []Col) (err error) {
 	sheetName := f.GetSheetName(0) // 单个sheet时，默认读取第一个sheet
 	err = importData(f, dst, sheetName, startRow, cols)
 	return
 }
 
-// ImportBySheet 导入数据（读取指定sheet）sheetName Sheet名称
-func ImportBySheet(f *excelize.File, dst any, sheetName string, startRow int, cols []Col) (err error) {
-	// 当需要读取多个sheet时，可以通过下面的方式，来调用 ImportBySheet 这个函数
-	//sheetList := f.GetSheetList()
-	//for _, sheetName := range sheetList {
-	//	ImportBySheet(f,dst,sheetName,startRow)
-	//}
-	err = importData(f, dst, sheetName, startRow, cols)
-	return
-}
-
 // 解析数据
-func importData(f *excelize.File, dst any, sheetName string, startRow int, cols []Col) (err error) {
+func importData[T any](f *excelize.File, dst T, sheetName string, startRow int, cols []Col) (err error) {
 	rows, err := f.GetRows(sheetName) // 获取所有行
 	if err != nil {
 		err = errors.New(sheetName + "工作表不存在")

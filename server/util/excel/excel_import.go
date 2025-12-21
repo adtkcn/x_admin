@@ -50,17 +50,6 @@ func ImportExcel(f *excelize.File, dst interface{}, headIndex, startRow int) (er
 	return
 }
 
-// ImportBySheet 导入数据（读取指定sheet）sheetName Sheet名称
-func ImportBySheet(f *excelize.File, dst interface{}, sheetName string, headIndex, startRow int) (err error) {
-	// 当需要读取多个sheet时，可以通过下面的方式，来调用 ImportBySheet 这个函数
-	//sheetList := f.GetSheetList()
-	//for _, sheetName := range sheetList {
-	//	ImportBySheet(f,dst,sheetName,headIndex,startRow)
-	//}
-	err = importData(f, dst, sheetName, headIndex, startRow)
-	return
-}
-
 // 获取在数组中得下标
 func GetIndex(items []string, item string) int {
 	for i, v := range items {
