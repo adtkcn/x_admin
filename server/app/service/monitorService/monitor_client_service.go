@@ -12,6 +12,7 @@ import (
 	"x_admin/util/excel2"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 var MonitorClientService = NewMonitorClientService()
@@ -176,7 +177,16 @@ func (service monitorClientService) ErrorUsers(error_id string) (res []monitorSc
 func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq) (createId string, e error) {
 	var obj model.MonitorClient
 	convert_util.Copy(&obj, addReq)
-	err := service.db.Create(&obj).Error
+	err := service.db.Clauses(clause.OnConflict{
+		Columns: []clause.Column{
+			{Name: "client_id"}, // 指定以 client_id 作为冲突判断字段（可选，GORM 会自动推断唯一索引）
+		},
+		DoUpdates: clause.Assignments(map[string]interface{}{
+			"os":      addReq.Os,
+			"browser": addReq.Browser,
+			"ua":      addReq.Ua,
+		}),
+	}).Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {
 		return "", e

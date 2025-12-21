@@ -2,12 +2,13 @@ package admin_ctl
 
 import (
 	"net/http"
-	"strconv"
+	"fmt"
 	"strings"
 	"time"
 	"github.com/gin-gonic/gin" 
 	"x_admin/core/request"
 	"x_admin/core/response"
+	"x_admin/config"
 	"x_admin/util"
 	"x_admin/util/excel2"
 	"golang.org/x/sync/singleflight"
@@ -117,7 +118,10 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	createId, e := service.{{{ toUpperCamelCase .EntityName }}}Service.Add(addReq)
+	
+	var adminId = config.AdminConfig.GetAdminId(c)// 创建人
+	
+	createId, e := service.{{{ toUpperCamelCase .EntityName }}}Service.Add(addReq, adminId)
 	response.CheckAndRespWithData(c,createId, e)
 }
 //	@Summary	{{{ .FunctionName }}}编辑

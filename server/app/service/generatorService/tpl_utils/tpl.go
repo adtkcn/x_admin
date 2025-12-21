@@ -4,9 +4,9 @@ import (
 	"archive/zip"
 	"bytes"
 	"embed"
+	"fmt"
 	"io"
 	"path"
-	"strings"
 	"text/template"
 	"x_admin/core/response"
 	"x_admin/model/gen_model"
@@ -32,6 +32,7 @@ var TemplateUtil = templateUtil{
 			"pathToName":        GenUtil.PathToName,
 			"deletePathPrefix":  GenUtil.DeletePathPrefix,
 			"toSqlType":         GenUtil.ToSqlType,
+			"makeID":            GenUtil.MakeID,
 		}),
 }
 
@@ -236,25 +237,25 @@ func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName string) map[string]string {
 	//模板文件对应的输出文件
 	fmtMap := map[string]string{
-		"gocode/model.go.tpl": strings.Join([]string{"server/model/", ModuleName, ".go"}, ""),
-		"gocode/route.go.tpl": strings.Join([]string{"server/router/adminRoute/", ModuleName, "_route.go"}, ""),
+		"gocode/model.go.tpl": fmt.Sprintf("server/model/%s.go", ModuleName),                   //strings.Join([]string{"server/model/", ModuleName, ".go"}, ""),
+		"gocode/route.go.tpl": fmt.Sprintf("server/routes/adminRoute/%s_route.go", ModuleName), //strings.Join([]string{"server/routes/adminRoute/", ModuleName, "_route.go"}, ""),
 
-		"gocode/schema.go.tpl":     strings.Join([]string{"server/app/schema/", ModuleName, "_schema.go"}, ""),            //"server/app/schema/%s_schema.go"
-		"gocode/service.go.tpl":    strings.Join([]string{"server/app/service/", ModuleName, "_service.go"}, ""),          //"server/app/service/%s_service.go",
-		"gocode/controller.go.tpl": strings.Join([]string{"server/app/controller/admin_ctl/", ModuleName, "_ctl.go"}, ""), //"server/app/controller/admin_ctl/%s_ctl.go",
+		"gocode/schema.go.tpl":     fmt.Sprintf("server/app/schema/%s_schema.go", ModuleName),            //"server/app/schema/%s_schema.go"
+		"gocode/service.go.tpl":    fmt.Sprintf("server/app/service/%s_service.go", ModuleName),          //"server/app/service/%s_service.go",
+		"gocode/controller.go.tpl": fmt.Sprintf("server/app/controller/admin_ctl/%s_ctl.go", ModuleName), //"server/app/controller/admin_ctl/%s_ctl.go",
 
-		"vue/api.ts.tpl":         strings.Join([]string{"admin/src/api/", GenUtil.NameToPath(ModuleName), ".ts"}, ""),            // "admin/src/api/%s.ts",
-		"vue/edit.vue.tpl":       strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),    // "admin/src/views/%s/edit.vue",
-		"vue/details.vue.tpl":    strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/details.vue"}, ""), // "admin/src/views/%s/details.vue",
-		"vue/index.vue.tpl":      strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""),   // "admin/src/views/%s/index.vue",
-		"vue/index-tree.vue.tpl": strings.Join([]string{"admin/src/views/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""),   // "admin/src/views/%s/index-tree.vue",
+		"vue/api.ts.tpl":         fmt.Sprintf("admin/src/api/%s.ts", GenUtil.NameToPath(ModuleName)),            // "admin/src/api/%s.ts",
+		"vue/edit.vue.tpl":       fmt.Sprintf("admin/src/views/%s/edit.vue", GenUtil.NameToPath(ModuleName)),    // "admin/src/views/%s/edit.vue",
+		"vue/details.vue.tpl":    fmt.Sprintf("admin/src/views/%s/details.vue", GenUtil.NameToPath(ModuleName)), // "admin/src/views/%s/details.vue",
+		"vue/index.vue.tpl":      fmt.Sprintf("admin/src/views/%s/index.vue", GenUtil.NameToPath(ModuleName)),   // "admin/src/views/%s/index.vue",
+		"vue/index-tree.vue.tpl": fmt.Sprintf("admin/src/views/%s/index.vue", GenUtil.NameToPath(ModuleName)),   // "admin/src/views/%s/index-tree.vue",
 
-		"uniapp/api.ts.tpl":      strings.Join([]string{"x_admin_app/api/", GenUtil.NameToPath(ModuleName), ".ts"}, ""),
-		"uniapp/edit.vue.tpl":    strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/edit.vue"}, ""),
-		"uniapp/index.vue.tpl":   strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/index.vue"}, ""),
-		"uniapp/search.vue.tpl":  strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/search.vue"}, ""),
-		"uniapp/details.vue.tpl": strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/details.vue"}, ""),
-		"uniapp/pages.json.tpl":  strings.Join([]string{"x_admin_app/pages/", GenUtil.NameToPath(ModuleName), "/pages.json"}, ""),
+		"uniapp/api.ts.tpl":      fmt.Sprintf("x_admin_app/api/%s.ts", GenUtil.NameToPath(ModuleName)),          // "x_admin_app/api/%s.ts",
+		"uniapp/edit.vue.tpl":    fmt.Sprintf("x_admin_app/pages/%s/edit.vue", GenUtil.NameToPath(ModuleName)),  // "x_admin_app/pages/%s/edit.vue",
+		"uniapp/index.vue.tpl":   fmt.Sprintf("x_admin_app/pages/%s/index.vue", GenUtil.NameToPath(ModuleName)), // "x_admin_app/pages/%s/index.vue",
+		"uniapp/search.vue.tpl":  fmt.Sprintf("x_admin_app/pages/%s/search.vue", GenUtil.NameToPath(ModuleName)),
+		"uniapp/details.vue.tpl": fmt.Sprintf("x_admin_app/pages/%s/details.vue", GenUtil.NameToPath(ModuleName)),
+		"uniapp/pages.json.tpl":  fmt.Sprintf("x_admin_app/pages/%s/pages.json", GenUtil.NameToPath(ModuleName)),
 	}
 	filePath := make(map[string]string)
 	for tplPath, tplCode := range tplCodeMap {

@@ -10,7 +10,6 @@ import (
 	"mime/multipart"
 	"os"
 	"reflect"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -40,7 +39,7 @@ func (tu toolsUtil) MakeUuidV7() string {
 	if err != nil {
 		return ""
 	}
-	return strings.ReplaceAll(v7.String(), "-", "")
+	return v7.String()
 }
 
 // MakeMd5 制作MD5

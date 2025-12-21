@@ -11,7 +11,7 @@ import (
 type MonitorClient struct {
 	Id         string `gorm:"primarykey;type:char(36);comment:'uuid'"` // uuid
 	ProjectKey string `gorm:"comment:'项目key'"`                         // 项目key
-	ClientId   string `gorm:"comment:'sdk生成的客户端id'"`                   // sdk生成的客户端id
+	ClientId   string `gorm:"uniqueIndex;comment:'sdk生成的客户端id'"`       // sdk生成的客户端id
 	// UserId     string        `gorm:"comment:'用户id'"`                          // 用户id
 	Os      string `gorm:"comment:'系统'"`  // 系统
 	Browser string `gorm:"comment:'浏览器'"` // 浏览器

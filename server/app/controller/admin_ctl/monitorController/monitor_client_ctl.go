@@ -146,12 +146,12 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	var addReq monitorSchema.MonitorClientAddReq
 	json.Unmarshal([]byte(data), &addReq)
 
-	_, err = monitorService.MonitorClientService.DetailByClientId(*addReq.ClientId)
+	// _, err = monitorService.MonitorClientService.DetailByClientId(*addReq.ClientId)
 
-	if err != nil {
-		response.FailWithMsg(c, response.SystemError, err.Error())
-		return
-	}
+	// if err != nil {
+	// 	response.FailWithMsg(c, response.SystemError, err.Error())
+	// 	return
+	// }
 	uaStr := c.GetHeader("user-agent")
 	if uaStr != "" {
 		ua := util.UAParser.Parse(uaStr)

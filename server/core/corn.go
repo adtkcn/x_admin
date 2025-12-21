@@ -22,7 +22,21 @@ func NewCronManager() *CronManager {
 	}
 }
 
-// AddTask 添加任务
+// RemoveTask 删除任务
+func (tm *CronManager) RemoveTask(taskID string) {
+	tm.mutex.Lock()
+	defer tm.mutex.Unlock()
+
+	if id, exists := tm.taskIDs[taskID]; exists {
+		tm.cron.Remove(id)
+		delete(tm.taskIDs, taskID)
+		fmt.Printf("任务 '%s' 已移除\n", taskID)
+	} else {
+		fmt.Printf("任务 '%s' 不存在\n", taskID)
+	}
+}
+
+// AddTask 添加、更新任务
 func (tm *CronManager) AddTask(taskID, spec string, cmd func()) error {
 	tm.mutex.Lock()
 	defer tm.mutex.Unlock()
@@ -42,19 +56,18 @@ func (tm *CronManager) AddTask(taskID, spec string, cmd func()) error {
 	return nil
 }
 
-// RemoveTask 删除任务
-func (tm *CronManager) RemoveTask(taskID string) {
-	tm.mutex.Lock()
-	defer tm.mutex.Unlock()
-
-	if id, exists := tm.taskIDs[taskID]; exists {
-		tm.cron.Remove(id)
-		delete(tm.taskIDs, taskID)
-		fmt.Printf("任务 '%s' 已移除\n", taskID)
-	} else {
-		fmt.Printf("任务 '%s' 不存在\n", taskID)
-	}
-}
+// 批量添加、更新任务，不存在的任务会添加，存在的任务会更新
+// func (tm *CronManager) AddTasks(tasks []*TaskInfo) error {
+// 	for _, task := range tasks {
+// 		if task.TaskId == "" || task.CronExpr == "" || task.TaskFunc == nil {
+// 			return fmt.Errorf("任务ID、Cron表达式或任务函数不能为空")
+// 		}
+// 		if err := tm.AddTask(task.TaskId, task.CronExpr, task.TaskFunc); err != nil {
+// 			return err
+// 		}
+// 	}
+// 	return nil
+// }
 
 // Start 启动任务调度器
 func (tm *CronManager) Start() {

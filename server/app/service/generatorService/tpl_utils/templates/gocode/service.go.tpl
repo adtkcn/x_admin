@@ -1,15 +1,17 @@
 package service
 
 import (
+	"errors"
+	"x_admin/app/schema"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model"
-	"x_admin/app/schema"
-	"gorm.io/gorm"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
+
+	"gorm.io/gorm"
 )
 
 var {{{ toUpperCamelCase .EntityName }}}Service=New{{{ toUpperCamelCase .EntityName }}}Service()
@@ -18,9 +20,9 @@ var {{{ toUpperCamelCase .EntityName }}}Service=New{{{ toUpperCamelCase .EntityN
 func New{{{ toUpperCamelCase .EntityName }}}Service() *{{{ toCamelCase .EntityName }}}Service {
 	return &{{{ toCamelCase .EntityName }}}Service{
 		db:   core.GetDB(),
-		CacheUtil util.CacheUtil{
+		CacheUtil: util.CacheUtil{
 			Name: "{{{ toCamelCase .EntityName }}}",
-		}
+		},
 	}
 }
 
@@ -69,9 +71,15 @@ func (service {{{ toCamelCase .EntityName }}}Service) GetUpdateMap(editReq schem
 	updateMap := make(map[string]interface{})
 	{{{- range .Columns }}}
 	{{{- if .IsEdit }}}
+	{{{- if .IsPk }}}
+	if editReq.{{{ toUpperCamelCase .ColumnName }}} !="" {
+		updateMap["{{{ .ColumnName }}}"] = editReq.{{{ toUpperCamelCase .ColumnName }}}
+	}
+    {{{- else }}}
 	if editReq.{{{ toUpperCamelCase .ColumnName }}}.IsExists() {
 		updateMap["{{{ .ColumnName }}}"] = editReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue()
 	}
+	{{{- end }}}
 	{{{- end }}}
 	{{{- end }}}
 	return updateMap
@@ -143,9 +151,14 @@ func (service {{{ toCamelCase .EntityName }}}Service) Detail({{{ toUpperCamelCas
 }
 
 // Add {{{ .FunctionName }}}新增
-func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq) (createId {{{.PrimaryKeyGoType}}},e error) {
+func (service {{{ toCamelCase .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq, adminId string) (createId {{{.PrimaryKeyGoType}}},e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	convert_util.Copy(&obj, addReq)
+
+	// 需要判断有没有CreatedBy字段
+	//obj.CreatedBy = adminId
+	obj.CreatedBy.SetValue(adminId)
+	
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
 	if e != nil {

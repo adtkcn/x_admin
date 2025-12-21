@@ -215,6 +215,10 @@ func (gu genUtil) GetTablePriCol(columns []gen_model.GenTableColumn) (res gen_mo
 	}
 	return
 }
+func (gu genUtil) MakeID() string {
+	uuid := util.ToolsUtil.MakeUuidV7()
+	return uuid
+}
 
 /**
  * @description: Go类型转TS类型
