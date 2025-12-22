@@ -289,7 +289,10 @@ const menuOptions = ref<any[]>([])
 const getMenu = async () => {
     const data: any = await menuLists()
     const menu: any = { id: '0', menuName: '顶级', children: [] }
-    menu.children = arrayToTree(data.filter((item) => item.menuType != MenuEnum.BUTTON))
+    menu.children = arrayToTree(
+        data.filter((item) => item.menuType != MenuEnum.BUTTON),
+        '0'
+    )
     menuOptions.value.push(menu)
 }
 function getApiListFn() {

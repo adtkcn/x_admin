@@ -1,9 +1,19 @@
 <template>
     <div class="menu-lists p-4 h-full box-border flex flex-col">
         <div>
-            <el-input v-model="menuName" style="width: 240px" placeholder="Please input" />
+            <el-input
+                v-model="menuName"
+                style="width: 240px"
+                clearable
+                placeholder="请输入菜单名称"
+            />
 
-            <el-button v-perms="['admin:system:menu:add']" type="primary" @click="handleAdd()">
+            <el-button
+                v-perms="['admin:system:menu:add']"
+                type="primary"
+                @click="handleAdd()"
+                class="ml-4"
+            >
                 <template #icon>
                     <icon name="el-icon-Plus" />
                 </template>
@@ -11,12 +21,13 @@
             </el-button>
             <el-button @click="handleExpand"> 展开/收起 </el-button>
         </div>
+
         <div class="mt-4" style="height: 100%">
             <vxe-table
                 ref="tableRef"
                 :row-config="rowConfig"
                 :tree-config="treeConfig"
-                :data="lists"
+                :data="filterList"
                 :border="'inner'"
                 height="100%"
                 :virtual-y-config="{ enabled: true, gt: 0 }"
@@ -165,12 +176,13 @@
     <EditPopup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
 </template>
 <script lang="ts" setup>
-import { ref, useTemplateRef, nextTick, computed } from 'vue'
+import { ref, useTemplateRef, nextTick, computed, toRaw } from 'vue'
 import { menuDelete, menuLists, SystemAuthMenuResp } from '@/api/perms/menu'
 // import { arrayToTree } from '@/utils/util'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
+import { queryHierarchy } from '@/utils/flatTreeUtils'
 
 import { VxeTableInstance } from 'vxe-table'
 
@@ -197,12 +209,19 @@ const loading = ref(false)
 const showEdit = ref(false)
 const lists = ref<SystemAuthMenuResp[]>([])
 const menuName = ref('')
-// const filterList = computed(() => {
-//     if (!menuName.value) {
-//         return lists.value
-//     }
-//     return lists.value.filter((item) => item.menuName.includes(menuName.value))
-// })
+const filterList = computed(() => {
+    if (!menuName.value) {
+        return lists.value
+    }
+    const raw = toRaw(lists.value)
+    console.log('raw', raw)
+
+    const { all } = queryHierarchy(raw, menuName.value, {
+        fields: ['menuName'],
+        exact: false
+    })
+    return all
+})
 const getLists = async () => {
     loading.value = true
     try {
