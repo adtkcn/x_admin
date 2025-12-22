@@ -11,6 +11,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/model/gen_model"
 	"x_admin/util"
+	"x_admin/util/convert_util"
 )
 
 var TemplateUtil = templateUtil{
@@ -25,14 +26,14 @@ var TemplateUtil = templateUtil{
 			"contains":         util.ToolsUtil.Contains,
 			"goToTsType":       GenUtil.GoToTsType,
 			// "goToParamType":     GenUtil.GoToParamType,
-			"goWithAddEditType": GenUtil.GoWithAddEditType,
-			"goWithRespType":    GenUtil.GoWithRespType,
-			"getPageResp":       GenUtil.GetPageResp,
-			"nameToPath":        GenUtil.NameToPath,
-			"pathToName":        GenUtil.PathToName,
-			"deletePathPrefix":  GenUtil.DeletePathPrefix,
-			"toSqlType":         GenUtil.ToSqlType,
-			"makeID":            GenUtil.MakeID,
+
+			// "goWithRespType":   GenUtil.GoWithRespType,
+			"getPageResp":      GenUtil.GetPageResp,
+			"nameToPath":       GenUtil.NameToPath,
+			"pathToName":       GenUtil.PathToName,
+			"deletePathPrefix": GenUtil.DeletePathPrefix,
+			"toSqlType":        GenUtil.ToSqlType,
+			"makeID":           GenUtil.MakeID,
 		}),
 }
 
@@ -52,6 +53,37 @@ type zFile struct {
 	Body string
 }
 
+// ExtentGenTableColumn 扩展代码生成表列实体
+type ExtentGenTableColumn struct {
+	ID            string //主键ID
+	ColumnName    string //列名称
+	ColumnComment string //列描述
+	ColumnLength  int    //列长度
+	ColumnType    string //列类型
+
+	IsPk        uint8  //是否主键: [1=是, 0=否]
+	IsIncrement uint8  //是否自增: [1=是, 0=否]
+	IsRequired  uint8  //是否必填: [1=是, 0=否]
+	IsInsert    uint8  //是否为插入字段: [1=是, 0=否]
+	IsEdit      uint8  //是否编辑字段: [1=是, 0=否]
+	IsList      uint8  //是否列表字段: [1=是, 0=否]
+	IsQuery     uint8  //是否查询字段: [1=是, 0=否]
+	QueryType   string //查询方式: [等于、不等于、大于、小于、范围]
+	HtmlType    string //显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]
+	DictType    string //字典类型
+	ListAllApi  string //列表数据来源
+	Sort        int    //排序编号
+
+	GoType     string //go类型
+	GoNullType string //go空类型
+	GoField    string //go字段名
+
+	TsType  string //TS类型
+	TsField string //TS字段名
+
+	SwagType string //swagger类型
+}
+
 // TplVars 模板变量
 type TplVars struct {
 	GenTpl           string
@@ -67,7 +99,7 @@ type TplVars struct {
 	PrimaryField     string
 	PrimaryKeyGoType string
 	AllFields        []string
-	SubPriCol        gen_model.GenTableColumn
+	SubPriCol        ExtentGenTableColumn
 	SubPriField      string
 	SubTableFields   []string
 	ListFields       []string
@@ -77,8 +109,8 @@ type TplVars struct {
 	IsSearch         bool
 	ModelOprMap      map[string]string
 	Table            gen_model.GenTable
-	Columns          []gen_model.GenTableColumn
-	SubColumns       []gen_model.GenTableColumn
+	Columns          []ExtentGenTableColumn
+	SubColumns       []ExtentGenTableColumn
 	//ModelTypeMap    map[string]string
 }
 
@@ -87,36 +119,157 @@ type templateUtil struct {
 	tpl *template.Template
 }
 
-// PrepareVars 获取模板变量信息
+/**
+ * PrepareVars 获取模板变量信息
+ * @param table 表信息
+ * @param columns 列信息
+ * @param oriSubPriCol 子表主键列信息
+ * @param oriSubCols 子表列信息
+ * @returns 模板变量
+ */
 func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model.GenTableColumn,
 	oriSubPriCol gen_model.GenTableColumn, oriSubCols []gen_model.GenTableColumn) TplVars {
-	subPriField := "id"
+	// subPriField := "id"
 	isSearch := false
 	primaryKey := "id"
 	primaryKeyGoType := "string"
 	primaryField := "id"
 	functionName := "【请填写功能名称】"
 	var allFields []string
-	var subTableFields []string
+	// var subTableFields []string
 	var listFields []string
 	var detailFields []string
 	var dictFields []string
 	var listAllFields []string
-	var subColumns []gen_model.GenTableColumn
-	var oriSubColNames []string
-	for _, column := range oriSubCols {
-		oriSubColNames = append(oriSubColNames, column.ColumnName)
-	}
-	if oriSubPriCol.ID != "" {
-		subPriField = oriSubPriCol.ColumnName
-		subColumns = append(subColumns, oriSubPriCol)
-	}
-	for _, column := range columns {
-		allFields = append(allFields, column.ColumnName)
-		if util.ToolsUtil.Contains(oriSubColNames, column.ColumnName) {
-			subTableFields = append(subTableFields, column.ColumnName)
-			subColumns = append(subColumns, column)
+
+	var newColumns = []ExtentGenTableColumn{}
+	convert_util.Copy(&newColumns, columns)
+
+	// var newSubColumns = []ExtentGenTableColumn{}
+	// convert_util.Copy(subColumns, &newSubColumns)
+
+	// var oriSubColNames []string
+	// for _, column := range oriSubCols {
+	// 	oriSubColNames = append(oriSubColNames, column.ColumnName)
+	// }
+	// var subColumns []ExtentGenTableColumn
+	// if oriSubPriCol.ID != "" {
+	// 	// subPriField = oriSubPriCol.ColumnName
+	// 	// subColumns = append(subColumns, oriSubPriCol)
+	// 	convert_util.Copy(&subColumns, oriSubPriCol)
+	// }
+
+	var haveCreatedBy bool = false
+	for i, column := range newColumns {
+		// 判断ColumnName=created_by
+		if column.ColumnName == "created_by" {
+			haveCreatedBy = true
 		}
+		newColumns[i].GoNullType = GenUtil.GoTypeToNullType(column.GoType)
+
+		newColumns[i].TsType = GenUtil.GoToTsType(column.GoType)
+		// newColumns[i].TsField = column.ColumnName
+		newColumns[i].TsField = column.GoField
+
+		newColumns[i].SwagType = GenUtil.GoTypeToSwagType(column.GoType)
+	}
+
+	if haveCreatedBy {
+		// 添加可查询字段
+		CreatedByColumns := []ExtentGenTableColumn{
+			{
+
+				ColumnName:    "nickname",
+				ColumnComment: "创建人姓名",
+				ColumnLength:  32,
+				ColumnType:    "char",
+				GoType:        GoConstants.TypeString,
+				GoNullType:    GoConstants.TypeString,
+
+				GoField: "Nickname",
+				TsType:  "string",
+				TsField: "Nickname",
+
+				SwagType: SwagTypeConstants.String,
+
+				IsPk:        0,
+				IsIncrement: 0,
+				IsRequired:  0,
+				IsInsert:    0,
+				IsEdit:      0,
+				IsList:      0,
+				IsQuery:     1,
+				QueryType:   "LIKE",
+				HtmlType:    "input",
+				DictType:    "",
+				ListAllApi:  "",
+				Sort:        6,
+			}, {
+
+				ColumnName:    "username",
+				ColumnComment: "创建人账号",
+				ColumnLength:  32,
+				ColumnType:    "char",
+				GoType:        GoConstants.TypeString,
+				GoNullType:    GoConstants.TypeString,
+
+				GoField: "Username",
+
+				TsType:   "string",
+				TsField:  "Username",
+				SwagType: SwagTypeConstants.String,
+
+				IsPk:        0,
+				IsIncrement: 0,
+				IsRequired:  0,
+				IsInsert:    0,
+				IsEdit:      0,
+				IsList:      0,
+				IsQuery:     1,
+				QueryType:   "=",
+				HtmlType:    "input",
+				DictType:    "",
+				ListAllApi:  "",
+				Sort:        6,
+			}, {
+
+				ColumnName:    "created_user",
+				ColumnComment: "创建人",
+				ColumnLength:  32,
+				ColumnType:    "char",
+				GoType:        "systemSchema.SystemAuthAdminSimpleInfo",
+
+				GoNullType: "systemSchema.SystemAuthAdminSimpleInfo",
+				GoField:    "CreatedUser",
+
+				TsType:  "object",
+				TsField: "CreatedUser",
+
+				SwagType:    SwagTypeConstants.Object,
+				IsPk:        0,
+				IsIncrement: 0,
+				IsRequired:  0,
+				IsInsert:    0,
+				IsEdit:      0,
+				IsList:      1,
+				IsQuery:     0,
+				QueryType:   "=",
+				HtmlType:    "input",
+				DictType:    "",
+				ListAllApi:  "",
+				Sort:        6,
+			},
+		}
+
+		newColumns = append(newColumns, CreatedByColumns...)
+	}
+
+	for _, column := range newColumns {
+		allFields = append(allFields, column.ColumnName)
+		// if util.ToolsUtil.Contains(oriSubColNames, column.ColumnName) {
+		// 	subTableFields = append(subTableFields, column.ColumnName)
+		// 	subColumns = append(subColumns, column)
+		// }
 		if column.IsList == 1 {
 			listFields = append(listFields, column.ColumnName)
 		}
@@ -160,18 +313,18 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		PrimaryField:     primaryField,
 		PrimaryKeyGoType: primaryKeyGoType,
 		AllFields:        allFields,
-		SubPriCol:        oriSubPriCol,
-		SubPriField:      subPriField,
-		SubTableFields:   subTableFields,
-		ListFields:       listFields,
-		DetailFields:     detailFields,
-		DictFields:       dictFields,
-		ListAllFields:    listAllFields,
-		IsSearch:         isSearch,
-		ModelOprMap:      modelOprMap,
-		Table:            table,
-		Columns:          columns,
-		SubColumns:       subColumns,
+		// SubPriCol:        oriSubPriCol,
+		// SubPriField:      subPriField,
+		// SubTableFields:   subTableFields,
+		ListFields:    listFields,
+		DetailFields:  detailFields,
+		DictFields:    dictFields,
+		ListAllFields: listAllFields,
+		IsSearch:      isSearch,
+		ModelOprMap:   modelOprMap,
+		Table:         table,
+		Columns:       newColumns,
+		// SubColumns:    subColumns,
 	}
 }
 

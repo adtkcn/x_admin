@@ -28,25 +28,25 @@
             {{{- end }}}
             {{{- range .Columns }}}
                 {{{- if .IsEdit }}}
-                {{{- if ne (toUpperCamelCase .GoField) "Id" }}}               
+                {{{- if ne .TsField "Id" }}}               
                     {{{- if eq .HtmlType "input" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <span v-text="formData.{{{ (toUpperCamelCase .GoField) }}}"></span>
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <span v-text="formData.{{{ .TsField }}}"></span>
                         </el-form-item>
                     {{{- else if eq .HtmlType "number" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <span v-text="formData.{{{ (toUpperCamelCase .GoField) }}}"></span>
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <span v-text="formData.{{{ .TsField }}}"></span>
                         </el-form-item>
                     {{{- else if eq .HtmlType "textarea" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <span v-text="formData.{{{ (toUpperCamelCase .GoField) }}}"></span>
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <span v-text="formData.{{{ .TsField }}}"></span>
                         </el-form-item>
                     {{{- else if eq .HtmlType "checkbox" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
                       
                       
                                 {{{- if ne .DictType "" }}}
-                                <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ (toUpperCamelCase .GoField) }}}" />
+                                <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ .TsField }}}" />
                                 {{!-- <el-checkbox
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
                                     :key="index"
@@ -55,7 +55,7 @@
                                     :disabled="!item.status"
                                 ></el-checkbox> --}}
                                 {{{- else if ne .ListAllApi "" }}}
-                                <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ (toUpperCamelCase .GoField) }}}" />
+                                <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" />
                                 {{!-- <el-checkbox
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
@@ -68,10 +68,10 @@
                     
                         </el-form-item>
                     {{{- else if eq .HtmlType "select" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            {{!-- <el-select class="flex-1" v-model="formData.{{{ (toUpperCamelCase .GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}"> --}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            {{!-- <el-select class="flex-1" v-model="formData.{{{ .TsField }}}" placeholder="请选择{{{ .ColumnComment }}}"> --}}
                                 {{{- if ne .DictType "" }}}
-                                <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ (toUpperCamelCase .GoField) }}}" />
+                                <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ .TsField }}}" />
                                 {{!-- <el-option
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
                                     :key="index"
@@ -85,7 +85,7 @@
                                     :disabled="!item.status"
                                 /> --}}
                                  {{{- else if ne .ListAllApi "" }}}
-                                 <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ (toUpperCamelCase .GoField) }}}" />
+                                 <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" />
                                  {{!-- <el-option
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
@@ -103,10 +103,9 @@
                             {{!-- </el-select> --}}
                         </el-form-item>
                     {{{- else if eq .HtmlType "radio" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            {{!-- <el-radio-group v-model="formData.{{{ (toUpperCamelCase .GoField) }}}" placeholder="请选择{{{ .ColumnComment }}}"> --}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
                                 {{{- if ne .DictType "" }}}
-                                <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ (toUpperCamelCase .GoField) }}}" />
+                                <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ .TsField }}}" />
                                 {{!-- <el-radio
                                     v-for="(item, index) in dictData.{{{ .DictType }}}"
                                     :key="index"
@@ -119,7 +118,7 @@
                                     :disabled="!item.status"
                                 ></el-radio> --}}
                                 {{{- else if ne .ListAllApi "" }}}
-                                <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ (toUpperCamelCase .GoField) }}}" />
+                                <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" />
                                 {{!-- <el-radio
                                     v-for="(item, index) in listAllData.{{{ pathToName .ListAllApi }}}"
                                     :key="index"
@@ -135,14 +134,13 @@
                       
                                 {{!-- <el-radio label="0">请选择字典生成</el-radio> --}}
                                 {{{- end }}}
-                            {{!-- </el-radio-group> --}}
                         </el-form-item>
                     {{{- else if eq .HtmlType "datetime" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <span v-text="formData.{{{ (toUpperCamelCase .GoField) }}}"></span>
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <span v-text="formData.{{{ .TsField }}}"></span>
                             {{!-- <el-date-picker
                                 class="flex-1 !flex"
-                                v-model="formData.{{{ (toUpperCamelCase .GoField) }}}"
+                                v-model="formData.{{{ .TsField }}}"
                                 type="datetime"
                                 clearable
                                 value-format="YYYY-MM-DD hh:mm:ss"
@@ -150,16 +148,16 @@
                             /> --}}
                         </el-form-item>
                     {{{- else if eq .HtmlType "editor" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
-                            <div v-html="formData.{{{ (toUpperCamelCase .GoField) }}}"></div>
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <div v-html="formData.{{{ .TsField }}}"></div>
                         </el-form-item>
                     {{{- else if eq .HtmlType "imageUpload" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}">
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
                             <image-contain
                                 :width="40"
                                 :height="40"
-                                :src="formData.{{{ (toUpperCamelCase .GoField) }}}"
-                                :preview-src-list="[formData.{{{ (toUpperCamelCase .GoField) }}}]"
+                                :src="formData.{{{ .TsField }}}"
+                                :preview-src-list="[formData.{{{ .TsField }}}]"
                                 preview-teleported
                                 hide-on-click-modal
                             />
@@ -203,15 +201,15 @@ const popupTitle = computed(() => {
 
 const formData = reactive({
     {{{- range .Columns }}}
-    {{{- if eq (toUpperCamelCase .GoField) $.PrimaryKey }}}
+    {{{- if eq .TsField $.PrimaryKey }}}
     {{{ $.PrimaryKey }}}: '',
     {{{- else if .IsEdit }}}
     {{{- if eq .HtmlType "checkbox" }}}
-    {{{ (toUpperCamelCase .GoField) }}}: [],
+    {{{ .TsField }}}: [],
     {{{- else if eq .HtmlType "number" }}}
-    {{{ (toUpperCamelCase .GoField) }}}: null,
+    {{{ .TsField }}}: null,
     {{{- else }}}
-    {{{ (toUpperCamelCase .GoField) }}}: null,
+    {{{ .TsField }}}: null,
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -220,7 +218,7 @@ const formData = reactive({
 const formRules = {
     {{{- range .Columns }}}
     {{{- if and .IsEdit }}}
-    {{{ (toUpperCamelCase .GoField) }}}: [
+    {{{ .TsField }}}: [
         {
             required: {{{- if eq .IsRequired 1}}} true {{{- else}}} false {{{- end }}},
             {{{- if or (eq .HtmlType "checkbox") (eq .HtmlType "datetime") (eq .HtmlType "radio") (eq .HtmlType "select") (eq .HtmlType "imageUpload") }}}
@@ -252,7 +250,7 @@ const setFormData = async (data: Record<string, any>) => {
             {{{- range .Columns }}}
             {{{- if eq .HtmlType "checkbox" }}}
             //@ts-ignore
-            formData.{{{ (toUpperCamelCase .GoField) }}} = String(data.{{{ (toUpperCamelCase .GoField) }}}).split(',')
+            formData.{{{ .TsField }}} = String(data.{{{ .TsField }}}).split(',')
             {{{- end }}}
             {{{- end }}}
         }

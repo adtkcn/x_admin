@@ -6,7 +6,7 @@ import (
 type {{{ toUpperCamelCase .EntityName }}}Primarykey struct {
     {{{- range .Columns }}}
     {{{- if .IsPk }}}
-        {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} // {{{ .ColumnComment }}}
+        {{{ .GoField }}} {{{.GoType }}} // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -15,14 +15,11 @@ type {{{ toUpperCamelCase .EntityName }}}Primarykey struct {
 type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
     {{{- range .Columns }}}
     {{{- if .IsQuery }}}
-        {{{- if eq .ColumnName "created_by" }}}
-            {{{ toUpperCamelCase .GoField }}} {{{goWithAddEditType .GoType }}} // {{{ .ColumnComment }}}
-            Nickname core.NullString // 创建人昵称
-        {{{- else if eq .HtmlType "datetime" }}}
-            {{{ toUpperCamelCase .GoField }}}Start core.NullString // 开始{{{ .ColumnComment }}}
-            {{{ toUpperCamelCase .GoField }}}End core.NullString // 结束{{{ .ColumnComment }}}
+        {{{- if eq .HtmlType "datetime" }}}
+            {{{ .GoField }}}Start core.NullString // 开始{{{ .ColumnComment }}}
+            {{{ .GoField }}}End core.NullString // 结束{{{ .ColumnComment }}}
         {{{- else }}}
-            {{{ toUpperCamelCase .GoField }}} {{{goWithAddEditType .GoType }}} // {{{ .ColumnComment }}}
+            {{{ .GoField }}} {{{ .GoNullType }}} // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -34,7 +31,7 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
 type {{{ toUpperCamelCase .EntityName }}}AddReq struct {
     {{{- range .Columns }}}
     {{{- if .IsInsert }}}
-    {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}} `binding:"{{{ if eq .IsRequired 1 }}}required;{{{ end }}}"`  // {{{ .ColumnComment }}}
+    {{{ .GoField }}}  {{{ .GoNullType }}} `binding:"{{{ if eq .IsRequired 1 }}}required;{{{ end }}}"`  // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }
@@ -44,9 +41,9 @@ type {{{ toUpperCamelCase .EntityName }}}EditReq struct {
     {{{- range .Columns }}}
     {{{- if .IsEdit }}}
         {{{- if .IsPk }}}
-    {{{ toUpperCamelCase .GoField }}} {{{ .GoType }}} // {{{ .ColumnComment }}}
+    {{{ .GoField }}} {{{ .GoType }}} // {{{ .ColumnComment }}}
         {{{- else }}}
-    {{{ toUpperCamelCase .GoField }}}  {{{goWithAddEditType .GoType }}}  // {{{ .ColumnComment }}}
+    {{{ .GoField }}}  {{{ .GoNullType }}}  // {{{ .ColumnComment }}}
         {{{- end }}}
     {{{- end }}}
     {{{- end }}}
@@ -64,9 +61,9 @@ type {{{ toUpperCamelCase .EntityName }}}Resp struct {
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
     {{{- if .IsPk }}}
-        {{{ toUpperCamelCase .GoField }}} {{{.GoType }}} `swaggertype:"{{{goToTsType .GoType }}}"`// {{{ .ColumnComment }}}
+        {{{ .GoField }}} {{{.GoType }}} `swaggertype:"{{{ .SwagType }}}"`// {{{ .ColumnComment }}}
     {{{- else }}}
-        {{{ toUpperCamelCase .GoField }}} {{{goWithRespType .GoType }}} `swaggertype:"{{{goToTsType .GoType }}}"`// {{{ .ColumnComment }}}
+        {{{ .GoField }}} {{{ .GoNullType }}} `swaggertype:"{{{ .SwagType }}}"`// {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}

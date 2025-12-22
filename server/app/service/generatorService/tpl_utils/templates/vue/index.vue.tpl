@@ -6,16 +6,16 @@
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ (toUpperCamelCase .GoField) }}}Start"
-                        v-model:endTime="queryParams.{{{ (toUpperCamelCase .GoField) }}}End"
+                        v-model:startTime="queryParams.{{{ .TsField }}}Start"
+                        v-model:endTime="queryParams.{{{ .TsField }}}End"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}"  class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}"  class="w-[280px]">
                     <el-select
-                        v-model="queryParams.{{{ (toUpperCamelCase .GoField) }}}"
+                        v-model="queryParams.{{{ .TsField }}}"
                         :empty-values="[null, undefined]"
                         clearable
                     >
@@ -42,8 +42,8 @@
                     </el-select>
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" class="w-[280px]">
-                    <el-input  v-model="queryParams.{{{ (toUpperCamelCase .GoField) }}}" />
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" class="w-[280px]">
+                    <el-input  v-model="queryParams.{{{ .TsField }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
@@ -103,34 +103,37 @@
                 <el-table-column label="序号" type="index" :index="handleIndex" min-width="60" />
             {{{- range .Columns }}}
             {{{- if .IsList }}}
-                {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
+                {{{- if eq .ColumnName "created_by" }}}
+                {{{- else if eq .ColumnName "created_user" }}}
+                <el-table-column label="创建人" prop="CreatedUser.Nickname" min-width="130" />
+                {{{- else if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="100">
                     <template #default="{ row }">
-                       <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" />
+                       <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ .TsField }}}" />
                     </template>
                 </el-table-column>
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='Id' valueKey='Id' />
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ .TsField }}}" labelKey='Id' valueKey='Id' />
                     </template>
                 </el-table-column>
 
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
                             :height="40"
-                            :src="row.{{{ (toUpperCamelCase .GoField) }}}"
-                            :preview-src-list="[row.{{{ (toUpperCamelCase .GoField) }}}]"
+                            :src="row.{{{ .TsField }}}"
+                            :preview-src-list="[row.{{{ .TsField }}}]"
                             preview-teleported
                             hide-on-click-modal
                         />
                     </template>
                 </el-table-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ (toUpperCamelCase .GoField) }}}" min-width="130" />
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="130" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
@@ -215,10 +218,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toUpperCamelCase .GoField) }}}Start: null,
-    {{{ (toUpperCamelCase .GoField) }}}End: null,
+    {{{ .TsField }}}Start: null,
+    {{{ .TsField }}}End: null,
     {{{- else }}}
-    {{{ (toUpperCamelCase .GoField) }}}: null,
+    {{{ .TsField }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}

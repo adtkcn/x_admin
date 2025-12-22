@@ -80,9 +80,9 @@
                                         <el-option label="int64" value="int64" />
                                         <el-option label="string" value="string" />
                                         <el-option label="float64" value="float64" />
-                                        <el-option label="rune" value="rune" />
+                                        <!-- <el-option label="rune" value="rune" /> -->
                                         <el-option label="bool" value="bool" />
-                                        <el-option label="NullTime" value="core.NullTime" />
+                                        <el-option label="time.Time" value="time.Time" />
                                     </el-select>
                                 </template>
                             </el-table-column>

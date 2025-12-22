@@ -4,7 +4,7 @@ import { clearObjEmpty } from "@/utils/utils";
 
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
-    {{{toUpperCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{.TsField }}}?: {{{.TsType}}};
 {{{- end }}}
 }
 // 查询
@@ -12,10 +12,10 @@ export type type_{{{.ModuleName}}}_query = {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-    {{{toUpperCamelCase .GoField }}}Start?: string;
-    {{{toUpperCamelCase .GoField }}}End?: string;
+    {{{.TsField }}}Start?: string;
+    {{{.TsField }}}End?: string;
 {{{- else }}}
-    {{{toUpperCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{.TsField }}}?: {{{.TsType}}};
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -24,7 +24,7 @@ export type type_{{{.ModuleName}}}_query = {
 export type type_{{{.ModuleName}}}_edit = {
 {{{- range .Columns }}}
 {{{- if or .IsEdit .IsInsert }}}
-    {{{toUpperCamelCase .GoField }}}?: {{{goToTsType .GoType}}};
+    {{{.TsField }}}?: {{{.TsType}}};
 {{{- end }}}
 {{{- end }}}
 }

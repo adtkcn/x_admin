@@ -5,16 +5,16 @@
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsType }}}">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ (.GoField) }}}Start"
-                        v-model:endTime="queryParams.{{{ (.GoField) }}}End"
+                        v-model:startTime="queryParams.{{{ .TsType }}}Start"
+                        v-model:endTime="queryParams.{{{ .TsType }}}End"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsType }}}" class="w-[280px]">
                     <el-select
-                        v-model="queryParams.{{{ (.GoField) }}}"
+                        v-model="queryParams.{{{ .TsType }}}"
                         :empty-values="[null, undefined]"
                         clearable
                     >
@@ -40,8 +40,8 @@
                     </el-select>
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ (.GoField) }}}" class="w-[280px]">
-                    <el-input v-model="queryParams.{{{ (.GoField) }}}" />
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsType }}}" class="w-[280px]">
+                    <el-input v-model="queryParams.{{{ .TsType }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
@@ -74,32 +74,32 @@
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (.GoField) }}}" />
+                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ .TsType }}}" />
                     </template>
                 </vxe-column>
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (.GoField) }}}" labelKey='{{{toUpperCamelCase .PrimaryKey }}}' valueKey='{{{toUpperCamelCase .PrimaryKey }}}' />
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ .TsType }}}" labelKey='{{{toUpperCamelCase .PrimaryKey }}}' valueKey='{{{toUpperCamelCase .PrimaryKey }}}' />
                     </template>
                 </vxe-column>
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
                             :height="40"
-                            :src="row.{{{ (.GoField) }}}"
-                            :preview-src-list="[row.{{{ (.GoField) }}}]"
+                            :src="row.{{{ .TsType }}}"
+                            :preview-src-list="[row.{{{ .TsType }}}]"
                             preview-teleported
                             hide-on-click-modal
                         />
                     </template>
                 </vxe-column>
                 {{{- else }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ (.GoField) }}}" min-width="100" />
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
@@ -215,10 +215,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ (toUpperCamelCase .GoField) }}}Start: null,
-    {{{ (toUpperCamelCase .GoField) }}}End: null,
+    {{{ .TsType }}}Start: null,
+    {{{ .TsType }}}End: null,
     {{{- else }}}
-    {{{ (toUpperCamelCase .GoField) }}}: null,
+    {{{ .TsType }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}

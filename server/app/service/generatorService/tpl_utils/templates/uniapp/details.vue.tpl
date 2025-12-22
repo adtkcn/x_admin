@@ -3,15 +3,15 @@
 		<uv-form labelPosition="left" :model="form">
         {{{- range .Columns }}}
         {{{- if .IsList }}}
-            <uv-form-item label="{{{.ColumnComment}}}" prop="{{{(toUpperCamelCase .GoField)}}}" borderBottom>
+            <uv-form-item label="{{{.ColumnComment}}}" prop="{{{(.TsField)}}}" borderBottom>
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                    <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" />
+                    <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (.TsField) }}}" />
 				{{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-				 	<dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (toUpperCamelCase .GoField) }}}" labelKey='id' valueKey='id' />
+				 	<dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (.TsField) }}}" labelKey='id' valueKey='id' />
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                    <uv-image :src="$filePath(form.{{{(toUpperCamelCase .GoField)}}})" width="100%"></uv-image>
+                    <uv-image :src="$filePath(form.{{{(.TsField)}}})" width="100%"></uv-image>
                 {{{- else }}}
-                    {{form.{{{(toUpperCamelCase .GoField)}}}}}
+                    {{form.{{{(.TsField)}}}}}
                 {{{- end }}}
             </uv-form-item>
         {{{- end }}}
@@ -44,7 +44,7 @@
 	let form = ref({
 	{{{- range .Columns }}}
     {{{- if or .IsList .IsPk }}}
-		{{{ toUpperCamelCase .GoField }}}: "",
+		{{{ .TsField }}}: "",
 	{{{- end }}}
     {{{- end }}}
 	});

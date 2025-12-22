@@ -12,10 +12,36 @@ var GenConstants = genConstants{
 
 // GoConstants Go相关常量
 var GoConstants = goConstants{
-	TypeString: "string",        //字符串类型
-	TypeFloat:  "float64",       //浮点型
-	TypeInt:    "int",           //整型
-	TypeDate:   "core.NullTime", //时间类型
+	// TypeString: "core.NullString", //字符串类型
+	// TypeFloat:  "core.NullFloat",  //浮点型
+	// TypeInt:    "core.NullInt",    //整型
+	// TypeDate:   "core.NullTime",   //时间类型
+	TypeString: "string",    //字符串类型
+	TypeFloat:  "float64",   //浮点型
+	TypeInt:    "int",       //整型
+	TypeDate:   "time.Time", //时间类型
+}
+
+// swaggertype
+type SwagType struct {
+	String  string
+	Integer string
+	Number  string
+	Date    string
+	Bool    string
+	Array   string
+	Object  string
+}
+
+// SwagConstants swagger相关常量
+var SwagTypeConstants = SwagType{
+	String:  "string",
+	Integer: "integer",
+	Number:  "number",
+	Date:    "date-time",
+	Bool:    "boolean",
+	Array:   "array",
+	Object:  "object",
 }
 
 // SqlConstants 数据库相关常量

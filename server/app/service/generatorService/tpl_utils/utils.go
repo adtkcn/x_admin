@@ -85,7 +85,7 @@ func (gu genUtil) InitColumn(tableId string, column gen_model.GenTableColumn) ge
 		ColumnComment: column.ColumnComment,
 		ColumnType:    columnType,
 		ColumnLength:  columnLen,
-		GoField:       column.ColumnName,
+		GoField:       util.StringUtil.ToUpperCamelCase(column.ColumnName),
 		GoType:        GoConstants.TypeString,
 		QueryType:     GenConstants.QueryEq,
 		Sort:          column.Sort,
@@ -234,7 +234,7 @@ func (gu genUtil) GoToTsType(s string) string {
 	case "bool":
 		return "boolean"
 	case "time.Time":
-		return "Date"
+		return "string"
 	case "[]byte":
 		return "string"
 	case "[]string":
@@ -246,34 +246,13 @@ func (gu genUtil) GoToTsType(s string) string {
 	case "core.NullTime":
 		return "string"
 	}
-	return "string"
+	return "any"
 }
 
 /**
  * @description: Go类型转 添加编辑 类型
  */
-func (gu genUtil) GoWithAddEditType(s string) string {
-	switch s {
-	case "int", "int8", "int16", "int32", "int64":
-		return "core.NullInt"
-	case "float", "float32", "float64":
-		return "core.NullFloat"
-	case "string":
-		return "core.NullString"
-	case "bool":
-		return "*int"
-	case "time.Time":
-		return "core.NullTime"
-	case "core.NullTime":
-		return "core.NullTime"
-	}
-	return "string"
-}
-
-/**
- * @description: Go类型转 添加编辑 类型
- */
-func (gu genUtil) GoWithRespType(s string) string {
+func (gu genUtil) GoTypeToNullType(s string) string {
 	switch s {
 	case "int", "int8", "int16", "int32", "int64":
 		return "core.NullInt"
@@ -288,7 +267,22 @@ func (gu genUtil) GoWithRespType(s string) string {
 	case "core.NullTime":
 		return "core.NullTime"
 	}
-	return "string"
+	return s
+}
+func (gu genUtil) GoTypeToSwagType(s string) string {
+	switch s {
+	case "int", "int8", "int16", "int32", "int64", "core.NullInt":
+		return SwagTypeConstants.Integer
+	case "float", "float32", "float64", "core.NullFloat":
+		return SwagTypeConstants.Number
+	case "string", "core.NullString":
+		return SwagTypeConstants.String
+	case "bool":
+		return SwagTypeConstants.Bool
+	case "time.Time", "core.NullTime":
+		return SwagTypeConstants.Date
+	}
+	return ""
 }
 
 /**
