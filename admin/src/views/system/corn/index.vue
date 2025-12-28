@@ -21,8 +21,8 @@
                 <el-form-item label="创建人" prop="CreatedBy" class="w-[280px]">
                     <el-input v-model="queryParams.CreatedBy" />
                 </el-form-item>
-                <el-form-item label="创建人名称" prop="Nickname" class="w-[280px]">
-                    <el-input v-model="queryParams.Nickname" />
+                <el-form-item label="创建人名称" prop="CreatedByNickname" class="w-[280px]">
+                    <el-input v-model="queryParams.CreatedByNickname" />
                 </el-form-item>
 
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
@@ -51,7 +51,7 @@
                     </template>
                     新增
                 </el-button>
-                <upload
+                <Upload
                     v-perms="['admin:system_corn:ImportFile']"
                     class="ml-3 mr-3"
                     :url="system_corn_import_file"
@@ -65,7 +65,7 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
+                </Upload>
                 <el-button
                     v-perms="['admin:system_corn:ExportFile']"
                     type="primary"
@@ -101,7 +101,7 @@
                         <dict-value :options="dictData.status" :value="row.Status" />
                     </template>
                 </el-table-column>
-                <el-table-column label="创建人" prop="CreatedUser.nickname" min-width="130" />
+                <el-table-column label="创建人" prop="CreatedByUser.nickname" min-width="130" />
                 <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
                 <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
                 <el-table-column label="操作" width="160" fixed="right">
@@ -173,6 +173,7 @@ const queryParams = reactive<type_system_corn_query>({
     CornExpr: null,
     Status: null,
     CreatedBy: null,
+    CreatedByNickname: null,
     CreateTimeStart: null,
     CreateTimeEnd: null,
     UpdateTimeStart: null,

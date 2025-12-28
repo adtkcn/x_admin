@@ -41,10 +41,12 @@ func (m *SystemAuthAdmin) BeforeCreate(tx *gorm.DB) (err error) {
 
 // SystemAuthAdminSimple 简化版系统管理员实体,用于关联查询
 type SystemAuthAdminSimple struct {
-	ID       string `gorm:"primarykey;type:char(36);comment:'uuid'"`
-	Username string `gorm:"not null;default:'';comment:'用户账号''"`
-	Nickname string `gorm:"not null;default:'';comment:'用户昵称'"`
-	Avatar   string `gorm:"not null;default:'';comment:'用户头像'"`
+	ID         string                `gorm:"primarykey;type:char(36);comment:'uuid'"`
+	Username   string                `gorm:"not null;default:'';comment:'用户账号''"`
+	Nickname   string                `gorm:"not null;default:'';comment:'用户昵称'"`
+	Avatar     string                `gorm:"not null;default:'';comment:'用户头像'"`
+	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
+	DeleteTime core.NullTime         `gorm:"default:null;comment:'删除时间'"`
 }
 
 func (m *SystemAuthAdminSimple) TableName() string {

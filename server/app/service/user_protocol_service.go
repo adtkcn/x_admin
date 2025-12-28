@@ -36,7 +36,7 @@ type userProtocolService struct {
 // List 用户协议列表
 func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.UserProtocol{}).Preload("CreatedUser")
+	dbModel := service.db.Model(&model.UserProtocol{}).Preload("CreatedByUser")
 	if listReq.Title.GetValue() != nil {
 		dbModel = dbModel.Where("title like ?", "%"+*listReq.Title.GetValue()+"%")
 	}
@@ -129,7 +129,7 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 	var obj = model.UserProtocol{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
-		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedUser").Limit(1).First(&obj).Error
+		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedByUser").Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}

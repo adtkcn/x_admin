@@ -112,7 +112,7 @@
                             </el-button>
                         </template>
                     </el-input>
-                    <upload
+                    <Upload
                         class="ml-3"
                         :data="{ cid: cateId }"
                         :ext="ext"
@@ -120,7 +120,7 @@
                         @change="refresh"
                     >
                         <el-button type="primary">本地上传</el-button>
-                    </upload>
+                    </Upload>
                 </div>
             </div>
 

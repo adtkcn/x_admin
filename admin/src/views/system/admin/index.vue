@@ -34,7 +34,7 @@
                     新增
                 </el-button>
 
-                <upload
+                <Upload
                     class="ml-3 mr-3"
                     :url="adminImportFile"
                     :ext="['xlsx']"
@@ -47,7 +47,7 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
+                </Upload>
 
                 <el-button type="primary" @click="exportFile">
                     <template #icon>

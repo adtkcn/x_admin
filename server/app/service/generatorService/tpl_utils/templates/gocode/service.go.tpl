@@ -37,7 +37,7 @@ type {{{ .EntityName }}}Service struct {
 // List {{{ .FunctionName }}}列表
 func (service {{{ .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.{{{ toUpperCamelCase .EntityName }}}{}).Joins("CreatedUser")
+	dbModel := service.db.Model(&model.{{{ toUpperCamelCase .EntityName }}}{}).Joins("CreatedByUser")
 	tableName := core.DBTableName(&model.{{{ toUpperCamelCase .EntityName }}}{})
 	{{{- range .Columns }}}
 	{{{- if .IsQuery }}}
@@ -47,10 +47,10 @@ func (service {{{ .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCam
 		dbModel = dbModel.Where(tableName+".created_by = ?", *listReq.CreatedBy.GetValue())
 	}
 	if listReq.Nickname.GetValue() != nil {
-		dbModel = dbModel.Where("CreatedUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
+		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
 	}
 	if listReq.Username.GetValue() != nil {
-		dbModel = dbModel.Where("CreatedUser.nickname like ?", "%"+*listReq.Username.GetValue()+"%")
+		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+*listReq.Username.GetValue()+"%")
 	}
 			{{{- else if eq .HtmlType "datetime" }}}
 	if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue() != nil {
@@ -141,7 +141,7 @@ func (service {{{ .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKe
 	var obj = model.{{{ toUpperCamelCase .EntityName }}}{}
 	err := service.CacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
-		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Preload("CreatedUser").Limit(1).First(&obj).Error
+		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Preload("CreatedByUser").Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -201,8 +201,8 @@ func (service {{{ .EntityName }}}Service) Edit(editReq schema.{{{ toUpperCamelCa
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
-	service.CacheUtil.RemoveCache(obj.Id)
-	// service.Detail(obj.Id)
+	service.CacheUtil.RemoveCache(obj.{{{toUpperCamelCase .PrimaryKey }}})
+
 	return
 }
 

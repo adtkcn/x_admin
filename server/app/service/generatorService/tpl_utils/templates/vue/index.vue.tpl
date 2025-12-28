@@ -33,8 +33,8 @@
                         <el-option
                             v-for="(item, index) in listAllData.{{{pathToName .ListAllApi}}}"
                             :key="index"
-                            :label="item.Id"
-                            :value="item.Id"
+                            :label="item.ID"
+                            :value="item.ID"
                         />
                         {{{- else }}}
                         <el-option label="请选择字典生成" value="" />
@@ -62,7 +62,7 @@
                     </template>
                     新增
                 </el-button>
-                    <upload
+                    <Upload
                     v-perms="['admin:{{{ .ModuleName }}}:ImportFile']"
                     class="ml-3 mr-3"
                     :url="{{{.ModuleName}}}_import_file"
@@ -76,7 +76,7 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
+                </Upload>
                 <el-button v-perms="['admin:{{{ .ModuleName }}}:ExportFile']" type="primary" @click="exportFile">
                     <template #icon>
                         <icon name="el-icon-Download" />
@@ -102,38 +102,35 @@
                 <el-table-column type="selection" width="55" />
                 <el-table-column label="序号" type="index" :index="handleIndex" min-width="60" />
             {{{- range .Columns }}}
-            {{{- if .IsList }}}
-                {{{- if eq .ColumnName "created_by" }}}
-                {{{- else if eq .ColumnName "created_user" }}}
-                <el-table-column label="创建人" prop="CreatedUser.Nickname" min-width="130" />
-                {{{- else if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="100">
+            {{{- if and .IsList .IsListShow }}}
+                {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="100">
                     <template #default="{ row }">
-                       <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ .TsField }}}" />
+                       <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{.TableColumnProp}}}" />
                     </template>
                 </el-table-column>
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ .TsField }}}" labelKey='Id' valueKey='Id' />
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{.TableColumnProp}}}" labelKey='ID' valueKey='ID' />
                     </template>
                 </el-table-column>
 
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
                             :height="40"
-                            :src="row.{{{ .TsField }}}"
-                            :preview-src-list="[row.{{{ .TsField }}}]"
+                            :src="row.{{{.TableColumnProp}}}"
+                            :preview-src-list="[row.{{{.TableColumnProp}}}]"
                             preview-teleported
                             hide-on-click-modal
                         />
                     </template>
                 </el-table-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" min-width="130" />
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="130" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
@@ -217,7 +214,10 @@ const showDetails = ref(false)
 const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
-    {{{- if eq .HtmlType "datetime" }}}
+    {{{- if eq .ColumnName "created_by" }}}
+    CreatedBy: null,
+    CreatedByNickname: null,
+    {{{- else if eq .HtmlType "datetime" }}}
     {{{ .TsField }}}Start: null,
     {{{ .TsField }}}End: null,
     {{{- else }}}

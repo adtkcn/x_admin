@@ -75,7 +75,7 @@
                     </template>
                     新增
                 </el-button>
-                <upload
+                <Upload
                     v-perms="['admin:monitor_project:ImportFile']"
                     class="ml-3 mr-3"
                     :url="monitor_project_import_file"
@@ -89,7 +89,7 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
+                </Upload>
                 <el-button
                     v-perms="['admin:monitor_project:ExportFile']"
                     type="primary"

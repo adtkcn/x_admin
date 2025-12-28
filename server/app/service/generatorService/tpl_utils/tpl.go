@@ -67,6 +67,8 @@ type ExtentGenTableColumn struct {
 	IsInsert    uint8  //是否为插入字段: [1=是, 0=否]
 	IsEdit      uint8  //是否编辑字段: [1=是, 0=否]
 	IsList      uint8  //是否列表字段: [1=是, 0=否]
+	IsListShow  uint8  //表格列表是否显示字段: [1=是, 0=否]
+	IsUid       uint8  //是否用户ID: [1=是, 0=否]
 	IsQuery     uint8  //是否查询字段: [1=是, 0=否]
 	QueryType   string //查询方式: [等于、不等于、大于、小于、范围]
 	HtmlType    string //显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]
@@ -82,6 +84,8 @@ type ExtentGenTableColumn struct {
 	TsField string //TS字段名
 
 	SwagType string //swagger类型
+
+	TableColumnProp string //表格列表prop属性,默认赋值TsField,用户名称赋值xxxUser.nickname、xxxUser.username
 }
 
 // TplVars 模板变量
@@ -159,109 +163,124 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 	// 	convert_util.Copy(&subColumns, oriSubPriCol)
 	// }
 
-	var haveCreatedBy bool = false
+	var userFiled = []ExtentGenTableColumn{}
+
 	for i, column := range newColumns {
-		// 判断ColumnName=created_by
-		if column.ColumnName == "created_by" {
-			haveCreatedBy = true
+		newColumns[i].IsListShow = 1
+
+		// 获取用户字段
+		for _, columnName := range SqlConstants.ColumnNameUserFiled {
+			if column.ColumnName == columnName {
+				userFiled = append(userFiled, column)
+				// 列表不显示用户id
+				newColumns[i].IsListShow = 0
+				// 是用户ID
+				newColumns[i].IsUid = 1
+			}
 		}
 		newColumns[i].GoNullType = GenUtil.GoTypeToNullType(column.GoType)
 
 		newColumns[i].TsType = GenUtil.GoToTsType(column.GoType)
 		// newColumns[i].TsField = column.ColumnName
 		newColumns[i].TsField = column.GoField
-
+		newColumns[i].TableColumnProp = newColumns[i].TsField
 		newColumns[i].SwagType = GenUtil.GoTypeToSwagType(column.GoType)
 	}
 
-	if haveCreatedBy {
+	if len(userFiled) > 0 {
 		// 添加可查询字段
-		CreatedByColumns := []ExtentGenTableColumn{
-			{
+		for _, column := range userFiled {
+			CreatedByColumns := []ExtentGenTableColumn{
 
-				ColumnName:    "nickname",
-				ColumnComment: "创建人姓名",
-				ColumnLength:  32,
-				ColumnType:    "char",
-				GoType:        GoConstants.TypeString,
-				GoNullType:    GoConstants.TypeString,
+				{
+					// 查询用户名称
+					ColumnName:    column.ColumnName + "_nickname",
+					ColumnComment: column.ColumnComment + "名称",
+					ColumnLength:  32,
+					ColumnType:    "char",
+					GoType:        GoConstants.TypeString,
+					GoNullType:    GenUtil.GoTypeToNullType(column.GoType),
 
-				GoField: "Nickname",
-				TsType:  "string",
-				TsField: "Nickname",
+					GoField:         column.GoField + "Nickname",
+					TsType:          "string",
+					TsField:         column.GoField + "Nickname",
+					TableColumnProp: "",
+					SwagType:        SwagTypeConstants.String,
 
-				SwagType: SwagTypeConstants.String,
+					IsPk:        0,
+					IsIncrement: 0,
+					IsRequired:  0,
+					IsInsert:    0,
+					IsEdit:      0,
+					IsList:      0,
+					IsListShow:  0,
+					IsQuery:     1,
+					QueryType:   "LIKE",
+					HtmlType:    "input",
+					DictType:    "",
+					ListAllApi:  "",
+					Sort:        6,
+				}, {
+					// 查询用户账号（一般不用）
+					ColumnName:    column.ColumnName + "_username",
+					ColumnComment: column.ColumnComment + "账号",
+					ColumnLength:  32,
+					ColumnType:    "char",
+					GoType:        GoConstants.TypeString,
+					GoNullType:    GenUtil.GoTypeToNullType(column.GoType),
 
-				IsPk:        0,
-				IsIncrement: 0,
-				IsRequired:  0,
-				IsInsert:    0,
-				IsEdit:      0,
-				IsList:      0,
-				IsQuery:     1,
-				QueryType:   "LIKE",
-				HtmlType:    "input",
-				DictType:    "",
-				ListAllApi:  "",
-				Sort:        6,
-			}, {
+					GoField: column.GoField + "Username",
 
-				ColumnName:    "username",
-				ColumnComment: "创建人账号",
-				ColumnLength:  32,
-				ColumnType:    "char",
-				GoType:        GoConstants.TypeString,
-				GoNullType:    GoConstants.TypeString,
+					TsType:   "string",
+					TsField:  column.GoField + "Username",
+					SwagType: SwagTypeConstants.String,
 
-				GoField: "Username",
+					IsPk:        0,
+					IsIncrement: 0,
+					IsRequired:  0,
+					IsInsert:    0,
+					IsEdit:      0,
+					IsList:      0,
+					IsListShow:  0,
+					IsQuery:     1,
+					QueryType:   "=",
+					HtmlType:    "input",
+					DictType:    "",
+					ListAllApi:  "",
+					Sort:        6,
+				}, {
+					// 列表用户名称
+					ColumnName:    column.ColumnName + "_user",
+					ColumnComment: column.ColumnComment,
+					ColumnLength:  32,
+					ColumnType:    "char",
+					GoType:        "systemSchema.SystemAuthAdminSimpleInfo",
 
-				TsType:   "string",
-				TsField:  "Username",
-				SwagType: SwagTypeConstants.String,
+					GoNullType: "systemSchema.SystemAuthAdminSimpleInfo",
+					GoField:    column.GoField + "User",
 
-				IsPk:        0,
-				IsIncrement: 0,
-				IsRequired:  0,
-				IsInsert:    0,
-				IsEdit:      0,
-				IsList:      0,
-				IsQuery:     1,
-				QueryType:   "=",
-				HtmlType:    "input",
-				DictType:    "",
-				ListAllApi:  "",
-				Sort:        6,
-			}, {
-
-				ColumnName:    "created_user",
-				ColumnComment: "创建人",
-				ColumnLength:  32,
-				ColumnType:    "char",
-				GoType:        "systemSchema.SystemAuthAdminSimpleInfo",
-
-				GoNullType: "systemSchema.SystemAuthAdminSimpleInfo",
-				GoField:    "CreatedUser",
-
-				TsType:  "object",
-				TsField: "CreatedUser",
-
-				SwagType:    SwagTypeConstants.Object,
-				IsPk:        0,
-				IsIncrement: 0,
-				IsRequired:  0,
-				IsInsert:    0,
-				IsEdit:      0,
-				IsList:      1,
-				IsQuery:     0,
-				QueryType:   "=",
-				HtmlType:    "input",
-				DictType:    "",
-				ListAllApi:  "",
-				Sort:        6,
-			},
+					TsType:          "object",
+					TsField:         column.GoField + "User",
+					TableColumnProp: column.GoField + "User" + ".nickname",
+					SwagType:        SwagTypeConstants.Object,
+					IsPk:            0,
+					IsIncrement:     0,
+					IsRequired:      0,
+					IsInsert:        0,
+					IsEdit:          0,
+					IsListShow:      1,
+					IsList:          1,
+					IsQuery:         0,
+					QueryType:       "=",
+					HtmlType:        "input",
+					DictType:        "",
+					ListAllApi:      "",
+					Sort:            6,
+				},
+			}
+			newColumns = append(newColumns, CreatedByColumns...)
 		}
 
-		newColumns = append(newColumns, CreatedByColumns...)
 	}
 
 	for _, column := range newColumns {

@@ -28,7 +28,7 @@
             {{{- end }}}
             {{{- range .Columns }}}
                 {{{- if .IsEdit }}}
-                {{{- if ne .TsField "Id" }}}               
+                {{{- if not .IsPk }}}               
                     {{{- if eq .HtmlType "input" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
                             <span v-text="formData.{{{ .TsField }}}"></span>
@@ -43,109 +43,34 @@
                         </el-form-item>
                     {{{- else if eq .HtmlType "checkbox" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
-                      
-                      
                                 {{{- if ne .DictType "" }}}
                                 <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ .TsField }}}" />
-                                {{!-- <el-checkbox
-                                    v-for="(item, index) in dictData.{{{ .DictType }}}"
-                                    :key="index"
-                                    :label="item.name"
-                                    :value="item.value"
-                                    :disabled="!item.status"
-                                ></el-checkbox> --}}
+
                                 {{{- else if ne .ListAllApi "" }}}
                                 <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" />
-                                {{!-- <el-checkbox
-                                    v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
-                                    :key="index"
-                                    :label="item.Id"
-                                    :value="item.Id"
-                                ></el-checkbox> --}}
-                       
-                                {{!-- <el-checkbox>请选择字典生成</el-checkbox> --}}
                                 {{{- end }}}
                     
                         </el-form-item>
                     {{{- else if eq .HtmlType "select" }}}
-                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
-                            {{!-- <el-select class="flex-1" v-model="formData.{{{ .TsField }}}" placeholder="请选择{{{ .ColumnComment }}}"> --}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}"> 
                                 {{{- if ne .DictType "" }}}
                                 <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ .TsField }}}" />
-                                {{!-- <el-option
-                                    v-for="(item, index) in dictData.{{{ .DictType }}}"
-                                    :key="index"
-                                    :label="item.name"
-                                    {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.value)"
-                                    {{{- else }}}
-                                    :value="item.value"
-                                    {{{- end }}}
-                                    clearable
-                                    :disabled="!item.status"
-                                /> --}}
+         
                                  {{{- else if ne .ListAllApi "" }}}
                                  <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" />
-                                 {{!-- <el-option
-                                    v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
-                                    :key="index"
-                                    :label="item.Id"
-                                    {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.Id)"
-                                    {{{- else }}}
-                                    :value="String(item.Id)"
-                                    {{{- end }}}
-                                    clearable
-                                /> --}}
-                             
-                                {{!-- <el-option label="请选择字典生成" value="" /> --}}
-                                {{{- end }}}
-                            {{!-- </el-select> --}}
+                                {{{- end }}} 
                         </el-form-item>
                     {{{- else if eq .HtmlType "radio" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
                                 {{{- if ne .DictType "" }}}
                                 <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ .TsField }}}" />
-                                {{!-- <el-radio
-                                    v-for="(item, index) in dictData.{{{ .DictType }}}"
-                                    :key="index"
-                                    :label="item.name"
-                                    {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.value)"
-                                    {{{- else }}}
-                                    :value="item.value"
-                                    {{{- end }}}
-                                    :disabled="!item.status"
-                                ></el-radio> --}}
                                 {{{- else if ne .ListAllApi "" }}}
                                 <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" />
-                                {{!-- <el-radio
-                                    v-for="(item, index) in listAllData.{{{ pathToName .ListAllApi }}}"
-                                    :key="index"
-                                    :label="item.name"
-                                    {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.Id)"
-                                    {{{- else }}}
-                                    :value="item.Id"
-                                    {{{- end }}}
-                                >
-                                    {{ item.Id }}
-                                </el-radio> --}}
-                      
-                                {{!-- <el-radio label="0">请选择字典生成</el-radio> --}}
                                 {{{- end }}}
                         </el-form-item>
                     {{{- else if eq .HtmlType "datetime" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
                             <span v-text="formData.{{{ .TsField }}}"></span>
-                            {{!-- <el-date-picker
-                                class="flex-1 !flex"
-                                v-model="formData.{{{ .TsField }}}"
-                                type="datetime"
-                                clearable
-                                value-format="YYYY-MM-DD hh:mm:ss"
-                                placeholder="请选择{{{ .ColumnComment }}}"
-                            /> --}}
                         </el-form-item>
                     {{{- else if eq .HtmlType "editor" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">

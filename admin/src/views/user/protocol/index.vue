@@ -46,7 +46,7 @@
                     </template>
                     新增
                 </el-button>
-                <upload
+                <Upload
                     v-perms="['admin:user_protocol:ImportFile']"
                     class="ml-3 mr-3"
                     :url="user_protocol_import_file"
@@ -60,7 +60,7 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
+                </Upload>
                 <el-button
                     v-perms="['admin:user_protocol:ExportFile']"
                     type="primary"
@@ -94,7 +94,7 @@
                 <vxe-column field="Title" title="标题" min-width="130"></vxe-column>
                 <vxe-column field="Tag" title="标识" min-width="130"></vxe-column>
                 <vxe-column field="Version" title="版本" width="100"></vxe-column>
-                <vxe-column field="CreatedUser.nickname" title="创建人" width="120"></vxe-column>
+                <vxe-column field="CreatedByUser.nickname" title="创建人" width="120"></vxe-column>
 
                 <vxe-column field="CreateTime" title="创建时间" width="180"></vxe-column>
                 <vxe-column field="UpdateTime" title="更新时间" width="180"></vxe-column>

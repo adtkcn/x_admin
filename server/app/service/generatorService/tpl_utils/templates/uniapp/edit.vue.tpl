@@ -16,7 +16,7 @@
 					{{{- if ne .DictType "" }}}
 						<x-picker v-model="form.{{{ .TsField }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
 					{{{- else if ne .ListAllApi "" }}}
-						<x-picker v-model="form.{{{ .TsField }}}" valueKey="Id" labelKey="Id" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+						<x-picker v-model="form.{{{ .TsField }}}" valueKey="{{{toUpperCamelCase .PrimaryKey }}}" labelKey="{{{toUpperCamelCase .PrimaryKey }}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- else }}}
 						请选择字典生成代码
 					{{{- end }}}

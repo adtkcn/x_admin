@@ -60,8 +60,8 @@
                                 <el-checkbox
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
-                                    :label="item.Id"
-                                    :value="item.Id"
+                                    :label="item.ID"
+                                    :value="item.ID"
                                 ></el-checkbox>
                                 {{{- else }}}
                                 <el-checkbox>请选择字典生成</el-checkbox>
@@ -88,11 +88,11 @@
                                  <el-option
                                     v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
                                     :key="index"
-                                    :label="item.Id"
+                                    :label="item.ID"
                                     {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.Id)"
+                                    :value="parseInt(item.ID)"
                                     {{{- else }}}
-                                    :value="String(item.Id)"
+                                    :value="String(item.ID)"
                                     {{{- end }}}
                                     clearable
                                 />
@@ -122,12 +122,12 @@
                                     :key="index"
                                     :label="item.name"
                                     {{{- if eq .GoType "int" }}}
-                                    :value="parseInt(item.Id)"
+                                    :value="parseInt(item.ID)"
                                     {{{- else }}}
-                                    :value="item.Id"
+                                    :value="item.ID"
                                     {{{- end }}}
                                 >
-                                    {{ item.Id }}
+                                    {{ item.ID }}
                                 </el-radio>
                                 {{{- else }}}
                                 <el-radio label="0">请选择字典生成</el-radio>

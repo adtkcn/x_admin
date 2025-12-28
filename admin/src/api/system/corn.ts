@@ -23,12 +23,14 @@ export type type_system_corn_query = {
     TaskName?: string
     TaskCode?: string
     CornExpr?: string
-    Status?: number
+    Status?: any
     CreatedBy?: string
     CreateTimeStart?: string
     CreateTimeEnd?: string
     UpdateTimeStart?: string
     UpdateTimeEnd?: string
+    CreatedByNickname?: string
+    CreatedByUsername?: string
 }
 // 添加编辑
 export type type_system_corn_edit = {

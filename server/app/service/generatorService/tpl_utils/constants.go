@@ -69,6 +69,9 @@ var SqlConstants = sqlConstants{
 	ColumnNameNotList: []string{"id", "is_delete", "delete_time"},
 	//页面不需要查询字段
 	ColumnNameNotQuery: []string{"is_delete", "delete_time"}, //"create_time", "update_time",
+
+	// 常用user id字段
+	ColumnNameUserFiled: []string{"created_by", "updated_by", "deleted_by"},
 }
 
 // HtmlConstants HTML相关常量
@@ -109,11 +112,12 @@ type sqlConstants struct {
 	ColumnTypeInt   []string
 	ColumnTypeFloat []string
 
-	ColumnTimeName     []string
-	ColumnNameNotAdd   []string
-	ColumnNameNotEdit  []string
-	ColumnNameNotList  []string
-	ColumnNameNotQuery []string
+	ColumnTimeName      []string
+	ColumnNameNotAdd    []string
+	ColumnNameNotEdit   []string
+	ColumnNameNotList   []string
+	ColumnNameNotQuery  []string
+	ColumnNameUserFiled []string
 }
 
 type htmlConstants struct {

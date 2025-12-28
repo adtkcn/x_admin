@@ -47,13 +47,13 @@ type SystemCornDelBatchReq struct {
 
 // SystemCornResp 定时任务返回信息
 type SystemCornResp struct {
-	Id          string                                 `swaggertype:"string"` //
-	TaskName    core.NullString                        `swaggertype:"string"` // 任务名称
-	TaskCode    core.NullString                        `swaggertype:"string"` // 任务编码
-	CornExpr    core.NullString                        `swaggertype:"string"` // corn表达式
-	Status      core.NullInt                           `swaggertype:"number"` // 状态
-	CreatedBy   core.NullString                        `swaggertype:"string"` // 创建人
-	CreatedUser systemSchema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
-	CreateTime  core.NullTime                          `swaggertype:"string"` // 创建时间
-	UpdateTime  core.NullTime                          `swaggertype:"string"` // 更新时间
+	Id            string                                 `swaggertype:"string"` //
+	TaskName      core.NullString                        `swaggertype:"string"` // 任务名称
+	TaskCode      core.NullString                        `swaggertype:"string"` // 任务编码
+	CornExpr      core.NullString                        `swaggertype:"string"` // corn表达式
+	Status        core.NullInt                           `swaggertype:"number"` // 状态
+	CreatedBy     core.NullString                        `swaggertype:"string"` // 创建人
+	CreatedByUser systemSchema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
+	CreateTime    core.NullTime                          `swaggertype:"string"` // 创建时间
+	UpdateTime    core.NullTime                          `swaggertype:"string"` // 更新时间
 }

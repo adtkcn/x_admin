@@ -35,7 +35,7 @@ type systemCornService struct {
 // List 定时任务列表
 func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.SystemCorn{}).Joins("CreatedUser")
+	dbModel := service.db.Model(&model.SystemCorn{}).Joins("CreatedByUser")
 	tableName := core.DBTableName(&model.SystemCorn{})
 	if listReq.TaskName.GetValue() != nil {
 		dbModel = dbModel.Where(tableName+".task_name like ?", "%"+*listReq.TaskName.GetValue()+"%")
@@ -54,7 +54,7 @@ func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gor
 		dbModel = dbModel.Where(tableName+".created_by = ?", *listReq.CreatedBy.GetValue())
 	}
 	if listReq.Nickname.GetValue() != nil {
-		dbModel = dbModel.Where("CreatedUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
+		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
 	}
 
 	if listReq.CreateTimeStart.GetValue() != nil {
@@ -141,7 +141,7 @@ func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e
 	var obj = model.SystemCorn{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
-		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedUser").Limit(1).First(&obj).Error
+		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedByUser").Limit(1).First(&obj).Error
 		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}

@@ -10,9 +10,9 @@ import (
 type {{{ toUpperCamelCase .EntityName }}} struct {
 {{{- range .Columns }}}
 {{{- if ne .ID "" }}}
-    {{{- if eq .ColumnName "created_by" }}}
-        CreatedBy   {{{.GoNullType }}}                    `gorm:"column:created_by;type:{{{toSqlType .ColumnType .ColumnLength}}};comment:'{{{ .ColumnComment }}}'"`
-        CreatedUser system_model.SystemAuthAdminSimple `gorm:"foreignKey:CreatedBy"`
+    {{{- if .IsUid }}}
+        {{{.GoField}}}   {{{.GoNullType }}}                    `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};comment:'{{{ .ColumnComment }}}'"`
+        {{{.GoField}}}User system_model.SystemAuthAdminSimple `gorm:"foreignKey:{{{.GoField}}}"`
     {{{- else if eq .ColumnName "is_delete" }}}
         IsDelete soft_delete.DeletedAt `gorm:"column:{{{.ColumnName}}};type:{{{toSqlType .ColumnType .ColumnLength}}};not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
     {{{- else if eq .GoType "time.Time" }}}
@@ -28,11 +28,13 @@ type {{{ toUpperCamelCase .EntityName }}} struct {
 {{{- if eq .PrimaryKeyGoType "string" }}}
 // 自动在创建时设置 UUIDv7
 func (u *{{{ toUpperCamelCase .EntityName }}}) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
-	u.Id = id.String()
+    if u.{{{toUpperCamelCase .PrimaryKey }}} == "" {
+        id, err := uuid.NewV7()
+        if err != nil {
+            return err
+        }
+        u.{{{toUpperCamelCase .PrimaryKey }}} = id.String()
+    }
 	return nil
 }
 {{{- end }}}
