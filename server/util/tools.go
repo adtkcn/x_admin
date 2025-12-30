@@ -23,6 +23,11 @@ var (
 // toolsUtil 常用工具集合类
 type toolsUtil struct{}
 
+// Random 返回随机数
+func (tu toolsUtil) Random(min, max int) int {
+	return rand.Intn(max-min) + min
+}
+
 // RandomString 返回随机字符串
 func (tu toolsUtil) RandomString(length int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
