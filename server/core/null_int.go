@@ -110,15 +110,9 @@ func (i *NullInt) UnmarshalJSON(data []byte) error {
 		i.Exist = true
 		return nil
 	case float64:
-		i64 := int64(v)
-		// 判断转换前后是否相等，防止精度丢失
-		if float64(i64) != v {
-			i.Exist = false
-			return errors.New("int64转换失败，" + fmt.Sprintf("%f", v) + "精度丢失")
-		}
-		i.Val = &i64
+		// 直接报错避免精度丢失问题
 		i.Exist = true
-		return nil
+		return errors.New("int64转换失败，" + fmt.Sprintf("%f", v) + "精度丢失")
 	case string:
 		if v == "" {
 			i.Val = nil
