@@ -1,4 +1,4 @@
-package service
+package cornService
 
 import (
 	"errors"
@@ -37,37 +37,37 @@ func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gor
 	// 查询
 	dbModel := service.db.Model(&model.SystemCorn{}).Joins("CreatedByUser")
 	tableName := core.DBTableName(&model.SystemCorn{})
-	if listReq.TaskName.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".task_name like ?", "%"+*listReq.TaskName.GetValue()+"%")
+	if listReq.TaskName.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".task_name like ?", "%"+listReq.TaskName.ValueOrZero()+"%")
 	}
 
-	if listReq.TaskCode.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".task_code = ?", *listReq.TaskCode.GetValue())
+	if listReq.TaskCode.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".task_code = ?", listReq.TaskCode.ValueOrZero())
 	}
-	if listReq.CornExpr.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".corn_expr = ?", *listReq.CornExpr.GetValue())
+	if listReq.CornExpr.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".corn_expr = ?", listReq.CornExpr.ValueOrZero())
 	}
-	if listReq.Status.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".Status = ?", *listReq.Status.GetValue())
+	if listReq.Status.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".Status = ?", listReq.Status.ValueOrZero())
 	}
-	if listReq.CreatedBy.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".created_by = ?", *listReq.CreatedBy.GetValue())
+	if listReq.CreatedBy.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".created_by = ?", listReq.CreatedBy.ValueOrZero())
 	}
-	if listReq.Nickname.GetValue() != nil {
-		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
+	if listReq.Nickname.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+listReq.Nickname.ValueOrZero()+"%")
 	}
 
-	if listReq.CreateTimeStart.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".create_time >= ?", *listReq.CreateTimeStart.GetValue())
+	if listReq.CreateTimeStart.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".create_time >= ?", listReq.CreateTimeStart.ValueOrZero())
 	}
-	if listReq.CreateTimeEnd.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".create_time <= ?", *listReq.CreateTimeEnd.GetValue())
+	if listReq.CreateTimeEnd.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".create_time <= ?", listReq.CreateTimeEnd.ValueOrZero())
 	}
-	if listReq.UpdateTimeStart.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".update_time >= ?", *listReq.UpdateTimeStart.GetValue())
+	if listReq.UpdateTimeStart.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".update_time >= ?", listReq.UpdateTimeStart.ValueOrZero())
 	}
-	if listReq.UpdateTimeEnd.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".update_time <= ?", *listReq.UpdateTimeEnd.GetValue())
+	if listReq.UpdateTimeEnd.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".update_time <= ?", listReq.UpdateTimeEnd.ValueOrZero())
 	}
 	// dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel

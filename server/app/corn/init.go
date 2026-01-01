@@ -1,12 +1,13 @@
 package corn
 
 import (
+	"x_admin/app/schema"
+	"x_admin/app/service/cornService"
 	"x_admin/core"
 	"x_admin/util"
-
-	"gorm.io/gorm"
 )
 
+// robfig/cron 基础使用示例
 //	func init() {
 //		c := cron.New(cron.WithSeconds())
 //		c.AddFunc("*/5 * * * * *", func() {
@@ -18,76 +19,61 @@ import (
 //		c.Start()
 //	}
 
-// 定义任务结构体
-type TaskInfo struct {
-	TaskCode string // 任务编码
-	TaskDesc string // 任务描述
-	TaskFunc func() // 任务函数
-}
-
-var TaskInfoList = []TaskInfo{
-	{
-		TaskCode: "exampleTask",
-		TaskDesc: "这是一个示例任务，每分钟执行一次",
-		TaskFunc: func() {
-			core.Logger.Info("执行示例任务: exampleTask")
-		},
-	},
-}
-
-// 任务结构
-type RunTask struct {
-	TaskId   string // 任务ID
-	TaskName string // 任务名称
-	TaskCode string // 任务编码
-	CronExpr string // cron表达式
-
-	Disabled bool      // 是否禁用
-	TaskInfo *TaskInfo // 任务信息
-}
-
 // 从数据库加载任务
-func LoadTasks(db *gorm.DB) []RunTask {
-	// 从数据库加载任务
-	var tasks []RunTask
-	err := db.Where("disabled = ?", false).Find(&tasks).Error
+func loadTasks() []cornService.RunTask {
+	var Status = core.NullInt{}
+	Status.SetValue(1)
+	allList, err := cornService.SystemCornService.ListAll(schema.SystemCornListReq{
+		Status: Status,
+	})
 	if err != nil {
-		core.Logger.Error("从数据库加载任务失败", err)
-		return []RunTask{}
+		core.Logger.Error("加载任务失败", err)
+		return nil
 	}
-	var RunTaskList = []RunTask{} // 运行中的任务列表
 
-	for _, task := range tasks {
-		if task.Disabled == true {
+	var RunTaskList = []cornService.RunTask{} // 运行中的任务列表
+
+	for _, task := range allList {
+		if task.Status.ValueOrZero() == 0 {
 			continue
 		}
-		for _, info := range TaskInfoList {
-			if task.TaskCode == info.TaskCode {
-				task.TaskInfo = &info
-				RunTaskList = append(RunTaskList, task)
+		for _, info := range cornService.TaskInfoList {
+			if task.TaskCode.ValueOrZero() == info.TaskCode {
+
+				RunTaskList = append(RunTaskList, cornService.RunTask{
+					TaskId:   task.Id,
+					TaskName: task.TaskName.ValueOrZero(),
+					TaskCode: task.TaskCode.ValueOrZero(),
+					CronExpr: task.CornExpr.ValueOrZero(),
+					Status:   task.Status.ValueOrZero() == 1,
+					Task:     &info,
+				})
 				break
 			}
 		}
 	}
 	return RunTaskList
 }
-func init() {
-	// var db = core.GetDB()
-	// var RunTaskList = LoadTasks(db)
-	tm := core.NewCronManager()
-	tm.Start()
 
-	// for _, task := range RunTaskList {
-	// 	if task.TaskInfo != nil {
-	// 		err := tm.AddTask(task.TaskId, task.CronExpr, task.TaskInfo.TaskFunc)
-	// 		if err != nil {
-	// 			core.Logger.Error("添加任务失败", err)
-	// 		}
-	// 	}
-	// }
-	// defer tm.Stop()
-	// 添加一个每5秒执行的任务
-	tm.AddTask("broadcast", "*/5 * * * * *", func() {
+func init() {
+	// 动态任务管理器
+	DynamicTasks := NewCronManager()
+	DynamicTasks.Start()
+
+	// 固定任务管理器
+	FixedTasks := NewCronManager()
+	FixedTasks.Start()
+
+	// 每10秒执行一次拉取定时任务
+	FixedTasks.AddTask("loadTasks", "*/10 * * * * *", func() {
+		RunTaskList := loadTasks()
+		core.Logger.Info("拉取到的任务数量: ", len(RunTaskList))
+		if err := DynamicTasks.AddTasksBeforeRemoveAll(RunTaskList); err != nil {
+			core.Logger.Error("添加任务失败", err)
+		}
+	})
+	// 每5秒执行一次广播当前在线用户数
+	FixedTasks.AddTask("onlineCount", "*/5 * * * * *", func() {
 		// core.Ws.SendToRoom("room1", map[string]any{
 		// 	"message": "Hello Room1!",
 		// })
@@ -99,4 +85,22 @@ func init() {
 			"onlineCount": core.Ws.GetOnlineCount(),
 		})
 	})
+
+	// FixedTasks.AddTask("WriteInfluxdb2", "*/10 * * * * *", func() {
+	// 	var alarm_event_list = []map[string]any{
+	// 		{
+	// 			"tid":   "284",
+	// 			"site":  "4c",
+	// 			"grade": "1",
+
+	// 			"channel":    strconv.Itoa(util.ToolsUtil.Random(1, 16)),
+	// 			"type":       util.ToolsUtil.Random(1, 7), // 告警类型1-7
+	// 			"start_time": time.Now().Unix() - int64(util.ToolsUtil.Random(1, 20)),
+	// 			"end_time":   time.Now().Unix(),
+	// 			"max":        util.ToolsUtil.Random(100, 200),
+	// 			"min":        util.ToolsUtil.Random(20, 100),
+	// 		},
+	// 	}
+	// 	core.WriteInfluxdb2(alarm_event_list)
+	// })
 }

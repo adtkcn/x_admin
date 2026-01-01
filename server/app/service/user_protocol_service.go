@@ -37,27 +37,27 @@ type userProtocolService struct {
 func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&model.UserProtocol{}).Preload("CreatedByUser")
-	if listReq.Title.GetValue() != nil {
-		dbModel = dbModel.Where("title like ?", "%"+*listReq.Title.GetValue()+"%")
+	if listReq.Title.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("title like ?", "%"+listReq.Title.ValueOrZero()+"%")
 	}
-	if listReq.Content.GetValue() != nil {
-		dbModel = dbModel.Where("content = ?", *listReq.Content.GetValue())
+	if listReq.Content.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("content = ?", listReq.Content.ValueOrZero())
 	}
-	if listReq.Version.GetValue() != nil {
-		dbModel = dbModel.Where("version = ?", *listReq.Version.GetValue())
+	if listReq.Version.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("version = ?", listReq.Version.ValueOrZero())
 	}
 
-	if listReq.CreateTimeStart.GetValue() != nil {
-		dbModel = dbModel.Where("create_time >= ?", *listReq.CreateTimeStart.GetValue())
+	if listReq.CreateTimeStart.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("create_time >= ?", listReq.CreateTimeStart.ValueOrZero())
 	}
-	if listReq.CreateTimeEnd.GetValue() != nil {
-		dbModel = dbModel.Where("create_time <= ?", *listReq.CreateTimeEnd.GetValue())
+	if listReq.CreateTimeEnd.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("create_time <= ?", listReq.CreateTimeEnd.ValueOrZero())
 	}
-	if listReq.UpdateTimeStart.GetValue() != nil {
-		dbModel = dbModel.Where("update_time >= ?", *listReq.UpdateTimeStart.GetValue())
+	if listReq.UpdateTimeStart.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("update_time >= ?", listReq.UpdateTimeStart.ValueOrZero())
 	}
-	if listReq.UpdateTimeEnd.GetValue() != nil {
-		dbModel = dbModel.Where("update_time <= ?", *listReq.UpdateTimeEnd.GetValue())
+	if listReq.UpdateTimeEnd.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("update_time <= ?", listReq.UpdateTimeEnd.ValueOrZero())
 	}
 	dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel

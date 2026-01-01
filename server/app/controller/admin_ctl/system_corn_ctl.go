@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 	"x_admin/app/schema"
-	"x_admin/app/service"
+	"x_admin/app/service/cornService"
+
 	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -48,7 +49,7 @@ func (hd *SystemCornHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := service.SystemCornService.List(page, listReq)
+	res, err := cornService.SystemCornService.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -72,7 +73,7 @@ func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := service.SystemCornService.ListAll(listReq)
+	res, err := cornService.SystemCornService.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -89,7 +90,7 @@ func (hd *SystemCornHandler) Detail(c *gin.Context) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("SystemCorn:Detail:%v", detailReq.Id), func() (any, error) {
-		v, err := service.SystemCornService.Detail(detailReq.Id)
+		v, err := cornService.SystemCornService.Detail(detailReq.Id)
 		return v, err
 	})
 
@@ -112,7 +113,7 @@ func (hd *SystemCornHandler) Add(c *gin.Context) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
-	createId, e := service.SystemCornService.Add(addReq, adminId)
+	createId, e := cornService.SystemCornService.Add(addReq, adminId)
 	response.CheckAndRespWithData(c, createId, e)
 }
 
@@ -132,7 +133,7 @@ func (hd *SystemCornHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, editReq.Id, service.SystemCornService.Edit(editReq))
+	response.CheckAndRespWithData(c, editReq.Id, cornService.SystemCornService.Edit(editReq))
 }
 
 // @Summary	定时任务删除
@@ -147,7 +148,7 @@ func (hd *SystemCornHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, service.SystemCornService.Del(delReq.Id))
+	response.CheckAndResp(c, cornService.SystemCornService.Del(delReq.Id))
 }
 
 //	@Summary	定时任务删除-批量
@@ -169,7 +170,7 @@ func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, service.SystemCornService.DelBatch(Ids))
+	response.CheckAndResp(c, cornService.SystemCornService.DelBatch(Ids))
 }
 
 //		@Summary	定时任务导出
@@ -193,12 +194,12 @@ func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := service.SystemCornService.ExportFile(listReq)
+	res, err := cornService.SystemCornService.ExportFile(listReq)
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "查询信息失败")
 		return
 	}
-	f, err := excel2.Export(res, service.SystemCornService.GetExcelCol(), "Sheet1", "定时任务")
+	f, err := excel2.Export(res, cornService.SystemCornService.GetExcelCol(), "Sheet1", "定时任务")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
@@ -221,12 +222,12 @@ func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []schema.SystemCornResp{}
-	err = excel2.GetExcelData(file, &importList, service.SystemCornService.GetExcelCol())
+	err = excel2.GetExcelData(file, &importList, cornService.SystemCornService.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = service.SystemCornService.ImportFile(importList)
+	err = cornService.SystemCornService.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }
