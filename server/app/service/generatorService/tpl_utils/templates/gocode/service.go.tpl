@@ -43,30 +43,30 @@ func (service {{{ .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCam
 	{{{- if .IsQuery }}}
 		{{{- $queryOpr := index $.ModelOprMap .QueryType }}}
 			{{{- if eq .ColumnName "created_by" }}}
-	if listReq.CreatedBy.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".created_by = ?", *listReq.CreatedBy.GetValue())
+	if listReq.CreatedBy.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".created_by = ?", listReq.CreatedBy.ValueOrZero())
 	}
-	if listReq.Nickname.GetValue() != nil {
-		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+*listReq.Nickname.GetValue()+"%")
+	if listReq.Nickname.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+listReq.Nickname.ValueOrZero()+"%")
 	}
-	if listReq.Username.GetValue() != nil {
-		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+*listReq.Username.GetValue()+"%")
+	if listReq.Username.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+listReq.Username.ValueOrZero()+"%")
 	}
 			{{{- else if eq .HtmlType "datetime" }}}
-	if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} >= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}Start.GetValue())
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} >= ?", listReq.{{{ toUpperCamelCase .ColumnName }}}Start.ValueOrZero())
 	}
-	if listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} <= ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}End.GetValue())
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}End.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} <= ?", listReq.{{{ toUpperCamelCase .ColumnName }}}End.ValueOrZero())
 	}
 			{{{- else }}}
 			{{{- if and (eq .GoType "string") (eq $queryOpr "like") }}}
-	if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} like ?", "%"+*listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue()+"%")
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} like ?", "%"+listReq.{{{ toUpperCamelCase .ColumnName }}}.ValueOrZero()+"%")
 	}
 			{{{- else }}}
-	if listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue() != nil {
-		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} = ?", *listReq.{{{ toUpperCamelCase .ColumnName }}}.GetValue())
+	if listReq.{{{ toUpperCamelCase .ColumnName }}}.IsExistsAndNotNull() {
+		dbModel = dbModel.Where(tableName+".{{{ .ColumnName }}} = ?", listReq.{{{ toUpperCamelCase .ColumnName }}}.ValueOrZero())
 	}
 			{{{- end }}}
 		{{{- end }}}
