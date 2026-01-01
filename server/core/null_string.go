@@ -60,13 +60,14 @@ func (i NullString) Value() (driver.Value, error) {
 	}
 	return *v, nil
 }
-func (i *NullString) UnmarshalText(text []byte) error {
-	return i.Scan(string(text))
-}
 
-// 实现gin框架的参数绑定接口
-func (i *NullString) UnmarshalParam(param string) error {
-	return i.Scan(param)
+// 实现fmt.Stringer接口
+func (i NullString) String() string {
+	if i.Val != nil {
+		return *i.Val
+	} else {
+		return ""
+	}
 }
 
 // 实现json序列化接口
@@ -76,6 +77,15 @@ func (i NullString) MarshalJSON() ([]byte, error) {
 	} else {
 		return json.Marshal(nil)
 	}
+}
+
+func (i *NullString) UnmarshalText(text []byte) error {
+	return i.Scan(string(text))
+}
+
+// 实现gin框架的参数绑定接口
+func (i *NullString) UnmarshalParam(param string) error {
+	return i.Scan(param)
 }
 
 // 实现json反序列化接口
@@ -101,25 +111,46 @@ func (i *NullString) UnmarshalJSON(data []byte) error {
 
 }
 
-func (i NullString) String() string {
-	if i.Val != nil {
-		return *i.Val
-	} else {
-		return ""
-	}
-}
 func (i *NullString) SetValue(value string) {
 	i.Val = &value
 	i.Exist = true
 }
 func (i *NullString) SetNull() {
-	var s string
-	i.Val = &s
+	i.Val = nil
 	i.Exist = true
 }
+
+func (i *NullString) GetValue() *string {
+	return i.Val
+}
+func (i *NullString) ValueOr(v string) string {
+	if i.Val == nil {
+		return v
+	}
+	return *i.Val
+}
+func (i *NullString) ValueOrZero() string {
+	if i.Val == nil {
+		return ""
+	}
+	return *i.Val
+}
+
+// go to json时omitempty标签是否忽略该字段
+func (i NullString) IsZero() bool {
+	return !i.Exist
+}
+
 func (i *NullString) IsExists() bool {
 	return i.Exist
 }
-func (i *NullString) GetValue() *string {
-	return i.Val
+
+// IsExistsAndNotNull 是否存在且不为空
+func (i *NullString) IsExistsAndNotNull() bool {
+	return i.Exist && i.Val != nil
+}
+
+// IsExistsAndNull 存在且为null
+func (i *NullString) IsExistsAndNull() bool {
+	return i.Exist && i.Val == nil
 }

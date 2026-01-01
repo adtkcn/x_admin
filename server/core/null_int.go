@@ -70,8 +70,13 @@ func (i NullInt) Value() (driver.Value, error) {
 	}
 	return *v, nil
 }
+
+// 实现fmt.Stringer接口
 func (i NullInt) String() string {
 	if i.Exist {
+		if i.Val == nil {
+			return ""
+		}
 		return strconv.FormatInt(*i.Val, 10)
 	} else {
 		return ""
@@ -110,9 +115,15 @@ func (i *NullInt) UnmarshalJSON(data []byte) error {
 		i.Exist = true
 		return nil
 	case float64:
-		// 直接报错避免精度丢失问题
+		i64 := int64(v)
+		// 判断转换前后是否相等，防止精度丢失
+		if float64(i64) != v {
+			i.Exist = false
+			return errors.New("int64转换失败，" + fmt.Sprintf("%f", v) + "精度丢失")
+		}
+		i.Val = &i64
 		i.Exist = true
-		return errors.New("int64转换失败，" + fmt.Sprintf("%f", v) + "精度丢失")
+		return nil
 	case string:
 		if v == "" {
 			i.Val = nil
@@ -141,9 +152,39 @@ func (i *NullInt) SetNull() {
 	i.Val = nil
 	i.Exist = true
 }
+
+func (i *NullInt) GetValue() *int64 {
+	return i.Val
+}
+func (i *NullInt) ValueOr(v int64) int64 {
+	if i.Val == nil {
+		return v
+	}
+	return *i.Val
+}
+func (i *NullInt) ValueOrZero() int64 {
+	if i.Val == nil {
+		return 0
+	}
+	return *i.Val
+}
+
+// go to json时omitempty标签是否忽略该字段
+func (i NullInt) IsZero() bool {
+	return !i.Exist
+}
+
+// IsExists 是否存在
 func (i *NullInt) IsExists() bool {
 	return i.Exist
 }
-func (i *NullInt) GetValue() *int64 {
-	return i.Val
+
+// IsExistsAndNotNull 存在且不为null
+func (i *NullInt) IsExistsAndNotNull() bool {
+	return i.Exist && i.Val != nil
+}
+
+// IsExistsAndNull 存在且为null
+func (i *NullInt) IsExistsAndNull() bool {
+	return i.Exist && i.Val == nil
 }
