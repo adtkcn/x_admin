@@ -11,7 +11,11 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var RedisUtil = redisUtil{redis: core.Redis}
+var RedisUtil = NewRedis()
+
+func NewRedis() redisUtil {
+	return redisUtil{redis: core.Redis}
+}
 
 // redisUtil Redis操作工具类
 type redisUtil struct {

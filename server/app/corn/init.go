@@ -1,6 +1,7 @@
 package corn
 
 import (
+	"time"
 	"x_admin/app/schema"
 	"x_admin/app/service/cornService"
 	"x_admin/core"
@@ -43,9 +44,7 @@ func loadTasks() []cornService.RunTask {
 				RunTaskList = append(RunTaskList, cornService.RunTask{
 					TaskId:   task.Id,
 					TaskName: task.TaskName.ValueOrZero(),
-					TaskCode: task.TaskCode.ValueOrZero(),
 					CronExpr: task.CornExpr.ValueOrZero(),
-					Status:   task.Status.ValueOrZero() == 1,
 					Task:     &info,
 				})
 				break
@@ -65,25 +64,35 @@ func init() {
 	FixedTasks.Start()
 
 	// 每10秒执行一次拉取定时任务
-	FixedTasks.AddTask("loadTasks", "*/10 * * * * *", func() {
-		RunTaskList := loadTasks()
-		core.Logger.Info("拉取到的任务数量: ", len(RunTaskList))
-		if err := DynamicTasks.AddTasksBeforeRemoveAll(RunTaskList); err != nil {
-			core.Logger.Error("添加任务失败", err)
-		}
+	FixedTasks.AddTask("loadTasks", "*/10 * * * * *", cornService.Task{
+		Lock: false,
+		// LockTTL:  10 * time.Second,
+		TaskCode: "loadTasks",
+		TaskDesc: "拉取定时任务",
+		TaskFunc: func() {
+			RunTaskList := loadTasks()
+			core.Logger.Info("拉取到的任务数量: ", len(RunTaskList))
+			if err := DynamicTasks.AddTasksBeforeRemoveAll(RunTaskList); err != nil {
+				core.Logger.Error("添加任务失败", err)
+			}
+		},
 	})
-	// 每5秒执行一次广播当前在线用户数
-	FixedTasks.AddTask("onlineCount", "*/5 * * * * *", func() {
-		// core.Ws.SendToRoom("room1", map[string]any{
-		// 	"message": "Hello Room1!",
-		// })
-		// 存入redis
-		util.RedisUtil.RPush("onlineCount", []any{core.Ws.GetOnlineCount()}, 10)
 
-		// 广播当前在线用户数
-		core.Ws.SendToAll(map[string]any{
-			"onlineCount": core.Ws.GetOnlineCount(),
-		})
+	// 每5秒执行一次广播当前在线用户数
+	FixedTasks.AddTask("onlineCount", "*/5 * * * * *", cornService.Task{
+		Lock:     true,
+		LockTTL:  2 * time.Second,
+		TaskCode: "onlineCount",
+		TaskDesc: "广播当前在线用户数",
+		TaskFunc: func() {
+			// 存入redis
+			util.RedisUtil.RPush("onlineCount", []any{core.Ws.GetOnlineCount()}, 10)
+
+			// 广播当前在线用户数
+			core.Ws.SendToAll(map[string]any{
+				"onlineCount": core.Ws.GetOnlineCount(),
+			})
+		},
 	})
 
 	// FixedTasks.AddTask("WriteInfluxdb2", "*/10 * * * * *", func() {

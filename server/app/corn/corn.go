@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"x_admin/app/service/cornService"
+	"x_admin/core"
+	"x_admin/util"
 
 	"github.com/robfig/cron/v3"
 )
@@ -47,7 +49,10 @@ func (tm *CronManager) RemoveAllTask() {
 }
 
 // AddTask 添加、更新任务
-func (tm *CronManager) AddTask(taskID, CronExpr string, cmd func()) error {
+func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) error {
+
+	cmd := task.TaskFunc
+
 	tm.mutex.Lock()
 	defer tm.mutex.Unlock()
 
@@ -57,7 +62,29 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, cmd func()) error {
 	}
 
 	// 添加新任务
-	id, err := tm.cron.AddFunc(CronExpr, cmd)
+	id, err := tm.cron.AddFunc(CronExpr, func() {
+		// 不加锁
+		if !task.Lock {
+			cmd()
+			return
+		}
+		// 加锁
+		lockKey := fmt.Sprintf("lock:%s", taskID)
+		lock := util.NewRedisLock(lockKey, task.LockTTL) // 锁自动过期 10s
+
+		if !lock.Lock() {
+			core.Logger.Info("任务加锁失败:%s: %s", task.TaskCode, task.TaskDesc)
+			return
+		}
+		defer func() {
+			core.Logger.Info("任务解锁:%s: %s", task.TaskCode, task.TaskDesc)
+			// 解锁失败时，记录日志
+			if err := lock.Unlock(); err != nil {
+				core.Logger.Error("任务解锁失败:%s: %s, err: %v", task.TaskCode, task.TaskDesc, err)
+			}
+		}()
+		cmd()
+	})
 	if err != nil {
 		return fmt.Errorf("添加任务失败: %w", err)
 	}
@@ -68,28 +95,13 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, cmd func()) error {
 
 // 批量添加任务，先移除所有任务
 func (tm *CronManager) AddTasksBeforeRemoveAll(tasks []cornService.RunTask) error {
-	// // 获取已存在的任务ID
-	// existingTaskIDs := []string{}
-	// for id := range tm.taskIDs {
-	// 	existingTaskIDs = append(existingTaskIDs, id)
-	// }
-	// // 获取需要删除idkey
-	// // 从任务列表中移除已存在的任务ID
-	// for _, id := range existingTaskIDs {
-	// 	for _, task := range tasks {
-	// 		if task.TaskId == id {
-	// 			tm.RemoveTask(id)
-	// 		}
-	// 	}
-	// }
-
 	// 移除所有任务
 	tm.RemoveAllTask()
 	for _, task := range tasks {
 		if task.TaskId == "" || task.CronExpr == "" || task.Task == nil {
 			return fmt.Errorf("任务ID、Cron表达式或任务函数不能为空")
 		}
-		if err := tm.AddTask(task.TaskId, task.CronExpr, task.Task.TaskFunc); err != nil {
+		if err := tm.AddTask(task.TaskId, task.CronExpr, *task.Task); err != nil {
 			return err
 		}
 	}

@@ -28,6 +28,7 @@ require (
 require (
 	github.com/duke-git/lancet/v2 v2.3.8
 	github.com/gorilla/websocket v1.5.3
+	github.com/influxdata/influxdb1-client v0.0.0-20220302092344-a9ab5670611c
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20251113013923-bd30b77d5468
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/robfig/cron/v3 v3.0.1
