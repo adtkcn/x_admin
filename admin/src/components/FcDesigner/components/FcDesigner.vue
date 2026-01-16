@@ -1452,7 +1452,7 @@ export default defineComponent({
                 if (!data.activeRule || data.validateForm.api[data.activeRule._fc_id] !== data.activeRule) return;
                 methods.handleChange('', field, value, _, fapi);
                 data.dragForm.api.refreshValidate();
-                data.dragForm.api.nextTick(() => {
+                data.dragForm.api.nextTick()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()(() => {
                     data.dragForm.api.clearValidateState(data.activeRule.__fc__.id);
                 });
             },
@@ -1686,7 +1686,7 @@ export default defineComponent({
                         $required: formData.formCreate$required
                     };
                     data.dragForm.api.refreshValidate();
-                    data.dragForm.api.nextTick(() => {
+                    data.dragForm.api.nextTick()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()(() => {
                         data.dragForm.api.clearValidateState(rule.__fc__.id);
                     });
                 }

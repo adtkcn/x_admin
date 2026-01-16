@@ -11,6 +11,9 @@ import 'highlight.js/styles/monokai.min.css'
 import hljs from 'highlight.js/lib/common'
 import javascript from 'highlight.js/lib/languages/javascript'
 import go from 'highlight.js/lib/languages/go'
+defineOptions({
+    name: 'HighlightCode'
+})
 
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('go', go)

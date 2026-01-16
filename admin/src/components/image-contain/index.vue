@@ -7,6 +7,10 @@ import { computed } from 'vue'
 import type { CSSProperties } from 'vue'
 import { addUnit } from '@/utils/util'
 import { imageProps } from 'element-plus'
+defineOptions({
+    name: 'ImageContain'
+})
+
 const props = defineProps({
     width: {
         type: [String, Number],

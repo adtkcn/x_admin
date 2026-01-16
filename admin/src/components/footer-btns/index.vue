@@ -13,6 +13,9 @@ defineProps({
         default: true
     }
 })
+defineOptions({
+    name: 'FooterBtns'
+})
 </script>
 
 <style scoped lang="scss">

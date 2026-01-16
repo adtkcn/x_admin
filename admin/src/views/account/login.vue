@@ -113,6 +113,9 @@ import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
 import { encryptPassword } from '@/utils/util'
+defineOptions({
+    name: 'AccountLogin'
+})
 const Verify = defineAsyncComponent(() => import('@/components/verify/Verify.vue'))
 const ImageContain = defineAsyncComponent(() => import('@/components/image-contain/index.vue'))
 // const verifyRef = ref(null)

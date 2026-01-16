@@ -334,12 +334,6 @@ const open = (type = 'add') => {
 const setFormData = (data: Record<any, any>) => {
     for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            // if (key == 'perms') {
-            //     formData['permsArr'] = data[key].split(',')
-            // } else {
-            //     formData[key] = data[key]
-            // }
             formData[key] = data[key]
         }
     }
