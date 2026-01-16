@@ -14,7 +14,7 @@ var AppConfig = appConfig{
 	AppName:        "x_admin",
 	Version:        "0.0.0",
 	Port:           8080,
-	GinMode:        "",
+	GinMode:        "release",
 	OssDomain:      "",
 	DisallowModify: false,
 }

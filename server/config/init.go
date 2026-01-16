@@ -50,10 +50,10 @@ func loadConfig(config config) config {
 }
 
 func init() {
-	fmt.Println("AppConfig:", AppConfig)
-	fmt.Println("DBConfig:", DBConfig)
-	fmt.Println("RedisConfig:", RedisConfig)
-	fmt.Println("FileConfig:", FileConfig)
-	fmt.Println("GeTuiConfig:", GeTuiConfig)
-	fmt.Println("EmailConfig:", EmailConfig)
+	fmt.Printf("AppConfig: %+v\n", AppConfig)
+	fmt.Printf("DBConfig: %+v\n", DBConfig)
+	fmt.Printf("RedisConfig: %+v\n", RedisConfig)
+	fmt.Printf("FileConfig: %+v\n", FileConfig)
+	fmt.Printf("GeTuiConfig: %+v\n", GeTuiConfig)
+	fmt.Printf("EmailConfig: %+v\n", EmailConfig)
 }

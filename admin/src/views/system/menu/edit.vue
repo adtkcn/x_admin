@@ -320,7 +320,11 @@ const handleSubmit = async () => {
     //     data.perms = ''
     // }
 
-    mode.value == 'edit' ? await menuEdit(data) : await menuAdd(data)
+    if (mode.value == 'edit') {
+        await menuEdit(data)
+    } else {
+        await menuAdd(data)
+    }
     popupRef.value?.close()
     feedback.msgSuccess('操作成功')
     emit('success')

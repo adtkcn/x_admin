@@ -73,11 +73,11 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) e
 		lock := util.NewRedisLock(lockKey, task.LockTTL) // 锁自动过期 10s
 
 		if !lock.Lock() {
-			core.Logger.Info("任务加锁失败:%s: %s", task.TaskCode, task.TaskDesc)
+			core.Logger.Infof("任务加锁失败:%s: %s", task.TaskCode, task.TaskDesc)
 			return
 		}
 		defer func() {
-			core.Logger.Info("任务解锁:%s: %s", task.TaskCode, task.TaskDesc)
+			core.Logger.Infof("任务解锁:%s: %s", task.TaskCode, task.TaskDesc)
 			// 解锁失败时，记录日志
 			if err := lock.Unlock(); err != nil {
 				core.Logger.Error("任务解锁失败:%s: %s, err: %v", task.TaskCode, task.TaskDesc, err)
