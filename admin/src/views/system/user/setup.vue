@@ -1,7 +1,7 @@
 <!-- 网站信息 -->
 <template>
     <div class="user-setup">
-        <el-card shadow="never" class="!border-none">
+        <el-card shadow="never" class="border-none!">
             <div class="font-medium mb-7">基本设置</div>
             <el-form ref="formRef" :model="formData" label-width="120px">
                 <el-form-item label="用户默认头像">

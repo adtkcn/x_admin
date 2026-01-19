@@ -2,7 +2,7 @@
 <template>
     <div class="login-register">
         <el-form ref="formRef" :rules="rules" :model="formData" label-width="120px">
-            <el-card shadow="never" class="!border-none">
+            <el-card shadow="never" class="border-none!">
                 <div class="font-medium mb-7">通用设置</div>
 
                 <el-form-item label="登录方式" prop="loginWay">
@@ -49,7 +49,7 @@
                 </el-form-item>
             </el-card>
 
-            <el-card shadow="never" class="!border-none mt-4">
+            <el-card shadow="never" class="border-none! mt-4">
                 <div class="font-medium mb-7">第三方设置</div>
 
                 <el-form-item label="第三方登录" prop="openOtherAuth">

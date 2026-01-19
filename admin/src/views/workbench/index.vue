@@ -1,7 +1,7 @@
 <template>
     <div class="workbench">
         <div class="md:flex">
-            <el-card class="!border-none mb-4 md:mr-4" shadow="never">
+            <el-card class="border-none! mb-4 md:mr-4" shadow="never">
                 <template #header>
                     <span class="card-title">版本信息</span>
                 </template>
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </el-card>
-            <el-card class="!border-none mb-4 flex-1" shadow="never">
+            <el-card class="border-none! mb-4 flex-1" shadow="never">
                 <template #header>
                     <div>
                         <span class="card-title">今日数据</span>
@@ -75,7 +75,7 @@
         </div>
 
         <div class="md:flex">
-            <el-card class="flex-1 !border-none mb-4" shadow="never">
+            <el-card class="flex-1 border-none! mb-4" shadow="never">
                 <template #header>
                     <span>访问量趋势图</span>
                 </template>

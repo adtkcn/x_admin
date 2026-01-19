@@ -1,7 +1,7 @@
 <!-- 系统日志 -->
 <template>
     <div class="journal">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form
                 class="ls-form mb-[-16px]"
                 :model="formData"
@@ -65,7 +65,7 @@
             </el-form>
         </el-card>
 
-        <el-card class="!border-none mt-4" shadow="never" v-loading="pager.loading">
+        <el-card class="border-none! mt-4" shadow="never" v-loading="pager.loading">
             <div>
                 <el-table :data="pager.lists" size="large" max-height="calc(100vh - 200px)">
                     <el-table-column

@@ -1,6 +1,6 @@
 <template>
     <div class="app-tabs flex">
-        <div class="flex-1 min-w-0">
+        <div class="flex-1 min-w-0 select-none">
             <el-tabs
                 :model-value="currentTab"
                 :closable="tabsLists.length > 1"

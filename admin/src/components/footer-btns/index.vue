@@ -1,6 +1,9 @@
 <template>
     <div class="footer-btns">
-        <div class="footer-btns__content" :style="fixed ? 'position: fixed' : ''">
+        <div
+            class="footer-btns__content flex justify-center items-center shadow bg-body"
+            :style="fixed ? 'position: fixed' : ''"
+        >
             <slot></slot>
         </div>
     </div>
@@ -27,7 +30,6 @@ defineOptions({
         right: 0;
         left: 0;
         z-index: 99;
-        @apply flex justify-center items-center shadow bg-body;
     }
 }
 </style>

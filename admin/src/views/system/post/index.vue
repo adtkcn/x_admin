@@ -1,6 +1,6 @@
 <template>
     <div class="post-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <el-form-item class="w-[280px]" label="岗位编码">
                     <el-input v-model="queryParams.code" clearable @keyup.enter="resetPage" />
@@ -15,7 +15,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div>
                 <el-button v-perms="['admin:system:post:add']" type="primary" @click="handleAdd()">
                     <template #icon>

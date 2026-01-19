@@ -2,7 +2,7 @@
 <template>
     <div class="system-environment" v-loading="loading">
         <div class="lg:flex">
-            <el-card class="!border-none flex-1 mb-4 lg:mr-4" shadow="never">
+            <el-card class="border-none! flex-1 mb-4 lg:mr-4" shadow="never">
                 <div>CPU</div>
                 <div class="mt-4">
                     <div class="flex flex-wrap">
@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </el-card>
-            <el-card class="!border-none flex-1 mb-4" shadow="never">
+            <el-card class="border-none! flex-1 mb-4" shadow="never">
                 <div>内存</div>
                 <div class="mt-4">
                     <div class="flex flex-wrap">
@@ -67,7 +67,7 @@
                 </div>
             </el-card>
         </div>
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <div>服务器信息</div>
             <div class="mt-4">
                 <el-table :data="[info.sys]" size="large">
@@ -80,7 +80,7 @@
             </div>
         </el-card>
 
-        <el-card shadow="never" class="!border-none mt-4">
+        <el-card shadow="never" class="border-none! mt-4">
             <div>go环境信息</div>
             <div class="mt-4">
                 <el-table :data="[info.go]" size="large">
@@ -94,7 +94,7 @@
             </div>
         </el-card>
 
-        <el-card shadow="never" class="!border-none mt-4">
+        <el-card shadow="never" class="border-none! mt-4">
             <div>硬盘状态</div>
             <div class="mt-4">
                 <el-table :data="info.disk" size="large">

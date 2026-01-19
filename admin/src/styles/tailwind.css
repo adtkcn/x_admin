@@ -1,3 +1,5 @@
-/* @tailwind base; */
-/* @tailwind components; */
-@tailwind utilities;
+/* @import 'tailwindcss/utilities' layer(utilities); */
+
+
+@import "tailwindcss";
+@config '../../tailwind.config.cjs';

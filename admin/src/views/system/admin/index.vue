@@ -1,6 +1,6 @@
 <template>
     <div class="admin">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
                 <el-form-item label="管理员账号" class="w-[280px]">
                     <el-input v-model="formData.username" clearable @keyup.enter="resetPage" />
@@ -25,7 +25,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card v-loading="pager.loading" class="mt-2 !border-none" shadow="never">
+        <el-card v-loading="pager.loading" class="mt-2 border-none!" shadow="never">
             <div>
                 <el-button v-perms="['admin:system:admin:add']" type="primary" @click="handleAdd">
                     <template #icon>

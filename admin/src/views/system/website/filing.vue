@@ -1,7 +1,7 @@
 <!-- 备案信息 -->
 <template>
     <div class="website-filing">
-        <el-card shadow="never" class="!border-none">
+        <el-card shadow="never" class="border-none!">
             <div class="mb-5">站点底部版权备案信息设置</div>
             <el-form ref="form" class="ls-form" label-width="100px">
                 <del-wrap

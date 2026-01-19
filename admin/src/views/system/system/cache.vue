@@ -1,7 +1,7 @@
 <!-- 系统缓存 -->
 <template>
     <div class="cache">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <div>
                 <div class="mb-4 lg">基本信息</div>
                 <el-row :gutter="20">
@@ -68,7 +68,7 @@
 
         <div class="sm:flex">
             <!-- 命令统计 -->
-            <el-card class="sm:mr-4 flex-1 !border-none mt-4" shadow="never">
+            <el-card class="sm:mr-4 flex-1 border-none! mt-4" shadow="never">
                 <div>
                     <div class="mb-10">命令统计</div>
                     <div class="flex h-[300px] items-center">
@@ -81,7 +81,7 @@
             </el-card>
 
             <!-- 内存信息 -->
-            <el-card class="flex-1 !border-none mt-4" shadow="never">
+            <el-card class="flex-1 border-none! mt-4" shadow="never">
                 <div>
                     <div class="mb-10">内存信息</div>
                     <div class="flex h-[300px] items-center">

@@ -1,6 +1,6 @@
 <template>
     <div class="dept-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <div>
                 <el-button v-perms="['admin:system:dept:add']" type="primary" @click="handleAdd()">
                     <template #icon>

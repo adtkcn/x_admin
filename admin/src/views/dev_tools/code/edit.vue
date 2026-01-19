@@ -1,9 +1,9 @@
 <template>
     <div class="code-edit">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-page-header content="编辑数据表" @back="$router.back()" />
         </el-card>
-        <el-card class="mt-4 !border-none" shadow="never">
+        <el-card class="mt-4 border-none!" shadow="never">
             <el-form
                 ref="formRef"
                 class="ls-form"

@@ -1,6 +1,6 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <!-- <el-form-item label="模板" prop="templateId">
                     <el-input v-model="queryParams.templateId" />
@@ -36,7 +36,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="申请人昵称" prop="applyUserNickname" min-width="100" />
                 <el-table-column label="流程名称" prop="flowName" min-width="100" />

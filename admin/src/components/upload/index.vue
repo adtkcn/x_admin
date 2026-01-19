@@ -48,6 +48,7 @@ import feedback from '@/utils/feedback'
 import type { ElUpload } from 'element-plus'
 import { RequestCodeEnum } from '@/enums/requestEnums'
 export default defineComponent({
+    name: 'Upload',
     components: {},
     props: {
         // 上传地址

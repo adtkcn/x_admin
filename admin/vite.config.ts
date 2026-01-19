@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
             rolldownOptions: {
                 external: ['XErr'],
                 output: {
-                    advancedChunks: {
+                    codeSplitting: {
                         groups: [
                             {
                                 name: 'vue_vue-router_pinia',
@@ -158,6 +158,7 @@ export default defineConfig(({ mode }) => {
         },
         plugins: [
             vue(),
+
             // vueJsx(),
             // AutoImport({
             //     imports: ['vue', 'vue-router'],
@@ -184,6 +185,7 @@ export default defineConfig(({ mode }) => {
             // viteCompression({
             //     algorithm: 'brotliCompress'
             // })
+
             visualizer({
                 gzipSize: false,
                 brotliSize: false,

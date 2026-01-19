@@ -47,7 +47,7 @@
                     >
                         <slot name="upload">
                             <div
-                                class="upload-btn"
+                                class="text-tx-secondary box-border rounded border-br border-dashed border flex flex-col justify-center items-center"
                                 :style="{
                                     width: size,
                                     height: size
@@ -297,11 +297,6 @@ export default defineComponent({
             line-height: 2;
             color: #fff;
             background-color: rgba(0, 0, 0, 0.3);
-        }
-    }
-    .material-upload {
-        :deep(.upload-btn) {
-            @apply text-tx-secondary box-border rounded border-br border-dashed border flex flex-col justify-center items-center;
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <div class="code-generation">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
                 <el-form-item label="表名称">
                     <el-input v-model="formData.tableName" clearable @keyup.enter="resetPage" />
@@ -14,7 +14,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never" v-loading="pager.loading">
+        <el-card class="border-none! mt-4" shadow="never" v-loading="pager.loading">
             <div class="flex">
                 <data-table
                     v-perms="['admin:gen:importTable']"

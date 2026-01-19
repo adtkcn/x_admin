@@ -1,6 +1,6 @@
 <template>
     <div class="dict-type">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" inline>
                 <el-form-item class="w-[280px]" label="字典名称">
                     <el-input v-model="queryParams.dictName" clearable @keyup.enter="resetPage" />
@@ -21,7 +21,7 @@
             </el-form>
         </el-card>
 
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div>
                 <el-button
                     v-perms="['admin:setting:dict:type:add']"

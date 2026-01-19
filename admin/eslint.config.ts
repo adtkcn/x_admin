@@ -7,13 +7,19 @@ import css from '@eslint/css'
 import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
+    tseslint.configs.recommended,
     {
         files: ['**/*.{js,mjs,cjs,ts,mts,cts,vue}'],
         plugins: { js },
         extends: ['js/recommended'],
-        languageOptions: { globals: globals.browser }
+        languageOptions: { globals: globals.browser },
+        rules: {
+            'no-undef': 'off'
+            // 'no-unused-vars': 'off'
+            // '@typescript-eslint/no-unused-vars': 'off'
+        }
     },
-    tseslint.configs.recommended,
+
     pluginVue.configs['flat/essential'],
     {
         files: ['**/*.vue'],
@@ -21,7 +27,9 @@ export default defineConfig([
         rules: {
             'vue/multi-word-component-names': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
-            'no-empty': 'off'
+            'no-empty': 'off',
+            'no-undef': 'off',
+            '@typescript-eslint/no-unused-vars': 'off'
         }
     },
     {
@@ -41,6 +49,6 @@ export default defineConfig([
         plugins: { json },
         language: 'json/json5',
         extends: ['json/recommended']
-    }
-    // { files: ['**/*.css'], plugins: { css }, language: 'css/css', extends: ['css/recommended'] }
+    },
+    { files: ['**/*.css'], plugins: { css }, language: 'css/css', extends: ['css/recommended'] }
 ])
