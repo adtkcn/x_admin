@@ -1,6 +1,6 @@
 package config
 
-type emailConfig struct {
+type EmailConfigStruct struct {
 	Host     string `mapstructure:"Host"`     // SMTP服务器地址，如 "smtp.qq.com"
 	Port     int    `mapstructure:"Port"`     // SMTP服务器端口，如 465
 	SSL      bool   `mapstructure:"SSL"`      // 是否启用SSL/TLS，如 true
@@ -9,7 +9,7 @@ type emailConfig struct {
 	Timeout  int    `mapstructure:"Timeout"`  // 超时时间，单位秒，默认 10s
 }
 
-var EmailConfig = emailConfig{
+var EmailConfig = EmailConfigStruct{
 	Host:     "smtp.qq.com",
 	Port:     465,
 	SSL:      true,

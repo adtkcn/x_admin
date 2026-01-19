@@ -1,6 +1,6 @@
 package config
 
-type fileConfig struct {
+type FileConfigStruct struct {
 	UploadDirectory string `mapstructure:"UploadDirectory"` // 文件目录
 	PublicPrefix    string `mapstructure:"PublicPrefix"`    // 资源访问前缀
 
@@ -15,7 +15,7 @@ type fileConfig struct {
 
 // var uploadImageExtDefault = []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp", "avif"}
 
-var FileConfig = fileConfig{
+var FileConfig = FileConfigStruct{
 	// 资源访问前缀
 	PublicPrefix: "/api/uploads",
 	// 上传文件路径

@@ -1,6 +1,6 @@
 package config
 
-type redisConfig struct {
+type RedisConfigStruct struct {
 	Url             string `mapstructure:"Url"`             // Redis源配置: redis://:@127.0.0.1:6379/0
 	PoolSize        int    `mapstructure:"PoolSize"`        // Redis连接池大小
 	MaxIdleConns    int    `mapstructure:"MaxIdleConns"`    // Redis空闲连接池最大值
@@ -8,7 +8,7 @@ type redisConfig struct {
 	RedisPrefix     string `mapstructure:"RedisPrefix"`     // Redis键前缀: x:
 }
 
-var RedisConfig = redisConfig{
+var RedisConfig = RedisConfigStruct{
 	Url:             "redis://:@127.0.0.1:6379/0",
 	PoolSize:        100,
 	MaxIdleConns:    10,

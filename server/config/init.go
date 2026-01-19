@@ -9,12 +9,13 @@ import (
 )
 
 type config struct {
-	APP   *appConfig
-	DB    *dbConfig
-	REDIS *redisConfig
-	FILE  *fileConfig
-	GeTui *geTuiConfig
-	Email *emailConfig
+	APP   *AppConfigStruct
+	DB    *DBConfigStruct
+	REDIS *RedisConfigStruct
+	FILE  *FileConfigStruct
+	GeTui *GeTuiConfigStruct
+	Email *EmailConfigStruct
+	Log   *LogConfigStruct
 }
 
 var Config = loadConfig(config{
@@ -24,10 +25,12 @@ var Config = loadConfig(config{
 	FILE:  &FileConfig,
 	GeTui: &GeTuiConfig,
 	Email: &EmailConfig,
+	Log:   &LogConfig,
 })
 
 func loadConfig(config config) config {
 	var envFilePath string
+	// 读取命令行参数 -env 配置文件路径，默认运行目录下的.env文件,使用：-env=.env
 	flag.StringVar(&envFilePath, "env", "", "-env 配置文件路径，默认运行目录下的.env文件")
 	flag.Parse()
 	if envFilePath == "" {
@@ -56,4 +59,5 @@ func init() {
 	fmt.Printf("FileConfig: %+v\n", FileConfig)
 	fmt.Printf("GeTuiConfig: %+v\n", GeTuiConfig)
 	fmt.Printf("EmailConfig: %+v\n", EmailConfig)
+	fmt.Printf("LogConfig: %+v\n", LogConfig)
 }

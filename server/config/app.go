@@ -1,6 +1,6 @@
 package config
 
-type appConfig struct {
+type AppConfigStruct struct {
 	AppName string `mapstructure:"AppName"` // 应用名称
 	Version string `mapstructure:"Version"` // 应用版本
 	Port    int    `mapstructure:"Port"`    // 应用端口
@@ -10,7 +10,7 @@ type appConfig struct {
 	DisallowModify bool   `mapstructure:"DisallowModify"` // 禁止修改操作 (演示功能,限制POST请求)
 }
 
-var AppConfig = appConfig{
+var AppConfig = AppConfigStruct{
 	AppName:        "x_admin",
 	Version:        "0.0.0",
 	Port:           8080,

@@ -1,6 +1,6 @@
 package config
 
-type dbConfig struct {
+type DBConfigStruct struct {
 	Type                   string `mapstructure:"Type"`                   // 数据库类型:MySQL, PostgreSQL, GaussDB, SQLite, SQLServer, TiDB
 	Dsn                    string `mapstructure:"Dsn"`                    // 数据库
 	MaxOpenConns           int    `mapstructure:"MaxOpenConns"`           // 数据库连接池最大值
@@ -12,7 +12,7 @@ type dbConfig struct {
 	DefaultStringSize      uint   `mapstructure:"DefaultStringSize"`      // 数据库string类型字段的默认长度:256
 }
 
-var DBConfig = dbConfig{
+var DBConfig = DBConfigStruct{
 	Type:                   "MySQL",
 	Dsn:                    "", //root:123456@tcp(127.0.0.1:3306)/x_admin?charset=utf8mb4&parseTime=True&loc=Local
 	MaxOpenConns:           100,

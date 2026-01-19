@@ -1,6 +1,6 @@
 package config
 
-type geTuiConfig struct {
+type GeTuiConfigStruct struct {
 	Host         string `mapstructure:"Host"`         // 主机地址
 	AppID        string `mapstructure:"AppID"`        // 应用ID
 	AppKEY       string `mapstructure:"AppKEY"`       // 应用KEY
@@ -9,7 +9,7 @@ type geTuiConfig struct {
 	PackName     string `mapstructure:"PackName"`     // 包名
 }
 
-var GeTuiConfig = geTuiConfig{
+var GeTuiConfig = GeTuiConfigStruct{
 	Host:         "",
 	AppID:        "",
 	AppKEY:       "",
