@@ -17,6 +17,9 @@ type NullFloat struct {
 	Exist bool // 是否有值
 }
 
+func NewNullFloat(val float64) NullFloat {
+	return NullFloat{Val: &val, Exist: true}
+}
 func DecodeFloat(value any) (any, error) {
 	switch v := value.(type) {
 	case nil:
@@ -123,13 +126,15 @@ func (f *NullFloat) UnmarshalJSON(data []byte) error {
 	}
 }
 
-func (i *NullFloat) SetValue(value float64) {
+func (i *NullFloat) SetValue(value float64) *NullFloat {
 	i.Val = &value
 	i.Exist = true
+	return i
 }
-func (i *NullFloat) SetNull() {
+func (i *NullFloat) SetNull() *NullFloat {
 	i.Val = nil
 	i.Exist = true
+	return i
 }
 
 func (i *NullFloat) GetValue() *float64 {
