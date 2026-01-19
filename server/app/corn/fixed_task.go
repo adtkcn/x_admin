@@ -2,13 +2,13 @@ package corn
 
 import (
 	"time"
-	"x_admin/app/schema"
 	"x_admin/app/service/cornService"
 	"x_admin/core"
 	"x_admin/util"
 )
 
 // robfig/cron 基础使用示例
+//
 //	func init() {
 //		c := cron.New(cron.WithSeconds())
 //		c.AddFunc("*/5 * * * * *", func() {
@@ -19,48 +19,11 @@ import (
 //		// 启动定时任务
 //		c.Start()
 //	}
-
-// 从数据库加载任务
-func loadTasks() []cornService.RunTask {
-	var Status = core.NullInt{}
-	Status.SetValue(1)
-	allList, err := cornService.SystemCornService.ListAll(schema.SystemCornListReq{
-		Status: Status,
-	})
-	if err != nil {
-		core.Logger.Error("加载任务失败", err)
-		return nil
-	}
-
-	var RunTaskList = []cornService.RunTask{} // 运行中的任务列表
-
-	for _, task := range allList {
-		if task.Status.ValueOrZero() == 0 {
-			continue
-		}
-		for _, info := range cornService.TaskInfoList {
-			if task.TaskCode.ValueOrZero() == info.TaskCode {
-
-				RunTaskList = append(RunTaskList, cornService.RunTask{
-					TaskId:   task.Id,
-					TaskName: task.TaskName.ValueOrZero(),
-					CronExpr: task.CornExpr.ValueOrZero(),
-					Task:     &info,
-				})
-				break
-			}
-		}
-	}
-	return RunTaskList
-}
+var FixedTasks = NewCronManager()
 
 func init() {
-	// 动态任务管理器
-	DynamicTasks := NewCronManager()
-	DynamicTasks.Start()
-
 	// 固定任务管理器
-	FixedTasks := NewCronManager()
+
 	FixedTasks.Start()
 
 	// 每10秒执行一次拉取定时任务
@@ -71,7 +34,7 @@ func init() {
 		TaskDesc: "拉取定时任务",
 		TaskFunc: func() {
 			RunTaskList := loadTasks()
-			core.Logger.Info("拉取到的任务数量: ", len(RunTaskList))
+			core.Logger.Debug("拉取到的任务数量: ", len(RunTaskList))
 			if err := DynamicTasks.AddTasksBeforeRemoveAll(RunTaskList); err != nil {
 				core.Logger.Error("添加任务失败", err)
 			}

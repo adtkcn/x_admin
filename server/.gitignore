@@ -6,7 +6,7 @@
 *.dll
 *.so
 *.dylib
-
+__debug_bin.exe*
 # Test binary, built with `go test -c`
 *.test
 
@@ -61,4 +61,4 @@ main
 tmp
 dist/
 uploads/
-./logs
+/logs/
