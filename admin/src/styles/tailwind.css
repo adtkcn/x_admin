@@ -1,5 +1,2 @@
-/* @import 'tailwindcss/utilities' layer(utilities); */
-
-
-@import "tailwindcss";
 @config '../../tailwind.config.cjs';
+@import "tailwindcss";

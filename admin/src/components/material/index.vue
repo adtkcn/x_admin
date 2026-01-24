@@ -97,9 +97,9 @@
             </el-tabs>
             <div class="flex flex-col">
                 <div class="operate-btn flex">
-                    <div class="flex-1 flex"></div>
+                    <div class="flex-1"></div>
                     <el-input
-                        class="w-60"
+                        class="w-[240px]!"
                         placeholder="请输入名称"
                         v-model="fileParams.name"
                         @keyup.enter="refresh"
@@ -112,6 +112,7 @@
                             </el-button>
                         </template>
                     </el-input>
+
                     <Upload
                         class="ml-3"
                         :data="{ cid: cateId }"
@@ -307,7 +308,7 @@ const {
     handleCatSelect
 } = useCate()
 
-const activeFileType = ref(props.defaultFileType)
+const activeFileType = ref<string>(props.defaultFileType)
 
 const ext = computed(() => {
     if (activeFileType.value) {

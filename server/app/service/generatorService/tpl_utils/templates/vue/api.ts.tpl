@@ -72,6 +72,6 @@ export function {{{.ModuleName}}}_delete_batch(data: { Ids: string }) {
 export const {{{.ModuleName}}}_import_file = '/{{{.ModuleName}}}/ImportFile'
 
 // {{{.FunctionName}}}导出
-export function {{{.ModuleName}}}_export_file(params: any) {
+export function {{{.ModuleName}}}_export_file(params: type_{{{.ModuleName}}}_query) {
     return (window.location.href =`${config.baseUrl}${config.urlPrefix}/{{{.ModuleName}}}/ExportFile?token=${getToken()}&` + queryString.stringify(clearEmpty(params)))
 }

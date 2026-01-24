@@ -3,6 +3,7 @@ package corn
 import (
 	"time"
 	"x_admin/app/service/cornService"
+	"x_admin/app/service/monitorService"
 	"x_admin/core"
 	"x_admin/util"
 )
@@ -26,8 +27,8 @@ func init() {
 
 	FixedTasks.Start()
 
-	// 每10秒执行一次拉取定时任务
-	FixedTasks.AddTask("loadTasks", "*/10 * * * * *", cornService.Task{
+	// 每10秒执行一次拉取定时任务"*/10 * * * * *"
+	FixedTasks.AddTask("loadTasks", "0 * * * * *", cornService.Task{
 		Lock: false,
 		// LockTTL:  10 * time.Second,
 		TaskCode: "loadTasks",
@@ -55,6 +56,19 @@ func init() {
 			core.Ws.SendToAll(map[string]any{
 				"onlineCount": core.Ws.GetOnlineCount(),
 			})
+		},
+	})
+
+	// 每2秒执行一次收集服务器信息并推送到Redis
+	FixedTasks.AddTask("CollectAndPushServerInfo", "*/2 * * * * *", cornService.Task{
+		Lock:     false,
+		LockTTL:  2 * time.Second,
+		TaskCode: "CollectAndPushServerInfo",
+		TaskDesc: "收集服务器信息并推送到Redis",
+		TaskFunc: func() {
+			if err := monitorService.MonitorServerService.CollectAndPushServerInfo(); err != nil {
+				core.Logger.Error("收集服务器信息并推送到Redis失败", err)
+			}
 		},
 	})
 

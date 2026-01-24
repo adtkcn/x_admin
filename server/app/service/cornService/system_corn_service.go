@@ -267,3 +267,17 @@ func (service systemCornService) ImportFile(importReq []schema.SystemCornResp) (
 	e = response.CheckErr(err, "添加失败")
 	return e
 }
+
+// 获取任务列表
+func (service systemCornService) GetTaskList() (list []map[string]interface{}) {
+	// var list []map[string]interface{}
+	for _, task := range TaskInfoList {
+		list = append(list, map[string]interface{}{
+			"Lock":     task.Lock,
+			"LockTTL":  task.LockTTL.Seconds(),
+			"TaskCode": task.TaskCode,
+			"TaskDesc": task.TaskDesc,
+		})
+	}
+	return list
+}

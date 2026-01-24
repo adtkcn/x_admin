@@ -27,7 +27,7 @@ type LogConfigStruct struct {
 }
 
 var LogConfig = LogConfigStruct{
-	Level:         "info",
+	Level:         "debug",
 	EnableConsole: true,
 	EnableFile:    true,
 	Filename:      "./logs/likeadmin.log",

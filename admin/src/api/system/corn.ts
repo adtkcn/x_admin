@@ -40,7 +40,12 @@ export type type_system_corn_edit = {
     CornExpr?: string
     Status?: number
 }
-
+export type TaskType = {
+    Lock: boolean
+    LockTTL: number
+    TaskCode: string
+    TaskDesc: string
+}
 // 定时任务列表
 export function system_corn_list(params?: type_system_corn_query) {
     return request.get<Pages<type_system_corn>>({
@@ -84,8 +89,15 @@ export function system_corn_delete_batch(data: { Ids: string }) {
 export const system_corn_import_file = '/system_corn/ImportFile'
 
 // 定时任务导出
-export function system_corn_export_file(params: any) {
+export function system_corn_export_file(params: type_system_corn_query) {
     return (window.location.href =
         `${config.baseUrl}${config.urlPrefix}/system_corn/ExportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
+}
+
+// 自定义任务列表-所有
+export function system_corn_getTaskList() {
+    return request.get<TaskType[]>({
+        url: '/system_corn/getTaskList'
+    })
 }

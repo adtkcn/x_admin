@@ -14,7 +14,16 @@
                     <el-input v-model="formData.TaskName" placeholder="请输入任务名称" />
                 </el-form-item>
                 <el-form-item label="任务编码" prop="TaskCode">
-                    <el-input v-model="formData.TaskCode" placeholder="请输入任务编码" />
+                    <!-- <el-input v-model="formData.TaskCode" placeholder="请输入任务编码" /> -->
+
+                    <el-select v-model="formData.TaskCode" placeholder="请选择任务编码">
+                        <el-option
+                            v-for="item in taskList"
+                            :key="item.TaskCode"
+                            :label="item.TaskCode + ' - ' + item.TaskDesc"
+                            :value="item.TaskCode"
+                        />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="corn表达式" prop="CornExpr">
                     <el-input v-model="formData.CornExpr" placeholder="请输入corn表达式" />
@@ -33,7 +42,13 @@
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import { system_corn_edit, system_corn_add, system_corn_detail } from '@/api/system/corn'
+import {
+    system_corn_edit,
+    system_corn_add,
+    system_corn_detail,
+    system_corn_getTaskList
+} from '@/api/system/corn'
+import type { TaskType } from '@/api/system/corn'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import { ref, shallowRef, computed, reactive } from 'vue'
@@ -106,7 +121,11 @@ const handleSubmit = async () => {
     try {
         await formRef.value?.validate()
         const data: any = { ...formData }
-        mode.value == 'edit' ? await system_corn_edit(data) : await system_corn_add(data)
+        if (mode.value == 'edit') {
+            await system_corn_edit(data)
+        } else {
+            await system_corn_add(data)
+        }
         popupRef.value?.close()
         feedback.msgSuccess('操作成功')
         emit('success')
@@ -116,6 +135,7 @@ const handleSubmit = async () => {
 const open = (type = 'add') => {
     mode.value = type
     popupRef.value?.open()
+    getTaskList()
 }
 
 const setFormData = async (data: Record<string, any>) => {
@@ -134,6 +154,13 @@ const getDetail = async (row: Record<string, any>) => {
     } catch (error) {}
 }
 
+const taskList = ref<TaskType[]>([])
+const getTaskList = async () => {
+    try {
+        const data = await system_corn_getTaskList()
+        taskList.value = data
+    } catch (error) {}
+}
 const handleClose = () => {
     emit('close')
 }

@@ -2,6 +2,7 @@ package monitorController
 
 import (
 	"strings"
+	"x_admin/app/service/monitorService"
 	"x_admin/core/response"
 	"x_admin/middleware"
 	"x_admin/util"
@@ -38,11 +39,17 @@ func (mh monitorHandler) cache(c *gin.Context) {
 
 // server 服务监控
 func (mh monitorHandler) server(c *gin.Context) {
-	response.OkWithData(c, map[string]interface{}{
-		"cpu":  util.ServerUtil.GetCpuInfo(),
-		"mem":  util.ServerUtil.GetMemInfo(),
-		"sys":  util.ServerUtil.GetSysInfo(),
-		"disk": util.ServerUtil.GetDiskInfo(),
-		"go":   util.ServerUtil.GetGoInfo(),
-	})
+	// response.OkWithData(c, map[string]interface{}{
+	// 	"cpu":  util.ServerUtil.GetCpuInfo(),
+	// 	"mem":  util.ServerUtil.GetMemInfo(),
+	// 	"sys":  util.ServerUtil.GetSysInfo(),
+	// 	"disk": util.ServerUtil.GetDiskInfo(),
+	// 	"go":   util.ServerUtil.GetGoInfo(),
+	// })
+	data, err := monitorService.MonitorServerService.GetAllServerLatestInfo()
+	if err != nil {
+		response.FailWithMsg(c, response.SystemError, "获取服务器信息失败:"+err.Error())
+		return
+	}
+	response.OkWithData(c, data)
 }

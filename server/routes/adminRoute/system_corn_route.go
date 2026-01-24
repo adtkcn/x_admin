@@ -1,9 +1,10 @@
 package adminRoute
 
 import (
-	"github.com/gin-gonic/gin"
-	"x_admin/middleware" 
 	"x_admin/app/controller/admin_ctl"
+	"x_admin/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 /**
@@ -28,7 +29,6 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT id, 'A', '定时任务导入excel','admin:system_corn:ImportFile', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='system/corn/index';
 */
 
-
 // SystemCornRoute(rg)
 func SystemCornRoute(rg *gin.RouterGroup) {
 	handle := admin_ctl.SystemCornHandler{}
@@ -37,15 +37,17 @@ func SystemCornRoute(rg *gin.RouterGroup) {
 	r.GET("/system_corn/list", handle.List)
 	r.GET("/system_corn/listAll", handle.ListAll)
 	r.GET("/system_corn/detail", handle.Detail)
-	
-	r.POST("/system_corn/add",middleware.RecordLog("定时任务新增"), handle.Add)
-	r.POST("/system_corn/edit",middleware.RecordLog("定时任务编辑"), handle.Edit)
-	
+
+	r.POST("/system_corn/add", middleware.RecordLog("定时任务新增"), handle.Add)
+	r.POST("/system_corn/edit", middleware.RecordLog("定时任务编辑"), handle.Edit)
+
 	r.POST("/system_corn/del", middleware.RecordLog("定时任务删除"), handle.Del)
 	r.POST("/system_corn/delBatch", middleware.RecordLog("定时任务删除-批量"), handle.DelBatch)
 
 	r.GET("/system_corn/ExportFile", middleware.RecordLog("定时任务导出"), handle.ExportFile)
-	r.POST("/system_corn/ImportFile",  handle.ImportFile)
+	r.POST("/system_corn/ImportFile", handle.ImportFile)
+
+	r.GET("/system_corn/getTaskList", handle.GetTaskList)
 }
 func init() {
 	routeHandlers = append(routeHandlers, SystemCornRoute)

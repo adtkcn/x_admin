@@ -1,6 +1,10 @@
 <!-- 系统环境 -->
 <template>
     <div class="system-environment" v-loading="loading">
+        <el-tabs v-model="activeIp" type="card">
+            <el-tab-pane v-for="ip in ips" :key="ip" :label="ip" :name="ip"></el-tab-pane>
+        </el-tabs>
+
         <div class="lg:flex">
             <el-card class="border-none! flex-1 mb-4 lg:mr-4" shadow="never">
                 <div>CPU</div>
@@ -114,26 +118,38 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onBeforeUnmount } from 'vue'
+import { ref, onBeforeUnmount, computed } from 'vue'
 import { systemInfo } from '@/api/setting/system'
 defineOptions({
     name: 'environment'
 })
 const loading = ref(false)
-const info = ref({
-    cpu: {} as any,
-    disk: [],
-    go: {},
-    mem: {} as any,
-    sys: {}
+const result = ref<Record<string, any>>({})
+const ips = computed(() => {
+    return Object.keys(result.value)
+})
+const activeIp = ref<string>('')
+const info = computed(() => {
+    if (result.value && activeIp.value && result.value[activeIp.value]) {
+        return result.value[activeIp.value]
+    }
+    return {
+        cpu: {} as any,
+        disk: [],
+        go: {},
+        mem: {} as any,
+        sys: {}
+    }
 })
 
 const getSystemInfo = async () => {
     try {
         loading.value = true
         const data = await systemInfo()
-        info.value = data
-
+        result.value = data || {}
+        if (activeIp.value == '' && ips.value.length > 0) {
+            activeIp.value = ips.value[0]
+        }
         loading.value = false
     } catch (error) {
         loading.value = false
@@ -143,7 +159,7 @@ const getSystemInfo = async () => {
 getSystemInfo()
 const timer = setInterval(() => {
     getSystemInfo()
-}, 10000)
+}, 2000)
 onBeforeUnmount(() => {
     clearInterval(timer)
 })

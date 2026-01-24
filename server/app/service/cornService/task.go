@@ -31,7 +31,7 @@ var TaskInfoList = []Task{
 		LockTTL: 10 * time.Second,
 
 		TaskCode: "exampleTask",
-		TaskDesc: "这是一个示例任务，每分钟执行一次",
+		TaskDesc: "这是一个示例任务",
 
 		TaskFunc: func() {
 

@@ -231,3 +231,14 @@ func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 	err = cornService.SystemCornService.ImportFile(importList)
 	response.CheckAndResp(c, err)
 }
+
+// @Summary	获取任务列表
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token		header		string				true	"token"
+// @Success	200			{object}	response.Response	"成功"
+// @Router		/api/admin/system_corn/getTaskList [get]
+func (hd *SystemCornHandler) GetTaskList(c *gin.Context) {
+	var taskList = cornService.SystemCornService.GetTaskList()
+	response.CheckAndRespWithData(c, taskList, nil)
+}
