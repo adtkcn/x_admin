@@ -35,6 +35,8 @@ func (c CacheUtil) GetCache(key interface{}, obj interface{}) error {
 	switch k := key.(type) {
 	case int:
 		cacheKey = strconv.Itoa(k)
+	case int64:
+		cacheKey = strconv.FormatInt(k, 10)
 	case string:
 		cacheKey = k
 	default:

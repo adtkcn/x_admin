@@ -2,7 +2,8 @@
 	"id": "wot-design-uni",
 	"name": "wot-design-uni",
 	"displayName": "wot-design-uni 基于vue3+Typescript的高颜值组件库",
-	"version": "1.2.24",
+	"version": "1.8.0",
+	"license": "MIT",
 	"description": "一个基于Vue3+TS开发的uni-app组件库，提供70+高质量组件，支持暗黑模式、国际化和自定义主题。",
 	"keywords": [
         "wot-design-uni",
@@ -36,14 +37,19 @@
 		},
 		"npmurl": "https://www.npmjs.com/package/wot-design-uni"
 	},
+	"vetur": {
+		"tags": "tags.json",
+		"attributes": "attributes.json"
+	},
+	"web-types": "web-types.json",
 	"uni_modules": {
 		"dependencies": [],
 		"encrypt": [],
 		"platforms": {
 			"cloud": {
 				"tcb": "y",
-                "aliyun": "y",
-                "alipay": "n"
+				"aliyun": "y",
+				"alipay": "n"
 			},
 			"client": {
 				"Vue": {
@@ -51,9 +57,11 @@
 					"vue3": "y"
 				},
 				"App": {
-					"app-vue": "y",
-					"app-nvue": "u"
-				},
+                    "app-vue": "y",
+                    "app-nvue": "n",
+                    "app-uvue": "n",
+                    "app-harmony": "u"
+                },
 				"H5-mobile": {
 					"Safari": "y",
 					"Android Browser": "y",
@@ -61,18 +69,18 @@
 					"QQ浏览器(Android)": "y"
 				},
 				"H5-pc": {
-					"Chrome": "u",
+					"Chrome": "y",
 					"IE": "u",
-					"Edge": "u",
-					"Firefox": "u",
-					"Safari": "u"
+					"Edge": "y",
+					"Firefox": "y",
+					"Safari": "y"
 				},
 				"小程序": {
 					"微信": "y",
 					"阿里": "y",
 					"百度": "u",
 					"字节跳动": "u",
-					"QQ": "u",
+					"QQ": "y",
 					"钉钉": "y",
 					"快手": "u",
 					"飞书": "u",

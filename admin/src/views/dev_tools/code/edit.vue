@@ -1,9 +1,9 @@
 <template>
     <div class="code-edit">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-page-header content="编辑数据表" @back="$router.back()" />
         </el-card>
-        <el-card class="mt-4 !border-none" shadow="never">
+        <el-card class="mt-4 border-none!" shadow="never">
             <el-form
                 ref="formRef"
                 class="ls-form"
@@ -80,9 +80,9 @@
                                         <el-option label="int64" value="int64" />
                                         <el-option label="string" value="string" />
                                         <el-option label="float64" value="float64" />
-                                        <el-option label="rune" value="rune" />
+                                        <!-- <el-option label="rune" value="rune" /> -->
                                         <el-option label="bool" value="bool" />
-                                        <el-option label="NullTime" value="core.NullTime" />
+                                        <el-option label="time.Time" value="time.Time" />
                                     </el-select>
                                 </template>
                             </el-table-column>
@@ -219,8 +219,8 @@
                     <el-tab-pane label="生成配置" name="config">
                         <el-form-item label="模板类型" prop="gen.genTpl" required>
                             <el-radio-group v-model="formData.gen.genTpl">
-                                <el-radio :label="GenTpl.CRUD">单表（增删改查）</el-radio>
-                                <el-radio :label="GenTpl.TREE">树表（增删改查）</el-radio>
+                                <el-radio :value="GenTpl.CRUD">单表（增删改查）</el-radio>
+                                <el-radio :value="GenTpl.TREE">树表（增删改查）</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item label="模块名" prop="gen.moduleName">

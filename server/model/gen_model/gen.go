@@ -1,10 +1,15 @@
 package gen_model
 
-import "x_admin/core"
+import (
+	"x_admin/core"
 
-//GenTable 代码生成业务实体
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
+
+// GenTable 代码生成业务实体
 type GenTable struct {
-	ID           uint   `gorm:"primarykey;comment:'主键'"`
+	ID           string `gorm:"primarykey;type:char(36);comment:'主键'"`
 	TableName    string `gorm:"not null;default:'';comment:'表名称''"`
 	TableComment string `gorm:"not null;default:'';comment:'表描述'"`
 	SubTableName string `gorm:"not null;default:'';comment:'关联表名称'"`
@@ -23,10 +28,20 @@ type GenTable struct {
 	UpdateTime core.NullTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 }
 
-//GenTableColumn 代码生成表列实体
+// 自动在创建时设置 UUIDv7
+func (m *GenTable) BeforeCreate(tx *gorm.DB) error {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	m.ID = id.String()
+	return nil
+}
+
+// GenTableColumn 代码生成表列实体
 type GenTableColumn struct {
-	ID            uint          `gorm:"primarykey;comment:'列主键'"`
-	TableID       uint          `gorm:"not null;default:0;comment:'表外键'"`
+	ID            string        `gorm:"primarykey;type:char(36);comment:'主键'"`
+	TableID       string        `gorm:"not null;default:0;comment:'表外键'"`
 	ColumnName    string        `gorm:"not null;default:'';comment:'列名称'"`
 	ColumnComment string        `gorm:"not null;default:'';comment:'列描述'"`
 	ColumnLength  int           `gorm:"not null;default:0;comment:'列长度'"`
@@ -47,4 +62,14 @@ type GenTableColumn struct {
 	Sort          int           `gorm:"not null;default:0;comment:'排序编号'"`
 	CreateTime    core.NullTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 	UpdateTime    core.NullTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+}
+
+// 自动在创建时设置 UUIDv7
+func (m *GenTableColumn) BeforeCreate(tx *gorm.DB) error {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	m.ID = id.String()
+	return nil
 }

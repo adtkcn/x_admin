@@ -29,16 +29,16 @@ async function build_go() {
 }
 async function build_frontend() {
     await execaCommand('npm run prod', { stdio: 'inherit', encoding: 'utf8', cwd })
-    if (existsSync(releasePath)) {
-        await remove(releasePath)
-    }
-    console.log(`文件正在复制 ==> ${releaseRelativePath}`)
-    try {
-        await copyFile(distPath, releasePath)
-    } catch (error) {
-        console.log(error)
-    }
-    console.log(`文件已复制 ==> ${releaseRelativePath}`)
+    // if (existsSync(releasePath)) {
+    //     await remove(releasePath)
+    // }
+    // console.log(`文件正在复制 ==> ${releaseRelativePath}`)
+    // try {
+    //     await copyFile(distPath, releasePath)
+    // } catch (error) {
+    //     console.log(error)
+    // }
+    // console.log(`文件已复制 ==> ${releaseRelativePath}`)
 }
 async function build() {
     try {

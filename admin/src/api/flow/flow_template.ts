@@ -2,7 +2,7 @@ import request from '@/utils/request'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_template = {
-    id?: number
+    id?: string
     flowName?: string
     flowGroup?: number
     flowRemark?: string
@@ -29,7 +29,7 @@ export type type_flow_template_query = {
 }
 // 添加编辑
 export type type_flow_template_edit = {
-    id?: number
+    id?: string
     flowName?: string
     flowGroup?: number
     flowRemark?: string

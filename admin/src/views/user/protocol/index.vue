@@ -1,17 +1,21 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form
                 ref="formRef"
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
-                label-width="70px"
+                label-width="90px"
                 label-position="left"
             >
                 <el-form-item label="标题" prop="Title" class="w-[280px]">
                     <el-input v-model="queryParams.Title" />
                 </el-form-item>
+                <el-form-item label="版本" prop="Version" class="w-[280px]">
+                    <el-input v-model="queryParams.Version" />
+                </el-form-item>
+
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
@@ -30,7 +34,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div class="text-right">
                 <el-button
                     v-perms="['admin:user_protocol:add']"
@@ -42,12 +46,11 @@
                     </template>
                     新增
                 </el-button>
-                <upload
+                <Upload
                     v-perms="['admin:user_protocol:ImportFile']"
                     class="ml-3 mr-3"
                     :url="user_protocol_import_file"
-                    :data="{ cid: 0 }"
-                    type="file"
+                    :ext="['xlsx']"
                     :show-progress="true"
                     @change="resetPage"
                 >
@@ -57,7 +60,7 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
+                </Upload>
                 <el-button
                     v-perms="['admin:user_protocol:ExportFile']"
                     type="primary"
@@ -77,21 +80,33 @@
                     批量删除
                 </el-button>
             </div>
-            <el-table
+            <vxe-table
+                ref="tableRef"
+                border
+                size="medium"
                 class="mt-4"
-                size="large"
-                v-loading="pager.loading"
                 :data="pager.lists"
-                @selection-change="handleSelectionChange"
+                auto-resize
+                @checkbox-change="handleSelectionChange"
+                @checkbox-all="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" />
-                <el-table-column label="标题" prop="Title" min-width="130" />
-                <el-table-column label="协议内容" prop="Content" min-width="130" />
-                <el-table-column label="排序" prop="Sort" min-width="130" />
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
-                <el-table-column label="操作" width="120" fixed="right">
+                <vxe-column type="checkbox" width="55"></vxe-column>
+                <vxe-column field="Title" title="标题" min-width="130"></vxe-column>
+                <vxe-column field="Tag" title="标识" min-width="130"></vxe-column>
+                <vxe-column field="Version" title="版本" width="100"></vxe-column>
+                <vxe-column field="CreatedByUser.nickname" title="创建人" width="120"></vxe-column>
+
+                <vxe-column field="CreateTime" title="创建时间" width="180"></vxe-column>
+                <vxe-column field="UpdateTime" title="更新时间" width="180"></vxe-column>
+                <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
+                        <el-button
+                            v-perms="['admin:user_protocol:detail']"
+                            type="primary"
+                            link
+                            @click="viewDetails(row)"
+                            >详情</el-button
+                        >
                         <el-button
                             v-perms="['admin:user_protocol:edit']"
                             type="primary"
@@ -109,17 +124,18 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <DetailsPopup v-if="showDetails" ref="detailsRef" @close="showDetails = false" />
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive, nextTick } from 'vue'
+import { ref, reactive, nextTick, useTemplateRef } from 'vue'
 import {
     user_protocol_delete,
     user_protocol_delete_batch,
@@ -128,19 +144,23 @@ import {
     user_protocol_export_file
 } from '@/api/user/protocol'
 import type { type_user_protocol, type_user_protocol_query } from '@/api/user/protocol'
+import type { VxeTableInstance } from 'vxe-table'
 
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+import DetailsPopup from './details.vue'
 defineOptions({
     name: 'user_protocol'
 })
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 const showEdit = ref(false)
+const detailsRef = useTemplateRef<InstanceType<typeof DetailsPopup>>('detailsRef')
+const showDetails = ref(false)
 const queryParams = reactive<type_user_protocol_query>({
     Title: null,
     Content: null,
-    Sort: null,
+    Version: null,
     CreateTimeStart: null,
     CreateTimeEnd: null,
     UpdateTimeStart: null,
@@ -164,10 +184,19 @@ const handleEdit = async (data: any) => {
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
+const viewDetails = async (data: any) => {
+    showDetails.value = true
+    await nextTick()
+    detailsRef.value?.open()
+    detailsRef.value?.getDetail(data)
+}
+
+const tableRef = useTemplateRef<VxeTableInstance<type_user_protocol>>('tableRef')
 const multipleSelection = ref<type_user_protocol[]>([])
-const handleSelectionChange = (val: type_user_protocol[]) => {
-    console.log(val)
-    multipleSelection.value = val
+const handleSelectionChange = () => {
+    if (tableRef.value) {
+        multipleSelection.value = tableRef.value.getCheckboxRecords()
+    }
 }
 
 const handleDelete = async (Id: number) => {

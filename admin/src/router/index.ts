@@ -3,7 +3,7 @@ import { MenuEnum } from '@/enums/appEnums'
 import { isExternal } from '@/utils/validate'
 import { constantRoutes, INDEX_ROUTE_NAME, LAYOUT, Empty } from './routes'
 import useUserStore from '@/stores/modules/user'
-
+import qs from 'query-string'
 // 匹配views里面所有的.vue文件，动态引入
 const modules = import.meta.glob('/src/views/**/*.vue')
 
@@ -27,6 +27,18 @@ export function filterAsyncRoutes(routes: any[], firstRoute = true) {
 
 // 创建一条路由记录
 export function createRouteRecord(route: any, firstRoute: boolean): RouteRecordRaw {
+    let query = route.params
+
+    try {
+        if (route.params) {
+            // console.log(route.params)
+            // query =
+            query = decodeURIComponent(qs.stringify(JSON.parse(route.params)))
+            console.log(query)
+        }
+    } catch (error) {
+        // console.error(error)
+    }
     //@ts-ignore
     const routeRecord: RouteRecordRaw = {
         path: isExternal(route.paths) ? route.paths : firstRoute ? `/${route.paths}` : route.paths,
@@ -35,8 +47,8 @@ export function createRouteRecord(route: any, firstRoute: boolean): RouteRecordR
             hidden: !route.isShow,
             keepAlive: !!route.isCache,
             title: route.menuName,
-            perms: route.perms, //逗号分隔的字符串
-            query: route.params,
+            perms: route.perms, //
+            query: query,
             icon: route.menuIcon,
             type: route.menuType,
             activeMenu: route.selected

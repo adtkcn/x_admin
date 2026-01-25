@@ -1,46 +1,30 @@
-/*
- * @Author: weisheng
- * @Date: 2024-03-29 13:29:57
- * @LastEditTime: 2024-04-10 20:18:47
- * @LastEditors: weisheng
- * @Description:
- * @FilePath: \wot-design-uni\src\uni_modules\wot-design-uni\components\wd-toast\index.ts
- * 记得注释
- */
-import { provide, ref } from 'vue'
+import { inject, provide, ref } from 'vue'
 import type { Toast, ToastOptions } from './types'
 import { deepMerge } from '../common/util'
 
 /**
  * useToast 用到的key
- *
- * @internal
  */
-export const toastDefaultOptionKey = '__TOAST_OPTION__'
+const toastDefaultOptionKey = '__TOAST_OPTION__'
 
 // 默认模板
 export const defaultOptions: ToastOptions = {
-  msg: '',
   duration: 2000,
-  loadingType: 'outline',
-  loadingColor: '#4D80F0',
-  iconColor: '#4D80F0',
-  iconSize: 42,
-  loadingSize: 42,
-  customIcon: false,
-  position: 'middle',
-  show: false,
-  zIndex: 100
+  show: false
 }
 
+const None = Symbol('None')
+
 export function useToast(selector: string = ''): Toast {
+  const toastOptionKey = getToastOptionKey(selector)
+  const toastOption = inject(toastOptionKey, ref<ToastOptions | typeof None>(None)) // toast选项
+  if (toastOption.value === None) {
+    toastOption.value = defaultOptions
+    provide(toastOptionKey, toastOption)
+  }
   let timer: ReturnType<typeof setTimeout> | null = null
-  const toastOption = ref<ToastOptions>(defaultOptions) // Toast选项
-  const toastOptionKey = selector ? toastDefaultOptionKey + selector : toastDefaultOptionKey
-  provide(toastOptionKey, toastOption)
 
   const createMethod = (toastOptions: ToastOptions) => {
-    // 优先级：options->toastOptions->defaultOptions
     return (options: ToastOptions | string) => {
       return show(deepMerge(toastOptions, typeof options === 'string' ? { msg: options } : options) as ToastOptions)
     }
@@ -86,6 +70,10 @@ export function useToast(selector: string = ''): Toast {
     info,
     close
   }
+}
+
+export const getToastOptionKey = (selector: string) => {
+  return selector ? `${toastDefaultOptionKey}${selector}` : toastDefaultOptionKey
 }
 
 export const toastIcon = {

@@ -143,7 +143,10 @@ export const firstToUpperCase = (str = '') => {
 /**
  * @description 清空对象空值属性
  */
-export const clearEmpty = (obj: Record<string, any>) => {
+export const clearEmpty = (obj?: Record<string, any>) => {
+    if (!obj || typeof obj !== 'object') {
+        return {}
+    }
     for (const key of Object.keys(obj)) {
         if (isEmpty(obj[key])) {
             delete obj[key]

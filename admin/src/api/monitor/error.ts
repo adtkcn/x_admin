@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_error = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     EventType?: string
     Path?: string
@@ -29,7 +29,7 @@ export type type_monitor_error_query = {
 }
 // 添加编辑
 export type type_monitor_error_edit = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     EventType?: string
     Path?: string

@@ -1,9 +1,9 @@
 <template>
     <div>
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-page-header content="用户详情" @back="$router.back()" />
         </el-card>
-        <el-card class="mt-4 !border-none" header="基本资料" shadow="never">
+        <el-card class="mt-4 border-none!" header="基本资料" shadow="never">
             <el-form ref="formRef" class="ls-form" :model="formData" label-width="120px">
                 <div class="bg-page py-5 pl-20 mb-10">
                     <div class="mb-3 text-tx-regular">用户头像</div>
@@ -85,7 +85,7 @@
 
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
-import { shallowRef, reactive } from 'vue'
+import { useTemplateRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { getUserDetail, userEdit } from '@/api/consumer'
 import feedback from '@/utils/feedback'
@@ -109,7 +109,7 @@ const formData = reactive({
     username: ''
 })
 
-const formRef = shallowRef<FormInstance>()
+const formRef = useTemplateRef<FormInstance>('formRef')
 
 const getDetails = async () => {
     const data = await getUserDetail({

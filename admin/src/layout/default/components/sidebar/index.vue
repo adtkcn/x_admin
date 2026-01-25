@@ -1,6 +1,7 @@
 <template>
     <aside class="sidebar h-full">
         <el-drawer
+            v-if="isMobile"
             v-model="showMenuDrawer"
             direction="ltr"
             :size="drawerSize"
@@ -9,7 +10,7 @@
         >
             <Side />
         </el-drawer>
-        <Side v-show="!isMobile" />
+        <Side v-if="!isMobile" />
     </aside>
 </template>
 
@@ -19,7 +20,7 @@ import Side from './side.vue'
 import useAppStore from '@/stores/modules/app'
 import useSettingStore from '@/stores/modules/setting'
 defineOptions({
-    name: 'LayoutSidebar'
+    name: 'LayoutDefaultSidebar'
 })
 const appStore = useAppStore()
 const settingStore = useSettingStore()

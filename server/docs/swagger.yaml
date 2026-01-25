@@ -1,29 +1,23 @@
 basePath: /
 definitions:
-  core.NullFloat:
-    properties:
-      float:
-        type: number
-      valid:
-        type: boolean
-    type: object
   core.NullInt:
     properties:
-      int:
-        type: integer
-      valid:
+      exist:
+        description: 是否有值
         type: boolean
+      val:
+        description: 整数或者null
+        format: int64
+        type: integer
     type: object
   core.NullTime:
     properties:
-      format:
-        type: string
-      time:
-        type: string
-      valid:
+      exist:
         type: boolean
+      val:
+        type: string
     type: object
-  flow_apply.FlowApplyResp:
+  flowSchema.FlowApplyResp:
     properties:
       applyUserId:
         description: 申请人id
@@ -69,7 +63,7 @@ definitions:
         - $ref: '#/definitions/core.NullTime'
         description: 更新时间
     type: object
-  flow_history.FlowHistoryResp:
+  flowSchema.FlowHistoryResp:
     properties:
       applyId:
         description: 申请id
@@ -119,7 +113,7 @@ definitions:
         - $ref: '#/definitions/core.NullTime'
         description: 更新时间
     type: object
-  flow_template.FlowTemplateResp:
+  flowSchema.FlowTemplateResp:
     properties:
       flowFormData:
         description: 表单配置
@@ -142,7 +136,7 @@ definitions:
       id:
         type: integer
     type: object
-  monitor_client.MonitorClientResp:
+  monitorSchema.MonitorClientResp:
     properties:
       browser:
         description: 浏览器
@@ -193,7 +187,7 @@ definitions:
         - $ref: '#/definitions/core.NullInt'
         description: 屏幕
     type: object
-  monitor_error.MonitorErrorResp:
+  monitorSchema.MonitorErrorResp:
     properties:
       createTime:
         allOf:
@@ -202,6 +196,10 @@ definitions:
       eventType:
         description: 事件类型
         type: string
+      height:
+        allOf:
+        - $ref: '#/definitions/core.NullInt'
+        description: 屏幕高度
       id:
         description: 错误id
         type: integer
@@ -220,8 +218,12 @@ definitions:
       stack:
         description: 错误堆栈
         type: string
+      width:
+        allOf:
+        - $ref: '#/definitions/core.NullInt'
+        description: 屏幕
     type: object
-  monitor_project.MonitorProjectResp:
+  monitorSchema.MonitorProjectResp:
     properties:
       createTime:
         allOf:
@@ -248,32 +250,6 @@ definitions:
         - $ref: '#/definitions/core.NullTime'
         description: 更新时间
     type: object
-  monitor_slow.MonitorSlowResp:
-    properties:
-      clientId:
-        description: sdk生成的客户端id
-        type: string
-      createTime:
-        allOf:
-        - $ref: '#/definitions/core.NullTime'
-        description: 创建时间
-      id:
-        description: 错误id
-        type: integer
-      path:
-        description: URL地址
-        type: string
-      projectKey:
-        description: 项目key
-        type: string
-      time:
-        allOf:
-        - $ref: '#/definitions/core.NullFloat'
-        description: 时间
-      userId:
-        description: 用户id
-        type: string
-    type: object
   response.PageResp:
     properties:
       count:
@@ -296,52 +272,55 @@ definitions:
       message:
         type: string
     type: object
-  user_protocol.UserProtocolResp:
+  schema.UserProtocolResp:
     properties:
       content:
         description: 协议内容
         type: string
       createTime:
-        allOf:
-        - $ref: '#/definitions/core.NullTime'
         description: 创建时间
+        type: string
       id:
-        type: integer
-      sort:
-        allOf:
-        - $ref: '#/definitions/core.NullFloat'
-        description: 排序
+        type: string
+      tag:
+        description: 标识
+        type: string
       title:
         description: 标题
         type: string
       updateTime:
-        allOf:
-        - $ref: '#/definitions/core.NullTime'
         description: 更新时间
+        type: string
+      version:
+        description: 版本
+        type: number
     type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8001
 info:
   contact:
-    email: 11675084@qq.com
-    name: API Support
+    email: x@adtk.cn
+    name: xh
     url: http://x.adtk.cn
   description: x_admin是一个完整的后台管理系统
   license:
     name: MIT License
     url: https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
   termsOfService: http://x.adtk.cn
-  title: x_admin文档
-  version: 0.0.1
 paths:
+  /api/admin/apiList:
+    get:
+      responses: {}
+      summary: 获取所有接口
+      tags:
+      - 公共接口
   /api/admin/flow/flow_apply/add:
     post:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 模板
@@ -409,7 +388,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 申请id
@@ -432,7 +411,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 申请id
@@ -449,7 +428,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/flow_apply.FlowApplyResp'
+                  $ref: '#/definitions/flowSchema.FlowApplyResp'
               type: object
       summary: 申请流程详情
       tags:
@@ -459,7 +438,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 申请id
@@ -527,17 +506,17 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 页码
         in: query
-        name: PageNo
+        name: pageNo
         required: true
         type: integer
       - description: 每页数量
         in: query
-        name: PageSize
+        name: pageSize
         required: true
         type: integer
       - description: 模板
@@ -591,7 +570,7 @@ paths:
                   - properties:
                       lists:
                         items:
-                          $ref: '#/definitions/flow_apply.FlowApplyResp'
+                          $ref: '#/definitions/flowSchema.FlowApplyResp'
                         type: array
                     type: object
               type: object
@@ -608,7 +587,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 申请id
@@ -676,7 +655,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 历史id
@@ -699,7 +678,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 历史id
@@ -716,7 +695,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/flow_history.FlowHistoryResp'
+                  $ref: '#/definitions/flowSchema.FlowHistoryResp'
               type: object
       summary: 流程历史详情
       tags:
@@ -726,7 +705,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 历史id
@@ -799,17 +778,17 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 页码
         in: query
-        name: PageNo
+        name: pageNo
         required: true
         type: integer
       - description: 每页数量
         in: query
-        name: PageSize
+        name: pageSize
         required: true
         type: integer
       - description: 申请id
@@ -867,7 +846,7 @@ paths:
                   - properties:
                       lists:
                         items:
-                          $ref: '#/definitions/flow_history.FlowHistoryResp'
+                          $ref: '#/definitions/flowSchema.FlowHistoryResp'
                         type: array
                     type: object
               type: object
@@ -886,7 +865,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/flow_history.FlowHistoryResp'
+                  $ref: '#/definitions/flowSchema.FlowHistoryResp'
               type: object
       summary: 流程历史列表-所有
       tags:
@@ -896,7 +875,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 流程名称
@@ -939,7 +918,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 历史id
@@ -962,7 +941,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 历史id
@@ -975,7 +954,7 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/flow_template.FlowTemplateResp'
+            $ref: '#/definitions/flowSchema.FlowTemplateResp'
       summary: 流程模板详情
       tags:
       - flow_template-流程模板
@@ -984,7 +963,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: .
@@ -1032,17 +1011,17 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 页码
         in: query
-        name: PageNo
+        name: pageNo
         required: true
         type: integer
       - description: 每页数量
         in: query
-        name: PageSize
+        name: pageSize
         required: true
         type: integer
       - description: 流程名称
@@ -1080,7 +1059,7 @@ paths:
                   - properties:
                       lists:
                         items:
-                          $ref: '#/definitions/flow_template.FlowTemplateResp'
+                          $ref: '#/definitions/flowSchema.FlowTemplateResp'
                         type: array
                     type: object
               type: object
@@ -1098,7 +1077,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目key
@@ -1180,7 +1159,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目key
@@ -1258,7 +1237,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: uuid
@@ -1281,7 +1260,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 逗号分割的id
@@ -1304,7 +1283,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: uuid
@@ -1321,7 +1300,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 ' data':
-                  $ref: '#/definitions/monitor_client.MonitorClientResp'
+                  $ref: '#/definitions/monitorSchema.MonitorClientResp'
               type: object
       summary: 监控-客户端信息详情
       tags:
@@ -1331,17 +1310,17 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 页码
         in: query
-        name: PageNo
+        name: pageNo
         required: true
         type: integer
       - description: 每页数量
         in: query
-        name: PageSize
+        name: pageSize
         required: true
         type: integer
       - description: 项目key
@@ -1419,7 +1398,7 @@ paths:
                   - properties:
                       ' lists':
                         items:
-                          $ref: '#/definitions/monitor_client.MonitorClientResp'
+                          $ref: '#/definitions/monitorSchema.MonitorClientResp'
                         type: array
                     type: object
               type: object
@@ -1500,7 +1479,7 @@ paths:
             - properties:
                 ' data':
                   items:
-                    $ref: '#/definitions/monitor_client.MonitorClientResp'
+                    $ref: '#/definitions/monitorSchema.MonitorClientResp'
                   type: array
               type: object
       summary: 监控-客户端信息列表-所有
@@ -1511,7 +1490,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目key
@@ -1565,7 +1544,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目key
@@ -1613,7 +1592,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 错误id
@@ -1636,7 +1615,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 逗号分割的id
@@ -1659,7 +1638,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 错误id
@@ -1676,7 +1655,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 ' data':
-                  $ref: '#/definitions/monitor_error.MonitorErrorResp'
+                  $ref: '#/definitions/monitorSchema.MonitorErrorResp'
               type: object
       summary: 监控-错误列详情
       tags:
@@ -1686,17 +1665,17 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 页码
         in: query
-        name: PageNo
+        name: pageNo
         required: true
         type: integer
       - description: 每页数量
         in: query
-        name: PageSize
+        name: pageSize
         required: true
         type: integer
       - description: 项目key
@@ -1746,7 +1725,7 @@ paths:
                   - properties:
                       ' lists':
                         items:
-                          $ref: '#/definitions/monitor_error.MonitorErrorResp'
+                          $ref: '#/definitions/monitorSchema.MonitorErrorResp'
                         type: array
                     type: object
               type: object
@@ -1799,7 +1778,7 @@ paths:
             - properties:
                 ' data':
                   items:
-                    $ref: '#/definitions/monitor_error.MonitorErrorResp'
+                    $ref: '#/definitions/monitorSchema.MonitorErrorResp'
                   type: array
               type: object
       summary: 监控-错误列列表-所有
@@ -1810,7 +1789,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目uuid
@@ -1864,7 +1843,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目uuid
@@ -1902,7 +1881,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目id
@@ -1925,7 +1904,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 逗号分割的id
@@ -1948,7 +1927,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目id
@@ -1965,7 +1944,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 ' data':
-                  $ref: '#/definitions/monitor_project.MonitorProjectResp'
+                  $ref: '#/definitions/monitorSchema.MonitorProjectResp'
               type: object
       summary: 监控项目详情
       tags:
@@ -1975,7 +1954,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 项目id
@@ -2018,17 +1997,17 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 页码
         in: query
-        name: PageNo
+        name: pageNo
         required: true
         type: integer
       - description: 每页数量
         in: query
-        name: PageSize
+        name: pageSize
         required: true
         type: integer
       - description: 项目uuid
@@ -2078,7 +2057,7 @@ paths:
                   - properties:
                       ' lists':
                         items:
-                          $ref: '#/definitions/monitor_project.MonitorProjectResp'
+                          $ref: '#/definitions/monitorSchema.MonitorProjectResp'
                         type: array
                     type: object
               type: object
@@ -2131,317 +2110,18 @@ paths:
             - properties:
                 ' data':
                   items:
-                    $ref: '#/definitions/monitor_project.MonitorProjectResp'
+                    $ref: '#/definitions/monitorSchema.MonitorProjectResp'
                   type: array
               type: object
       summary: 监控项目列表-所有
       tags:
       - monitor_project-监控项目
-  /api/admin/monitor_slow/ExportFile:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 项目key
-        in: query
-        name: ProjectKey
-        type: string
-      - description: sdk生成的客户端id
-        in: query
-        name: ClientId
-        type: string
-      - description: 用户id
-        in: query
-        name: UserId
-        type: string
-      - description: URL地址
-        in: query
-        name: Path
-        type: string
-      - description: 时间
-        in: query
-        name: Time
-        type: number
-      - description: 创建时间
-        in: query
-        name: CreateTimeStart
-        type: string
-      - description: 创建时间
-        in: query
-        name: CreateTimeEnd
-        type: string
-      produces:
-      - application/json
-      responses: {}
-      summary: 监控-错误列导出
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/ImportFile:
-    post:
-      produces:
-      - application/json
-      responses: {}
-      summary: 监控-错误列导入
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/add:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 监控-错误列新增
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/del:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 错误id
-        in: body
-        name: Id
-        schema:
-          type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 监控-错误列删除
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/delBatch:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 逗号分割的id
-        in: body
-        name: Ids
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 监控-错误列删除-批量
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/detail:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 错误id
-        in: query
-        name: Id
-        type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                ' data':
-                  $ref: '#/definitions/monitor_slow.MonitorSlowResp'
-              type: object
-      summary: 监控-错误列详情
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/edit:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 错误id
-        in: body
-        name: Id
-        schema:
-          type: number
-      - description: 项目key
-        in: body
-        name: ProjectKey
-        schema:
-          type: string
-      - description: sdk生成的客户端id
-        in: body
-        name: ClientId
-        schema:
-          type: string
-      - description: 用户id
-        in: body
-        name: UserId
-        schema:
-          type: string
-      - description: URL地址
-        in: body
-        name: Path
-        schema:
-          type: string
-      - description: 时间
-        in: body
-        name: Time
-        schema:
-          type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 监控-错误列编辑
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/list:
-    get:
-      parameters:
-      - description: token
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 页码
-        in: query
-        name: PageNo
-        required: true
-        type: integer
-      - description: 每页数量
-        in: query
-        name: PageSize
-        required: true
-        type: integer
-      - description: 项目key
-        in: query
-        name: ProjectKey
-        type: string
-      - description: sdk生成的客户端id
-        in: query
-        name: ClientId
-        type: string
-      - description: 用户id
-        in: query
-        name: UserId
-        type: string
-      - description: URL地址
-        in: query
-        name: Path
-        type: string
-      - description: 时间
-        in: query
-        name: Time
-        type: number
-      - description: 创建时间
-        in: query
-        name: CreateTimeStart
-        type: string
-      - description: 创建时间
-        in: query
-        name: CreateTimeEnd
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                ' data':
-                  allOf:
-                  - $ref: '#/definitions/response.PageResp'
-                  - properties:
-                      ' lists':
-                        items:
-                          $ref: '#/definitions/monitor_slow.MonitorSlowResp'
-                        type: array
-                    type: object
-              type: object
-      summary: 监控-错误列列表
-      tags:
-      - monitor_slow-监控-错误列
-  /api/admin/monitor_slow/listAll:
-    get:
-      parameters:
-      - description: 项目key
-        in: query
-        name: ProjectKey
-        type: string
-      - description: sdk生成的客户端id
-        in: query
-        name: ClientId
-        type: string
-      - description: 用户id
-        in: query
-        name: UserId
-        type: string
-      - description: URL地址
-        in: query
-        name: Path
-        type: string
-      - description: 时间
-        in: query
-        name: Time
-        type: number
-      - description: 创建时间
-        in: query
-        name: CreateTimeStart
-        type: string
-      - description: 创建时间
-        in: query
-        name: CreateTimeEnd
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                ' data':
-                  items:
-                    $ref: '#/definitions/monitor_slow.MonitorSlowResp'
-                  type: array
-              type: object
-      summary: 监控-错误列列表-所有
-      tags:
-      - monitor_slow-监控-错误列
   /api/admin/user_protocol/ExportFile:
     get:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 标题
@@ -2474,15 +2154,38 @@ paths:
         type: string
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: file
+        "500":
+          description: 失败
+          schema:
+            $ref: '#/definitions/response.Response'
       summary: 用户协议导出
       tags:
       - user_protocol-用户协议
   /api/admin/user_protocol/ImportFile:
     post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 导入文件
+        in: formData
+        name: file
+        required: true
+        type: file
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
       summary: 用户协议导入
       tags:
       - user_protocol-用户协议
@@ -2491,7 +2194,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 标题
@@ -2524,7 +2227,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: Id
@@ -2547,7 +2250,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 逗号分割的id
@@ -2570,7 +2273,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: Id
@@ -2586,8 +2289,8 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                ' data':
-                  $ref: '#/definitions/user_protocol.UserProtocolResp'
+                data:
+                  $ref: '#/definitions/schema.UserProtocolResp'
               type: object
       summary: 用户协议详情
       tags:
@@ -2597,7 +2300,7 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: Id
@@ -2635,17 +2338,17 @@ paths:
       parameters:
       - description: token
         in: header
-        name: Token
+        name: token
         required: true
         type: string
       - description: 页码
         in: query
-        name: PageNo
+        name: pageNo
         required: true
         type: integer
       - description: 每页数量
         in: query
-        name: PageSize
+        name: pageSize
         required: true
         type: integer
       - description: 标题
@@ -2685,13 +2388,13 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                ' data':
+                data:
                   allOf:
                   - $ref: '#/definitions/response.PageResp'
                   - properties:
-                      ' lists':
+                      lists:
                         items:
-                          $ref: '#/definitions/user_protocol.UserProtocolResp'
+                          $ref: '#/definitions/schema.UserProtocolResp'
                         type: array
                     type: object
               type: object
@@ -2701,6 +2404,11 @@ paths:
   /api/admin/user_protocol/listAll:
     get:
       parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
       - description: 标题
         in: query
         name: Title
@@ -2738,58 +2446,54 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
-                ' data':
+                data:
                   items:
-                    $ref: '#/definitions/user_protocol.UserProtocolResp'
+                    $ref: '#/definitions/schema.UserProtocolResp'
                   type: array
               type: object
       summary: 用户协议列表-所有
       tags:
       - user_protocol-用户协议
-  /api/article_collect/list:
+  /api/swagger/doc.json:
+    get:
+      responses: {}
+      summary: swagger文档数据
+      tags:
+      - 公共接口
+  /api/ws:
     get:
       parameters:
-      - description: token
+      - default: '"websocket"'
+        description: 请求协议升级
         in: header
-        name: Token
+        name: Upgrade
         required: true
         type: string
-      - description: 页码
-        in: query
-        name: PageNo
+      - default: '"Upgrade"'
+        description: 升级连接类型
+        in: header
+        name: Connection
         required: true
-        type: integer
-      - description: 每页大小
-        in: query
-        name: PageSize
+        type: string
+      - description: WebSocket握手密钥
+        in: header
+        name: Sec-WebSocket-Key
         required: true
-        type: integer
-      - description: 用户ID
-        in: query
-        name: userId
-        type: integer
-      - description: 文章ID
-        in: query
-        name: articleId
-        type: integer
-      produces:
-      - application/json
+        type: string
+      - default: '"13"'
+        description: WebSocket协议版本
+        in: header
+        name: Sec-WebSocket-Version
+        required: true
+        type: string
       responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.PageResp'
-        "400":
-          description: 请求错误
+        "101":
+          description: 协议切换成功
           schema:
             type: string
-        "500":
-          description: 内部错误
-          schema:
-            type: string
-      summary: article_collect列表
+      summary: ws通用接口
       tags:
-      - article_collect文章
+      - 公共接口
   /system/admin/ListByDeptId/{deptId}:
     get:
       description: 获取部门的用户
@@ -2807,7 +2511,4 @@ paths:
       summary: 获取部门的用户
       tags:
       - 管理员
-securityDefinitions:
-  BasicAuth:
-    type: basic
 swagger: "2.0"

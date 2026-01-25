@@ -1,16 +1,20 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form
                 ref="formRef"
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
                 label-width="90px"
-                label-position="left"
+                label-position="right"
             >
-                <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
-                    <el-select v-model="queryParams.ProjectKey" clearable>
+                <el-form-item label="项目" prop="ProjectKey" class="w-[270px]">
+                    <el-select
+                        v-model="queryParams.ProjectKey"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in listAllData.monitor_project_listAll"
@@ -20,34 +24,34 @@
                         />
                     </el-select>
                 </el-form-item>
-                <!-- <el-form-item label="客户端id" prop="ClientId" class="w-[280px]">
+                <!-- <el-form-item label="客户端id" prop="ClientId" class="w-[270px]">
                     <el-input v-model="queryParams.ClientId" />
                 </el-form-item> -->
-                <el-form-item label="用户id" prop="UserId" class="w-[280px]">
+                <!-- <el-form-item label="用户id" prop="UserId" class="w-[270px]">
                     <el-input v-model="queryParams.UserId" />
-                </el-form-item>
-                <el-form-item label="系统" prop="Os" class="w-[280px]">
+                </el-form-item> -->
+                <el-form-item label="系统" prop="Os" class="w-[270px]">
                     <el-input v-model="queryParams.Os" />
                 </el-form-item>
-                <el-form-item label="浏览器" prop="Browser" class="w-[280px]">
+                <el-form-item label="浏览器" prop="Browser" class="w-[270px]">
                     <el-input v-model="queryParams.Browser" />
                 </el-form-item>
-                <el-form-item label="国家" prop="Country" class="w-[280px]">
+                <!-- <el-form-item label="国家" prop="Country" class="w-[270px]">
                     <el-input v-model="queryParams.Country" />
                 </el-form-item>
-                <el-form-item label="省份" prop="Province" class="w-[280px]">
+                <el-form-item label="省份" prop="Province" class="w-[270px]">
                     <el-input v-model="queryParams.Province" />
                 </el-form-item>
-                <el-form-item label="城市" prop="City" class="w-[280px]">
+                <el-form-item label="城市" prop="City" class="w-[270px]">
                     <el-input v-model="queryParams.City" />
                 </el-form-item>
-                <el-form-item label="电信运营商" prop="Operator" class="w-[280px]">
+                <el-form-item label="电信运营商" prop="Operator" class="w-[270px]">
                     <el-input v-model="queryParams.Operator" />
                 </el-form-item>
-                <el-form-item label="ip" prop="Ip" class="w-[280px]">
+                <el-form-item label="ip" prop="Ip" class="w-[270px]">
                     <el-input v-model="queryParams.Ip" />
-                </el-form-item>
-                <!-- <el-form-item label="ua记录" prop="Ua" class="w-[280px]">
+                </el-form-item> -->
+                <!-- <el-form-item label="ua记录" prop="Ua" class="w-[270px]">
                     <el-input v-model="queryParams.Ua" />
                 </el-form-item> -->
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[425px]">
@@ -63,44 +67,8 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div class="text-right">
-                <el-button
-                    v-perms="['admin:monitor_client:add']"
-                    type="primary"
-                    @click="handleAdd()"
-                >
-                    <template #icon>
-                        <icon name="el-icon-Plus" />
-                    </template>
-                    新增
-                </el-button>
-                <upload
-                    v-perms="['admin:monitor_client:ImportFile']"
-                    class="ml-3 mr-3"
-                    :url="monitor_client_import_file"
-                    :data="{ cid: 0 }"
-                    type="file"
-                    :show-progress="true"
-                    @change="resetPage"
-                >
-                    <el-button type="primary">
-                        <template #icon>
-                            <icon name="el-icon-Upload" />
-                        </template>
-                        导入
-                    </el-button>
-                </upload>
-                <el-button
-                    v-perms="['admin:monitor_client:ExportFile']"
-                    type="primary"
-                    @click="exportFile"
-                >
-                    <template #icon>
-                        <icon name="el-icon-Download" />
-                    </template>
-                    导出
-                </el-button>
                 <el-button
                     v-perms="['admin:monitor_client:delBatch']"
                     type="danger"
@@ -128,8 +96,8 @@
                         />
                     </template>
                 </el-table-column>
-                <!-- <el-table-column label="客户端id" prop="ClientId" min-width="130" /> -->
-                <el-table-column label="用户id" prop="UserId">
+                <el-table-column label="客户端id" prop="ClientId" min-width="130" />
+                <!-- <el-table-column label="客户端ID：" prop="UserId">
                     <template #default="{ row }">
                         <el-popover
                             placement="top-start"
@@ -138,13 +106,13 @@
                             :content="row.ClientId"
                         >
                             <template #reference>
-                                <el-link type="primary">{{ row.UserId }}</el-link>
+                                <el-link type="primary">{{ row.UserId || '无' }}</el-link>
                             </template>
                             <div>用 户 ID ：{{ row.UserId }}</div>
                             <div>客户端ID：{{ row.ClientId }}</div>
                         </el-popover>
                     </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <el-table-column label="浏览器" prop="Browser" min-width="150">
                     <template #default="{ row }">
@@ -161,23 +129,19 @@
                         </el-popover>
                     </template>
                 </el-table-column>
-                <el-table-column label="IP" prop="Ip" />
-                <el-table-column label="区域">
+                <!-- <el-table-column label="IP" prop="Ip" width="145" />
+                <el-table-column label="区域" min-width="150">
                     <template #default="{ row }">
                         {{ row.Country }}{{ row.Province }}{{ row.City }}
                     </template>
-                </el-table-column>
+                </el-table-column> -->
 
                 <!-- <el-table-column label="省份" prop="Province" />
                 <el-table-column label="城市" prop="City" /> -->
-                <el-table-column label="运营商" prop="Operator" />
+                <!-- <el-table-column label="运营商" prop="Operator" /> -->
 
-                <el-table-column label="屏幕" prop="Width">
-                    <template #default="{ row }"> {{ row.Width }} * {{ row.Height }} </template>
-                </el-table-column>
-                <!-- <el-table-column label="屏幕高度" prop="Height" min-width="130" /> -->
                 <!-- <el-table-column label="ua记录" prop="Ua" min-width="380" /> -->
-                <el-table-column label="创建时间" prop="CreateTime" min-width="140" />
+                <el-table-column label="创建时间" prop="CreateTime" width="180" />
 
                 <el-table-column label="操作" width="80" fixed="right">
                     <template #default="{ row }">
@@ -208,13 +172,11 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive, nextTick } from 'vue'
+import { ref, shallowRef, reactive } from 'vue'
 import {
     monitor_client_delete,
     monitor_client_delete_batch,
-    monitor_client_list,
-    monitor_client_import_file,
-    monitor_client_export_file
+    monitor_client_list
 } from '@/api/monitor/client'
 import type { type_monitor_client, type_monitor_client_query } from '@/api/monitor/client'
 
@@ -240,8 +202,7 @@ const queryParams = reactive<type_monitor_client_query>({
     City: null,
     Operator: null,
     Ip: null,
-    Width: null,
-    Height: null,
+
     Ua: null,
     CreateTimeStart: null,
     CreateTimeEnd: null
@@ -256,11 +217,6 @@ const { listAllData } = useListAllData<{
 }>({
     monitor_project_listAll: '/monitor_project/listAll'
 })
-const handleAdd = async () => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('add')
-}
 
 const multipleSelection = ref<type_monitor_client[]>([])
 const handleSelectionChange = (val: type_monitor_client[]) => {
@@ -289,13 +245,6 @@ const deleteBatch = async () => {
         })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
-}
-
-const exportFile = async () => {
-    try {
-        await feedback.confirm('确定要导出？')
-        await monitor_client_export_file(queryParams)
     } catch (error) {}
 }
 getLists()

@@ -8,7 +8,7 @@
             class="popover-input"
             :teleported="teleported"
             :persistent="false"
-            popper-class="!p-0"
+            popper-class="p-0!"
         >
             <div class="flex p-3" @click.stop="">
                 <div class="popover-input__input mr-[10px] flex-1">

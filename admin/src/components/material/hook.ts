@@ -15,7 +15,7 @@ import { shallowRef, ref, reactive } from 'vue'
 import type { Ref } from 'vue'
 
 // 左侧分组的钩子函数
-export function useCate(type: number) {
+export function useCate() {
     const treeRef = shallowRef<InstanceType<typeof ElTree>>()
     // 分组列表
     const cateLists = ref<any[]>([])
@@ -25,18 +25,12 @@ export function useCate(type: number) {
 
     // 获取分组列表
     const getCateLists = async () => {
-        const data = await fileCateLists({
-            type
-        })
+        const data = await fileCateLists({})
         const item: any[] = [
             {
                 name: '全部',
                 id: 0
             }
-            // {
-            //     name: '未分组',
-            //     id: 0
-            // }
         ]
         cateLists.value = data
         cateLists.value.unshift(...item)
@@ -48,9 +42,8 @@ export function useCate(type: number) {
     // 添加分组
     const handleAddCate = async (value: string) => {
         await fileCateAdd({
-            type,
             name: value,
-            pid: 0
+            pid: ''
         })
         getCateLists()
     }
@@ -92,8 +85,8 @@ export function useCate(type: number) {
 // 处理文件的钩子函数
 export function useFile(
     cateId: Ref<string | number>,
-    type: Ref<number>,
-    limit: Ref<number>,
+    ext: Ref<string[]>,
+    limit: number,
     size: number
 ) {
     const tableRef = shallowRef()
@@ -103,9 +96,10 @@ export function useFile(
     const isIndeterminate = ref(false)
     const fileParams = reactive({
         name: '',
-        type: type,
+        ext: ext,
         cid: cateId
     })
+
     const { pager, getLists, resetPage } = usePaging({
         fetchFun: fileList,
         params: fileParams,
@@ -122,9 +116,7 @@ export function useFile(
 
     const batchFileDelete = async (id?: number[]) => {
         try {
-            await feedback.confirm(
-                '确认删除后，本地或云存储文件也将同步删除，如文件已被使用，请谨慎操作！'
-            )
+            await feedback.confirm('确认删除记录，不会删除文件')
             const ids = id ? id : select.value.map((item: any) => item.id)
             await fileDelete({ ids })
             getFileList()
@@ -148,8 +140,8 @@ export function useFile(
             select.value.splice(index, 1)
             return
         }
-        if (select.value.length == limit.value) {
-            if (limit.value == 1) {
+        if (select.value.length == limit) {
+            if (limit == 1) {
                 select.value = []
                 select.value.push(item)
                 return
@@ -164,7 +156,7 @@ export function useFile(
         select.value = []
     }
 
-    const cancelSelete = (id: number) => {
+    const cancelSelect = (id: number) => {
         select.value = select.value.filter((item: any) => item.id != id)
     }
     const selectItems = (items: any[]) => {
@@ -201,7 +193,7 @@ export function useFile(
         batchFileMove,
         selectFile,
         clearSelect,
-        cancelSelete,
+        cancelSelect,
         selectAll,
         selectItems,
         handleFileRename

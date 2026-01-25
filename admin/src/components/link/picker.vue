@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, shallowRef, ref, watch } from 'vue'
+import { computed, useTemplateRef, ref, watch } from 'vue'
 import { LinkTypeEnum, type Link } from '.'
 import LinkContent from './index.vue'
 import Popup from '@/components/popup/index.vue'
@@ -34,7 +34,7 @@ const emit = defineEmits<{
     (event: 'update:modelValue', value: any): void
 }>()
 
-const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 const activeLink = ref<Link>({ path: '', type: LinkTypeEnum.SHOP_PAGES })
 const handleConfirm = () => {
     emit('update:modelValue', activeLink.value)

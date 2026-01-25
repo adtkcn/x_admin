@@ -56,7 +56,7 @@
     />
     <!-- 下方按钮 -->
     <view class="wd-img-cropper__footer">
-      <wd-icon v-if="!disabledRotate" name="rotate" size="24px" color="#fff" data-eventsync="true" @click="handleRotate"></wd-icon>
+      <wd-icon custom-class="wd-img-cropper__rotate" v-if="!disabledRotate" name="rotate" @click="handleRotate"></wd-icon>
       <view class="wd-img-cropper__footer--button">
         <view class="is-cancel" @click="handleCancel">{{ cancelButtonText || translate('cancel') }}</view>
         <wd-button size="small" :custom-style="buttonStyle" @click="handleConfirm">{{ confirmButtonText || translate('confirm') }}</wd-button>
@@ -77,6 +77,8 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdIcon from '../wd-icon/wd-icon.vue'
+import wdButton from '../wd-button/wd-button.vue'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { addUnit, objToStyle } from '../common/util'
 import { useTranslate } from '../composables/useTranslate'
@@ -259,8 +261,8 @@ function revertIsAnimation(animation: boolean) {
 }
 
 /**
- * @description 对外暴露：控制旋转角度
- * @param {Number} angle 角度
+ * 控制旋转角度
+ * @param angle 角度
  */
 function setRoate(angle: number) {
   if (!angle || props.disabledRotate) return
@@ -271,7 +273,7 @@ function setRoate(angle: number) {
 }
 
 /**
- * @description 对外暴露：初始化图片的大小和角度以及距离
+ * 初始化图片的大小和角度以及距离
  */
 function resetImg() {
   const { windowHeight, windowWidth } = uni.getSystemInfoSync()
@@ -282,7 +284,7 @@ function resetImg() {
 }
 
 /**
- * @description 加载图片资源文件，并初始化裁剪框内图片信息
+ *  加载图片资源文件，并初始化裁剪框内图片信息
  */
 function loadImg() {
   if (!props.imgSrc) return
@@ -304,7 +306,7 @@ function loadImg() {
 }
 
 /**
- * @description 设置图片尺寸，使其有一边小于裁剪框尺寸
+ *  设置图片尺寸，使其有一边小于裁剪框尺寸
  * 1、图片宽或高 小于裁剪框，自动放大至一边与高平齐
  * 2、图片宽或高 大于裁剪框，自动缩小至一边与高平齐
  */
@@ -340,7 +342,7 @@ function computeImgSize() {
 }
 
 /**
- * @description canvas 初始化
+ *  canvas 初始化
  */
 function initCanvas() {
   if (!ctx.value) {
@@ -349,7 +351,7 @@ function initCanvas() {
 }
 
 /**
- * @description 图片初始化,处理宽高特殊单位
+ *  图片初始化,处理宽高特殊单位
  */
 function initImageSize() {
   // 处理宽高特殊单位 %>px
@@ -371,7 +373,7 @@ function initImageSize() {
 }
 
 /**
- * @description 图片拖动边缘检测：检测移动或缩放时 是否触碰到图片边缘位置
+ *  图片拖动边缘检测：检测移动或缩放时 是否触碰到图片边缘位置
  */
 function detectImgPosIsEdge(scale?: number) {
   const currentScale = scale || imgScale.value
@@ -408,7 +410,7 @@ function detectImgPosIsEdge(scale?: number) {
 }
 
 /**
- * @description 缩放边缘检测：检测移动或缩放时 是否触碰到图片边缘位置
+ *  缩放边缘检测：检测移动或缩放时 是否触碰到图片边缘位置
  */
 function detectImgScaleIsEdge() {
   let tempPicWidth = picWidth.value
@@ -430,7 +432,7 @@ function detectImgScaleIsEdge() {
 }
 
 /**
- * @description 节流
+ *  节流
  */
 function throttle() {
   if (info.value.platform === 'android') {
@@ -444,7 +446,7 @@ function throttle() {
 }
 
 /**
- * @description {图片区} 开始拖动
+ *  {图片区} 开始拖动
  */
 function handleImgTouchStart(event: any) {
   // 如果处于在拖动中，背景为淡色展示全部，拖动结束则为 0.85 透明度
@@ -464,7 +466,7 @@ function handleImgTouchStart(event: any) {
 }
 
 /**
- * @description {图片区} 拖动中
+ *  {图片区} 拖动中
  */
 function handleImgTouchMove(event: any) {
   if (IS_TOUCH_END.value || !MOVE_THROTTLE_FLAG) return
@@ -491,35 +493,35 @@ function handleImgTouchMove(event: any) {
 }
 
 /**
- * @description {图片区} 拖动结束
+ *  {图片区} 拖动结束
  */
 function handleImgTouchEnd() {
   IS_TOUCH_END.value = true
 }
 
 /**
- * @description 图片已加载完成
+ *  图片已加载完成
  */
 function handleImgLoaded(res: any) {
   emit('imgloaded', res)
 }
 
 /**
- * @description 图片加载失败
+ *  图片加载失败
  */
 function handleImgLoadError(err: any) {
   emit('imgloaderror', err)
 }
 
 /**
- * @description 旋转图片
+ *  旋转图片
  */
 function handleRotate() {
   setRoate(imgAngle.value - 90)
 }
 
 /**
- * @description 取消裁剪图片
+ *  取消裁剪图片
  */
 function handleCancel() {
   emit('cancel')
@@ -527,47 +529,43 @@ function handleCancel() {
 }
 
 /**
- * @description 完成裁剪
+ *  完成裁剪
  */
 function handleConfirm() {
   draw()
 }
 
 /**
- * @description canvas 绘制图片输出成文件类型
+ *  canvas 绘制图片输出成文件类型
  */
 function canvasToImage() {
   const { fileType, quality, exportScale } = props
-  try {
-    uni.canvasToTempFilePath(
-      {
-        width: cutWidth.value * exportScale,
-        height: Math.round(cutHeight.value * exportScale),
-        destWidth: cutWidth.value * exportScale,
-        destHeight: Math.round(cutHeight.value * exportScale),
-        fileType,
-        quality,
-        canvasId: 'wd-img-cropper-canvas',
-        success: (res: any) => {
-          const result = { tempFilePath: res.tempFilePath, width: cutWidth.value * exportScale, height: cutHeight.value * exportScale }
-          // #ifdef MP-DINGTALK
-          result.tempFilePath = res.filePath
-          // #endif
-          emit('confirm', result)
-        },
-        complete: () => {
-          emit('update:modelValue', false)
-        }
+  uni.canvasToTempFilePath(
+    {
+      width: cutWidth.value * exportScale,
+      height: Math.round(cutHeight.value * exportScale),
+      destWidth: cutWidth.value * exportScale,
+      destHeight: Math.round(cutHeight.value * exportScale),
+      fileType,
+      quality,
+      canvasId: 'wd-img-cropper-canvas',
+      success: (res: any) => {
+        const result = { tempFilePath: res.tempFilePath, width: cutWidth.value * exportScale, height: cutHeight.value * exportScale }
+        // #ifdef MP-DINGTALK
+        result.tempFilePath = res.filePath
+        // #endif
+        emit('confirm', result)
       },
-      proxy
-    )
-  } catch (error) {
-    console.log(error)
-  }
+      complete: () => {
+        emit('update:modelValue', false)
+      }
+    },
+    proxy
+  )
 }
 
 /**
- * @description canvas绘制，用canvas模拟裁剪框 对根据图片当前的裁剪信息进行模拟
+ *  canvas绘制，用canvas模拟裁剪框 对根据图片当前的裁剪信息进行模拟
  */
 function draw() {
   if (!props.imgSrc) return
@@ -603,7 +601,9 @@ function draw() {
 function preventTouchMove() {}
 
 defineExpose<ImgCropperExpose>({
-  revertIsAnimation
+  revertIsAnimation,
+  setRoate,
+  resetImg
 })
 </script>
 

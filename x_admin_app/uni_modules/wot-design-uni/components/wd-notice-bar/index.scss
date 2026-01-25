@@ -23,18 +23,12 @@
   }
   @include edeep(prefix) {
     padding-right: 4px;
-    width: $-notice-bar-prefix-size;
-    height: $-notice-bar-prefix-size;
-    line-height: $-notice-bar-prefix-size;
+    font-size: $-notice-bar-prefix-size;
   }
-
-
 
   @include edeep(suffix) {
     text-align: center;
-    width: $-notice-bar-close-size;
-    height: $-notice-bar-close-size;
-    line-height: $-notice-bar-close-size;
+    font-size: $-notice-bar-close-size;
     display: inline-block;
     background-color: $-notice-bar-close-bg;
     color: $-notice-bar-close-color;
@@ -54,13 +48,6 @@
   @include e(content) {
     position: absolute;
     white-space: nowrap;
-
-    @include m(play) {
-      animation: notice-bar-play linear both;
-    }
-    @include m(play-infinite) {
-      animation: notice-bar-play-infinite linear infinite both;
-    }
   }
   @include m(ellipse) {
     .wd-notice-bar__content {
@@ -77,17 +64,5 @@
       position: static;
       white-space: normal;
     }
-  }
-}
-
-@keyframes notice-bar-play {
-  100% {
-    transform: translate3d(-100%, 0, 0);
-  }
-}
-
-@keyframes notice-bar-play-infinite {
-  100% {
-    transform: translate3d(-100%, 0, 0);
   }
 }

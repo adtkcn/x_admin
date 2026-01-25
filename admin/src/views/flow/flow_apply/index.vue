@@ -1,7 +1,13 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
-            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
+        <el-card class="border-none!" shadow="never">
+            <el-form
+                ref="formRef"
+                class="mb-[-16px]"
+                label-width="80px"
+                :model="queryParams"
+                :inline="true"
+            >
                 <!-- <el-form-item label="模板" prop="templateId">
                     <el-input v-model="queryParams.templateId" />
                 </el-form-item> -->
@@ -15,7 +21,11 @@
                     <el-input v-model="queryParams.flowName" />
                 </el-form-item>
                 <el-form-item label="流程分类" prop="flowGroup" class="w-[280px]">
-                    <el-select v-model="queryParams.flowGroup" clearable>
+                    <el-select
+                        v-model="queryParams.flowGroup"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.flow_group"
@@ -29,7 +39,11 @@
                     <el-input v-model="queryParams.flowRemark" />
                 </el-form-item> -->
                 <el-form-item label="状态" prop="status" class="w-[280px]">
-                    <el-select v-model="queryParams.status" clearable>
+                    <el-select
+                        v-model="queryParams.status"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.flow_apply_status"
@@ -45,7 +59,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div>
                 <el-button
                     v-perms="['admin:flow:flow_apply:add']"
@@ -60,7 +74,7 @@
             </div>
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="申请人昵称" prop="applyUserNickname" min-width="100" />
-                <el-table-column label="流程名称" prop="flowName" min-width="100" />
+                <el-table-column label="流程名称" prop="flowName" min-width="160" />
                 <el-table-column label="流程分类" prop="flowGroup" min-width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.flow_group" :value="row.flowGroup" />
@@ -69,13 +83,13 @@
                 <el-table-column label="流程描述" prop="flowRemark" min-width="100" />
                 <!-- <el-table-column label="formValue" prop="formValue" min-width="100" /> -->
 
-                <el-table-column label="状态" prop="status" min-width="100">
+                <el-table-column label="状态" prop="status" width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.flow_apply_status" :value="row.status" />
                     </template>
                 </el-table-column>
-                <el-table-column label="更新时间" prop="updateTime" min-width="130" />
-                <el-table-column label="创建时间" prop="createTime" min-width="130" />
+                <el-table-column label="更新时间" prop="updateTime" width="180" />
+                <el-table-column label="创建时间" prop="createTime" width="180" />
                 <el-table-column label="操作" width="180" fixed="right">
                     <template #default="{ row }">
                         <el-button
@@ -119,7 +133,7 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup
+        <EditPopup
             v-if="showEdit"
             ref="editRef"
             :dict-data="dictData"
@@ -136,7 +150,15 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, shallowRef, nextTick } from 'vue'
+import {
+    ref,
+    reactive,
+    shallowRef,
+    nextTick,
+    defineAsyncComponent,
+    onMounted,
+    onActivated
+} from 'vue'
 import {
     flow_apply_delete,
     flow_apply_lists,
@@ -144,16 +166,16 @@ import {
     flow_apply_detail
 } from '@/api/flow/flow_apply'
 
-import type { type_flow_apply } from '@/api/flow/flow_apply'
+import type { type_flow_apply, type_flow_apply_query } from '@/api/flow/flow_apply'
 
 import { useDictData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
-import EditPopup from './edit.vue'
+const EditPopup = defineAsyncComponent(() => import('./edit.vue'))
 
-import ApplySubmit from './components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
+const ApplySubmit = defineAsyncComponent(() => import('./components/apply_submit.vue'))
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 
 import useUserStore from '@/stores/modules/user'
 
@@ -166,16 +188,16 @@ const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
-const queryParams = reactive({
-    templateId: '',
+const queryParams = reactive<type_flow_apply_query>({
+    templateId: undefined,
     applyUserId: userStore.userInfo?.id,
-    applyUserNickname: '',
-    flowName: '',
-    flowGroup: '',
-    flowRemark: '',
-    flowFormData: '',
-    flowProcessData: '',
-    status: ''
+    applyUserNickname: undefined,
+    flowName: undefined,
+    flowGroup: undefined,
+    flowRemark: undefined,
+    flowFormData: undefined,
+    flowProcessData: undefined,
+    status: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_apply>({
@@ -252,5 +274,12 @@ const SaveViewForm = (id, form_data) => {
             })
     })
 }
-getLists()
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
 </script>

@@ -10,6 +10,8 @@
     ],
     "exclude": ["dist"],
     "compilerOptions": {
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
         "module": "esnext",
         "moduleResolution": "Bundler",
         "allowJs": true,

@@ -1,6 +1,6 @@
-@import 'tailwind.css';
-@import 'element.scss';
-@import 'dark.css';
-@import 'var.css';
+@use 'element.scss' as *;
+@use 'dark.css' as *;
+@use 'var.css' as *;
 
-@import 'public.scss';
+@use 'public.scss' as *;
+@use 'tailwind.css' as *;

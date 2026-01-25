@@ -21,7 +21,7 @@ interface Options {
  *
  */
 export function usePaging<T>(options: Options) {
-    const { page = 1, size = 15, fetchFun, params = {}, firstLoading = false } = options
+    const { page = 1, size = 10, fetchFun, params = {}, firstLoading = false } = options
     // 记录分页初始参数
     const paramsInit: Record<any, any> = Object.assign({}, toRaw(params))
     // 分页数据
@@ -65,10 +65,16 @@ export function usePaging<T>(options: Options) {
 
         resetPage()
     }
+    // 计算真实序号的函数
+    const handleIndex = (index: number) => {
+        // index 是当前页的索引（从 0 开始）
+        return (pager.page - 1) * pager.size + index + 1
+    }
     return {
         pager,
         getLists,
         resetParams,
-        resetPage
+        resetPage,
+        handleIndex
     }
 }

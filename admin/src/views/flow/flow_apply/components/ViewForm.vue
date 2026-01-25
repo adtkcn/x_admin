@@ -7,22 +7,33 @@
         :destroy-on-close="true"
         :title="applyDetail.flowName"
     >
-        <v-form-render
+        <FormCreate
+            v-if="dialogVisible"
+            :rule="formJson"
+            v-model="formData"
+            v-model:api="api"
+            :option="options"
+        ></FormCreate>
+
+        <!-- <v-form-render
             :form-json="formJson"
             :form-data="formData"
             :option-data="optionData"
             ref="vFormRef"
         >
-        </v-form-render>
+        </v-form-render> -->
 
-        <el-table size="large" :data="historyList" v-if="historyList.length">
+        <el-table size="large" :data="showHistoryList" v-if="showHistoryList.length">
             <el-table-column label="审批人" prop="approverNickname" />
             <el-table-column label="节点" prop="nodeLabel" />
-            <el-table-column label="状态" prop="passStatus" />
+            <el-table-column label="状态" prop="passStatus">
+                <template #default="{ row }">
+                    <dict-value :options="dictData.flow_history_status" :value="row.passStatus" />
+                </template>
+            </el-table-column>
             <el-table-column label="备注" prop="passRemark" />
         </el-table>
 
-        <!-- {{ historyList }} -->
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
             <el-button
@@ -36,16 +47,37 @@
     </el-dialog>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
-import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
+<script setup lang="ts">
+import { computed, ref, defineAsyncComponent } from 'vue'
+// import formCreate from '@form-create/element-ui'
+const FormCreate = defineAsyncComponent(() => import('@form-create/element-ui'))
+import type { Api } from '@form-create/element-ui'
+import { useDictData } from '@/hooks/useDictOptions'
+import type { type_dict } from '@/hooks/useDictOptions'
 
 import { flow_history_list_all } from '@/api/flow/flow_history'
+const props = defineProps({
+    save: {
+        type: Function,
+        default: () => {}
+    }
+})
 
-const formJson = ref({})
-const formData = ref({})
-const optionData = reactive({})
-const vFormRef = ref(null)
+const api = ref<Api>(null)
+// 表单组件配置
+const formJson = ref([])
+// 表单数据
+const formData = ref<Record<string, any>>({})
+const options = ref({
+    submitBtn: {
+        show: false
+    },
+    onSubmit: (formData) => {
+        console.log(JSON.stringify(formData))
+        onSubmit()
+    }
+    // resetBtn: true
+})
 
 const dialogVisible = ref(false)
 const applyDetail = ref({
@@ -53,16 +85,24 @@ const applyDetail = ref({
     status: null,
     flowName: ''
 })
+const { dictData } = useDictData<{
+    flow_history_status: type_dict[]
+}>(['flow_history_status'])
 
 const historyList = ref([])
-
-const props = defineProps({
-    save: {
-        type: Function,
-        default: () => {}
-    }
+const showHistoryList = computed(() => {
+    return historyList.value.filter((item) => {
+        return item.nodeType !== 'bpmn:startEvent' && item.nodeType !== 'bpmn:endEvent'
+    })
 })
-function open(row, form_json, form_data) {
+
+/**
+ *
+ * @param row 申请详情
+ * @param form_json 表单配置
+ * @param form_data 表单数据
+ */
+function open(row, form_json, form_data: Record<string, any>) {
     applyDetail.value = row
     getHistoryList(row.id)
     formData.value = form_data
@@ -87,19 +127,29 @@ function closeFn() {
         flowName: ''
     }
     formData.value = {}
-    formJson.value = {}
+    formJson.value = []
     historyList.value = []
 }
 function onSubmit() {
-    vFormRef.value.getFormData().then((formData) => {
-        console.log('formData', formData)
+    console.log('formData', formData.value)
+    api.value.validate().then(() => {
+        //todo 验证通过
         props
-            .save(applyDetail.value?.id, formData)
+            .save(applyDetail.value?.id, formData.value)
             .then(() => {
                 closeFn()
             })
             .catch(() => {})
     })
+    // vFormRef.value.getFormData().then((formData) => {
+    //     console.log('formData', formData)
+    //     props
+    //         .save(applyDetail.value?.id, formData)
+    //         .then(() => {
+    //             closeFn()
+    //         })
+    //         .catch(() => {})
+    // })
 }
 defineExpose({
     open

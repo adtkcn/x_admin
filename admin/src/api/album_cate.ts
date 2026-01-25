@@ -6,9 +6,9 @@ import queryString from 'query-string'
 import { getToken } from '@/utils/auth'
 
 type album_cate = {
-    id?: number
-    pid?: number
-    type?: number
+    id?: string
+    pid?: string
+    // type?: number
     name?: string
     isDelete?: number
     createTime?: string
@@ -17,8 +17,8 @@ type album_cate = {
 }
 // 查询
 type album_cate_query = {
-    pid?: number
-    type?: number
+    pid?: string
+    // type?: number
     name?: string
     createTimeStart?: string
     createTimeEnd?: string
@@ -27,9 +27,9 @@ type album_cate_query = {
 }
 // 添加编辑
 type album_cate_edit = {
-    id?: number
-    pid?: number
-    type?: number
+    id?: string
+    pid?: string
+    // type?: number
     name?: string
 }
 

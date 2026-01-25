@@ -220,6 +220,7 @@ function getPicture() {
       backToken.value = res.repData.token;
       secretKey.value = res.repData.secretKey;
       pointTextList.value = res.repData.wordList;
+      checkNum.value=res.repData.wordList.length;
       text.value = "请依次点击【" + pointTextList.value.join(",") + "】";
     }
     // 判断接口请求次数是否失效

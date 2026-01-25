@@ -2,18 +2,14 @@ import type {
   LogWithError,
   LogWithEnv,
   ListenCallbackFn,
-  IErrorEvent,ISlow
+  IErrorEvent,
 } from "../types";
 
-interface LoggerProps {
-  // timeout:number
-  onloadTimeOut?: number;
-}
+interface LoggerProps {}
 class Web implements IErrorEvent {
   props: LoggerProps;
   constructor(props?: LoggerProps) {
     this.props = {
-      onloadTimeOut: 5000,
       ...props,
     };
   }
@@ -57,18 +53,22 @@ class Web implements IErrorEvent {
 
   public getEnvInfo(): LogWithEnv {
     const env: LogWithEnv = {
-      Type: "env",
-      ScreenHeight: 0,
-      ScreenWidth: 0,
+      Height: 0,
+      Width: 0,
     };
     if (window) {
-      env.ScreenHeight = window.innerHeight || 0; // 获取显示屏信息
-      env.ScreenWidth = window.innerWidth || 0;
+      env.Height = window.innerHeight || 0; // 获取显示屏信息
+      env.Width = window.innerWidth || 0;
     }
     return env;
   }
-  private callback(err: LogWithError|ISlow): void {}
+  private callback(err: LogWithError): void {}
   private listenError = (err: any) => {
+    // 过滤ResizeObserver相关错误
+    if (err&&err.message && err.message.includes("ResizeObserver")) {
+      return;
+    }
+
     console.error([err]);
     let target = err.target;
     if (target?.localName) {
@@ -79,6 +79,7 @@ class Web implements IErrorEvent {
           Path: target.src,
           Message: "",
           Stack: "",
+          Height: 0,
         });
       } else if (target?.localName === "link") {
         this.callback({
@@ -94,6 +95,7 @@ class Web implements IErrorEvent {
         Path: window.location.href,
         Message: err.message,
         Stack: this.handleStack(err.error?.stack || ""),
+        ...this.getEnvInfo(),
       });
     }
   };
@@ -106,6 +108,7 @@ class Web implements IErrorEvent {
         Path: window.location.href,
         Message: err.reason,
         Stack: "",
+        ...this.getEnvInfo(),
       });
     } else if (err && typeof err.reason === "object") {
       this.callback({
@@ -114,10 +117,10 @@ class Web implements IErrorEvent {
         Path: window.location.href,
         Message: err.reason?.message || "",
         Stack: this.handleStack(err.reason?.stack || ""),
+        ...this.getEnvInfo(),
       });
     }
   };
-
 
   private handleStack(stack: string): string {
     let newStack: string[] = [];
@@ -130,31 +133,7 @@ class Web implements IErrorEvent {
     }
     return newStack.join("\n");
   }
-  private onLoad = () => {
-    // 获取性能数据
-    const entries = performance.getEntriesByType("navigation");
-    if (entries.length > 0) {
-      const performanceData = entries[0] as PerformanceNavigationTiming;
 
-      console.log("performanceData", performanceData);
-
-      // 计算页面onload时间
-      let onloadTime =
-        performanceData.loadEventStart - performanceData.startTime;
-      if (
-        this.props.onloadTimeOut &&
-        onloadTime > this.props.onloadTimeOut
-      ) {
-        // 页面加载时间5s以上
-        this.callback({
-          Type: "onloadTime",
-          Path: window.location.href,
-          Time:onloadTime
-        });
-      }
-    }
-
-  };
   public listen(callback: ListenCallbackFn): void {
     this.callback = callback;
     window.addEventListener("unhandledrejection", this.unhandledrejection);
@@ -162,8 +141,6 @@ class Web implements IErrorEvent {
     // window.addEventListener("click", this.listenClick);
     // window.addEventListener("hashchange", this.listenHashRouterChange);
     // window.addEventListener("popstate", this.listenHistoryRouterChange);
-
-    window.addEventListener("load", this.onLoad);
   }
 
   public unListen(): void {

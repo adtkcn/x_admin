@@ -1,9 +1,9 @@
 # 打包
 ## 方式一：直接打包
 ```bash
-# linux
+# 在linux打包
 go build -o x_admin .
-# window
+# 在window打包
 go build -o x_admin.exe .
 ```
 
@@ -15,20 +15,25 @@ go install github.com/goreleaser/goreleaser@latest
 goreleaser release --snapshot --clean
 ```
 
-
+## 方式三：运行pack.bat文件打包
+```
+在window运行pack.bat文件, 可以夸平台打包，压缩打包后产物；请按需取消注释
+```
 # 部署
 
 ## 上传所有需要的文件
 - 打包后的二进制文件.exe
-- resources/*
+- public/*
 - .env
 
 
 
 ## 管理进程
-我是前端er，所以我推荐使用pm2管理进程
-https://pm2.io/
+1. 推荐使用pm2管理进程,因为我是前端
+
 ```bash
+# https://pm2.io/
+
 # 需要node环境
 npm install pm2 -g
 # 之前有一种不依赖node直接安装，好像不能用了,没找见

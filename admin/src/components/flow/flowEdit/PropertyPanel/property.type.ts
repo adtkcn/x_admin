@@ -31,22 +31,26 @@ export type NodeType = {
 }
 // Form读取读取德列表结构
 export type FormFieldListType = {
-    name?: string
-    type?: string
-    field?: {
-        id: string
+    id: string
+    name: string
+    // type:string
+    // label?: string
+    // name?: string
+    // type?: string
+    // field?: {
+    //     id: string
 
-        options?: {
-            name: string
-            label: string
-            defaultValue: ''
-        }
-        type?: string //'textarea'
-    }
+    //     options?: {
+    //         name: string
+    //         label: string
+    //         defaultValue: ''
+    //     }
+    //     type?: string //'textarea'
+    // }
 }
 
 export type FieldListType = {
     id?: string
-    label?: string
+    name?: string
     auth?: number
 }

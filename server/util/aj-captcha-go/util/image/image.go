@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	constant "x_admin/util/aj-captcha-go/const"
+	"x_admin/util/aj-captcha-go/captcha_config"
 	"x_admin/util/aj-captcha-go/util"
 )
 
@@ -12,18 +12,13 @@ var backgroundImageArr []string
 var clickBackgroundImageArr []string
 var templateImageArr []string
 
-var resourceAbsPath string
+func SetUp() {
 
-func SetUp(resourcePath string) {
-	resourceAbsPath = resourcePath
-	root := resourcePath
+	backgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultBackgroundImageDirectory
+	templateImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultTemplateImageDirectory
+	clickBackgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultClickBackgroundImageDirectory
 
-	//root := "/Users/skyline/go/src/aj-captcha-go"
-	backgroundImageRoot := root + constant.DefaultBackgroundImageDirectory
-	templateImageRoot := root + constant.DefaultTemplateImageDirectory
-	clickBackgroundImageRoot := root + constant.DefaultClickBackgroundImageDirectory
-
-	err := filepath.Walk(backgroundImageRoot, func(path string, info os.FileInfo, err error) error {
+	err1 := filepath.Walk(backgroundImageRoot, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
 		}
@@ -31,7 +26,7 @@ func SetUp(resourcePath string) {
 		return nil
 	})
 
-	err = filepath.Walk(templateImageRoot, func(path string, info os.FileInfo, err error) error {
+	err2 := filepath.Walk(templateImageRoot, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
 		}
@@ -39,7 +34,7 @@ func SetUp(resourcePath string) {
 		return nil
 	})
 
-	err = filepath.Walk(clickBackgroundImageRoot, func(path string, info os.FileInfo, err error) error {
+	err3 := filepath.Walk(clickBackgroundImageRoot, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
 		}
@@ -47,8 +42,14 @@ func SetUp(resourcePath string) {
 		return nil
 	})
 
-	if err != nil {
-		log.Printf("初始化resource目录失败，请检查该目录是否存在 err: %v", err)
+	if err1 != nil {
+		log.Printf("初始化resource目录失败，请检查该目录是否存在 err: %v", err1)
+	}
+	if err2 != nil {
+		log.Printf("初始化resource目录失败，请检查该目录是否存在 err: %v", err2)
+	}
+	if err3 != nil {
+		log.Printf("初始化resource目录失败，请检查该目录是否存在 err: %v", err3)
 	}
 
 }
@@ -58,7 +59,7 @@ func GetBackgroundImage() *util.ImageUtil {
 	if max <= 0 {
 		max = 1
 	}
-	return util.NewImageUtil(backgroundImageArr[util.RandomInt(0, max)], resourceAbsPath+constant.DefaultFont)
+	return util.NewImageUtil(backgroundImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
 }
 
 func GetTemplateImage() *util.ImageUtil {
@@ -66,7 +67,7 @@ func GetTemplateImage() *util.ImageUtil {
 	if max <= 0 {
 		max = 1
 	}
-	return util.NewImageUtil(templateImageArr[util.RandomInt(0, max)], resourceAbsPath+constant.DefaultFont)
+	return util.NewImageUtil(templateImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
 }
 
 func GetClickBackgroundImage() *util.ImageUtil {
@@ -74,5 +75,5 @@ func GetClickBackgroundImage() *util.ImageUtil {
 	if max <= 0 {
 		max = 1
 	}
-	return util.NewImageUtil(clickBackgroundImageArr[util.RandomInt(0, max)], resourceAbsPath+constant.DefaultFont)
+	return util.NewImageUtil(clickBackgroundImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
 }

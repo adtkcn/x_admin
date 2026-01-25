@@ -65,9 +65,16 @@ const axiosHooks: AxiosHooks = {
         switch (code) {
             case RequestCodeEnum.SUCCESS:
                 return data
-
-            case RequestCodeEnum.PARAMS_TYPE_ERROR:
             case RequestCodeEnum.PARAMS_VALID_ERROR:
+                // 参数校验错误
+                if (Array.isArray(data)) {
+                    message && feedback.msgError(data.join('、'))
+                } else {
+                    message && feedback.msgError(message)
+                }
+
+                return Promise.reject(data)
+            case RequestCodeEnum.PARAMS_TYPE_ERROR:
             case RequestCodeEnum.REQUEST_METHOD_ERROR:
             case RequestCodeEnum.ASSERT_ARGUMENT_ERROR:
             case RequestCodeEnum.ASSERT_MYBATIS_ERROR:
@@ -99,7 +106,9 @@ const axiosHooks: AxiosHooks = {
         // console.log('返回异常Hook', error)
 
         NProgress.done()
-        if (error.code !== AxiosError.ERR_CANCELED) {
+        if (error.code === AxiosError.ERR_BAD_RESPONSE) {
+            feedback.msgError('网络发生错误')
+        } else if (error.code !== AxiosError.ERR_CANCELED) {
             error.message && feedback.msgError(error.message)
         }
         return Promise.reject(error)

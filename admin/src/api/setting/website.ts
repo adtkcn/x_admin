@@ -17,15 +17,6 @@ export function setWebsite(data: any) {
     return request.post({ url: '/setting/website/save', data })
 }
 
-// 获取政策协议
-export function getProtocol() {
-    return request.get({ url: '/setting/protocol/detail' })
-}
-// 设置政策协议
-export function setProtocol(data: any) {
-    return request.post({ url: '/setting/protocol/save', data })
-}
-
 // 获取网站接口列表
 export function getApiList() {
     return request.get({ url: '/apiList' })

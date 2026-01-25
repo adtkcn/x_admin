@@ -9,6 +9,7 @@
                 v-bind="config"
                 :default-active="activeMenu"
                 :collapse="isCollapsed"
+                :collapse-transition="transition"
                 mode="vertical"
                 :unique-opened="uniqueOpened"
                 @select="$emit('select')"
@@ -27,10 +28,11 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { computed } from 'vue'
+import { computed, watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import MenuItem from './menu-item.vue'
 import type { RouteRecordRaw } from 'vue-router'
+
 defineOptions({
     name: 'SideMenu'
 })
@@ -63,6 +65,15 @@ defineEmits(['select'])
 const route = useRoute()
 const activeMenu = computed<string>(() => route.meta?.activeMenu || route.path)
 const themeClass = computed(() => `theme-${props.theme}`)
+const transition = ref(false)
+watch(
+    () => props.isCollapsed,
+    (val) => {
+        setTimeout(() => {
+            transition.value = val
+        }, 500)
+    }
+)
 </script>
 
 <style lang="scss" scoped>

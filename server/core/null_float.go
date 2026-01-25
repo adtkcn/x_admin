@@ -3,97 +3,55 @@ package core
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"x_admin/util/convert_util"
 )
 
-// Float类型别名，支持前端传递null，float64, string类型
-// 忽略前端null值，接收""值时，返回0
+// 支持前端传递null，int，float，string类型和不传值
+// 前端传1，“1”都可以，都转换为float64类型: NullFloat{Float: 1.0, Exist: true}
+// 前端null值: NullFloat{Float: nil, Exist: true}
+// 前端没传值: NullFloat{Float: nil, Exist: false}
 type NullFloat struct {
-	Float *float64
-	Valid bool
+	Val   *float64
+	Exist bool // 是否有值
 }
 
+func NewNullFloat(val float64) NullFloat {
+	return NullFloat{Val: &val, Exist: true}
+}
 func DecodeFloat(value any) (any, error) {
 	switch v := value.(type) {
-	// case float64:
-	// 	f := v
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case float32:
-	// 	f := float64(v)
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case int:
-	// 	f := float64(v)
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case int64:
-	// 	f := float64(v)
-	// 	return NullFloat{Float: &f, Valid: true}, nil
-	// case string:
-	// 	if v == "" {
-	// 		return NullFloat{Float: nil, Valid: false}, nil
-	// 	}
-	// 	f, err := strconv.ParseFloat(v, 64)
-	// 	return NullFloat{Float: &f, Valid: true}, err
 	case nil:
-		return NullFloat{Float: nil, Valid: false}, nil
+		return NullFloat{Val: nil, Exist: false}, nil
 	case NullFloat:
 		return v, nil
 	default:
 		result, err := convert_util.ToFloat64(value)
 		if err != nil {
-			return NullFloat{Float: nil, Valid: false}, err
+			return NullFloat{Val: nil, Exist: false}, err
 		}
-		return NullFloat{Float: &result, Valid: true}, nil
+		return NullFloat{Val: &result, Exist: true}, nil
 	}
 }
 
 // gorm实现Scanner
 func (f *NullFloat) Scan(value interface{}) error {
-	f.Valid = false
 
 	result, err := convert_util.ToFloat64(value)
 	if err != nil {
 		return err
 	}
-	f.Float, f.Valid = &result, true
+	f.Val, f.Exist = &result, true
 	return nil
-	// switch v := value.(type) {
-	// case float64:
-	// 	f.Float, f.Valid = &v, true
-	// case float32:
-	// 	// 直接用float64(float32(v)), 会丢失精度
-	// 	val, _ := strconv.ParseFloat(fmt.Sprintf("%f", v), 64)
-	// 	f.Float, f.Valid = &val, true
-	// 	// 匹配所有int
-	// case uint, uint8, uint16, uint32, uint64, int8, int16, int, int32, int64:
-	// 	val := float64(v)
-	// 	f.Float, f.Valid = &val, true
-	// case string:
-	// 	if v == "" {
-	// 		f.Float, f.Valid = nil, false
-	// 		return nil
-	// 	}
-	// 	val, err := strconv.ParseFloat(v, 64)
-	// 	if err != nil {
-	// 		f.Float, f.Valid = nil, false
-	// 		return err
-	// 	}
-	// 	f.Float, f.Valid = &val, true
-	// 	return err
-	// case nil:
-	// 	f.Float, f.Valid = nil, false
-	// 	return nil
-	// }
-
-	// return nil
 }
 
 // gorm实现 Valuer
 func (f NullFloat) Value() (driver.Value, error) {
-	if !f.Valid {
+	if !f.Exist {
 		return nil, nil
 	}
-	v := f.Float
+	v := f.Val
 	if v == nil {
 		return nil, nil
 	}
@@ -101,8 +59,11 @@ func (f NullFloat) Value() (driver.Value, error) {
 }
 
 func (f NullFloat) String() string {
-	if f.Valid {
-		return strconv.FormatFloat(*f.Float, 'f', -1, 64)
+	if f.Exist {
+		if f.Val == nil {
+			return ""
+		}
+		return strconv.FormatFloat(*f.Val, 'f', -1, 64)
 	} else {
 		return ""
 	}
@@ -110,11 +71,20 @@ func (f NullFloat) String() string {
 
 // 实现json序列化接口
 func (f NullFloat) MarshalJSON() ([]byte, error) {
-	if f.Valid {
-		return json.Marshal(f.Float)
+	if f.Exist {
+		return json.Marshal(f.Val)
 	} else {
 		return json.Marshal(nil)
 	}
+}
+
+func (i *NullFloat) UnmarshalText(text []byte) error {
+	return i.Scan(string(text))
+}
+
+// 实现gin框架的参数绑定接口
+func (i *NullFloat) UnmarshalParam(param string) error {
+	return i.Scan(param)
 }
 
 // 实现json反序列化接口
@@ -124,29 +94,80 @@ func (f *NullFloat) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v := x.(type) {
+	case nil:
+		f.Exist = true
+		return nil
+	case int64:
+		f64 := float64(v)
+		f.Val = &f64
+		f.Exist = true
+		return nil
 	case float64:
-		f.Float = &v
-		f.Valid = true
+		f.Val = &v
+		f.Exist = true
 		return nil
 	case string:
 		if v == "" {
-			f.Float = nil
-			f.Valid = true
+			f.Val = nil
+			f.Exist = true
 			return nil
 		}
 		num, err := strconv.ParseFloat(v, 64)
 		if err == nil {
-			f.Float = &num
-			f.Valid = true
+			f.Val = &num
+			f.Exist = true
 		} else {
-			f.Valid = false
+			f.Exist = false
 		}
 		return err
-	case nil:
-		f.Valid = false
-	default:
-		f.Valid = false
-	}
 
-	return nil
+	default:
+		return fmt.Errorf("不能将类型 %T 转换为 float64, 值为 %v", v, v)
+	}
+}
+
+func (i *NullFloat) SetValue(value float64) *NullFloat {
+	i.Val = &value
+	i.Exist = true
+	return i
+}
+func (i *NullFloat) SetNull() *NullFloat {
+	i.Val = nil
+	i.Exist = true
+	return i
+}
+
+func (i *NullFloat) GetValue() *float64 {
+	return i.Val
+}
+func (i *NullFloat) ValueOr(v float64) float64 {
+	if i.Val == nil {
+		return v
+	}
+	return *i.Val
+}
+
+// ValueOrZero 获取值，不存在则返回0
+func (i *NullFloat) ValueOrZero() float64 {
+	if i.Val == nil {
+		return 0
+	}
+	return *i.Val
+}
+
+// go to json时omitempty标签是否忽略该字段
+func (i NullFloat) IsZero() bool {
+	return !i.Exist
+}
+
+func (i *NullFloat) IsExists() bool {
+	return i.Exist
+}
+func (i *NullFloat) IsExistsAndNotNull() bool {
+	return i.Exist && i.Val != nil
+}
+
+// IsExistsAndNull 存在且为null
+func (i *NullFloat) IsExistsAndNull() bool {
+	return i.Exist && i.Val == nil
 }

@@ -123,5 +123,11 @@ export default {
   },
   tableCol: {
     indexLabel: 'index'
+  },
+  signature: {
+    confirmText: 'OK',
+    clearText: 'Clear',
+    revokeText: 'Undo',
+    restoreText: 'Restore'
   }
 }

@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_client = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     ClientId?: string
     UserId?: string
@@ -18,8 +18,7 @@ export type type_monitor_client = {
     City?: string
     Operator?: string
     Ip?: string
-    Width?: number
-    Height?: number
+
     Ua?: string
     CreateTime?: string
 }
@@ -35,15 +34,14 @@ export type type_monitor_client_query = {
     City?: string
     Operator?: string
     Ip?: string
-    Width?: number
-    Height?: number
+
     Ua?: string
     CreateTimeStart?: string
     CreateTimeEnd?: string
 }
 // 添加编辑
 export type type_monitor_client_edit = {
-    Id?: number
+    Id?: string
     ProjectKey?: string
     ClientId?: string
     UserId?: string
@@ -54,8 +52,7 @@ export type type_monitor_client_edit = {
     City?: string
     Operator?: string
     Ip?: string
-    Width?: number
-    Height?: number
+
     Ua?: string
 }
 

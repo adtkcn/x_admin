@@ -40,7 +40,8 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		// 请求方式
 		reqMethod := c.Request.Method
 		// 获取请求参数
-		if reqMethod == "POST" {
+		switch reqMethod {
+		case "POST":
 			// POST请求
 			if reqType == RequestFile {
 				// 文件类型
@@ -72,7 +73,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 					args = val
 				}
 			}
-		} else if reqMethod == "GET" {
+		case "GET":
 			// GET请求
 			query := c.Request.URL.RawQuery
 			if query != "" {
@@ -108,9 +109,9 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		}()
 		// 执行方法
 		c.Next()
-		if config.Config.GinMode != "release" {
-			return
-		}
+		// if config.AppConfig.GinMode == "debug" {
+		// 	return
+		// }
 		if len(c.Errors) > 0 {
 			errStr = c.Errors.String()
 			status = 2

@@ -1,12 +1,12 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form
                 ref="formRef"
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
-                label-width="70px"
+                label-width="90px"
                 label-position="left"
             >
                 <el-form-item label="项目key" prop="ProjectKey" class="w-[280px]">
@@ -16,7 +16,11 @@
                     <el-input v-model="queryParams.ProjectName" />
                 </el-form-item>
                 <el-form-item label="项目类型" prop="ProjectType" class="w-[280px]">
-                    <el-select v-model="queryParams.ProjectType" clearable>
+                    <el-select
+                        v-model="queryParams.ProjectType"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.project_type"
@@ -27,7 +31,11 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="是否启用" prop="Status" class="w-[280px]">
-                    <el-select v-model="queryParams.Status" clearable>
+                    <el-select
+                        v-model="queryParams.Status"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.status"
@@ -37,12 +45,12 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[430px]">
+                <!-- <el-form-item label="创建时间" prop="CreateTime" class="w-[430px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
                         v-model:endTime="queryParams.CreateTimeEnd"
                     />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="更新时间" prop="UpdateTime" class="w-[420px]">
                     <daterange-picker
                         v-model:startTime="queryParams.UpdateTimeStart"
@@ -55,7 +63,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div class="text-right">
                 <el-button
                     v-perms="['admin:monitor_project:add']"
@@ -67,12 +75,11 @@
                     </template>
                     新增
                 </el-button>
-                <upload
+                <Upload
                     v-perms="['admin:monitor_project:ImportFile']"
                     class="ml-3 mr-3"
                     :url="monitor_project_import_file"
-                    :data="{ cid: 0 }"
-                    type="file"
+                    :ext="['xlsx']"
                     :show-progress="true"
                     @change="resetPage"
                 >
@@ -82,7 +89,7 @@
                         </template>
                         导入
                     </el-button>
-                </upload>
+                </Upload>
                 <el-button
                     v-perms="['admin:monitor_project:ExportFile']"
                     type="primary"
@@ -112,18 +119,18 @@
                 <el-table-column type="selection" width="55" />
                 <el-table-column label="项目uuid" prop="ProjectKey" min-width="130" />
                 <el-table-column label="项目名称" prop="ProjectName" min-width="130" />
-                <el-table-column label="项目类型" prop="ProjectType" min-width="100">
+                <el-table-column label="项目类型" prop="ProjectType" width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.project_type" :value="row.ProjectType" />
                     </template>
                 </el-table-column>
-                <el-table-column label="是否启用" prop="Status" min-width="100">
+                <el-table-column label="是否启用" prop="Status" width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.status" :value="row.Status" />
                     </template>
                 </el-table-column>
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
+                <!-- <el-table-column label="创建时间" prop="CreateTime" min-width="130" /> -->
+                <el-table-column label="更新时间" prop="UpdateTime" width="180" />
                 <el-table-column label="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button

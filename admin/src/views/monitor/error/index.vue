@@ -1,16 +1,20 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form
                 ref="formRef"
                 class="mb-[-16px]"
                 :model="queryParams"
                 :inline="true"
-                label-width="70px"
+                label-width="90px"
                 label-position="right"
             >
                 <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
-                    <el-select v-model="queryParams.ProjectKey" clearable>
+                    <el-select
+                        v-model="queryParams.ProjectKey"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in listAllData.monitor_project_listAll"
@@ -20,9 +24,9 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="md5" prop="Md5" class="w-[280px]">
+                <!-- <el-form-item label="md5" prop="Md5" class="w-[280px]">
                     <el-input v-model="queryParams.Md5" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
@@ -36,7 +40,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div class="text-right">
                 <el-button
                     v-perms="['admin:monitor_error:delBatch']"
@@ -56,7 +60,8 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" />
-                <el-table-column label="项目" prop="ProjectKey" min-width="80">
+                <el-table-column label="序号" type="index" :index="handleIndex" width="80" />
+                <el-table-column label="项目" prop="ProjectKey">
                     <template #default="{ row }">
                         <dict-value
                             :options="listAllData.monitor_project_listAll"
@@ -66,9 +71,9 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column label="事件类型" prop="EventType" width="130" />
-                <el-table-column label="URL地址" prop="Path" min-width="130" />
-                <el-table-column label="错误消息" prop="Message" min-width="130" />
+                <el-table-column label="事件类型" prop="EventType" width="170" />
+                <!-- <el-table-column label="URL地址" prop="Path" min-width="130" /> -->
+                <el-table-column label="错误消息" prop="Message" min-width="150" />
 
                 <!-- <el-table-column label="md5" prop="Md5" min-width="130" /> -->
                 <el-table-column label="创建时间" prop="CreateTime" width="170" />
@@ -148,7 +153,7 @@ const queryParams = reactive<type_monitor_error_query>({
     CreateTimeEnd: null
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_error>({
+const { pager, getLists, resetPage, resetParams, handleIndex } = usePaging<type_monitor_error>({
     fetchFun: monitor_error_list,
     params: queryParams
 })

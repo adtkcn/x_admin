@@ -9,7 +9,7 @@
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
                 <el-form-item label="流程名称" prop="flowName">
                     <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
                 </el-form-item>

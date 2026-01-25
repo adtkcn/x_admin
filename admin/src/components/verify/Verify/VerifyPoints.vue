@@ -100,7 +100,7 @@ export default {
         }
     },
     setup(props, { emit }) {
-        const { mode, captchaType } = toRefs(props)
+        const { captchaType } = toRefs(props)
         const { proxy } = getCurrentInstance()
         const secretKey = ref(''), //后端返回的ase加密秘钥
             checkNum = ref(3), //默认需要点击的字数
@@ -155,11 +155,6 @@ export default {
                             barAreaBorderColor.value = '#5cb85c'
                             text.value = '验证成功'
                             bindingClick.value = false
-                            if (mode.value == 'pop') {
-                                setTimeout(() => {
-                                    refresh()
-                                }, 1500)
-                            }
                             emit('success', { ...data })
                         } else {
                             emit('error')
@@ -207,12 +202,17 @@ export default {
                 captchaType: captchaType.value
             }
             reqGet(data).then((res) => {
+                if (!res) {
+                    text.value = '网络错误'
+                    return
+                }
                 if (res.repCode == '0000') {
                     pointBackImgBase.value =
                         'data:image/png;base64,' + res.repData.originalImageBase64
                     backToken.value = res.repData.token
                     secretKey.value = res.repData.secretKey
                     pointTextList.value = res.repData.wordList
+                    checkNum.value = res.repData.wordList.length
                     text.value = '请依次点击【' + pointTextList.value.join(',') + '】'
                 } else {
                     text.value = res.repMsg

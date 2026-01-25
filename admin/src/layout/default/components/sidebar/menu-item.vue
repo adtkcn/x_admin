@@ -1,6 +1,9 @@
 <template>
     <template v-if="!route.meta?.hidden">
-        <app-link v-if="!hasShowChild" :to="`${routePath}?${queryStr}`">
+        <app-link
+            v-if="!hasShowChild"
+            :to="`${routePath}${queryStr?.length ? `?${queryStr}` : ''}`"
+        >
             <el-menu-item :index="routePath">
                 <Icon :size="16" v-if="routeMeta?.icon" :name="routeMeta?.icon" />
                 <template #title>

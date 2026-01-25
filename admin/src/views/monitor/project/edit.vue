@@ -9,7 +9,7 @@
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-form ref="formRef" :model="formData" label-width="84px" :rules="formRules">
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
                 <el-form-item label="项目uuid" prop="ProjectKey" v-if="mode === 'edit'">
                     {{ formData.ProjectKey }}
                 </el-form-item>
@@ -48,7 +48,10 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="使用SDK" v-if="mode == 'edit'">
+                <el-form-item
+                    label="使用SDK"
+                    v-if="mode == 'edit' && formData.ProjectType == 'web'"
+                >
                     <highlight-code :code="code" lang="javascript"></highlight-code>
                 </el-form-item>
             </el-form>
@@ -93,16 +96,14 @@ const formData = reactive({
     Status: null
 })
 const code = computed(() => {
-    return `import { XErr, XErrWeb } from '../../x_err_sdk/web/index'
-new XErr(
+    return `import { Base, Web } from '../../x_err_sdk/web/index'
+new Base(
     {
         Dns: '${location.origin}/api',
         Pid: '${formData.ProjectKey}',
         Uid: ''
     },
-    new XErrWeb({
-        onloadTimeOut: 3000
-    })
+    new Web()
 )`
 })
 const formRules = {

@@ -1,10 +1,11 @@
 import type { ComponentPublicInstance, ExtractPropTypes } from 'vue'
 import { baseProps, makeBooleanProp, makeNumberProp, makeStringProp } from '../common/props'
+import type { PropType } from 'vue'
 
 export type FabType = 'primary' | 'success' | 'info' | 'warning' | 'error' | 'default'
-export type FabPosition = 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom'
+export type FabPosition = 'left-top' | 'right-top' | 'left-bottom' | 'right-bottom' | 'left-center' | 'right-center' | 'top-center' | 'bottom-center'
 export type FabDirection = 'top' | 'right' | 'bottom' | 'left'
-
+export type FabGap = Partial<Record<FabDirection, number>>
 export const fabProps = {
   ...baseProps,
   /**
@@ -16,7 +17,7 @@ export const fabProps = {
    */
   type: makeStringProp<FabType>('primary'),
   /**
-   * 悬浮按钮位置，可选值为 left-top right-top left-bottom right-bottom
+   * 悬浮按钮位置，可选值为 left-top right-top left-bottom right-bottom left-center right-center top-center bottom-center
    */
   position: makeStringProp<FabPosition>('right-bottom'),
   /**
@@ -42,7 +43,15 @@ export const fabProps = {
   /**
    * 是否可拖动
    */
-  draggable: makeBooleanProp(false)
+  draggable: makeBooleanProp(false),
+  gap: {
+    type: Object as PropType<FabGap>,
+    default: () => ({})
+  },
+  /**
+   * 用于控制点击时是否展开菜单
+   */
+  expandable: makeBooleanProp(true)
 }
 
 export type FabProps = ExtractPropTypes<typeof fabProps>

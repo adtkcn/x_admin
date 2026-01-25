@@ -1,7 +1,7 @@
 <!-- 已完成审批 -->
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <el-form-item label="申请人昵称" prop="applyUserNickname">
                     <el-input v-model="queryParams.applyUserNickname" />
@@ -13,7 +13,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <!-- <div></div> -->
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="申请人" prop="applyUserNickname" min-width="100" />
@@ -68,7 +68,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list } from '@/api/flow/flow_history'
 import type { type_flow_apply } from '@/api/flow/flow_apply'
@@ -76,9 +76,7 @@ import type { type_flow_apply } from '@/api/flow/flow_apply'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import useUserStore from '@/stores/modules/user'
-// import ApplySubmit from '@/views/flow/flow_apply/components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
-
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 const userStore = useUserStore()
 
 defineOptions({
@@ -126,5 +124,12 @@ const OpenViewForm = async (row: any) => {
     viewFormRef.value?.open(applyDetail, row, form_json, form_data)
 }
 
-getLists()
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
 </script>

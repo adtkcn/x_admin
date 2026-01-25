@@ -11,9 +11,9 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "termsOfService": "http://x.adtk.cn",
         "contact": {
-            "name": "API Support",
+            "name": "xh",
             "url": "http://x.adtk.cn",
-            "email": "11675084@qq.com"
+            "email": "x@adtk.cn"
         },
         "license": {
             "name": "MIT License",
@@ -24,6 +24,15 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/admin/apiList": {
+            "get": {
+                "tags": [
+                    "公共接口"
+                ],
+                "summary": "获取所有接口",
+                "responses": {}
+            }
+        },
         "/api/admin/flow/flow_apply/add": {
             "post": {
                 "produces": [
@@ -37,7 +46,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -145,7 +154,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -181,7 +190,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -204,7 +213,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flow_apply.FlowApplyResp"
+                                            "$ref": "#/definitions/flowSchema.FlowApplyResp"
                                         }
                                     }
                                 }
@@ -227,7 +236,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -335,21 +344,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -430,7 +439,7 @@ const docTemplate = `{
                                                         "lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/flow_apply.FlowApplyResp"
+                                                                "$ref": "#/definitions/flowSchema.FlowApplyResp"
                                                             }
                                                         }
                                                     }
@@ -466,7 +475,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -574,7 +583,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -610,7 +619,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -633,7 +642,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                                            "$ref": "#/definitions/flowSchema.FlowHistoryResp"
                                         }
                                     }
                                 }
@@ -656,7 +665,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -772,21 +781,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -873,7 +882,7 @@ const docTemplate = `{
                                                         "lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                                                                "$ref": "#/definitions/flowSchema.FlowHistoryResp"
                                                             }
                                                         }
                                                     }
@@ -909,7 +918,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flow_history.FlowHistoryResp"
+                                            "$ref": "#/definitions/flowSchema.FlowHistoryResp"
                                         }
                                     }
                                 }
@@ -932,7 +941,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1000,7 +1009,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1036,7 +1045,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1051,7 +1060,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/flow_template.FlowTemplateResp"
+                            "$ref": "#/definitions/flowSchema.FlowTemplateResp"
                         }
                     }
                 }
@@ -1070,7 +1079,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1146,21 +1155,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -1217,7 +1226,7 @@ const docTemplate = `{
                                                         "lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/flow_template.FlowTemplateResp"
+                                                                "$ref": "#/definitions/flowSchema.FlowTemplateResp"
                                                             }
                                                         }
                                                     }
@@ -1254,7 +1263,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1377,7 +1386,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1499,7 +1508,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1535,7 +1544,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1571,7 +1580,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1594,7 +1603,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         " data": {
-                                            "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                                            "$ref": "#/definitions/monitorSchema.MonitorClientResp"
                                         }
                                     }
                                 }
@@ -1617,21 +1626,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -1748,7 +1757,7 @@ const docTemplate = `{
                                                         " lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                                                                "$ref": "#/definitions/monitorSchema.MonitorClientResp"
                                                             }
                                                         }
                                                     }
@@ -1878,7 +1887,7 @@ const docTemplate = `{
                                         " data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/monitor_client.MonitorClientResp"
+                                                "$ref": "#/definitions/monitorSchema.MonitorClientResp"
                                             }
                                         }
                                     }
@@ -1902,7 +1911,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -1983,7 +1992,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2059,7 +2068,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2095,7 +2104,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2131,7 +2140,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2154,7 +2163,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         " data": {
-                                            "$ref": "#/definitions/monitor_error.MonitorErrorResp"
+                                            "$ref": "#/definitions/monitorSchema.MonitorErrorResp"
                                         }
                                     }
                                 }
@@ -2177,21 +2186,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -2266,7 +2275,7 @@ const docTemplate = `{
                                                         " lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/monitor_error.MonitorErrorResp"
+                                                                "$ref": "#/definitions/monitorSchema.MonitorErrorResp"
                                                             }
                                                         }
                                                     }
@@ -2354,7 +2363,7 @@ const docTemplate = `{
                                         " data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/monitor_error.MonitorErrorResp"
+                                                "$ref": "#/definitions/monitorSchema.MonitorErrorResp"
                                             }
                                         }
                                     }
@@ -2378,7 +2387,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2459,7 +2468,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2519,7 +2528,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2555,7 +2564,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2591,7 +2600,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2614,7 +2623,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         " data": {
-                                            "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                                            "$ref": "#/definitions/monitorSchema.MonitorProjectResp"
                                         }
                                     }
                                 }
@@ -2637,7 +2646,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -2705,21 +2714,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -2794,7 +2803,7 @@ const docTemplate = `{
                                                         " lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
+                                                                "$ref": "#/definitions/monitorSchema.MonitorProjectResp"
                                                             }
                                                         }
                                                     }
@@ -2882,484 +2891,7 @@ const docTemplate = `{
                                         " data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/monitor_project.MonitorProjectResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_slow/ExportFile": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列导出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目key",
-                        "name": "ProjectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sdk生成的客户端id",
-                        "name": "ClientId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "URL地址",
-                        "name": "Path",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "时间",
-                        "name": "Time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeEnd",
-                        "in": "query"
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/admin/monitor_slow/ImportFile": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列导入",
-                "responses": {}
-            }
-        },
-        "/api/admin/monitor_slow/add": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列新增",
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_slow/del": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列删除",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "错误id",
-                        "name": "Id",
-                        "in": "body",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_slow/delBatch": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列删除-批量",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "逗号分割的id",
-                        "name": "Ids",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_slow/detail": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "number",
-                        "description": "错误id",
-                        "name": "Id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        " data": {
-                                            "$ref": "#/definitions/monitor_slow.MonitorSlowResp"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_slow/edit": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列编辑",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "错误id",
-                        "name": "Id",
-                        "in": "body",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "description": "项目key",
-                        "name": "ProjectKey",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "sdk生成的客户端id",
-                        "name": "ClientId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "URL地址",
-                        "name": "Path",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "时间",
-                        "name": "Time",
-                        "in": "body",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_slow/list": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页数量",
-                        "name": "PageSize",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目key",
-                        "name": "ProjectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sdk生成的客户端id",
-                        "name": "ClientId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "URL地址",
-                        "name": "Path",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "时间",
-                        "name": "Time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeEnd",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        " data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.PageResp"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        " lists": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/monitor_slow.MonitorSlowResp"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/monitor_slow/listAll": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_slow-监控-错误列"
-                ],
-                "summary": "监控-错误列列表-所有",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "项目key",
-                        "name": "ProjectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sdk生成的客户端id",
-                        "name": "ClientId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "URL地址",
-                        "name": "Path",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "时间",
-                        "name": "Time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeEnd",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        " data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/monitor_slow.MonitorSlowResp"
+                                                "$ref": "#/definitions/monitorSchema.MonitorProjectResp"
                                             }
                                         }
                                     }
@@ -3383,7 +2915,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3430,7 +2962,20 @@ const docTemplate = `{
                         "in": "query"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "失败",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/admin/user_protocol/ImportFile": {
@@ -3442,7 +2987,30 @@ const docTemplate = `{
                     "user_protocol-用户协议"
                 ],
                 "summary": "用户协议导入",
-                "responses": {}
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "导入文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/admin/user_protocol/add": {
@@ -3458,7 +3026,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3510,7 +3078,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3546,7 +3114,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3582,7 +3150,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3604,8 +3172,8 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
-                                            "$ref": "#/definitions/user_protocol.UserProtocolResp"
+                                        "data": {
+                                            "$ref": "#/definitions/schema.UserProtocolResp"
                                         }
                                     }
                                 }
@@ -3628,7 +3196,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
@@ -3688,21 +3256,21 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "token",
-                        "name": "Token",
+                        "name": "token",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "PageNo",
+                        "name": "pageNo",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "PageSize",
+                        "name": "pageSize",
                         "in": "query",
                         "required": true
                     },
@@ -3760,7 +3328,7 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
+                                        "data": {
                                             "allOf": [
                                                 {
                                                     "$ref": "#/definitions/response.PageResp"
@@ -3768,10 +3336,10 @@ const docTemplate = `{
                                                 {
                                                     "type": "object",
                                                     "properties": {
-                                                        " lists": {
+                                                        "lists": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/user_protocol.UserProtocolResp"
+                                                                "$ref": "#/definitions/schema.UserProtocolResp"
                                                             }
                                                         }
                                                     }
@@ -3798,6 +3366,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "标题",
                         "name": "Title",
                         "in": "query"
@@ -3850,10 +3425,10 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
+                                        "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/user_protocol.UserProtocolResp"
+                                                "$ref": "#/definitions/schema.UserProtocolResp"
                                             }
                                         }
                                     }
@@ -3864,65 +3439,57 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/article_collect/list": {
+        "/api/swagger/doc.json": {
             "get": {
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
-                    "article_collect文章"
+                    "公共接口"
                 ],
-                "summary": "article_collect列表",
+                "summary": "swagger文档数据",
+                "responses": {}
+            }
+        },
+        "/api/ws": {
+            "get": {
+                "tags": [
+                    "公共接口"
+                ],
+                "summary": "ws通用接口",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "token",
-                        "name": "Token",
+                        "default": "\"websocket\"",
+                        "description": "请求协议升级",
+                        "name": "Upgrade",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "PageNo",
-                        "in": "query",
+                        "type": "string",
+                        "default": "\"Upgrade\"",
+                        "description": "升级连接类型",
+                        "name": "Connection",
+                        "in": "header",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "每页大小",
-                        "name": "PageSize",
-                        "in": "query",
+                        "type": "string",
+                        "description": "WebSocket握手密钥",
+                        "name": "Sec-WebSocket-Key",
+                        "in": "header",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "description": "用户ID",
-                        "name": "userId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "文章ID",
-                        "name": "articleId",
-                        "in": "query"
+                        "type": "string",
+                        "default": "\"13\"",
+                        "description": "WebSocket协议版本",
+                        "name": "Sec-WebSocket-Version",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.PageResp"
-                        }
-                    },
-                    "400": {
-                        "description": "请求错误",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "内部错误",
+                    "101": {
+                        "description": "协议切换成功",
                         "schema": {
                             "type": "string"
                         }
@@ -3958,43 +3525,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "core.NullFloat": {
-            "type": "object",
-            "properties": {
-                "float": {
-                    "type": "number"
-                },
-                "valid": {
-                    "type": "boolean"
-                }
-            }
-        },
         "core.NullInt": {
             "type": "object",
             "properties": {
-                "int": {
-                    "type": "integer"
-                },
-                "valid": {
+                "exist": {
+                    "description": "是否有值",
                     "type": "boolean"
+                },
+                "val": {
+                    "description": "整数或者null",
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
         "core.NullTime": {
             "type": "object",
             "properties": {
-                "format": {
-                    "type": "string"
-                },
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
+                "exist": {
                     "type": "boolean"
+                },
+                "val": {
+                    "type": "string"
                 }
             }
         },
-        "flow_apply.FlowApplyResp": {
+        "flowSchema.FlowApplyResp": {
             "type": "object",
             "properties": {
                 "applyUserId": {
@@ -4062,7 +3618,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flow_history.FlowHistoryResp": {
+        "flowSchema.FlowHistoryResp": {
             "type": "object",
             "properties": {
                 "applyId": {
@@ -4135,7 +3691,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flow_template.FlowTemplateResp": {
+        "flowSchema.FlowTemplateResp": {
             "type": "object",
             "properties": {
                 "flowFormData": {
@@ -4167,7 +3723,7 @@ const docTemplate = `{
                 }
             }
         },
-        "monitor_client.MonitorClientResp": {
+        "monitorSchema.MonitorClientResp": {
             "type": "object",
             "properties": {
                 "browser": {
@@ -4244,7 +3800,7 @@ const docTemplate = `{
                 }
             }
         },
-        "monitor_error.MonitorErrorResp": {
+        "monitorSchema.MonitorErrorResp": {
             "type": "object",
             "properties": {
                 "createTime": {
@@ -4258,6 +3814,14 @@ const docTemplate = `{
                 "eventType": {
                     "description": "事件类型",
                     "type": "string"
+                },
+                "height": {
+                    "description": "屏幕高度",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
                 },
                 "id": {
                     "description": "错误id",
@@ -4282,10 +3846,18 @@ const docTemplate = `{
                 "stack": {
                     "description": "错误堆栈",
                     "type": "string"
+                },
+                "width": {
+                    "description": "屏幕",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/core.NullInt"
+                        }
+                    ]
                 }
             }
         },
-        "monitor_project.MonitorProjectResp": {
+        "monitorSchema.MonitorProjectResp": {
             "type": "object",
             "properties": {
                 "createTime": {
@@ -4330,47 +3902,6 @@ const docTemplate = `{
                 }
             }
         },
-        "monitor_slow.MonitorSlowResp": {
-            "type": "object",
-            "properties": {
-                "clientId": {
-                    "description": "sdk生成的客户端id",
-                    "type": "string"
-                },
-                "createTime": {
-                    "description": "创建时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "错误id",
-                    "type": "integer"
-                },
-                "path": {
-                    "description": "URL地址",
-                    "type": "string"
-                },
-                "projectKey": {
-                    "description": "项目key",
-                    "type": "string"
-                },
-                "time": {
-                    "description": "时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullFloat"
-                        }
-                    ]
-                },
-                "userId": {
-                    "description": "用户id",
-                    "type": "string"
-                }
-            }
-        },
         "response.PageResp": {
             "type": "object",
             "properties": {
@@ -4403,7 +3934,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user_protocol.UserProtocolResp": {
+        "schema.UserProtocolResp": {
             "type": "object",
             "properties": {
                 "content": {
@@ -4412,22 +3943,14 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
-                "sort": {
-                    "description": "排序",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullFloat"
-                        }
-                    ]
+                "tag": {
+                    "description": "标识",
+                    "type": "string"
                 },
                 "title": {
                     "description": "标题",
@@ -4435,18 +3958,13 @@ const docTemplate = `{
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
+                },
+                "version": {
+                    "description": "版本",
+                    "type": "number"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
         }
     },
     "externalDocs": {
@@ -4457,11 +3975,11 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.0.1",
-	Host:             "localhost:8001",
+	Version:          "",
+	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "x_admin文档",
+	Title:            "",
 	Description:      "x_admin是一个完整的后台管理系统",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

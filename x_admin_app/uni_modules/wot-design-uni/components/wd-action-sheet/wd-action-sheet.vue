@@ -38,7 +38,7 @@
             :style="`color: ${action.color}`"
             @click="select(rowIndex, 'action')"
           >
-            <wd-loading v-if="action.loading" size="20px" />
+            <wd-loading custom-class="`wd-action-sheet__action-loading" v-if="action.loading" />
             <view v-else class="wd-action-sheet__name">{{ action.name }}</view>
             <view v-if="!action.loading && action.subname" class="wd-action-sheet__subname">{{ action.subname }}</view>
           </button>
@@ -71,6 +71,9 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdPopup from '../wd-popup/wd-popup.vue'
+import wdIcon from '../wd-icon/wd-icon.vue'
+import wdLoading from '../wd-loading/wd-loading.vue'
 import { watch, ref } from 'vue'
 import { actionSheetProps, type Panel } from './types'
 import { isArray } from '../common/util'
@@ -101,6 +104,9 @@ function computedValue() {
 
 function select(rowIndex: number, type: 'action' | 'panels', colIndex?: number) {
   if (type === 'action') {
+    if (props.actions[rowIndex].disabled || props.actions[rowIndex].loading) {
+      return
+    }
     emit('select', {
       item: props.actions[rowIndex],
       index: rowIndex
@@ -117,13 +123,12 @@ function select(rowIndex: number, type: 'action' | 'panels', colIndex?: number) 
       colIndex
     })
   }
-  close()
+  if (props.closeOnClickAction) {
+    close()
+  }
 }
 function handleClickModal() {
   emit('click-modal')
-  if (props.closeOnClickModal) {
-    close()
-  }
 }
 function handleCancel() {
   emit('cancel')

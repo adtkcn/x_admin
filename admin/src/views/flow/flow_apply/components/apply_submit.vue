@@ -109,7 +109,7 @@ function open(applyId) {
         applyId: applyId
     }).then((res) => {
         console.log('res', res)
-        next_nodes.value = res
+        next_nodes.value = res || []
     })
     flow_history_get_approver({ applyId: applyId }).then((user) => {
         console.log('user', user)
@@ -133,7 +133,7 @@ function submit() {
     }
     flow_history_pass({
         applyId: formData.id,
-        nextNodeAdminId: formData.applyUserId || 0,
+        nextNodeAdminId: formData.applyUserId || '',
         passRemark: formData.passRemark
     }).then(() => {
         BeforeClose()

@@ -10,7 +10,7 @@
         />
         <div class="diagram-main">
             <diagram-sidebar class="diagram-sidebar" @dragInNode="dragInNode" />
-            <div ref="container" class="diagram-container">
+            <div class="diagram-container">
                 <div class="diagram-wrapper">
                     <div ref="diagramRef" class="lf-diagram"></div>
                 </div>
@@ -22,61 +22,56 @@
 </template>
 
 <script setup lang="ts">
-// Importing necessary functions and components
-import { ref, onMounted } from 'vue'
-import LogicFlow from '@logicflow/core'
-import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
+import { ref, onMounted, onBeforeUnmount, useTemplateRef, defineAsyncComponent } from 'vue'
+import { LogicFlow } from '@logicflow/core'
 
-// import '@logicflow/core/dist/style/index.css'
-// import '@logicflow/extension/lib/style/index.css'
+import { SelectionSelect, Menu, BpmnElement, MiniMap } from '@logicflow/extension'
+import type { NodeType, PropertiesType } from './PropertyPanel/property.type'
+
 import '@logicflow/core/lib/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 
-import DiagramToolbar from './DiagramToolbar.vue'
-import DiagramSidebar from './DiagramSidebar.vue'
-import PropertyPanel from './PropertyPanel/index.vue'
+// import DiagramToolbar from './DiagramToolbar.vue'
+// import DiagramSidebar from './DiagramSidebar.vue'
+// import PropertyPanel from './PropertyPanel/index.vue'
+const DiagramToolbar = defineAsyncComponent(() => import('./DiagramToolbar.vue'))
+const DiagramSidebar = defineAsyncComponent(() => import('./DiagramSidebar.vue'))
+const PropertyPanel = defineAsyncComponent(() => import('./PropertyPanel/index.vue'))
 import { registerCustomElement } from './node'
 
 defineOptions({
     name: 'flowEdit'
 })
 // Define component props
-const props = defineProps({
-    tabName: {
-        type: String,
-        default: ''
-    },
-    fieldList: {
-        type: Array,
-        default: () => []
-    },
-    conf: {
-        type: Object,
-        default: () => ({})
-    }
-})
+const props = defineProps<{
+    tabName: string
+    fieldList: { id: string; name: string }[]
+    conf: any
+}>()
 
 // Define refs for reactive data and component references
-const lf = ref(null) // Reference to LogicFlow instance
+const lf = ref<LogicFlow>(null) // Reference to LogicFlow instance
 const activeEdges = ref([]) // Reactive array for active edges
-const diagramRef = ref(null) // Reference to the diagram container
-const PropertyPanelRef = ref(null) // Reference to the PropertyPanel component
+const diagramRef = useTemplateRef<HTMLInputElement>('diagramRef') // Reference to the diagram container
+const PropertyPanelRef = useTemplateRef<InstanceType<typeof PropertyPanel>>('PropertyPanelRef') // Reference to the PropertyPanel component
 
 // Lifecycle hook to initialize LogicFlow when the component is mounted
 onMounted(() => {
     initLogicFlow(props.conf)
 })
-
+// Lifecycle hook to clean up LogicFlow when the component is unmounted
+onBeforeUnmount(() => {
+    if (lf.value) {
+        console.log('卸载LogicFlow')
+        lf.value.destroy()
+        lf.value = null
+    }
+})
 // Function to initialize LogicFlow
 function initLogicFlow(data) {
-    // 引入框选插件
-    LogicFlow.use(SelectionSelect)
-    LogicFlow.use(Menu)
-    LogicFlow.use(BpmnElement)
-    LogicFlow.use(MiniMap)
-    // Creating a new LogicFlow instance
     const logicFlowInstance = new LogicFlow({
-        container: diagramRef.value, // Setting the container where LogicFlow will be rendered
+        plugins: [SelectionSelect, Menu, MiniMap, BpmnElement],
+        container: diagramRef.value,
         overlapMode: 1,
         // allowResize: true,
         autoWrap: true,
@@ -96,8 +91,8 @@ function initLogicFlow(data) {
     logicFlowInstance.setTheme({
         baseEdge: { strokeWidth: 1 },
         baseNode: { strokeWidth: 1 },
-        nodeText: { overflowMode: 'autoWrap', lineHeight: 1.5 },
-        edgeText: { overflowMode: 'autoWrap', lineHeight: 1.5 }
+        nodeText: { overflowMode: 'autoWrap', lineHeight: 1.5, fontSize: 12 },
+        edgeText: { overflowMode: 'autoWrap', lineHeight: 1.5, fontSize: 12, textWidth: 100 }
     })
 
     // Registering custom elements for LogicFlow
@@ -105,31 +100,30 @@ function initLogicFlow(data) {
 
     // Setting default edge type and rendering initial data
     logicFlowInstance.setDefaultEdgeType('pro-polyline')
-    logicFlowInstance.extension.menu.addMenuConfig({
+    ;(logicFlowInstance.extension.menu as Menu).addMenuConfig({
         nodeMenu: [
             {
                 text: '属性配置',
                 callback(node) {
-                    // alert('分享成功！')
                     PropertyPanelRef.value.open(node, props.fieldList)
                 }
             }
         ]
     })
     logicFlowInstance.render(data)
-    logicFlowInstance.extension.miniMap.show()
+    ;(logicFlowInstance.extension.miniMap as MiniMap).show()
     // Assigning the LogicFlow instance to the 'lf' ref
     lf.value = logicFlowInstance
 
     // Event listener for node clicks
     lf.value.on('node:dbclick', (e) => {
         console.log('dbclick on node', e.data, props.fieldList)
-        PropertyPanelRef.value.open(e.data, props.fieldList)
+        PropertyPanelRef.value.open(e.data as NodeType, props.fieldList)
     })
 }
 
 // Function to handle dragging nodes into the diagram
-function dragInNode(type, text = '') {
+function dragInNode(type: string, text = '') {
     lf.value.dnd.startDrag({
         type,
         text
@@ -137,15 +131,12 @@ function dragInNode(type, text = '') {
 }
 
 // Function to set properties of a node
-function setProperties(node, item) {
+function setProperties(node: NodeType, item: PropertiesType) {
     console.log('setProperties', node, item)
 
     lf.value.setProperties(node.id, item)
 }
-// function setZIndex(node, type) {
-//     lf.value.setElementZIndex(node.id, type)
-// }
-// Function to import data into the LogicFlow instance
+
 function importData(text) {
     lf.value.renderRawData(text)
 }
@@ -153,11 +144,11 @@ function importData(text) {
 // Function to save the graph data
 function saveGraph() {
     const data = lf.value.getGraphData()
-    download('export.json', JSON.stringify(data))
+    download(`export.${Date.now()}.json`, JSON.stringify(data))
 }
 
 // Function to download the graph data as a file
-function download(filename, text) {
+function download(filename: string, text: string) {
     window.sessionStorage.setItem(filename, text)
     const element = document.createElement('a')
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
@@ -182,9 +173,9 @@ async function getData() {
         formData: any
         treeToList: any
     }>((resolve, reject) => {
-        const data = lf.value.getGraphData()
-        const nodes = data.nodes
-        const edges = data.edges
+        const data: any = lf.value.getGraphData()
+        const nodes = data?.nodes || []
+        const edges = data?.edges || []
 
         let haveMoreChildNode = false
         const sourceNodeIdSum = {} // Node ID -> child nodes mapping
@@ -267,7 +258,7 @@ defineExpose({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .diagram {
     width: 100%;
     height: 100%;
@@ -318,7 +309,7 @@ defineExpose({
         }
     }
     /* 由于背景图和gird不对齐，需要css处理一下 */
-    .diagram-container :v-deep .lf-background {
+    .diagram-container :deep(.lf-background) {
         left: -9px;
     }
 }

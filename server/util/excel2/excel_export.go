@@ -36,7 +36,7 @@ func Export(lists any, cols []Col, sheet string, title string) (file *excelize.F
 }
 
 // ExportExcel excel导出
-func ExportExcel(sheet, title string, lists []map[string]interface{}, cols []Col, e *Excel) (err error) {
+func ExportExcel(sheet, title string, lists []map[string]any, cols []Col, e *Excel) (err error) {
 	index, _ := e.F.GetSheetIndex(sheet)
 	if index < 0 { // 如果sheet名称不存在
 		e.F.NewSheet(sheet)
@@ -53,7 +53,7 @@ func ExportExcel(sheet, title string, lists []map[string]interface{}, cols []Col
 
 // 构造表头（endColName 最后一列的列名 startDataRow 数据行开始的行号）
 func buildTitle(e *Excel, sheet, title string, cols []Col) (endColName string, startDataRow int, err error) {
-	var titleRowData []interface{} // 列头行
+	var titleRowData []any // 列头行
 	for i, colTitle := range cols {
 		endColName := GetExcelColumnName(i + 1)
 		if colTitle.Width > 0 { // 根据给定的宽度设置列宽
@@ -93,7 +93,7 @@ func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []
 		startCol := fmt.Sprintf("A%d", startDataRow)
 		endCol := fmt.Sprintf("%s%d", endColName, startDataRow)
 
-		var rowData []interface{} // 数据列
+		var rowData []any // 数据列
 
 		list := lists[i]
 		for j := 0; j < len(cols); j++ {
@@ -111,7 +111,6 @@ func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []
 
 			// 再替换
 			for replaceKey, v := range replace {
-
 				if replaceKey == fmt.Sprintf("%v", val) {
 					val = fmt.Sprintf("%v", v)
 					break

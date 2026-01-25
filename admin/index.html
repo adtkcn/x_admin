@@ -8,11 +8,14 @@
         <meta name="description" content="后台管理系统" />
         <meta name="keywords" content="x_admin,后台管理系统" />
         <style>
-            * {
+            html,
+            body {
                 margin: 0;
                 padding: 0;
             }
         </style>
+
+        <link rel="stylesheet" preload href="/loading.css" />
         <script src="/XErr.umd.js"></script>
         <script>
             const xErr = new XErr.Base(
@@ -21,28 +24,55 @@
                     Pid: 'e19e3be20de94f49b68fafb4c30668bc',
                     Uid: ''
                 },
-                new XErr.Web({
-                    onloadTimeOut: 5000
-                })
+                new XErr.Web({})
             )
             xErr.SetUid(2) //设置用户ID
         </script>
-
-        <link rel="stylesheet" href="/src/styles/loading.css" />
     </head>
     <body>
         <div id="app">
             <div class="x-loading">
-                <div class="loading-center">
-                    <div class="loading-center-absolute">
-                        <div class="object object_four"></div>
-                        <div class="object object_three"></div>
-                        <div class="object object_two"></div>
-                        <div class="object object_one"></div>
-                    </div>
+                <div class="circle">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="Loading">Loading...</div>
                 </div>
             </div>
         </div>
-        <script type="module" src="/src/main.ts"></script>
+        <script type="module" defer src="/src/main.ts"></script>
     </body>
 </html>

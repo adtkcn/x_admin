@@ -8,6 +8,7 @@ export enum ThemeEnum {
 export enum MenuEnum {
     CATALOGUE = 'M',
     MENU = 'C',
+    /**按钮*/
     BUTTON = 'A'
 }
 

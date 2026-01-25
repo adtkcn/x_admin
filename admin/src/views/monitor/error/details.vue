@@ -60,12 +60,15 @@
                                     :name="index"
                                 >
                                     <template #title>
-                                        <div class="flex-1 text-left">
-                                            {{ user.City }} {{ user.Browser }}：{{ user.Ip }}
+                                        <div class="collapse-title">
+                                            <span>
+                                                {{ user.City }} {{ user.Browser }}：{{ user.Ip }}
+                                            </span>
+
+                                            <span>
+                                                {{ user.CreateTime }}
+                                            </span>
                                         </div>
-                                        <span>
-                                            {{ user.CreateTime }}
-                                        </span>
                                     </template>
                                     <el-descriptions border :column="2">
                                         <el-descriptions-item label="省市区">
@@ -189,3 +192,9 @@ defineExpose({
     getDetail
 })
 </script>
+<style lang="scss">
+.collapse-title {
+    display: flex;
+    justify-content: space-between;
+}
+</style>

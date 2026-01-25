@@ -1,7 +1,7 @@
 <template>
   <view :class="`wd-segmented ${customClass}`" :style="customStyle">
     <view
-      :class="`wd-segmented__item is-${size} ${activeIndex === index ? 'is-active' : ''} ${
+      :class="`wd-segmented__item is-${size} ${state.activeIndex === index ? 'is-active' : ''} ${
         disabled || (isObj(option) ? option.disabled : false) ? 'is-disabled' : ''
       }`"
       @click="handleClick(option, index)"
@@ -15,7 +15,7 @@
         </template>
       </view>
     </view>
-    <view :class="`wd-segmented__item--active ${activeDisabled ? 'is-disabled' : ''}`" :style="activeStyle"></view>
+    <view :class="`wd-segmented__item--active ${activeDisabled ? 'is-disabled' : ''}`" :style="state.activeStyle"></view>
   </view>
 </template>
 
@@ -31,22 +31,19 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
-import { addUnit, getRect, isObj, objToStyle } from '../common/util'
+import { computed, getCurrentInstance, onMounted, reactive, watch } from 'vue'
+import { getRect, isObj, objToStyle, addUnit, pause } from '../common/util'
 import type { CSSProperties } from 'vue'
-import { segmentedProps, type SegmentedInfo, type SegmentedOption } from './types'
+import { segmentedProps, type SegmentedExpose, type SegmentedOption } from './types'
 const $item = '.wd-segmented__item'
 
 const props = defineProps(segmentedProps)
 const emit = defineEmits(['update:value', 'change', 'click'])
 
-const sectionItemInfo = reactive<SegmentedInfo>({
-  width: 0,
-  height: 0
+const state = reactive({
+  activeIndex: 0, // 选中项
+  activeStyle: '' // 选中样式
 })
-
-const activeIndex = ref<number>(0) // 选中项
-const activeStyle = ref<string>('') // 选中样式
 
 const activeDisabled = computed(() => {
   return props.disabled || (props.options[0] && isObj(props.options[0]) ? props.options[0].disabled : false)
@@ -68,38 +65,32 @@ watch(
 
 const { proxy } = getCurrentInstance() as any
 
-onMounted(() => {
-  getRect('.wd-segmented__item', false, proxy).then((rect) => {
-    if (rect) {
-      sectionItemInfo.height = Number(rect.height)
-      sectionItemInfo.width = Number(rect.width)
-      updateCurrentIndex()
-      updateActiveStyle()
-    }
-  })
+onMounted(async () => {
+  updateCurrentIndex()
+  await pause()
+  updateActiveStyle(false)
 })
 
 /**
- * @description 更新滑块偏移量
+ * 更新滑块偏移量
  *
  */
-function updateActiveStyle() {
+function updateActiveStyle(animation: boolean = true) {
   getRect($item, true, proxy).then((rects) => {
-    const rect = rects[activeIndex.value]
-    let left = rects.slice(0, activeIndex.value).reduce((prev, curr) => prev + Number(curr.width), 0)
-    left += (Number(rect.width) - sectionItemInfo.width) / 2
-    const transition = 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)'
+    const rect = rects[state.activeIndex]
     const style: CSSProperties = {
       position: 'absolute',
-      width: addUnit(sectionItemInfo.width),
-      transition: transition,
-      transform: `translateX(${left}px)`,
+      width: addUnit(rect.width!),
       'z-index': 0
     }
-    // 防止重复绘制
-    if (activeStyle.value !== objToStyle(style)) {
-      activeStyle.value = objToStyle(style)
+    const left = rects.slice(0, state.activeIndex).reduce((prev, curr) => prev + Number(curr.width), 0)
+    if (left) {
+      style.transform = `translateX(${left}px)`
     }
+    if (animation) {
+      style.transition = 'all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1)'
+    }
+    state.activeStyle = objToStyle(style)
   })
 }
 
@@ -112,7 +103,7 @@ function updateCurrentIndex() {
     return value == props.value
   })
   if (index >= 0) {
-    activeIndex.value = index
+    state.activeIndex = index
   } else {
     const value = isObj(props.options[0]) ? props.options[0].value : props.options[0]
     emit('update:value', value)
@@ -126,12 +117,16 @@ function handleClick(option: string | number | SegmentedOption, index: number) {
     return
   }
   const value = isObj(option) ? option.value : option
-  activeIndex.value = index
+  state.activeIndex = index
   updateActiveStyle()
   emit('update:value', value)
   emit('change', isObj(option) ? option : { value })
   emit('click', isObj(option) ? option : { value })
 }
+
+defineExpose<SegmentedExpose>({
+  updateActiveStyle
+})
 </script>
 
 <style lang="scss" scoped>

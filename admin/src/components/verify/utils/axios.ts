@@ -1,8 +1,9 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = '/api'
+// axios.defaults.baseURL = '/api'
 
 const service = axios.create({
+    baseURL: '/api',
     timeout: 4000,
     headers: {
         'X-Requested-With': 'XMLHttpRequest',

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>x-admin API Docs - Scalar</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- <script id="api-reference" data-url="/api/swagger/doc.json"></script> -->
+    <script src="./api-reference.js"></script>
+    <script>
+      var x_admin_token_str = localStorage.getItem("x_admin_token");
+      var token = "";
+      if (x_admin_token_str) {
+        try {
+          var x_admin_token_json = JSON.parse(x_admin_token_str);
+          token = x_admin_token_json.value;
+        } catch (error) {}
+      }
+      Scalar.createApiReference("#app", {
+        url: "/api/swagger/doc.json",
+        theme: "kepler",
+        withDefaultFonts: false,
+        hideClientButton: true,
+
+        onBeforeRequest: ({ request }) => {
+          // Add a custom header to all requests
+          // console.log("request", request.headers.get("token"));
+          if (!request.headers.get("token")) {
+            if (token) {
+              request.headers.set("token", token);
+            }
+          }
+        },
+      });
+    </script>
+  </body>
+</html>

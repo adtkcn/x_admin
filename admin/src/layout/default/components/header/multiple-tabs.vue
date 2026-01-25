@@ -1,6 +1,6 @@
 <template>
-    <div class="app-tabs pl-4 flex bg-body">
-        <div class="flex-1 min-w-0">
+    <div class="app-tabs flex">
+        <div class="flex-1 min-w-0 select-none">
             <el-tabs
                 :model-value="currentTab"
                 :closable="tabsLists.length > 1"
@@ -14,7 +14,7 @@
         </div>
         <el-dropdown @command="handleCommand">
             <span class="flex items-center px-3">
-                <icon :size="16" name="el-icon-arrow-down" />
+                <icon :size="16" name="el-icon-ArrowDown" />
             </span>
             <template #dropdown>
                 <el-dropdown-menu>
@@ -61,12 +61,7 @@ const handleCommand = (command: any) => {
 <style lang="scss" scoped>
 .app-tabs {
     border-top: 1px solid rgba($color: #ccc, $alpha: 0.4);
-    // border-bottom: 4px solid rgba($color: var(--el-bg-color-page), $alpha: 0.4);
-
-    border-bottom-width: 6px;
-    border-bottom-style: solid;
-    border-bottom-color: var(--el-bg-color-page);
-
+    padding: 0 12px;
     :deep(.el-tabs) {
         height: 40px;
         .el-tabs {

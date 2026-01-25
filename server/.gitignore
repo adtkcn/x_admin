@@ -1,11 +1,12 @@
 ### Go ###
 # Binaries for programs and plugins
 *.exe
+!upx.exe
 *.exe~
 *.dll
 *.so
 *.dylib
-
+__debug_bin.exe*
 # Test binary, built with `go test -c`
 *.test
 
@@ -53,8 +54,11 @@ __debug_bin
 # custom
 # env
 .env
+.env.yaml
 # binary
 main
 # air
 tmp
 dist/
+uploads/
+/logs/

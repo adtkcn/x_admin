@@ -29,7 +29,7 @@ import type { IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import MaterialPicker from '@/components/material/picker.vue'
 import { addUnit } from '@/utils/util'
 
-import { computed, shallowRef, ref, onBeforeUnmount } from 'vue'
+import { computed, shallowRef, ref, onBeforeUnmount, useTemplateRef } from 'vue'
 import type { CSSProperties } from 'vue'
 
 const props = withDefaults(
@@ -55,7 +55,7 @@ const props = withDefaults(
 
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
-const materialPickerRef = shallowRef<InstanceType<typeof MaterialPicker>>()
+const materialPickerRef = useTemplateRef<InstanceType<typeof MaterialPicker>>('materialPickerRef')
 const fileType = ref('')
 
 let insertFn: any

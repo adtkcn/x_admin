@@ -1,58 +1,58 @@
 package main
 
 import (
-	"embed"
+	"database/sql/driver"
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"strconv"
 	"time"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/middleware"
-	"x_admin/router"
+	"x_admin/routes"
 
-	_ "x_admin/docs"
+	_ "x_admin/app/corn"
+	// _ "x_admin/docs"
 
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
-//go:embed static
-var staticFs embed.FS
+// // go:embed public/static
+// var staticFs embed.FS
 
 // initRouter 初始化router
 func initRouter() *gin.Engine {
+
 	// 初始化gin
-	gin.SetMode(config.Config.GinMode)
+	gin.SetMode(config.AppConfig.GinMode)
 	r := gin.New()
+	pprof.Register(r)
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
-	// 设置静态路径
-	r.Static(config.Config.PublicPrefix, config.Config.UploadDirectory)
+	// 设置上传文件的静态路径路由
+	r.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
 
-	staticHttpFs := http.FS(staticFs)
-	r.GET("/api/static/*filepath", func(c *gin.Context) {
-		filepath := c.Param("filepath")
-		fmt.Println(filepath)
+	// staticHttpFs := http.FS(staticFs)
+	// r.GET("/api/static/*filepath", func(c *gin.Context) {
+	// 	filepath := c.Param("filepath")
+	// 	fmt.Println(filepath)
 
-		c.FileFromFS("static"+filepath, staticHttpFs)
-	})
+	// 	c.FileFromFS("public/static"+filepath, staticHttpFs)
+	// })
+
+	// 静态文件路由
+	r.Static("/api/static", "./public/static")
+
 	// 设置中间件
 	r.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
-	r.GET("/api/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
-		var path = []string{}
-		for _, route := range r.Routes() {
-			// fmt.Printf("%s 127.0.0.1:%v%s\n", route.Method, config.Config.ServerPort, route.Path)
-			path = append(path, route.Path)
-		}
-		response.Result(ctx, response.Success, path)
-	})
 
 	// 演示模式
-	if config.Config.DisallowModify {
+	if config.AppConfig.DisallowModify {
 		r.Use(middleware.ShowMode())
 	}
 	// 特殊异常处理
@@ -61,7 +61,7 @@ func initRouter() *gin.Engine {
 	// 注册路由
 	apiGroup := r.Group("/api")
 
-	router.RegisterGroup(apiGroup)
+	routes.RegisterRoute(apiGroup, r)
 
 	return r
 }
@@ -69,34 +69,42 @@ func initRouter() *gin.Engine {
 // initServer 初始化server
 func initServer(router *gin.Engine) *http.Server {
 	return &http.Server{
-		Addr:           ":" + strconv.Itoa(config.Config.ServerPort),
+		Addr:           ":" + strconv.Itoa(config.AppConfig.Port),
 		Handler:        router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   100 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+		ReadTimeout:    10 * time.Second,  //从连接建立到读取完整请求头和 body的最大时间
+		WriteTimeout:   100 * time.Second, // 从读取完请求到写完响应的最大时间
+		MaxHeaderBytes: 8192,              // 8KB,请求头最大字节数
 	}
 }
 
-//	@title			x_admin文档
-//	@version		0.0.1
+// ValidateValuer 将 NullInt等类型 转换为底层值（int64 或 nil）
+func ValidateValuer(field reflect.Value) interface{} {
+	if valuer, ok := field.Interface().(driver.Valuer); ok {
+		val, _ := valuer.Value()
+		return val // 返回 int64 或 nil
+	}
+	return nil
+}
+
 //	@description	x_admin是一个完整的后台管理系统
 //	@termsOfService	http://x.adtk.cn
 
-//	@contact.name	API Support
+//	@contact.name	xh
 //	@contact.url	http://x.adtk.cn
-//	@contact.email	11675084@qq.com
+//	@contact.email	x@adtk.cn
 
-//	@license.name	MIT License
-//	@license.url	https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
-
-//	@host		localhost:8001
-//	@BasePath	/
-
-//	@securityDefinitions.basic	BasicAuth
-
+// @license.name				MIT License
+// @license.url				https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
+// @BasePath					/
+//
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
+	// 注册自定义类型的验证器
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterCustomTypeFunc(ValidateValuer, core.NullString{}, core.NullInt{}, core.NullFloat{}, core.NullTime{})
+	}
+
 	// 刷新日志缓冲
 	defer core.Logger.Sync()
 	// 程序结束前关闭数据库连接
@@ -107,14 +115,15 @@ func main() {
 
 	// 初始化router
 	router := initRouter()
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	fmt.Println("格式化文档注释:", "swag fmt")
 	fmt.Println("生成文档:", "swag init")
+	// fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.AppConfig.Port)
+	fmt.Printf("文档: http://localhost:%v/api/static/api/index.html\n", config.AppConfig.Port)
 
-	fmt.Printf("文档: http://localhost:%v/swagger/index.html", config.Config.ServerPort)
 	// 初始化server
 	s := initServer(router)
 	// 运行服务
 	log.Fatalln(s.ListenAndServe().Error())
+
 }

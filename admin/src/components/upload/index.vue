@@ -40,13 +40,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, toRaw, shallowRef } from 'vue'
+import { computed, defineComponent, ref, toRaw, useTemplateRef } from 'vue'
+import type { PropType } from 'vue'
 import useUserStore from '@/stores/modules/user'
 import config from '@/config'
 import feedback from '@/utils/feedback'
 import type { ElUpload } from 'element-plus'
 import { RequestCodeEnum } from '@/enums/requestEnums'
 export default defineComponent({
+    name: 'Upload',
     components: {},
     props: {
         // 上传地址
@@ -54,10 +56,9 @@ export default defineComponent({
             type: String,
             default: ''
         },
-        // 上传文件类型
-        type: {
-            type: String,
-            default: 'image'
+        ext: {
+            type: Array as PropType<string[]>,
+            default: () => []
         },
         // 是否支持多选
         multiple: {
@@ -83,7 +84,7 @@ export default defineComponent({
     emits: ['change', 'error'],
     setup(props, { emit }) {
         const userStore = useUserStore()
-        const uploadRefs = shallowRef<InstanceType<typeof ElUpload>>()
+        const uploadRefs = useTemplateRef<InstanceType<typeof ElUpload>>('uploadRefs')
         let action = ''
         if (props.url && typeof props.url === 'string') {
             console.log('props.url', props.url)
@@ -94,7 +95,7 @@ export default defineComponent({
                 action = `${config.baseUrl}${config.urlPrefix}${props.url}`
             }
         } else {
-            action = `${config.baseUrl}${config.urlPrefix}/common/upload/${props.type}`
+            action = `${config.baseUrl}${config.urlPrefix}/common/upload/file`
         }
         const headers = computed(() => ({
             token: userStore.token,
@@ -119,9 +120,9 @@ export default defineComponent({
                 feedback.msgError(response.message)
             }
         }
-        const handleError = (event: any, file: any) => {
+        const handleError = (error: Error, file: any) => {
             feedback.msgError(`${file.name}文件上传失败`)
-            uploadRefs.value?.abort(file)
+            // uploadRefs.value?.abort(file)
             visible.value = false
             emit('change')
             emit('error')
@@ -135,14 +136,15 @@ export default defineComponent({
         }
 
         const getAccept = computed(() => {
-            switch (props.type) {
-                case 'image':
-                    return '.jpg,.png,.gif,.webp,.jpeg,.ico,.bmp'
-                case 'video':
-                    return '.wmv,.avi,.mov,.mp4,.flv,.rmvb'
-                default:
-                    return '*'
+            if (props.ext.length) {
+                // 补充前缀
+                return props.ext
+                    .map((item) => {
+                        return `.${item}`
+                    })
+                    .join(',')
             }
+            return '*'
         })
         return {
             uploadRefs,

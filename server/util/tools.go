@@ -4,14 +4,13 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"io"
 	"math"
 	"math/rand"
+	"mime/multipart"
 	"os"
 	"reflect"
-	"strconv"
-	"strings"
 	"time"
-	"x_admin/config"
 
 	"github.com/google/uuid"
 )
@@ -24,6 +23,11 @@ var (
 // toolsUtil 常用工具集合类
 type toolsUtil struct{}
 
+// Random 返回随机数
+func (tu toolsUtil) Random(min, max int) int {
+	return rand.Intn(max-min) + min
+}
+
 // RandomString 返回随机字符串
 func (tu toolsUtil) RandomString(length int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -34,9 +38,13 @@ func (tu toolsUtil) RandomString(length int) string {
 	return string(byteList)
 }
 
-// MakeUuid 制作UUID
-func (tu toolsUtil) MakeUuid() string {
-	return strings.ReplaceAll(uuid.New().String(), "-", "")
+// MakeUuidV7 制作UUID v7
+func (tu toolsUtil) MakeUuidV7() string {
+	v7, err := uuid.NewV7()
+	if err != nil {
+		return ""
+	}
+	return v7.String()
 }
 
 // MakeMd5 制作MD5
@@ -45,12 +53,18 @@ func (tu toolsUtil) MakeMd5(data string) string {
 	return hex.EncodeToString(sum[:])
 }
 
-// MakeToken 生成唯一Token
-func (tu toolsUtil) MakeToken() string {
-	ms := time.Now().UnixMilli()
-	token := tu.MakeMd5(tu.MakeUuid() + strconv.FormatInt(ms, 10) + tu.RandomString(8))
-	tokenSecret := token + config.Config.Secret
-	return tu.MakeMd5(tokenSecret) + tu.RandomString(6)
+// GetFileMD5 获取文件MD5
+func (tu toolsUtil) GetFileMD5(file *multipart.FileHeader) (string, error) {
+	f, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	hash := md5.New()
+	if _, err := io.Copy(hash, f); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
 // Contains 判断src是否包含elem元素
@@ -92,6 +106,24 @@ func (tu toolsUtil) ObjToJson(data interface{}) (res string, err error) {
 
 // IsFileExist 判断文件或目录是否存在
 func (tu toolsUtil) IsFileExist(path string) bool {
-	_, err := os.Stat(path)
+	var root, err = os.OpenRoot(".")
+	if err != nil {
+		return false
+	}
+	defer root.Close()
+	_, err = root.Stat(path)
 	return err == nil || os.IsExist(err)
+}
+
+// 创建文件夹
+func (tu toolsUtil) CreateDir(path string) error {
+	var root, err = os.OpenRoot(".")
+	if err != nil {
+		return err
+	}
+	defer root.Close()
+	return root.Mkdir(path, 0755)
+}
+func (tu toolsUtil) WriteFile(path string, data []byte) error {
+	return os.WriteFile(path, data, 0644)
 }

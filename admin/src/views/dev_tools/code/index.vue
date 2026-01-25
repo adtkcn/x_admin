@@ -1,6 +1,6 @@
 <template>
     <div class="code-generation">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
                 <el-form-item label="表名称">
                     <el-input v-model="formData.tableName" clearable @keyup.enter="resetPage" />
@@ -14,7 +14,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never" v-loading="pager.loading">
+        <el-card class="border-none! mt-4" shadow="never" v-loading="pager.loading">
             <div class="flex">
                 <data-table
                     v-perms="['admin:gen:importTable']"
@@ -73,7 +73,7 @@
                                 <el-button type="primary" link v-perms="['admin:gen:editTable']">
                                     <router-link
                                         :to="{
-                                            path: '/dev_tools/dev_tools/code/edit',
+                                            path: 'code/edit',
                                             query: {
                                                 id: row.id
                                             }
@@ -107,14 +107,14 @@
                                             >
                                                 <el-dropdown-item command="generate">
                                                     <el-button type="primary" link>
-                                                        生成代码
+                                                        下载代码
                                                     </el-button>
                                                 </el-dropdown-item>
                                             </div>
                                             <div v-perms="['admin:gen:syncTable']">
                                                 <el-dropdown-item command="sync">
                                                     <el-button type="primary" link>
-                                                        同步
+                                                        更新
                                                     </el-button>
                                                 </el-dropdown-item>
                                             </div>
@@ -135,7 +135,7 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <code-preview
+        <CodePreview
             v-if="previewState.show"
             v-model="previewState.show"
             :code="previewState.code"
@@ -144,7 +144,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onActivated } from 'vue'
+import { ref, reactive, onActivated, defineAsyncComponent } from 'vue'
 import {
     generateTable,
     syncColumn,
@@ -153,8 +153,8 @@ import {
     downloadCode
 } from '@/api/tools/code'
 import { usePaging } from '@/hooks/usePaging'
-import DataTable from '../components/data-table.vue'
-import CodePreview from '../components/code-preview.vue'
+const DataTable = defineAsyncComponent(() => import('./components/data-table.vue'))
+const CodePreview = defineAsyncComponent(() => import('./components/code-preview.vue'))
 import feedback from '@/utils/feedback'
 import { streamFileDownload } from '@/utils/file'
 defineOptions({
@@ -182,7 +182,7 @@ const handleSelectionChange = (val: any[]) => {
 }
 
 const handleSync = async (id: number) => {
-    await feedback.confirm('确定要同步表结构？')
+    await feedback.confirm('确定要更新表结构？从数据库拉取最新表结构')
     await syncColumn({ id })
     feedback.msgSuccess('操作成功')
 }

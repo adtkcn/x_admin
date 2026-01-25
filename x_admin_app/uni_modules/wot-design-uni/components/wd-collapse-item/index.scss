@@ -39,6 +39,14 @@
     padding: $-collapse-header-padding;
     overflow: hidden;
     user-select: none;
+
+    @include when(expanded) {
+      @include halfPixelBorder('bottom');
+    }
+
+    @include when(custom) {
+      display: block;
+    }
   }
 
   @include e(title) {
@@ -60,7 +68,6 @@
 
   @include e(wrapper) {
     position: relative;
-    transition: height 0.3s ease-in-out;
     overflow: hidden;
     will-change: height;
   }

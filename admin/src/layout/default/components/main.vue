@@ -1,14 +1,10 @@
 <template>
-    <main class="main-wrap h-full bg-page">
-        <el-scrollbar>
-            <div class="p-4">
-                <router-view v-if="isRouteShow" v-slot="{ Component, route }">
-                    <keep-alive :include="includeList" :max="20">
-                        <component :is="Component" :key="route.fullPath" />
-                    </keep-alive>
-                </router-view>
-            </div>
-        </el-scrollbar>
+    <main class="h-full bg-page pl-3 pr-3 pb-3 pt-1 box-border overflow-auto">
+        <router-view v-if="isRouteShow" v-slot="{ Component, route }">
+            <keep-alive :include="includeList" :max="20">
+                <component :is="Component" :key="route.fullPath" />
+            </keep-alive>
+        </router-view>
     </main>
 </template>
 
@@ -19,7 +15,7 @@ import useAppStore from '@/stores/modules/app'
 import useTabsStore from '@/stores/modules/multipleTabs'
 import useSettingStore from '@/stores/modules/setting'
 defineOptions({
-    name: 'LayoutMain'
+    name: 'LayoutDefaultMain'
 })
 
 const appStore = useAppStore()
@@ -28,5 +24,3 @@ const settingStore = useSettingStore()
 const isRouteShow = computed(() => appStore.isRouteShow)
 const includeList = computed(() => (settingStore.openMultipleTabs ? tabsStore.getCacheTabList : []))
 </script>
-
-<style></style>

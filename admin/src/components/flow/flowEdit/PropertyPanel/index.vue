@@ -34,6 +34,7 @@ import UserTask from './UserTask.vue'
 import FieldAuth from './FieldAuth.vue'
 import Gateway from './Gateway.vue'
 import type { NodeType, PropertiesType, FormFieldListType, FieldListType } from './property.type'
+
 defineOptions({
     name: 'PropertyPanel'
 })
@@ -71,9 +72,9 @@ const open = (newNode: NodeType, newFieldList: FormFieldListType[]) => {
 
     fieldList.value = newFieldList.map((item) => {
         return {
-            id: item?.field?.id,
-            label: item?.field?.options?.label,
-            auth: newNode?.properties?.fieldAuth?.[item?.field?.id] || 1
+            id: item?.id,
+            name: item?.name,
+            auth: newNode?.properties?.fieldAuth?.[item?.id] || 1
         }
     })
     drawerVisible.value = true

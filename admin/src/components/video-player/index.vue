@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, shallowRef } from 'vue'
+import { reactive, useTemplateRef } from 'vue'
 import 'vue3-video-play/dist/style.css'
 import { videoPlay } from 'vue3-video-play/dist/index.mjs'
 const props = defineProps({
@@ -26,17 +26,17 @@ const props = defineProps({
     poster: String
 })
 
-const playerRef = shallowRef()
+const playerRef = useTemplateRef('playerRef')
 const options = reactive({
     color: 'var(--el-color-primary)', //主题色
     muted: false, //静音
     webFullScreen: false,
     speedRate: ['0.75', '1.0', '1.25', '1.5', '2.0'], //播放倍速
-    autoPlay: true, //自动播放
+    autoPlay: false, //自动播放
     loop: false, //循环播放
     mirror: false, //镜像画面
     ligthOff: false, //关灯模式
-    volume: 0.3, //默认音量大小
+    volume: 1, //默认音量大小
     control: true, //是否显示控制器
     title: '', //视频名称
     poster: '', //封面
@@ -59,7 +59,7 @@ const onPause = (event: any) => {
 }
 
 const onTimeupdate = (event: any) => {
-    console.log(event, '时间更新')
+    // console.log(event, '时间更新')
 }
 const onCanplay = (event: any) => {
     console.log(event, '可以播放')

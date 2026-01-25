@@ -1,13 +1,19 @@
 <template>
-    <div class="ov w-[100%]">
-        <highlightjs autodetect :code="code" :language="lang" />
-    </div>
+    <highlightjs
+        style="width: 100%; height: 100%; overflow: auto"
+        autodetect
+        :code="code"
+        :language="lang"
+    />
 </template>
 <script lang="ts" setup>
 import 'highlight.js/styles/monokai.min.css'
 import hljs from 'highlight.js/lib/common'
 import javascript from 'highlight.js/lib/languages/javascript'
 import go from 'highlight.js/lib/languages/go'
+defineOptions({
+    name: 'HighlightCode'
+})
 
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('go', go)

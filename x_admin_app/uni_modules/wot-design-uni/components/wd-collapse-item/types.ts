@@ -1,14 +1,22 @@
 import type { ComponentPublicInstance, ExtractPropTypes, PropType } from 'vue'
-import { baseProps, makeBooleanProp, makeRequiredProp } from '../common/props'
+import { baseProps, makeBooleanProp, makeRequiredProp, makeStringProp } from '../common/props'
 
-export type CollapseItemBeforeExpand = (name: string) => void
+export type CollapseItemBeforeExpand = (name: string) => boolean | Promise<unknown>
 
 export const collapseItemProps = {
   ...baseProps,
   /**
-   * 折叠栏的标题
+   * 自定义折叠栏内容容器样式类名
    */
-  title: String,
+  customBodyClass: makeStringProp(''),
+  /**
+   * 自定义折叠栏内容容器样式
+   */
+  customBodyStyle: makeStringProp(''),
+  /**
+   * 折叠栏的标题, 可通过 slot 传递自定义内容
+   */
+  title: makeStringProp(''),
   /**
    * 禁用折叠栏
    */
@@ -31,6 +39,10 @@ export type CollapseItemExpose = {
    * @returns boolean
    */
   getExpanded: () => boolean
+  /**
+   * 更新展开状态
+   */
+  updateExpand: () => Promise<void>
 }
 
 export type CollapseItemInstance = ComponentPublicInstance<CollapseItemProps, CollapseItemExpose>

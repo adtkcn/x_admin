@@ -1,6 +1,6 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <!-- <el-form-item label="模板" prop="templateId">
                     <el-input v-model="queryParams.templateId" />
@@ -15,7 +15,11 @@
                     <el-input v-model="queryParams.flowName" />
                 </el-form-item>
                 <el-form-item label="流程分类" prop="flowGroup" class="w-[280px]">
-                    <el-select v-model="queryParams.flowGroup" clearable>
+                    <el-select
+                        v-model="queryParams.flowGroup"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.flow_group"
@@ -25,27 +29,14 @@
                         />
                     </el-select>
                 </el-form-item>
-                <!-- <el-form-item label="流程描述" prop="flowRemark">
-                    <el-input v-model="queryParams.flowRemark" />
-                </el-form-item> -->
-                <!-- <el-form-item label="状态" prop="status">
-                    <el-select v-model="queryParams.status" clearable>
-                        <el-option label="全部" value="" />
-                        <el-option
-                            v-for="(item, index) in dictData.flow_apply_status"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
-                        />
-                    </el-select>
-                </el-form-item> -->
+
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="申请人昵称" prop="applyUserNickname" min-width="100" />
                 <el-table-column label="流程名称" prop="flowName" min-width="100" />
@@ -101,7 +92,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import {
     flow_apply_delete,
     flow_apply_lists,
@@ -114,9 +105,8 @@ import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 
-import ApplySubmit from './components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
-
+const ApplySubmit = defineAsyncComponent(() => import('./components/apply_submit.vue'))
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 defineOptions({
     name: 'flow_apply'
 })
@@ -190,5 +180,13 @@ const SaveViewForm = (id, form_data) => {
             })
     })
 }
-getLists()
+
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
 </script>

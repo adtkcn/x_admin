@@ -59,7 +59,7 @@ import { computed, getCurrentInstance, onMounted, ref } from 'vue'
 import { getRect, isArray, isDef, isNumber, uuid } from '../common/util'
 import { useTouch } from '../composables/useTouch'
 import { watch } from 'vue'
-import { sliderProps } from './types'
+import { sliderProps, type SliderExpose } from './types'
 
 const props = defineProps(sliderProps)
 const emit = defineEmits(['dragstart', 'dragmove', 'dragend', 'update:modelValue'])
@@ -76,8 +76,7 @@ const touchLeft = useTouch()
 const touchRight = useTouch()
 
 const showRight = ref<boolean>(false)
-const barStyle = ref<string>('width: 0; height: 3px')
-const barHeight = ref<string>('3px')
+const barStyle = ref<string>('')
 const leftNewValue = ref<number>(0)
 const rightNewValue = ref<number>(0)
 const rightBarPercent = ref<number>(0)
@@ -137,21 +136,21 @@ watch(
 
 watch(
   () => props.modelValue,
-  (newValue, oldValue) => {
+  (newValue) => {
     // 类型校验，支持所有值(除null、undefined。undefined建议统一写成void (0)防止全局undefined被覆盖)
     if (newValue === null || newValue === undefined) {
-      emit('update:modelValue', oldValue)
+      emit('update:modelValue', currentValue.value)
       console.warn('[wot design] warning(wd-slider): value can nott be null or undefined')
     } else if (isArray(newValue) && newValue.length !== 2) {
       console.warn('[wot design] warning(wd-slider): value must be dyadic array')
     } else if (!isNumber(newValue) && !isArray(newValue)) {
-      emit('update:modelValue', oldValue)
+      emit('update:modelValue', currentValue.value)
       console.warn('[wot design] warning(wd-slider): value must be dyadic array Or Number')
     }
-    currentValue.value = newValue
     // 动态传值后修改
     if (isArray(newValue)) {
-      if (oldValue && isArray(oldValue) && equal(newValue, oldValue)) return
+      if (currentValue.value && isArray(currentValue.value) && equal(newValue, currentValue.value)) return
+      currentValue.value = newValue
       showRight.value = true
       if (leftBarPercent.value <= rightBarPercent.value) {
         leftBarSlider(newValue[0])
@@ -161,7 +160,8 @@ watch(
         rightBarSlider(newValue[0])
       }
     } else {
-      if (newValue === oldValue) return
+      if (newValue === currentValue.value) return
+      currentValue.value = newValue
       leftBarSlider(newValue)
     }
   },
@@ -196,13 +196,20 @@ const buttonRightStyle = computed(() => {
 })
 
 onMounted(() => {
+  initSlider()
+})
+
+/**
+ * 初始化slider宽度
+ */
+function initSlider() {
   getRect(`#${sliderId.value}`, false, proxy).then((data) => {
     // trackWidth: 轨道全长
     trackWidth.value = Number(data.width)
     // trackLeft: 轨道距离左侧的距离
     trackLeft.value = Number(data.left)
   })
-})
+}
 
 function onTouchStart(event: any) {
   const { disabled, modelValue } = props
@@ -224,6 +231,7 @@ function onTouchMove(event: any) {
   // 移动间距 deltaX 就是向左(-)向右(+)
   const diff = (touchLeft.deltaX.value / trackWidth.value) * (maxValue.value - minValue.value)
   newValue.value = startValue.value + diff
+
   // 左滑轮滑动控制
   leftBarSlider(newValue.value)
   emit('dragmove', {
@@ -290,7 +298,7 @@ function leftBarSlider(value: number) {
     emit('update:modelValue', value)
     leftNewValue.value = value
     leftBarPercent.value = percent
-    barStyle.value = `width: ${percent}%; height: ${barHeight.value};`
+    barStyle.value = `width: ${percent}%; `
   } else {
     leftNewValue.value = value
     leftBarPercent.value = percent
@@ -304,7 +312,7 @@ function styleControl() {
   const barLeft =
     leftBarPercent.value < rightBarPercent.value ? [leftBarPercent.value, rightBarPercent.value] : [rightBarPercent.value, leftBarPercent.value]
   // 通过左右滑轮的间距控制 激活条宽度 barLeft[1] - barLeft[0]
-  const barStyleTemp = `width: ${barLeft[1] - barLeft[0]}%; height: ${barHeight.value}; left: ${barLeft[0]}%`
+  const barStyleTemp = `width: ${barLeft[1] - barLeft[0]}%;  left: ${barLeft[0]}%`
   currentValue.value =
     leftNewValue.value < rightNewValue.value ? [leftNewValue.value, rightNewValue.value] : [rightNewValue.value, leftNewValue.value]
   barStyle.value = barStyleTemp
@@ -338,8 +346,12 @@ function calcBarPercent() {
   // 把 value 转换成百分比
   const percent = formatPercent(value)
   leftBarPercent.value = percent
-  barStyle.value = `width: ${percent}%; height: ${barHeight.value};`
+  barStyle.value = `width: ${percent}%; `
 }
+
+defineExpose<SliderExpose>({
+  initSlider
+})
 </script>
 <style lang="scss" scoped>
 @import './index.scss';

@@ -1,12 +1,16 @@
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <el-form-item class="w-[280px]" label="流程名称" prop="flowName">
                     <el-input v-model="queryParams.flowName" />
                 </el-form-item>
                 <el-form-item class="w-[280px]" label="流程分类" prop="flowGroup">
-                    <el-select v-model="queryParams.flowGroup" clearable>
+                    <el-select
+                        v-model="queryParams.flowGroup"
+                        clearable
+                        :empty-values="[null, undefined]"
+                    >
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in dictData.flow_group"
@@ -25,7 +29,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <div>
                 <el-button
                     v-perms="['admin:flow_template:add']"
@@ -87,7 +91,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive } from 'vue'
+import { ref, shallowRef, reactive, defineAsyncComponent } from 'vue'
 import {
     flow_template_delete,
     flow_template_lists,
@@ -98,7 +102,7 @@ import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
-import Approver from '@/components/flow/Approver.vue'
+const Approver = defineAsyncComponent(() => import('@/components/flow/Approver.vue'))
 
 defineOptions({
     name: 'flow_template'

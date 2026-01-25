@@ -1,7 +1,7 @@
 <!-- 代办 -->
 <template>
     <div class="index-lists">
-        <el-card class="!border-none" shadow="never">
+        <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <el-form-item label="申请人昵称" prop="applyUserNickname">
                     <el-input v-model="queryParams.applyUserNickname" />
@@ -13,7 +13,7 @@
                 </el-form-item>
             </el-form>
         </el-card>
-        <el-card class="!border-none mt-4" shadow="never">
+        <el-card class="border-none! mt-4" shadow="never">
             <!-- <div></div> -->
             <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
                 <el-table-column label="申请人" prop="applyUserNickname" min-width="100" />
@@ -69,7 +69,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { shallowRef, reactive } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
 import type { type_flow_history } from '@/api/flow/flow_history'
@@ -78,8 +78,11 @@ import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import useUserStore from '@/stores/modules/user'
 import ApplySubmit from './components/apply_submit.vue'
-import ViewForm from './components/ViewForm.vue'
-import Back from './components/Back.vue'
+// import ViewForm from './components/ViewForm.vue'
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
+// import Back from './components/Back.vue'
+const Back = defineAsyncComponent(() => import('./components/Back.vue'))
+
 const userStore = useUserStore()
 
 defineOptions({
@@ -106,12 +109,12 @@ const { dictData } = useDictData<{
 // const handleOpen = async (row) => {
 //     ApproveRef.value?.open(toRaw(row))
 // }
-const OpenViewForm = async (row: any) => {
-    const applyDetail = await flow_apply_detail({ id: row.applyId })
+const OpenViewForm = async (history_row: type_flow_history) => {
+    const applyDetail = await flow_apply_detail({ id: history_row.applyId })
 
     let form_data = {}
     try {
-        form_data = JSON.parse(row.formValue)
+        form_data = JSON.parse(history_row.formValue)
     } catch (error) {
         // 解析失败
     }
@@ -124,7 +127,7 @@ const OpenViewForm = async (row: any) => {
 
     console.log(applyDetail, form_data, form_json)
 
-    viewFormRef.value?.open(applyDetail, row, form_json, form_data)
+    viewFormRef.value?.open(applyDetail, history_row, form_json, form_data)
 }
 const SaveViewForm = (historyId, form_data) => {
     return new Promise((resolve, reject) => {
@@ -161,7 +164,15 @@ const closeBack = () => {
     console.log('closeBack')
 
     viewFormRef.value?.closeFn()
+    getLists()
 }
 
-getLists()
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
 </script>

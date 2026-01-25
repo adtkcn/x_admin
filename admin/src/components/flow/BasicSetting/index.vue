@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { useDictData } from '@/hooks/useDictOptions'
 defineOptions({
@@ -86,7 +86,7 @@ onMounted(() => {
         Object.assign(formData.value, props.conf)
     }
 })
-const elFormRef = shallowRef<FormInstance>()
+const elFormRef = useTemplateRef<FormInstance>('elFormRef')
 function getData() {
     return new Promise<{
         formData: any

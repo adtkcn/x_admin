@@ -1,6 +1,6 @@
 import { v1 as uuid_v1 } from "uuid";
-import type { LogWithError, IErrorEvent,ISlow, LogWithEnv } from "../types";
- 
+import type { LogWithError, IErrorEvent, LogWithEnv } from "../types";
+
 type Uid = string | number;
 
 type Props = {
@@ -19,6 +19,8 @@ class Base {
 
   private MessageList: any[] = [];
   private timer: number = 0;
+  private lastTimeStamp: number = Date.now(); //上次上报时间戳
+  private diffTime: number = 1000 * 10; // 上报间隔
 
   constructor(props: Props, platform: IErrorEvent) {
     if (!props) {
@@ -44,45 +46,32 @@ class Base {
     this.SetUid();
     this.getLocalMessage();
 
-    
     // 监听错误
-    platform.listen((params: LogWithError|ISlow) => {
-      console.log("listenCallback", params);
-      if(params.Type=='onloadTime'){
-        let slow=params as ISlow;
-        this.uploadSlow(slow);
-      }else{
-        this.Push(params);
-      }
-   
+    platform.listen((params: LogWithError) => {
+      this.Push(params);
     });
-
+    // 定时检查发送一次
     this.timer = setInterval(() => {
-      this.upload();
-    }, 1000 * 10);
+      if (Date.now() - this.lastTimeStamp >= this.diffTime) {
+        this.upload();
+      }
+    }, 2000);
   }
 
   // 设置用户id
   public SetUid(uid?: Uid) {
     if (uid) {
-      this.Uid =String(uid) ;
+      this.Uid = String(uid);
       this.platform?.setCache("x_err_uid", this.Uid);
-
     } else {
       const u_id = this.platform?.getCache("x_err_uid");
       if (u_id) {
         this.Uid = u_id;
       }
     }
-    this.initEnv();
+    this.uploadInfo();
   }
-  // 初始化环境信息并上传
-  private initEnv() {
-    let envInfo = this.platform?.getEnvInfo();
-    if (envInfo) {
-      this.uploadInfo(envInfo);
-    }
-  }
+
   // 设置错误ID
   private setClientID() {
     const client_id = this.platform?.getCache("x_err_client_id");
@@ -103,11 +92,12 @@ class Base {
     }
   }
   // 记录错误，超出5条时立即上报，否则缓存到本地(等待定时器上报)
-  public Push=(data: LogWithError) =>{
+  public Push = (data: LogWithError) => {
     this.MessageList.push({
       ...data,
       ProjectKey: this.Pid,
       ClientId: this.client_id,
+      UserId: this.Uid,
     });
 
     if (this.MessageList.length > 5) {
@@ -115,8 +105,8 @@ class Base {
     } else {
       this.platform?.setCache("x_err_message_list", this.MessageList);
     }
-  }
-  public uploadInfo=(envInfo: LogWithEnv) =>{
+  };
+  public uploadInfo = () => {
     if (!this.Dns) return; //未设置Dns服务器不上传
 
     try {
@@ -125,31 +115,14 @@ class Base {
           ProjectKey: this.Pid,
           ClientId: this.client_id,
           UserId: this.Uid,
-          Width: envInfo.ScreenWidth,
-          Height: envInfo.ScreenHeight,
+          // Width: envInfo.ScreenWidth,
+          // Height: envInfo.ScreenHeight,
         })
         .catch((err: any) => {
           // 上传失败
         });
     } catch (error) {}
-  }
-  public uploadSlow=(envInfo: ISlow) =>{
-    if (!this.Dns) return; //未设置Dns服务器不上传
-
-    try {
-      this.platform
-        ?.upload(this.Dns + `/admin/monitor_slow/add`, {
-          ProjectKey: this.Pid,
-          ClientId: this.client_id,
-          UserId: this.Uid,
-          Path: envInfo.Path,
-          Time: envInfo.Time,
-        })
-        .catch((err: any) => {
-          // 上传失败
-        });
-    } catch (error) {}
-  }
+  };
 
   // 上传文件
   public upload() {
@@ -157,14 +130,17 @@ class Base {
     if (!this.MessageList.length) {
       return;
     }
+    this.lastTimeStamp = Date.now();
     try {
       this.platform
         ?.upload(this.Dns + `/admin/monitor_error/add`, this.MessageList)
         .catch((err: any) => {
           // 上传失败
+        })
+        .then(() => {
+          this.MessageList = [];
+          this.platform?.delCache("x_err_message_list");
         });
-      this.MessageList = [];
-      this.platform?.delCache("x_err_message_list");
     } catch (error) {}
   }
   public unListen() {

@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -14,6 +15,7 @@ var StringUtil = stringUtil{}
 // arrayUtil 数组工具类
 type stringUtil struct{}
 
+// 转换为蛇形命名
 func (su stringUtil) ToSnakeCase(s string) string {
 	buf := bytes.Buffer{}
 	for i, r := range s {
@@ -42,10 +44,19 @@ func (su stringUtil) ToCamelCase(s string) string {
 
 // 转换为大驼峰命名
 func (su stringUtil) ToUpperCamelCase(s string) string {
+	if s == "id" {
+		return "ID"
+	}
 	words := strings.Split(s, "_")
 	c := cases.Title(language.Und, cases.NoLower)
 	for i := 0; i < len(words); i++ {
 		words[i] = c.String(words[i])
 	}
 	return strings.Join(words, "")
+}
+
+// 检查字符串只能包含字母、数字和下划线
+func (su stringUtil) CheckSafeString(s string) bool {
+	reg := regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
+	return !reg.MatchString(s)
 }

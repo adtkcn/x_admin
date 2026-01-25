@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "build": "hb-cli",
+    "build:prod": "hb-cli --mode prod"
+  },
   "dependencies": {
     "bignumber.js": "^9.1.2",
     "crypto-js": "^4.2.0",

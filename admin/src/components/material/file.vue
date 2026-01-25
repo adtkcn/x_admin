@@ -3,18 +3,27 @@
         <div class="file-item relative" :style="{ height: fileSize, width: fileSize }">
             <el-image
                 class="image"
-                v-if="type == 'image'"
+                v-if="fileType == 'image'"
                 fit="contain"
-                loading="lazy"
+                lazy
                 :src="uri"
             ></el-image>
-            <video class="video" v-else-if="type == 'video'" :src="uri"></video>
+            <video class="video" v-else-if="fileType == 'video'" :src="uri"></video>
             <div
-                v-if="type == 'video'"
-                class="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] rounded-full w-5 h-5 flex justify-center items-center bg-[rgba(0,0,0,0.3)]"
+                v-if="fileType == 'video'"
+                class="absolute left-1/2 top-1/2 rounded-full w-[30px] h-[30px] flex justify-center items-center bg-[rgba(0,0,0,0.3)]"
+                style="transform: translate(-50%, -50%)"
             >
                 <icon name="el-icon-CaretRight" :size="18" color="#fff" />
             </div>
+            <div
+                v-if="fileType == 'audio'"
+                class="absolute left-1/2 top-1/2 rounded-full w-[30px] h-[30px] flex justify-center items-center bg-[rgba(0,0,0,0.3)]"
+                style="transform: translate(-50%, -50%)"
+            >
+                <icon name="el-icon-CaretRight" :size="16" color="#fff" />
+            </div>
+
             <slot></slot>
         </div>
     </div>
@@ -22,6 +31,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { GetFileType } from '@/enums/fileEnums'
+
 export default defineComponent({
     props: {
         // 图片地址
@@ -34,12 +45,19 @@ export default defineComponent({
             default: '100px'
         },
         // 文件类型
-        type: {
+        ext: {
             type: String,
-            default: 'image'
+            default: ''
         }
     },
-    emits: ['close']
+    emits: ['close'],
+    computed: {
+        fileType() {
+            const fileType = GetFileType(this.uri)
+
+            return fileType
+        }
+    }
 })
 </script>
 

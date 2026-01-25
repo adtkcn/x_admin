@@ -1,7 +1,7 @@
 <template>
     <div class="workbench">
         <div class="md:flex">
-            <el-card class="!border-none mb-4 md:mr-4" shadow="never">
+            <el-card class="border-none! mb-4 md:mr-4" shadow="never">
                 <template #header>
                     <span class="card-title">版本信息</span>
                 </template>
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </el-card>
-            <el-card class="!border-none mb-4 flex-1" shadow="never">
+            <el-card class="border-none! mb-4 flex-1" shadow="never">
                 <template #header>
                     <div>
                         <span class="card-title">今日数据</span>
@@ -75,14 +75,16 @@
         </div>
 
         <div class="md:flex">
-            <el-card class="flex-1 !border-none md:mr-4 mb-4" shadow="never">
+            <el-card class="flex-1 border-none! mb-4" shadow="never">
                 <template #header>
                     <span>访问量趋势图</span>
                 </template>
+
                 <div>
-                    <v-charts
-                        style="height: 350px"
-                        :option="workbenchData.visitorOption"
+                    <echart-component
+                        ref="visitorChartRef"
+                        height="350px"
+                        :option="visitorOption"
                         :autoresize="true"
                     />
                 </div>
@@ -92,10 +94,16 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, onDeactivated, onActivated, onMounted, useTemplateRef, onUnmounted } from 'vue'
 import { getWorkbench } from '@/api/app'
-import '@/utils/echart'
-import vCharts from 'vue-echarts'
+
+// import feedback from '@/utils/feedback'
+import { useWebSocket } from '@vueuse/core'
+import useUserStore from '@/stores/modules/user'
+
+import type { ECOption } from '@/utils/echart'
+
+const userStore = useUserStore()
 defineOptions({
     name: 'workbench'
 })
@@ -115,37 +123,36 @@ const workbenchData: any = reactive({
     today: {}, // 今日数据
 
     visitor: [], // 访问量
-    article: [], // 文章阅读量
-
-    visitorOption: {
-        xAxis: {
-            type: 'category',
-            data: [0]
-        },
-        yAxis: {
-            type: 'value'
-        },
-        legend: {
-            data: ['访问量']
-        },
-        itemStyle: {
-            // 点的颜色。
-            color: 'red'
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        series: [
-            {
-                name: '访问量',
-                data: [0],
-                type: 'line',
-                smooth: true
-            }
-        ]
-    }
+    article: [] // 文章阅读量
 })
-
+const visitorOption = {
+    xAxis: {
+        type: 'category',
+        data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    legend: {
+        data: ['访问量']
+    },
+    itemStyle: {
+        // 点的颜色。
+        color: 'red'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    series: [
+        {
+            name: '访问量',
+            data: [],
+            type: 'line',
+            smooth: true
+        }
+    ]
+}
+const visitorChartRef = useTemplateRef('visitorChartRef')
 // 获取工作台主页数据
 const getData = async () => {
     const res = await getWorkbench()
@@ -153,16 +160,75 @@ const getData = async () => {
     workbenchData.today = res.today
     workbenchData.visitor = res.visitor
 
-    // 清空echarts 数据
-    workbenchData.visitorOption.xAxis.data = []
-    workbenchData.visitorOption.series[0].data = []
-
     // 写入从后台拿来的数据
-    workbenchData.visitorOption.xAxis.data = res.visitor.date
-    workbenchData.visitorOption.series[0].data = res.visitor.list
+    visitorOption.xAxis.data = res.visitor.date
+    visitorOption.series[0].data = res.visitor.list
+    visitorChartRef.value?.setOption(visitorOption as ECOption)
 }
 
-getData()
+function updateChart(val) {
+    visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
+    visitorOption.series[0].data.push(val)
+
+    // 保持数据长度在10个
+    if (visitorOption.xAxis.data.length > 20) {
+        visitorOption.xAxis.data.shift()
+        visitorOption.series[0].data.shift()
+    }
+    visitorChartRef.value?.setOption(visitorOption as ECOption)
+}
+
+// 定义你的消息类型
+interface ChatMessage {
+    onlineCount: number
+}
+const ws = useWebSocket(`ws://localhost:8080/api/ws?token=${userStore.token}&room=room1`, {
+    heartbeat: {
+        message: 'ping',
+        interval: 10000,
+        pongTimeout: 1000
+    },
+    autoReconnect: true,
+
+    onMessage(ws, e) {
+        if (e.data === 'pong') {
+            console.log('Received pong message')
+            return
+        }
+        try {
+            const data = JSON.parse(e.data) as ChatMessage
+            updateChart(data.onlineCount)
+        } catch (error) {
+            console.error('JSON parse error:', error)
+            return
+        }
+    },
+    onError: (ws, event) => {
+        console.error('WebSocket error:', event)
+    },
+
+    onDisconnected: (ws, event) => {
+        console.log('WebSocket closed:', event)
+    }
+})
+// setInterval(() => {
+//     ws.send('ping')
+// }, 1000)
+onActivated(() => {
+    console.log('onActivated')
+})
+onDeactivated(() => {
+    // ws.close()
+})
+onMounted(() => {
+    console.log('onMounted')
+    // ws.connect()
+    getData()
+    // updateChart()
+})
+onUnmounted(() => {
+    console.log('onUnmounted')
+})
 </script>
 
 <style lang="scss" scoped></style>

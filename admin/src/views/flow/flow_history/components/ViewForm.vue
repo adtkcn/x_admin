@@ -8,13 +8,20 @@
         draggable
         :title="applyDetail.flowName"
     >
-        <v-form-render
+        <FormCreate
+            v-if="dialogVisible"
+            :rule="formJson"
+            v-model="formData"
+            v-model:api="api"
+            :option="options"
+        ></FormCreate>
+        <!-- <v-form-render
             :form-json="formJson"
             :form-data="formData"
             :option-data="optionData"
             ref="vFormRef"
         >
-        </v-form-render>
+        </v-form-render> -->
 
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
@@ -28,16 +35,23 @@
     </el-dialog>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
-import 'vform3-builds/dist/designer.style.css' //引入VForm3样式
+<script setup lang="ts">
+import { ref, defineAsyncComponent } from 'vue'
+const FormCreate = defineAsyncComponent(() => import('@form-create/element-ui'))
+import type { Api } from '@form-create/element-ui'
 
 // import { flow_apply_detail } from '@/api/flow/flow_apply'
 
-const formJson = ref({})
-const formData = ref({})
-const optionData = reactive({})
-const vFormRef = ref(null)
+const api = ref<Api>(null)
+// 表单组件配置
+const formJson = ref([])
+// 表单数据
+const formData = ref<Record<string, any>>({})
+const options = ref({
+    submitBtn: {
+        show: false
+    }
+})
 
 const dialogVisible = ref(false)
 const applyDetail = ref({
@@ -67,16 +81,16 @@ function open(row, history, form_json, form_data) {
 }
 
 function disableWidgets(widgetNames) {
-    vFormRef.value.disableWidgets(widgetNames)
+    // vFormRef.value.disableWidgets(widgetNames)
 }
 function hideWidgets(widgetNames) {
-    vFormRef.value.hideWidgets(widgetNames)
+    // vFormRef.value.hideWidgets(widgetNames)
 }
 function closeFn() {
     dialogVisible.value = false
     applyDetail.value = { flowName: '' }
     formData.value = {}
-    formJson.value = {}
+    formJson.value = []
     historyDetail.value = {
         id: null,
         passStatus: null
@@ -86,10 +100,11 @@ function onBack() {
     emit('back', historyDetail.value)
 }
 function onSubmit() {
-    vFormRef.value.getFormData().then((formData) => {
-        console.log('formData', formData)
+    console.log('formData', formData.value)
+    api.value.validate().then(() => {
+        //todo 验证通过
         props
-            .save(historyDetail.value?.id, formData)
+            .save(historyDetail.value?.id, formData.value)
             .then(() => {
                 closeFn()
             })

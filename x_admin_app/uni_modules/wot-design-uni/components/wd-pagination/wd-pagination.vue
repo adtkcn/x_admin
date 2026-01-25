@@ -5,8 +5,7 @@
         <text v-if="!showIcon">{{ prevText || translate('prev') }}</text>
         <wd-icon
           v-else
-          size="14px"
-          :custom-class="`wd-pager__left ${modelValue <= 1 ? 'wd-pager__nav--disabled' : 'wd-pager__nav--active'}`"
+          :custom-class="`wd-pager__left wd-pager__icon ${modelValue <= 1 ? 'wd-pager__nav--disabled' : 'wd-pager__nav--active'}`"
           name="arrow-right"
         ></wd-icon>
       </wd-button>
@@ -26,8 +25,7 @@
         <text v-if="!showIcon">{{ nextText || translate('next') }}</text>
         <wd-icon
           v-else
-          size="14px"
-          :custom-class="modelValue >= totalPageNum ? 'wd-pager__nav--disabled' : 'wd-pager__nav--active'"
+          :custom-class="`wd-pager__icon ${modelValue >= totalPageNum ? 'wd-pager__nav--disabled' : 'wd-pager__nav--active'}`"
           name="arrow-right"
         ></wd-icon>
       </wd-button>
@@ -52,6 +50,8 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import wdIcon from '../wd-icon/wd-icon.vue'
+import wdButton from '../wd-button/wd-button.vue'
 import { ref, watch } from 'vue'
 import { useTranslate } from '../composables/useTranslate'
 import { paginationProps } from './types'
@@ -101,9 +101,7 @@ function sub() {
 
 function updateTotalPage() {
   const { total, pageSize } = props
-  if (total) {
-    totalPageNum.value = Math.ceil(total / pageSize)
-  }
+  totalPageNum.value = Math.ceil(total / pageSize)
 }
 </script>
 

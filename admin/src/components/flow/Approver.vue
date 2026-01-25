@@ -35,14 +35,14 @@
             </header>
         </template>
 
-        <div class="page__content" v-if="mockData">
+        <div class="page__content" v-if="dialogVisible">
             <BasicSetting
                 ref="basicSetting"
                 :conf="mockData.basicSetting"
                 v-show="activeStep === 'basicSetting'"
                 tabName="basicSetting"
             />
-            <XForm
+            <XForm2
                 ref="formDesign"
                 :conf="mockData.flowFormData"
                 v-show="activeStep === 'formDesign'"
@@ -60,9 +60,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, watch } from 'vue'
-import XForm from './XForm/index.vue'
-import FlowEdit from './flowEdit/index.vue'
+import { ref, useTemplateRef, watch, defineAsyncComponent } from 'vue'
+// import XForm from './XForm/index.vue'
+// import XForm2 from './XForm2/index.vue'
+const XForm2 = defineAsyncComponent(() => import('./XForm/index.vue'))
+// import FlowEdit from './flowEdit/index.vue'
+const FlowEdit = defineAsyncComponent(() => import('./flowEdit/index.vue'))
 import BasicSetting from './BasicSetting/index.vue'
 
 import feedback from '@/utils/feedback'
@@ -87,15 +90,15 @@ const props = defineProps({
     }
 })
 
-const basicSetting = shallowRef<InstanceType<typeof BasicSetting>>()
-const formDesign = shallowRef<InstanceType<typeof XForm>>()
-const flowEdit = shallowRef<InstanceType<typeof FlowEdit>>()
+const basicSetting = useTemplateRef<InstanceType<typeof BasicSetting>>('basicSetting')
+const formDesign = useTemplateRef<InstanceType<typeof XForm2>>('formDesign')
+const flowEdit = useTemplateRef<InstanceType<typeof FlowEdit>>('flowEdit')
 const dialogVisible = ref(false)
 const activeStep = ref('basicSetting')
 const mockData = ref({
     id: '',
     basicSetting: {},
-    flowFormData: {},
+    flowFormData: [],
     flowProcessData: {}
 })
 const fieldList = ref([])
@@ -118,7 +121,7 @@ function reset() {
     mockData.value = {
         id: '',
         basicSetting: {},
-        flowFormData: {},
+        flowFormData: [],
         flowProcessData: {}
     }
     activeStep.value = 'basicSetting'
@@ -133,7 +136,7 @@ function open(data) {
         mockData.value = {
             id: '',
             basicSetting: {},
-            flowFormData: {},
+            flowFormData: [],
             flowProcessData: {}
         }
     }
