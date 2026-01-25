@@ -14,8 +14,8 @@ func RegisterRoute(rg *gin.RouterGroup) {
 	handle := monitorHandler{}
 
 	rg = rg.Group("/monitor", middleware.TokenAuth())
-	rg.GET("/cache", middleware.RecordLog("缓存监控"), handle.cache)
-	rg.GET("/server", middleware.RecordLog("服务监控"), handle.server)
+	rg.GET("/cache", handle.cache)
+	rg.GET("/server", handle.server)
 }
 
 type monitorHandler struct{}

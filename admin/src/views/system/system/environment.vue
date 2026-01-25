@@ -123,7 +123,7 @@ import { systemInfo } from '@/api/setting/system'
 defineOptions({
     name: 'environment'
 })
-const loading = ref(false)
+const loading = ref(true)
 const result = ref<Record<string, any>>({})
 const ips = computed(() => {
     return Object.keys(result.value)
@@ -144,7 +144,7 @@ const info = computed(() => {
 
 const getSystemInfo = async () => {
     try {
-        loading.value = true
+        // loading.value = true
         const data = await systemInfo()
         result.value = data || {}
         if (activeIp.value == '' && ips.value.length > 0) {
