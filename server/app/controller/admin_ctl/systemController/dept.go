@@ -1,7 +1,7 @@
 package systemController
 
 import (
-	. "x_admin/app/schema/systemSchema"
+	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/core/response"
 	"x_admin/middleware"
@@ -43,7 +43,7 @@ func (dh deptHandler) All(c *gin.Context) {
 
 // list 部门列表
 func (dh deptHandler) List(c *gin.Context) {
-	var listReq SystemAuthDeptListReq
+	var listReq systemSchema.SystemAuthDeptListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
@@ -53,7 +53,7 @@ func (dh deptHandler) List(c *gin.Context) {
 
 // detail 部门详情
 func (dh deptHandler) Detail(c *gin.Context) {
-	var detailReq SystemAuthDeptDetailReq
+	var detailReq systemSchema.SystemAuthDeptDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
@@ -63,7 +63,7 @@ func (dh deptHandler) Detail(c *gin.Context) {
 
 // add 部门新增
 func (dh deptHandler) Add(c *gin.Context) {
-	var addReq SystemAuthDeptAddReq
+	var addReq systemSchema.SystemAuthDeptAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
@@ -72,7 +72,7 @@ func (dh deptHandler) Add(c *gin.Context) {
 
 // edit 部门编辑
 func (dh deptHandler) Edit(c *gin.Context) {
-	var editReq SystemAuthDeptEditReq
+	var editReq systemSchema.SystemAuthDeptEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
@@ -81,7 +81,7 @@ func (dh deptHandler) Edit(c *gin.Context) {
 
 // del 部门删除
 func (dh deptHandler) Del(c *gin.Context) {
-	var delReq SystemAuthDeptDelReq
+	var delReq systemSchema.SystemAuthDeptDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}

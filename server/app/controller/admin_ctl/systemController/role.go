@@ -1,7 +1,7 @@
 package systemController
 
 import (
-	. "x_admin/app/schema/systemSchema"
+	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -48,7 +48,7 @@ func (rh RoleHandler) List(c *gin.Context) {
 
 // detail 角色详情
 func (rh RoleHandler) Detail(c *gin.Context) {
-	var detailReq SystemAuthRoleDetailReq
+	var detailReq systemSchema.SystemAuthRoleDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
@@ -58,7 +58,7 @@ func (rh RoleHandler) Detail(c *gin.Context) {
 
 // add 新增角色
 func (rh RoleHandler) Add(c *gin.Context) {
-	var addReq SystemAuthRoleAddReq
+	var addReq systemSchema.SystemAuthRoleAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
@@ -67,7 +67,7 @@ func (rh RoleHandler) Add(c *gin.Context) {
 
 // edit 编辑角色
 func (rh RoleHandler) Edit(c *gin.Context) {
-	var editReq SystemAuthRoleEditReq
+	var editReq systemSchema.SystemAuthRoleEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
@@ -76,7 +76,7 @@ func (rh RoleHandler) Edit(c *gin.Context) {
 
 // del 删除角色
 func (rh RoleHandler) Del(c *gin.Context) {
-	var delReq SystemAuthRoleDelReq
+	var delReq systemSchema.SystemAuthRoleDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}

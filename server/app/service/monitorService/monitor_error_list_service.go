@@ -1,6 +1,7 @@
 package monitorService
 
 import (
+	"time"
 	"x_admin/app/schema/monitorSchema"
 	"x_admin/core"
 	"x_admin/core/response"
@@ -38,4 +39,11 @@ func (service monitorErrorListService) Add(addReq monitorSchema.MonitorErrorList
 
 	createId = obj.Id
 	return
+}
+
+// 删除三个月前的数据
+func (service monitorErrorListService) DelThreeMonthAgo() error {
+	err := service.db.Where("create_time < ?", time.Now().AddDate(0, -3, 0)).Delete(&model.MonitorErrorList{}).Error
+
+	return err
 }

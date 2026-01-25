@@ -25,7 +25,7 @@ type systemLogsServer struct {
 }
 
 // Operate 系统操作日志
-func (logSrv systemLogsServer) Operate(page request.PageReq, logReq systemSchema.SystemLogOperateReq) (res response.PageResp, e error) {
+func (logSrv systemLogsServer) OperateLog(page request.PageReq, logReq systemSchema.SystemLogOperateReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -81,7 +81,7 @@ func (logSrv systemLogsServer) Operate(page request.PageReq, logReq systemSchema
 }
 
 // Login 系统登录日志
-func (logSrv systemLogsServer) Login(page request.PageReq, logReq systemSchema.SystemLogLoginReq) (res response.PageResp, e error) {
+func (logSrv systemLogsServer) LoginLog(page request.PageReq, logReq systemSchema.SystemLogLoginReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)

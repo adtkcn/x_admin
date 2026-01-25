@@ -1,7 +1,7 @@
 package systemController
 
 import (
-	. "x_admin/app/schema/systemSchema"
+	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/config"
 	"x_admin/core/response"
@@ -45,7 +45,7 @@ func (mh menuHandler) List(c *gin.Context) {
 
 // detail 菜单详情
 func (mh menuHandler) Detail(c *gin.Context) {
-	var detailReq SystemAuthMenuDetailReq
+	var detailReq systemSchema.SystemAuthMenuDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
@@ -55,7 +55,7 @@ func (mh menuHandler) Detail(c *gin.Context) {
 
 // add 新增菜单
 func (mh menuHandler) Add(c *gin.Context) {
-	var addReq SystemAuthMenuAddReq
+	var addReq systemSchema.SystemAuthMenuAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
@@ -64,7 +64,7 @@ func (mh menuHandler) Add(c *gin.Context) {
 
 // edit 编辑菜单
 func (mh menuHandler) Edit(c *gin.Context) {
-	var editReq SystemAuthMenuEditReq
+	var editReq systemSchema.SystemAuthMenuEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
@@ -73,7 +73,7 @@ func (mh menuHandler) Edit(c *gin.Context) {
 
 // del 删除菜单
 func (mh menuHandler) Del(c *gin.Context) {
-	var delReq SystemAuthMenuDelReq
+	var delReq systemSchema.SystemAuthMenuDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}

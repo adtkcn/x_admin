@@ -64,7 +64,7 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) e
 
 	// 添加新任务
 	id, err := tm.cron.AddFunc(CronExpr, func() {
-		core.Logger.Debugf("开始运行定时任务:%s", task.TaskCode)
+		// core.Logger.Debugf("开始运行定时任务:%s", task.TaskCode)
 		// 不加锁
 		if !task.Lock {
 			cmd()
@@ -76,7 +76,7 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) e
 		lock := util.NewRedisLock(lockKey, task.LockTTL) // 锁自动过期 10s
 
 		if !lock.Lock() {
-			core.Logger.Errorf("任务加锁失败:%s: %s", task.TaskCode, task.TaskDesc)
+			core.Logger.Debugf("任务抢占运行失败:%s: %s", task.TaskCode, task.TaskDesc)
 			return
 		}
 		defer func() {

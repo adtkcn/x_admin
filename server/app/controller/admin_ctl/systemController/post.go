@@ -1,7 +1,7 @@
 package systemController
 
 import (
-	. "x_admin/app/schema/systemSchema"
+	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -37,7 +37,7 @@ func (ph postHandler) All(c *gin.Context) {
 // list 岗位列表
 func (ph postHandler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq SystemAuthPostListReq
+	var listReq systemSchema.SystemAuthPostListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
@@ -50,7 +50,7 @@ func (ph postHandler) List(c *gin.Context) {
 
 // detail 岗位详情
 func (ph postHandler) Detail(c *gin.Context) {
-	var detailReq SystemAuthPostDetailReq
+	var detailReq systemSchema.SystemAuthPostDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
@@ -60,7 +60,7 @@ func (ph postHandler) Detail(c *gin.Context) {
 
 // add 岗位新增
 func (ph postHandler) Add(c *gin.Context) {
-	var addReq SystemAuthPostAddReq
+	var addReq systemSchema.SystemAuthPostAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
@@ -69,7 +69,7 @@ func (ph postHandler) Add(c *gin.Context) {
 
 // edit 岗位编辑
 func (ph postHandler) Edit(c *gin.Context) {
-	var editReq SystemAuthPostEditReq
+	var editReq systemSchema.SystemAuthPostEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
@@ -78,7 +78,7 @@ func (ph postHandler) Edit(c *gin.Context) {
 
 // del 岗位删除
 func (ph postHandler) Del(c *gin.Context) {
-	var delReq SystemAuthPostDelReq
+	var delReq systemSchema.SystemAuthPostDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}

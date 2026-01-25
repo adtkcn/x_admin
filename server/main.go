@@ -17,7 +17,6 @@ import (
 	_ "x_admin/app/corn"
 	// _ "x_admin/docs"
 
-	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -32,7 +31,7 @@ func initRouter() *gin.Engine {
 	// 初始化gin
 	gin.SetMode(config.AppConfig.GinMode)
 	r := gin.New()
-	pprof.Register(r)
+	// pprof.Register(r)
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 	// 设置上传文件的静态路径路由
 	r.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)

@@ -28,7 +28,7 @@ func init() {
 	FixedTasks.Start()
 
 	// 每10秒执行一次拉取定时任务"*/10 * * * * *"
-	FixedTasks.AddTask("loadTasks", "0 * * * * *", cornService.Task{
+	FixedTasks.AddTask("loadTasks", "40 * * * * *", cornService.Task{
 		Lock: false,
 		// LockTTL:  10 * time.Second,
 		TaskCode: "loadTasks",
@@ -68,6 +68,19 @@ func init() {
 		TaskFunc: func() {
 			if err := monitorService.MonitorServerService.CollectAndPushServerInfo(); err != nil {
 				core.Logger.Error("收集服务器信息并推送到Redis失败", err)
+			}
+		},
+	})
+
+	// 每天凌晨1点删除三个月前的错误监控数据
+	FixedTasks.AddTask("DelMonitorErrorListThreeMonthAgo", "0 1 * * * *", cornService.Task{
+		Lock:     true,
+		LockTTL:  10 * time.Minute,
+		TaskCode: "DelMonitorErrorListThreeMonthAgo",
+		TaskDesc: "删除三个月前的错误监控数据",
+		TaskFunc: func() {
+			if err := monitorService.MonitorErrorListService.DelThreeMonthAgo(); err != nil {
+				core.Logger.Error("删除三个月前的错误监控数据失败", err)
 			}
 		},
 	})
