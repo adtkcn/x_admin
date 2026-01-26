@@ -23,10 +23,8 @@ jobs:
 
       - name: Build Go binary
         run: |
-          BUILD_TIME=$(date +%Y%m%d%H%M%S)
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-          -ldflags="-s -w -X main.buildTime=$BUILD_TIME" \
-          -trimpath -o ${{ env.APP_NAME }} .
+          go mod init
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${{ env.APP_NAME }} .
           echo "构建完成，文件大小: $(du -h ${{ env.APP_NAME }} | cut -f1)"
 
       - name: Upload binary via SCP
