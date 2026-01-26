@@ -28,7 +28,6 @@ require (
 require (
 	github.com/duke-git/lancet/v2 v2.3.8
 	github.com/gorilla/websocket v1.5.3
-	github.com/influxdata/influxdb1-client v0.0.0-20220302092344-a9ab5670611c
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20251113013923-bd30b77d5468
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/robfig/cron/v3 v3.0.1
@@ -36,6 +35,7 @@ require (
 	go.uber.org/ratelimit v0.3.1
 	golang.org/x/sync v0.19.0
 	golang.org/x/text v0.32.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
 require (
@@ -50,7 +50,6 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
-	github.com/gin-contrib/pprof v1.5.3 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-openapi/jsonpointer v0.22.2 // indirect
@@ -104,6 +103,5 @@ require (
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

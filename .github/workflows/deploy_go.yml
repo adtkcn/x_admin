@@ -23,7 +23,7 @@ jobs:
 
       - name: Build Go binary
         run: |
-          go mod init
+          go mod tidy
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${{ env.APP_NAME }} .
           echo "构建完成，文件大小: $(du -h ${{ env.APP_NAME }} | cut -f1)"
 
