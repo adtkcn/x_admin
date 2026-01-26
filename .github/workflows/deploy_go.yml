@@ -8,6 +8,7 @@ on:
 env:
   APP_NAME: "x_admin"
   DEPLOY_PATH: "/opt/1panel/apps/openresty/openresty/www/sites/x-admin/"
+  PROJECT_DIR: "./server"  # 关键：定义项目子目录
 
 jobs:
   build-and-deploy:
@@ -21,11 +22,15 @@ jobs:
         with:
           go-version: '1.25'
 
+      - name: Go mod tidy
+        run: go mod tidy
+        working-directory: ${{ env.PROJECT_DIR }}  # 在 server 目录下执行
+
       - name: Build Go binary
         run: |
-          go mod tidy
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${{ env.APP_NAME }} .
           echo "构建完成，文件大小: $(du -h ${{ env.APP_NAME }} | cut -f1)"
+        working-directory: ${{ env.PROJECT_DIR }}  # 在 server 目录下构建
 
       - name: Upload binary via SCP
         uses: appleboy/scp-action@v0.1.7
@@ -34,7 +39,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORLD }}
           port: 22
-          source: "${{ env.APP_NAME }}"
+          source: "${{ env.PROJECT_DIR }}/${{ env.APP_NAME }}"
           target: ${{ env.DEPLOY_PATH }}
           overwrite: true
 
