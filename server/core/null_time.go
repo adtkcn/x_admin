@@ -20,6 +20,10 @@ type NullTime struct {
 	// Format string
 }
 
+func NewNullTime(val time.Time) NullTime {
+	return NullTime{Val: &val, Exist: true}
+}
+
 // func DecodeNulLTime(value any) (any, error) {
 // 	switch v := value.(type) {
 // 	case string:

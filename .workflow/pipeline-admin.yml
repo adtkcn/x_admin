@@ -43,7 +43,7 @@ stages:
         hostGroupID:
           ID: tengxun_qingliang
           hostID:
-            - fee90b81-14b8-4170-915d-3da3f413a812
+            - c82a2c6b-9d13-4837-bf6c-5416d20d258d
         deployArtifact:
           - source: build
             name: admin
@@ -53,7 +53,7 @@ stages:
           - '# 功能：部署脚本会在部署主机组的每台机器上执行'
           - '# 使用场景：先将制品包解压缩到指定目录中，再执行启动脚本deploy.sh，脚本示例地址：https://gitee.com/gitee-go/spring-boot-maven-deploy-case/blob/master/deploy.sh'
           - mkdir -p /www/wwwroot/likeadmin/web
-          - tar zxvf ~/gitee_go/deploy/admin.tar.gz -C /www/wwwroot/likeadmin/web
+          - tar zxvf ~/gitee_go/deploy/admin.tar.gz -C /opt/1panel/apps/openresty/openresty/www/sites/x.adtk.cn/index
           - ''
           - echo '后台前端部署完成'
         notify: []

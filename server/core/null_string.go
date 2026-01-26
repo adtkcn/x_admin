@@ -15,6 +15,9 @@ type NullString struct {
 	Exist bool
 }
 
+func NewNullString(val string) NullString {
+	return NullString{Val: &val, Exist: true}
+}
 func DecodeString(value any) (any, error) {
 	switch v := value.(type) {
 	case nil:

@@ -19,6 +19,9 @@ type NullInt struct {
 	Exist bool   // 是否有值
 }
 
+func NewNullInt(val int64) NullInt {
+	return NullInt{Val: &val, Exist: true}
+}
 func DecodeInt(value any) (any, error) {
 	switch v := value.(type) {
 	case nil:
