@@ -25,7 +25,7 @@ stages:
           - cd admin
           - '# 执行编译命令'
           - pnpm i
-          - pnpm run prod
+          - pnpm run build
         artifacts:
           - name: BUILD_Admin
             path:
@@ -52,7 +52,7 @@ stages:
         script:
           - '# 功能：部署脚本会在部署主机组的每台机器上执行'
           - '# 使用场景：先将制品包解压缩到指定目录中，再执行启动脚本deploy.sh，脚本示例地址：https://gitee.com/gitee-go/spring-boot-maven-deploy-case/blob/master/deploy.sh'
-          - mkdir -p /www/wwwroot/likeadmin/web
+          # - mkdir -p /www/wwwroot/likeadmin/web
           - tar zxvf ~/gitee_go/deploy/admin.tar.gz -C /opt/1panel/apps/openresty/openresty/www/sites/x.adtk.cn/index
           - ''
           - echo '后台前端部署完成'
