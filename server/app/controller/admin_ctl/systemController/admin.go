@@ -2,6 +2,7 @@ package systemController
 
 import (
 	"net/http"
+	"time"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/config"
@@ -9,7 +10,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/middleware"
 
-	"x_admin/util/excel"
+	"x_admin/util/excel2"
 
 	"x_admin/util"
 
@@ -63,12 +64,12 @@ func (ah AdminHandler) ExportFile(c *gin.Context) {
 		response.FailWithMsg(c, response.SystemError, "查询导出失败")
 		return
 	}
-	f, err := excel.NormalDynamicExport(res, "Sheet1", "用户信息", nil)
+	f, err := excel2.Export(res, systemService.AdminService.GetExcelCol(), "Sheet1", "用户信息")
 	if err != nil {
 		response.FailWithMsg(c, response.SystemError, "导出失败")
 		return
 	}
-	excel.DownLoadExcel("用户信息", c.Writer, f)
+	excel2.DownLoadExcel("用户信息"+time.Now().Format("20060102-150405"), c.Writer, f)
 	// c.Header("Content-Type", "application/octet-stream")
 	// c.Header("Content-Disposition", "attachment; filename="+"用户信息.xlsx")
 	// c.Header("Content-Transfer-Encoding", "binary")
@@ -84,7 +85,7 @@ func (ah AdminHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []systemSchema.SystemAuthAdminResp{}
-	err = excel.GetExcelData(file, &importList)
+	err = excel2.GetExcelData(file, &importList, systemService.AdminService.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return

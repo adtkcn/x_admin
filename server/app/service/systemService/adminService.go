@@ -14,6 +14,7 @@ import (
 	"x_admin/model/system_model"
 	"x_admin/util"
 	"x_admin/util/convert_util"
+	"x_admin/util/excel2"
 
 	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
@@ -155,6 +156,26 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []systemSchema.Syste
 	err := adminSrv.db.Create(&sysAdmin).Error
 	e = response.CheckErr(err, "添加失败")
 	return e
+}
+
+// 获取Excel的列
+func (adminSrv systemAuthAdminService) GetExcelCol() []excel2.Col {
+	var cols = []excel2.Col{
+		{Name: "账号", Key: "Username", Width: 15, Decode: core.DecodeString},
+		{Name: "昵称", Key: "Nickname", Width: 15, Decode: core.DecodeString},
+		{Name: "头像", Key: "Avatar", Width: 15, Decode: core.DecodeString},
+		{Name: "角色", Key: "Role", Width: 15, Decode: core.DecodeString},
+		{Name: "部门ID", Key: "DeptId", Width: 15, Decode: core.DecodeString},
+		{Name: "岗位ID", Key: "PostId", Width: 15, Decode: core.DecodeString},
+		{Name: "角色ID", Key: "RoleId", Width: 15, Decode: core.DecodeString},
+		{Name: "部门", Key: "Dept", Width: 15, Decode: core.DecodeString},
+		{Name: "是否禁用", Key: "IsDisable", Width: 15, Decode: core.DecodeInt},
+		{Name: "最后登录IP", Key: "LastLoginIp", Width: 15, Decode: core.DecodeString},
+		{Name: "最后登录时间", Key: "LastLoginTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+	}
+	return cols
 }
 
 // List 管理员列表
