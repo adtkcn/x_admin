@@ -502,7 +502,6 @@ func (service flowHistoryService) GetNextNode(ApplyId string) (res []flowSchema.
 	} else {
 		for _, v := range flowTree {
 			if v.Id == LastHistory.NodeId {
-				fmt.Println(v.Children)
 				if v.Children == nil {
 					break
 				}

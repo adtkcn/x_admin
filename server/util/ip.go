@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"x_admin/core"
 
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 )
@@ -37,19 +38,19 @@ type Region struct {
 func (ipUtils *ipUtil) Parse(ip string) Region {
 
 	if ip == "" {
-		fmt.Println("输入ip为空")
+		core.Logger.Errorf("输入ip为空: ip=[%s]", ip)
 		return Region{}
 	}
 
 	region, err := ipUtils.Searcher.SearchByStr(ip)
 	if err != nil {
-		fmt.Printf("解析ip(%s)错误: %s\n", ip, err)
+		core.Logger.Errorf("解析ip(%s)错误: %s\n", ip, err)
 		return Region{}
 	}
 	//   中国|0|四川省|成都市|电信
 	parts := strings.Split(region, "|")
 	if len(parts) != 5 {
-		fmt.Println("解析ip返回错误")
+		core.Logger.Errorf("解析ip返回错误: ip=[%s]", ip)
 		return Region{}
 	}
 	country := parts[0]
