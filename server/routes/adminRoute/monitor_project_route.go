@@ -57,8 +57,8 @@ func MonitorProjectRoute(rg *gin.RouterGroup) {
 	r.POST("/monitor_project/del", middleware.RecordLog("监控项目删除"), handle.Del)
 	r.POST("/monitor_project/delBatch", middleware.RecordLog("监控项目删除-批量"), handle.DelBatch)
 
-	r.GET("/monitor_project/ExportFile", middleware.RecordLog("监控项目导出"), handle.ExportFile)
-	r.POST("/monitor_project/ImportFile", handle.ImportFile)
+	r.GET("/monitor_project/exportFile", middleware.RecordLog("监控项目导出"), handle.ExportFile)
+	r.POST("/monitor_project/importFile", handle.ImportFile)
 }
 func init() {
 	routeHandlers = append(routeHandlers, MonitorProjectRoute)

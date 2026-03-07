@@ -100,11 +100,11 @@ export function monitor_client_delete_batch(data: { Ids: string }) {
 }
 
 // 监控-客户端信息导入
-export const monitor_client_import_file = '/monitor_client/ImportFile'
+export const monitor_client_import_file = '/monitor_client/importFile'
 
 // 监控-客户端信息导出
 export function monitor_client_export_file(params: any) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/monitor_client/ExportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/monitor_client/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

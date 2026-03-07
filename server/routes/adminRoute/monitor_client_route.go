@@ -58,8 +58,8 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 	r.POST("/monitor_client/del", middleware.RecordLog("监控-客户端信息删除"), handle.Del)
 	r.POST("/monitor_client/delBatch", middleware.RecordLog("监控-客户端信息删除-批量"), handle.DelBatch)
 
-	r.GET("/monitor_client/ExportFile", middleware.RecordLog("监控-客户端信息导出"), handle.ExportFile)
-	r.POST("/monitor_client/ImportFile", handle.ImportFile)
+	r.GET("/monitor_client/exportFile", middleware.RecordLog("监控-客户端信息导出"), handle.ExportFile)
+	r.POST("/monitor_client/importFile", handle.ImportFile)
 }
 func init() {
 	routeHandlers = append(routeHandlers, MonitorClientRoute)

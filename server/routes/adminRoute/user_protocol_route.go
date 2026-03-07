@@ -56,8 +56,8 @@ func UserProtocolRoute(rg *gin.RouterGroup) {
 	r.POST("/user_protocol/del", middleware.RecordLog("用户协议删除"), handle.Del)
 	r.POST("/user_protocol/delBatch", middleware.RecordLog("用户协议删除-批量"), handle.DelBatch)
 
-	r.GET("/user_protocol/ExportFile", middleware.RecordLog("用户协议导出"), handle.ExportFile)
-	r.POST("/user_protocol/ImportFile", handle.ImportFile)
+	r.GET("/user_protocol/exportFile", middleware.RecordLog("用户协议导出"), handle.ExportFile)
+	r.POST("/user_protocol/importFile", handle.ImportFile)
 }
 func init() {
 	routeHandlers = append(routeHandlers, UserProtocolRoute)

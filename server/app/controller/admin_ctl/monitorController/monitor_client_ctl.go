@@ -215,7 +215,7 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 // @Param		Ua				query	string	false	"ua记录"
 // @Param		CreateTimeStart	query	string	false	"创建时间"
 // @Param		CreateTimeEnd	query	string	false	"创建时间"
-// @Router		/api/admin/monitor_client/ExportFile [get]
+// @Router		/api/admin/monitor_client/exportFile [get]
 func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 	var listReq monitorSchema.MonitorClientListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -237,7 +237,7 @@ func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 // @Summary	监控-客户端信息导入
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Router		/api/admin/monitor_client/ImportFile [post]
+// @Router		/api/admin/monitor_client/importFile [post]
 func (hd *MonitorClientHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

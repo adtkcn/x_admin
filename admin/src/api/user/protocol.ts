@@ -78,11 +78,11 @@ export function user_protocol_delete_batch(data: { Ids: string }) {
 }
 
 // 用户协议导入
-export const user_protocol_import_file = '/user_protocol/ImportFile'
+export const user_protocol_import_file = '/user_protocol/importFile'
 
 // 用户协议导出
 export function user_protocol_export_file(params: any) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/user_protocol/ExportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/user_protocol/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

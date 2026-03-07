@@ -73,11 +73,11 @@ export function monitor_error_delete_batch(data: { Ids: string }) {
 }
 
 // 监控-错误列导入
-export const monitor_error_import_file = '/monitor_error/ImportFile'
+export const monitor_error_import_file = '/monitor_error/importFile'
 
 // 监控-错误列导出
 export function monitor_error_export_file(params: any) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/monitor_error/ExportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/monitor_error/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

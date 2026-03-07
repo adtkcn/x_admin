@@ -55,8 +55,8 @@ func MonitorErrorRoute(rg *gin.RouterGroup) {
 	r.POST("/monitor_error/del", middleware.RecordLog("监控-错误列删除"), handle.Del)
 	r.POST("/monitor_error/delBatch", middleware.RecordLog("监控-错误列删除-批量"), handle.DelBatch)
 
-	r.GET("/monitor_error/ExportFile", middleware.RecordLog("监控-错误列导出"), handle.ExportFile)
-	r.POST("/monitor_error/ImportFile", handle.ImportFile)
+	r.GET("/monitor_error/exportFile", middleware.RecordLog("监控-错误列导出"), handle.ExportFile)
+	r.POST("/monitor_error/importFile", handle.ImportFile)
 }
 func init() {
 	routeHandlers = append(routeHandlers, MonitorErrorRoute)

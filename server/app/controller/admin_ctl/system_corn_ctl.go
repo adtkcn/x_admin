@@ -188,7 +188,7 @@ func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 //		@Param UpdateTimeEnd  query string false "更新时间"
 //	 @Success	200		{file} string	"成功"
 //	 @Failure	500 	{object}	response.Response	"失败"
-//		@Router		/api/admin/system_corn/ExportFile [get]
+//		@Router		/api/admin/system_corn/exportFile [get]
 func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 	var listReq schema.SystemCornListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -213,7 +213,7 @@ func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 //	 @Param		token		header		string				true	"token"
 //	 @Param		file	formData	file	true	"导入文件"
 //	 @Success	200		{object}	response.Response	"成功"
-//		@Router		/api/admin/system_corn/ImportFile [post]
+//		@Router		/api/admin/system_corn/importFile [post]
 func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

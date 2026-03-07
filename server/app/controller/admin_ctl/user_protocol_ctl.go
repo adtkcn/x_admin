@@ -186,7 +186,7 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 // @Param		UpdateTimeEnd	query		string														false	"更新时间"
 // @Success	200				{file}		string														"成功"
 // @Failure	500				{object}	response.Response	"失败"
-// @Router		/api/admin/user_protocol/ExportFile [get]
+// @Router		/api/admin/user_protocol/exportFile [get]
 func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 	var listReq schema.UserProtocolListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -211,7 +211,7 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 // @Param		token	header		string														true	"token"
 // @Param		file	formData	file														true	"导入文件"
 // @Success	200		{object}	response.Response	"成功"
-// @Router		/api/admin/user_protocol/ImportFile [post]
+// @Router		/api/admin/user_protocol/importFile [post]
 func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

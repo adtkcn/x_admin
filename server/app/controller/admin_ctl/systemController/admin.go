@@ -36,9 +36,9 @@ func AdminRoute(rg *gin.RouterGroup) {
 	auth.POST("/admin/del", middleware.RecordLog("管理员删除"), handle.Del)
 	auth.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handle.Disable)
 
-	auth.GET("/admin/ExportFile", middleware.RecordLog("管理员导出"), handle.ExportFile)
+	auth.GET("/admin/exportFile", middleware.RecordLog("管理员导出"), handle.ExportFile)
 
-	auth.POST("/admin/ImportFile", handle.ImportFile)
+	auth.POST("/admin/importFile", handle.ImportFile)
 
 }
 

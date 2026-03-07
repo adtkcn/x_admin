@@ -41,12 +41,12 @@ export function adminListByDeptId(params: any) {
 }
 
 // 导入
-export const adminImportFile = '/system/admin/ImportFile'
+export const adminImportFile = '/system/admin/importFile'
 
 // 导出
 export function adminExportFile(params: any) {
-    // return request.get({ url: '/system/admin/ExportFile', params })
+    // return request.get({ url: '/system/admin/exportFile', params })
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/system/admin/ExportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/system/admin/exportFile?token=${getToken()}&` +
         queryString.stringify(params))
 }

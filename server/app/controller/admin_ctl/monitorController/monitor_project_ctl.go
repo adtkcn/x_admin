@@ -178,7 +178,7 @@ func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 // @Param		CreateTimeEnd	query	string	false	"创建时间"
 // @Param		UpdateTimeStart	query	string	false	"更新时间"
 // @Param		UpdateTimeEnd	query	string	false	"更新时间"
-// @Router		/api/admin/monitor_project/ExportFile [get]
+// @Router		/api/admin/monitor_project/exportFile [get]
 func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorProjectListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -200,7 +200,7 @@ func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 // @Summary	监控项目导入
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Router		/api/admin/monitor_project/ImportFile [post]
+// @Router		/api/admin/monitor_project/importFile [post]
 func (hd *MonitorProjectHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

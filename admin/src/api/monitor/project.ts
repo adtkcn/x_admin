@@ -77,11 +77,11 @@ export function monitor_project_delete_batch(data: { Ids: string }) {
 }
 
 // 监控项目导入
-export const monitor_project_import_file = '/monitor_project/ImportFile'
+export const monitor_project_import_file = '/monitor_project/importFile'
 
 // 监控项目导出
 export function monitor_project_export_file(params: any) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/monitor_project/ExportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/monitor_project/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

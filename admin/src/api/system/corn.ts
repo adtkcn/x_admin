@@ -86,12 +86,12 @@ export function system_corn_delete_batch(data: { Ids: string }) {
 }
 
 // 定时任务导入
-export const system_corn_import_file = '/system_corn/ImportFile'
+export const system_corn_import_file = '/system_corn/importFile'
 
 // 定时任务导出
 export function system_corn_export_file(params: type_system_corn_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/system_corn/ExportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/system_corn/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }
 
