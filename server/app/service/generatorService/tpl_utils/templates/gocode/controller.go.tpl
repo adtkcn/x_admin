@@ -158,7 +158,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, service.{{{ toUpperCamelCase .EntityName }}}Service.Del(delReq.{{{ toUpperCamelCase .PrimaryKey }}}))
+	response.CheckAndRespWithData(c,nil, service.{{{ toUpperCamelCase .EntityName }}}Service.Del(delReq.{{{ toUpperCamelCase .PrimaryKey }}}))
 }
 
 //	@Summary	{{{ .FunctionName }}}删除-批量
@@ -174,12 +174,12 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 		return
 	}
 	if delReq.Ids == "" {
-		response.FailWithMsg(c, response.SystemError, "请选择要删除的数据")
+		response.Fail(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, service.{{{ toUpperCamelCase .EntityName }}}Service.DelBatch(Ids))
+	response.CheckAndRespWithData(c,nil, service.{{{ toUpperCamelCase .EntityName }}}Service.DelBatch(Ids))
 }
 
 
@@ -208,12 +208,12 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Contex
 	}
 	res, err := service.{{{ toUpperCamelCase .EntityName }}}Service.ExportFile(listReq)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		response.Fail(c, "查询信息失败")
 		return
 	}
 	f, err := excel2.Export(res,service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("{{{ .FunctionName }}}" + time.Now().Format("20060102-150405"), c.Writer, f)
@@ -241,5 +241,5 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Contex
 	}
 
 	err = service.{{{ toUpperCamelCase .EntityName }}}Service.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c,nil, err)
 }

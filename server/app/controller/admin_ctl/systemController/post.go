@@ -64,7 +64,7 @@ func (ph postHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.PostService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, systemService.PostService.Add(addReq))
 }
 
 // edit 岗位编辑
@@ -73,7 +73,7 @@ func (ph postHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.PostService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, systemService.PostService.Edit(editReq))
 }
 
 // del 岗位删除
@@ -82,5 +82,5 @@ func (ph postHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.PostService.Del(delReq.ID))
+	response.CheckAndRespWithData(c, nil, systemService.PostService.Del(delReq.ID))
 }

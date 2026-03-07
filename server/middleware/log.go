@@ -61,7 +61,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				args = strings.Join(filenames, ",")
 			} else {
 				//默认类型
-				var formParams map[string]interface{}
+				var formParams map[string]any
 				err := c.ShouldBindBodyWith(&formParams, binding.JSON)
 				if err == nil {
 					val, err := util.ToolsUtil.ObjToJson(&formParams)

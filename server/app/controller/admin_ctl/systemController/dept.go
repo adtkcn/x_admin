@@ -11,21 +11,12 @@ import (
 )
 
 func DeptRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// permSrv := system.NewSystemAuthPermService(db)
-	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
-	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
-	// service := system.NewSystemLoginService(db, adminSrv)
-	// authSrv := system.NewSystemAuthMenuService(db, permSrv)
-
 	handle := deptHandler{}
 	notAuth := rg.Group("/system", middleware.LoginAuth())
-	// notAuth.GET("/dept/all", handle.All)
 	notAuth.GET("/dept/list", handle.List)
 
 	rg = rg.Group("/system", middleware.TokenAuth())
 	rg.GET("/dept/all", handle.All)
-	// rg.GET("/dept/list", handle.List)
 	rg.GET("/dept/detail", handle.Detail)
 	rg.POST("/dept/add", handle.Add)
 	rg.POST("/dept/edit", handle.Edit)
@@ -67,7 +58,8 @@ func (dh deptHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.DeptService.Add(addReq))
+	err := systemService.DeptService.Add(addReq)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // edit 部门编辑
@@ -76,7 +68,8 @@ func (dh deptHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.DeptService.Edit(editReq))
+	err := systemService.DeptService.Edit(editReq)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // del 部门删除
@@ -85,5 +78,6 @@ func (dh deptHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.DeptService.Del(delReq.ID))
+	err := systemService.DeptService.Del(delReq.ID)
+	response.CheckAndRespWithData(c, nil, err)
 }

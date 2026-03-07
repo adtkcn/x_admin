@@ -16,7 +16,7 @@ func ShowMode() gin.HandlerFunc {
 		auths := strings.ReplaceAll(strings.Replace(c.Request.URL.Path, "/api/", "", 1), "/", ":")
 		// 禁止修改操作 (演示功能,限制POST请求)
 		if c.Request.Method == "POST" && !util.ToolsUtil.Contains(config.AdminConfig.ShowWhitelistUri, auths) {
-			response.FailWithMsg(c, response.NoPermission, "演示环境不支持修改数据，请下载源码本地部署体验!")
+			response.Forbidden(c, "演示环境不支持修改数据，请下载源码本地部署体验!")
 			c.Abort()
 			return
 		}

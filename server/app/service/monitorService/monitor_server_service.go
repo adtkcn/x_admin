@@ -31,7 +31,7 @@ func (service *monitorServerService) CollectAndPushServerInfo() error {
 	var sys = util.ServerUtil.GetSysInfo()
 	var computerIp = sys["computerIp"].(string)
 
-	serverInfo := map[string]interface{}{
+	serverInfo := map[string]any{
 		"cpu":       util.ServerUtil.GetCpuInfo(),
 		"mem":       util.ServerUtil.GetMemInfo(),
 		"sys":       sys,
@@ -46,8 +46,8 @@ func (service *monitorServerService) CollectAndPushServerInfo() error {
 }
 
 // GetServerInfoFromRedis 从Redis获取服务器信息
-func (service *monitorServerService) GetServerInfoFromRedis(computerIp string) (map[string]interface{}, error) {
-	data := map[string]interface{}{}
+func (service *monitorServerService) GetServerInfoFromRedis(computerIp string) (map[string]any, error) {
+	data := map[string]any{}
 	err := service.CacheUtil.GetCache(computerIp, &data)
 	if err != nil {
 		return nil, err
@@ -56,11 +56,11 @@ func (service *monitorServerService) GetServerInfoFromRedis(computerIp string) (
 }
 
 // GetAllServerLatestInfo 获取所有服务器最新信息
-func (service *monitorServerService) GetAllServerLatestInfo() (map[string]map[string]interface{}, error) {
+func (service *monitorServerService) GetAllServerLatestInfo() (map[string]map[string]any, error) {
 
 	ips := util.RedisUtil.SGet(service.CacheUtil.Name + ":ips")
 
-	serverInfos := make(map[string]map[string]interface{})
+	serverInfos := make(map[string]map[string]any)
 
 	for _, computerIp := range ips {
 

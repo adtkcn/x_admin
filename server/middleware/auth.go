@@ -101,7 +101,7 @@ func LoginAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		resp := Auth(c)
 		if resp != response.Success {
-			response.Fail(c, resp)
+			response.FailWithResp(c, resp)
 			c.Abort()
 			return
 		}
@@ -122,7 +122,7 @@ func TokenAuth() gin.HandlerFunc {
 		}
 		resp := Auth(c)
 		if resp != response.Success {
-			response.Fail(c, resp)
+			response.FailWithResp(c, resp)
 			c.Abort()
 			return
 		}
@@ -139,7 +139,7 @@ func TokenAuth() gin.HandlerFunc {
 		// 验证是否有权限操作
 		menus := util.RedisUtil.HGet(config.AdminConfig.BackstageRolesKey, config.AdminConfig.GetRoleId(c))
 		if !(menus != "" && util.ToolsUtil.Contains(strings.Split(menus, ","), ApiAuth)) {
-			response.Fail(c, response.NoPermission)
+			response.FailWithResp(c, response.NoPermission)
 			c.Abort()
 			return
 		}

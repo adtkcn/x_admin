@@ -34,5 +34,5 @@ func (ch copyrightHandler) save(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSONArray(c, &cReqs)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.CopyrightService.Save(cReqs))
+	response.CheckAndRespWithData(c, nil, settingService.CopyrightService.Save(cReqs))
 }

@@ -148,7 +148,7 @@ func (hd *SystemCornHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, cornService.SystemCornService.Del(delReq.Id))
+	response.CheckAndRespWithData(c, nil, cornService.SystemCornService.Del(delReq.Id))
 }
 
 //	@Summary	定时任务删除-批量
@@ -165,12 +165,12 @@ func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.FailWithMsg(c, response.SystemError, "请选择要删除的数据")
+		response.Fail(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, cornService.SystemCornService.DelBatch(Ids))
+	response.CheckAndRespWithData(c, nil, cornService.SystemCornService.DelBatch(Ids))
 }
 
 //		@Summary	定时任务导出
@@ -196,12 +196,12 @@ func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 	}
 	res, err := cornService.SystemCornService.ExportFile(listReq)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		response.Fail(c, "查询信息失败")
 		return
 	}
 	f, err := excel2.Export(res, cornService.SystemCornService.GetExcelCol(), "Sheet1", "定时任务")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("定时任务"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -229,7 +229,7 @@ func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 	}
 
 	err = cornService.SystemCornService.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // @Summary	获取任务列表

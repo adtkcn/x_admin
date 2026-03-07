@@ -21,12 +21,12 @@ type AuthData struct {
 
 // PushMessage 定义推送消息结构
 type PushMessage struct {
-	CID       string                 `json:"cid"`
-	RequestID string                 `json:"request_id"` //10-32位之间；如果request_id重复，会导致消息丢失
-	NotifyID  int                    `json:"notify_id"`  //两条消息的notify_id相同，新的消息会覆盖老的消息.0-2147483647
-	Title     string                 `json:"title"`
-	Body      string                 `json:"body"`
-	Payload   map[string]interface{} `json:"payload"`
+	CID       string         `json:"cid"`
+	RequestID string         `json:"request_id"` //10-32位之间；如果request_id重复，会导致消息丢失
+	NotifyID  int            `json:"notify_id"`  //两条消息的notify_id相同，新的消息会覆盖老的消息.0-2147483647
+	Title     string         `json:"title"`
+	Body      string         `json:"body"`
+	Payload   map[string]any `json:"payload"`
 }
 
 // PushResponse 定义推送响应
@@ -89,7 +89,7 @@ func (gt *geTuiService) GetAuthToken() (string, error) {
 	sign := hex.EncodeToString(hash[:])
 
 	// 构建请求数据
-	reqData := map[string]interface{}{
+	reqData := map[string]any{
 		"sign":      sign,
 		"timestamp": timestamp,
 		"appkey":    gt.appKey,
@@ -158,7 +158,7 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 
 	// 将消息分批处理，每批最多200条
 	batchSize := 100
-	var batches [][]map[string]interface{}
+	var batches [][]map[string]any
 
 	for i := 0; i < len(messages); i += batchSize {
 		end := i + batchSize
@@ -166,22 +166,22 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 			end = len(messages)
 		}
 
-		var batch []map[string]interface{}
+		var batch []map[string]any
 		for _, msg := range messages[i:end] {
 			payload := msg.Payload
 			if payload == nil {
-				payload = make(map[string]interface{})
+				payload = make(map[string]any)
 			}
 
 			intent := fmt.Sprintf("intent://io.dcloud.unipush/?#Intent;scheme=unipush;launchFlags=0x4000000;component=%s/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title=%s;S.content=%s;S.payload=%s;end", gt.packageName, msg.Title, msg.Body, toJSONString(payload))
 			fmt.Println("intent:", intent)
 
-			ios := map[string]interface{}{
+			ios := map[string]any{
 				"type":    "notify",
 				"payload": toJSONString(payload),
 
-				"aps": map[string]interface{}{
-					"alert": map[string]interface{}{
+				"aps": map[string]any{
+					"alert": map[string]any{
 						"title": msg.Title,
 						"body":  msg.Body,
 					},
@@ -190,7 +190,7 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 				},
 				// "apns-collapse-id": notify_id, // 使用相同的apns-collapse-id可以覆盖之前的消息
 			}
-			notification := map[string]interface{}{
+			notification := map[string]any{
 				"title":      msg.Title,
 				"body":       msg.Body,
 				"click_type": "intent",
@@ -202,26 +202,26 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 				ios["apns-collapse-id"] = msg.NotifyID
 				notification["notify_id"] = msg.NotifyID
 			}
-			android := map[string]interface{}{
-				"ups": map[string]interface{}{
+			android := map[string]any{
+				"ups": map[string]any{
 					"notification": notification,
 				},
 			}
-			info := map[string]interface{}{
+			info := map[string]any{
 				"request_id": msg.RequestID,
-				"settings": map[string]interface{}{
+				"settings": map[string]any{
 					"ttl": 3600000, // 消息离线时间设置，单位毫秒
-					"strategy": map[string]interface{}{
+					"strategy": map[string]any{
 						"default": 4, // 优先走厂商通道
 					},
 				},
-				"audience": map[string]interface{}{
+				"audience": map[string]any{
 					"cid": []string{msg.CID},
 				},
-				"push_message": map[string]interface{}{
+				"push_message": map[string]any{
 					"notification": notification,
 				},
-				"push_channel": map[string]interface{}{
+				"push_channel": map[string]any{
 					"ios":     ios,
 					"android": android,
 				},
@@ -240,10 +240,10 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 
 	for i, batch := range batches {
 		wg.Add(1)
-		go func(index int, batch []map[string]interface{}) {
+		go func(index int, batch []map[string]any) {
 			defer wg.Done()
 
-			reqData := map[string]interface{}{
+			reqData := map[string]any{
 				"is_async": true,
 				"msg_list": batch,
 			}

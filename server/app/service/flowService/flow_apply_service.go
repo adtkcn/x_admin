@@ -88,7 +88,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flowSchema.Fl
 func (service flowApplyService) Detail(id string) (res flowSchema.FlowApplyResp, e error) {
 	var obj model.FlowApply
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -102,7 +102,7 @@ func (service flowApplyService) Detail(id string) (res flowSchema.FlowApplyResp,
 func (service flowApplyService) Add(addReq flowSchema.FlowApplyAddReq) (e error) {
 	var obj model.FlowApply
 	var flow_template_resp, err = TemplateService.Detail(addReq.TemplateId)
-	if e = response.CheckErrDBNotRecord(err, "模板不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "模板不存在!"); e != nil {
 		return
 	}
 	convert_util.Copy(&obj, addReq)
@@ -123,7 +123,7 @@ func (service flowApplyService) Edit(editReq flowSchema.FlowApplyEditReq) (e err
 	var obj model.FlowApply
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
@@ -141,7 +141,7 @@ func (service flowApplyService) Del(id string) (e error) {
 	var obj model.FlowApply
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {

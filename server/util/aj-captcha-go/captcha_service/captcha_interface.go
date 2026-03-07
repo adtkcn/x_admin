@@ -3,7 +3,7 @@ package captcha_service
 type CaptchaInterface interface {
 
 	// Get 获取验证码
-	Get() (map[string]interface{}, error)
+	Get() (map[string]any, error)
 
 	// Check 核对验证码
 	Check(token string, pointJson string) error

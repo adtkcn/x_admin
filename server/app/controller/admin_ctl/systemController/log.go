@@ -20,7 +20,6 @@ func LogRoute(rg *gin.RouterGroup) {
 }
 
 type logHandler struct {
-	// Service ISystemLogsServer
 }
 
 // operate 操作日志

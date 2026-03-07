@@ -51,11 +51,11 @@ func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
 	var fileMd5 = c.Query("fileMd5")
 	var fileName = c.Query("fileName")
 	if fileMd5 == "" {
-		response.FailWithMsg(c, response.SystemError, "文件hash错误")
+		response.Fail(c, "文件hash错误")
 		return
 	}
 	if fileName == "" {
-		response.FailWithMsg(c, response.SystemError, "文件名错误")
+		response.Fail(c, "文件名错误")
 		return
 	}
 	//文件类型白名单
@@ -113,7 +113,7 @@ func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
 		}
 	}
 	if fileExt == "" {
-		response.FailWithMsg(c, response.SystemError, "文件类型错误")
+		response.Fail(c, "文件类型错误")
 		return
 	}
 
@@ -121,46 +121,32 @@ func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
 	// 正则检查MD5
 	reg := regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
 	if !reg.MatchString(fileMd5) {
-		response.FailWithMsg(c, response.SystemError, "文件hash错误")
+		response.Fail(c, "文件hash错误")
 		return
 	}
 	var filePath = uh.getFilePath(fileMd5, fileName)
 	// 检查文件是否存在
 	if commonService.UploadChunkService.CheckFileExist(filePath) {
-		response.OkWithData(c, filePath)
+		response.Ok(c, filePath)
 		return
 	}
-	response.OkWithData(c, nil)
+	response.Ok(c, nil)
 }
 func (uh uploadChunkHandler) HasChunk(c *gin.Context) {
 	var fileMd5 = c.Query("fileMd5")
 	var chunkSize = c.Query("chunkSize")
 	if fileMd5 == "" {
-		response.FailWithMsg(c, response.SystemError, "文件hash错误")
+		response.Fail(c, "文件hash错误")
 		return
 	}
 	if chunkSize == "" {
-		response.FailWithMsg(c, response.SystemError, "分片大小错误")
+		response.Fail(c, "分片大小错误")
 		return
 	}
 	var chunkDir = uh.getChunkDir(fileMd5, chunkSize)
 	var HasChunk = commonService.UploadChunkService.HasChunk(chunkDir)
-	response.OkWithData(c, HasChunk)
+	response.Ok(c, HasChunk)
 }
-
-// 检查chunk是否存在
-// func (uh uploadChunkHandler) CheckChunkExist(c *gin.Context) {
-// 	fileMd5 := c.Query("fileMd5") // 上传文件的md5
-// 	chunkSize := c.Query("chunkSize")
-// 	index := c.Query("index") // 分片序号
-// 	// chunkPath := fmt.Sprintf("%s/%s/%s", uh.tmpPath, fileMd5, index)
-// 	chunkPath := uh.getChunkPath(fileMd5, chunkSize, index)
-// 	if commonService.UploadChunkService.CheckFileExist(chunkPath) {
-// 		response.OkWithData(c, 1)
-// 		return
-// 	}
-// 	response.OkWithData(c, 0)
-// }
 
 // UploadChunk 上传分片
 func (uh uploadChunkHandler) UploadChunk(c *gin.Context) {
@@ -169,19 +155,19 @@ func (uh uploadChunkHandler) UploadChunk(c *gin.Context) {
 	index := c.PostForm("index")         // 分片序号
 	fileMd5 := c.PostForm("fileMd5")     // 上传文件的md5
 	if fileMd5 == "" {
-		response.FailWithMsg(c, response.SystemError, "文件hash错误")
+		response.Fail(c, "文件hash错误")
 		return
 	}
 	if chunkSize == "" {
-		response.FailWithMsg(c, response.SystemError, "分片大小错误")
+		response.Fail(c, "分片大小错误")
 		return
 	}
 	if index == "" {
-		response.FailWithMsg(c, response.SystemError, "分片序号错误")
+		response.Fail(c, "分片序号错误")
 		return
 	}
 	if chunk == nil {
-		response.FailWithMsg(c, response.SystemError, "分片文件错误")
+		response.Fail(c, "分片文件错误")
 		return
 	}
 
@@ -189,7 +175,7 @@ func (uh uploadChunkHandler) UploadChunk(c *gin.Context) {
 	chunkPath := uh.getChunkPath(fileMd5, chunkSize, index)
 	err := commonService.UploadChunkService.UploadChunk(chunkDir, chunkPath, chunk)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, err.Error())
+		response.Fail(c, err.Error())
 		return
 	}
 	response.Ok(c)
@@ -203,31 +189,31 @@ func (uh uploadChunkHandler) MergeChunk(c *gin.Context) {
 	}
 	bindErr := c.ShouldBindJSON(&MergeChunk)
 	if bindErr != nil {
-		response.FailWithMsg(c, response.SystemError, bindErr.Error())
+		response.Fail(c, bindErr.Error())
 		return
 	}
 	if MergeChunk.FileMd5 == "" {
-		response.FailWithMsg(c, response.SystemError, "文件hash错误")
+		response.Fail(c, "文件hash错误")
 		return
 	}
 	if MergeChunk.FileName == "" {
-		response.FailWithMsg(c, response.SystemError, "文件名错误")
+		response.Fail(c, "文件名错误")
 		return
 	}
 	if MergeChunk.ChunkCount <= 0 {
-		response.FailWithMsg(c, response.SystemError, "分片数量错误")
+		response.Fail(c, "分片数量错误")
 		return
 	}
 	if MergeChunk.ChunkSize <= 0 {
-		response.FailWithMsg(c, response.SystemError, "分片大小错误")
+		response.Fail(c, "分片大小错误")
 		return
 	}
 	var filePath = uh.getFilePath(MergeChunk.FileMd5, MergeChunk.FileName)
 	var chunkDir = uh.getChunkDir(MergeChunk.FileMd5, fmt.Sprintf("%d", MergeChunk.ChunkSize))
 	err := commonService.UploadChunkService.MergeChunk(chunkDir, filePath, MergeChunk.ChunkCount)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, err.Error())
+		response.Fail(c, err.Error())
 		return
 	}
-	response.OkWithData(c, filePath)
+	response.Ok(c, filePath)
 }

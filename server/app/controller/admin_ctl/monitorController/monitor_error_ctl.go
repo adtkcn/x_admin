@@ -154,7 +154,7 @@ func (hd *MonitorErrorHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, monitorService.MonitorErrorService.Del(delReq.Id))
+	response.CheckAndRespWithData(c, nil, monitorService.MonitorErrorService.Del(delReq.Id))
 }
 
 // @Summary	监控-错误列删除-批量
@@ -171,12 +171,12 @@ func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.FailWithMsg(c, response.SystemError, "请选择要删除的数据")
+		response.Fail(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, monitorService.MonitorErrorService.DelBatch(Ids))
+	response.CheckAndRespWithData(c, nil, monitorService.MonitorErrorService.DelBatch(Ids))
 }
 
 // @Summary	监控-错误列导出
@@ -199,12 +199,12 @@ func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 	}
 	res, err := monitorService.MonitorErrorService.ExportFile(listReq)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		response.Fail(c, "查询信息失败")
 		return
 	}
 	f, err := excel2.Export(res, monitorService.MonitorErrorService.GetExcelCol(), "Sheet1", "监控-错误列")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("监控-错误列"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -229,5 +229,5 @@ func (hd *MonitorErrorHandler) ImportFile(c *gin.Context) {
 	}
 
 	err = monitorService.MonitorErrorService.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }

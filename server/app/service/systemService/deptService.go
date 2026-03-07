@@ -58,7 +58,7 @@ func (service systemAuthDeptService) List(listReq systemSchema.SystemAuthDeptLis
 func (service systemAuthDeptService) Detail(id string) (res systemSchema.SystemAuthDeptResp, e error) {
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dept).Error
-	if e = response.CheckErrDBNotRecord(err, "部门已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "部门已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -91,7 +91,7 @@ func (service systemAuthDeptService) Edit(editReq systemSchema.SystemAuthDeptEdi
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dept).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "部门不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "部门不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
@@ -115,7 +115,7 @@ func (service systemAuthDeptService) Del(id string) (e error) {
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dept).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "部门不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "部门不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {

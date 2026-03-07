@@ -59,7 +59,7 @@ func (ddh dictDataHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.DictDataService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, settingService.DictDataService.Add(addReq))
 }
 
 // edit 字典数据编辑
@@ -68,7 +68,7 @@ func (ddh dictDataHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.DictDataService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, settingService.DictDataService.Edit(editReq))
 }
 
 // del 字典数据删除
@@ -77,5 +77,5 @@ func (ddh dictDataHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.DictDataService.Del(delReq))
+	response.CheckAndRespWithData(c, nil, settingService.DictDataService.Del(delReq))
 }

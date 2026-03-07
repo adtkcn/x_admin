@@ -101,7 +101,7 @@ func (genSrv generateService) List(page request.PageReq, listReq generatorSchema
 func (genSrv generateService) Detail(id string) (res generatorSchema.GenTableDetailResp, e error) {
 	var genTb gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTb).Error
-	if e = response.CheckErrDBNotRecord(err, "查询的数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "查询的数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "Detail Find err"); e != nil {
@@ -171,7 +171,7 @@ func (genSrv generateService) SyncTable(id string) (e error) {
 	//旧数据
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
-	if e = response.CheckErrDBNotRecord(err, "生成数据不存在！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "生成数据不存在！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "SyncTable First err"); e != nil {
@@ -267,7 +267,7 @@ func (genSrv generateService) EditTable(editReq generatorSchema.EditTableReq) (e
 	}
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&genTable).Error
-	if e = response.CheckErrDBNotRecord(err, "数据已丢失！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据已丢失！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查找数据失败"); e != nil {
@@ -318,7 +318,7 @@ func (genSrv generateService) getSubTableInfo(genTable gen_model.GenTable) (pkCo
 	}
 	var table gen_model.GenTable
 	err := genSrv.db.Where("table_name = ?", genTable.SubTableName).Limit(1).First(&table).Error
-	if e = response.CheckErrDBNotRecord(err, "子表记录丢失！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "子表记录丢失！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "getSubTableInfo First err"); e != nil {
@@ -363,7 +363,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (re
 func (genSrv generateService) PreviewCode(id string) (res map[string]string, e error) {
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
-	if e = response.CheckErrDBNotRecord(err, "记录丢失！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "记录丢失！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "PreviewCode First err"); e != nil {
@@ -386,7 +386,7 @@ func (genSrv generateService) PreviewCode(id string) (res map[string]string, e e
 func (genSrv generateService) genZipCode(zipWriter *zip.Writer, tableName string) (e error) {
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("table_name = ?", tableName).Order("id desc").Limit(1).First(&genTable).Error
-	if e = response.CheckErrDBNotRecord(err, "记录丢失！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "记录丢失！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "genZipCode First err"); e != nil {

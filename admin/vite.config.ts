@@ -20,9 +20,9 @@ export default defineConfig(({ mode }) => {
     console.log(env)
 
     return {
-        experimental: {
-            enableNativePlugin: true // 启用 Rust 原生插件（如 alias/resolve）
-        },
+        // experimental: {
+        //     enableNativePlugin: true // 启用 Rust 原生插件（如 alias/resolve）
+        // },
         optimizeDeps: {
             // 依赖预构建，避免开发刷新
             include: ['@wangeditor/editor-for-vue', 'vuedraggable', 'crypto-js']
@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
 
         base: '/',
         build: {
-            sourcemap: true,
+            sourcemap: false,
             rolldownOptions: {
                 external: ['XErr'],
                 output: {

@@ -83,7 +83,7 @@ func (service flowTemplateService) ListAll() (res []flowSchema.FlowTemplateResp,
 func (service flowTemplateService) Detail(id string) (res flowSchema.FlowTemplateResp, e error) {
 	var obj model.FlowTemplate
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -107,7 +107,7 @@ func (service flowTemplateService) Edit(editReq flowSchema.FlowTemplateEditReq) 
 	var obj model.FlowTemplate
 	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
@@ -125,7 +125,7 @@ func (service flowTemplateService) Del(id string) (e error) {
 	var obj model.FlowTemplate
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {

@@ -21,10 +21,9 @@ func apiList(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	api.GET("/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
 		var path = []string{}
 		for _, route := range rootRouter.Routes() {
-			// fmt.Printf("%s 127.0.0.1:%v%s\n", route.Method, config.Config.ServerPort, route.Path)
 			path = append(path, route.Path)
 		}
-		response.Result(ctx, response.Success, path)
+		response.Ok(ctx, path)
 	})
 }
 

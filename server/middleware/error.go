@@ -19,15 +19,12 @@ func ErrorRecover() gin.HandlerFunc {
 				case response.RespType:
 					core.Logger.WithOptions(zap.AddCallerSkip(2)).Warnf(
 						"Request Fail by recover: url=[%s], resp=[%+v]", c.Request.URL.Path, v)
-					var data interface{}
-					if v.Data() == nil {
-						data = []string{}
-					}
-					response.Result(c, v, data)
+
+					response.Fail(c, v.Msg())
 				// 其他类型
 				default:
 					core.Logger.Errorf("stacktrace from panic: %+v\n%s", r, string(debug.Stack()))
-					response.Fail(c, response.SystemError)
+					response.FailWithResp(c, response.SystemError)
 				}
 				c.Abort()
 			}

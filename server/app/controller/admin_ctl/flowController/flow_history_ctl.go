@@ -98,7 +98,7 @@ func (hd FlowHistoryHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.HistoryService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, flowService.HistoryService.Add(addReq))
 }
 
 // @Summary	流程历史编辑
@@ -123,7 +123,7 @@ func (hd FlowHistoryHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.HistoryService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, flowService.HistoryService.Edit(editReq))
 }
 
 // @Summary	流程历史删除
@@ -138,7 +138,7 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.HistoryService.Del(delReq.Id))
+	response.CheckAndRespWithData(c, nil, flowService.HistoryService.Del(delReq.Id))
 }
 
 // 提交申请,通过审批
@@ -153,7 +153,7 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	}
 	err := flowService.HistoryService.Pass(pass)
 
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // 拒绝审批
@@ -168,7 +168,7 @@ func (hd FlowHistoryHandler) Back(c *gin.Context) {
 	}
 	err := flowService.HistoryService.Back(back)
 	fmt.Println(err)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // 获取下一个审批节点，中间可能存在系统任务节点和网关
@@ -190,8 +190,8 @@ func (hd FlowHistoryHandler) GetApprover(c *gin.Context) {
 	}
 	res, err := flowService.HistoryService.GetApprover(nextNode.ApplyId)
 	if err != nil {
-		response.FailWithMsg(c, response.Failed, err.Error())
+		response.Fail(c, err.Error())
 		return
 	}
-	response.OkWithData(c, res)
+	response.Ok(c, res)
 }

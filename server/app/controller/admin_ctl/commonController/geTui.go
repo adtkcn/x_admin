@@ -21,7 +21,7 @@ type geTuiHandler struct{}
 func (ih geTuiHandler) push(c *gin.Context) {
 	var req []commonService.PushMessage
 	// if err := c.ShouldBindJSON(&req); err != nil {
-	// 	response.CheckAndResp(c, err)
+	// 	response.CheckAndRespWithData(c,nil, err)
 	// 	return
 	// }
 	// "cid":"ca416f34681c49d2ee14a192c28de537", #华为

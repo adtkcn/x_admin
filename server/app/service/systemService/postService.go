@@ -78,7 +78,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq systemSc
 func (service systemAuthPostService) Detail(id string) (res systemSchema.SystemAuthPostResp, e error) {
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&post).Error
-	if e = response.CheckErrDBNotRecord(err, "岗位不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "岗位不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -109,7 +109,7 @@ func (service systemAuthPostService) Edit(editReq systemSchema.SystemAuthPostEdi
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&post).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "部门不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "部门不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
@@ -134,7 +134,7 @@ func (service systemAuthPostService) Del(id string) (e error) {
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&post).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "岗位不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "岗位不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {

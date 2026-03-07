@@ -85,7 +85,7 @@ func (c *ClickWordCaptchaService) Verification(token string, pointJson string) e
 	return nil
 }
 
-func (c *ClickWordCaptchaService) Get() (map[string]interface{}, error) {
+func (c *ClickWordCaptchaService) Get() (map[string]any, error) {
 	// 初始化背景图片
 	backgroundImage := img.GetClickBackgroundImage()
 	// 为背景图片设置水印
@@ -103,7 +103,7 @@ func (c *ClickWordCaptchaService) Get() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	data := make(map[string]interface{})
+	data := make(map[string]any)
 	data["originalImageBase64"] = originalImageBase64
 	data["wordList"] = wordList
 	data["secretKey"] = pointList[0].SecretKey

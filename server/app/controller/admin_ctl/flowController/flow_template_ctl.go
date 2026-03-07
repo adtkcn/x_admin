@@ -79,7 +79,7 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.TemplateService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, flowService.TemplateService.Add(addReq))
 }
 
 // @Summary	流程模板编辑
@@ -99,7 +99,7 @@ func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.TemplateService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, flowService.TemplateService.Edit(editReq))
 }
 
 // @Summary	流程模板删除
@@ -114,5 +114,5 @@ func (hd FlowTemplateHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.TemplateService.Del(delReq.Id))
+	response.CheckAndRespWithData(c, nil, flowService.TemplateService.Del(delReq.Id))
 }

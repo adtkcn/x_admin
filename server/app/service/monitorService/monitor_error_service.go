@@ -112,7 +112,7 @@ func (service monitorErrorService) Detail(Id string) (res monitorSchema.MonitorE
 	var obj = model.MonitorError{}
 
 	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -129,7 +129,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res monitorSchema.Mo
 	err := service.CacheUtil.GetCache("md5:"+md5, &obj)
 	if err != nil {
 		err := service.db.Where("md5 = ?", md5).Order("id DESC").Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -178,7 +178,7 @@ func (service monitorErrorService) Del(Id string) (e error) {
 	var obj model.MonitorError
 	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {

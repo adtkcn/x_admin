@@ -50,8 +50,8 @@ func CaptchaRoute(rg *gin.RouterGroup) {
 
 }
 
-func successRes(data interface{}) map[string]interface{} {
-	ret := make(map[string]interface{})
+func successRes(data interface{}) map[string]any {
+	ret := make(map[string]any)
 	ret["error"] = false
 	ret["repCode"] = "0000"
 	ret["repData"] = data
@@ -60,8 +60,8 @@ func successRes(data interface{}) map[string]interface{} {
 
 	return ret
 }
-func errorRes(err error) map[string]interface{} {
-	ret := make(map[string]interface{})
+func errorRes(err error) map[string]any {
+	ret := make(map[string]any)
 	ret["error"] = true
 	ret["repCode"] = "0001"
 	ret["repData"] = nil

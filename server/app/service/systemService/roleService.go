@@ -72,7 +72,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 func (roleSrv systemAuthRoleService) Detail(id string) (res systemSchema.SystemAuthRoleResp, e error) {
 	var role system_model.SystemAuthRole
 	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&role).Error
-	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -116,7 +116,7 @@ func (roleSrv systemAuthRoleService) Add(addReq systemSchema.SystemAuthRoleAddRe
 // Edit 编辑角色
 func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEditReq) (e error) {
 	err := roleSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&system_model.SystemAuthRole{}).Error
-	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
@@ -159,7 +159,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 // Del 删除角色
 func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&system_model.SystemAuthRole{}).Error
-	if e = response.CheckErrDBNotRecord(err, "角色已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {

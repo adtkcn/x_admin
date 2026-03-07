@@ -146,12 +146,6 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 	var addReq monitorSchema.MonitorClientAddReq
 	json.Unmarshal([]byte(data), &addReq)
 
-	// _, err = monitorService.MonitorClientService.DetailByClientId(*addReq.ClientId)
-
-	// if err != nil {
-	// 	response.FailWithMsg(c, response.SystemError, err.Error())
-	// 	return
-	// }
 	uaStr := c.GetHeader("user-agent")
 	if uaStr != "" {
 		ua := util.UAParser.Parse(uaStr)
@@ -159,16 +153,6 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 		addReq.Os = &ua.Os.Family
 		addReq.Browser = &ua.UserAgent.Family
 	}
-	// ip := c.ClientIP()
-	// addReq.Ip = &ip
-	// if ip != "" && ip != "127.0.0.1" {
-	// 	regionInfo := util.IpUtil.Parse(ip)
-	// 	// regionInfo := util.IpUtil.Parse("118.24.157.190")
-	// 	addReq.City = &regionInfo.City
-	// 	addReq.Country = &regionInfo.Country
-	// 	addReq.Operator = &regionInfo.Operator
-	// 	addReq.Province = &regionInfo.Province
-	// }
 
 	monitorService.MonitorClientService.Add(addReq)
 
@@ -187,7 +171,7 @@ func (hd *MonitorClientHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, monitorService.MonitorClientService.Del(delReq.Id))
+	response.CheckAndRespWithData(c, nil, monitorService.MonitorClientService.Del(delReq.Id))
 }
 
 // @Summary	监控-客户端信息删除-批量
@@ -204,12 +188,12 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.FailWithMsg(c, response.SystemError, "请选择要删除的数据")
+		response.Fail(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, monitorService.MonitorClientService.DelBatch(Ids))
+	response.CheckAndRespWithData(c, nil, monitorService.MonitorClientService.DelBatch(Ids))
 }
 
 // @Summary	监控-客户端信息导出
@@ -239,12 +223,12 @@ func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 	}
 	res, err := monitorService.MonitorClientService.ExportFile(listReq)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		response.Fail(c, "查询信息失败")
 		return
 	}
 	f, err := excel2.Export(res, monitorService.MonitorClientService.GetExcelCol(), "Sheet1", "监控-客户端信息")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("监控-客户端信息"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -269,5 +253,5 @@ func (hd *MonitorClientHandler) ImportFile(c *gin.Context) {
 	}
 
 	err = monitorService.MonitorClientService.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }

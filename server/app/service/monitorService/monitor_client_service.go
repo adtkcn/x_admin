@@ -131,7 +131,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res monit
 	err := service.CacheUtil.GetCache("ClientId:"+ClientId, &obj)
 	if err != nil {
 		err := service.db.Where("client_id = ?", ClientId).Order("id DESC").Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -151,7 +151,7 @@ func (service monitorClientService) Detail(Id string) (res monitorSchema.Monitor
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -181,7 +181,7 @@ func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq
 		Columns: []clause.Column{
 			{Name: "client_id"}, // 指定以 client_id 作为冲突判断字段（可选，GORM 会自动推断唯一索引）
 		},
-		DoUpdates: clause.Assignments(map[string]interface{}{
+		DoUpdates: clause.Assignments(map[string]any{
 			"os":      addReq.Os,
 			"browser": addReq.Browser,
 			"ua":      addReq.Ua,
@@ -202,7 +202,7 @@ func (service monitorClientService) Del(Id string) (e error) {
 	var obj model.MonitorClient
 	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {

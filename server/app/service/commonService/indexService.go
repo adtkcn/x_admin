@@ -25,13 +25,13 @@ type indexService struct {
 }
 
 // Console 控制台数据
-func (iSrv indexService) Console() (res map[string]interface{}, e error) {
+func (iSrv indexService) Console() (res map[string]any, e error) {
 	// 版本信息
 	name, err := settingService.SystemConfigService.GetVal(iSrv.db, "website", "name", "x_admin-Go")
 	if e = response.CheckErr(err, "Console Get err"); e != nil {
 		return
 	}
-	version := map[string]interface{}{
+	version := map[string]any{
 		"name":    name,
 		"version": config.AppConfig.Version,
 		"website": "x.adtk.cn",
@@ -42,7 +42,7 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 		},
 	}
 	// 今日数据
-	today := map[string]interface{}{
+	today := map[string]any{
 		"time":        util.NullTimeUtil.Now(),
 		"todayVisits": 10,  // 访问量(人)
 		"totalVisits": 100, // 总访问量
@@ -59,11 +59,11 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 	for i := 14; i >= 0; i-- {
 		date = append(date, now.AddDate(0, 0, -i).Format(core.DateFormat))
 	}
-	visitor := map[string]interface{}{
+	visitor := map[string]any{
 		"date": date,
 		"list": []int{12, 13, 11, 5, 100, 22, 14, 9, 456, 62, 78, 12, 18, 22, 46},
 	}
-	return map[string]interface{}{
+	return map[string]any{
 		"version": version,
 		"today":   today,
 		"visitor": visitor,
@@ -71,7 +71,7 @@ func (iSrv indexService) Console() (res map[string]interface{}, e error) {
 }
 
 // Config 公共配置
-func (iSrv indexService) Config() (res map[string]interface{}, e error) {
+func (iSrv indexService) Config() (res map[string]any, e error) {
 	website, err := settingService.SystemConfigService.Get(iSrv.db, "website")
 	if e = response.CheckErr(err, "Config Get err"); e != nil {
 		return
@@ -89,7 +89,7 @@ func (iSrv indexService) Config() (res map[string]interface{}, e error) {
 	} else {
 		copyright = []map[string]string{}
 	}
-	return map[string]interface{}{
+	return map[string]any{
 		"webName":     website["name"],
 		"webLogo":     util.UrlUtil.ToAbsoluteUrl(website["logo"]),
 		"webFavicon":  util.UrlUtil.ToAbsoluteUrl(website["favicon"]),

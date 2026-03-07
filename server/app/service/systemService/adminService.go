@@ -269,7 +269,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 func (adminSrv systemAuthAdminService) Detail(id string) (res systemSchema.SystemAuthAdminResp, e error) {
 	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&sysAdmin).Error
-	if e = response.CheckErrDBNotRecord(err, "账号已不存在！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "账号已不存在！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -333,7 +333,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema.SystemAuthAdminEditReq) (e error) {
 	// 检查id
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&system_model.SystemAuthAdmin{}).Error
-	if e = response.CheckErrDBNotRecord(err, "账号不存在了!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
@@ -417,7 +417,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 	// 检查id
 	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&admin).Error
-	if e = response.CheckErrDBNotRecord(err, "账号不存在了!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "Update First err"); e != nil {
@@ -475,7 +475,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) {
 	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&admin).Error
-	if e = response.CheckErrDBNotRecord(err, "账号已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "账号已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
@@ -511,7 +511,7 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id string) (e err
 	} else {
 		isDisable = 0
 	}
-	err = adminSrv.db.Model(&admin).Updates(map[string]interface{}{"is_disable": isDisable, "update_time": time.Now()}).Error
+	err = adminSrv.db.Model(&admin).Updates(map[string]any{"is_disable": isDisable, "update_time": time.Now()}).Error
 	e = response.CheckErr(err, "Disable Updates err")
 	return
 }

@@ -85,7 +85,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq settingSc
 func (dtSrv settingDictTypeService) Detail(id string) (res settingSchema.SettingDictTypeResp, e error) {
 	var dt setting_model.DictType
 	err := dtSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dt).Error
-	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "字典类型不存在！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -114,7 +114,7 @@ func (dtSrv settingDictTypeService) Add(addReq settingSchema.SettingDictTypeAddR
 func (dtSrv settingDictTypeService) Edit(editReq settingSchema.SettingDictTypeEditReq) (e error) {
 	var dt setting_model.DictType
 	err := dtSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dt).Error
-	if e = response.CheckErrDBNotRecord(err, "字典类型不存在！"); e != nil {
+	if e = response.CheckDBNotRecord(err, "字典类型不存在！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {

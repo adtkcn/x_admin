@@ -70,7 +70,7 @@ func (dth dictTypeHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.DictTypeService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, settingService.DictTypeService.Add(addReq))
 }
 
 // edit 字典类型编辑
@@ -79,7 +79,7 @@ func (dth dictTypeHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.DictTypeService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, settingService.DictTypeService.Edit(editReq))
 }
 
 // del 字典类型删除
@@ -88,5 +88,5 @@ func (dth dictTypeHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.DictTypeService.Del(delReq))
+	response.CheckAndRespWithData(c, nil, settingService.DictTypeService.Del(delReq))
 }

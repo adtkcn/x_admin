@@ -83,7 +83,7 @@ func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 func (menuSrv systemAuthMenuService) Detail(id string) (res systemSchema.SystemAuthMenuResp, e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
-	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -107,7 +107,7 @@ func (menuSrv systemAuthMenuService) Add(addReq systemSchema.SystemAuthMenuAddRe
 func (menuSrv systemAuthMenuService) Edit(editReq systemSchema.SystemAuthMenuEditReq) (e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", editReq.ID).Limit(1).Find(&menu).Error
-	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "Edit Find err"); e != nil {
@@ -127,7 +127,7 @@ func (menuSrv systemAuthMenuService) Edit(editReq systemSchema.SystemAuthMenuEdi
 func (menuSrv systemAuthMenuService) Del(id string) (e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
-	if e = response.CheckErrDBNotRecord(err, "菜单已不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查找失败"); e != nil {

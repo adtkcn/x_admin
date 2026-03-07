@@ -1,6 +1,6 @@
 module x_admin
 
-go 1.24.2
+go 1.26.0
 
 require (
 	github.com/fatih/structs v1.1.0

@@ -86,7 +86,7 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 	addReq.ApplyUserId = AdminId
 	addReq.Status = 1
 
-	response.CheckAndResp(c, flowService.ApplyService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, flowService.ApplyService.Add(addReq))
 }
 
 // @Summary	申请流程编辑
@@ -110,7 +110,7 @@ func (hd FlowApplyHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.ApplyService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, flowService.ApplyService.Edit(editReq))
 }
 
 // @Summary	申请流程删除
@@ -125,5 +125,5 @@ func (hd FlowApplyHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, flowService.ApplyService.Del(delReq.Id))
+	response.CheckAndRespWithData(c, nil, flowService.ApplyService.Del(delReq.Id))
 }

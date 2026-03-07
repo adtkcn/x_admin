@@ -35,47 +35,49 @@ type systemCornService struct {
 // List 定时任务列表
 func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.SystemCorn{}).Joins("CreatedByUser")
 	tableName := core.DBTableName(&model.SystemCorn{})
+
+	dbModel := service.db.Table(tableName + " as a").Joins("CreatedByUser")
+
 	if listReq.TaskName.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".task_name like ?", "%"+listReq.TaskName.ValueOrZero()+"%")
+		dbModel = dbModel.Where("a.task_name like ?", "%"+listReq.TaskName.ValueOrZero()+"%")
 	}
 
 	if listReq.TaskCode.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".task_code = ?", listReq.TaskCode.ValueOrZero())
+		dbModel = dbModel.Where("a.task_code = ?", listReq.TaskCode.ValueOrZero())
 	}
 	if listReq.CornExpr.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".corn_expr = ?", listReq.CornExpr.ValueOrZero())
+		dbModel = dbModel.Where("a.corn_expr = ?", listReq.CornExpr.ValueOrZero())
 	}
 	if listReq.Status.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".Status = ?", listReq.Status.ValueOrZero())
+		dbModel = dbModel.Where("a.Status = ?", listReq.Status.ValueOrZero())
 	}
 	if listReq.CreatedBy.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".created_by = ?", listReq.CreatedBy.ValueOrZero())
+		dbModel = dbModel.Where("a.created_by = ?", listReq.CreatedBy.ValueOrZero())
 	}
 	if listReq.Nickname.IsExistsAndNotNull() {
 		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+listReq.Nickname.ValueOrZero()+"%")
 	}
 
 	if listReq.CreateTimeStart.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".create_time >= ?", listReq.CreateTimeStart.ValueOrZero())
+		dbModel = dbModel.Where("a.create_time >= ?", listReq.CreateTimeStart.ValueOrZero())
 	}
 	if listReq.CreateTimeEnd.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".create_time <= ?", listReq.CreateTimeEnd.ValueOrZero())
+		dbModel = dbModel.Where("a.create_time <= ?", listReq.CreateTimeEnd.ValueOrZero())
 	}
 	if listReq.UpdateTimeStart.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".update_time >= ?", listReq.UpdateTimeStart.ValueOrZero())
+		dbModel = dbModel.Where("a.update_time >= ?", listReq.UpdateTimeStart.ValueOrZero())
 	}
 	if listReq.UpdateTimeEnd.IsExistsAndNotNull() {
-		dbModel = dbModel.Where(tableName+".update_time <= ?", listReq.UpdateTimeEnd.ValueOrZero())
+		dbModel = dbModel.Where("a.update_time <= ?", listReq.UpdateTimeEnd.ValueOrZero())
 	}
 	// dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel
 }
 
 // 获取更新map
-func (service systemCornService) GetUpdateMap(editReq schema.SystemCornEditReq) map[string]interface{} {
-	updateMap := make(map[string]interface{})
+func (service systemCornService) GetUpdateMap(editReq schema.SystemCornEditReq) map[string]any {
+	updateMap := make(map[string]any)
 	if editReq.Id != "" {
 		updateMap["id"] = editReq.Id
 	}
@@ -142,7 +144,7 @@ func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedByUser").Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -175,7 +177,7 @@ func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error
 	var obj model.SystemCorn
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询失败"); e != nil {
@@ -201,7 +203,7 @@ func (service systemCornService) Del(Id string) (e error) {
 	var obj model.SystemCorn
 	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {
@@ -269,10 +271,10 @@ func (service systemCornService) ImportFile(importReq []schema.SystemCornResp) (
 }
 
 // 获取任务列表
-func (service systemCornService) GetTaskList() (list []map[string]interface{}) {
-	// var list []map[string]interface{}
+func (service systemCornService) GetTaskList() (list []map[string]any) {
+	// var list []map[string]any
 	for _, task := range TaskInfoList {
-		list = append(list, map[string]interface{}{
+		list = append(list, map[string]any{
 			"Lock":     task.Lock,
 			"LockTTL":  task.LockTTL.Seconds(),
 			"TaskCode": task.TaskCode,

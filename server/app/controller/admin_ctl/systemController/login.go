@@ -30,7 +30,7 @@ func (lh loginHandler) login(c *gin.Context) {
 	}
 	err := commonService.CaptchaVerify(params)
 	if err != nil {
-		response.FailWithMsg(c, response.Failed, err.Error())
+		response.Fail(c, err.Error())
 		return
 	}
 
@@ -48,5 +48,5 @@ func (lh loginHandler) logout(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyHeader(c, &logoutReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.LoginService.Logout(&logoutReq))
+	response.CheckAndRespWithData(c, nil, systemService.LoginService.Logout(&logoutReq))
 }

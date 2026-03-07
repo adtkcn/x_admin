@@ -62,7 +62,7 @@ func (rh RoleHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.RoleService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, systemService.RoleService.Add(addReq))
 }
 
 // edit 编辑角色
@@ -71,7 +71,7 @@ func (rh RoleHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.RoleService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, systemService.RoleService.Edit(editReq))
 }
 
 // del 删除角色
@@ -80,5 +80,5 @@ func (rh RoleHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.RoleService.Del(delReq.ID))
+	response.CheckAndRespWithData(c, nil, systemService.RoleService.Del(delReq.ID))
 }

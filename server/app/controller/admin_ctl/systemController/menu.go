@@ -59,7 +59,7 @@ func (mh menuHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.MenuService.Add(addReq))
+	response.CheckAndRespWithData(c, nil, systemService.MenuService.Add(addReq))
 }
 
 // edit 编辑菜单
@@ -68,7 +68,7 @@ func (mh menuHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.MenuService.Edit(editReq))
+	response.CheckAndRespWithData(c, nil, systemService.MenuService.Edit(editReq))
 }
 
 // del 删除菜单
@@ -77,5 +77,5 @@ func (mh menuHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.MenuService.Del(delReq.ID))
+	response.CheckAndRespWithData(c, nil, systemService.MenuService.Del(delReq.ID))
 }

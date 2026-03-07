@@ -40,5 +40,5 @@ func (wh websiteHandler) save(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &wsReq)) {
 		return
 	}
-	response.CheckAndResp(c, settingService.WebsiteService.Save(wsReq))
+	response.CheckAndRespWithData(c, nil, settingService.WebsiteService.Save(wsReq))
 }

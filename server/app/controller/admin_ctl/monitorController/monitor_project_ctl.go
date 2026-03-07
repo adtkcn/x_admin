@@ -141,7 +141,7 @@ func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, monitorService.MonitorProjectService.Del(delReq.Id))
+	response.CheckAndRespWithData(c, nil, monitorService.MonitorProjectService.Del(delReq.Id))
 }
 
 // @Summary	监控项目删除-批量
@@ -158,12 +158,12 @@ func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.FailWithMsg(c, response.SystemError, "请选择要删除的数据")
+		response.Fail(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, monitorService.MonitorProjectService.DelBatch(Ids))
+	response.CheckAndRespWithData(c, nil, monitorService.MonitorProjectService.DelBatch(Ids))
 }
 
 // @Summary	监控项目导出
@@ -186,12 +186,12 @@ func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	}
 	res, err := monitorService.MonitorProjectService.ExportFile(listReq)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		response.Fail(c, "查询信息失败")
 		return
 	}
 	f, err := excel2.Export(res, monitorService.MonitorProjectService.GetExcelCol(), "Sheet1", "监控项目")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("监控项目"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -216,5 +216,5 @@ func (hd *MonitorProjectHandler) ImportFile(c *gin.Context) {
 	}
 
 	err = monitorService.MonitorProjectService.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }

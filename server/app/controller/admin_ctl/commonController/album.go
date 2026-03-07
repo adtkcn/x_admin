@@ -51,7 +51,7 @@ func (ah albumHandler) albumRename(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
 		return
 	}
-	response.CheckAndResp(c, commonService.AlbumService.AlbumRename(rnReq.ID, rnReq.Name))
+	response.CheckAndRespWithData(c, nil, commonService.AlbumService.AlbumRename(rnReq.ID, rnReq.Name))
 }
 
 // albumMove 相册文件移动
@@ -60,7 +60,7 @@ func (ah albumHandler) albumMove(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &mvReq)) {
 		return
 	}
-	response.CheckAndResp(c, commonService.AlbumService.AlbumMove(mvReq.Ids, mvReq.Cid))
+	response.CheckAndRespWithData(c, nil, commonService.AlbumService.AlbumMove(mvReq.Ids, mvReq.Cid))
 }
 
 // albumDel 相册文件删除
@@ -69,7 +69,7 @@ func (ah albumHandler) albumDel(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, commonService.AlbumService.AlbumDel(delReq.Ids))
+	response.CheckAndRespWithData(c, nil, commonService.AlbumService.AlbumDel(delReq.Ids))
 }
 
 // cateList 类目列表
@@ -90,7 +90,7 @@ func (ah albumHandler) cateAdd(c *gin.Context) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
-	response.CheckAndResp(c, commonService.AlbumService.CateAdd(adminId, addReq))
+	response.CheckAndRespWithData(c, nil, commonService.AlbumService.CateAdd(adminId, addReq))
 }
 
 // cateRename 类目命名
@@ -99,7 +99,7 @@ func (ah albumHandler) cateRename(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
 		return
 	}
-	response.CheckAndResp(c, commonService.AlbumService.CateRename(rnReq.ID, rnReq.Name))
+	response.CheckAndRespWithData(c, nil, commonService.AlbumService.CateRename(rnReq.ID, rnReq.Name))
 }
 
 // cateDel 类目删除
@@ -108,5 +108,5 @@ func (ah albumHandler) cateDel(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, commonService.AlbumService.CateDel(delReq.ID))
+	response.CheckAndRespWithData(c, nil, commonService.AlbumService.CateDel(delReq.ID))
 }

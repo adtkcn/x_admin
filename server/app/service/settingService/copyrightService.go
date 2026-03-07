@@ -11,7 +11,7 @@ import (
 )
 
 type ISettingCopyrightService interface {
-	Detail() (res []map[string]interface{}, e error)
+	Detail() (res []map[string]any, e error)
 	Save(cReqs []settingSchema.SettingCopyrightItemReq) (e error)
 }
 
@@ -29,7 +29,7 @@ type settingCopyrightService struct {
 }
 
 // Detail 获取网站备案信息
-func (cSrv settingCopyrightService) Detail() (res []map[string]interface{}, e error) {
+func (cSrv settingCopyrightService) Detail() (res []map[string]any, e error) {
 	data, err := SystemConfigService.GetVal(cSrv.db, "website", "copyright", "[]")
 	if e = response.CheckErr(err, "Detail GetVal err"); e != nil {
 		return

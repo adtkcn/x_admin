@@ -64,8 +64,8 @@ func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) 
 }
 
 // 获取更新map,原因是可以如果字段为空,则不更新
-func (service userProtocolService) GetUpdateMap(editReq schema.UserProtocolEditReq) map[string]interface{} {
-	updateMap := make(map[string]interface{})
+func (service userProtocolService) GetUpdateMap(editReq schema.UserProtocolEditReq) map[string]any {
+	updateMap := make(map[string]any)
 
 	if editReq.Tag.IsExists() {
 		updateMap["tag"] = editReq.Tag.GetValue()
@@ -130,7 +130,7 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedByUser").Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -163,7 +163,7 @@ func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e e
 	var obj model.UserProtocol
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询失败"); e != nil {
@@ -190,7 +190,7 @@ func (service userProtocolService) Del(Id string) (e error) {
 	var obj model.UserProtocol
 	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {

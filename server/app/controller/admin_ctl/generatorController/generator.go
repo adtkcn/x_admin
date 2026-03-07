@@ -78,7 +78,7 @@ func (gh genHandler) importTable(c *gin.Context) {
 		return
 	}
 	err := generatorService.GenerateService.ImportTable(strings.Split(importReq.Tables, ","))
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // syncTable 同步表结构
@@ -88,7 +88,7 @@ func (gh genHandler) syncTable(c *gin.Context) {
 		return
 	}
 	err := generatorService.GenerateService.SyncTable(syncReq.ID)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // editTable 编辑表结构
@@ -98,7 +98,7 @@ func (gh genHandler) editTable(c *gin.Context) {
 		return
 	}
 	err := generatorService.GenerateService.EditTable(editReq)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // delTable 删除表结构
@@ -108,7 +108,7 @@ func (gh genHandler) delTable(c *gin.Context) {
 		return
 	}
 	err := generatorService.GenerateService.DelTable(delReq.Ids)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // previewCode 预览代码

@@ -111,7 +111,7 @@ func (service monitorProjectService) Detail(Id string) (res monitorSchema.Monito
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -144,7 +144,7 @@ func (service monitorProjectService) Edit(editReq monitorSchema.MonitorProjectEd
 	var obj model.MonitorProject
 	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询失败"); e != nil {
@@ -166,7 +166,7 @@ func (service monitorProjectService) Del(Id string) (e error) {
 	var obj model.MonitorProject
 	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {

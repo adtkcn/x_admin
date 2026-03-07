@@ -25,16 +25,16 @@ type UserProtocolHandler struct {
 // @Summary	用户协议列表
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token			header		string																		true	"token"
-// @Param		pageNo			query		int																			true	"页码"
-// @Param		pageSize		query		int																			true	"每页数量"
-// @Param		Title			query		string																		false	"标题"
-// @Param		Content			query		string																		false	"协议内容"
-// @Param		Sort			query		number																		false	"排序"
-// @Param		CreateTimeStart	query		string																		false	"创建时间"
-// @Param		CreateTimeEnd	query		string																		false	"创建时间"
-// @Param		UpdateTimeStart	query		string																		false	"更新时间"
-// @Param		UpdateTimeEnd	query		string																		false	"更新时间"
+// @Param		token			header		string														true	"token"
+// @Param		pageNo			query		int															true	"页码"
+// @Param		pageSize		query		int															true	"每页数量"
+// @Param		Title			query		string														false	"标题"
+// @Param		Content			query		string														false	"协议内容"
+// @Param		Sort			query		number														false	"排序"
+// @Param		CreateTimeStart	query		string														false	"创建时间"
+// @Param		CreateTimeEnd	query		string														false	"创建时间"
+// @Param		UpdateTimeStart	query		string														false	"更新时间"
+// @Param		UpdateTimeEnd	query		string														false	"更新时间"
 //
 // @Success	200				{object}	response.Response{data=response.PageResp{lists=[]schema.UserProtocolResp}}	"成功"
 // @Router		/api/admin/user_protocol/list [get]
@@ -55,14 +55,14 @@ func (hd *UserProtocolHandler) List(c *gin.Context) {
 // @Summary	用户协议列表-所有
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token			header		string												true	"token"
-// @Param		Title			query		string												false	"标题"
-// @Param		Content			query		string												false	"协议内容"
-// @Param		Sort			query		number												false	"排序"
-// @Param		CreateTimeStart	query		string												false	"创建时间"
-// @Param		CreateTimeEnd	query		string												false	"创建时间"
-// @Param		UpdateTimeStart	query		string												false	"更新时间"
-// @Param		UpdateTimeEnd	query		string												false	"更新时间"
+// @Param		token			header		string														true	"token"
+// @Param		Title			query		string														false	"标题"
+// @Param		Content			query		string														false	"协议内容"
+// @Param		Sort			query		number														false	"排序"
+// @Param		CreateTimeStart	query		string														false	"创建时间"
+// @Param		CreateTimeEnd	query		string														false	"创建时间"
+// @Param		UpdateTimeStart	query		string														false	"更新时间"
+// @Param		UpdateTimeEnd	query		string														false	"更新时间"
 // @Success	200				{object}	response.Response{data=[]schema.UserProtocolResp}	"成功"
 // @Router		/api/admin/user_protocol/listAll [get]
 func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
@@ -77,8 +77,8 @@ func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
 // @Summary	用户协议详情
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token	header		string											true	"token"
-// @Param		Id		query		number											false	"Id"
+// @Param		token	header		string														true	"token"
+// @Param		Id		query		number														false	"Id"
 // @Success	200		{object}	response.Response{data=schema.UserProtocolResp}	"成功"
 // @Router		/api/admin/user_protocol/detail [get]
 func (hd *UserProtocolHandler) Detail(c *gin.Context) {
@@ -97,10 +97,10 @@ func (hd *UserProtocolHandler) Detail(c *gin.Context) {
 // @Summary	用户协议新增
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token	header		string				true	"token"
-// @Param		Title	body		string				false	"标题"
-// @Param		Content	body		string				false	"协议内容"
-// @Param		Sort	body		number				false	"排序"
+// @Param		token	header		string														true	"token"
+// @Param		Title	body		string														false	"标题"
+// @Param		Content	body		string														false	"协议内容"
+// @Param		Sort	body		number														false	"排序"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/add [post]
 func (hd *UserProtocolHandler) Add(c *gin.Context) {
@@ -111,18 +111,18 @@ func (hd *UserProtocolHandler) Add(c *gin.Context) {
 	// 添加创建人
 	var adminId = config.AdminConfig.GetAdminId(c)
 
-	createId, e := service.UserProtocolService.Add(addReq, adminId)
-	response.CheckAndRespWithData(c, createId, e)
+	createId, err := service.UserProtocolService.Add(addReq, adminId)
+	response.CheckAndRespWithData(c, createId, err)
 }
 
 // @Summary	用户协议编辑
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token	header		string				true	"token"
-// @Param		Id		body		number				false	"Id"
-// @Param		Title	body		string				false	"标题"
-// @Param		Content	body		string				false	"协议内容"
-// @Param		Sort	body		number				false	"排序"
+// @Param		token	header		string														true	"token"
+// @Param		Id		body		number														false	"Id"
+// @Param		Title	body		string														false	"标题"
+// @Param		Content	body		string														false	"协议内容"
+// @Param		Sort	body		number														false	"排序"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/edit [post]
 func (hd *UserProtocolHandler) Edit(c *gin.Context) {
@@ -130,14 +130,15 @@ func (hd *UserProtocolHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, editReq.Id, service.UserProtocolService.Edit(editReq))
+	err := service.UserProtocolService.Edit(editReq)
+	response.CheckAndRespWithData(c, editReq.Id, err)
 }
 
 // @Summary	用户协议删除
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token	header		string				true	"token"
-// @Param		Id		body		number				false	"Id"
+// @Param		token	header		string														true	"token"
+// @Param		Id		body		number														false	"Id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/del [post]
 func (hd *UserProtocolHandler) Del(c *gin.Context) {
@@ -145,15 +146,16 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, service.UserProtocolService.Del(delReq.Id))
+	err := service.UserProtocolService.Del(delReq.Id)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // @Summary	用户协议删除-批量
 // @Tags		user_protocol-用户协议
 //
 // @Produce	json
-// @Param		token	header		string				true	"token"
-// @Param		Ids		body		string				false	"逗号分割的id"
+// @Param		token	header		string														true	"token"
+// @Param		Ids		body		string														false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/delBatch [post]
 func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
@@ -162,26 +164,27 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.FailWithMsg(c, response.SystemError, "请选择要删除的数据")
+		response.Fail(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, service.UserProtocolService.DelBatch(Ids))
+	err := service.UserProtocolService.DelBatch(Ids)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // @Summary	用户协议导出
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token			header		string				true	"token"
-// @Param		Title			query		string				false	"标题"
-// @Param		Content			query		string				false	"协议内容"
-// @Param		Sort			query		number				false	"排序"
-// @Param		CreateTimeStart	query		string				false	"创建时间"
-// @Param		CreateTimeEnd	query		string				false	"创建时间"
-// @Param		UpdateTimeStart	query		string				false	"更新时间"
-// @Param		UpdateTimeEnd	query		string				false	"更新时间"
-// @Success	200				{file}		string				"成功"
+// @Param		token			header		string														true	"token"
+// @Param		Title			query		string														false	"标题"
+// @Param		Content			query		string														false	"协议内容"
+// @Param		Sort			query		number														false	"排序"
+// @Param		CreateTimeStart	query		string														false	"创建时间"
+// @Param		CreateTimeEnd	query		string														false	"创建时间"
+// @Param		UpdateTimeStart	query		string														false	"更新时间"
+// @Param		UpdateTimeEnd	query		string														false	"更新时间"
+// @Success	200				{file}		string														"成功"
 // @Failure	500				{object}	response.Response	"失败"
 // @Router		/api/admin/user_protocol/ExportFile [get]
 func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
@@ -191,12 +194,12 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 	}
 	res, err := service.UserProtocolService.ExportFile(listReq)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		response.Fail(c, "查询信息失败")
 		return
 	}
 	f, err := excel2.Export(res, service.UserProtocolService.GetExcelCol(), "Sheet1", "用户协议")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("用户协议"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -205,8 +208,8 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 // @Summary	用户协议导入
 // @Tags		user_protocol-用户协议
 // @Produce	json
-// @Param		token	header		string				true	"token"
-// @Param		file	formData	file				true	"导入文件"
+// @Param		token	header		string														true	"token"
+// @Param		file	formData	file														true	"导入文件"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/user_protocol/ImportFile [post]
 func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
@@ -224,5 +227,5 @@ func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 	}
 
 	err = service.UserProtocolService.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }

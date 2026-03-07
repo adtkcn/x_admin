@@ -78,8 +78,8 @@ func (service {{{ .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCam
 	return dbModel
 }
 // 获取更新map
-func (service {{{ .EntityName }}}Service) GetUpdateMap(editReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq) map[string]interface{} {
-	updateMap := make(map[string]interface{})
+func (service {{{ .EntityName }}}Service) GetUpdateMap(editReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq) map[string]any {
+	updateMap := make(map[string]any)
 	{{{- range .Columns }}}
 	{{{- if .IsEdit }}}
 	{{{- if .IsPk }}}
@@ -142,7 +142,7 @@ func (service {{{ .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKe
 	err := service.CacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
 		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Preload("CreatedByUser").Limit(1).First(&obj).Error
-		if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
@@ -185,7 +185,7 @@ func (service {{{ .EntityName }}}Service) Edit(editReq schema.{{{ toUpperCamelCa
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", editReq.{{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询失败"); e != nil {
@@ -211,7 +211,7 @@ func (service {{{ .EntityName }}}Service) Del({{{ toUpperCamelCase .PrimaryKey }
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "查询数据失败"); e != nil {

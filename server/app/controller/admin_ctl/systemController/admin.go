@@ -61,19 +61,15 @@ func (ah AdminHandler) ExportFile(c *gin.Context) {
 	res, err := systemService.AdminService.ExportFile(listReq)
 
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询导出失败")
+		response.Fail(c, "查询导出失败")
 		return
 	}
 	f, err := excel2.Export(res, systemService.AdminService.GetExcelCol(), "Sheet1", "用户信息")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("用户信息"+time.Now().Format("20060102-150405"), c.Writer, f)
-	// c.Header("Content-Type", "application/octet-stream")
-	// c.Header("Content-Disposition", "attachment; filename="+"用户信息.xlsx")
-	// c.Header("Content-Transfer-Encoding", "binary")
-	// f.Write(c.Writer)
 }
 
 // 导入文件
@@ -91,7 +87,7 @@ func (ah AdminHandler) ImportFile(c *gin.Context) {
 		return
 	}
 	err = systemService.AdminService.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // list 管理员列表
@@ -136,7 +132,8 @@ func (ah AdminHandler) Add(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.AdminService.Add(addReq))
+	err := systemService.AdminService.Add(addReq)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // edit 管理员编辑
@@ -145,7 +142,8 @@ func (ah AdminHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.AdminService.Edit(c, editReq))
+	err := systemService.AdminService.Edit(c, editReq)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // upInfo 管理员更新
@@ -154,8 +152,9 @@ func (ah AdminHandler) UpInfo(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &updateReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.AdminService.Update(
-		c, updateReq, config.AdminConfig.GetAdminId(c)))
+	err := systemService.AdminService.Update(
+		c, updateReq, config.AdminConfig.GetAdminId(c))
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // del 管理员删除
@@ -164,7 +163,8 @@ func (ah AdminHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.AdminService.Del(c, delReq.ID))
+	err := systemService.AdminService.Del(c, delReq.ID)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // disable 管理员状态切换
@@ -173,7 +173,8 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &disableReq)) {
 		return
 	}
-	response.CheckAndResp(c, systemService.AdminService.Disable(c, disableReq.ID))
+	err := systemService.AdminService.Disable(c, disableReq.ID)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // @Summary		获取部门的用户
@@ -185,7 +186,7 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 func (ah AdminHandler) ListByDeptId(c *gin.Context) {
 	deptId, bool := c.GetQuery("deptId")
 	if !bool {
-		response.FailWithMsg(c, response.Failed, "deptId不能为空")
+		response.Fail(c, "deptId不能为空")
 		return
 	}
 

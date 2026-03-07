@@ -121,7 +121,7 @@ func (service flowHistoryService) ListAll(listReq flowSchema.FlowHistoryListReq)
 func (service flowHistoryService) Detail(id string) (res flowSchema.FlowHistoryResp, e error) {
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "详情获取失败"); e != nil {
@@ -145,7 +145,7 @@ func (service flowHistoryService) Edit(editReq flowSchema.FlowHistoryEditReq) (e
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
@@ -163,7 +163,7 @@ func (service flowHistoryService) Del(id string) (e error) {
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
 	// 校验
-	if e = response.CheckErrDBNotRecord(err, "数据不存在!"); e != nil {
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
@@ -209,7 +209,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []systemSchem
 
 	adminModel := service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
 
-	where := map[string]interface{}{}
+	where := map[string]any{}
 	if userType == 1 {
 		if deptId != "" {
 			where["admin.dept_id"] = deptId
@@ -482,7 +482,7 @@ func (service flowHistoryService) GetNextNode(ApplyId string) (res []flowSchema.
 	// start
 	var flowTree []flowSchema.FlowTree
 	json.Unmarshal([]byte(applyDetail.FlowProcessDataList), &flowTree)
-	var formValue map[string]interface{}
+	var formValue map[string]any
 
 	if result.RowsAffected == 1 { //有最新审批记录
 		json.Unmarshal([]byte(LastHistory.FormValue), &formValue)
@@ -515,7 +515,7 @@ func (service flowHistoryService) GetNextNode(ApplyId string) (res []flowSchema.
 }
 
 // 返回节点数组，最后一个节点为用户或结束节点
-func DeepNextNode(flowTree *[]flowSchema.FlowTree, formValue map[string]interface{}) []flowSchema.FlowTree {
+func DeepNextNode(flowTree *[]flowSchema.FlowTree, formValue map[string]any) []flowSchema.FlowTree {
 	var nextNodes []flowSchema.FlowTree
 	for _, v := range *flowTree {
 		if v.Type == "bpmn:startEvent" {
