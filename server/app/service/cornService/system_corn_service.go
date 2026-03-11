@@ -71,7 +71,7 @@ func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gor
 	if listReq.UpdateTimeEnd.IsExistsAndNotNull() {
 		dbModel = dbModel.Where("a.update_time <= ?", listReq.UpdateTimeEnd.ValueOrZero())
 	}
-	// dbModel = dbModel.Where("is_delete = ?", 0)
+
 	return dbModel
 }
 
