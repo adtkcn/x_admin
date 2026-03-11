@@ -13,20 +13,11 @@ export type type_system_post_detail = {
     id: string
 }
 
-// 岗位添加参数
-export type type_system_post_add = {
-    code?: string
-    name: string
-    remarks?: string
-    isStop?: number
-    sort?: number
-}
-
 // 岗位编辑参数
 export type type_system_post_edit = {
-    id: string
+    id?: string
     code?: string
-    name: string
+    name?: string
     remarks?: string
     isStop?: number
     sort?: number
@@ -60,12 +51,12 @@ export function postLists(params?: type_system_post_list) {
 }
 
 // 岗位全部列表
-export function postAll(params?: any) {
-    return request.get<type_system_post_resp[]>({ url: '/system/post/all', params })
+export function postAll() {
+    return request.get<type_system_post_resp[]>({ url: '/system/post/all' })
 }
 
 // 添加岗位
-export function postAdd(data: type_system_post_add) {
+export function postAdd(data: type_system_post_edit) {
     return request.post({ url: '/system/post/add', data })
 }
 

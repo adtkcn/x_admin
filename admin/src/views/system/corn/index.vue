@@ -168,16 +168,16 @@ const showEdit = ref(false)
 const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
 const showDetails = ref(false)
 const queryParams = reactive<type_system_corn_query>({
-    TaskName: null,
-    TaskCode: null,
-    CornExpr: null,
-    Status: null,
-    CreatedBy: null,
-    CreatedByNickname: null,
-    CreateTimeStart: null,
-    CreateTimeEnd: null,
-    UpdateTimeStart: null,
-    UpdateTimeEnd: null
+    TaskName: undefined,
+    TaskCode: undefined,
+    CornExpr: undefined,
+    Status: undefined,
+    CreatedBy: undefined,
+    CreatedByNickname: undefined,
+    CreateTimeStart: undefined,
+    CreateTimeEnd: undefined,
+    UpdateTimeStart: undefined,
+    UpdateTimeEnd: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_system_corn>({
@@ -191,13 +191,13 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_system_corn) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
-const viewDetails = async (data: any) => {
+const viewDetails = async (data: type_system_corn) => {
     showDetails.value = true
     await nextTick()
     detailsRef.value?.open()
@@ -205,11 +205,10 @@ const viewDetails = async (data: any) => {
 }
 const multipleSelection = ref<type_system_corn[]>([])
 const handleSelectionChange = (val: type_system_corn[]) => {
-    console.log(val)
     multipleSelection.value = val
 }
 
-const handleDelete = async (Id: number) => {
+const handleDelete = async (Id: string) => {
     try {
         await feedback.confirm('确定要删除？')
         await system_corn_delete(Id)

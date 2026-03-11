@@ -51,6 +51,7 @@ export type type_system_dept_resp = {
     isStop: number
     createTime: string
     updateTime: string
+    children?: type_system_dept_resp[]
 }
 
 // 部门列表
@@ -59,8 +60,8 @@ export function deptLists(params?: type_system_dept_list) {
 }
 
 // 部门列表-全部
-export function deptAll(params?: any) {
-    return request.get<type_system_dept_resp[]>({ url: '/system/dept/all', params })
+export function deptAll() {
+    return request.get<type_system_dept_resp[]>({ url: '/system/dept/all' })
 }
 
 // 部门详情

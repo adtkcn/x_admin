@@ -25,19 +25,19 @@ export type type_system_menu_add = {
 // 菜单编辑参数
 export type type_system_menu_edit = {
     id: string
-    pid?: string
+    pid: string
     menuType: string
     menuName: string
-    menuIcon?: string
-    menuSort?: number
-    perms?: string
-    paths?: string
-    component?: string
-    selected?: string
-    params?: string
-    isCache?: number
-    isShow?: number
-    isDisable?: number
+    menuIcon: string
+    menuSort: number
+    perms: string
+    paths: string
+    component: string
+    selected: string
+    params: string
+    isCache: number
+    isShow: number
+    isDisable: number
 }
 
 // 菜单删除参数
@@ -67,8 +67,8 @@ export type type_system_menu_resp = {
 }
 
 // 菜单列表
-export function menuLists(params?: any) {
-    return request.get<type_system_menu_resp[]>({ url: '/system/menu/list', params })
+export function menuLists() {
+    return request.get<type_system_menu_resp[]>({ url: '/system/menu/list' })
 }
 
 // 菜单详情

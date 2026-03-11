@@ -80,7 +80,7 @@ export function monitor_project_delete_batch(data: { Ids: string }) {
 export const monitor_project_import_file = '/monitor_project/importFile'
 
 // 监控项目导出
-export function monitor_project_export_file(params: any) {
+export function monitor_project_export_file(params: type_monitor_project_query) {
     return (window.location.href =
         `${config.baseUrl}${config.urlPrefix}/monitor_project/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))

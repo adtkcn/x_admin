@@ -46,9 +46,10 @@ import {
     system_corn_edit,
     system_corn_add,
     system_corn_detail,
-    system_corn_getTaskList
+    system_corn_getTaskList,
+    type type_system_corn_edit
 } from '@/api/system/corn'
-import type { TaskType } from '@/api/system/corn'
+import type { type_task } from '@/api/system/corn'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import { ref, shallowRef, computed, reactive } from 'vue'
@@ -71,12 +72,12 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑定时任务' : '新增定时任务'
 })
 
-const formData = reactive({
-    Id: null,
-    TaskName: null,
-    TaskCode: null,
-    CornExpr: null,
-    Status: null
+const formData = reactive<type_system_corn_edit>({
+    Id: '',
+    TaskName: '',
+    TaskCode: '',
+    CornExpr: '',
+    Status: 1
 })
 
 const formRules = {
@@ -120,7 +121,7 @@ const formRules = {
 const handleSubmit = async () => {
     try {
         await formRef.value?.validate()
-        const data: any = { ...formData }
+        const data = { ...formData }
         if (mode.value == 'edit') {
             await system_corn_edit(data)
         } else {
@@ -154,7 +155,7 @@ const getDetail = async (row: Record<string, any>) => {
     } catch (error) {}
 }
 
-const taskList = ref<TaskType[]>([])
+const taskList = ref<type_task[]>([])
 const getTaskList = async () => {
     try {
         const data = await system_corn_getTaskList()

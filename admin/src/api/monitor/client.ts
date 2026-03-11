@@ -25,16 +25,8 @@ export type type_monitor_client = {
 // 查询
 export type type_monitor_client_query = {
     ProjectKey?: string
-    ClientId?: string
-    UserId?: string
     Os?: string
     Browser?: string
-    Country?: string
-    Province?: string
-    City?: string
-    Operator?: string
-    Ip?: string
-
     Ua?: string
     CreateTimeStart?: string
     CreateTimeEnd?: string
@@ -43,16 +35,8 @@ export type type_monitor_client_query = {
 export type type_monitor_client_edit = {
     Id?: string
     ProjectKey?: string
-    ClientId?: string
-    UserId?: string
     Os?: string
     Browser?: string
-    Country?: string
-    Province?: string
-    City?: string
-    Operator?: string
-    Ip?: string
-
     Ua?: string
 }
 
@@ -103,7 +87,7 @@ export function monitor_client_delete_batch(data: { Ids: string }) {
 export const monitor_client_import_file = '/monitor_client/importFile'
 
 // 监控-客户端信息导出
-export function monitor_client_export_file(params: any) {
+export function monitor_client_export_file(params: type_monitor_client_query) {
     return (window.location.href =
         `${config.baseUrl}${config.urlPrefix}/monitor_client/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))

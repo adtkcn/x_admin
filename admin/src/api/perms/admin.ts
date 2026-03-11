@@ -18,29 +18,29 @@ export type type_system_admin_detail = {
 
 // 管理员添加参数
 export type type_system_admin_add = {
-    deptId?: string
-    postId?: string
-    roleId?: string
+    deptId: string
+    postId: string
+    roleId: string
     username: string
     nickname: string
     password: string
-    avatar?: string
-    sort?: number
-    isDisable?: number
+    avatar: string
+    sort: number
+    isDisable: number
 }
 
 // 管理员编辑参数
 export type type_system_admin_edit = {
     id: string
-    deptId?: string
-    postId?: string
-    roleId?: string
+    deptId: string
+    postId: string
+    roleId: string
     username: string
     nickname: string
-    password?: string
-    avatar?: string
-    sort?: number
-    isDisable?: number
+    password: string
+    avatar: string
+    sort: number
+    isDisable: number
 }
 
 // 管理员删除参数

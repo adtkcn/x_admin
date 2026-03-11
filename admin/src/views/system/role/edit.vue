@@ -49,7 +49,14 @@
 <script lang="ts" setup>
 import { ref, computed, useTemplateRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
-import { roleAdd, roleDetail, roleEdit } from '@/api/perms/role'
+import {
+    roleAdd,
+    roleDetail,
+    roleEdit,
+    type type_system_role_add,
+    type type_system_role_edit,
+    type type_system_role_resp
+} from '@/api/perms/role'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 const emit = defineEmits(['success', 'close'])
@@ -59,7 +66,12 @@ const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑角色' : '新增角色'
 })
-const formData = reactive({
+
+type type_role_form = type_system_role_edit & {
+    menus: string[]
+}
+
+const formData = reactive<type_role_form>({
     id: '',
     name: '',
     remark: '',
@@ -96,14 +108,16 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = async (row: Record<any, any>) => {
+const setFormData = async (row: type_system_role_resp) => {
     const data = await roleDetail({
         id: row.id
     })
     for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            formData[key] = data[key]
+        if (
+            data[key as keyof type_system_role_resp] != null &&
+            data[key as keyof type_system_role_resp] != undefined
+        ) {
+            formData[key] = data[key as keyof type_system_role_resp]
         }
     }
 }

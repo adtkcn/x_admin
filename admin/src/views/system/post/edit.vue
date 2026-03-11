@@ -46,7 +46,13 @@
 <script lang="ts" setup>
 import { ref, computed, reactive, shallowRef } from 'vue'
 import type { FormInstance } from 'element-plus'
-import { postEdit, postAdd, postDetail } from '@/api/org/post'
+import {
+    postEdit,
+    postAdd,
+    postDetail,
+    type type_system_post_edit,
+    type type_system_post_resp
+} from '@/api/org/post'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 const emit = defineEmits(['success', 'close'])
@@ -56,7 +62,8 @@ const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑岗位' : '新增岗位'
 })
-const formData = reactive({
+
+const formData = reactive<type_system_post_edit>({
     id: '',
     name: '',
     code: '',
@@ -95,19 +102,18 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = (data: Record<any, any>) => {
+const setFormData = (data: Partial<type_system_post_edit>) => {
     for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            formData[key] = data[key]
-        }
-        //TODO：因为后端返回字段为is_stop
-        else {
-            formData[key] = data['is_stop']
+        if (
+            data[key as keyof type_system_post_edit] != null &&
+            data[key as keyof type_system_post_edit] != undefined
+        ) {
+            formData[key] = data[key as keyof type_system_post_edit]
         }
     }
 }
 
-const getDetail = async (row: Record<string, any>) => {
+const getDetail = async (row: type_system_post_resp) => {
     const data = await postDetail({
         id: row.id
     })

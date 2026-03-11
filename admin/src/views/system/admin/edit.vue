@@ -114,11 +114,18 @@
 import { ref, computed, reactive, shallowRef } from 'vue'
 import type { FormInstance } from 'element-plus'
 import Popup from '@/components/popup/index.vue'
-import { adminAdd, adminEdit, adminDetail } from '@/api/perms/admin'
+import {
+    adminAdd,
+    adminEdit,
+    adminDetail,
+    type type_system_admin_add,
+    type type_system_admin_edit,
+    type type_system_admin_resp
+} from '@/api/perms/admin'
 import { useDictOptions } from '@/hooks/useDictOptions'
-import { roleAll } from '@/api/perms/role'
-import { postAll } from '@/api/org/post'
-import { deptLists } from '@/api/org/department'
+import { roleAll, type type_system_role_simple_resp } from '@/api/perms/role'
+import { postAll, type type_system_post_resp } from '@/api/org/post'
+import { deptLists, type type_system_dept_resp } from '@/api/org/department'
 import feedback from '@/utils/feedback'
 import { encryptPassword } from '@/utils/util'
 
@@ -130,7 +137,11 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑管理员' : '新增管理员'
 })
 
-const formData = reactive({
+type type_admin_form = type_system_admin_edit & {
+    passwordConfirm: string
+}
+
+const formData = reactive<type_admin_form>({
     id: '',
     username: '',
     nickname: '',
@@ -141,7 +152,6 @@ const formData = reactive({
     password: '',
     passwordConfirm: '',
     isDisable: 0,
-    //服务端为必传参数，先给默认值
     sort: 1
 })
 
@@ -220,9 +230,9 @@ const formRules = reactive({
 })
 
 const { optionsData } = useDictOptions<{
-    role: any[]
-    post: any[]
-    dept: any[]
+    role: type_system_role_simple_resp[]
+    post: type_system_post_resp[]
+    dept: type_system_dept_resp[]
 }>({
     role: {
         api: roleAll
@@ -256,20 +266,19 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = async (row: any) => {
+const setFormData = async (row: type_system_admin_resp) => {
     const data = await adminDetail({
         id: row.id
     })
-    // debugger
-    console.log('formData', formData, Object.keys(formData))
     for (const key in formData) {
-        console.log('key', key)
-
-        if (data[key] != null && data[key] != undefined) {
-            formData[key] = data[key]
+        if (
+            data[key as keyof type_system_admin_resp] != null &&
+            data[key as keyof type_system_admin_resp] != undefined
+        ) {
+            formData[key as keyof type_admin_form] = data[
+                key as keyof type_system_admin_resp
+            ] as any
         }
-        // Number(formData.deptId) == 0 && (formData.deptId = '')
-        // Number(formData.postId) == 0 && (formData.postId = '')
     }
     formRules.password = []
     formRules.passwordConfirm = [

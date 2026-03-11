@@ -7,23 +7,23 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_system_corn = {
-    Id?: string
-    TaskName?: string
-    TaskCode?: string
-    CornExpr?: string
-    Status?: number
-    CreatedBy?: string
-    IsDelete?: number
-    CreateTime?: string
-    UpdateTime?: string
-    DeleteTime?: string
+    Id: string
+    TaskName: string
+    TaskCode: string
+    CornExpr: string
+    Status: number
+    CreatedBy: string
+    IsDelete: number
+    CreateTime: string
+    UpdateTime: string
+    DeleteTime: string
 }
 // 查询
 export type type_system_corn_query = {
     TaskName?: string
     TaskCode?: string
     CornExpr?: string
-    Status?: any
+    Status?: number
     CreatedBy?: string
     CreateTimeStart?: string
     CreateTimeEnd?: string
@@ -40,7 +40,7 @@ export type type_system_corn_edit = {
     CornExpr?: string
     Status?: number
 }
-export type TaskType = {
+export type type_task = {
     Lock: boolean
     LockTTL: number
     TaskCode: string
@@ -97,7 +97,7 @@ export function system_corn_export_file(params: type_system_corn_query) {
 
 // 自定义任务列表-所有
 export function system_corn_getTaskList() {
-    return request.get<TaskType[]>({
+    return request.get<type_task[]>({
         url: '/system_corn/getTaskList'
     })
 }

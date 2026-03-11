@@ -76,7 +76,7 @@ export function monitor_error_delete_batch(data: { Ids: string }) {
 export const monitor_error_import_file = '/monitor_error/importFile'
 
 // 监控-错误列导出
-export function monitor_error_export_file(params: any) {
+export function monitor_error_export_file(params: type_monitor_error_query) {
     return (window.location.href =
         `${config.baseUrl}${config.urlPrefix}/monitor_error/exportFile?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))

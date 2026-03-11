@@ -1,8 +1,8 @@
 export type PropertiesType = {
-    userType?: number
-    userId?: string | number
-    deptId?: string | number
-    postId?: string | number
+    userType?: number | null
+    userId?: string | number | null
+    deptId?: string | number | null
+    postId?: string | number | null
     fieldAuth?: {
         [key: string]: number
     }
@@ -33,20 +33,6 @@ export type NodeType = {
 export type FormFieldListType = {
     id: string
     name: string
-    // type:string
-    // label?: string
-    // name?: string
-    // type?: string
-    // field?: {
-    //     id: string
-
-    //     options?: {
-    //         name: string
-    //         label: string
-    //         defaultValue: ''
-    //     }
-    //     type?: string //'textarea'
-    // }
 }
 
 export type FieldListType = {

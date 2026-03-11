@@ -86,7 +86,7 @@
                                 :model-value="row.isDisable"
                                 :active-value="0"
                                 :inactive-value="1"
-                                @change="changeStatus($event, row.id)"
+                                @change="(val) => changeStatus(val as number, row.id)"
                             />
                         </template>
                     </vxe-column>
@@ -128,9 +128,11 @@ import {
     adminDelete,
     adminStatus,
     adminExportFile,
-    adminImportFile
+    adminImportFile,
+    type type_system_admin_list,
+    type type_system_admin_resp
 } from '@/api/perms/admin'
-import { roleAll } from '@/api/perms/role'
+import { roleAll, type type_system_role_simple_resp } from '@/api/perms/role'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -140,7 +142,7 @@ defineOptions({
 })
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 // 表单数据
-const formData = reactive<any>({
+const formData = reactive<type_system_admin_list>({
     username: '',
     nickname: '',
     roleId: ''
@@ -151,7 +153,7 @@ const { pager, getLists, resetParams, resetPage } = usePaging({
     params: formData
 })
 
-const changeStatus = async (active: any, id: number) => {
+const changeStatus = async (active: number, id: string) => {
     try {
         await feedback.confirm(`确定${active ? '停用' : '开启'}当前管理员？`)
         await adminStatus({ id })
@@ -171,14 +173,14 @@ const exportFile = async () => {
     await feedback.confirm('确定要导出？')
     await adminExportFile(formData)
 }
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_system_admin_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.setFormData(data)
 }
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     try {
         await feedback.confirm('确定要删除？')
         await adminDelete({ id })
@@ -187,7 +189,7 @@ const handleDelete = async (id: number) => {
     } catch (error) {}
 }
 const { optionsData } = useDictOptions<{
-    role: any[]
+    role: type_system_role_simple_resp[]
 }>({
     role: {
         api: roleAll
