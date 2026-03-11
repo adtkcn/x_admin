@@ -8,6 +8,10 @@ var AdminConfig = adminConfig{
 	BackstageManageKey: "backstage:manage",
 	// 角色缓存键
 	BackstageRolesKey: "backstage:roles",
+	// 用户角色缓存键
+	BackstageAdminRolesKey: "backstage:admin:roles",
+	// 用户权限缓存键(菜单+按钮)
+	BackstageAdminPermsKey: "backstage:admin:perms",
 	// 令牌缓存键
 	BackstageTokenKey: "backstage:token:",
 	// 令牌的集合
@@ -44,7 +48,7 @@ var AdminConfig = adminConfig{
 	// 管理员账号key
 	ReqAdminIdKey: "admin_id",
 	// 角色key
-	ReqRoleIdKey: "role",
+	// ReqRoleIdKey: "role",
 	// 用户名key
 	ReqUsernameKey: "username",
 	// 昵称key
@@ -59,6 +63,10 @@ type adminConfig struct {
 	BackstageManageKey string
 	// 角色缓存键"backstage:roles"
 	BackstageRolesKey string
+	// 用户角色缓存键"backstage:admin:roles"，field为管理员id，value为角色id列表(逗号分隔)
+	BackstageAdminRolesKey string
+	// 用户权限缓存键"backstage:admin:perms"，field为管理员id，value为权限列表(逗号分隔)
+	BackstageAdminPermsKey string
 	// 令牌缓存键"backstage:token:"，值为用户id
 	BackstageTokenKey string
 	// 令牌的集合 "backstage:token:set:"，值为token集合
@@ -74,7 +82,7 @@ type adminConfig struct {
 	// 管理员账号key
 	ReqAdminIdKey string
 	// 角色key
-	ReqRoleIdKey string
+	// ReqRoleIdKey string
 	// 用户名key
 	ReqUsernameKey string
 	// 昵称key
@@ -92,13 +100,13 @@ func (cnf adminConfig) GetAdminId(c *gin.Context) string {
 	return adminId.(string)
 }
 
-func (cnf adminConfig) GetRoleId(c *gin.Context) string {
-	roleId, ok := c.Get(cnf.ReqRoleIdKey)
-	if !ok {
-		return ""
-	}
-	return roleId.(string)
-}
+// func (cnf adminConfig) GetRoleId(c *gin.Context) string {
+// 	roleId, ok := c.Get(cnf.ReqRoleIdKey)
+// 	if !ok {
+// 		return ""
+// 	}
+// 	return roleId.(string)
+// }
 
 func (cnf adminConfig) GetUsername(c *gin.Context) string {
 	username, ok := c.Get(cnf.ReqUsernameKey)

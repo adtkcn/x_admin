@@ -15,9 +15,8 @@ import (
 )
 
 func Auth(c *gin.Context) response.RespType {
-	// Token是否为空
 	token := c.Request.Header.Get("token")
-	if token == "" { // 从url获取token
+	if token == "" {
 		token = c.Request.URL.Query().Get("token")
 	}
 	if token == "" {
@@ -30,11 +29,9 @@ func Auth(c *gin.Context) response.RespType {
 	if existCnt < 0 {
 		return response.SystemError
 	} else if existCnt == 0 {
-
 		return response.TokenInvalid
 	}
-
-	// 用户信息缓存
+	// 用户token获取用户id
 	uid := util.RedisUtil.Get(tokenKey)
 	if uid == "" {
 		return response.TokenInvalid
@@ -54,13 +51,11 @@ func Auth(c *gin.Context) response.RespType {
 	err := util.ToolsUtil.JsonToObj(util.RedisUtil.HGet(config.AdminConfig.BackstageManageKey, uid), &adminUser)
 	if err != nil {
 		core.Logger.Errorf("TokenAuth Unmarshal err: err=[%+v]", err)
-
 		return response.SystemError
 	}
 	if adminUser.IsDelete == 1 {
 		util.RedisUtil.Del(tokenKey)
 		util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey, uid)
-
 		return response.TokenInvalid
 	}
 
@@ -76,22 +71,8 @@ func Auth(c *gin.Context) response.RespType {
 
 	// 单次请求信息保存
 	c.Set(config.AdminConfig.ReqAdminIdKey, uid)
-	c.Set(config.AdminConfig.ReqRoleIdKey, adminUser.RoleId)
 	c.Set(config.AdminConfig.ReqUsernameKey, adminUser.Username)
 	c.Set(config.AdminConfig.ReqNicknameKey, adminUser.Nickname)
-
-	// 校验角色的权限，redis没有就重新查询
-	roleId := adminUser.RoleId
-	if roleId != "" {
-		if !util.RedisUtil.HExists(config.AdminConfig.BackstageRolesKey, roleId) {
-
-			err = systemService.PermService.CacheRoleMenusByRoleId(roleId)
-			if err != nil {
-				core.Logger.Errorf("Auth 缓存角色失败 err: [%+v]", err)
-				return response.SystemError
-			}
-		}
-	}
 
 	return response.Success
 }
@@ -131,14 +112,19 @@ func TokenAuth() gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		// 超管权限
-		if config.AdminConfig.GetAdminId(c) == config.AdminConfig.SuperAdminId {
+		adminId := config.AdminConfig.GetAdminId(c)
+		if adminId == config.AdminConfig.SuperAdminId {
 			c.Next()
 			return
 		}
-		// 验证是否有权限操作
-		menus := util.RedisUtil.HGet(config.AdminConfig.BackstageRolesKey, config.AdminConfig.GetRoleId(c))
-		if !(menus != "" && util.ToolsUtil.Contains(strings.Split(menus, ","), ApiAuth)) {
+		perms, err := systemService.PermService.GetAdminPerms(adminId)
+		if err != nil {
+			core.Logger.Errorf("获取用户权限失败: err=[%+v]", err)
+			response.FailWithResp(c, response.SystemError)
+			c.Abort()
+			return
+		}
+		if !(len(perms) > 0 && util.ToolsUtil.Contains(perms, ApiAuth)) {
 			response.FailWithResp(c, response.NoPermission)
 			c.Abort()
 			return

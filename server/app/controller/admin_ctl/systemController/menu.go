@@ -17,7 +17,7 @@ func MenuRoute(rg *gin.RouterGroup) {
 	notAuth.GET("/menu/route", handle.route)
 
 	rg = rg.Group("/system", middleware.TokenAuth())
-	// rg.GET("/menu/route", handle.route)
+
 	rg.GET("/menu/list", handle.List)
 	rg.GET("/menu/detail", handle.Detail)
 	rg.POST("/menu/add", handle.Add)
@@ -31,9 +31,8 @@ type menuHandler struct {
 // route 菜单路由
 func (mh menuHandler) route(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
-	roleId := config.AdminConfig.GetRoleId(c)
 
-	res, err := systemService.MenuService.SelectMenuByRoleId(adminId, roleId)
+	res, err := systemService.MenuService.SelectMenuByAdminId(adminId)
 	response.CheckAndRespWithData(c, res, err)
 }
 

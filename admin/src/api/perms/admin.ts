@@ -4,23 +4,20 @@ import { getToken } from '@/utils/auth'
 import config from '@/config'
 import type { Pages } from '@/utils/request'
 
-// 管理员列表参数
 export type type_system_admin_list = {
     username?: string
     nickname?: string
     roleId?: string
 }
 
-// 管理员详情参数
 export type type_system_admin_detail = {
     id: string
 }
 
-// 管理员添加参数
 export type type_system_admin_add = {
     deptId: string
     postId: string
-    roleId: string
+    roleIds: string[]
     username: string
     nickname: string
     password: string
@@ -29,12 +26,11 @@ export type type_system_admin_add = {
     isDisable: number
 }
 
-// 管理员编辑参数
 export type type_system_admin_edit = {
     id: string
     deptId: string
     postId: string
-    roleId: string
+    roleIds: string[]
     username: string
     nickname: string
     password: string
@@ -43,17 +39,14 @@ export type type_system_admin_edit = {
     isDisable: number
 }
 
-// 管理员删除参数
 export type type_system_admin_del = {
     id: string
 }
 
-// 管理员状态切换参数
 export type type_system_admin_disable = {
     id: string
 }
 
-// 管理员返回信息
 export type type_system_admin_resp = {
     id: string
     username: string
@@ -62,7 +55,7 @@ export type type_system_admin_resp = {
     role: string
     deptId: string
     postId: string
-    roleId: string
+    roleIds: string[]
     dept: string
     isDisable: number
     lastLoginIp: string

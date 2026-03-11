@@ -29,11 +29,12 @@
                     <el-input v-model="formData.nickname" placeholder="请输入名称" clearable />
                 </el-form-item>
 
-                <el-form-item label="角色" prop="roleId">
+                <el-form-item label="角色" prop="roleIds">
                     <el-select
-                        v-model="formData.roleId"
+                        v-model="formData.roleIds"
                         :disabled="isRoot"
                         class="flex-1"
+                        multiple
                         clearable
                         placeholder="请选择角色"
                     >
@@ -118,7 +119,7 @@ import {
     adminAdd,
     adminEdit,
     adminDetail,
-    type type_system_admin_edit,
+    type type_system_admin_add,
     type type_system_admin_resp
 } from '@/api/perms/admin'
 import { useDictOptions } from '@/hooks/useDictOptions'
@@ -136,7 +137,8 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑管理员' : '新增管理员'
 })
 
-type type_admin_form = type_system_admin_edit & {
+type type_admin_form = type_system_admin_add & {
+    id: string
     passwordConfirm: string
 }
 
@@ -146,7 +148,7 @@ const formData = reactive<type_admin_form>({
     nickname: '',
     deptId: '',
     postId: '',
-    roleId: '',
+    roleIds: [],
     avatar: '',
     password: '',
     passwordConfirm: '',
@@ -218,15 +220,18 @@ const { optionsData } = useDictOptions<{
 
 const handleSubmit = async () => {
     await formRef.value?.validate()
-    const data = {
+    const data: any = {
         ...formData
     }
+    delete data.passwordConfirm
     if (formData.password) {
         data.password = encryptPassword(formData.password)
-        data.passwordConfirm = encryptPassword(formData.passwordConfirm)
     }
-
-    mode.value == 'edit' ? await adminEdit(data) : await adminAdd(data)
+    if (mode.value == 'edit') {
+        await adminEdit(data)
+    } else {
+        await adminAdd(data)
+    }
     popupRef.value?.close()
     feedback.msgSuccess('操作成功')
     emit('success')

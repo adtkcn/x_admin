@@ -42,6 +42,26 @@ func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId string) (menuI
 	return
 }
 
+// SelectMenuIdsByRoleIds 根据多个角色ID获取菜单ID
+func (service systemAuthPermService) SelectMenuIdsByRoleIds(roleIds []string) (menuIds []string, e error) {
+	if len(roleIds) == 0 {
+		return []string{}, nil
+	}
+	var perms []system_model.SystemAuthPerm
+	err := service.db.Where("role_id in ?", roleIds).Find(&perms).Error
+	if e = response.CheckErr(err, "查询角色的菜单失败"); e != nil {
+		return []string{}, e
+	}
+	menuIdMap := make(map[string]bool)
+	for _, perm := range perms {
+		menuIdMap[perm.MenuId] = true
+	}
+	for menuId := range menuIdMap {
+		menuIds = append(menuIds, menuId)
+	}
+	return
+}
+
 // CacheRoleMenusByRoleId 缓存角色菜单
 func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId string) (e error) {
 	var perms []system_model.SystemAuthPerm
@@ -68,6 +88,68 @@ func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId string) (e er
 	}
 	util.RedisUtil.HSet(config.AdminConfig.BackstageRolesKey, roleId, strings.Join(menuArray, ","), 0)
 	return
+}
+
+// CacheAdminPermsByRoleIds 缓存用户权限(基于多个角色)
+func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, roleIds []string) error {
+	if len(roleIds) == 0 {
+		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
+		return nil
+	}
+	menuIds, err := service.SelectMenuIdsByRoleIds(roleIds)
+	if err != nil {
+		return err
+	}
+	if len(menuIds) == 0 {
+		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
+		return nil
+	}
+	var menus []system_model.SystemAuthMenu
+	err = service.db.Where(
+		"is_disable = ? and id in ? and menu_type in ?", 0, menuIds, []string{"C", "A"}).Order(
+		"menu_sort, id").Find(&menus).Error
+	if err != nil {
+		return err
+	}
+	var permArray []string
+	permMap := make(map[string]bool)
+	for _, menu := range menus {
+		if menu.Perms != "" {
+			perms := strings.Split(menu.Perms, ",")
+			for _, p := range perms {
+				p = strings.Trim(p, " ")
+				if p != "" && !permMap[p] {
+					permMap[p] = true
+					permArray = append(permArray, p)
+				}
+			}
+		}
+	}
+	util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, strings.Join(permArray, ","), 0)
+	return nil
+}
+
+// GetAdminPerms 获取用户缓存的权限列表
+func (service systemAuthPermService) GetAdminPerms(adminId string) ([]string, error) {
+	if !util.RedisUtil.HExists(config.AdminConfig.BackstageAdminPermsKey, adminId) {
+		roleIds, err := AdminRoleService.GetRoleIdsByAdminId(adminId)
+		if err != nil {
+			return nil, err
+		}
+		if err := service.CacheAdminPermsByRoleIds(adminId, roleIds); err != nil {
+			return nil, err
+		}
+	}
+	permsStr := util.RedisUtil.HGet(config.AdminConfig.BackstageAdminPermsKey, adminId)
+	if permsStr == "" {
+		return []string{}, nil
+	}
+	return strings.Split(permsStr, ","), nil
+}
+
+// RemoveAdminPermsCache 移除用户权限缓存
+func (service systemAuthPermService) RemoveAdminPermsCache(adminId string) {
+	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminPermsKey, adminId)
 }
 
 // BatchSaveByMenuIds 批量写入角色菜单

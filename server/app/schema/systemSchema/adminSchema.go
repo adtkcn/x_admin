@@ -6,7 +6,7 @@ import "x_admin/core"
 type SystemAuthAdminListReq struct {
 	Username string `form:"username"` // 账号
 	Nickname string `form:"nickname"` // 昵称
-	RoleId   string `form:"roleId"`   // 角色ID
+	RoleId   string `form:"roleId"`   // 角色ID(用于筛选)
 }
 
 // SystemAuthAdminDetailReq 管理员详情参数
@@ -16,9 +16,9 @@ type SystemAuthAdminDetailReq struct {
 
 // SystemAuthAdminAddReq 管理员新增参数
 type SystemAuthAdminAddReq struct {
-	DeptId string `form:"deptId" binding:""` // 部门ID
-	PostId string `form:"postId" binding:""` // 岗位ID
-	RoleId string `form:"roleId" binding:""` // 角色ID
+	DeptId  string   `form:"deptId" binding:""`  // 部门ID
+	PostId  string   `form:"postId" binding:""`  // 岗位ID
+	RoleIds []string `form:"roleIds" binding:""` // 角色ID列表
 
 	Username string `form:"username" binding:"required,min=2,max=32"` // 账号
 	Nickname string `form:"nickname" binding:"required,min=2,max=32"` // 昵称
@@ -32,14 +32,14 @@ type SystemAuthAdminAddReq struct {
 
 // SystemAuthAdminEditReq 管理员编辑参数
 type SystemAuthAdminEditReq struct {
-	ID       string `form:"id" binding:"required"`                    // 主键
-	DeptId   string `form:"deptId" binding:""`                        // 部门ID
-	PostId   string `form:"postId" binding:""`                        // 岗位ID
-	RoleId   string `form:"roleId" binding:""`                        // 角色ID
-	Username string `form:"username" binding:"required,min=2,max=32"` // 账号
-	Nickname string `form:"nickname" binding:"required,min=2,max=32"` // 昵称
-	Password string `form:"password"`                                 // 密码
-	Avatar   string `form:"avatar"`                                   // 头像
+	ID       string   `form:"id" binding:"required"`                    // 主键
+	DeptId   string   `form:"deptId" binding:""`                        // 部门ID
+	PostId   string   `form:"postId" binding:""`                        // 岗位ID
+	RoleIds  []string `form:"roleIds" binding:""`                       // 角色ID列表
+	Username string   `form:"username" binding:"required,min=2,max=32"` // 账号
+	Nickname string   `form:"nickname" binding:"required,min=2,max=32"` // 昵称
+	Password string   `form:"password"`                                 // 密码
+	Avatar   string   `form:"avatar"`                                   // 头像
 
 	Sort      int   `form:"sort" binding:"gte=0"`          // 排序
 	IsDisable uint8 `form:"isDisable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
@@ -69,10 +69,10 @@ type SystemAuthAdminResp struct {
 	Username      string        `json:"username" excel:"name:账号;"`          // 账号
 	Nickname      string        `json:"nickname" excel:"name:昵称;"`          // 昵称
 	Avatar        string        `json:"avatar" excel:"name:头像;"`            // 头像
-	Role          string        `json:"role" excel:"name:角色;"`              // 角色
+	Role          string        `json:"role" excel:"name:角色;"`              // 角色名称(逗号分隔)
 	DeptId        string        `json:"deptId" excel:"name:部门ID;"`          // 部门ID
 	PostId        string        `json:"postId" excel:"name:岗位ID;"`          // 岗位ID
-	RoleId        string        `json:"roleId" excel:"name:角色ID;"`          // 角色ID
+	RoleIds       []string      `json:"roleIds"`                            // 角色ID列表
 	Dept          string        `json:"dept" excel:"name:部门;"`              // 部门
 	IsDisable     uint8         `json:"isDisable" excel:"name:是否禁用;"`       // 是否禁用: [0=否, 1=是]
 	LastLoginIp   string        `json:"lastLoginIp" excel:"name:最后登录IP;"`   // 最后登录IP

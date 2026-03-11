@@ -87,8 +87,8 @@ func (roleSrv systemAuthRoleService) Detail(id string) (res systemSchema.SystemA
 
 // getMemberCnt 根据角色ID获取成员数量
 func (roleSrv systemAuthRoleService) getMemberCnt(roleId string) (count int64) {
-	roleSrv.db.Model(&system_model.SystemAuthAdmin{}).Where(
-		"role = ?", roleId).Count(&count)
+	roleSrv.db.Model(&system_model.SystemAuthAdminRole{}).Where(
+		"role_id = ?", roleId).Count(&count)
 	return
 }
 
@@ -159,14 +159,11 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 
 // Del 删除角色
 func (roleSrv systemAuthRoleService) Del(id string) (e error) {
-	// 检查角色是否被使用
-	if r := roleSrv.db.Where("role = ?", id).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
+	if r := roleSrv.db.Where("role_id = ?", id).Limit(1).Find(&system_model.SystemAuthAdminRole{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("角色已被管理员使用,请先移除!")
 	}
 
-	// 事务
 	err := roleSrv.db.Transaction(func(tx *gorm.DB) error {
-		// 删除角色
 		result := tx.Delete(&system_model.SystemAuthRole{}, "id = ?", id)
 		if result.Error != nil {
 			return result.Error
@@ -175,12 +172,10 @@ func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 			return errors.New("角色已不存在")
 		}
 
-		// 删除角色菜单关联
 		if te := PermService.BatchDeleteByRoleId(id, tx); te != nil {
 			return te
 		}
 
-		// 清除缓存
 		util.RedisUtil.HDel(config.AdminConfig.BackstageRolesKey, id)
 
 		return nil

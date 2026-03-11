@@ -207,7 +207,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []systemSchem
 	}
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
-	adminModel := service.db.Table(adminTbName + " AS admin")
+	adminModel := service.db.Model(&system_model.SystemAuthAdmin{}).Table(adminTbName + " AS admin")
 
 	where := map[string]any{}
 	if userType == 1 {

@@ -26,13 +26,18 @@ type systemAuthMenuService struct {
 	db *gorm.DB
 }
 
-// SelectMenuByRoleId 根据角色ID获取菜单
-func (menuSrv systemAuthMenuService) SelectMenuByRoleId(adminId string, roleId string) (menuList []*systemSchema.SystemAuthMenuResp, e error) {
-	// adminId := config.AdminConfig.GetAdminId(c)
+// SelectMenuByAdminId 根据管理员ID获取菜单
+func (menuSrv systemAuthMenuService) SelectMenuByAdminId(adminId string) (menuList []*systemSchema.SystemAuthMenuResp, e error) {
 	var menuIds = []string{}
-	// 超管
 	if adminId != config.AdminConfig.SuperAdminId {
-		if menuIds, e = PermService.SelectMenuIdsByRoleId(roleId); e != nil {
+		roleIds, err := AdminRoleService.GetRoleIdsByAdminId(adminId)
+		if err != nil {
+			return nil, err
+		}
+		if len(roleIds) == 0 {
+			return menuList, errors.New("用户未绑定角色")
+		}
+		if menuIds, e = PermService.SelectMenuIdsByRoleIds(roleIds); e != nil {
 			return
 		}
 		if len(menuIds) == 0 {
@@ -46,7 +51,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByRoleId(adminId string, roleId s
 	}
 	var menus []system_model.SystemAuthMenu
 	err := chain.Order("menu_sort desc, id").Find(&menus).Error
-	if e = response.CheckErr(err, "RoleId查询菜单失败"); e != nil {
+	if e = response.CheckErr(err, "查询菜单失败"); e != nil {
 		return
 	}
 	var menuResps []*systemSchema.SystemAuthMenuResp
