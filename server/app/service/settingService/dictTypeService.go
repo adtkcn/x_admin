@@ -1,13 +1,13 @@
 package settingService
 
 import (
+	"errors"
 	"x_admin/app/schema/settingSchema"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/setting_model"
 
-	"x_admin/util"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
@@ -112,31 +112,41 @@ func (dtSrv settingDictTypeService) Add(addReq settingSchema.SettingDictTypeAddR
 
 // Edit 字典类型编辑
 func (dtSrv settingDictTypeService) Edit(editReq settingSchema.SettingDictTypeEditReq) (e error) {
+	// 检查字典类型是否存在
 	var dt setting_model.DictType
-	err := dtSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dt).Error
-	if e = response.CheckDBNotRecord(err, "字典类型不存在！"); e != nil {
-		return
+	err := dtSrv.db.Where("id = ?", editReq.ID).First(&dt).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.New("字典类型不存在")
+		}
+		return response.CheckErr(err, "查询字典类型失败")
 	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
-		return
-	}
-	if r := dtSrv.db.Where("id != ? AND dict_name = ? AND is_delete = ?", editReq.ID, editReq.DictName, 0).Limit(1).First(&setting_model.DictType{}); r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("字典名称已存在！")
-	}
-	if r := dtSrv.db.Where("id != ? AND dict_type = ? AND is_delete = ?", editReq.ID, editReq.DictType, 0).Limit(1).First(&setting_model.DictType{}); r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("字典类型已存在！")
+
+	// 检查名称和类型是否重复
+	if r := dtSrv.db.Where("id != ? AND (dict_name = ? OR dict_type = ?)", editReq.ID, editReq.DictName, editReq.DictType).Limit(1).Find(&setting_model.DictType{}); r.RowsAffected > 0 {
+		return response.AssertArgumentError.SetMessage("字典名称或类型已存在！")
 	}
 
 	convert_util.Copy(&dt, editReq)
-	// err = dtSrv.db.Model(&dt).Updates(&up).Error
-	err = dtSrv.db.Save(&dt).Error
-	e = response.CheckErr(err, "编辑失败")
+	result := dtSrv.db.Model(&dt).Select("*").Updates(dt)
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "编辑失败")
+	}
 	return
 }
 
 // Del 字典类型删除
 func (dtSrv settingDictTypeService) Del(delReq settingSchema.SettingDictTypeDelReq) (e error) {
-	err := dtSrv.db.Model(&setting_model.DictType{}).Where("id IN ?", delReq.Ids).Updates(
-		setting_model.DictType{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
-	return response.CheckErr(err, "Del Update err")
+	if len(delReq.Ids) == 0 {
+		return errors.New("删除ID列表不能为空")
+	}
+
+	result := dtSrv.db.Where("id in (?)", delReq.Ids).Delete(&setting_model.DictType{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("没有找到可删除的记录")
+	}
+	return
 }

@@ -1,6 +1,7 @@
 package systemService
 
 import (
+	"errors"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -104,51 +105,45 @@ func (service systemAuthPostService) Add(addReq systemSchema.SystemAuthPostAddRe
 	return
 }
 
-// Edit 部门编辑
+// Edit 岗位编辑
 func (service systemAuthPostService) Edit(editReq systemSchema.SystemAuthPostEditReq) (e error) {
+	// 检查岗位是否存在
 	var post system_model.SystemAuthPost
-	err := service.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&post).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "部门不存在!"); e != nil {
-		return
+	err := service.db.Where("id = ?", editReq.ID).First(&post).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.New("岗位不存在")
+		}
+		return response.CheckErr(err, "查询岗位失败")
 	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
-		return
-	}
-	r := service.db.Where("(code = ? OR name = ?) AND id != ? AND is_delete = ?", editReq.Code, editReq.Name, editReq.ID, 0).Limit(1).Find(&system_model.SystemAuthPost{})
-	if e = response.CheckErr(r.Error, "Add Find err"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
+	
+	// 检查编码和名称是否重复
+	if r := service.db.Where("(code = ? OR name = ?) AND id != ?", editReq.Code, editReq.Name, editReq.ID).Limit(1).Find(&system_model.SystemAuthPost{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("该岗位已存在!")
 	}
+	
 	// 更新
 	convert_util.Copy(&post, editReq)
-	err = service.db.Model(&post).Select("*").Updates(post).Error
-	e = response.CheckErr(err, "编辑失败")
+	result := service.db.Model(&post).Select("*").Updates(post)
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "编辑失败")
+	}
 	return
 }
 
-// Del 部门删除
+// Del 岗位删除
 func (service systemAuthPostService) Del(id string) (e error) {
-	var post system_model.SystemAuthPost
-	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&post).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "岗位不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
-		return
-	}
-	r := service.db.Where("post_id = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{})
-	if e = response.CheckErr(r.Error, "Del Find err"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
+	// 检查岗位是否被使用
+	if r := service.db.Where("post_id = ?", id).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("该岗位存在管理员,请先移除!")
 	}
 
-	err = service.db.Delete(&post).Error
-	e = response.CheckErr(err, "Del Save err")
+	result := service.db.Where("id = ?", id).Delete(&system_model.SystemAuthPost{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("岗位不存在")
+	}
 	return
 }

@@ -1,6 +1,7 @@
 package systemService
 
 import (
+	"errors"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/core"
 	"x_admin/core/response"
@@ -112,35 +113,22 @@ func (service systemAuthDeptService) Edit(editReq systemSchema.SystemAuthDeptEdi
 
 // Del 部门删除
 func (service systemAuthDeptService) Del(id string) (e error) {
-	var dept system_model.SystemAuthDept
-	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dept).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "部门不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
-		return
-	}
-	if dept.Pid == "" {
-		return response.AssertArgumentError.SetMessage("顶级部门不能删除!")
-	}
-	r := service.db.Where("pid = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthDept{})
-	if e = response.CheckErr(r.Error, "Del Find dept err"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
+	// 检查是否有子部门
+	if r := service.db.Where("pid = ?", id).Limit(1).Find(&system_model.SystemAuthDept{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("请先删除子级部门!")
 	}
-	r = service.db.Where("dept_id = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{})
-	if e = response.CheckErr(r.Error, "Del Find admin err"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
+
+	// 检查是否有管理员使用
+	if r := service.db.Where("dept_id = ?", id).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("该部门已被管理员使用,请先移除!")
 	}
-	// dept.IsDelete = 1
-	// err = service.db.Save(&dept).Error
-	err = service.db.Delete(&dept).Error
-	e = response.CheckErr(err, "Del Save err")
+
+	result := service.db.Where("id = ?", id).Delete(&system_model.SystemAuthDept{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("部门不存在")
+	}
 	return
 }

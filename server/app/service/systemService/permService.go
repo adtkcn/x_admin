@@ -27,7 +27,7 @@ type systemAuthPermService struct {
 // SelectMenuIdsByRoleId 根据角色ID获取菜单ID
 func (service systemAuthPermService) SelectMenuIdsByRoleId(roleId string) (menuIds []string, e error) {
 	var role system_model.SystemAuthRole
-	err := service.db.Where("id = ? AND is_disable = ?", roleId, 0).Limit(1).First(&role).Error
+	err := service.db.Where("id = ?", roleId).First(&role).Error
 	if e = response.CheckErr(err, "角色不存在"); e != nil {
 		return []string{}, e
 	}

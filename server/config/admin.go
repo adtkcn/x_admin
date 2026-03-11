@@ -55,13 +55,13 @@ var AdminConfig = adminConfig{
 }
 
 type adminConfig struct {
-	// 管理缓存键"backstage:manage"
+	// 管理缓存键"backstage:manage"，filed为管理员id，value为管理员信息
 	BackstageManageKey string
 	// 角色缓存键"backstage:roles"
 	BackstageRolesKey string
-	// 令牌缓存键"backstage:token:"
+	// 令牌缓存键"backstage:token:"，值为用户id
 	BackstageTokenKey string
-	// 令牌的集合 "backstage:token:set:"
+	// 令牌的集合 "backstage:token:set:"，值为token集合
 	BackstageTokenSet string
 	// 免登录验证
 	NotLoginUri []string

@@ -1,6 +1,7 @@
 package systemService
 
 import (
+	"errors"
 	"fmt"
 
 	"strings"
@@ -36,7 +37,7 @@ type systemAuthAdminService struct {
 
 // FindByUsername 根据账号查找管理员
 func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin system_model.SystemAuthAdmin, err error) {
-	err = adminSrv.db.Where("username = ?", username).Limit(1).First(&admin).Error
+	err = adminSrv.db.Where("username = ?", username).First(&admin).Error
 	return
 }
 
@@ -44,7 +45,7 @@ func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin sy
 func (adminSrv systemAuthAdminService) Self(adminId string) (res systemSchema.SystemAuthAdminSelfResp, e error) {
 	// 管理员信息
 	var sysAdmin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&sysAdmin).Error
+	err := adminSrv.db.Where("id = ? ", adminId).First(&sysAdmin).Error
 	if e = response.CheckErr(err, "获取用户信息失败"); e != nil {
 		return
 	}
@@ -52,18 +53,16 @@ func (adminSrv systemAuthAdminService) Self(adminId string) (res systemSchema.Sy
 	var auths []string
 	if adminId == config.AdminConfig.SuperAdminId {
 		auths = append(auths, "*")
-	} else if adminId == "" {
-		return systemSchema.SystemAuthAdminSelfResp{}, response.SystemError.SetMessage("管理员id不能为空")
 	} else if sysAdmin.RoleId != "" {
 		roleId := sysAdmin.RoleId
-		var menuIds []string
+		var menuIds []string // 角色的菜单ID
 		if menuIds, e = PermService.SelectMenuIdsByRoleId(roleId); e != nil {
 			return
 		}
 		if len(menuIds) > 0 {
 			var menus []system_model.SystemAuthMenu
 			err := adminSrv.db.Where(
-				"id in ? AND is_disable = ? AND menu_type in ?", menuIds, 0, []string{"C", "A"}).Order(
+				"id in ? AND menu_type in ?", menuIds, []string{"C", "A"}).Order(
 				"menu_sort, id").Find(&menus).Error
 			if e = response.CheckErr(err, "查找权限失败"); e != nil {
 				return
@@ -332,7 +331,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 // Edit 管理员编辑
 func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema.SystemAuthAdminEditReq) (e error) {
 	// 检查id
-	err := adminSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&system_model.SystemAuthAdmin{}).Error
+	err := adminSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&system_model.SystemAuthAdmin{}).Error
 	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
@@ -341,7 +340,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	}
 	// 检查username
 	var admin system_model.SystemAuthAdmin
-	r := adminSrv.db.Where("username = ? AND is_delete = ? AND id != ?", editReq.Username, 0, editReq.ID).Find(&admin)
+	r := adminSrv.db.Where("username = ? AND id != ?", editReq.Username, editReq.ID).Find(&admin)
 	err = r.Error
 	if e = response.CheckErr(err, "Edit Find by username err"); e != nil {
 		return
@@ -350,7 +349,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 		return response.AssertArgumentError.SetMessage("账号已存在换一个吧！")
 	}
 	// 检查nickname
-	r = adminSrv.db.Where("nickname = ? AND is_delete = ? AND id != ?", editReq.Nickname, 0, editReq.ID).Find(&admin)
+	r = adminSrv.db.Where("nickname = ? AND id != ?", editReq.Nickname, editReq.ID).Find(&admin)
 	err = r.Error
 	if e = response.CheckErr(err, "Edit Find by nickname err"); e != nil {
 		return
@@ -370,7 +369,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(editReq.Avatar)
 	roleId := editReq.RoleId
 	if editReq.ID == config.AdminConfig.SuperAdminId {
-		roleId = "0"
+		roleId = ""
 	}
 	adminMap["RoleId"] = roleId
 	if editReq.ID == config.AdminConfig.SuperAdminId {
@@ -392,31 +391,20 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 		return
 	}
 	adminSrv.CacheAdminUserByUid(editReq.ID)
-	// 如果更改自己的密码,则删除旧缓存
+	// 如果更改自己的密码,则删除其他登录
 	adminId := config.AdminConfig.GetAdminId(c)
 	if editReq.Password != "" && editReq.ID == adminId {
 		token := c.Request.Header.Get("token")
-		util.RedisUtil.Del(config.AdminConfig.BackstageTokenKey + token)
-		adminSetKey := config.AdminConfig.BackstageTokenSet + adminId
-		ts := util.RedisUtil.SGet(adminSetKey)
-		if len(ts) > 0 {
-			var tokenKeys []string
-			for _, t := range ts {
-				tokenKeys = append(tokenKeys, config.AdminConfig.BackstageTokenKey+t)
-			}
-			util.RedisUtil.Del(tokenKeys...)
-		}
-		util.RedisUtil.Del(adminSetKey)
-		util.RedisUtil.SSet(adminSetKey, token)
+		adminSrv.ClearOtherTokens(adminId, token)
 	}
 	return
 }
 
-// Update 管理员更新
+// Update 管理员更新自己
 func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSchema.SystemAuthAdminUpdateReq, adminId string) (e error) {
 	// 检查id
 	var admin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("id = ? AND is_delete = ?", adminId, 0).Limit(1).First(&admin).Error
+	err := adminSrv.db.Where("id = ?", adminId).Limit(1).First(&admin).Error
 	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
@@ -431,7 +419,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 		avatar = updateReq.Avatar
 	}
 	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(avatar)
-	// delete(adminMap, "aaa")
+
 	if updateReq.Password != "" {
 		currPass := util.ToolsUtil.MakeMd5(updateReq.CurrPassword + admin.Salt)
 		if currPass != admin.Password {
@@ -452,43 +440,45 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 		return
 	}
 	adminSrv.CacheAdminUserByUid(adminId)
-	// 如果更改自己的密码,则删除旧缓存
+	// 如果更改自己的密码,则删除其他登录缓存
 	if updateReq.Password != "" {
 		token := c.Request.Header.Get("token")
-		util.RedisUtil.Del(config.AdminConfig.BackstageTokenKey + token)
-		adminSetKey := config.AdminConfig.BackstageTokenSet + adminId
-		ts := util.RedisUtil.SGet(adminSetKey)
-		if len(ts) > 0 {
-			var tokenKeys []string
-			for _, t := range ts {
-				tokenKeys = append(tokenKeys, config.AdminConfig.BackstageTokenKey+t)
-			}
-			util.RedisUtil.Del(tokenKeys...)
-		}
-		util.RedisUtil.Del(adminSetKey)
-		util.RedisUtil.SSet(adminSetKey, token)
+		adminSrv.ClearOtherTokens(adminId, token)
 	}
 	return
 }
 
 // Del 管理员删除
 func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) {
-	var admin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&admin).Error
-	if e = response.CheckDBNotRecord(err, "账号已不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
-		return
-	}
 	if id == config.AdminConfig.SuperAdminId {
 		return response.AssertArgumentError.SetMessage("系统管理员不允许删除!")
 	}
 	if id == config.AdminConfig.GetAdminId(c) {
 		return response.AssertArgumentError.SetMessage("不能删除自己!")
 	}
-	err = adminSrv.db.Model(&admin).Updates(system_model.SystemAuthAdmin{IsDelete: 1, DeleteTime: util.NullTimeUtil.Now()}).Error
-	e = response.CheckErr(err, "Del Updates err")
+
+	result := adminSrv.db.Where("id = ?", id).Delete(&system_model.SystemAuthAdmin{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("账号已不存在")
+	}
+
+	// 清除缓存
+	util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey, id)
+	// 清除相关的token缓存
+	adminSetKey := config.AdminConfig.BackstageTokenSet + id
+	ts := util.RedisUtil.SGet(adminSetKey)
+	if len(ts) > 0 {
+		var tokenKeys []string
+		for _, t := range ts {
+			tokenKeys = append(tokenKeys, config.AdminConfig.BackstageTokenKey+t)
+		}
+		util.RedisUtil.Del(tokenKeys...)
+	}
+	util.RedisUtil.Del(adminSetKey)
+
 	return
 }
 
@@ -521,15 +511,37 @@ func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id string) (err error
 	var admin system_model.SystemAuthAdmin
 	err = adminSrv.db.Where("id = ?", id).Limit(1).First(&admin).Error
 	if err != nil {
-		return
+		return err
 	}
 	// redis排除缓存
 	admin.Password = ""
 
 	str, err := util.ToolsUtil.ObjToJson(&admin)
 	if err != nil {
-		return
+		return err
 	}
 	util.RedisUtil.HSet(config.AdminConfig.BackstageManageKey, admin.ID, str, 0)
+	return nil
+}
+
+// 清理用户其他登陆token
+func (adminSrv systemAuthAdminService) ClearOtherTokens(id string, nowToken string) (err error) {
+	// 账号token集合key
+	adminSetKey := config.AdminConfig.BackstageTokenSet + id
+	// 获取账号所有token
+	tokens := util.RedisUtil.SGet(adminSetKey)
+	if len(tokens) > 0 {
+		var delTokens []string
+		for _, token := range tokens {
+			if token != nowToken {
+				delTokens = append(delTokens, config.AdminConfig.BackstageTokenKey+token)
+			}
+		}
+		// 清除其他token缓存
+		util.RedisUtil.Del(delTokens...)
+	}
+	util.RedisUtil.Del(adminSetKey)
+	// 添加当前token到集合
+	util.RedisUtil.SSet(adminSetKey, nowToken)
 	return nil
 }

@@ -1,6 +1,7 @@
 package systemService
 
 import (
+	"errors"
 	"strings"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/config"
@@ -158,29 +159,32 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 
 // Del 删除角色
 func (roleSrv systemAuthRoleService) Del(id string) (e error) {
-	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&system_model.SystemAuthRole{}).Error
-	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
-		return
-	}
+	// 检查角色是否被使用
 	if r := roleSrv.db.Where("role = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("角色已被管理员使用,请先移除!")
 	}
+
 	// 事务
-	err = roleSrv.db.Transaction(func(tx *gorm.DB) error {
-		txErr := tx.Delete(&system_model.SystemAuthRole{}, "id = ?", id).Error
-		var te error
-		if te = response.CheckErr(txErr, "Del Delete in tx err"); te != nil {
+	err := roleSrv.db.Transaction(func(tx *gorm.DB) error {
+		// 删除角色
+		result := tx.Delete(&system_model.SystemAuthRole{}, "id = ?", id)
+		if result.Error != nil {
+			return result.Error
+		}
+		if result.RowsAffected == 0 {
+			return errors.New("角色已不存在")
+		}
+
+		// 删除角色菜单关联
+		if te := PermService.BatchDeleteByRoleId(id, tx); te != nil {
 			return te
 		}
-		if te = PermService.BatchDeleteByRoleId(id, tx); te != nil {
-			return te
-		}
+
+		// 清除缓存
 		util.RedisUtil.HDel(config.AdminConfig.BackstageRolesKey, id)
+
 		return nil
 	})
-	e = response.CheckErr(err, "Del Transaction err")
-	return
+
+	return response.CheckErr(err, "删除失败")
 }

@@ -2,7 +2,6 @@ package systemService
 
 import (
 	"errors"
-	"runtime/debug"
 
 	"x_admin/app/schema/systemSchema"
 	"x_admin/config"
@@ -46,13 +45,6 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *systemSchema.Syste
 		e = response.Failed
 		return
 	}
-	if sysAdmin.IsDelete == 1 {
-		if e = loginSrv.RecordLoginLog(c, "", req.Username, response.LoginAccountError.Msg()); e != nil {
-			return
-		}
-		e = response.LoginAccountError
-		return
-	}
 	if sysAdmin.IsDisable == 1 {
 		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.LoginDisableError.Msg()); e != nil {
 			return
@@ -68,25 +60,11 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *systemSchema.Syste
 		e = response.LoginAccountError
 		return
 	}
-	defer func() {
-		if r := recover(); r != nil {
-			switch r.(type) {
-			// 自定义类型
-			case response.RespType:
-				panic(r)
-			// 其他类型
-			default:
-				core.Logger.Errorf("stacktrace from panic: %+v\n%s", r, string(debug.Stack()))
-				loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.Failed.Msg())
-				panic(response.Failed)
-			}
-		}
-	}()
+
 	token := util.ToolsUtil.MakeUuidV7()
-	adminIdStr := sysAdmin.ID
 
 	// 缓存登录信息
-	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, adminIdStr, config.AdminConfig.TokenExpire)
+	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, sysAdmin.ID, config.AdminConfig.TokenExpire)
 	AdminService.CacheAdminUserByUid(sysAdmin.ID)
 
 	u := system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: util.NullTimeUtil.Now()}

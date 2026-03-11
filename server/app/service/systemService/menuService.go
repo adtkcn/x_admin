@@ -90,48 +90,47 @@ func (menuSrv systemAuthMenuService) Add(addReq systemSchema.SystemAuthMenuAddRe
 	if e = response.CheckErr(err, "添加失败"); e != nil {
 		return
 	}
+	// TODO 清除角色缓存
 	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
 	return
 }
 
 func (menuSrv systemAuthMenuService) Edit(editReq systemSchema.SystemAuthMenuEditReq) (e error) {
+	// 检查菜单是否存在
 	var menu system_model.SystemAuthMenu
-	err := menuSrv.db.Where("id = ?", editReq.ID).Limit(1).Find(&menu).Error
-	if e = response.CheckDBNotRecord(err, "菜单已不存在!"); e != nil {
-		return
+	err := menuSrv.db.Where("id = ?", editReq.ID).First(&menu).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.New("菜单已不存在")
+		}
+		return response.CheckErr(err, "查询菜单失败")
 	}
-	if e = response.CheckErr(err, "Edit Find err"); e != nil {
-		return
-	}
-	convert_util.Copy(&menu, editReq)
 
-	err = menuSrv.db.Model(&menu).Select("*").Updates(menu).Error
-	if e = response.CheckErr(err, "编辑失败"); e != nil {
-		return
+	convert_util.Copy(&menu, editReq)
+	result := menuSrv.db.Model(&menu).Select("*").Updates(menu)
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "编辑失败")
 	}
+
 	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
 	return
 }
 
 // Del 删除菜单
 func (menuSrv systemAuthMenuService) Del(id string) (e error) {
-	var menu system_model.SystemAuthMenu
-	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
-	if e = response.CheckDBNotRecord(err, "菜单已不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查找失败"); e != nil {
-		return
-	}
-	r := menuSrv.db.Where("pid = ?", id).Limit(1).Find(&system_model.SystemAuthMenu{})
-	err = r.Error
-	if e = response.CheckErr(err, "查找子菜单失败"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
+	// 检查是否有子菜单
+	if r := menuSrv.db.Where("pid = ?", id).Limit(1).Find(&system_model.SystemAuthMenu{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("请先删除子菜单再操作！")
 	}
-	err = menuSrv.db.Delete(&menu).Error
-	e = response.CheckErr(err, "删除失败")
+
+	result := menuSrv.db.Where("id = ?", id).Delete(&system_model.SystemAuthMenu{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("菜单已不存在")
+	}
+
+	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
 	return
 }
