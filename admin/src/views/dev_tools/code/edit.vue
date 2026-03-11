@@ -350,7 +350,7 @@ const rules = reactive({
 
 const getDetails = async () => {
     const data = await tableDetail({
-        id: route.query.id
+        id: route.query.id as string
     })
     Object.keys(formData).forEach((key) => {
         //@ts-ignore
