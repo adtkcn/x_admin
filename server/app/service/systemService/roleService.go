@@ -72,7 +72,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 // Detail 角色详情
 func (roleSrv systemAuthRoleService) Detail(id string) (res systemSchema.SystemAuthRoleResp, e error) {
 	var role system_model.SystemAuthRole
-	err := roleSrv.db.Where("id = ?", id).Limit(1).First(&role).Error
+	err := roleSrv.db.Where("id = ?", id).First(&role).Error
 	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
@@ -88,14 +88,14 @@ func (roleSrv systemAuthRoleService) Detail(id string) (res systemSchema.SystemA
 // getMemberCnt 根据角色ID获取成员数量
 func (roleSrv systemAuthRoleService) getMemberCnt(roleId string) (count int64) {
 	roleSrv.db.Model(&system_model.SystemAuthAdmin{}).Where(
-		"role = ? AND is_delete = ?", roleId, 0).Count(&count)
+		"role = ?", roleId).Count(&count)
 	return
 }
 
 // Add 新增角色
 func (roleSrv systemAuthRoleService) Add(addReq systemSchema.SystemAuthRoleAddReq) (e error) {
 	var role system_model.SystemAuthRole
-	if r := roleSrv.db.Where("name = ?", strings.Trim(addReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
+	if r := roleSrv.db.Where("name = ?", strings.Trim(addReq.Name, " ")).First(&role); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("角色名称已存在!")
 	}
 	convert_util.Copy(&role, addReq)
@@ -116,7 +116,7 @@ func (roleSrv systemAuthRoleService) Add(addReq systemSchema.SystemAuthRoleAddRe
 
 // Edit 编辑角色
 func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEditReq) (e error) {
-	err := roleSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&system_model.SystemAuthRole{}).Error
+	err := roleSrv.db.Where("id = ?", editReq.ID).First(&system_model.SystemAuthRole{}).Error
 	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
 		return
 	}
@@ -124,7 +124,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 		return
 	}
 	var role system_model.SystemAuthRole
-	if r := roleSrv.db.Where("id != ? AND name = ?", editReq.ID, strings.Trim(editReq.Name, " ")).Limit(1).First(&role); r.RowsAffected > 0 {
+	if r := roleSrv.db.Where("id != ? AND name = ?", editReq.ID, strings.Trim(editReq.Name, " ")).First(&role); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("角色名称已存在!")
 	}
 	role.ID = editReq.ID
@@ -160,7 +160,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 // Del 删除角色
 func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 	// 检查角色是否被使用
-	if r := roleSrv.db.Where("role = ? AND is_delete = ?", id, 0).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
+	if r := roleSrv.db.Where("role = ?", id).Limit(1).Find(&system_model.SystemAuthAdmin{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("角色已被管理员使用,请先移除!")
 	}
 

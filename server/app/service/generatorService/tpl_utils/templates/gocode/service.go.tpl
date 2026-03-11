@@ -72,9 +72,6 @@ func (service {{{ .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCam
 		{{{- end }}}
 	{{{- end }}}
     {{{- end }}}
-	{{{- if contains .AllFields "is_delete" }}}
-	dbModel = dbModel.Where(tableName+".is_delete = ?", 0)
-	{{{- end }}}
 	return dbModel
 }
 // 获取更新map
@@ -141,7 +138,7 @@ func (service {{{ .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKe
 	var obj = model.{{{ toUpperCamelCase .EntityName }}}{}
 	err := service.CacheUtil.GetCache({{{ toUpperCamelCase .PrimaryKey }}}, &obj)
 	if err != nil {
-		err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Preload("CreatedByUser").Limit(1).First(&obj).Error
+		err := service.db.Where("{{{ $.PrimaryKey }}} = ?", {{{ toUpperCamelCase .PrimaryKey }}}).Preload("CreatedByUser").First(&obj).Error
 		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -183,7 +180,7 @@ func (service {{{ .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase
 // Edit {{{ .FunctionName }}}编辑
 func (service {{{ .EntityName }}}Service) Edit(editReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq) (e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
-	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", editReq.{{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+	err := service.db.Where("{{{ $.PrimaryKey }}} = ?", editReq.{{{ toUpperCamelCase .PrimaryKey }}}).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -209,7 +206,7 @@ func (service {{{ .EntityName }}}Service) Edit(editReq schema.{{{ toUpperCamelCa
 // Del {{{ .FunctionName }}}删除
 func (service {{{ .EntityName }}}Service) Del({{{ toUpperCamelCase .PrimaryKey }}} {{{.PrimaryKeyGoType}}}) (e error) {
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
-	err := service.db.Where("{{{ $.PrimaryKey }}} = ?{{{ if contains .AllFields "is_delete" }}} AND is_delete = ?{{{ end }}}", {{{ toUpperCamelCase .PrimaryKey }}}{{{ if contains .AllFields "is_delete" }}}, 0{{{ end }}}).Limit(1).First(&obj).Error
+	err := service.db.Where("{{{ $.PrimaryKey }}} = ?", {{{ toUpperCamelCase .PrimaryKey }}}).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return

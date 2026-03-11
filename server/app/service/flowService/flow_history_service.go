@@ -120,7 +120,7 @@ func (service flowHistoryService) ListAll(listReq flowSchema.FlowHistoryListReq)
 // Detail 流程历史详情
 func (service flowHistoryService) Detail(id string) (res flowSchema.FlowHistoryResp, e error) {
 	var obj model.FlowHistory
-	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).First(&obj).Error
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
@@ -143,7 +143,7 @@ func (service flowHistoryService) Add(addReq flowSchema.FlowHistoryAddReq) (e er
 // Edit 流程历史编辑
 func (service flowHistoryService) Edit(editReq flowSchema.FlowHistoryEditReq) (e error) {
 	var obj model.FlowHistory
-	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -161,7 +161,7 @@ func (service flowHistoryService) Edit(editReq flowSchema.FlowHistoryEditReq) (e
 // Del 流程历史删除
 func (service flowHistoryService) Del(id string) (e error) {
 	var obj model.FlowHistory
-	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -207,7 +207,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []systemSchem
 	}
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
-	adminModel := service.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
+	adminModel := service.db.Table(adminTbName + " AS admin")
 
 	where := map[string]any{}
 	if userType == 1 {
@@ -388,7 +388,7 @@ func (service flowHistoryService) Back(back flowSchema.BackReq) (e error) {
 			err = service.db.Where(model.FlowHistory{
 				ApplyId:  back.ApplyId,
 				NodeType: "bpmn:startEvent",
-			}).Limit(1).First(&FirstHistory).Error
+			}).First(&FirstHistory).Error
 			if err != nil {
 				return err
 			}

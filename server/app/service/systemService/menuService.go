@@ -72,7 +72,7 @@ func (menuSrv systemAuthMenuService) List() (res interface{}, e error) {
 // Detail 菜单详情
 func (menuSrv systemAuthMenuService) Detail(id string) (res systemSchema.SystemAuthMenuResp, e error) {
 	var menu system_model.SystemAuthMenu
-	err := menuSrv.db.Where("id = ?", id).Limit(1).First(&menu).Error
+	err := menuSrv.db.Where("id = ?", id).First(&menu).Error
 	if e = response.CheckDBNotRecord(err, "菜单已不存在!"); e != nil {
 		return
 	}

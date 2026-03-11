@@ -100,7 +100,7 @@ func (genSrv generateService) List(page request.PageReq, listReq generatorSchema
 // Detail 生成详情
 func (genSrv generateService) Detail(id string) (res generatorSchema.GenTableDetailResp, e error) {
 	var genTb gen_model.GenTable
-	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTb).Error
+	err := genSrv.db.Where("id = ?", id).First(&genTb).Error
 	if e = response.CheckDBNotRecord(err, "查询的数据不存在!"); e != nil {
 		return
 	}
@@ -170,7 +170,7 @@ func (genSrv generateService) ImportTable(tableNames []string) (e error) {
 func (genSrv generateService) SyncTable(id string) (e error) {
 	//旧数据
 	var genTable gen_model.GenTable
-	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
+	err := genSrv.db.Where("id = ?", id).First(&genTable).Error
 	if e = response.CheckDBNotRecord(err, "生成数据不存在！"); e != nil {
 		return
 	}
@@ -266,7 +266,7 @@ func (genSrv generateService) EditTable(editReq generatorSchema.EditTableReq) (e
 		}
 	}
 	var genTable gen_model.GenTable
-	err := genSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&genTable).Error
+	err := genSrv.db.Where("id = ?", editReq.ID).First(&genTable).Error
 	if e = response.CheckDBNotRecord(err, "数据已丢失！"); e != nil {
 		return
 	}
@@ -317,7 +317,7 @@ func (genSrv generateService) getSubTableInfo(genTable gen_model.GenTable) (pkCo
 		return
 	}
 	var table gen_model.GenTable
-	err := genSrv.db.Where("table_name = ?", genTable.SubTableName).Limit(1).First(&table).Error
+	err := genSrv.db.Where("table_name = ?", genTable.SubTableName).First(&table).Error
 	if e = response.CheckDBNotRecord(err, "子表记录丢失！"); e != nil {
 		return
 	}
@@ -362,7 +362,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (re
 // PreviewCode 预览代码
 func (genSrv generateService) PreviewCode(id string) (res map[string]string, e error) {
 	var genTable gen_model.GenTable
-	err := genSrv.db.Where("id = ?", id).Limit(1).First(&genTable).Error
+	err := genSrv.db.Where("id = ?", id).First(&genTable).Error
 	if e = response.CheckDBNotRecord(err, "记录丢失！"); e != nil {
 		return
 	}
@@ -385,7 +385,7 @@ func (genSrv generateService) PreviewCode(id string) (res map[string]string, e e
 // genZipCode 生成代码 (压缩包下载)
 func (genSrv generateService) genZipCode(zipWriter *zip.Writer, tableName string) (e error) {
 	var genTable gen_model.GenTable
-	err := genSrv.db.Where("table_name = ?", tableName).Order("id desc").Limit(1).First(&genTable).Error
+	err := genSrv.db.Where("table_name = ?", tableName).Order("id desc").First(&genTable).Error
 	if e = response.CheckDBNotRecord(err, "记录丢失！"); e != nil {
 		return
 	}

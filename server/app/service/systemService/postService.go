@@ -78,7 +78,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq systemSc
 // Detail 部门详情
 func (service systemAuthPostService) Detail(id string) (res systemSchema.SystemAuthPostResp, e error) {
 	var post system_model.SystemAuthPost
-	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&post).Error
+	err := service.db.Where("id = ?", id).First(&post).Error
 	if e = response.CheckDBNotRecord(err, "岗位不存在!"); e != nil {
 		return
 	}
@@ -91,7 +91,7 @@ func (service systemAuthPostService) Detail(id string) (res systemSchema.SystemA
 
 // Add 部门新增
 func (service systemAuthPostService) Add(addReq systemSchema.SystemAuthPostAddReq) (e error) {
-	r := service.db.Where("(code = ? OR name = ?) AND is_delete = ?", addReq.Code, addReq.Name, 0).Limit(1).Find(&system_model.SystemAuthPost{})
+	r := service.db.Where("(code = ? OR name = ?)", addReq.Code, addReq.Name).Limit(1).Find(&system_model.SystemAuthPost{})
 	if e = response.CheckErr(r.Error, "Add Find err"); e != nil {
 		return
 	}
@@ -116,12 +116,12 @@ func (service systemAuthPostService) Edit(editReq systemSchema.SystemAuthPostEdi
 		}
 		return response.CheckErr(err, "查询岗位失败")
 	}
-	
+
 	// 检查编码和名称是否重复
 	if r := service.db.Where("(code = ? OR name = ?) AND id != ?", editReq.Code, editReq.Name, editReq.ID).Limit(1).Find(&system_model.SystemAuthPost{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("该岗位已存在!")
 	}
-	
+
 	// 更新
 	convert_util.Copy(&post, editReq)
 	result := service.db.Model(&post).Select("*").Updates(post)

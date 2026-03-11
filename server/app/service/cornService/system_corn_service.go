@@ -122,7 +122,7 @@ func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e
 	var obj = model.SystemCorn{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
-		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedByUser").Limit(1).First(&obj).Error
+		err := service.db.Where("id = ?", Id).Preload("CreatedByUser").First(&obj).Error
 		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -175,7 +175,7 @@ func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error
 // Del 定时任务删除
 func (service systemCornService) Del(Id string) (e error) {
 	var obj model.SystemCorn
-	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return

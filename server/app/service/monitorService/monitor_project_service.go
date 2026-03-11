@@ -59,7 +59,6 @@ func (service monitorProjectService) GetModel(listReq monitorSchema.MonitorProje
 	if listReq.UpdateTimeEnd != nil {
 		dbModel = dbModel.Where("update_time <= ?", *listReq.UpdateTimeEnd)
 	}
-	dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel
 }
 
@@ -110,7 +109,7 @@ func (service monitorProjectService) Detail(Id string) (res monitorSchema.Monito
 	var obj = model.MonitorProject{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
-		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
+		err := service.db.Where("id = ?", Id).First(&obj).Error
 		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -142,7 +141,7 @@ func (service monitorProjectService) Add(addReq monitorSchema.MonitorProjectAddR
 // Edit 监控项目编辑
 func (service monitorProjectService) Edit(editReq monitorSchema.MonitorProjectEditReq) (e error) {
 	var obj model.MonitorProject
-	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -164,7 +163,7 @@ func (service monitorProjectService) Edit(editReq monitorSchema.MonitorProjectEd
 // Del 监控项目删除
 func (service monitorProjectService) Del(Id string) (e error) {
 	var obj model.MonitorProject
-	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return

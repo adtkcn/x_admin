@@ -82,7 +82,7 @@ func (service flowTemplateService) ListAll() (res []flowSchema.FlowTemplateResp,
 // Detail 流程模板详情
 func (service flowTemplateService) Detail(id string) (res flowSchema.FlowTemplateResp, e error) {
 	var obj model.FlowTemplate
-	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).First(&obj).Error
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
@@ -105,7 +105,7 @@ func (service flowTemplateService) Add(addReq flowSchema.FlowTemplateAddReq) (e 
 // Edit 流程模板编辑
 func (service flowTemplateService) Edit(editReq flowSchema.FlowTemplateEditReq) (e error) {
 	var obj model.FlowTemplate
-	err := service.db.Where("id = ?", editReq.Id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -123,7 +123,7 @@ func (service flowTemplateService) Edit(editReq flowSchema.FlowTemplateEditReq) 
 // Del 流程模板删除
 func (service flowTemplateService) Del(id string) (e error) {
 	var obj model.FlowTemplate
-	err := service.db.Where("id = ?", id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return

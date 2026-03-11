@@ -37,14 +37,14 @@ type settingDictDataService struct {
 // All 字典数据所有
 func (ddSrv settingDictDataService) All(allReq settingSchema.SettingDictDataListReq) (res []settingSchema.SettingDictDataResp, e error) {
 	var dictType setting_model.DictType
-	err := ddSrv.db.Where("dict_type = ? AND is_delete = ?", allReq.DictType, 0).Limit(1).First(&dictType).Error
+	err := ddSrv.db.Where("dict_type = ?", allReq.DictType).First(&dictType).Error
 	if e = response.CheckDBNotRecord(err, "该字典类型不存在！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "All First err"); e != nil {
 		return
 	}
-	ddModel := ddSrv.db.Where("type_id = ? AND is_delete = ?", dictType.ID, 0)
+	ddModel := ddSrv.db.Where("type_id = ?", dictType.ID)
 	if allReq.Name != "" {
 		ddModel = ddModel.Where("name like ?", "%"+allReq.Name+"%")
 	}
@@ -67,7 +67,7 @@ func (ddSrv settingDictDataService) All(allReq settingSchema.SettingDictDataList
 // Detail 字典数据详情
 func (ddSrv settingDictDataService) Detail(id string) (res settingSchema.SettingDictDataResp, e error) {
 	var dd setting_model.DictData
-	err := ddSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dd).Error
+	err := ddSrv.db.Where("id = ?", id).First(&dd).Error
 	if e = response.CheckDBNotRecord(err, "字典数据不存在！"); e != nil {
 		return
 	}
@@ -80,7 +80,7 @@ func (ddSrv settingDictDataService) Detail(id string) (res settingSchema.Setting
 
 // Add 字典数据新增
 func (ddSrv settingDictDataService) Add(addReq settingSchema.SettingDictDataAddReq) (e error) {
-	if r := ddSrv.db.Where("name = ? AND is_delete = ?", addReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
+	if r := ddSrv.db.Where("name = ?", addReq.Name).First(&setting_model.DictData{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 	var dd setting_model.DictData
@@ -93,14 +93,14 @@ func (ddSrv settingDictDataService) Add(addReq settingSchema.SettingDictDataAddR
 // Edit 字典数据编辑
 func (ddSrv settingDictDataService) Edit(editReq settingSchema.SettingDictDataEditReq) (e error) {
 	var dd setting_model.DictData
-	err := ddSrv.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dd).Error
+	err := ddSrv.db.Where("id = ?", editReq.ID).First(&dd).Error
 	if e = response.CheckDBNotRecord(err, "字典数据不存在！"); e != nil {
 		return
 	}
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
-	if r := ddSrv.db.Where("id != ? AND name = ? AND is_delete = ?", editReq.ID, editReq.Name, 0).Limit(1).First(&setting_model.DictData{}); r.RowsAffected > 0 {
+	if r := ddSrv.db.Where("id != ? AND name = ?", editReq.ID, editReq.Name).First(&setting_model.DictData{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典数据已存在！")
 	}
 

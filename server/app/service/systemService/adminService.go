@@ -88,7 +88,7 @@ func (adminSrv systemAuthAdminService) Self(adminId string) (res systemSchema.Sy
 func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId, postId string) (res []systemSchema.SystemAuthAdminResp, e error) {
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
-	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0)
+	adminModel := adminSrv.db.Table(adminTbName + " AS admin")
 	if userId != "" {
 		adminModel.Where("admin.id =?", userId)
 	}
@@ -119,7 +119,7 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAut
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
 	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
-	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
+	adminModel := adminSrv.db.Table(adminTbName + " AS admin").Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.role_id = %s.id", roleTbName, roleTbName)).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
@@ -186,7 +186,7 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
 	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
-	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
+	adminModel := adminSrv.db.Table(adminTbName + " AS admin").Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.role_id = %s.id", roleTbName, roleTbName)).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
@@ -234,7 +234,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
 	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
-	adminModel := adminSrv.db.Table(adminTbName+" AS admin").Where("admin.is_delete = ?", 0).Joins(
+	adminModel := adminSrv.db.Table(adminTbName + " AS admin").Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.role_id = %s.id", roleTbName, roleTbName)).Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
@@ -267,7 +267,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 // Detail 管理员详细
 func (adminSrv systemAuthAdminService) Detail(id string) (res systemSchema.SystemAuthAdminResp, e error) {
 	var sysAdmin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&sysAdmin).Error
+	err := adminSrv.db.Where("id = ?", id).First(&sysAdmin).Error
 	if e = response.CheckDBNotRecord(err, "账号已不存在！"); e != nil {
 		return
 	}
@@ -286,7 +286,7 @@ func (adminSrv systemAuthAdminService) Detail(id string) (res systemSchema.Syste
 func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAddReq) (e error) {
 	var sysAdmin system_model.SystemAuthAdmin
 	// 检查username
-	r := adminSrv.db.Where("username = ? AND is_delete = ?", addReq.Username, 0).Limit(1).Find(&sysAdmin)
+	r := adminSrv.db.Where("username = ?", addReq.Username).Limit(1).Find(&sysAdmin)
 	err := r.Error
 	if e = response.CheckErr(err, "Add Find by username err"); e != nil {
 		return
@@ -295,7 +295,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 		return response.AssertArgumentError.SetMessage("账号已存在换一个吧！")
 	}
 	// 检查nickname
-	r = adminSrv.db.Where("nickname = ? AND is_delete = ?", addReq.Nickname, 0).Limit(1).Find(&sysAdmin)
+	r = adminSrv.db.Where("nickname = ?", addReq.Nickname).Limit(1).Find(&sysAdmin)
 	err = r.Error
 	if e = response.CheckErr(err, "Add Find by nickname err"); e != nil {
 		return
@@ -331,7 +331,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 // Edit 管理员编辑
 func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema.SystemAuthAdminEditReq) (e error) {
 	// 检查id
-	err := adminSrv.db.Where("id = ?", editReq.ID).Limit(1).First(&system_model.SystemAuthAdmin{}).Error
+	err := adminSrv.db.Where("id = ?", editReq.ID).First(&system_model.SystemAuthAdmin{}).Error
 	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
@@ -404,7 +404,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSchema.SystemAuthAdminUpdateReq, adminId string) (e error) {
 	// 检查id
 	var admin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("id = ?", adminId).Limit(1).First(&admin).Error
+	err := adminSrv.db.Where("id = ?", adminId).First(&admin).Error
 	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
 		return
 	}
@@ -485,7 +485,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) 
 // Disable 管理员状态切换
 func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id string) (e error) {
 	var admin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).Find(&admin).Error
+	err := adminSrv.db.Where("id = ?", id).Limit(1).Find(&admin).Error
 	if e = response.CheckErr(err, "Disable Find err"); e != nil {
 		return
 	}
@@ -509,7 +509,7 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id string) (e err
 // CacheAdminUserByUid 缓存管理员
 func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id string) (err error) {
 	var admin system_model.SystemAuthAdmin
-	err = adminSrv.db.Where("id = ?", id).Limit(1).First(&admin).Error
+	err = adminSrv.db.Where("id = ?", id).First(&admin).Error
 	if err != nil {
 		return err
 	}

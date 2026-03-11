@@ -28,7 +28,7 @@ type systemAuthDeptService struct {
 // All 部门所有
 func (service systemAuthDeptService) All() (res []systemSchema.SystemAuthDeptResp, e error) {
 	var depts []system_model.SystemAuthDept
-	err := service.db.Where("is_delete = ?", 0).Order("sort desc, id desc").Find(&depts).Error
+	err := service.db.Order("sort desc, id desc").Find(&depts).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
@@ -39,7 +39,7 @@ func (service systemAuthDeptService) All() (res []systemSchema.SystemAuthDeptRes
 
 // List 部门列表
 func (service systemAuthDeptService) List(listReq systemSchema.SystemAuthDeptListReq) (deptResps []systemSchema.SystemAuthDeptResp, e error) {
-	deptModel := service.db.Where("is_delete = ?", 0)
+	deptModel := service.db
 	if listReq.Name != "" {
 		deptModel = deptModel.Where("name like ?", "%"+listReq.Name+"%")
 	}
@@ -58,7 +58,7 @@ func (service systemAuthDeptService) List(listReq systemSchema.SystemAuthDeptLis
 // Detail 部门详情
 func (service systemAuthDeptService) Detail(id string) (res systemSchema.SystemAuthDeptResp, e error) {
 	var dept system_model.SystemAuthDept
-	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dept).Error
+	err := service.db.Where("id = ?", id).First(&dept).Error
 	if e = response.CheckDBNotRecord(err, "部门已不存在!"); e != nil {
 		return
 	}
@@ -72,7 +72,7 @@ func (service systemAuthDeptService) Detail(id string) (res systemSchema.SystemA
 // Add 部门新增
 func (service systemAuthDeptService) Add(addReq systemSchema.SystemAuthDeptAddReq) (e error) {
 	if addReq.Pid == "" {
-		r := service.db.Where("pid = ? AND is_delete = ?", "", 0).Limit(1).Find(&system_model.SystemAuthDept{})
+		r := service.db.Where("pid = ?", "").Limit(1).Find(&system_model.SystemAuthDept{})
 		if e = response.CheckErr(r.Error, "Add Find err"); e != nil {
 			return
 		}
@@ -90,7 +90,7 @@ func (service systemAuthDeptService) Add(addReq systemSchema.SystemAuthDeptAddRe
 // Edit 部门编辑
 func (service systemAuthDeptService) Edit(editReq systemSchema.SystemAuthDeptEditReq) (e error) {
 	var dept system_model.SystemAuthDept
-	err := service.db.Where("id = ? AND is_delete = ?", editReq.ID, 0).Limit(1).First(&dept).Error
+	err := service.db.Where("id = ?", editReq.ID).First(&dept).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "部门不存在!"); e != nil {
 		return

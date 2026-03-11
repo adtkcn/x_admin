@@ -130,7 +130,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res monit
 	var obj = model.MonitorClient{}
 	err := service.CacheUtil.GetCache("ClientId:"+ClientId, &obj)
 	if err != nil {
-		err := service.db.Where("client_id = ?", ClientId).Order("id DESC").Limit(1).First(&obj).Error
+		err := service.db.Where("client_id = ?", ClientId).Order("id DESC").First(&obj).Error
 		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -150,7 +150,7 @@ func (service monitorClientService) Detail(Id string) (res monitorSchema.Monitor
 	var obj = model.MonitorClient{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
-		err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
+		err := service.db.Where("id = ?", Id).First(&obj).Error
 		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
@@ -200,7 +200,7 @@ func (service monitorClientService) Add(addReq monitorSchema.MonitorClientAddReq
 // Del 监控-客户端信息删除
 func (service monitorClientService) Del(Id string) (e error) {
 	var obj model.MonitorClient
-	err := service.db.Where("id = ?", Id).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return

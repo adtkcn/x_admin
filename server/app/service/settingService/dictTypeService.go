@@ -38,7 +38,7 @@ type settingDictTypeService struct {
 // All 字典类型所有
 func (dtSrv settingDictTypeService) All() (res []settingSchema.SettingDictTypeResp, e error) {
 	var dictTypes []setting_model.DictType
-	err := dtSrv.db.Where("is_delete = ?", 0).Order("id desc").Find(&dictTypes).Error
+	err := dtSrv.db.Order("id desc").Find(&dictTypes).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
@@ -51,7 +51,7 @@ func (dtSrv settingDictTypeService) All() (res []settingSchema.SettingDictTypeRe
 func (dtSrv settingDictTypeService) List(page request.PageReq, listReq settingSchema.SettingDictTypeListReq) (res response.PageResp, e error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
-	dtModel := dtSrv.db.Model(&setting_model.DictType{}).Where("is_delete = ?", 0)
+	dtModel := dtSrv.db.Model(&setting_model.DictType{})
 	if listReq.DictName != "" {
 		dtModel = dtModel.Where("dict_name like ?", "%"+listReq.DictName+"%")
 	}
@@ -84,7 +84,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq settingSc
 // Detail 字典类型详情
 func (dtSrv settingDictTypeService) Detail(id string) (res settingSchema.SettingDictTypeResp, e error) {
 	var dt setting_model.DictType
-	err := dtSrv.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&dt).Error
+	err := dtSrv.db.Where("id = ?", id).First(&dt).Error
 	if e = response.CheckDBNotRecord(err, "字典类型不存在！"); e != nil {
 		return
 	}
@@ -97,10 +97,10 @@ func (dtSrv settingDictTypeService) Detail(id string) (res settingSchema.Setting
 
 // Add 字典类型新增
 func (dtSrv settingDictTypeService) Add(addReq settingSchema.SettingDictTypeAddReq) (e error) {
-	if r := dtSrv.db.Where("dict_name = ? AND is_delete = ?", addReq.DictName, 0).Limit(1).First(&setting_model.DictType{}); r.RowsAffected > 0 {
+	if r := dtSrv.db.Where("dict_name = ?", addReq.DictName).First(&setting_model.DictType{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典名称已存在！")
 	}
-	if r := dtSrv.db.Where("dict_type = ? AND is_delete = ?", addReq.DictType, 0).Limit(1).First(&setting_model.DictType{}); r.RowsAffected > 0 {
+	if r := dtSrv.db.Where("dict_type = ?", addReq.DictType).First(&setting_model.DictType{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("字典类型已存在！")
 	}
 	var dt setting_model.DictType

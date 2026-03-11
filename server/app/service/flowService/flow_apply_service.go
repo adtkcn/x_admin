@@ -61,7 +61,6 @@ func (service flowApplyService) List(page request.PageReq, listReq flowSchema.Fl
 	if listReq.Status > 0 {
 		dbModel = dbModel.Where("status = ?", listReq.Status)
 	}
-	dbModel = dbModel.Where("is_delete = ?", 0)
 	// 总数
 	var count int64
 	err := dbModel.Count(&count).Error
@@ -87,7 +86,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flowSchema.Fl
 // Detail 申请流程详情
 func (service flowApplyService) Detail(id string) (res flowSchema.FlowApplyResp, e error) {
 	var obj model.FlowApply
-	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).First(&obj).Error
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
 	}
@@ -121,7 +120,7 @@ func (service flowApplyService) Add(addReq flowSchema.FlowApplyAddReq) (e error)
 // Edit 申请流程编辑
 func (service flowApplyService) Edit(editReq flowSchema.FlowApplyEditReq) (e error) {
 	var obj model.FlowApply
-	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return
@@ -139,7 +138,7 @@ func (service flowApplyService) Edit(editReq flowSchema.FlowApplyEditReq) (e err
 // Del 申请流程删除
 func (service flowApplyService) Del(id string) (e error) {
 	var obj model.FlowApply
-	err := service.db.Where("id = ? AND is_delete = ?", id, 0).Limit(1).First(&obj).Error
+	err := service.db.Where("id = ?", id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 		return

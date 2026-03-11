@@ -59,7 +59,6 @@ func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) 
 	if listReq.UpdateTimeEnd.IsExistsAndNotNull() {
 		dbModel = dbModel.Where("update_time <= ?", listReq.UpdateTimeEnd.ValueOrZero())
 	}
-	dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel
 }
 
@@ -110,7 +109,7 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 	var obj = model.UserProtocol{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
-		err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Preload("CreatedByUser").Limit(1).First(&obj).Error
+		err := service.db.Where("id = ?", Id).Preload("CreatedByUser").First(&obj).Error
 		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
 			return
 		}
