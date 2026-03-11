@@ -33,21 +33,7 @@ type UserProtocolAddReq struct {
 type UserProtocolEditReq struct {
 	UserProtocolPrimarykey
 	UserProtocolAddReq
-	// Tag     core.NullString // 标识
-	// Version core.NullInt    // 版本
-	// Title   core.NullString // 标题
-	// Content core.NullString // 协议内容
 }
-
-// UserProtocolDetailReq 用户协议详情参数
-// type UserProtocolDetailReq struct {
-// 	Id string //
-// }
-
-// // UserProtocolDelReq 用户协议删除参数
-// type UserProtocolDelReq struct {
-// 	Id string //
-// }
 
 // // UserProtocolBatchReq 用户协议批量删除参数
 type UserProtocolDelBatchReq struct {
@@ -63,6 +49,6 @@ type UserProtocolResp struct {
 	Content       core.NullString                        `swaggertype:"string"` // 协议内容
 	CreateTime    core.NullTime                          `swaggertype:"string"` // 创建时间
 	UpdateTime    core.NullTime                          `swaggertype:"string"` // 更新时间
-	CreatedBy     string                                 `swaggertype:"string"` // 创建人id
+	CreatedBy     core.NullString                        `swaggertype:"string"` // 创建人id
 	CreatedByUser systemSchema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
 }

@@ -118,7 +118,6 @@ import {
     adminAdd,
     adminEdit,
     adminDetail,
-    type type_system_admin_add,
     type type_system_admin_edit,
     type type_system_admin_resp
 } from '@/api/perms/admin'
@@ -174,13 +173,6 @@ const formRules = reactive({
             trigger: ['blur']
         }
     ],
-    // avatar: [
-    //     {
-    //         required: true,
-    //         message: '请上传头像',
-    //         trigger: ['blur']
-    //     }
-    // ],
     nickname: [
         {
             required: true,
@@ -188,27 +180,6 @@ const formRules = reactive({
             trigger: ['blur']
         }
     ],
-    // roleId: [
-    //     {
-    //         required: true,
-    //         message: '请选择角色',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // deptId: [
-    //     {
-    //         required: true,
-    //         message: '请输入名称',
-    //         trigger: ['blur']
-    //     }
-    // ],
-    // postId: [
-    //     {
-    //         required: true,
-    //         message: '请输入名称',
-    //         trigger: ['blur']
-    //     }
-    // ],
     password: [
         {
             required: true,
@@ -275,9 +246,8 @@ const setFormData = async (row: type_system_admin_resp) => {
             data[key as keyof type_system_admin_resp] != null &&
             data[key as keyof type_system_admin_resp] != undefined
         ) {
-            formData[key as keyof type_admin_form] = data[
-                key as keyof type_system_admin_resp
-            ] as any
+            //@ts-ignore
+            formData[key as keyof type_admin_form] = data[key as keyof type_system_admin_resp]
         }
     }
     formRules.password = []

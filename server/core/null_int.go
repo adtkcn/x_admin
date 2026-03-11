@@ -12,7 +12,7 @@ import (
 // 支持前端传递null，int，string类型和不传值
 // 前端传1，“1”都可以，都转换为int64类型: NullInt{Int: 1, Exist: true}
 // 前端null值: NullInt{Int: nil, Exist: true}
-// 前端没传值: NullInt{Int: nil, Exist: false}
+// 前端没传值: NullInt{Int: nil, Exist: false}：结构体字段都是零值，并且Value接口返回nil，会忽略更新
 
 type NullInt struct {
 	Val   *int64 // 整数或者null
@@ -178,16 +178,16 @@ func (i NullInt) IsZero() bool {
 }
 
 // IsExists 是否存在
-func (i *NullInt) IsExists() bool {
+func (i NullInt) IsExists() bool {
 	return i.Exist
 }
 
 // IsExistsAndNotNull 存在且不为null
-func (i *NullInt) IsExistsAndNotNull() bool {
+func (i NullInt) IsExistsAndNotNull() bool {
 	return i.Exist && i.Val != nil
 }
 
 // IsExistsAndNull 存在且为null
-func (i *NullInt) IsExistsAndNull() bool {
+func (i NullInt) IsExistsAndNull() bool {
 	return i.Exist && i.Val == nil
 }

@@ -18,9 +18,9 @@ type PageResp struct {
 // Send 发送响应的内部函数
 func Send(c *gin.Context, code int, msg string, data interface{}) {
 	status := http.StatusOK
-	if code >= 500 {
-		status = http.StatusInternalServerError
-	}
+	// if code >= 500 {
+	// 	status = http.StatusInternalServerError
+	// }
 
 	c.JSON(status, Response{
 		Code:    code,

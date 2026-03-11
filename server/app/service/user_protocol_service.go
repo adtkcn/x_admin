@@ -63,25 +63,6 @@ func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) 
 	return dbModel
 }
 
-// 获取更新map,原因是可以如果字段为空,则不更新
-func (service userProtocolService) GetUpdateMap(editReq schema.UserProtocolEditReq) map[string]any {
-	updateMap := make(map[string]any)
-
-	if editReq.Tag.IsExists() {
-		updateMap["tag"] = editReq.Tag.GetValue()
-	}
-	if editReq.Title.IsExists() {
-		updateMap["title"] = editReq.Title.GetValue()
-	}
-	if editReq.Content.IsExists() {
-		updateMap["content"] = editReq.Content.GetValue()
-	}
-	if editReq.Version.IsExists() {
-		updateMap["version"] = editReq.Version.GetValue()
-	}
-	return updateMap
-}
-
 // List 用户协议列表
 func (service userProtocolService) List(page request.PageReq, listReq schema.UserProtocolListReq) (res response.PageResp, e error) {
 	// 分页信息
@@ -160,63 +141,53 @@ func (service userProtocolService) Add(addReq schema.UserProtocolAddReq, adminId
 
 // Edit 用户协议编辑
 func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e error) {
-	var obj model.UserProtocol
-	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询失败"); e != nil {
-		return
-	}
-	// 不使用结构体是因为没法区分前端是否有值,都会清空，如果全传就无所谓
-	// convert_util.Copy(&obj, editReq)
-	updateMap := service.GetUpdateMap(editReq)
-	if len(updateMap) == 0 {
-		return errors.New("没有可更新的字段")
+	result := service.db.Model(model.UserProtocol{}).Where("id = ?", editReq.Id).Updates(editReq)
+	if result.Error != nil {
+		// 这里处理真正的数据库错误（如连接失败、SQL语法错误、约束冲突等）
+		core.Logger.Errorf("数据库错误: %v", result.Error)
+		return result.Error
 	}
 
-	err = service.db.Model(&obj).Updates(updateMap).Error
-	if e = response.CheckErr(err, "编辑失败"); e != nil {
-		return
+	if result.RowsAffected == 0 {
+		// 这里处理“找不到数据”的情况
+		core.Logger.Errorf("未找到 ID 为 %v 的记录，更新失败", editReq.Id)
+		return errors.New("记录不存在")
 	}
-	service.CacheUtil.RemoveCache(obj.Id)
-	// service.Detail(obj.Id)
+	service.CacheUtil.RemoveCache(editReq.Id)
+	// service.Detail(editReq.Id)
 	return
 }
 
 // Del 用户协议删除
 func (service userProtocolService) Del(Id string) (e error) {
-	var obj model.UserProtocol
-	err := service.db.Where("id = ? AND is_delete = ?", Id, 0).Limit(1).First(&obj).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
+	result := service.db.Where("id = ?", Id).Delete(&model.UserProtocol{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
 	}
-	if e = response.CheckErr(err, "查询数据失败"); e != nil {
-		return
+	if result.RowsAffected == 0 {
+		return errors.New("数据不存在")
 	}
-	// 删除
-	obj.IsDelete = 1
-	obj.DeleteTime = util.NullTimeUtil.Now()
-	err = service.db.Save(&obj).Error
-	e = response.CheckErr(err, "删除失败")
-	service.CacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache(Id)
+
 	return
 }
 
 // DelBatch 用户协议-批量删除
 func (service userProtocolService) DelBatch(Ids []string) (e error) {
-	var obj model.UserProtocol
-	err := service.db.Where("id in (?)", Ids).Delete(&obj).Error
-	if err != nil {
-		return err
+
+	result := service.db.Where("id in (?)", Ids).Delete(&model.UserProtocol{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "批量删除失败")
 	}
-	// 删除缓存
+
+	if result.RowsAffected == 0 {
+		return errors.New("没有找到可删除的记录")
+	}
+
 	for _, v := range Ids {
 		service.CacheUtil.RemoveCache(v)
 	}
-	return nil
+	return
 }
 
 // 获取Excel的列

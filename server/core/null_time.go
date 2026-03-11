@@ -192,11 +192,11 @@ func (i *NullTime) ValueOrZero() time.Time {
 func (i NullTime) IsZero() bool {
 	return !i.Exist
 }
-func (i *NullTime) IsExists() bool {
+func (i NullTime) IsExists() bool {
 	return i.Exist
 }
 
 // IsExistsAndNull 存在且为null
-func (i *NullTime) IsExistsAndNull() bool {
+func (i NullTime) IsExistsAndNull() bool {
 	return i.Exist && i.Val == nil
 }

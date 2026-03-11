@@ -149,20 +149,6 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 	var newColumns = []ExtentGenTableColumn{}
 	convert_util.Copy(&newColumns, columns)
 
-	// var newSubColumns = []ExtentGenTableColumn{}
-	// convert_util.Copy(subColumns, &newSubColumns)
-
-	// var oriSubColNames []string
-	// for _, column := range oriSubCols {
-	// 	oriSubColNames = append(oriSubColNames, column.ColumnName)
-	// }
-	// var subColumns []ExtentGenTableColumn
-	// if oriSubPriCol.ID != "" {
-	// 	// subPriField = oriSubPriCol.ColumnName
-	// 	// subColumns = append(subColumns, oriSubPriCol)
-	// 	convert_util.Copy(&subColumns, oriSubPriCol)
-	// }
-
 	var userFiled = []ExtentGenTableColumn{}
 
 	for i, column := range newColumns {

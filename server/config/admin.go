@@ -49,6 +49,9 @@ var AdminConfig = adminConfig{
 	ReqUsernameKey: "username",
 	// 昵称key
 	ReqNicknameKey: "nickname",
+
+	// 登录有效期(秒)
+	TokenExpire: 60 * 60 * 24, // 1天
 }
 
 type adminConfig struct {
@@ -76,6 +79,9 @@ type adminConfig struct {
 	ReqUsernameKey string
 	// 昵称key
 	ReqNicknameKey string
+
+	// 登录有效期(秒)
+	TokenExpire int
 }
 
 func (cnf adminConfig) GetAdminId(c *gin.Context) string {

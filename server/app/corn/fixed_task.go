@@ -60,7 +60,7 @@ func init() {
 	})
 
 	// 每2秒执行一次收集服务器信息并推送到Redis
-	FixedTasks.AddTask("CollectAndPushServerInfo", "*/2 * * * * *", cornService.Task{
+	FixedTasks.AddTask("CollectAndPushServerInfo", "*/5 * * * * *", cornService.Task{
 		Lock:     false,
 		LockTTL:  2 * time.Second,
 		TaskCode: "CollectAndPushServerInfo",

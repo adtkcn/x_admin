@@ -37,7 +37,7 @@ func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gor
 	// 查询
 	tableName := core.DBTableName(&model.SystemCorn{})
 
-	dbModel := service.db.Table(tableName + " as a").Joins("CreatedByUser")
+	dbModel := service.db.Model(&model.SystemCorn{}).Table(tableName + " as a").Joins("CreatedByUser")
 
 	if listReq.TaskName.IsExistsAndNotNull() {
 		dbModel = dbModel.Where("a.task_name like ?", "%"+listReq.TaskName.ValueOrZero()+"%")
@@ -73,27 +73,6 @@ func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gor
 	}
 	// dbModel = dbModel.Where("is_delete = ?", 0)
 	return dbModel
-}
-
-// 获取更新map
-func (service systemCornService) GetUpdateMap(editReq schema.SystemCornEditReq) map[string]any {
-	updateMap := make(map[string]any)
-	if editReq.Id != "" {
-		updateMap["id"] = editReq.Id
-	}
-	if editReq.TaskName.IsExists() {
-		updateMap["task_name"] = editReq.TaskName.GetValue()
-	}
-	if editReq.TaskCode.IsExists() {
-		updateMap["task_code"] = editReq.TaskCode.GetValue()
-	}
-	if editReq.CornExpr.IsExists() {
-		updateMap["corn_expr"] = editReq.CornExpr.GetValue()
-	}
-	if editReq.Status.IsExists() {
-		updateMap["Status"] = editReq.Status.GetValue()
-	}
-	return updateMap
 }
 
 // List 定时任务列表
@@ -174,26 +153,21 @@ func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId str
 
 // Edit 定时任务编辑
 func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error) {
-	var obj model.SystemCorn
-	err := service.db.Where("id = ? AND is_delete = ?", editReq.Id, 0).Limit(1).First(&obj).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询失败"); e != nil {
-		return
-	}
-	// convert_util.Copy(&obj, editReq)
-	updateMap := service.GetUpdateMap(editReq)
-	if len(updateMap) == 0 {
-		return errors.New("没有可更新的字段")
+
+	result := service.db.Model(&model.SystemCorn{}).Where("id = ?", editReq.Id).Updates(editReq)
+
+	if result.Error != nil {
+		// 这里处理真正的数据库错误（如连接失败、SQL语法错误、约束冲突等）
+		core.Logger.Errorf("数据库错误: %v", result.Error)
+		return result.Error
 	}
 
-	err = service.db.Model(&obj).Updates(updateMap).Error
-	if e = response.CheckErr(err, "编辑失败"); e != nil {
-		return
+	if result.RowsAffected == 0 {
+		// 这里处理“找不到数据”的情况
+		core.Logger.Errorf("未找到 ID 为 %v 的记录，更新失败", editReq.Id)
+		return errors.New("记录不存在")
 	}
-	service.CacheUtil.RemoveCache(obj.Id)
+	service.CacheUtil.RemoveCache(editReq.Id)
 	// service.Detail(obj.Id)
 	return
 }

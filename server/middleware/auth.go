@@ -71,7 +71,7 @@ func Auth(c *gin.Context) response.RespType {
 
 	// 令牌剩余30分钟自动续签
 	if util.RedisUtil.TTL(tokenKey) < 1800 {
-		util.RedisUtil.Expire(tokenKey, 7200)
+		util.RedisUtil.Expire(tokenKey, config.AdminConfig.TokenExpire)
 	}
 
 	// 单次请求信息保存
