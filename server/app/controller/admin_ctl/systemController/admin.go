@@ -190,6 +190,6 @@ func (ah AdminHandler) ListByDeptId(c *gin.Context) {
 		return
 	}
 
-	res, err := systemService.AdminService.ListByUserIdOrDeptIdPostId("", deptId, "")
+	res, err := systemService.AdminService.ListByDeptId(deptId)
 	response.CheckAndRespWithData(c, res, err)
 }

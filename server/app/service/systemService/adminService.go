@@ -1,6 +1,7 @@
 package systemService
 
 import (
+	"errors"
 	"fmt"
 
 	"strings"
@@ -40,7 +41,7 @@ func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin sy
 	return
 }
 
-// Self 当前管理员
+// Self 当前用户
 func (adminSrv systemAuthAdminService) Self(adminId string) (res systemSchema.SystemAuthAdminSelfResp, e error) {
 	// 管理员信息
 	var sysAdmin system_model.SystemAuthAdmin
@@ -65,32 +66,20 @@ func (adminSrv systemAuthAdminService) Self(adminId string) (res systemSchema.Sy
 	return systemSchema.SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
 }
 
-// 获取管理员列表-
-func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId, postId string) (res []systemSchema.SystemAuthAdminResp, e error) {
-	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
-
-	adminModel := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Table(adminTbName + " AS admin")
-	if userId != "" {
-		adminModel.Where("admin.id =?", userId)
-	}
-	if deptId != "" {
-		adminModel.Where("admin.dept_id =?", deptId)
-	}
-	if postId != "" {
-		adminModel.Where("admin.post_id =?", postId)
+// 获取部门下用户列表
+func (adminSrv systemAuthAdminService) ListByDeptId(deptId string) (res []systemSchema.SystemAuthAdminResp, e error) {
+	if deptId == "" {
+		e = errors.New("部门ID不能为空")
+		return
 	}
 	// 数据
 	var adminResp []systemSchema.SystemAuthAdminResp
-	err := adminModel.Find(&adminResp).Error
+	err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Where("dept_id =?", deptId).Find(&adminResp).Error
+
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	for i := 0; i < len(adminResp); i++ {
-		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
-			adminResp[i].Role = "系统管理员"
-		}
-	}
+
 	return adminResp, nil
 }
 
@@ -98,12 +87,19 @@ func (adminSrv systemAuthAdminService) ListByUserIdOrDeptIdPostId(userId, deptId
 func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAuthAdminListReq) (res []systemSchema.SystemAuthAdminResp, e error) {
 	// 查询
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
-	roleTbName := core.DBTableName(&system_model.SystemAuthRole{})
 	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
+	postTbName := core.DBTableName(&system_model.SystemAuthPost{})
+	adminRoleTbName := core.DBTableName(&system_model.SystemAuthAdminRole{})
+
+	// 基本查询
 	adminModel := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Table(adminTbName + " AS admin").Joins(
-		fmt.Sprintf("LEFT JOIN %s ON admin.role_id = %s.id", roleTbName, roleTbName)).Joins(
-		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
-		fmt.Sprintf("admin.*, %s.name as dept, %s.name as role", deptTbName, roleTbName))
+		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName),
+	).Joins(
+		fmt.Sprintf("LEFT JOIN %s ON admin.post_id = %s.id", postTbName, postTbName),
+	).Select(
+		fmt.Sprintf("admin.*, %s.name as dept, %s.name as post", deptTbName, postTbName),
+	)
+
 	// 条件
 	if listReq.Username != "" {
 		adminModel = adminModel.Where("username like ?", "%"+listReq.Username+"%")
@@ -112,43 +108,156 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAut
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
 	}
 	if listReq.RoleId != "" {
-		adminModel = adminModel.Where("role_id = ?", listReq.RoleId)
+		adminModel = adminModel.Where("admin.id in (SELECT admin_id FROM "+adminRoleTbName+" WHERE role_id = ?)", listReq.RoleId)
 	}
+
 	// 数据
 	var adminResp []systemSchema.SystemAuthAdminResp
 	err := adminModel.Order("id desc, sort desc").Find(&adminResp).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	for i := 0; i < len(adminResp); i++ {
-		// adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
-			adminResp[i].Role = "系统管理员"
+
+	// 收集所有管理员ID
+	var adminIds []string
+	for _, admin := range adminResp {
+		if admin.ID != config.AdminConfig.SuperAdminId {
+			adminIds = append(adminIds, admin.ID)
 		}
 	}
+
+	// 一次性获取所有用户的角色关联
+	adminRoleMap := make(map[string][]string) // adminId -> roleIds
+	if len(adminIds) > 0 {
+		var adminRoles []system_model.SystemAuthAdminRole
+		adminSrv.db.Where("admin_id in ?", adminIds).Find(&adminRoles)
+		for _, ar := range adminRoles {
+			adminRoleMap[ar.AdminId] = append(adminRoleMap[ar.AdminId], ar.RoleId)
+		}
+	}
+
+	// 收集所有角色ID
+	var allRoleIds []string
+	roleIdMap := make(map[string]bool)
+	for _, userRoleIds := range adminRoleMap {
+		for _, roleId := range userRoleIds {
+			if !roleIdMap[roleId] {
+				roleIdMap[roleId] = true
+				allRoleIds = append(allRoleIds, roleId)
+			}
+		}
+	}
+
+	// 一次性获取所有角色信息
+	roleMap := make(map[string]string) // roleId -> roleName
+	if len(allRoleIds) > 0 {
+		var roles []system_model.SystemAuthRole
+		adminSrv.db.Where("id in ?", allRoleIds).Find(&roles)
+		for _, role := range roles {
+			roleMap[role.ID] = role.Name
+		}
+	}
+
+	// 组装数据
+	for i := 0; i < len(adminResp); i++ {
+		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
+			adminResp[i].Role = "超管"
+			adminResp[i].RoleIds = []string{}
+		} else {
+			roleIds := adminRoleMap[adminResp[i].ID]
+			adminResp[i].RoleIds = roleIds
+			if len(roleIds) > 0 {
+				var roleNames []string
+				for _, roleId := range roleIds {
+					if roleName, ok := roleMap[roleId]; ok {
+						roleNames = append(roleNames, roleName)
+					}
+				}
+				adminResp[i].Role = strings.Join(roleNames, ",")
+			}
+		}
+	}
+
 	return adminResp, nil
 }
 
 // 导入
 func (adminSrv systemAuthAdminService) ImportFile(importReq []systemSchema.SystemAuthAdminResp) (e error) {
-	var sysAdmin []system_model.SystemAuthAdmin
-	convert_util.Copy(&sysAdmin, importReq)
-	err := adminSrv.db.Create(&sysAdmin).Error
-	e = response.CheckErr(err, "添加失败")
-	return e
+	for _, importItem := range importReq {
+		// 检查用户是否已存在
+		var existAdmin system_model.SystemAuthAdmin
+		result := adminSrv.db.Where("username = ?", importItem.Username).Limit(1).Find(&existAdmin)
+		if result.Error != nil {
+			e = response.CheckErr(result.Error, "检查用户是否存在失败")
+			return
+		}
+		if result.RowsAffected > 0 {
+			// 用户已存在，跳过
+			continue
+		}
+
+		// 创建用户
+		var sysAdmin system_model.SystemAuthAdmin
+		convert_util.Copy(&sysAdmin, importItem)
+
+		// 初始化密码
+		sysAdmin.Salt = "WFdiD"
+		sysAdmin.Password = "81a13dd8e25644a8823082573ca973f7"
+
+		// 设置默认头像
+		if sysAdmin.Avatar == "" {
+			sysAdmin.Avatar = "/api/static/backend_avatar.png"
+		}
+
+		// 单个用户开启事务
+		err := adminSrv.db.Transaction(func(tx *gorm.DB) error {
+			// 插入用户
+			if err := tx.Create(&sysAdmin).Error; err != nil {
+				return err
+			}
+
+			// 处理角色关联（批量写入）
+			if len(importItem.RoleIds) > 0 {
+				var adminRoles []system_model.SystemAuthAdminRole
+				for _, roleId := range importItem.RoleIds {
+					adminRoles = append(adminRoles, system_model.SystemAuthAdminRole{
+						AdminId: sysAdmin.ID,
+						RoleId:  roleId,
+					})
+				}
+				if err := tx.Create(&adminRoles).Error; err != nil {
+					return err
+				}
+			}
+			return nil
+		})
+
+		if err != nil {
+			e = response.CheckErr(err, "添加用户失败: "+importItem.Username)
+			return
+		}
+	}
+
+	return nil
 }
 
 // 获取Excel的列
 func (adminSrv systemAuthAdminService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
 		{Name: "账号", Key: "Username", Width: 15, Decode: core.DecodeString},
-		{Name: "昵称", Key: "Nickname", Width: 15, Decode: core.DecodeString},
+		{Name: "名称", Key: "Nickname", Width: 15, Decode: core.DecodeString},
 		{Name: "头像", Key: "Avatar", Width: 15, Decode: core.DecodeString},
+
+		{Name: "角色ID", Key: "RoleIds", Width: 15, Decode: func(value any) (any, error) {
+			return strings.Split(value.(string), ","), nil
+		}},
 		{Name: "角色", Key: "Role", Width: 15, Decode: core.DecodeString},
 		{Name: "部门ID", Key: "DeptId", Width: 15, Decode: core.DecodeString},
-		{Name: "岗位ID", Key: "PostId", Width: 15, Decode: core.DecodeString},
-		{Name: "角色ID", Key: "RoleId", Width: 15, Decode: core.DecodeString},
 		{Name: "部门", Key: "Dept", Width: 15, Decode: core.DecodeString},
+
+		{Name: "岗位ID", Key: "PostId", Width: 15, Decode: core.DecodeString},
+		{Name: "岗位", Key: "Post", Width: 15, Decode: core.DecodeString},
+
 		{Name: "是否禁用", Key: "IsDisable", Width: 15, Decode: core.DecodeInt},
 		{Name: "最后登录IP", Key: "LastLoginIp", Width: 15, Decode: core.DecodeString},
 		{Name: "最后登录时间", Key: "LastLoginTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
@@ -188,24 +297,68 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
+
+	// 收集所有管理员ID
+	var adminIds []string
+	for _, admin := range adminResp {
+		if admin.ID != config.AdminConfig.SuperAdminId {
+			adminIds = append(adminIds, admin.ID)
+		}
+	}
+
+	// 一次性获取所有用户的角色关联
+	adminRoleMap := make(map[string][]string) // adminId -> roleIds
+	if len(adminIds) > 0 {
+		var adminRoles []system_model.SystemAuthAdminRole
+		adminSrv.db.Where("admin_id in ?", adminIds).Find(&adminRoles)
+		for _, ar := range adminRoles {
+			adminRoleMap[ar.AdminId] = append(adminRoleMap[ar.AdminId], ar.RoleId)
+		}
+	}
+
+	// 收集所有角色ID
+	var allRoleIds []string
+	roleIdMap := make(map[string]bool)
+	for _, userRoleIds := range adminRoleMap {
+		for _, roleId := range userRoleIds {
+			if !roleIdMap[roleId] {
+				roleIdMap[roleId] = true
+				allRoleIds = append(allRoleIds, roleId)
+			}
+		}
+	}
+
+	// 一次性获取所有角色信息
+	roleMap := make(map[string]string) // roleId -> roleName
+	if len(allRoleIds) > 0 {
+		var roles []system_model.SystemAuthRole
+		adminSrv.db.Where("id in ?", allRoleIds).Find(&roles)
+		for _, role := range roles {
+			roleMap[role.ID] = role.Name
+		}
+	}
+
+	// 组装数据
 	for i := 0; i < len(adminResp); i++ {
 		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
 		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
-			adminResp[i].Role = "系统管理员"
+			adminResp[i].Role = "超管"
+			adminResp[i].RoleIds = []string{}
 		} else {
-			roleIds, _ := AdminRoleService.GetRoleIdsByAdminId(adminResp[i].ID)
+			roleIds := adminRoleMap[adminResp[i].ID]
 			adminResp[i].RoleIds = roleIds
 			if len(roleIds) > 0 {
-				var roles []system_model.SystemAuthRole
-				adminSrv.db.Where("id in ?", roleIds).Find(&roles)
 				var roleNames []string
-				for _, r := range roles {
-					roleNames = append(roleNames, r.Name)
+				for _, roleId := range roleIds {
+					if roleName, ok := roleMap[roleId]; ok {
+						roleNames = append(roleNames, roleName)
+					}
 				}
 				adminResp[i].Role = strings.Join(roleNames, ",")
 			}
 		}
 	}
+
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -236,24 +389,6 @@ func (adminSrv systemAuthAdminService) ListAll(listReq systemSchema.SystemAuthAd
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
-	for i := 0; i < len(adminResp); i++ {
-		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
-			adminResp[i].Role = "系统管理员"
-		} else {
-			roleIds, _ := AdminRoleService.GetRoleIdsByAdminId(adminResp[i].ID)
-			adminResp[i].RoleIds = roleIds
-			if len(roleIds) > 0 {
-				var roles []system_model.SystemAuthRole
-				adminSrv.db.Where("id in ?", roleIds).Find(&roles)
-				var roleNames []string
-				for _, r := range roles {
-					roleNames = append(roleNames, r.Name)
-				}
-				adminResp[i].Role = strings.Join(roleNames, ",")
-			}
-		}
-	}
 	return adminResp, nil
 }
 
@@ -270,7 +405,7 @@ func (adminSrv systemAuthAdminService) Detail(id string) (res systemSchema.Syste
 	convert_util.Copy(&res, sysAdmin)
 	res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 	if res.Dept == "" {
-		res.Dept = res.DeptId
+		// res.Dept = res.DeptId
 	}
 	if res.ID != config.AdminConfig.SuperAdminId {
 		res.RoleIds, _ = AdminRoleService.GetRoleIdsByAdminId(id)
@@ -296,7 +431,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("账号已存在换一个吧！")
+		return errors.New("账号已存在换一个吧！")
 	}
 	r = adminSrv.db.Where("nickname = ?", addReq.Nickname).Limit(1).Find(&sysAdmin)
 	err = r.Error
@@ -304,7 +439,7 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("昵称已存在换一个吧！")
+		return errors.New("名称已存在换一个吧！")
 	}
 	for _, roleId := range addReq.RoleIds {
 		var roleResp systemSchema.SystemAuthRoleResp
@@ -312,12 +447,12 @@ func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAd
 			return
 		}
 		if roleResp.IsDisable > 0 {
-			return response.AssertArgumentError.SetMessage("当前角色已被禁用!")
+			return errors.New("当前角色已被禁用!")
 		}
 	}
 	passwdLen := len(addReq.Password)
 	if passwdLen != 32 {
-		return response.Failed.SetMessage("密码格式不正确")
+		return errors.New("密码格式不正确")
 	}
 	salt := util.ToolsUtil.RandomString(5)
 	convert_util.Copy(&sysAdmin, addReq)
@@ -353,20 +488,20 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	}
 	var admin system_model.SystemAuthAdmin
 	r := adminSrv.db.Where("username = ? AND id != ?", editReq.Username, editReq.ID).Find(&admin)
-	err = r.Error
-	if e = response.CheckErr(err, "Edit Find by username err"); e != nil {
+
+	if e = response.CheckErr(r.Error, "Edit Find by username err"); e != nil {
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("账号已存在换一个吧！")
+		return errors.New("账号已存在换一个吧！")
 	}
 	r = adminSrv.db.Where("nickname = ? AND id != ?", editReq.Nickname, editReq.ID).Find(&admin)
-	err = r.Error
-	if e = response.CheckErr(err, "Edit Find by nickname err"); e != nil {
+
+	if e = response.CheckErr(r.Error, "Edit Find by nickname err"); e != nil {
 		return
 	}
 	if r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("昵称已存在换一个吧！")
+		return errors.New("名称已存在换一个吧！")
 	}
 	for _, roleId := range editReq.RoleIds {
 		if editReq.ID != config.AdminConfig.SuperAdminId {
@@ -379,9 +514,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	delete(adminMap, "ID")
 	delete(adminMap, "RoleIds")
 	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(editReq.Avatar)
-	if editReq.ID == config.AdminConfig.SuperAdminId {
-		delete(adminMap, "Username")
-	}
+
 	if editReq.Password != "" {
 		passwdLen := len(editReq.Password)
 		if passwdLen != 32 {
@@ -469,10 +602,10 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 // Del 管理员删除
 func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) {
 	if id == config.AdminConfig.SuperAdminId {
-		return response.AssertArgumentError.SetMessage("系统管理员不允许删除!")
+		return errors.New("系统管理员不允许删除!")
 	}
 	if id == config.AdminConfig.GetAdminId(c) {
-		return response.AssertArgumentError.SetMessage("不能删除自己!")
+		return errors.New("不能删除自己!")
 	}
 
 	err := adminSrv.db.Transaction(func(tx *gorm.DB) error {
@@ -509,14 +642,14 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) 
 func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id string) (e error) {
 	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ?", id).Limit(1).Find(&admin).Error
-	if e = response.CheckErr(err, "Disable Find err"); e != nil {
+	if e = response.CheckErr(err, "禁用失败"); e != nil {
 		return
 	}
 	if admin.ID == "" {
-		return response.AssertArgumentError.SetMessage("账号已不存在!")
+		return errors.New("账号已不存在!")
 	}
 	if id == config.AdminConfig.GetAdminId(c) {
-		return response.AssertArgumentError.SetMessage("不能禁用自己!")
+		return errors.New("不能禁用自己!")
 	}
 	var isDisable uint8
 	if admin.IsDisable == 0 {

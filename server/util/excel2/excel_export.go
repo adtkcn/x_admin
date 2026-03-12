@@ -2,6 +2,7 @@ package excel2
 
 import (
 	"fmt"
+	"strings"
 	"x_admin/util/convert_util"
 
 	"github.com/xuri/excelize/v2"
@@ -105,6 +106,8 @@ func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []
 			// 先编码
 			if col.Encode != nil {
 				val = col.Encode(val)
+			} else if value, ok := val.([]string); ok {
+				val = strings.Join(value, ",")
 			} else if v, ok := val.(Encode); ok {
 				val = v.String()
 			}

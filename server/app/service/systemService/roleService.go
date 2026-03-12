@@ -4,12 +4,10 @@ import (
 	"errors"
 	"strings"
 	"x_admin/app/schema/systemSchema"
-	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/model/system_model"
-	"x_admin/util"
 	"x_admin/util/convert_util"
 
 	"github.com/fatih/structs"
@@ -96,7 +94,7 @@ func (roleSrv systemAuthRoleService) getMemberCnt(roleId string) (count int64) {
 func (roleSrv systemAuthRoleService) Add(addReq systemSchema.SystemAuthRoleAddReq) (e error) {
 	var role system_model.SystemAuthRole
 	if r := roleSrv.db.Where("name = ?", strings.Trim(addReq.Name, " ")).First(&role); r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("角色名称已存在!")
+		return errors.New("角色名称已存在!")
 	}
 	convert_util.Copy(&role, addReq)
 	role.Name = strings.Trim(addReq.Name, " ")
@@ -125,7 +123,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 	}
 	var role system_model.SystemAuthRole
 	if r := roleSrv.db.Where("id != ? AND name = ?", editReq.ID, strings.Trim(editReq.Name, " ")).First(&role); r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("角色名称已存在!")
+		return errors.New("角色名称已存在!")
 	}
 	role.ID = editReq.ID
 	roleMap := structs.Map(editReq)
@@ -149,7 +147,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 		}
 		return nil
 	})
-	e = PermService.CacheRoleMenusByRoleId(editReq.ID)
+
 	if e != nil {
 		return e
 	}
@@ -160,7 +158,7 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 // Del 删除角色
 func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 	if r := roleSrv.db.Where("role_id = ?", id).Limit(1).Find(&system_model.SystemAuthAdminRole{}); r.RowsAffected > 0 {
-		return response.AssertArgumentError.SetMessage("角色已被管理员使用,请先移除!")
+		return errors.New("角色已被管理员使用,请先移除!")
 	}
 
 	err := roleSrv.db.Transaction(func(tx *gorm.DB) error {
@@ -175,8 +173,6 @@ func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 		if te := PermService.BatchDeleteByRoleId(id, tx); te != nil {
 			return te
 		}
-
-		util.RedisUtil.HDel(config.AdminConfig.BackstageRolesKey, id)
 
 		return nil
 	})

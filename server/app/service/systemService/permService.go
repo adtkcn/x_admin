@@ -62,34 +62,6 @@ func (service systemAuthPermService) SelectMenuIdsByRoleIds(roleIds []string) (m
 	return
 }
 
-// CacheRoleMenusByRoleId 缓存角色菜单
-func (service systemAuthPermService) CacheRoleMenusByRoleId(roleId string) (e error) {
-	var perms []system_model.SystemAuthPerm
-	err := service.db.Where("role_id = ?", roleId).Find(&perms).Error
-	if e = response.CheckErr(err, "查询角色的菜单失败"); e != nil {
-		return
-	}
-	var menuIds []string
-	for _, perm := range perms {
-		menuIds = append(menuIds, perm.MenuId)
-	}
-	var menus []system_model.SystemAuthMenu
-	err = service.db.Where(
-		"is_disable = ? and id in ? and menu_type in ?", 0, menuIds, []string{"C", "A"}).Order(
-		"menu_sort, id").Find(&menus).Error
-	if e = response.CheckErr(err, "查找角色菜单失败"); e != nil {
-		return
-	}
-	var menuArray []string
-	for _, menu := range menus {
-		if menu.Perms != "" {
-			menuArray = append(menuArray, strings.Trim(menu.Perms, ""))
-		}
-	}
-	util.RedisUtil.HSet(config.AdminConfig.BackstageRolesKey, roleId, strings.Join(menuArray, ","), 0)
-	return
-}
-
 // CacheAdminPermsByRoleIds 缓存用户权限(基于多个角色)
 func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, roleIds []string) error {
 	if len(roleIds) == 0 {

@@ -6,8 +6,7 @@ import "github.com/gin-gonic/gin"
 var AdminConfig = adminConfig{
 	// 管理缓存键
 	BackstageManageKey: "backstage:manage",
-	// 角色缓存键
-	BackstageRolesKey: "backstage:roles",
+
 	// 用户角色缓存键
 	BackstageAdminRolesKey: "backstage:admin:roles",
 	// 用户权限缓存键(菜单+按钮)
@@ -61,8 +60,7 @@ var AdminConfig = adminConfig{
 type adminConfig struct {
 	// 管理缓存键"backstage:manage"，filed为管理员id，value为管理员信息
 	BackstageManageKey string
-	// 角色缓存键"backstage:roles"
-	BackstageRolesKey string
+
 	// 用户角色缓存键"backstage:admin:roles"，field为管理员id，value为角色id列表(逗号分隔)
 	BackstageAdminRolesKey string
 	// 用户权限缓存键"backstage:admin:perms"，field为管理员id，value为权限列表(逗号分隔)

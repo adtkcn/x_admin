@@ -95,8 +95,6 @@ func (menuSrv systemAuthMenuService) Add(addReq systemSchema.SystemAuthMenuAddRe
 	if e = response.CheckErr(err, "添加失败"); e != nil {
 		return
 	}
-	// TODO 清除角色缓存
-	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
 	return
 }
 
@@ -117,7 +115,6 @@ func (menuSrv systemAuthMenuService) Edit(editReq systemSchema.SystemAuthMenuEdi
 		return response.CheckErr(result.Error, "编辑失败")
 	}
 
-	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
 	return
 }
 
@@ -136,6 +133,5 @@ func (menuSrv systemAuthMenuService) Del(id string) (e error) {
 		return errors.New("菜单已不存在")
 	}
 
-	util.RedisUtil.Del(config.AdminConfig.BackstageRolesKey)
 	return
 }

@@ -65,15 +65,20 @@ type SystemAuthAdminDisableReq struct {
 
 // SystemAuthAdminResp 管理员返回信息
 type SystemAuthAdminResp struct {
-	ID            string        `json:"id"`                                 // 主键
-	Username      string        `json:"username" excel:"name:账号;"`          // 账号
-	Nickname      string        `json:"nickname" excel:"name:昵称;"`          // 昵称
-	Avatar        string        `json:"avatar" excel:"name:头像;"`            // 头像
-	Role          string        `json:"role" excel:"name:角色;"`              // 角色名称(逗号分隔)
-	DeptId        string        `json:"deptId" excel:"name:部门ID;"`          // 部门ID
-	PostId        string        `json:"postId" excel:"name:岗位ID;"`          // 岗位ID
-	RoleIds       []string      `json:"roleIds"`                            // 角色ID列表
-	Dept          string        `json:"dept" excel:"name:部门;"`              // 部门
+	ID       string `json:"id"`                        // 主键
+	Username string `json:"username" excel:"name:账号;"` // 账号
+	Nickname string `json:"nickname" excel:"name:昵称;"` // 昵称
+	Avatar   string `json:"avatar" excel:"name:头像;"`   // 头像
+
+	DeptId string `json:"deptId" excel:"name:部门ID;"` // 部门ID
+	Dept   string `json:"dept" excel:"name:部门;"`     // 部门
+
+	PostId string `json:"postId" excel:"name:岗位ID;"` // 岗位ID
+	Post   string `json:"post" excel:"name:岗位;"`     // 岗位名称
+
+	RoleIds []string `json:"roleIds" gorm:"-"`      // 角色ID列表
+	Role    string   `json:"role" excel:"name:角色;"` // 角色名称(逗号分隔)
+
 	IsDisable     uint8         `json:"isDisable" excel:"name:是否禁用;"`       // 是否禁用: [0=否, 1=是]
 	LastLoginIp   string        `json:"lastLoginIp" excel:"name:最后登录IP;"`   // 最后登录IP
 	LastLoginTime core.NullTime `json:"lastLoginTime" excel:"name:最后登录时间;"` // 最后登录时间
