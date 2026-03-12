@@ -183,16 +183,28 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq systemSchema.SystemAut
 
 // 导入
 func (adminSrv systemAuthAdminService) ImportFile(importReq []systemSchema.SystemAuthAdminResp) (e error) {
+	if len(importReq) == 0 {
+		return nil
+	}
+
+	// 批量查询已存在的用户名
+	var usernames []string
+	for _, item := range importReq {
+		usernames = append(usernames, item.Username)
+	}
+	var existingAdmins []system_model.SystemAuthAdmin
+	if err := adminSrv.db.Where("username IN ?", usernames).Find(&existingAdmins).Error; err != nil {
+		return response.CheckErr(err, "检查用户是否存在失败")
+	}
+	// 构建已存在的用户名 map
+	existingMap := make(map[string]bool)
+	for _, admin := range existingAdmins {
+		existingMap[admin.Username] = true
+	}
+
 	for _, importItem := range importReq {
-		// 检查用户是否已存在
-		var existAdmin system_model.SystemAuthAdmin
-		result := adminSrv.db.Where("username = ?", importItem.Username).Limit(1).Find(&existAdmin)
-		if result.Error != nil {
-			e = response.CheckErr(result.Error, "检查用户是否存在失败")
-			return
-		}
-		if result.RowsAffected > 0 {
-			// 用户已存在，跳过
+		// 检查用户是否已存在（内存判断）
+		if existingMap[importItem.Username] {
 			continue
 		}
 
@@ -424,32 +436,33 @@ func (adminSrv systemAuthAdminService) Detail(id string) (res systemSchema.Syste
 
 // Add 管理员新增
 func (adminSrv systemAuthAdminService) Add(addReq systemSchema.SystemAuthAdminAddReq) (e error) {
-	var sysAdmin system_model.SystemAuthAdmin
-	r := adminSrv.db.Where("username = ?", addReq.Username).Limit(1).Find(&sysAdmin)
-	err := r.Error
-	if e = response.CheckErr(err, "Add Find by username err"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
-		return errors.New("账号已存在换一个吧！")
-	}
-	r = adminSrv.db.Where("nickname = ?", addReq.Nickname).Limit(1).Find(&sysAdmin)
-	err = r.Error
-	if e = response.CheckErr(err, "Add Find by nickname err"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
+	// 合并查询：检查 username 和 nickname 是否已存在
+	var existAdmin system_model.SystemAuthAdmin
+	err := adminSrv.db.Where("username = ? OR nickname = ?", addReq.Username, addReq.Nickname).First(&existAdmin).Error
+	if err == nil {
+		if existAdmin.Username == addReq.Username {
+			return errors.New("账号已存在换一个吧！")
+		}
 		return errors.New("名称已存在换一个吧！")
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return response.CheckErr(err, "Add Find err")
 	}
-	for _, roleId := range addReq.RoleIds {
-		var roleResp systemSchema.SystemAuthRoleResp
-		if roleResp, e = RoleService.Detail(roleId); e != nil {
-			return
+
+	// 批量验证角色是否存在及是否被禁用
+	if len(addReq.RoleIds) > 0 {
+		var roles []system_model.SystemAuthRole
+		adminSrv.db.Where("id IN ?", addReq.RoleIds).Find(&roles)
+		if len(roles) != len(addReq.RoleIds) {
+			return errors.New("包含无效的角色!")
 		}
-		if roleResp.IsDisable > 0 {
-			return errors.New("当前角色已被禁用!")
+		for _, role := range roles {
+			if role.IsDisable > 0 {
+				return errors.New("角色[" + role.Name + "]已被禁用!")
+			}
 		}
 	}
+
+	var sysAdmin system_model.SystemAuthAdmin
 	passwdLen := len(addReq.Password)
 	if passwdLen != 32 {
 		return errors.New("密码格式不正确")
@@ -486,30 +499,28 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
 		return
 	}
-	var admin system_model.SystemAuthAdmin
-	r := adminSrv.db.Where("username = ? AND id != ?", editReq.Username, editReq.ID).Find(&admin)
 
-	if e = response.CheckErr(r.Error, "查找用户失败"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
-		return errors.New("账号已存在换一个吧！")
-	}
-	r = adminSrv.db.Where("nickname = ? AND id != ?", editReq.Nickname, editReq.ID).Find(&admin)
-
-	if e = response.CheckErr(r.Error, "Edit Find by nickname err"); e != nil {
-		return
-	}
-	if r.RowsAffected > 0 {
+	// 合并查询：检查 username 和 nickname 是否已被其他用户使用
+	var existAdmin system_model.SystemAuthAdmin
+	err = adminSrv.db.Where("(username = ? OR nickname = ?) AND id != ?", editReq.Username, editReq.Nickname, editReq.ID).First(&existAdmin).Error
+	if err == nil {
+		if existAdmin.Username == editReq.Username {
+			return errors.New("账号已存在换一个吧！")
+		}
 		return errors.New("名称已存在换一个吧！")
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return response.CheckErr(err, "Edit Find err")
 	}
-	for _, roleId := range editReq.RoleIds {
-		if editReq.ID != config.AdminConfig.SuperAdminId {
-			if _, e = RoleService.Detail(roleId); e != nil {
-				return
-			}
+
+	// 批量验证角色是否存在
+	if editReq.ID != config.AdminConfig.SuperAdminId && len(editReq.RoleIds) > 0 {
+		var count int64
+		adminSrv.db.Model(&system_model.SystemAuthRole{}).Where("id IN ?", editReq.RoleIds).Count(&count)
+		if int(count) != len(editReq.RoleIds) {
+			return errors.New("包含无效的角色!")
 		}
 	}
+
 	adminMap := structs.Map(editReq)
 	delete(adminMap, "ID")
 	delete(adminMap, "RoleIds")
@@ -527,7 +538,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 		delete(adminMap, "Password")
 	}
 	err = adminSrv.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Model(&admin).Where("id = ?", editReq.ID).Updates(adminMap).Error; err != nil {
+		if err := tx.Model(&system_model.SystemAuthAdmin{}).Where("id = ?", editReq.ID).Updates(adminMap).Error; err != nil {
 			return err
 		}
 		if editReq.ID != config.AdminConfig.SuperAdminId {

@@ -62,26 +62,26 @@ func (service systemAuthPermService) SelectMenuIdsByRoleIds(roleIds []string) (m
 	return
 }
 
-// CacheAdminPermsByRoleIds 缓存用户权限(基于多个角色)
-func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, roleIds []string) error {
+// CacheAdminPermsByRoleIds 缓存用户权限(基于多个角色)并返回权限字符串
+func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, roleIds []string) (string, error) {
 	if len(roleIds) == 0 {
 		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
-		return nil
+		return "", nil
 	}
 	menuIds, err := service.SelectMenuIdsByRoleIds(roleIds)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if len(menuIds) == 0 {
 		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
-		return nil
+		return "", nil
 	}
 	var menus []system_model.SystemAuthMenu
 	err = service.db.Where(
 		"is_disable = ? and id in ? and menu_type in ?", 0, menuIds, []string{"C", "A"}).Order(
 		"menu_sort, id").Find(&menus).Error
 	if err != nil {
-		return err
+		return "", err
 	}
 	var permArray []string
 	permMap := make(map[string]bool)
@@ -97,8 +97,9 @@ func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, ro
 			}
 		}
 	}
-	util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, strings.Join(permArray, ","), 0)
-	return nil
+	permsStr := strings.Join(permArray, ",")
+	util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, permsStr, 0)
+	return permsStr, nil
 }
 
 // GetAdminPerms 获取用户缓存的权限列表
@@ -110,10 +111,11 @@ func (service systemAuthPermService) GetAdminPerms(adminId string) ([]string, er
 		if err != nil {
 			return nil, err
 		}
-		if err := service.CacheAdminPermsByRoleIds(adminId, roleIds); err != nil {
+		// 缓存并直接获取返回值，避免二次 Redis 调用
+		permsStr, err = service.CacheAdminPermsByRoleIds(adminId, roleIds)
+		if err != nil {
 			return nil, err
 		}
-		permsStr = util.RedisUtil.HGet(config.AdminConfig.BackstageAdminPermsKey, adminId)
 	}
 	if permsStr == "" {
 		return []string{}, nil

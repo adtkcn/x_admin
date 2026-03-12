@@ -49,15 +49,38 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 		return
 	}
 	var roles []system_model.SystemAuthRole
-	err = roleModel.Limit(limit).Offset(offset).Order("sort desc, id desc").Find(&roles).Error
+	err = roleSrv.db.Limit(limit).Offset(offset).Order("sort desc, id desc").Find(&roles).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
+
+	// 批量获取成员数量
+	var roleIds []string
+	for _, role := range roles {
+		roleIds = append(roleIds, role.ID)
+	}
+	memberCountMap := make(map[string]int64)
+	if len(roleIds) > 0 {
+		type MemberCount struct {
+			RoleId string
+			Count  int64
+		}
+		var memberCounts []MemberCount
+		roleSrv.db.Model(&system_model.SystemAuthAdminRole{}).
+			Select("role_id, count(*) as count").
+			Where("role_id IN ?", roleIds).
+			Group("role_id").
+			Find(&memberCounts)
+		for _, mc := range memberCounts {
+			memberCountMap[mc.RoleId] = mc.Count
+		}
+	}
+
 	var roleResp []systemSchema.SystemAuthRoleResp
 	convert_util.Copy(&roleResp, roles)
 	for i := 0; i < len(roleResp); i++ {
 		roleResp[i].Menus = []string{}
-		roleResp[i].Member = roleSrv.getMemberCnt(roleResp[i].ID)
+		roleResp[i].Member = memberCountMap[roleResp[i].ID]
 	}
 	return response.PageResp{
 		PageNo:   page.PageNo,
