@@ -47,7 +47,7 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 	handle := monitorController.MonitorClientHandler{}
 	rg.GET("/monitor_client/add", middleware.RecordLog("监控-客户端信息新增"), handle.Add)
 
-	r := rg.Group("/", middleware.TokenAuth())
+	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/monitor_client/list", handle.List)
 	r.GET("/monitor_client/listAll", handle.ListAll)
 	r.GET("/monitor_client/detail", handle.Detail)

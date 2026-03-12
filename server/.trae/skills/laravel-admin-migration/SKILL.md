@@ -173,7 +173,7 @@ type {Module}Resp struct {
 
 关键点：
 - 使用 `init()` 函数自动注册路由
-- 使用 `middleware.TokenAuth()` 进行认证
+- 使用 `middleware.PermAuth()` 进行认证
 - 使用 `middleware.RecordLog` 记录操作日志
 
 ## 迁移占位符说明

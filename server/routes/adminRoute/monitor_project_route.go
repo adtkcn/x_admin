@@ -46,7 +46,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 func MonitorProjectRoute(rg *gin.RouterGroup) {
 	handle := monitorController.MonitorProjectHandler{}
 
-	r := rg.Group("/", middleware.TokenAuth())
+	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/monitor_project/list", handle.List)
 	r.GET("/monitor_project/listAll", handle.ListAll)
 	r.GET("/monitor_project/detail", handle.Detail)

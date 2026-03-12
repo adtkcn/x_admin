@@ -24,7 +24,7 @@ func DictTypeRoute(rg *gin.RouterGroup) {
 	notAuth := rg.Group("/setting", middleware.LoginAuth())
 	notAuth.GET("/dict/type/all", handle.All)
 
-	auth := rg.Group("/setting", middleware.TokenAuth())
+	auth := rg.Group("/setting", middleware.PermAuth())
 	auth.GET("/dict/type/list", handle.List)
 	auth.GET("/dict/type/detail", handle.Detail)
 	auth.POST("/dict/type/add", handle.Add)

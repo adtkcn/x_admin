@@ -16,7 +16,7 @@ func MenuRoute(rg *gin.RouterGroup) {
 	notAuth := rg.Group("/system", middleware.LoginAuth())
 	notAuth.GET("/menu/route", handle.route)
 
-	rg = rg.Group("/system", middleware.TokenAuth())
+	rg = rg.Group("/system", middleware.PermAuth())
 
 	rg.GET("/menu/list", handle.List)
 	rg.GET("/menu/detail", handle.Detail)

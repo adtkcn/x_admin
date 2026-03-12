@@ -33,7 +33,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 func SystemCornRoute(rg *gin.RouterGroup) {
 	handle := admin_ctl.SystemCornHandler{}
 
-	r := rg.Group("/", middleware.TokenAuth())
+	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/system_corn/list", handle.List)
 	r.GET("/system_corn/listAll", handle.ListAll)
 	r.GET("/system_corn/detail", handle.Detail)

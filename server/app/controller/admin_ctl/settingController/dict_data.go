@@ -24,7 +24,7 @@ func DictDataRoute(rg *gin.RouterGroup) {
 	notAuth := rg.Group("/setting", middleware.LoginAuth())
 	notAuth.GET("/dict/data/all", handle.All)
 
-	rg = rg.Group("/setting", middleware.TokenAuth())
+	rg = rg.Group("/setting", middleware.PermAuth())
 	rg.GET("/dict/data/detail", handle.Detail)
 	rg.POST("/dict/data/add", handle.Add)
 	rg.POST("/dict/data/edit", handle.Edit)

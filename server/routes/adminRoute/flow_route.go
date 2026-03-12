@@ -18,7 +18,7 @@ func FlowApplyRoute(rg *gin.RouterGroup) {
 
 	handle := flowController.FlowApplyHandler{}
 
-	rg = rg.Group("/flow", middleware.TokenAuth())
+	rg = rg.Group("/flow", middleware.PermAuth())
 	rg.GET("/flow_apply/list", handle.List)
 	rg.GET("/flow_apply/detail", handle.Detail)
 	rg.POST("/flow_apply/add", handle.Add)
@@ -42,7 +42,7 @@ func FlowHistoryRoute(rg *gin.RouterGroup) {
 
 	handle := flowController.FlowHistoryHandler{}
 
-	rg = rg.Group("/flow", middleware.TokenAuth())
+	rg = rg.Group("/flow", middleware.PermAuth())
 	rg.GET("/flow_history/list", handle.List)
 	rg.GET("/flow_history/listAll", handle.ListAll)
 	rg.GET("/flow_history/detail", handle.Detail)
@@ -73,7 +73,7 @@ func FlowTemplateRoute(rg *gin.RouterGroup) {
 
 	handle := flowController.FlowTemplateHandler{}
 
-	rg = rg.Group("/flow", middleware.TokenAuth())
+	rg = rg.Group("/flow", middleware.PermAuth())
 	rg.GET("/flow_template/list", handle.List)
 	rg.GET("/flow_template/listAll", handle.ListAll)
 	rg.GET("/flow_template/detail", handle.Detail)

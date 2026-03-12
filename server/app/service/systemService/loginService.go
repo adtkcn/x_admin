@@ -65,7 +65,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *systemSchema.Syste
 
 	// 缓存登录信息
 	util.RedisUtil.Set(config.AdminConfig.BackstageTokenKey+token, sysAdmin.ID, config.AdminConfig.TokenExpire)
-	AdminService.CacheAdminUserByUid(sysAdmin.ID)
+	AdminService.CacheAdminById(sysAdmin.ID)
 
 	u := system_model.SystemAuthAdmin{LastLoginIp: c.ClientIP(), LastLoginTime: util.NullTimeUtil.Now()}
 	// 更新登录信息

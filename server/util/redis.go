@@ -170,12 +170,13 @@ func (ru redisUtil) HDel(key string, fields ...string) bool {
 // Exists 判断多项key是否存在
 func (ru redisUtil) Exists(keys ...string) int64 {
 	fullKeys := ru.toFullKeys(keys)
-	cnt, err := ru.redis.Exists(context.Background(), fullKeys...).Result()
+	// count 存在的key数量
+	count, err := ru.redis.Exists(context.Background(), fullKeys...).Result()
 	if err != nil {
 		core.Logger.Errorf("redisUtil.Exists err: err=[%+v]", err)
 		return -1
 	}
-	return cnt
+	return count
 }
 
 // Expire 指定缓存失效时间

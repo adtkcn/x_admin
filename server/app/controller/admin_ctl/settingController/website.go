@@ -21,7 +21,7 @@ func WebsiteRoute(rg *gin.RouterGroup) {
 
 	handle := websiteHandler{}
 
-	rg = rg.Group("/setting", middleware.TokenAuth())
+	rg = rg.Group("/setting", middleware.PermAuth())
 	rg.GET("/website/detail", handle.Detail)
 	rg.POST("/website/save", handle.save)
 }

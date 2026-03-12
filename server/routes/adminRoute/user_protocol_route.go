@@ -45,7 +45,7 @@ INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms,is_cache, is_sh
 func UserProtocolRoute(rg *gin.RouterGroup) {
 	handle := admin_ctl.UserProtocolHandler{}
 
-	r := rg.Group("/", middleware.TokenAuth())
+	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/user_protocol/list", handle.List)
 	r.GET("/user_protocol/listAll", handle.ListAll)
 	r.GET("/user_protocol/detail", handle.Detail)

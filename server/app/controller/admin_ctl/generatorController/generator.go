@@ -17,7 +17,7 @@ import (
 func GenRoute(rg *gin.RouterGroup) {
 	handle := genHandler{}
 
-	rg = rg.Group("/gen", middleware.TokenAuth())
+	rg = rg.Group("/gen", middleware.PermAuth())
 	rg.GET("/db", handle.dbTables)
 	rg.GET("/list", handle.List)
 	rg.GET("/detail", handle.Detail)

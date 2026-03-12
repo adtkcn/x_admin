@@ -13,7 +13,7 @@ import (
 func RegisterRoute(rg *gin.RouterGroup) {
 	handle := monitorHandler{}
 
-	rg = rg.Group("/monitor", middleware.TokenAuth())
+	rg = rg.Group("/monitor", middleware.PermAuth())
 	rg.GET("/cache", handle.cache)
 	rg.GET("/server", handle.server)
 }

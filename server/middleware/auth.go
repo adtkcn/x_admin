@@ -25,10 +25,8 @@ func Auth(c *gin.Context) response.RespType {
 
 	// Token是否过期
 	tokenKey := config.AdminConfig.BackstageTokenKey + token
-	existCnt := util.RedisUtil.Exists(tokenKey)
-	if existCnt < 0 {
-		return response.SystemError
-	} else if existCnt == 0 {
+	existCount := util.RedisUtil.Exists(tokenKey)
+	if existCount <= 0 {
 		return response.TokenInvalid
 	}
 	// 用户token获取用户id
@@ -37,26 +35,21 @@ func Auth(c *gin.Context) response.RespType {
 		return response.TokenInvalid
 	}
 
-	// redis管理员信息不存在时缓存
-	if !util.RedisUtil.HExists(config.AdminConfig.BackstageManageKey, uid) {
-		err := systemService.AdminService.CacheAdminUserByUid(uid) //缓存管理员信息
-		if err != nil {
-			core.Logger.Errorf("缓存管理员失败: err=[%+v]", err)
+	var adminUser system_model.SystemAuthAdmin
+	var userStr = util.RedisUtil.HGet(config.AdminConfig.BackstageAdminKey, uid)
+	if userStr == "" {
+		user, err2 := systemService.AdminService.CacheAdminById(uid) //缓存管理员信息
+		if err2 != nil {
+			core.Logger.Errorf("缓存管理员失败: err=[%+v]", err2)
 			return response.SystemError
 		}
-	}
-
-	// 校验用户被删除
-	var adminUser system_model.SystemAuthAdmin
-	err := util.ToolsUtil.JsonToObj(util.RedisUtil.HGet(config.AdminConfig.BackstageManageKey, uid), &adminUser)
-	if err != nil {
-		core.Logger.Errorf("TokenAuth Unmarshal err: err=[%+v]", err)
-		return response.SystemError
-	}
-	if adminUser.IsDelete == 1 {
-		util.RedisUtil.Del(tokenKey)
-		util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey, uid)
-		return response.TokenInvalid
+		adminUser = user
+	} else {
+		err := util.ToolsUtil.JsonToObj(userStr, &adminUser)
+		if err != nil {
+			core.Logger.Errorf("PermAuth Unmarshal err: err=[%+v]", err)
+			return response.SystemError
+		}
 	}
 
 	// 校验用户被禁用
@@ -90,8 +83,8 @@ func LoginAuth() gin.HandlerFunc {
 	}
 }
 
-// TokenAuth 检查token有效性，获取用户信息，并判断接口权限
-func TokenAuth() gin.HandlerFunc {
+// PermAuth 检查token有效性、判断接口权限
+func PermAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 路由转权限
 		ApiAuth := strings.ReplaceAll(strings.Replace(c.Request.URL.Path, "/api/", "", 1), "/", ":")
@@ -117,6 +110,7 @@ func TokenAuth() gin.HandlerFunc {
 			c.Next()
 			return
 		}
+		// 获取用户权限
 		perms, err := systemService.PermService.GetAdminPerms(adminId)
 		if err != nil {
 			core.Logger.Errorf("获取用户权限失败: err=[%+v]", err)

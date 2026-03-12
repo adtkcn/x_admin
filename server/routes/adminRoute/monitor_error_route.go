@@ -47,7 +47,7 @@ func MonitorErrorRoute(rg *gin.RouterGroup) {
 	handle := monitorController.MonitorErrorHandler{}
 	rg.GET("/monitor_error/add", handle.Add)
 
-	r := rg.Group("/", middleware.TokenAuth())
+	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/monitor_error/list", handle.List)
 	r.GET("/monitor_error/listAll", handle.ListAll)
 	r.GET("/monitor_error/detail", handle.Detail)

@@ -103,7 +103,9 @@ func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, ro
 
 // GetAdminPerms 获取用户缓存的权限列表
 func (service systemAuthPermService) GetAdminPerms(adminId string) ([]string, error) {
-	if !util.RedisUtil.HExists(config.AdminConfig.BackstageAdminPermsKey, adminId) {
+	permsStr := util.RedisUtil.HGet(config.AdminConfig.BackstageAdminPermsKey, adminId)
+	if permsStr == "" {
+		// 根据用户ID获取角色ID列表
 		roleIds, err := AdminRoleService.GetRoleIdsByAdminId(adminId)
 		if err != nil {
 			return nil, err
@@ -111,8 +113,8 @@ func (service systemAuthPermService) GetAdminPerms(adminId string) ([]string, er
 		if err := service.CacheAdminPermsByRoleIds(adminId, roleIds); err != nil {
 			return nil, err
 		}
+		permsStr = util.RedisUtil.HGet(config.AdminConfig.BackstageAdminPermsKey, adminId)
 	}
-	permsStr := util.RedisUtil.HGet(config.AdminConfig.BackstageAdminPermsKey, adminId)
 	if permsStr == "" {
 		return []string{}, nil
 	}
@@ -124,7 +126,7 @@ func (service systemAuthPermService) RemoveAdminPermsCache(adminId string) {
 	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminPermsKey, adminId)
 }
 
-// BatchSaveByMenuIds 批量写入角色菜单
+// BatchSaveByMenuIds 批量写入角色和菜单绑定
 func (service systemAuthPermService) BatchSaveByMenuIds(roleId string, menuIds string, db *gorm.DB) (e error) {
 	if menuIds == "" {
 		return

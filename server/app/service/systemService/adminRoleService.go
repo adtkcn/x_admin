@@ -1,11 +1,8 @@
 package systemService
 
 import (
-	"strings"
-	"x_admin/config"
 	"x_admin/core"
 	"x_admin/model/system_model"
-	"x_admin/util"
 
 	"gorm.io/gorm"
 )
@@ -82,31 +79,4 @@ func (s *adminRoleService) DeleteByRoleId(roleId string) error {
 	return s.db.Where("role_id = ?", roleId).Delete(&system_model.SystemAuthAdminRole{}).Error
 }
 
-// CacheAdminRoles 缓存用户角色
-func (s *adminRoleService) CacheAdminRoles(adminId string) error {
-	roleIds, err := s.GetRoleIdsByAdminId(adminId)
-	if err != nil {
-		return err
-	}
-	util.RedisUtil.HSet(config.AdminConfig.BackstageAdminRolesKey, adminId, strings.Join(roleIds, ","), 0)
-	return nil
-}
 
-// GetCachedRoleIds 获取缓存的角色ID列表
-func (s *adminRoleService) GetCachedRoleIds(adminId string) ([]string, error) {
-	if !util.RedisUtil.HExists(config.AdminConfig.BackstageAdminRolesKey, adminId) {
-		if err := s.CacheAdminRoles(adminId); err != nil {
-			return nil, err
-		}
-	}
-	roleIdsStr := util.RedisUtil.HGet(config.AdminConfig.BackstageAdminRolesKey, adminId)
-	if roleIdsStr == "" {
-		return []string{}, nil
-	}
-	return strings.Split(roleIdsStr, ","), nil
-}
-
-// RemoveAdminRoleCache 移除用户角色缓存
-func (s *adminRoleService) RemoveAdminRoleCache(adminId string) {
-	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminRolesKey, adminId)
-}

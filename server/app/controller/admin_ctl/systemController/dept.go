@@ -15,7 +15,7 @@ func DeptRoute(rg *gin.RouterGroup) {
 	notAuth := rg.Group("/system", middleware.LoginAuth())
 	notAuth.GET("/dept/list", handle.List)
 
-	rg = rg.Group("/system", middleware.TokenAuth())
+	rg = rg.Group("/system", middleware.PermAuth())
 	rg.GET("/dept/all", handle.All)
 	rg.GET("/dept/detail", handle.Detail)
 	rg.POST("/dept/add", handle.Add)

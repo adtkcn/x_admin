@@ -489,7 +489,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	var admin system_model.SystemAuthAdmin
 	r := adminSrv.db.Where("username = ? AND id != ?", editReq.Username, editReq.ID).Find(&admin)
 
-	if e = response.CheckErr(r.Error, "Edit Find by username err"); e != nil {
+	if e = response.CheckErr(r.Error, "查找用户失败"); e != nil {
 		return
 	}
 	if r.RowsAffected > 0 {
@@ -540,9 +540,8 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq systemSchema
 	if e = response.CheckErr(err, "编辑失败"); e != nil {
 		return
 	}
-	adminSrv.CacheAdminUserByUid(editReq.ID)
+	adminSrv.CacheAdminById(editReq.ID)
 	PermService.RemoveAdminPermsCache(editReq.ID)
-	AdminRoleService.RemoveAdminRoleCache(editReq.ID)
 	adminId := config.AdminConfig.GetAdminId(c)
 	if editReq.Password != "" && editReq.ID == adminId {
 		token := c.Request.Header.Get("token")
@@ -590,7 +589,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq systemSc
 	if e = response.CheckErr(err, "Update Updates err"); e != nil {
 		return
 	}
-	adminSrv.CacheAdminUserByUid(adminId)
+	adminSrv.CacheAdminById(adminId)
 	// 如果更改自己的密码,则删除其他登录缓存
 	if updateReq.Password != "" {
 		token := c.Request.Header.Get("token")
@@ -621,8 +620,7 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) 
 		return response.CheckErr(err, "删除失败")
 	}
 
-	util.RedisUtil.HDel(config.AdminConfig.BackstageManageKey, id)
-	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminRolesKey, id)
+	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminKey, id)
 	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminPermsKey, id)
 	adminSetKey := config.AdminConfig.BackstageTokenSet + id
 	ts := util.RedisUtil.SGet(adminSetKey)
@@ -662,22 +660,28 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id string) (e err
 	return
 }
 
-// CacheAdminUserByUid 缓存管理员
-func (adminSrv systemAuthAdminService) CacheAdminUserByUid(id string) (err error) {
+// CacheAdminById 缓存管理员
+func (adminSrv systemAuthAdminService) CacheAdminById(id string) (user system_model.SystemAuthAdmin, err error) {
 	var admin system_model.SystemAuthAdmin
-	err = adminSrv.db.Where("id = ?", id).First(&admin).Error
-	if err != nil {
-		return err
+	result := adminSrv.db.Where("id = ?", id).First(&admin)
+	if result.Error != nil {
+		core.Logger.Error("CacheAdminById First err", result.Error)
+		err = errors.New("查询失败")
+		return
+	}
+	if result.RowsAffected == 0 {
+		err = errors.New("管理员不存在")
+		return
 	}
 	// redis排除缓存
 	admin.Password = ""
 
 	str, err := util.ToolsUtil.ObjToJson(&admin)
 	if err != nil {
-		return err
+		return
 	}
-	util.RedisUtil.HSet(config.AdminConfig.BackstageManageKey, admin.ID, str, 0)
-	return nil
+	util.RedisUtil.HSet(config.AdminConfig.BackstageAdminKey, admin.ID, str, 0)
+	return admin, nil
 }
 
 // 清理用户其他登陆token

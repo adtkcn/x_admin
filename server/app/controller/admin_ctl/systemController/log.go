@@ -14,7 +14,7 @@ import (
 func LogRoute(rg *gin.RouterGroup) {
 	handle := logHandler{}
 
-	rg = rg.Group("/system", middleware.TokenAuth())
+	rg = rg.Group("/system", middleware.PermAuth())
 	rg.GET("/log/operate", handle.operate)
 	rg.GET("/log/login", handle.login)
 }

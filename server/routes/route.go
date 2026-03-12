@@ -18,7 +18,7 @@ import (
 // @Router		/api/admin/apiList [get]
 func apiList(api *gin.RouterGroup, rootRouter *gin.Engine) {
 
-	api.GET("/admin/apiList", middleware.TokenAuth(), func(ctx *gin.Context) {
+	api.GET("/admin/apiList", middleware.PermAuth(), func(ctx *gin.Context) {
 		var path = []string{}
 		for _, route := range rootRouter.Routes() {
 			path = append(path, route.Path)

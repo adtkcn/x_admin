@@ -33,7 +33,7 @@ INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is
 func {{{ toUpperCamelCase .ModuleName }}}Route(rg *gin.RouterGroup) {
 	handle := admin_ctl.{{{ toUpperCamelCase .EntityName }}}Handler{}
 
-	r := rg.Group("/", middleware.TokenAuth())
+	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/{{{ .ModuleName }}}/list", handle.List)
 	r.GET("/{{{ .ModuleName }}}/listAll", handle.ListAll)
 	r.GET("/{{{ .ModuleName }}}/detail", handle.Detail)

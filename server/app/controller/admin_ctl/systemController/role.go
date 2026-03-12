@@ -17,7 +17,7 @@ func RoleRoute(rg *gin.RouterGroup) {
 	notAuth := rg.Group("/system", middleware.LoginAuth())
 	notAuth.GET("/role/all", handle.All)
 
-	rg = rg.Group("/system", middleware.TokenAuth())
+	rg = rg.Group("/system", middleware.PermAuth())
 	// rg.GET("/role/all", handle.All)
 	rg.GET("/role/list", handle.List)
 	rg.GET("/role/detail", middleware.RecordLog("角色详情"), handle.Detail)

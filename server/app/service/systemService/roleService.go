@@ -137,11 +137,11 @@ func (roleSrv systemAuthRoleService) Edit(editReq systemSchema.SystemAuthRoleEdi
 		if te = response.CheckErr(txErr, "编辑角色失败"); te != nil {
 			return te
 		}
-		// 删除角色菜单
+		// 删除角色的菜单
 		if te = PermService.BatchDeleteByRoleId(editReq.ID, tx); te != nil {
 			return te
 		}
-		// 重新保存角色菜单
+		// 重新保存角色的菜单
 		if te = PermService.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
 			return te
 		}

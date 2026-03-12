@@ -24,7 +24,7 @@ func AdminRoute(rg *gin.RouterGroup) {
 	notAuth.GET("/admin/self", handle.Self)
 	notAuth.POST("/admin/upInfo", middleware.RecordLog("管理员更新"), handle.UpInfo)
 
-	auth := rg.Group("/system", middleware.TokenAuth())
+	auth := rg.Group("/system", middleware.PermAuth())
 
 	auth.GET("/admin/list", handle.List)
 	auth.GET("/admin/listAll", handle.ListAll)

@@ -4,17 +4,14 @@ import "github.com/gin-gonic/gin"
 
 // AdminConfig 后台公共配置
 var AdminConfig = adminConfig{
-	// 管理缓存键
-	BackstageManageKey: "backstage:manage",
-
-	// 用户角色缓存键
-	BackstageAdminRolesKey: "backstage:admin:roles",
-	// 用户权限缓存键(菜单+按钮)
-	BackstageAdminPermsKey: "backstage:admin:perms",
+	// 用户缓存键 hash
+	BackstageAdminKey: "admin:users",
+	// 用户权限缓存键(菜单+按钮) hash
+	BackstageAdminPermsKey: "admin:perms",
 	// 令牌缓存键
-	BackstageTokenKey: "backstage:token:",
+	BackstageTokenKey: "admin:token:",
 	// 令牌的集合
-	BackstageTokenSet: "backstage:token:set:",
+	BackstageTokenSet: "admin:token_set:",
 	// #region NotAuth
 	// 免登录验证
 	NotLoginUri: []string{
@@ -46,8 +43,7 @@ var AdminConfig = adminConfig{
 	SuperAdminId: "1",
 	// 管理员账号key
 	ReqAdminIdKey: "admin_id",
-	// 角色key
-	// ReqRoleIdKey: "role",
+
 	// 用户名key
 	ReqUsernameKey: "username",
 	// 昵称key
@@ -58,11 +54,9 @@ var AdminConfig = adminConfig{
 }
 
 type adminConfig struct {
-	// 管理缓存键"backstage:manage"，filed为管理员id，value为管理员信息
-	BackstageManageKey string
+	// 管理缓存键"backstage:admin:users"，field为管理员id，value为管理员信息
+	BackstageAdminKey string
 
-	// 用户角色缓存键"backstage:admin:roles"，field为管理员id，value为角色id列表(逗号分隔)
-	BackstageAdminRolesKey string
 	// 用户权限缓存键"backstage:admin:perms"，field为管理员id，value为权限列表(逗号分隔)
 	BackstageAdminPermsKey string
 	// 令牌缓存键"backstage:token:"，值为用户id
@@ -79,8 +73,7 @@ type adminConfig struct {
 	SuperAdminId string
 	// 管理员账号key
 	ReqAdminIdKey string
-	// 角色key
-	// ReqRoleIdKey string
+
 	// 用户名key
 	ReqUsernameKey string
 	// 昵称key
@@ -97,14 +90,6 @@ func (cnf adminConfig) GetAdminId(c *gin.Context) string {
 	}
 	return adminId.(string)
 }
-
-// func (cnf adminConfig) GetRoleId(c *gin.Context) string {
-// 	roleId, ok := c.Get(cnf.ReqRoleIdKey)
-// 	if !ok {
-// 		return ""
-// 	}
-// 	return roleId.(string)
-// }
 
 func (cnf adminConfig) GetUsername(c *gin.Context) string {
 	username, ok := c.Get(cnf.ReqUsernameKey)
