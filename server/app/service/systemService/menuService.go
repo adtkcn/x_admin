@@ -57,7 +57,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByAdminId(adminId string) (menuLi
 	var menuResps []*systemSchema.SystemAuthMenuResp
 	convert_util.Copy(&menuResps, menus)
 
-	trees := util.ListToTree(menuResps, "0")
+	trees := util.ListToTree(menuResps, "")
 
 	return trees, nil
 }

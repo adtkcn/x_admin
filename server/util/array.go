@@ -1,12 +1,7 @@
 package util
 
-var ArrayUtil = arrayUtil{}
-
-// arrayUtil 数组工具类
-type arrayUtil struct{}
-
 // ListToTree 列表转树形结构
-func (au arrayUtil) ListToTree(arr []map[string]any, id string, pid string, child string) (mapList []any) {
+func MapListToTree(arr []map[string]any, id string, pid string, child string) (mapList []any) {
 	mapList = []any{}
 	// 遍历以id_为key生成map
 	idValMap := make(map[string]any)
