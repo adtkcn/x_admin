@@ -94,7 +94,7 @@ func (loginSrv systemLoginService) Logout(req *systemSchema.SystemLogoutReq) (e 
 
 // RecordLoginLog 记录登录日志
 func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId string, username string, errStr string) (e error) {
-	ua := util.UAParser.Parse(c.GetHeader("user-agent"))
+	ua := util.UAUtils.Parse(c.GetHeader("user-agent"))
 	var status uint8
 	if errStr == "" {
 		status = 1
@@ -103,8 +103,8 @@ func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId string
 		AdminId:    adminId,
 		Username:   username,
 		Ip:         c.ClientIP(),
-		Os:         ua.Os.Family,
-		Browser:    ua.UserAgent.Family,
+		Os:         ua.OsName,
+		Browser:    ua.BrowserName,
 		Status:     status,
 		CreateTime: util.NullTimeUtil.Now(),
 	}).Error

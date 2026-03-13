@@ -200,7 +200,7 @@ func (service systemCornService) DelBatch(Ids []string) (e error) {
 		return err
 	}
 	// 删除缓存
-	service.CacheUtil.RemoveCache(Ids)
+	service.CacheUtil.RemoveCache(Ids...)
 	return nil
 }
 

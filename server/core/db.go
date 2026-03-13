@@ -87,7 +87,7 @@ func initMysql() *gorm.DB {
 	return db
 }
 
-func DBTableName(model interface{}) string {
+func DBTableName(model any) string {
 	stmt := &gorm.Statement{DB: db}
 	stmt.Parse(model)
 	return stmt.Schema.Table

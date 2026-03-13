@@ -238,8 +238,8 @@ func (service monitorClientService) DelBatch(Ids []string) (e error) {
 	}
 
 	// 删除缓存
-	service.CacheUtil.RemoveCache(Ids)
-	service.CacheUtil.RemoveCache(Clients)
+	service.CacheUtil.RemoveCache(Ids...)
+	service.CacheUtil.RemoveCache(Clients...)
 	return nil
 }
 

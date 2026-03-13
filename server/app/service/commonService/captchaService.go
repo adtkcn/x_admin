@@ -42,7 +42,7 @@ func init() {
 	factory.RegisterService(captcha_config.BlockPuzzleCaptcha, captcha_service.NewBlockPuzzleCaptchaService(factory))
 }
 
-func CaptchaGet(captchaType string) (interface{}, error) {
+func CaptchaGet(captchaType string) (any, error) {
 	// 根据参数类型获取不同服务即可
 	data, err := factory.GetService(captchaType).Get()
 

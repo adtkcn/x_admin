@@ -2,7 +2,6 @@ package util
 
 import (
 	"errors"
-	"strconv"
 )
 
 // var CacheUtil = toolsUtil{}
@@ -12,37 +11,19 @@ type CacheUtil struct {
 }
 
 // 设置缓存
-func (c CacheUtil) SetCache(key interface{}, obj interface{}) bool {
+func (c CacheUtil) SetCache(field string, obj any) bool {
 	str, e := ToolsUtil.ObjToJson(obj)
 	if e != nil {
 		return false
 	}
-	var cacheKey string
-	switch k := key.(type) {
-	case int:
-		cacheKey = strconv.Itoa(k)
-	case string:
-		cacheKey = k
-	default:
-		return false
-	}
-	return RedisUtil.HSet(c.Name, cacheKey, str, 3600)
+
+	return RedisUtil.HSet(c.Name, field, str, 3600)
 }
 
 // 获取缓存
-func (c CacheUtil) GetCache(key interface{}, obj interface{}) error {
-	var cacheKey string
-	switch k := key.(type) {
-	case int:
-		cacheKey = strconv.Itoa(k)
-	case int64:
-		cacheKey = strconv.FormatInt(k, 10)
-	case string:
-		cacheKey = k
-	default:
-		return errors.New("缓存key无效")
-	}
-	str := RedisUtil.HGet(c.Name, cacheKey)
+func (c CacheUtil) GetCache(field string, obj any) error {
+
+	str := RedisUtil.HGet(c.Name, field)
 	if str == "" {
 		return errors.New("获取缓存失败")
 	}
@@ -55,22 +36,7 @@ func (c CacheUtil) GetCache(key interface{}, obj interface{}) error {
 }
 
 // 删除缓存-支持批量删除
-func (c CacheUtil) RemoveCache(key interface{}) bool {
-	var cacheKey []string
-	switch k := key.(type) {
-	case int:
-		cacheKey = append(cacheKey, strconv.Itoa(k))
-	case string:
-		cacheKey = append(cacheKey, k)
-	//  判断是slice
-	case []int:
-		for _, v := range k {
-			cacheKey = append(cacheKey, strconv.Itoa(v))
-		}
-	case []string:
-		cacheKey = k
-	default:
-		return false
-	}
-	return RedisUtil.HDel(c.Name, cacheKey...)
+func (c CacheUtil) RemoveCache(fields ...string) bool {
+
+	return RedisUtil.HDel(c.Name, fields...)
 }

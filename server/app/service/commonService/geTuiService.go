@@ -33,7 +33,7 @@ type PushMessage struct {
 type PushResponse struct {
 	Success bool
 	Message string
-	Data    interface{}
+	Data    any
 }
 
 var GeTuiService = NewGeTuiService()
@@ -280,9 +280,9 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 			defer resp.Body.Close()
 
 			var result struct {
-				Code int         `json:"code"`
-				Msg  string      `json:"msg"`
-				Data interface{} `json:"data"`
+				Code int    `json:"code"`
+				Msg  string `json:"msg"`
+				Data any    `json:"data"`
 			}
 
 			if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
@@ -310,7 +310,7 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 }
 
 // toJSONString 将对象转换为JSON字符串
-func toJSONString(v interface{}) string {
+func toJSONString(v any) string {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return "{}"

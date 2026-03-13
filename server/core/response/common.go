@@ -8,15 +8,15 @@ import (
 
 // PageResp 分页响应结构
 type PageResp struct {
-	Count    int64       `json:"count"`    // 总数
-	PageNo   int         `json:"pageNo"`   // 当前页码
-	PageSize int         `json:"pageSize"` // 每页数量
-	Lists    interface{} `json:"lists"`    // 数据列表
+	Count    int64 `json:"count"`    // 总数
+	PageNo   int   `json:"pageNo"`   // 当前页码
+	PageSize int   `json:"pageSize"` // 每页数量
+	Lists    any   `json:"lists"`    // 数据列表
 }
 
 // ========== 快捷响应函数 ==========
 // Send 发送响应的内部函数
-func Send(c *gin.Context, code int, msg string, data interface{}) {
+func Send(c *gin.Context, code int, msg string, data any) {
 	status := http.StatusOK
 	// if code >= 500 {
 	// 	status = http.StatusInternalServerError
@@ -30,8 +30,8 @@ func Send(c *gin.Context, code int, msg string, data interface{}) {
 }
 
 // Ok 成功响应快捷函数
-func Ok(c *gin.Context, data ...interface{}) {
-	var respData interface{}
+func Ok(c *gin.Context, data ...any) {
+	var respData any
 	if len(data) > 0 {
 		respData = data[0]
 	}

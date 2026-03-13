@@ -188,7 +188,7 @@ func (service monitorProjectService) DelBatch(Ids []string) (e error) {
 		return err
 	}
 
-	service.CacheUtil.RemoveCache(Ids)
+	service.CacheUtil.RemoveCache(Ids...)
 	return nil
 }
 

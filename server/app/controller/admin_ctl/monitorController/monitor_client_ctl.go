@@ -124,10 +124,10 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 
 	uaStr := c.GetHeader("user-agent")
 	if uaStr != "" {
-		ua := util.UAParser.Parse(uaStr)
+		ua := util.UAUtils.Parse(uaStr)
 		addReq.Ua = &uaStr
-		addReq.Os = &ua.Os.Family
-		addReq.Browser = &ua.UserAgent.Family
+		addReq.Os = &ua.OsName
+		addReq.Browser = &ua.BrowserName
 	}
 
 	monitorService.MonitorClientService.Add(addReq)

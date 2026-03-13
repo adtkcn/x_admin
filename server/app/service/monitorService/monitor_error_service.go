@@ -214,7 +214,7 @@ func (service monitorErrorService) DelBatch(Ids []string) (e error) {
 	}
 	// 删除缓存
 
-	service.CacheUtil.RemoveCache(md5s)
+	service.CacheUtil.RemoveCache(md5s...)
 	return nil
 }
 

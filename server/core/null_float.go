@@ -36,7 +36,7 @@ func DecodeFloat(value any) (any, error) {
 }
 
 // gorm实现Scanner
-func (f *NullFloat) Scan(value interface{}) error {
+func (f *NullFloat) Scan(value any) error {
 
 	result, err := convert_util.ToFloat64(value)
 	if err != nil {

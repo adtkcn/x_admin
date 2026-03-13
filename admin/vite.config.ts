@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'url'
-
+import { DevTools } from '@vitejs/devtools'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 // import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -23,6 +23,9 @@ export default defineConfig(({ mode }) => {
         // experimental: {
         //     enableNativePlugin: true // 启用 Rust 原生插件（如 alias/resolve）
         // },
+        // devtools: {
+        //     enabled: true
+        // },
         optimizeDeps: {
             // 依赖预构建，避免开发刷新
             include: ['@wangeditor/editor-for-vue', 'vuedraggable', 'crypto-js']
@@ -32,6 +35,7 @@ export default defineConfig(({ mode }) => {
         build: {
             sourcemap: false,
             rolldownOptions: {
+                // devtools: {}, // enable devtools mode
                 external: ['XErr'],
                 output: {
                     codeSplitting: {
@@ -157,6 +161,7 @@ export default defineConfig(({ mode }) => {
             }
         },
         plugins: [
+            // DevTools(),
             vue(),
 
             // vueJsx(),
@@ -178,7 +183,7 @@ export default defineConfig(({ mode }) => {
                 // 配置路劲在你的src里的svg存放文件
                 iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
                 symbolId: 'local-icon-[dir]-[name]'
-            }),
+            })
             // viteCompression({
             //     algorithm: 'gzip'
             // })
@@ -186,13 +191,13 @@ export default defineConfig(({ mode }) => {
             //     algorithm: 'brotliCompress'
             // })
 
-            visualizer({
-                gzipSize: false,
-                brotliSize: false,
-                emitFile: false,
-                filename: 'test.html', //分析图生成的文件名
-                open: true
-            })
+            // visualizer({
+            //     gzipSize: false,
+            //     brotliSize: false,
+            //     emitFile: false,
+            //     filename: 'test.html', //分析图生成的文件名
+            //     open: true
+            // })
         ],
         resolve: {
             alias: {

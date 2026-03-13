@@ -39,7 +39,7 @@ func DecodeInt(value any) (any, error) {
 }
 
 // gorm实现Scanner
-func (i *NullInt) Scan(value interface{}) error {
+func (i *NullInt) Scan(value any) error {
 	// 判断int64、string类型
 	switch v := value.(type) {
 	case nil:

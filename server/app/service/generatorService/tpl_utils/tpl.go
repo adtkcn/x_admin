@@ -43,7 +43,7 @@ func sub(a, b int) int {
 }
 
 // slice 模板-创建切片
-func slice(items ...interface{}) []interface{} {
+func slice(items ...any) []any {
 	return items
 }
 
@@ -271,10 +271,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 
 	for _, column := range newColumns {
 		allFields = append(allFields, column.ColumnName)
-		// if util.ToolsUtil.Contains(oriSubColNames, column.ColumnName) {
-		// 	subTableFields = append(subTableFields, column.ColumnName)
-		// 	subColumns = append(subColumns, column)
-		// }
+
 		if column.IsList == 1 {
 			listFields = append(listFields, column.ColumnName)
 		}

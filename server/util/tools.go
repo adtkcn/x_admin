@@ -9,7 +9,7 @@ import (
 	"math/rand"
 	"mime/multipart"
 	"os"
-	"reflect"
+	"slices"
 	"time"
 
 	"github.com/google/uuid"
@@ -68,19 +68,12 @@ func (tu toolsUtil) GetFileMD5(file *multipart.FileHeader) (string, error) {
 }
 
 // Contains 判断src是否包含elem元素
-func (tu toolsUtil) Contains(src interface{}, elem interface{}) bool {
-	srcArr := reflect.ValueOf(src)
-	if srcArr.Kind() == reflect.Ptr {
-		srcArr = srcArr.Elem()
+func (tu toolsUtil) Contains(list []string, elem string) bool {
+	if slices.Contains(list, elem) {
+		return true
+	} else {
+		return false
 	}
-	if srcArr.Kind() == reflect.Slice {
-		for i := 0; i < srcArr.Len(); i++ {
-			if srcArr.Index(i).Interface() == elem {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 // Round float四舍五入
@@ -90,12 +83,12 @@ func (tu toolsUtil) Round(val float64, n int) float64 {
 }
 
 // JsonToObj JSON转Obj
-func (tu toolsUtil) JsonToObj(jsonStr string, toVal interface{}) (err error) {
+func (tu toolsUtil) JsonToObj(jsonStr string, toVal any) (err error) {
 	return json.Unmarshal([]byte(jsonStr), &toVal)
 }
 
 // ObjToJson Obj转JSON
-func (tu toolsUtil) ObjToJson(data interface{}) (res string, err error) {
+func (tu toolsUtil) ObjToJson(data any) (res string, err error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return res, err

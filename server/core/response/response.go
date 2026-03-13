@@ -11,16 +11,16 @@ import (
 
 // Response 统一响应结构
 type Response struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    any    `json:"data"`
 }
 
 // RespType 响应类型
 type RespType struct {
 	code    int
 	message string
-	data    interface{}
+	data    any
 }
 
 // 预定义响应类型
@@ -55,7 +55,7 @@ func (rt RespType) SetMessage(message string) RespType {
 }
 
 // SetData 设置数据
-func (rt RespType) SetData(data interface{}) RespType {
+func (rt RespType) SetData(data any) RespType {
 	rt.data = data
 	return rt
 }
@@ -71,7 +71,7 @@ func (rt RespType) Msg() string {
 }
 
 // Data 获取数据
-func (rt RespType) Data() interface{} {
+func (rt RespType) Data() any {
 	return rt.data
 }
 
@@ -91,7 +91,7 @@ func IsFailWithResp(c *gin.Context, err error) bool {
 }
 
 // CheckAndRespWithData 检查错误并响应带数据
-func CheckAndRespWithData(c *gin.Context, data interface{}, err error) {
+func CheckAndRespWithData(c *gin.Context, data any, err error) {
 	if err != nil {
 		switch v := err.(type) {
 		case RespType:
@@ -105,7 +105,7 @@ func CheckAndRespWithData(c *gin.Context, data interface{}, err error) {
 }
 
 // CheckErr 检查错误
-func CheckErr(err error, template string, args ...interface{}) error {
+func CheckErr(err error, template string, args ...any) error {
 	if err != nil {
 		return SystemError.SetMessage(template)
 	}

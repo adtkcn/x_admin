@@ -77,7 +77,7 @@ func (ru redisUtil) DBSize() int64 {
 }
 
 // Set 设置键值对
-func (ru redisUtil) Set(key string, value interface{}, timeSec int) bool {
+func (ru redisUtil) Set(key string, value any, timeSec int) bool {
 	err := ru.redis.Set(context.Background(),
 		config.RedisConfig.RedisPrefix+key, value, time.Duration(timeSec)*time.Second).Err()
 	if err != nil {
@@ -98,7 +98,7 @@ func (ru redisUtil) Get(key string) string {
 }
 
 // SSet 将数据放入set缓存
-func (ru redisUtil) SSet(key string, values ...interface{}) bool {
+func (ru redisUtil) SSet(key string, values ...any) bool {
 	err := ru.redis.SAdd(context.Background(), config.RedisConfig.RedisPrefix+key, values...).Err()
 	if err != nil {
 		core.Logger.Errorf("redisUtil.SSet err: err=[%+v]", err)

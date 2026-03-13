@@ -6,8 +6,8 @@ var ArrayUtil = arrayUtil{}
 type arrayUtil struct{}
 
 // ListToTree 列表转树形结构
-func (au arrayUtil) ListToTree(arr []map[string]any, id string, pid string, child string) (mapList []interface{}) {
-	mapList = []interface{}{}
+func (au arrayUtil) ListToTree(arr []map[string]any, id string, pid string, child string) (mapList []any) {
+	mapList = []any{}
 	// 遍历以id_为key生成map
 	idValMap := make(map[string]any)
 	for _, m := range arr {
@@ -23,14 +23,14 @@ func (au arrayUtil) ListToTree(arr []map[string]any, id string, pid string, chil
 				// 有父节点则添加到父节点子集
 				if cVal, cok := pNode.(map[string]any)[child]; cok {
 					if cVal == nil {
-						cVal = []interface{}{m}
+						cVal = []any{m}
 					} else {
-						cVal = append(cVal.([]interface{}), m)
+						cVal = append(cVal.([]any), m)
 					}
 					pNode.(map[string]any)[child] = cVal
 					continue
 				} else {
-					cVal := []interface{}{m}
+					cVal := []any{m}
 					pNode.(map[string]any)[child] = cVal
 					continue
 				}

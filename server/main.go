@@ -77,7 +77,7 @@ func initServer(router *gin.Engine) *http.Server {
 }
 
 // ValidateValuer 将 NullInt等类型 转换为底层值（int64 或 nil）
-func ValidateValuer(field reflect.Value) interface{} {
+func ValidateValuer(field reflect.Value) any {
 	if valuer, ok := field.Interface().(driver.Valuer); ok {
 		val, _ := valuer.Value()
 		return val // 返回 int64 或 nil

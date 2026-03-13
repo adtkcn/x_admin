@@ -43,7 +43,7 @@ func (t nullTimeUtil) DecodeTime(value any) (any, error) {
 // }
 
 // Parse 时间戳转时间
-func (t nullTimeUtil) Parse(value interface{}) (core.NullTime, error) {
+func (t nullTimeUtil) Parse(value any) (core.NullTime, error) {
 	switch v := value.(type) {
 	case string:
 		tt, e := t.ParseString(v)
