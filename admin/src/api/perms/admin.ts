@@ -54,9 +54,10 @@ export type type_system_admin_resp = {
     avatar: string
     role: string
     deptId: string
-    postId: string
-    roleIds: string[]
     dept: string
+    postId: string
+    post: string
+    roleIds: string[]
     isDisable: number
     lastLoginIp: string
     lastLoginTime: string

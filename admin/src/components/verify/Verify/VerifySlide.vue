@@ -142,7 +142,7 @@ const blockSize = computed(() => {
 // }
 
 const { mode, explain } = toRefs(props)
-const { proxy } = getCurrentInstance()
+const instance = getCurrentInstance()
 const secretKey = ref(''), //后端返回的ase加密秘钥
     passFlag = ref(false), //是否通过的标识
     backImgBase = ref(''), //验证码背景图片
@@ -153,12 +153,12 @@ const secretKey = ref(''), //后端返回的ase加密秘钥
     tipWords = ref(''),
     text = ref(''),
     finishText = ref(''),
-    moveBlockLeft = ref(undefined),
-    leftBarWidth = ref(undefined),
+    moveBlockLeft = ref<string>('0px'),
+    leftBarWidth = ref<string | undefined>(undefined),
     // 移动中样式
-    moveBlockBackgroundColor = ref(undefined),
+    moveBlockBackgroundColor = ref(''),
     leftBarBorderColor = ref('#ddd'),
-    iconColor = ref(undefined),
+    iconColor = ref(''),
     iconClass = ref('icon-right'),
     status = ref(false), //鼠标状态
     isEnd = ref(false), //是够验证完成
@@ -168,7 +168,10 @@ const secretKey = ref(''), //后端返回的ase加密秘钥
     startLeft = ref(0)
 
 const barArea = computed(() => {
-    return proxy.$el.querySelector('.verify-bar-area')
+    if (instance && instance?.proxy?.$el) {
+        return instance.proxy.$el.querySelector('.verify-bar-area')
+    }
+    return null
 })
 function init() {
     text.value = explain.value
@@ -193,20 +196,21 @@ onUnmounted(() => {
 onMounted(() => {
     // 禁止拖拽
     init()
-    proxy.$el.onselectstart = function () {
-        return false
+    if (instance && instance?.proxy?.$el) {
+        return (instance.proxy.$el.onselectstart = function () {
+            return false
+        })
     }
 })
 //鼠标按下
-function start(e) {
+function start(e: TouchEvent | MouseEvent) {
     e = e || window.event
     let x = 0
-    if (!e.touches) {
+    if ('touches' in e) {
+        x = e.touches[0].pageX //兼容移动端
+    } else {
         //兼容PC端
         x = e.clientX
-    } else {
-        //兼容移动端
-        x = e.touches[0].pageX
     }
     console.log(barArea)
     startLeft.value = Math.floor(x - barArea.value.getBoundingClientRect().left)
@@ -223,16 +227,15 @@ function start(e) {
     }
 }
 //鼠标移动
-function move(e) {
+function move(e: TouchEvent | MouseEvent) {
     e = e || window.event
     if (status.value && isEnd.value == false) {
         let x
-        if (!e.touches) {
+        if ('touches' in e) {
+            x = e.touches[0].pageX //兼容移动端
+        } else {
             //兼容PC端
             x = e.clientX
-        } else {
-            //兼容移动端
-            x = e.touches[0].pageX
         }
         const bar_area_left = barArea.value.getBoundingClientRect().left
         // console.log('bar_area_left', x, bar_area_left)
@@ -317,7 +320,7 @@ const refresh = () => {
     tipWords.value = ''
 
     transitionLeft.value = 'left .3s'
-    moveBlockLeft.value = 0
+    moveBlockLeft.value = '0px'
 
     leftBarWidth.value = undefined
     transitionWidth.value = 'width .3s'

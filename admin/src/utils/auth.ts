@@ -4,8 +4,8 @@ import useTabsStore from '@/stores/modules/multipleTabs'
 import useUserStore from '@/stores/modules/user'
 import cache from './cache'
 
-export function getToken() {
-    return cache.get(TOKEN_KEY)
+export function getToken(): string | null {
+    return cache.get<string>(TOKEN_KEY) ?? null
 }
 
 export function clearAuthInfo() {

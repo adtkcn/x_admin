@@ -47,11 +47,17 @@ export interface FileUploaderOptions {
     onChunkError?: (chunkIndex: number, error: Error) => void
 }
 
+interface ApiResponse<T = any> {
+    code: number
+    data: T
+    message: string
+}
+
 export default class FileUploader {
-    file: File
-    fileName: string
-    fileMd5: string
-    fileSize: number
+    private file: File | null = null
+    private fileName: string = ''
+    private fileMd5: string = ''
+    private fileSize: number = 0
     chunkSize: number = 1024 * 1024 // 1MB
     chunkCount: number = 0
 
@@ -61,12 +67,12 @@ export default class FileUploader {
     private startChunkIndex = -1
 
     // 上传完成
-    success(filePath: string) {
+    private success(filePath: string) {
         this.uploading = false
         this.startChunkIndex = -1
         this.onSuccess(filePath)
     }
-    error(error: Error) {
+    private error(error: Error) {
         this.uploading = false
         this.startChunkIndex = -1
         this.onError(error)
@@ -76,11 +82,11 @@ export default class FileUploader {
      * @param chunkIndex 当前分块索引
      * @param chunkTotal 总分块数
      */
-    calculateMD5Progress(chunkIndex: number, chunkTotal: number) {
+    private calculateMD5Progress(chunkIndex: number, chunkTotal: number) {
         const chunkPercent = Math.floor((chunkIndex / chunkTotal) * 100)
         this.onCalculateMD5Progress(chunkPercent)
     }
-    uploadProgress(chunkIndex: number, chunkLoaded: number, chunkTotal: number) {
+    private uploadProgress(chunkIndex: number, chunkLoaded: number, chunkTotal: number) {
         // 计算百分比
         const chunkPercent = Math.floor((chunkLoaded / chunkTotal) * 100)
         this.onUploadProgress(chunkIndex, this.chunkCount, chunkLoaded, chunkTotal, chunkPercent)
@@ -97,7 +103,7 @@ export default class FileUploader {
      * @param options
      * @param file 上传的文件
      */
-    constructor(options: FileUploaderOptions, file?: File) {
+    constructor(options: FileUploaderOptions = {}, file?: File) {
         if (options?.chunkSize) {
             this.chunkSize = options.chunkSize
         }
@@ -130,7 +136,7 @@ export default class FileUploader {
      * @param fileName
      * @returns
      */
-    public loadFile(file: File, fileName?: string) {
+    public loadFile(file: File, fileName?: string): void {
         if (this.uploading) {
             this.error(new Error('请等待上一个文件上传完成'))
             return
@@ -160,7 +166,7 @@ export default class FileUploader {
     //         reader.readAsArrayBuffer(file)
     //     })
     // }
-    getAbortControllerSignal() {
+    getAbortControllerSignal(): AbortSignal {
         const controller = new AbortController()
         this.abortControllers.push(controller)
         return controller.signal
@@ -178,7 +184,7 @@ export default class FileUploader {
     /**
      * 开始上传
      */
-    public async start() {
+    public async start(): Promise<void> {
         try {
             if (!this.file) {
                 this.error(new Error('请选择文件后上传'))
@@ -208,7 +214,7 @@ export default class FileUploader {
             await this.splitChunksAndUpload()
             await this.mergeChunk()
         } catch (error) {
-            this.error(error)
+            this.error(error as Error)
         }
     }
     /**
@@ -216,7 +222,7 @@ export default class FileUploader {
      * @param file
      * @returns
      */
-    async calculateMD5(file: File) {
+    private async calculateMD5(file: File): Promise<string> {
         return new Promise((resolve, reject) => {
             const _this = this
             const spark = new SparkMD5.ArrayBuffer()
@@ -226,7 +232,7 @@ export default class FileUploader {
             const chunkTotal = Math.ceil(file.size / chunkSize)
 
             reader.onload = function (e) {
-                spark.append(e.target.result) // 添加数组缓冲区
+                spark.append(e.target?.result as ArrayBuffer) // 添加数组缓冲区
                 chunkIndex++
 
                 if (chunkIndex < chunkTotal) {
@@ -237,7 +243,7 @@ export default class FileUploader {
             }
 
             reader.onerror = function () {
-                reject('文件读取错误')
+                reject(new Error('文件读取错误'))
             }
 
             function loadNext() {
@@ -265,43 +271,49 @@ export default class FileUploader {
     //     return hash
     // }
     // 检查文件是否存在,可实现秒传
-    async checkFileExist(): Promise<string> {
+    private async checkFileExist(): Promise<string | null> {
         if (!this.uploading) {
-            return
+            return null
         }
         try {
             /* 检查文件是否存在 */
-            const res = await axios.get('/api/admin/common/uploadChunk/CheckFileExist', {
-                signal: this.getAbortControllerSignal(),
-                params: {
-                    fileMd5: this.fileMd5,
-                    fileName: this.fileName
+            const res = await axios.get<ApiResponse<string>>(
+                '/api/admin/common/uploadChunk/CheckFileExist',
+                {
+                    signal: this.getAbortControllerSignal(),
+                    params: {
+                        fileMd5: this.fileMd5,
+                        fileName: this.fileName
+                    }
                 }
-            })
+            )
             if (res.data?.code === 200) {
                 return res.data.data
             }
             throw new Error(res.data.message)
         } catch (error) {
             if (axios.isCancel(error)) {
-                return
+                return null
             }
             throw error
         }
     }
-    async getHasChunk(): Promise<number[]> {
+    private async getHasChunk(): Promise<number[]> {
         if (!this.uploading) {
-            return
+            return []
         }
         try {
-            const hasChunkRes = await axios.get('/api/admin/common/uploadChunk/HasChunk', {
-                signal: this.getAbortControllerSignal(),
-                params: {
-                    fileMd5: this.fileMd5,
-                    chunkSize: this.chunkSize,
-                    fileName: this.fileName
+            const hasChunkRes = await axios.get<ApiResponse<number[]>>(
+                '/api/admin/common/uploadChunk/HasChunk',
+                {
+                    signal: this.getAbortControllerSignal(),
+                    params: {
+                        fileMd5: this.fileMd5,
+                        chunkSize: this.chunkSize,
+                        fileName: this.fileName
+                    }
                 }
-            })
+            )
             console.log('HasChunk', hasChunkRes)
 
             if (hasChunkRes.data.code === 200) {
@@ -310,13 +322,14 @@ export default class FileUploader {
             throw new Error(hasChunkRes.data.message)
         } catch (error) {
             if (axios.isCancel(error)) {
-                return
+                return []
             }
             throw error
         }
     }
 
-    async splitChunksAndUpload() {
+    private async splitChunksAndUpload(): Promise<void> {
+        if (!this.file) return
         for (let index = this.startChunkIndex + 1; index < this.chunkCount; index++) {
             if (!this.uploading) {
                 break
@@ -327,7 +340,7 @@ export default class FileUploader {
             await this.uploadChunk(this.fileMd5, index, chunk)
         }
     }
-    async uploadChunk(fileMd5: string, index: number, chunk: Blob) {
+    private async uploadChunk(fileMd5: string, index: number, chunk: Blob): Promise<void> {
         if (!this.uploading) {
             return
         }
@@ -338,12 +351,16 @@ export default class FileUploader {
             formData.append('chunkSize', String(this.chunkSize))
             formData.append('index', String(index))
 
-            const result = await axios.post('/api/admin/common/uploadChunk/UploadChunk', formData, {
-                signal: this.getAbortControllerSignal(),
-                onUploadProgress: (progressEvent) => {
-                    this.uploadProgress(index + 1, progressEvent.loaded, progressEvent.total)
+            const result = await axios.post<ApiResponse<string>>(
+                '/api/admin/common/uploadChunk/UploadChunk',
+                formData,
+                {
+                    signal: this.getAbortControllerSignal(),
+                    onUploadProgress: (progressEvent) => {
+                        this.uploadProgress(index + 1, progressEvent.loaded!, progressEvent.total!)
+                    }
                 }
-            })
+            )
             console.log('result', result)
 
             if (result.data.code === 200) {
@@ -356,18 +373,16 @@ export default class FileUploader {
             if (axios.isCancel(error)) {
                 return
             }
-            this.onChunkError?.(index + 1, error)
-            this.error(error)
-        } finally {
-            chunk = null
+            this.onChunkError?.(index + 1, error as Error)
+            this.error(error as Error)
         }
     }
-    async mergeChunk() {
+    private async mergeChunk(): Promise<void> {
         if (!this.uploading) {
             return
         }
         try {
-            const res = await axios.post(
+            const res = await axios.post<ApiResponse<string>>(
                 '/api/admin/common/uploadChunk/MergeChunk',
                 {
                     fileMd5: this.fileMd5,
@@ -391,7 +406,7 @@ export default class FileUploader {
                 return
             }
             console.error(`合并分片失败: ${error}`)
-            this.error(error)
+            this.error(error as Error)
         }
     }
 }
