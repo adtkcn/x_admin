@@ -148,7 +148,7 @@ func (i NullString) IsExists() bool {
 	return i.Exist
 }
 
-// IsExistsAndNotNull 是否存在且不为空
+// IsExistsAndNotNull 存在且不为null
 func (i NullString) IsExistsAndNotNull() bool {
 	return i.Exist && i.Val != nil
 }

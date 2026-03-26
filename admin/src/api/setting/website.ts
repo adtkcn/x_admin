@@ -51,5 +51,5 @@ export function setWebsite(data: type_setting_website_save) {
 
 // 获取网站接口列表
 export function getApiList() {
-    return request.get({ url: '/apiList' })
+    return request.get<string[]>({ url: '/apiList' })
 }

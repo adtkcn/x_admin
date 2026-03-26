@@ -281,7 +281,7 @@ const menuOptions = ref<type_system_menu_resp[]>([])
 
 const getMenu = async () => {
     const data = await menuLists()
-    const menu: type_system_menu_resp = { id: '0', menuName: '顶级', children: [] } as any
+    const menu: type_system_menu_resp = { id: '', menuName: '顶级', children: [] } as any
     menu.children = arrayToTree(
         data.filter((item) => item.menuType != MenuEnum.BUTTON),
         '0'

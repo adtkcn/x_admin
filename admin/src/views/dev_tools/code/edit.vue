@@ -368,7 +368,7 @@ const { optionsData } = useDictOptions<{
     menu: {
         api: menuLists,
         transformData(data: any) {
-            const menu = { id: 0, name: '顶级', children: [] }
+            const menu = { id: '', name: '顶级', children: [] }
             menu.children = data
             return menu
         }

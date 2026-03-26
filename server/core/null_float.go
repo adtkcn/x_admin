@@ -163,6 +163,8 @@ func (i NullFloat) IsZero() bool {
 func (i *NullFloat) IsExists() bool {
 	return i.Exist
 }
+
+// IsExistsAndNotNull 存在且不为null
 func (i *NullFloat) IsExistsAndNotNull() bool {
 	return i.Exist && i.Val != nil
 }

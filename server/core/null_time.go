@@ -196,6 +196,11 @@ func (i NullTime) IsExists() bool {
 	return i.Exist
 }
 
+// IsExistsAndNotNull 存在且不为null
+func (i NullTime) IsExistsAndNotNull() bool {
+	return i.Exist && i.Val != nil
+}
+
 // IsExistsAndNull 存在且为null
 func (i NullTime) IsExistsAndNull() bool {
 	return i.Exist && i.Val == nil

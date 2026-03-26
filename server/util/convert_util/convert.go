@@ -16,6 +16,8 @@ func ToFloat64(value any) (float64, error) {
 	switch v := value.(type) {
 	case float32:
 		return strconv.ParseFloat(fmt.Sprintf("%f", v), 64)
+	case []uint8:
+		return strconv.ParseFloat(string(v), 64)
 	default:
 		return convertor.ToFloat(value)
 	}
@@ -87,7 +89,7 @@ func ShallowStructsToMaps(from any) (data []map[string]any) {
 }
 
 // MapToStruct 将map类型转换成结构体
-func MapToStruct[F any, T any](from F, to T) (err error) {
+func MapToStruct(from any, to any) (err error) {
 	// err = mapstructure.WeakDecode(from, to) // 需要tag:mapstructure
 
 	jsonData, err := json.Marshal(from)

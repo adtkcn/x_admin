@@ -41,10 +41,10 @@ export const isObject = (val: unknown): boolean => {
  */
 export const treeToArray = <T extends Record<string, any>>(
     data: T[],
-    props: { children: 'children' }
+    props = { children: 'children' }
 ): T[] => {
     data = cloneDeep(data)
-    const { children } = props
+    const children = props.children
     const newData: T[] = []
     const queue: T[] = []
     data.forEach((child) => queue.push(child))
@@ -158,4 +158,38 @@ export const clearEmpty = (obj?: Record<string, any>) => {
         }
     }
     return obj
+}
+
+/**
+ * @description 格式化时间戳
+ * @param {Number} timestamp 时间戳（秒或毫秒）
+ * @param {String} format 格式化模板
+ * @return {String} 格式化后的时间字符串
+ */
+export const formatTime = (
+    timestamp: number | string | null | undefined,
+    format = 'YYYY-MM-DD HH:mm:ss'
+): string => {
+    if (!timestamp) return '-'
+    const ts = typeof timestamp === 'string' ? parseInt(timestamp, 10) : timestamp
+    // 判断是秒还是毫秒
+    const date = new Date(ts < 1e12 ? ts * 1000 : ts)
+    if (isNaN(date.getTime())) return '-'
+
+    const pad = (n: number) => n.toString().padStart(2, '0')
+    const year = date.getFullYear()
+    const month = pad(date.getMonth() + 1)
+    const day = pad(date.getDate())
+    const hours = pad(date.getHours())
+    const minutes = pad(date.getMinutes())
+    const seconds = pad(date.getSeconds())
+
+    return format
+        .replace('YYYY', year.toString())
+        .replace('MM', month)
+        .replace('DD', day)
+        .replace('HH', hours)
+        .replace('mm', minutes)
+        .replace('ss', seconds)
+        .replace('hh', hours)
 }
