@@ -1,8 +1,6 @@
 package monitorSchema
 
-import (
-	"x_admin/core"
-)
+import "github.com/adtkcn/x_null"
 
 // MonitorClientListReq 监控-客户端信息列表参数
 type MonitorClientListReq struct {
@@ -72,20 +70,19 @@ type MonitorClientDelBatchReq struct {
 
 // MonitorClientResp 监控-客户端信息返回信息
 type MonitorClientResp struct {
-	Id         string        // uuid
-	ProjectKey string        // 项目key
-	ClientId   string        // sdk生成的客户端id
-	UserId     string        // 用户id
-	Os         string        // 系统
-	Browser    string        // 浏览器
-	Country    string        // 国家
-	Province   string        // 省份
-	City       string        // 城市
-	Operator   string        // 电信运营商
-	Ip         string        // ip
-	Ua         string        // ua记录
-	CreateTime core.NullTime // 创建时间
-
-	Width  core.NullInt // 屏幕
-	Height core.NullInt // 屏幕高度
+	Id         string            // uuid
+	ProjectKey string            // 项目key
+	ClientId   string            // sdk生成的客户端id
+	UserId     string            // 用户id
+	Os         string            // 系统
+	Browser    string            // 浏览器
+	Country    string            // 国家
+	Province   string            // 省份
+	City       string            // 城市
+	Operator   string            // 电信运营商
+	Ip         string            // ip
+	Ua         string            // ua记录
+	CreateTime x_null.Time       `swaggertype:"string"`  // 创建时间
+	Width      x_null.Int64      `swaggertype:"integer"` // 屏幕
+	Height     x_null.Int64      `swaggertype:"integer"` // 屏幕高度
 }

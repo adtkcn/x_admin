@@ -12,6 +12,7 @@ import (
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
+	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
 )
 
@@ -227,8 +228,8 @@ func (service monitorErrorService) GetExcelCol() []excel2.Col {
 		{Name: "错误消息", Key: "Message", Width: 15},
 		{Name: "错误堆栈", Key: "Stack", Width: 15},
 		{Name: "md5", Key: "Md5", Width: 15},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
-		{Name: "更新时间", Key: "ClientTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", Key: "ClientTime", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

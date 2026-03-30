@@ -66,7 +66,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{data=[]{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{data=[]schema.{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) {
 	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
@@ -86,7 +86,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Param		{{{ .GoField }}}		query		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{data={{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{data=schema.{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
 	var detailReq schema.{{{ toUpperCamelCase .EntityName }}}Primarykey

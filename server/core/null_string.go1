@@ -36,8 +36,7 @@ func (i *NullString) Scan(value any) error {
 
 	switch v := value.(type) {
 	case nil:
-		var s string
-		i.Val = &s
+		i.Val = nil
 		i.Exist = true
 		return nil
 	case string:

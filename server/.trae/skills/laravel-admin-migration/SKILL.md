@@ -120,16 +120,16 @@ type {Module}Primarykey struct {
 }
 
 type {Module}ListReq struct {
-    Title   core.NullString
-    Content core.NullString
-    CreateTimeStart core.NullString
-    CreateTimeEnd   core.NullString
+    Title   x_null.String
+    Content x_null.String
+    CreateTimeStart x_null.String
+    CreateTimeEnd   x_null.String
 }
 
 type {Module}AddReq struct {
-    Title   core.NullString
-    Content core.NullString
-    Sort    core.NullInt
+    Title   x_null.String
+    Content x_null.String
+    Sort    x_null.Int64
 }
 
 type {Module}EditReq struct {
@@ -143,11 +143,11 @@ type {Module}DelBatchReq struct {
 
 type {Module}Resp struct {
     {Module}Primarykey
-    Title      core.NullString
-    Content    core.NullString
-    Sort       core.NullInt
-    CreateTime core.NullTime
-    UpdateTime core.NullTime
+    Title      x_null.String
+    Content    x_null.String
+    Sort       x_null.Int64
+    CreateTime x_null.Time
+    UpdateTime x_null.Time
     CreatedBy  string
     CreatedByUser systemSchema.SystemAuthAdminSimpleInfo
 }

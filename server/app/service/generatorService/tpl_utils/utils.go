@@ -243,7 +243,7 @@ func (gu genUtil) GoToTsType(s string) string {
 		return "number[]"
 	case "[]float":
 		return "number[]"
-	case "core.NullTime":
+	case "x_null.Time":
 		return "string"
 	}
 	return "any"
@@ -255,31 +255,31 @@ func (gu genUtil) GoToTsType(s string) string {
 func (gu genUtil) GoTypeToNullType(s string) string {
 	switch s {
 	case "int", "int8", "int16", "int32", "int64":
-		return "core.NullInt"
+		return "x_null.Int64"
 	case "float", "float32", "float64":
-		return "core.NullFloat"
+		return "x_null.Float64"
 	case "string":
-		return "core.NullString"
+		return "x_null.String"
 	case "bool":
 		return "int"
 	case "time.Time":
-		return "core.NullTime"
-	case "core.NullTime":
-		return "core.NullTime"
+		return "x_null.Time"
+	case "x_null.Time":
+		return "x_null.Time"
 	}
 	return s
 }
 func (gu genUtil) GoTypeToSwagType(s string) string {
 	switch s {
-	case "int", "int8", "int16", "int32", "int64", "core.NullInt":
+	case "int", "int8", "int16", "int32", "int64", "x_null.Int64":
 		return SwagTypeConstants.Integer
-	case "float", "float32", "float64", "core.NullFloat":
+	case "float", "float32", "float64", "x_null.Float64":
 		return SwagTypeConstants.Number
-	case "string", "core.NullString":
+	case "string", "x_null.String":
 		return SwagTypeConstants.String
 	case "bool":
 		return SwagTypeConstants.Bool
-	case "time.Time", "core.NullTime":
+	case "time.Time", "x_null.Time":
 		return SwagTypeConstants.Date
 	}
 	return ""
@@ -297,7 +297,7 @@ func (gu genUtil) GoTypeToSwagType(s string) string {
 // 		return "string"
 // 	} else if s == "bool" {
 // 		return "bool"
-// 	} else if s == "core.NullTime" {
+// 	} else if s == "x_null.Time" {
 // 		return "string"
 // 	}
 // 	return "string"

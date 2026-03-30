@@ -78,5 +78,3 @@ func (s *adminRoleService) DeleteByAdminId(adminId string) error {
 func (s *adminRoleService) DeleteByRoleId(roleId string) error {
 	return s.db.Where("role_id = ?", roleId).Delete(&system_model.SystemAuthAdminRole{}).Error
 }
-
-

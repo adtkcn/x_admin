@@ -1,8 +1,7 @@
 package model
 
 import (
-	"x_admin/core"
-
+	"github.com/adtkcn/x_null"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -20,8 +19,8 @@ type MonitorClient struct {
 	// City       string        `gorm:"comment:'城市'"`                            // 城市
 	// Operator   string        `gorm:"comment:'电信运营商'"`                         // 电信运营商
 	// Ip         string        `gorm:"comment:'ip'"`                            // ip
-	Ua         string        `gorm:"comment:'ua记录'"`                // ua记录
-	CreateTime core.NullTime `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
+	Ua         string      `gorm:"comment:'ua记录'"`                // ua记录
+	CreateTime x_null.Time `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
 }
 
 // BeforeCreate 在创建前生成UUIDv7

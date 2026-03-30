@@ -11,6 +11,7 @@ import (
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
+	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -252,10 +253,10 @@ func (service monitorClientService) GetExcelCol() []excel2.Col {
 		{Name: "系统", Key: "Os", Width: 15},
 		{Name: "浏览器", Key: "Browser", Width: 15},
 		{Name: "城市", Key: "City", Width: 15},
-		{Name: "屏幕", Key: "Width", Width: 15, Decode: core.DecodeInt},
-		{Name: "屏幕高度", Key: "Height", Width: 15, Decode: core.DecodeInt},
+		{Name: "屏幕", Key: "Width", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "屏幕高度", Key: "Height", Width: 15, Decode: x_null.DecodeInt64},
 		{Name: "ua记录", Key: "Ua", Width: 15},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

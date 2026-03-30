@@ -11,6 +11,7 @@ import (
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
+	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
 )
 
@@ -192,12 +193,12 @@ func (service userProtocolService) DelBatch(Ids []string) (e error) {
 // 获取Excel的列
 func (service userProtocolService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "标识", Key: "Tag", Width: 15, Decode: core.DecodeString},
-		{Name: "版本", Key: "Version", Width: 15, Decode: core.DecodeInt},
-		{Name: "标题", Key: "Title", Width: 15, Decode: core.DecodeString},
-		{Name: "协议内容", Key: "Content", Width: 15, Decode: core.DecodeString},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
-		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "标识", Key: "Tag", Width: 15, Decode: x_null.DecodeString},
+		{Name: "版本", Key: "Version", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "标题", Key: "Title", Width: 15, Decode: x_null.DecodeString},
+		{Name: "协议内容", Key: "Content", Width: 15, Decode: x_null.DecodeString},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

@@ -1250,129 +1250,6 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/admin/monitor_client/ExportFile": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_client-监控-客户端信息"
-                ],
-                "summary": "监控-客户端信息导出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目key",
-                        "name": "ProjectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "sdk生成的客户端id",
-                        "name": "ClientId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "系统",
-                        "name": "Os",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "浏览器",
-                        "name": "Browser",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "国家",
-                        "name": "Country",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "省份",
-                        "name": "Province",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "城市",
-                        "name": "City",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "电信运营商",
-                        "name": "Operator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ip",
-                        "name": "Ip",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "屏幕",
-                        "name": "Width",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "屏幕高度",
-                        "name": "Height",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ua记录",
-                        "name": "Ua",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeEnd",
-                        "in": "query"
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/admin/monitor_client/ImportFile": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_client-监控-客户端信息"
-                ],
-                "summary": "监控-客户端信息导入",
-                "responses": {}
-            }
-        },
         "/api/admin/monitor_client/add": {
             "post": {
                 "produces": [
@@ -1407,14 +1284,6 @@ const docTemplate = `{
                         }
                     },
                     {
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "description": "系统",
                         "name": "Os",
                         "in": "body",
@@ -1428,52 +1297,6 @@ const docTemplate = `{
                         "in": "body",
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "国家",
-                        "name": "Country",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "省份",
-                        "name": "Province",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "城市",
-                        "name": "City",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "电信运营商",
-                        "name": "Operator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ip",
-                        "name": "Ip",
-                        "in": "query"
-                    },
-                    {
-                        "description": "屏幕",
-                        "name": "Width",
-                        "in": "body",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "description": "屏幕高度",
-                        "name": "Height",
-                        "in": "body",
-                        "schema": {
-                            "type": "number"
                         }
                     },
                     {
@@ -1613,6 +1436,81 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/monitor_client/exportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-监控-客户端信息"
+                ],
+                "summary": "监控-客户端信息导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sdk生成的客户端id",
+                        "name": "ClientId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "系统",
+                        "name": "Os",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器",
+                        "name": "Browser",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ua记录",
+                        "name": "Ua",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_client/importFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_client-监控-客户端信息"
+                ],
+                "summary": "监控-客户端信息导入",
+                "responses": {}
+            }
+        },
         "/api/admin/monitor_client/list": {
             "get": {
                 "produces": [
@@ -1658,12 +1556,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "系统",
                         "name": "Os",
                         "in": "query"
@@ -1672,48 +1564,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "浏览器",
                         "name": "Browser",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "国家",
-                        "name": "Country",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "省份",
-                        "name": "Province",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "城市",
-                        "name": "City",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "电信运营商",
-                        "name": "Operator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ip",
-                        "name": "Ip",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "屏幕",
-                        "name": "Width",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "屏幕高度",
-                        "name": "Height",
                         "in": "query"
                     },
                     {
@@ -1796,12 +1646,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "用户id",
-                        "name": "UserId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "系统",
                         "name": "Os",
                         "in": "query"
@@ -1810,48 +1654,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "浏览器",
                         "name": "Browser",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "国家",
-                        "name": "Country",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "省份",
-                        "name": "Province",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "城市",
-                        "name": "City",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "电信运营商",
-                        "name": "Operator",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ip",
-                        "name": "Ip",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "屏幕",
-                        "name": "Width",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "屏幕高度",
-                        "name": "Height",
                         "in": "query"
                     },
                     {
@@ -1896,87 +1698,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/admin/monitor_error/ExportFile": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_error-监控-错误列"
-                ],
-                "summary": "监控-错误列导出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目key",
-                        "name": "ProjectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "事件类型",
-                        "name": "EventType",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "URL地址",
-                        "name": "Path",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "错误消息",
-                        "name": "Message",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "错误堆栈",
-                        "name": "Stack",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "md5",
-                        "name": "Md5",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeEnd",
-                        "in": "query"
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/admin/monitor_error/ImportFile": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_error-监控-错误列"
-                ],
-                "summary": "监控-错误列导入",
-                "responses": {}
             }
         },
         "/api/admin/monitor_error/add": {
@@ -2171,6 +1892,87 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/api/admin/monitor_error/exportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目key",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "事件类型",
+                        "name": "EventType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "URL地址",
+                        "name": "Path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误消息",
+                        "name": "Message",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "错误堆栈",
+                        "name": "Stack",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "md5",
+                        "name": "Md5",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_error/importFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_error-监控-错误列"
+                ],
+                "summary": "监控-错误列导入",
+                "responses": {}
             }
         },
         "/api/admin/monitor_error/list": {
@@ -2372,87 +2174,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/admin/monitor_project/ExportFile": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-监控项目"
-                ],
-                "summary": "监控项目导出",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目uuid",
-                        "name": "ProjectKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目名称",
-                        "name": "ProjectName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "项目类型go java web node php 等",
-                        "name": "ProjectType",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "是否启用: 0=否, 1=是",
-                        "name": "Status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "创建时间",
-                        "name": "CreateTimeEnd",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "UpdateTimeStart",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "更新时间",
-                        "name": "UpdateTimeEnd",
-                        "in": "query"
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/admin/monitor_project/ImportFile": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "monitor_project-监控项目"
-                ],
-                "summary": "监控项目导入",
-                "responses": {}
             }
         },
         "/api/admin/monitor_project/add": {
@@ -2701,6 +2422,87 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/monitor_project/exportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目uuid",
+                        "name": "ProjectKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目名称",
+                        "name": "ProjectName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目类型go java web node php 等",
+                        "name": "ProjectType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "是否启用: 0=否, 1=是",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/admin/monitor_project/importFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "monitor_project-监控项目"
+                ],
+                "summary": "监控项目导入",
+                "responses": {}
+            }
+        },
         "/api/admin/monitor_project/list": {
             "get": {
                 "produces": [
@@ -2902,15 +2704,147 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user_protocol/ExportFile": {
+        "/api/admin/system_corn/add": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "定时任务新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "任务名称",
+                        "name": "TaskName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "任务编码",
+                        "name": "TaskCode",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "corn表达式",
+                        "name": "CornExpr",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "状态",
+                        "name": "Status",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/del": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "定时任务删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "taskid",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/delBatch": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "定时任务删除-批量",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "逗号分割的id",
+                        "name": "Ids",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/detail": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "user_protocol-用户协议"
+                    "system_corn-定时任务"
                 ],
-                "summary": "用户协议导出",
+                "summary": "定时任务详情",
                 "parameters": [
                     {
                         "type": "string",
@@ -2921,20 +2855,147 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "标题",
-                        "name": "Title",
+                        "description": "taskid",
+                        "name": "Id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/schema.SystemCornResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/edit": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "定时任务编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "taskid",
+                        "name": "Id",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "任务名称",
+                        "name": "TaskName",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "任务编码",
+                        "name": "TaskCode",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "corn表达式",
+                        "name": "CornExpr",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "状态",
+                        "name": "Status",
+                        "in": "body",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/exportFile": {
+            "get": {
+                "produces": [
+                    "application/octet-stream",
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "定时任务导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "任务名称",
+                        "name": "TaskName",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "协议内容",
-                        "name": "Content",
+                        "description": "任务编码",
+                        "name": "TaskCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "corn表达式",
+                        "name": "CornExpr",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "description": "排序",
-                        "name": "Sort",
+                        "description": "状态",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建人",
+                        "name": "CreatedBy",
                         "in": "query"
                     },
                     {
@@ -2978,15 +3039,43 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user_protocol/ImportFile": {
+        "/api/admin/system_corn/getTaskList": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "获取任务列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/importFile": {
             "post": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "user_protocol-用户协议"
+                    "system_corn-定时任务"
                 ],
-                "summary": "用户协议导入",
+                "summary": "定时任务导入",
                 "parameters": [
                     {
                         "type": "string",
@@ -3008,6 +3097,226 @@ const docTemplate = `{
                         "description": "成功",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "定时任务列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "任务名称",
+                        "name": "TaskName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "任务编码",
+                        "name": "TaskCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "corn表达式",
+                        "name": "CornExpr",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "状态",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建人",
+                        "name": "CreatedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/schema.SystemCornResp"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system_corn/listAll": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system_corn-定时任务"
+                ],
+                "summary": "定时任务列表-所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "任务名称",
+                        "name": "TaskName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "任务编码",
+                        "name": "TaskCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "corn表达式",
+                        "name": "CornExpr",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "状态",
+                        "name": "Status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建人",
+                        "name": "CreatedBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/schema.SystemCornResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3243,6 +3552,117 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/user_protocol/exportFile": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议导出",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "Title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "协议内容",
+                        "name": "Content",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "排序",
+                        "name": "Sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "CreateTimeEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "UpdateTimeEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "失败",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user_protocol/importFile": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_protocol-用户协议"
+                ],
+                "summary": "用户协议导入",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "导入文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/user_protocol/list": {
             "get": {
                 "produces": [
@@ -3454,42 +3874,9 @@ const docTemplate = `{
                     "公共接口"
                 ],
                 "summary": "ws通用接口",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "\"websocket\"",
-                        "description": "请求协议升级",
-                        "name": "Upgrade",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "\"Upgrade\"",
-                        "description": "升级连接类型",
-                        "name": "Connection",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "WebSocket握手密钥",
-                        "name": "Sec-WebSocket-Key",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "\"13\"",
-                        "description": "WebSocket协议版本",
-                        "name": "Sec-WebSocket-Version",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "101": {
-                        "description": "协议切换成功",
+                        "description": "ws连接成功",
                         "schema": {
                             "type": "string"
                         }
@@ -3525,37 +3912,12 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "core.NullInt": {
-            "type": "object",
-            "properties": {
-                "exist": {
-                    "description": "是否有值",
-                    "type": "boolean"
-                },
-                "val": {
-                    "description": "整数或者null",
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
-        "core.NullTime": {
-            "type": "object",
-            "properties": {
-                "exist": {
-                    "type": "boolean"
-                },
-                "val": {
-                    "type": "string"
-                }
-            }
-        },
         "flowSchema.FlowApplyResp": {
             "type": "object",
             "properties": {
                 "applyUserId": {
                     "description": "申请人id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "applyUserNickname": {
                     "description": "申请人昵称",
@@ -3563,11 +3925,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 },
                 "flowFormData": {
                     "description": "表单配置",
@@ -3598,7 +3956,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "status": {
                     "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
@@ -3606,15 +3964,11 @@ const docTemplate = `{
                 },
                 "templateId": {
                     "description": "模板",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 }
             }
         },
@@ -3623,11 +3977,11 @@ const docTemplate = `{
             "properties": {
                 "applyId": {
                     "description": "申请id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "applyUserId": {
                     "description": "申请人id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "applyUserNickname": {
                     "description": "申请人昵称",
@@ -3635,7 +3989,7 @@ const docTemplate = `{
                 },
                 "approverId": {
                     "description": "审批人id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "approverNickname": {
                     "description": "审批用户昵称",
@@ -3643,11 +3997,7 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 },
                 "formValue": {
                     "description": "表单值",
@@ -3655,7 +4005,7 @@ const docTemplate = `{
                 },
                 "id": {
                     "description": "历史id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "nodeId": {
                     "description": "节点",
@@ -3679,15 +4029,11 @@ const docTemplate = `{
                 },
                 "templateId": {
                     "description": "模板id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 }
             }
         },
@@ -3719,7 +4065,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -3744,23 +4090,15 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 },
                 "height": {
                     "description": "屏幕高度",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullInt"
-                        }
-                    ]
+                    "type": "integer"
                 },
                 "id": {
                     "description": "uuid",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "ip": {
                     "description": "ip",
@@ -3792,11 +4130,7 @@ const docTemplate = `{
                 },
                 "width": {
                     "description": "屏幕",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullInt"
-                        }
-                    ]
+                    "type": "integer"
                 }
             }
         },
@@ -3805,11 +4139,7 @@ const docTemplate = `{
             "properties": {
                 "createTime": {
                     "description": "创建时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 },
                 "eventType": {
                     "description": "事件类型",
@@ -3817,15 +4147,11 @@ const docTemplate = `{
                 },
                 "height": {
                     "description": "屏幕高度",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullInt"
-                        }
-                    ]
+                    "type": "integer"
                 },
                 "id": {
                     "description": "错误id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "md5": {
                     "description": "md5",
@@ -3849,11 +4175,7 @@ const docTemplate = `{
                 },
                 "width": {
                     "description": "屏幕",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullInt"
-                        }
-                    ]
+                    "type": "integer"
                 }
             }
         },
@@ -3862,15 +4184,11 @@ const docTemplate = `{
             "properties": {
                 "createTime": {
                     "description": "创建时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 },
                 "id": {
                     "description": "项目id",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "projectKey": {
                     "description": "项目uuid",
@@ -3886,19 +4204,11 @@ const docTemplate = `{
                 },
                 "status": {
                     "description": "是否启用: 0=否, 1=是",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullInt"
-                        }
-                    ]
+                    "type": "integer"
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/core.NullTime"
-                        }
-                    ]
+                    "type": "string"
                 }
             }
         },
@@ -3910,14 +4220,14 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "lists": {
-                    "description": "数据"
+                    "description": "数据列表"
                 },
                 "pageNo": {
-                    "description": "每页数量",
+                    "description": "当前页码",
                     "type": "integer"
                 },
                 "pageSize": {
-                    "description": "每页Size",
+                    "description": "每页数量",
                     "type": "integer"
                 }
             }
@@ -3934,6 +4244,46 @@ const docTemplate = `{
                 }
             }
         },
+        "schema.SystemCornResp": {
+            "type": "object",
+            "properties": {
+                "cornExpr": {
+                    "description": "corn表达式",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "createdBy": {
+                    "description": "创建人",
+                    "type": "string"
+                },
+                "createdByUser": {
+                    "description": "创建人",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "number"
+                },
+                "taskCode": {
+                    "description": "任务编码",
+                    "type": "string"
+                },
+                "taskName": {
+                    "description": "任务名称",
+                    "type": "string"
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
         "schema.UserProtocolResp": {
             "type": "object",
             "properties": {
@@ -3943,6 +4293,14 @@ const docTemplate = `{
                 },
                 "createTime": {
                     "description": "创建时间",
+                    "type": "string"
+                },
+                "createdBy": {
+                    "description": "创建人id",
+                    "type": "string"
+                },
+                "createdByUser": {
+                    "description": "创建人",
                     "type": "string"
                 },
                 "id": {

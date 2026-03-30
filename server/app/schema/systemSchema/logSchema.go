@@ -1,8 +1,6 @@
 package systemSchema
 
-import (
-	"x_admin/core"
-)
+import "github.com/adtkcn/x_null"
 
 // //SystemLogOperateReq 操作日志列表参数
 type SystemLogOperateReq struct {
@@ -25,19 +23,19 @@ type SystemLogOperateReq struct {
 
 // SystemLogOperateResp 操作日志返回信息
 type SystemLogOperateResp struct {
-	ID         string        `json:"id" structs:"id"`                 // 主键
-	Username   string        `json:"username" structs:"username"`     // 用户账号
-	Nickname   string        `json:"nickname" structs:"nickname"`     // 用户昵称
-	Type       string        `json:"type" structs:"type"`             // 请求类型: GET/POST/PUT
-	Title      string        `json:"title" structs:"title"`           // 操作标题
-	Method     string        `json:"method" structs:"method"`         // 请求方式
-	Ip         string        `json:"ip" structs:"ip"`                 // 请求IP
-	Url        string        `json:"url" structs:"url"`               // 请求地址
-	Args       string        `json:"args" structs:"args"`             // 请求参数
-	Error      string        `json:"error" structs:"error"`           // 错误信息
-	Status     int           `json:"status" structs:"status"`         // 执行状态: [1=成功, 2=失败]
-	TaskTime   string        `json:"taskTime" structs:"taskTime"`     // 执行耗时
-	StartTime  core.NullTime `json:"startTime" structs:"startTime"`   // 开始时间
-	EndTime    core.NullTime `json:"endTime" structs:"endTime"`       // 结束时间
-	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
+	ID         string      `json:"id" structs:"id"`                 // 主键
+	Username   string      `json:"username" structs:"username"`     // 用户账号
+	Nickname   string      `json:"nickname" structs:"nickname"`     // 用户昵称
+	Type       string      `json:"type" structs:"type"`             // 请求类型: GET/POST/PUT
+	Title      string      `json:"title" structs:"title"`           // 操作标题
+	Method     string      `json:"method" structs:"method"`         // 请求方式
+	Ip         string      `json:"ip" structs:"ip"`                 // 请求IP
+	Url        string      `json:"url" structs:"url"`               // 请求地址
+	Args       string      `json:"args" structs:"args"`             // 请求参数
+	Error      string      `json:"error" structs:"error"`           // 错误信息
+	Status     int         `json:"status" structs:"status"`         // 执行状态: [1=成功, 2=失败]
+	TaskTime   string      `json:"taskTime" structs:"taskTime"`     // 执行耗时
+	StartTime  x_null.Time `json:"startTime" structs:"startTime"`   // 开始时间
+	EndTime    x_null.Time `json:"endTime" structs:"endTime"`       // 结束时间
+	CreateTime x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
 }

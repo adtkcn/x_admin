@@ -1,6 +1,6 @@
 package systemSchema
 
-import "x_admin/core"
+import "github.com/adtkcn/x_null"
 
 // SystemAuthDeptListReq 部门列表参数
 type SystemAuthDeptListReq struct {
@@ -43,14 +43,14 @@ type SystemAuthDeptDelReq struct {
 
 // SystemAuthDeptResp 系统部门返回信息
 type SystemAuthDeptResp struct {
-	ID         string        `json:"id" structs:"id"`                 // 主键
-	Pid        string        `json:"pid" structs:"pid"`               // 部门父级
-	Name       string        `json:"name" structs:"name"`             // 部门名称
-	DutyId     string        `json:"dutyId" structs:"dutyId"`         // 负责人id
-	Duty       string        `json:"duty" structs:"duty"`             // 负责人
-	Mobile     string        `json:"mobile" structs:"mobile"`         // 联系电话
-	Sort       uint16        `json:"sort" structs:"sort"`             // 排序编号
-	IsStop     uint8         `json:"isStop" structs:"isStop"`         // 是否停用: [0=否, 1=是]
-	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
-	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
+	ID         string      `json:"id" structs:"id"`                 // 主键
+	Pid        string      `json:"pid" structs:"pid"`               // 部门父级
+	Name       string      `json:"name" structs:"name"`             // 部门名称
+	DutyId     string      `json:"dutyId" structs:"dutyId"`         // 负责人id
+	Duty       string      `json:"duty" structs:"duty"`             // 负责人
+	Mobile     string      `json:"mobile" structs:"mobile"`         // 联系电话
+	Sort       uint16      `json:"sort" structs:"sort"`             // 排序编号
+	IsStop     uint8       `json:"isStop" structs:"isStop"`         // 是否停用: [0=否, 1=是]
+	CreateTime x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime x_null.Time `json:"updateTime" structs:"updateTime"` // 更新时间
 }

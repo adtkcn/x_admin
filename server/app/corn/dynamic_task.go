@@ -4,13 +4,15 @@ import (
 	"x_admin/app/schema"
 	"x_admin/app/service/cornService"
 	"x_admin/core"
+
+	"github.com/adtkcn/x_null"
 )
 
 var DynamicTasks = NewCronManager()
 
 // 从数据库加载任务
 func loadTasks() []cornService.RunTask {
-	var Status = core.NullInt{}
+	var Status = x_null.Int64{}
 	Status.SetValue(1)
 	allList, err := cornService.SystemCornService.ListAll(schema.SystemCornListReq{
 		Status: Status,

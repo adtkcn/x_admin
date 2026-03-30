@@ -1,8 +1,7 @@
 package system_model
 
 import (
-	"x_admin/core"
-
+	"github.com/adtkcn/x_null"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
@@ -10,12 +9,12 @@ import (
 
 // SystemConfig 系统配置实体
 type SystemConfig struct {
-	ID         string        `gorm:"primarykey;type:char(36);comment:'uuid'"`
-	Type       string        `gorm:"default:'';comment:'类型''"`
-	Name       string        `gorm:"not null;default:'';comment:'键'"`
-	Value      string        `gorm:"type:text;not null;default:'';comment:'值'"`
-	CreateTime core.NullTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime core.NullTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+	ID         string      `gorm:"primarykey;type:char(36);comment:'uuid'"`
+	Type       string      `gorm:"default:'';comment:'类型''"`
+	Name       string      `gorm:"not null;default:'';comment:'键'"`
+	Value      string      `gorm:"type:text;not null;default:'';comment:'值'"`
+	CreateTime x_null.Time `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime x_null.Time `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7
@@ -30,22 +29,22 @@ func (m *SystemConfig) BeforeCreate(tx *gorm.DB) (err error) {
 
 // SystemAuthMenu 系统菜单实体
 type SystemAuthMenu struct {
-	ID         string        `gorm:"primarykey;type:char(36);comment:'uuid'"`
-	Pid        string        `gorm:"not null;default:0;comment:'上级菜单'"`
-	MenuType   string        `gorm:"not null;default:'';comment:'权限类型: M=目录，C=菜单，A=按钮''"`
-	MenuName   string        `gorm:"not null;default:'';comment:'菜单名称'"`
-	MenuIcon   string        `gorm:"not null;default:'';comment:'菜单图标'"`
-	MenuSort   uint16        `gorm:"not null;default:0;comment:'菜单排序'"`
-	Perms      string        `gorm:"not null;default:'';comment:'权限标识'"`
-	Paths      string        `gorm:"not null;default:'';comment:'路由地址'"`
-	Component  string        `gorm:"not null;default:'';comment:'前端组件'"`
-	Selected   string        `gorm:"not null;default:'';comment:'选中路径'"`
-	Params     string        `gorm:"not null;default:'';comment:'路由参数'"`
-	IsCache    uint8         `gorm:"not null;default:0;comment:'是否缓存: 0=否, 1=是''"`
-	IsShow     uint8         `gorm:"not null;default:1;comment:'是否显示: 0=否, 1=是'"`
-	IsDisable  uint8         `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
-	CreateTime core.NullTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime core.NullTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+	ID         string      `gorm:"primarykey;type:char(36);comment:'uuid'"`
+	Pid        string      `gorm:"not null;default:0;comment:'上级菜单'"`
+	MenuType   string      `gorm:"not null;default:'';comment:'权限类型: M=目录，C=菜单，A=按钮''"`
+	MenuName   string      `gorm:"not null;default:'';comment:'菜单名称'"`
+	MenuIcon   string      `gorm:"not null;default:'';comment:'菜单图标'"`
+	MenuSort   uint16      `gorm:"not null;default:0;comment:'菜单排序'"`
+	Perms      string      `gorm:"not null;default:'';comment:'权限标识'"`
+	Paths      string      `gorm:"not null;default:'';comment:'路由地址'"`
+	Component  string      `gorm:"not null;default:'';comment:'前端组件'"`
+	Selected   string      `gorm:"not null;default:'';comment:'选中路径'"`
+	Params     string      `gorm:"not null;default:'';comment:'路由参数'"`
+	IsCache    uint8       `gorm:"not null;default:0;comment:'是否缓存: 0=否, 1=是''"`
+	IsShow     uint8       `gorm:"not null;default:1;comment:'是否显示: 0=否, 1=是'"`
+	IsDisable  uint8       `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
+	CreateTime x_null.Time `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime x_null.Time `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7
@@ -77,13 +76,13 @@ func (m *SystemAuthPerm) BeforeCreate(tx *gorm.DB) (err error) {
 
 // SystemAuthRole 系统角色实体
 type SystemAuthRole struct {
-	ID         string        `gorm:"primarykey;type:char(36);comment:'uuid'"`
-	Name       string        `gorm:"not null;default:'';comment:'角色名称''"`
-	Remark     string        `gorm:"not null;default:'';comment:'备注信息'"`
-	IsDisable  uint8         `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
-	Sort       uint16        `gorm:"not null;default:0;comment:'角色排序'"`
-	CreateTime core.NullTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime core.NullTime `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+	ID         string      `gorm:"primarykey;type:char(36);comment:'uuid'"`
+	Name       string      `gorm:"not null;default:'';comment:'角色名称''"`
+	Remark     string      `gorm:"not null;default:'';comment:'备注信息'"`
+	IsDisable  uint8       `gorm:"not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
+	Sort       uint16      `gorm:"not null;default:0;comment:'角色排序'"`
+	CreateTime x_null.Time `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime x_null.Time `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7
@@ -107,9 +106,9 @@ type SystemAuthDept struct {
 	Sort       uint16                `gorm:"not null;default:0;comment:'排序编号'"`
 	IsStop     uint8                 `gorm:"not null;default:0;comment:'是否停用: 0=否, 1=是'"`
 	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
-	CreateTime core.NullTime         `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime core.NullTime         `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
-	DeleteTime core.NullTime         `gorm:"default:0;comment:'删除时间'"`
+	CreateTime x_null.Time           `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime x_null.Time           `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+	DeleteTime x_null.Time           `gorm:"default:0;comment:'删除时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7
@@ -131,9 +130,9 @@ type SystemAuthPost struct {
 	Sort       uint16                `gorm:"not null;default:0;comment:'岗位排序'"`
 	IsStop     uint8                 `gorm:"not null;default:0;comment:'是否停用: 0=否, 1=是'"`
 	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
-	CreateTime core.NullTime         `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime core.NullTime         `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
-	DeleteTime core.NullTime         `gorm:"default:null;comment:'删除时间'"`
+	CreateTime x_null.Time           `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime x_null.Time           `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+	DeleteTime x_null.Time           `gorm:"default:null;comment:'删除时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7
@@ -148,14 +147,14 @@ func (m *SystemAuthPost) BeforeCreate(tx *gorm.DB) (err error) {
 
 // SystemLogLogin 系统登录日志实体
 type SystemLogLogin struct {
-	ID         string        `gorm:"primarykey;type:char(36);comment:'uuid'"`
-	AdminId    string        `gorm:"not null;comment:'管理员ID'"`
-	Username   string        `gorm:"not null;default:'';comment:'登录账号'"`
-	Ip         string        `gorm:"not null;default:'';comment:'登录地址'"`
-	Os         string        `gorm:"not null;default:'';comment:'操作系统'"`
-	Browser    string        `gorm:"not null;default:'';comment:'浏览器'"`
-	Status     uint8         `gorm:"not null;default:0;comment:'操作状态: 1=成功, 0=失败'"`
-	CreateTime core.NullTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	ID         string      `gorm:"primarykey;type:char(36);comment:'uuid'"`
+	AdminId    string      `gorm:"not null;comment:'管理员ID'"`
+	Username   string      `gorm:"not null;default:'';comment:'登录账号'"`
+	Ip         string      `gorm:"not null;default:'';comment:'登录地址'"`
+	Os         string      `gorm:"not null;default:'';comment:'操作系统'"`
+	Browser    string      `gorm:"not null;default:'';comment:'浏览器'"`
+	Status     uint8       `gorm:"not null;default:0;comment:'操作状态: 1=成功, 0=失败'"`
+	CreateTime x_null.Time `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7
@@ -170,20 +169,20 @@ func (m *SystemLogLogin) BeforeCreate(tx *gorm.DB) (err error) {
 
 // SystemLogOperate 系统操作日志实体
 type SystemLogOperate struct {
-	ID         string        `gorm:"primarykey;type:char(36);comment:'uuid'"`
-	AdminId    string        `gorm:"not null;comment:'操作人ID'"`
-	Type       string        `gorm:"not null;default:'';comment:'请求类型: GET/POST/PUT'"`
-	Title      string        `gorm:"default:'';comment:'操作标题'"`
-	Ip         string        `gorm:"not null;default:'';comment:'请求IP'"`
-	Url        string        `gorm:"not null;default:'';comment:'请求接口'"`
-	Method     string        `gorm:"not null;default:'';comment:'请求方法'"`
-	Args       string        `gorm:"comment:'请求参数'"`
-	Error      string        `gorm:"comment:'错误信息'"`
-	Status     uint8         `gorm:"not null;default:0;comment:'执行状态: 1=成功, 2=失败'"`
-	StartTime  core.NullTime `gorm:"not null;default:0;comment:'开始时间'"`
-	EndTime    core.NullTime `gorm:"not null;default:0;comment:'结束时间'"`
-	TaskTime   int64         `gorm:"not null;default:0;comment:'执行耗时'"`
-	CreateTime core.NullTime `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	ID         string      `gorm:"primarykey;type:char(36);comment:'uuid'"`
+	AdminId    string      `gorm:"not null;comment:'操作人ID'"`
+	Type       string      `gorm:"not null;default:'';comment:'请求类型: GET/POST/PUT'"`
+	Title      string      `gorm:"default:'';comment:'操作标题'"`
+	Ip         string      `gorm:"not null;default:'';comment:'请求IP'"`
+	Url        string      `gorm:"not null;default:'';comment:'请求接口'"`
+	Method     string      `gorm:"not null;default:'';comment:'请求方法'"`
+	Args       string      `gorm:"comment:'请求参数'"`
+	Error      string      `gorm:"comment:'错误信息'"`
+	Status     uint8       `gorm:"not null;default:0;comment:'执行状态: 1=成功, 2=失败'"`
+	StartTime  x_null.Time `gorm:"not null;default:0;comment:'开始时间'"`
+	EndTime    x_null.Time `gorm:"not null;default:0;comment:'结束时间'"`
+	TaskTime   int64       `gorm:"not null;default:0;comment:'执行耗时'"`
+	CreateTime x_null.Time `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7

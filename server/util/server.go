@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"x_admin/config"
 	"x_admin/core"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -166,6 +167,6 @@ func (su serverUtil) GetGoInfo() (data map[string]any) {
 		"free":      ToolsUtil.Round((float64(memInfo.VMS-memInfo.RSS))/number, 2),
 		"usage":     ToolsUtil.Round(float64(memInfo.RSS)/number, 2),
 		"runTime":   su.GetFmtTime(time.Now().UnixMilli() - startTime),
-		"startTime": time.UnixMilli(startTime).Format(core.TimeFormat),
+		"startTime": time.UnixMilli(startTime).Format(config.ConstantConfig.TimeFormat),
 	}
 }

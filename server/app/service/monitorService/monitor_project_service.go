@@ -10,6 +10,7 @@ import (
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
+	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
 )
 
@@ -198,9 +199,9 @@ func (service monitorProjectService) GetExcelCol() []excel2.Col {
 		{Name: "项目uuid", Key: "ProjectKey", Width: 15},
 		{Name: "项目名称", Key: "ProjectName", Width: 15},
 		{Name: "项目类型go java web node php 等", Key: "ProjectType", Width: 15},
-		{Name: "是否启用: 0=否, 1=是", Key: "Status", Width: 15, Decode: core.DecodeInt},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
-		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "是否启用: 0=否, 1=是", Key: "Status", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

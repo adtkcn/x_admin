@@ -17,6 +17,7 @@ import (
 	_ "x_admin/app/corn"
 	// _ "x_admin/docs"
 
+	"github.com/adtkcn/x_null"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -101,7 +102,7 @@ func ValidateValuer(field reflect.Value) any {
 func main() {
 	// 注册自定义类型的验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterCustomTypeFunc(ValidateValuer, core.NullString{}, core.NullInt{}, core.NullFloat{}, core.NullTime{})
+		v.RegisterCustomTypeFunc(ValidateValuer, x_null.String{}, x_null.Int64{}, x_null.Float64{}, x_null.Time{})
 	}
 
 	// 刷新日志缓冲

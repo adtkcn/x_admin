@@ -1,8 +1,6 @@
 package systemSchema
 
-import (
-	"x_admin/core"
-)
+import "github.com/adtkcn/x_null"
 
 type SystemLogLoginReq struct {
 	Username  string `form:"username"`                             // 登录账号
@@ -28,11 +26,11 @@ type SystemLogoutReq struct {
 
 // SystemLogLoginResp 登录日志返回信息
 type SystemLogLoginResp struct {
-	ID         string        `json:"id" structs:"id"`                 // 主键
-	Username   string        `json:"username" structs:"username"`     // 登录账号
-	Ip         string        `json:"ip" structs:"ip"`                 // 来源IP
-	Os         string        `json:"os" structs:"os"`                 // 操作系统
-	Browser    string        `json:"browser" structs:"browser"`       // 浏览器
-	Status     int           `json:"status" structs:"status"`         // 操作状态: [1=成功, 2=失败]
-	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
+	ID         string      `json:"id" structs:"id"`                 // 主键
+	Username   string      `json:"username" structs:"username"`     // 登录账号
+	Ip         string      `json:"ip" structs:"ip"`                 // 来源IP
+	Os         string      `json:"os" structs:"os"`                 // 操作系统
+	Browser    string      `json:"browser" structs:"browser"`       // 浏览器
+	Status     int         `json:"status" structs:"status"`         // 操作状态: [1=成功, 2=失败]
+	CreateTime x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
 }

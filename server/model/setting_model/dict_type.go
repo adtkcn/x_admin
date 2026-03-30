@@ -1,8 +1,7 @@
 package setting_model
 
 import (
-	"x_admin/core"
-
+	"github.com/adtkcn/x_null"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
@@ -16,9 +15,9 @@ type DictType struct {
 	DictRemark string                `gorm:"not null;default:'';comment:'字典备注'"`
 	DictStatus uint8                 `gorm:"not null;default:1;comment:'字典状态: 0=停用, 1=正常'"`
 	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
-	CreateTime core.NullTime         `gorm:"autoCreateTime;not null;comment:'创建时间'"`
-	UpdateTime core.NullTime         `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
-	DeleteTime core.NullTime         `gorm:"default:null;comment:'删除时间'"`
+	CreateTime x_null.Time           `gorm:"autoCreateTime;not null;comment:'创建时间'"`
+	UpdateTime x_null.Time           `gorm:"autoUpdateTime;not null;comment:'更新时间'"`
+	DeleteTime x_null.Time           `gorm:"default:null;comment:'删除时间'"`
 }
 
 // BeforeCreate 在创建前生成UUIDv7

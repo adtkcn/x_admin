@@ -14,32 +14,22 @@ type config struct {
 	REDIS *RedisConfigStruct
 	FILE  *FileConfigStruct
 	GeTui *GeTuiConfigStruct
-	Email *EmailConfigStruct
+	Email *[]EmailConfigStruct
 	Log   *LogConfigStruct
 }
 
-var Config = loadConfig(config{
-	APP:   &AppConfig,
-	DB:    &DBConfig,
-	REDIS: &RedisConfig,
-	FILE:  &FileConfig,
-	GeTui: &GeTuiConfig,
-	Email: &EmailConfig,
-	Log:   &LogConfig,
-})
-
 func loadConfig(config config) config {
 	var envFilePath string
-	// 读取命令行参数 -env 配置文件路径，默认运行目录下的.env文件,使用：-env=.env
-	flag.StringVar(&envFilePath, "env", "", "-env 配置文件路径，默认运行目录下的.env文件")
+	// 读取命令行参数 -env 配置文件路径，默认运行目录下的.env文件,使用：-env=.env.yaml
+	flag.StringVar(&envFilePath, "env", "", "-env 配置文件路径，默认运行目录下的.env.yaml文件")
 	flag.Parse()
 	if envFilePath == "" {
-		envFilePath = ".env"
+		envFilePath = ".env.yaml"
 	}
 	// viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	viper.SetConfigFile(envFilePath)
-	viper.AutomaticEnv()
+	// viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatal("loadConfig ReadInConfig err:", err)
@@ -53,6 +43,16 @@ func loadConfig(config config) config {
 }
 
 func init() {
+	loadConfig(config{
+		APP:   &AppConfig,
+		DB:    &DBConfig,
+		REDIS: &RedisConfig,
+		FILE:  &FileConfig,
+		GeTui: &GeTuiConfig,
+		Email: &EmailConfig,
+		Log:   &LogConfig,
+	})
+
 	fmt.Printf("AppConfig: %+v\n", AppConfig)
 	fmt.Printf("DBConfig: %+v\n", DBConfig)
 	fmt.Printf("RedisConfig: %+v\n", RedisConfig)

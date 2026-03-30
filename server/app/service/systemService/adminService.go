@@ -17,6 +17,7 @@ import (
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
+	"github.com/adtkcn/x_null"
 	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -256,25 +257,25 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []systemSchema.Syste
 // 获取Excel的列
 func (adminSrv systemAuthAdminService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "账号", Key: "Username", Width: 15, Decode: core.DecodeString},
-		{Name: "名称", Key: "Nickname", Width: 15, Decode: core.DecodeString},
-		{Name: "头像", Key: "Avatar", Width: 15, Decode: core.DecodeString},
+		{Name: "账号", Key: "Username", Width: 15, Decode: x_null.DecodeString},
+		{Name: "名称", Key: "Nickname", Width: 15, Decode: x_null.DecodeString},
+		{Name: "头像", Key: "Avatar", Width: 15, Decode: x_null.DecodeString},
 
 		{Name: "角色ID", Key: "RoleIds", Width: 15, Decode: func(value any) (any, error) {
 			return strings.Split(value.(string), ","), nil
 		}},
-		{Name: "角色", Key: "Role", Width: 15, Decode: core.DecodeString},
-		{Name: "部门ID", Key: "DeptId", Width: 15, Decode: core.DecodeString},
-		{Name: "部门", Key: "Dept", Width: 15, Decode: core.DecodeString},
+		{Name: "角色", Key: "Role", Width: 15, Decode: x_null.DecodeString},
+		{Name: "部门ID", Key: "DeptId", Width: 15, Decode: x_null.DecodeString},
+		{Name: "部门", Key: "Dept", Width: 15, Decode: x_null.DecodeString},
 
-		{Name: "岗位ID", Key: "PostId", Width: 15, Decode: core.DecodeString},
-		{Name: "岗位", Key: "Post", Width: 15, Decode: core.DecodeString},
+		{Name: "岗位ID", Key: "PostId", Width: 15, Decode: x_null.DecodeString},
+		{Name: "岗位", Key: "Post", Width: 15, Decode: x_null.DecodeString},
 
-		{Name: "是否禁用", Key: "IsDisable", Width: 15, Decode: core.DecodeInt},
-		{Name: "最后登录IP", Key: "LastLoginIp", Width: 15, Decode: core.DecodeString},
-		{Name: "最后登录时间", Key: "LastLoginTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
-		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "是否禁用", Key: "IsDisable", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "最后登录IP", Key: "LastLoginIp", Width: 15, Decode: x_null.DecodeString},
+		{Name: "最后登录时间", Key: "LastLoginTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},
 	}
 	return cols
 }

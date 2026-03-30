@@ -11,6 +11,7 @@ import (
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
+	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
 )
 
@@ -207,13 +208,13 @@ func (service systemCornService) DelBatch(Ids []string) (e error) {
 // 获取Excel的列
 func (service systemCornService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "任务名称", Key: "TaskName", Width: 15, Decode: core.DecodeString},
-		{Name: "任务编码", Key: "TaskCode", Width: 15, Decode: core.DecodeString},
-		{Name: "corn表达式", Key: "CornExpr", Width: 15, Decode: core.DecodeString},
-		{Name: "禁用", Key: "Status", Width: 15, Decode: core.DecodeInt},
-		{Name: "创建人", Key: "CreatedBy", Width: 15, Decode: core.DecodeString},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
-		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: util.NullTimeUtil.DecodeTime},
+		{Name: "任务名称", Key: "TaskName", Width: 15, Decode: x_null.DecodeString},
+		{Name: "任务编码", Key: "TaskCode", Width: 15, Decode: x_null.DecodeString},
+		{Name: "corn表达式", Key: "CornExpr", Width: 15, Decode: x_null.DecodeString},
+		{Name: "禁用", Key: "Status", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "创建人", Key: "CreatedBy", Width: 15, Decode: x_null.DecodeString},
+		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

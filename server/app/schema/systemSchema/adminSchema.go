@@ -1,6 +1,6 @@
 package systemSchema
 
-import "x_admin/core"
+import "github.com/adtkcn/x_null"
 
 // SystemAuthAdminListReq 管理员列表参数
 type SystemAuthAdminListReq struct {
@@ -79,26 +79,26 @@ type SystemAuthAdminResp struct {
 	RoleIds []string `json:"roleIds" gorm:"-"`      // 角色ID列表
 	Role    string   `json:"role" excel:"name:角色;"` // 角色名称(逗号分隔)
 
-	IsDisable     uint8         `json:"isDisable" excel:"name:是否禁用;"`       // 是否禁用: [0=否, 1=是]
-	LastLoginIp   string        `json:"lastLoginIp" excel:"name:最后登录IP;"`   // 最后登录IP
-	LastLoginTime core.NullTime `json:"lastLoginTime" excel:"name:最后登录时间;"` // 最后登录时间
-	CreateTime    core.NullTime `json:"createTime" excel:"name:创建时间;"`      // 创建时间
-	UpdateTime    core.NullTime `json:"updateTime" excel:"name:更新时间;"`      // 更新时间
+	IsDisable     uint8       `json:"isDisable" excel:"name:是否禁用;"`       // 是否禁用: [0=否, 1=是]
+	LastLoginIp   string      `json:"lastLoginIp" excel:"name:最后登录IP;"`   // 最后登录IP
+	LastLoginTime x_null.Time `json:"lastLoginTime" excel:"name:最后登录时间;"` // 最后登录时间
+	CreateTime    x_null.Time `json:"createTime" excel:"name:创建时间;"`      // 创建时间
+	UpdateTime    x_null.Time `json:"updateTime" excel:"name:更新时间;"`      // 更新时间
 }
 
 // SystemAuthAdminSelfOneResp 当前管理员返回部分信息
 type SystemAuthAdminSelfOneResp struct {
-	ID            string        `json:"id"`            // 主键
-	Username      string        `json:"username"`      // 账号
-	Nickname      string        `json:"nickname"`      // 昵称
-	Avatar        string        `json:"avatar"`        // 头像
-	Role          string        `json:"role"`          // 角色
-	Dept          string        `json:"dept"`          // 部门
-	IsDisable     uint8         `json:"isDisable"`     // 是否禁用: [0=否, 1=是]
-	LastLoginIp   string        `json:"lastLoginIp"`   // 最后登录IP
-	LastLoginTime core.NullTime `json:"lastLoginTime"` // 最后登录时间
-	CreateTime    core.NullTime `json:"createTime"`    // 创建时间
-	UpdateTime    core.NullTime `json:"updateTime"`    // 更新时间
+	ID            string      `json:"id"`            // 主键
+	Username      string      `json:"username"`      // 账号
+	Nickname      string      `json:"nickname"`      // 昵称
+	Avatar        string      `json:"avatar"`        // 头像
+	Role          string      `json:"role"`          // 角色
+	Dept          string      `json:"dept"`          // 部门
+	IsDisable     uint8       `json:"isDisable"`     // 是否禁用: [0=否, 1=是]
+	LastLoginIp   string      `json:"lastLoginIp"`   // 最后登录IP
+	LastLoginTime x_null.Time `json:"lastLoginTime"` // 最后登录时间
+	CreateTime    x_null.Time `json:"createTime"`    // 创建时间
+	UpdateTime    x_null.Time `json:"updateTime"`    // 更新时间
 }
 
 // SystemAuthAdminSelfResp 当前系统管理员返回信息

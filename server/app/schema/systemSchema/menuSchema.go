@@ -1,6 +1,6 @@
 package systemSchema
 
-import "x_admin/core"
+import "github.com/adtkcn/x_null"
 
 // SystemAuthMenuDetailReq 菜单详情参数
 type SystemAuthMenuDetailReq struct {
@@ -63,8 +63,8 @@ type SystemAuthMenuResp struct {
 	IsCache    uint8                 `json:"isCache" structs:"isCache"`             // 是否缓存: [0=否, 1=是]
 	IsShow     uint8                 `json:"isShow" structs:"isShow"`               // 是否显示: [0=否, 1=是]
 	IsDisable  uint8                 `json:"isDisable" structs:"isDisable"`         // 是否禁用: [0=否, 1=是]
-	CreateTime core.NullTime         `json:"createTime" structs:"createTime"`       // 创建时间
-	UpdateTime core.NullTime         `json:"updateTime" structs:"updateTime"`       // 更新时间
+	CreateTime x_null.Time           `json:"createTime" structs:"createTime"`       // 创建时间
+	UpdateTime x_null.Time           `json:"updateTime" structs:"updateTime"`       // 更新时间
 	Children   []*SystemAuthMenuResp `json:"children,omitempty" structs:"children"` // 子集
 }
 

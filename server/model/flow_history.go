@@ -1,8 +1,7 @@
 package model
 
 import (
-	"x_admin/core"
-
+	"github.com/adtkcn/x_null"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
@@ -35,9 +34,9 @@ type FlowHistory struct {
 	PassRemark string `gorm:"comment:'通过备注'"` // 通过备注
 
 	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
-	UpdateTime core.NullTime         `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
-	CreateTime core.NullTime         `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
-	DeleteTime core.NullTime         `gorm:"default:null;comment:'删除时间'"`   // 删除时间
+	UpdateTime x_null.Time           `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
+	CreateTime x_null.Time           `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
+	DeleteTime x_null.Time           `gorm:"default:null;comment:'删除时间'"`   // 删除时间
 
 }
 

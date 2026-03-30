@@ -95,8 +95,15 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				ip := c.ClientIP()
 				method := c.HandlerName()
 				err := core.GetDB().Create(&system_model.SystemLogOperate{
-					AdminId: adminId, Type: reqMethod, Title: title, Ip: ip,
-					Url: urlPath, Method: method, Args: args, Error: errStr, Status: status,
+					AdminId:   adminId,
+					Type:      reqMethod,
+					Title:     title,
+					Ip:        ip,
+					Url:       urlPath,
+					Method:    method,
+					Args:      args,
+					Error:     errStr,
+					Status:    status,
 					StartTime: util.NullTimeUtil.ParseTime(startTime),
 					EndTime:   util.NullTimeUtil.ParseTime(endTime),
 					TaskTime:  taskTime,

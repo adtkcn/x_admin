@@ -26,10 +26,10 @@ func (i NullString) String() string
 ### 扩展了四个可为null类型：
 1. NullFloat、NullInt：支持前端传递null、字符串数字、数字
 ```go
-core.NullFloat
-core.NullInt
-core.NullString
-core.NullTime
+x_null.Float64
+x_null.Int64
+x_null.String
+x_null.Time
 ```
 
 ### 参考：

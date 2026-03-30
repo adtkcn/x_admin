@@ -2,7 +2,8 @@ package generatorSchema
 
 import (
 	"time"
-	"x_admin/core"
+
+	"github.com/adtkcn/x_null"
 )
 
 // DbTablesReq 库表列表参数
@@ -48,19 +49,19 @@ type EditColumn struct {
 
 	ColumnComment string `form:"columnComment" binding:"required,max=200"` // 列描述
 
-	IsPk        uint8         `form:"isPk" binding:"oneof=0 1"`            // 是否主键: [0=否, 1=是]
-	IsIncrement uint8         `form:"isIncrement" binding:"oneof=0 1"`     // 是否自增: [0=否, 1=是]
-	IsRequired  uint8         `form:"isStop" binding:"oneof=0 1"`          // 是否必填: [0=否, 1=是]
-	IsInsert    uint8         `form:"isInsert" binding:"oneof=0 1"`        // 是否新增字段: [0=否, 1=是]
-	IsEdit      uint8         `form:"isEdit" binding:"oneof=0 1"`          // 是否编辑字段: [0=否, 1=是]
-	IsList      uint8         `form:"isList" binding:"oneof=0 1"`          // 是否列表字段: [0=否, 1=是]
-	IsQuery     uint8         `form:"isQuery" binding:"oneof=0 1"`         // 是否查询字段: [0=否, 1=是]
-	QueryType   string        `form:"queryType" binding:"required,max=30"` // 查询方式
-	HtmlType    string        `form:"htmlType" binding:"required,max=30"`  // 表单类型
-	DictType    string        `form:"dictType" binding:"required,max=200"` // 字典类型
-	ListAllApi  string        `form:"listAllApi" binding:"max=200"`        // 下拉框数据来源listAll
-	CreateTime  core.NullTime `form:"createTime"`                          // 创建时间
-	UpdateTime  core.NullTime `form:"updateTime"`                          // 更新时间
+	IsPk        uint8       `form:"isPk" binding:"oneof=0 1"`            // 是否主键: [0=否, 1=是]
+	IsIncrement uint8       `form:"isIncrement" binding:"oneof=0 1"`     // 是否自增: [0=否, 1=是]
+	IsRequired  uint8       `form:"isStop" binding:"oneof=0 1"`          // 是否必填: [0=否, 1=是]
+	IsInsert    uint8       `form:"isInsert" binding:"oneof=0 1"`        // 是否新增字段: [0=否, 1=是]
+	IsEdit      uint8       `form:"isEdit" binding:"oneof=0 1"`          // 是否编辑字段: [0=否, 1=是]
+	IsList      uint8       `form:"isList" binding:"oneof=0 1"`          // 是否列表字段: [0=否, 1=是]
+	IsQuery     uint8       `form:"isQuery" binding:"oneof=0 1"`         // 是否查询字段: [0=否, 1=是]
+	QueryType   string      `form:"queryType" binding:"required,max=30"` // 查询方式
+	HtmlType    string      `form:"htmlType" binding:"required,max=30"`  // 表单类型
+	DictType    string      `form:"dictType" binding:"required,max=200"` // 字典类型
+	ListAllApi  string      `form:"listAllApi" binding:"max=200"`        // 下拉框数据来源listAll
+	CreateTime  x_null.Time `form:"createTime"`                          // 创建时间
+	UpdateTime  x_null.Time `form:"updateTime"`                          // 更新时间
 }
 
 // EditTableReq 编辑表结构参数
@@ -105,32 +106,32 @@ type DownloadReq struct {
 
 // DbTableResp 数据表返回信息
 type DbTableResp struct {
-	TableName    string        `json:"tableName" structs:"tableName"`       // 表的名称
-	TableComment string        `json:"tableComment" structs:"tableComment"` // 表的描述
-	CreateTime   core.NullTime `json:"createTime" structs:"createTime"`     // 创建时间
-	UpdateTime   core.NullTime `json:"updateTime" structs:"updateTime"`     // 更新时间
+	TableName    string      `json:"tableName" structs:"tableName"`       // 表的名称
+	TableComment string      `json:"tableComment" structs:"tableComment"` // 表的描述
+	CreateTime   x_null.Time `json:"createTime" structs:"createTime"`     // 创建时间
+	UpdateTime   x_null.Time `json:"updateTime" structs:"updateTime"`     // 更新时间
 }
 
 // GenTableResp 生成表返回信息
 type GenTableResp struct {
 	ID string `json:"id" structs:"id"` // 主键
 
-	TableName    string        `json:"tableName" structs:"tableName"`       // 表名称
-	TableComment string        `json:"tableComment" structs:"tableComment"` // 表描述
-	CreateTime   core.NullTime `json:"createTime" structs:"createTime"`     // 创建时间
-	UpdateTime   core.NullTime `json:"updateTime" structs:"updateTime"`     // 更新时间
+	TableName    string      `json:"tableName" structs:"tableName"`       // 表名称
+	TableComment string      `json:"tableComment" structs:"tableComment"` // 表描述
+	CreateTime   x_null.Time `json:"createTime" structs:"createTime"`     // 创建时间
+	UpdateTime   x_null.Time `json:"updateTime" structs:"updateTime"`     // 更新时间
 }
 
 // GenTableBaseResp 生成表基本返回信息
 type GenTableBaseResp struct {
-	ID           string        `json:"id" structs:"id"`                     // 主键
-	TableName    string        `json:"tableName" structs:"tableName"`       // 表的名称
-	TableComment string        `json:"tableComment" structs:"tableComment"` // 表的描述
-	EntityName   string        `json:"entityName" structs:"entityName"`     // 实体名称
-	AuthorName   string        `json:"authorName" structs:"authorName"`     // 作者名称
-	Remarks      string        `json:"remarks" structs:"remarks"`           // 备注信息
-	CreateTime   core.NullTime `json:"createTime" structs:"createTime"`     // 创建时间
-	UpdateTime   core.NullTime `json:"updateTime" structs:"updateTime"`     // 更新时间
+	ID           string      `json:"id" structs:"id"`                     // 主键
+	TableName    string      `json:"tableName" structs:"tableName"`       // 表的名称
+	TableComment string      `json:"tableComment" structs:"tableComment"` // 表的描述
+	EntityName   string      `json:"entityName" structs:"entityName"`     // 实体名称
+	AuthorName   string      `json:"authorName" structs:"authorName"`     // 作者名称
+	Remarks      string      `json:"remarks" structs:"remarks"`           // 备注信息
+	CreateTime   x_null.Time `json:"createTime" structs:"createTime"`     // 创建时间
+	UpdateTime   x_null.Time `json:"updateTime" structs:"updateTime"`     // 更新时间
 }
 
 // GenTableGenResp 生成表生成返回信息
@@ -158,19 +159,19 @@ type GenColumnResp struct {
 	GoType        string `json:"goType" structs:"goType"`               // Go类型
 	GoField       string `json:"goField" structs:"goField"`             // Go字段
 
-	IsPk        uint8         `json:"isPk" structs:"isPk"`
-	IsIncrement uint8         `json:"isIncrement" structs:"isIncrement"`
-	IsRequired  uint8         `json:"isRequired" structs:"isRequired"` // 是否必填
-	IsInsert    uint8         `json:"isInsert" structs:"isInsert"`     // 是否为插入字段
-	IsEdit      uint8         `json:"isEdit" structs:"isEdit"`         // 是否编辑字段
-	IsList      uint8         `json:"isList" structs:"isList"`         // 是否列表字段
-	IsQuery     uint8         `json:"isQuery" structs:"isQuery"`       // 是否查询字段
-	QueryType   string        `json:"queryType" structs:"queryType"`   // 查询方式: [等于、不等于、大于、小于、范围]
-	HtmlType    string        `json:"htmlType" structs:"htmlType"`     // 显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]
-	DictType    string        `json:"dictType" structs:"dictType"`     // 字典类型
-	ListAllApi  string        `json:"listAllApi" structs:"listAllApi"` // 下拉框数据来源listAll
-	CreateTime  core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
-	UpdateTime  core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
+	IsPk        uint8       `json:"isPk" structs:"isPk"`
+	IsIncrement uint8       `json:"isIncrement" structs:"isIncrement"`
+	IsRequired  uint8       `json:"isRequired" structs:"isRequired"` // 是否必填
+	IsInsert    uint8       `json:"isInsert" structs:"isInsert"`     // 是否为插入字段
+	IsEdit      uint8       `json:"isEdit" structs:"isEdit"`         // 是否编辑字段
+	IsList      uint8       `json:"isList" structs:"isList"`         // 是否列表字段
+	IsQuery     uint8       `json:"isQuery" structs:"isQuery"`       // 是否查询字段
+	QueryType   string      `json:"queryType" structs:"queryType"`   // 查询方式: [等于、不等于、大于、小于、范围]
+	HtmlType    string      `json:"htmlType" structs:"htmlType"`     // 显示类型: [文本框、文本域、下拉框、复选框、单选框、日期控件]
+	DictType    string      `json:"dictType" structs:"dictType"`     // 字典类型
+	ListAllApi  string      `json:"listAllApi" structs:"listAllApi"` // 下拉框数据来源listAll
+	CreateTime  x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime  x_null.Time `json:"updateTime" structs:"updateTime"` // 更新时间
 }
 
 // GenTableDetailResp 生成表详情返回信息

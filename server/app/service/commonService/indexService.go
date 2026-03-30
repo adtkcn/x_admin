@@ -57,7 +57,7 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 	now := time.Now()
 	var date []string
 	for i := 14; i >= 0; i-- {
-		date = append(date, now.AddDate(0, 0, -i).Format(core.DateFormat))
+		date = append(date, now.AddDate(0, 0, -i).Format(config.ConstantConfig.DateFormat))
 	}
 	visitor := map[string]any{
 		"date": date,

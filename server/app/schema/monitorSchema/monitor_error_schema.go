@@ -1,8 +1,6 @@
 package monitorSchema
 
-import (
-	"x_admin/core"
-)
+import "github.com/adtkcn/x_null"
 
 // MonitorErrorListReq 监控-错误列列表参数
 type MonitorErrorListReq struct {
@@ -27,8 +25,8 @@ type MonitorErrorAddReq struct {
 	Path       *string      // URL地址
 	Message    *string      // 错误消息
 	Stack      *string      // 错误堆栈
-	Width      core.NullInt // 屏幕
-	Height     core.NullInt // 屏幕高度
+	Width      x_null.Int64 // 屏幕
+	Height     x_null.Int64 // 屏幕高度
 }
 
 // MonitorErrorDetailReq 监控-错误列详情参数
@@ -48,14 +46,14 @@ type MonitorErrorDelBatchReq struct {
 
 // MonitorErrorResp 监控-错误列返回信息
 type MonitorErrorResp struct {
-	Id         string        // 错误id
-	ProjectKey string        // 项目key
-	EventType  string        // 事件类型
-	Path       string        // URL地址
-	Message    string        // 错误消息
-	Stack      string        // 错误堆栈
-	Width      core.NullInt  // 屏幕
-	Height     core.NullInt  // 屏幕高度
-	Md5        string        // md5
-	CreateTime core.NullTime // 创建时间
+	Id         string            // 错误id
+	ProjectKey string            // 项目key
+	EventType  string            // 事件类型
+	Path       string            // URL地址
+	Message    string            // 错误消息
+	Stack      string            // 错误堆栈
+	Width      x_null.Int64      `swaggertype:"integer"` // 屏幕
+	Height     x_null.Int64      `swaggertype:"integer"` // 屏幕高度
+	Md5        string            // md5
+	CreateTime x_null.Time       `swaggertype:"string"` // 创建时间
 }

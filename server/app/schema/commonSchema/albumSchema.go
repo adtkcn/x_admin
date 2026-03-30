@@ -1,6 +1,6 @@
 package commonSchema
 
-import "x_admin/core"
+import "github.com/adtkcn/x_null"
 
 type CommonUploadImageReq struct {
 	Cid string `form:"cid"` // 主键
@@ -79,22 +79,22 @@ type CommonUploadFileResp struct {
 
 // CommonAlbumListResp 相册文件列表返回信息
 type CommonAlbumListResp struct {
-	ID         string        `json:"id" structs:"id"`                 // 主键
-	Cid        string        `json:"cid" structs:"cid"`               // 所属类目
-	Name       string        `json:"name" structs:"name"`             // 文件名称
-	Path       string        `json:"path" structs:"path"`             // 相对路径
-	Uri        string        `json:"uri" structs:"uri"`               // 文件路径
-	Ext        string        `json:"ext" structs:"ext"`               // 文件扩展
-	Size       string        `json:"size" structs:"size"`             // 文件大小
-	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
-	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
+	ID         string      `json:"id" structs:"id"`                 // 主键
+	Cid        string      `json:"cid" structs:"cid"`               // 所属类目
+	Name       string      `json:"name" structs:"name"`             // 文件名称
+	Path       string      `json:"path" structs:"path"`             // 相对路径
+	Uri        string      `json:"uri" structs:"uri"`               // 文件路径
+	Ext        string      `json:"ext" structs:"ext"`               // 文件扩展
+	Size       string      `json:"size" structs:"size"`             // 文件大小
+	CreateTime x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime x_null.Time `json:"updateTime" structs:"updateTime"` // 更新时间
 }
 
 // CommonCateListResp 相册分类列表返回信息
 type CommonCateListResp struct {
-	ID         string        `json:"id" structs:"id"`                 // 主键
-	Pid        string        `json:"pid" structs:"pid"`               // 父级ID
-	Name       string        `json:"name" structs:"name"`             // 分类名称
-	CreateTime core.NullTime `json:"createTime" structs:"createTime"` // 创建时间
-	UpdateTime core.NullTime `json:"updateTime" structs:"updateTime"` // 更新时间
+	ID         string      `json:"id" structs:"id"`                 // 主键
+	Pid        string      `json:"pid" structs:"pid"`               // 父级ID
+	Name       string      `json:"name" structs:"name"`             // 分类名称
+	CreateTime x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime x_null.Time `json:"updateTime" structs:"updateTime"` // 更新时间
 }

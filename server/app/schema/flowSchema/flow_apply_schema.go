@@ -1,6 +1,6 @@
 package flowSchema
 
-import "x_admin/core"
+import "github.com/adtkcn/x_null"
 
 // FlowApplyListReq 申请流程列表参数
 type FlowApplyListReq struct {
@@ -47,18 +47,18 @@ type FlowApplyDelReq struct {
 
 // FlowApplyResp 申请流程返回信息
 type FlowApplyResp struct {
-	Id                  string        `json:"id" structs:"id"`                               //
-	TemplateId          string        `json:"templateId" structs:"templateId"`               // 模板
-	ApplyUserId         string        `json:"applyUserId" structs:"applyUserId"`             // 申请人id
-	ApplyUserNickname   string        `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
-	FlowName            string        `json:"flowName" structs:"flowName"`                   // 流程名称
-	FlowGroup           int           `json:"flowGroup" structs:"flowGroup"`                 // 流程分类
-	FlowRemark          string        `json:"flowRemark" structs:"flowRemark"`               // 流程描述
-	FlowFormData        string        `json:"flowFormData" structs:"flowFormData"`           // 表单配置
-	FlowProcessData     string        `json:"flowProcessData" structs:"flowProcessData"`     // 流程配置
-	FlowProcessDataList string        `json:"flowProcessDataList"`                           // 流程配置list数据
-	FormValue           string        `json:"formValue"`                                     // 表单值
-	Status              int           `json:"status" structs:"status"`                       // 状态：1待提交，2审批中，3审批完成，4审批失败
-	UpdateTime          core.NullTime `json:"updateTime" structs:"updateTime"`               // 更新时间
-	CreateTime          core.NullTime `json:"createTime" structs:"createTime"`               // 创建时间
+	Id                  string      `json:"id" structs:"id"`                               //
+	TemplateId          string      `json:"templateId" structs:"templateId"`               // 模板
+	ApplyUserId         string      `json:"applyUserId" structs:"applyUserId"`             // 申请人id
+	ApplyUserNickname   string      `json:"applyUserNickname" structs:"applyUserNickname"` // 申请人昵称
+	FlowName            string      `json:"flowName" structs:"flowName"`                   // 流程名称
+	FlowGroup           int         `json:"flowGroup" structs:"flowGroup"`                 // 流程分类
+	FlowRemark          string      `json:"flowRemark" structs:"flowRemark"`               // 流程描述
+	FlowFormData        string      `json:"flowFormData" structs:"flowFormData"`           // 表单配置
+	FlowProcessData     string      `json:"flowProcessData" structs:"flowProcessData"`     // 流程配置
+	FlowProcessDataList string      `json:"flowProcessDataList"`                           // 流程配置list数据
+	FormValue           string      `json:"formValue"`                                     // 表单值
+	Status              int         `json:"status" structs:"status"`                       // 状态：1待提交，2审批中，3审批完成，4审批失败
+	UpdateTime          x_null.Time `json:"updateTime" structs:"updateTime"`               // 更新时间
+	CreateTime          x_null.Time `json:"createTime" structs:"createTime"`               // 创建时间
 }

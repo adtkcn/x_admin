@@ -16,8 +16,8 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
     {{{- range .Columns }}}
     {{{- if .IsQuery }}}
         {{{- if eq .HtmlType "datetime" }}}
-            {{{ .GoField }}}Start core.NullString // 开始{{{ .ColumnComment }}}
-            {{{ .GoField }}}End core.NullString // 结束{{{ .ColumnComment }}}
+            {{{ .GoField }}}Start x_null.String // 开始{{{ .ColumnComment }}}
+            {{{ .GoField }}}End x_null.String // 结束{{{ .ColumnComment }}}
         {{{- else }}}
             {{{ .GoField }}} {{{ .GoNullType }}} // {{{ .ColumnComment }}}
         {{{- end }}}
