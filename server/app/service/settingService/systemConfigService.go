@@ -67,6 +67,9 @@ func (cu systemConfigService) Set(db *gorm.DB, cnfType string, name string, val 
 	var config system_model.SystemConfig
 	err = db.Where("type = ? AND name = ?", cnfType, name).First(&config).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		config.Type = cnfType
+		config.Name = name
+		config.Value = val
 		if err = db.Create(&config).Error; err != nil {
 			return err
 		}
