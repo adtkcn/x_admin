@@ -4,7 +4,7 @@
             ref="popupRef"
             :title="popupTitle"
             :async="true"
-            width="550px"
+            width="650px"
             :clickModalClose="true"
             @confirm="handleSubmit"
             @close="handleClose"
