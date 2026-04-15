@@ -7,7 +7,7 @@
             :mode="mode"
         />
         <w-editor
-            class="overflow-y-auto flex-1 border-solid border rounded-s"
+            class="overflow-y-auto flex-1 border-solid border rounded-s rich-text-style"
             v-model="valueHtml"
             :defaultConfig="editorConfig"
             :mode="mode"
@@ -24,6 +24,8 @@
 </template>
 <script setup lang="ts">
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
+import './rich-text-style.css'
+
 import { Editor as WEditor, Toolbar } from '@wangeditor/editor-for-vue'
 import type { IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import MaterialPicker from '@/components/material/picker.vue'

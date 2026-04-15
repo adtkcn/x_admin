@@ -1,0 +1,54 @@
+.rich-text-style {
+    /* border: 3px solid #ccc; */
+    border-radius: 5px;
+    padding: 0 10px;
+    margin-top: 20px;
+    overflow-x: auto;
+    all: revert;
+}
+
+.rich-text-style p,
+.rich-text-style li {
+    white-space: pre-wrap; /* 保留空格 */
+}
+
+.rich-text-style blockquote {
+    border-left: 8px solid #d0e5f2;
+    padding: 10px 10px;
+    margin: 10px 0;
+    background-color: #f1f1f1;
+}
+
+.rich-text-style code {
+    font-family: monospace;
+    background-color: #eee;
+    padding: 3px;
+    border-radius: 3px;
+}
+.rich-text-style pre > code {
+    display: block;
+    padding: 10px;
+}
+
+.rich-text-style table {
+    border-collapse: collapse;
+}
+.rich-text-style td,
+.rich-text-style th {
+    border: 1px solid #ccc;
+    min-width: 50px;
+    height: 20px;
+}
+.rich-text-style th {
+    background-color: #f1f1f1;
+}
+
+.rich-text-style ul,
+.rich-text-style ol {
+    padding-left: 20px;
+    /* list-style: disc; */
+}
+
+.rich-text-style input[type='checkbox'] {
+    margin-right: 5px;
+}
