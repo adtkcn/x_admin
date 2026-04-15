@@ -7,15 +7,8 @@ go build -o x_admin .
 go build -o x_admin.exe .
 ```
 
-## 方式二：goreleaser 同时打包多平台
-```bash
-# 安装第三方工具
-go install github.com/goreleaser/goreleaser@latest
-# 打包
-goreleaser release --snapshot --clean
-```
 
-## 方式三：运行pack.bat文件打包
+## 方式二：运行pack.bat文件打包
 ```
 在window运行pack.bat文件, 可以夸平台打包，压缩打包后产物；请按需取消注释
 ```
@@ -24,7 +17,7 @@ goreleaser release --snapshot --clean
 ## 上传所有需要的文件
 - 打包后的二进制文件.exe
 - public/*
-- .env
+- .env.yaml
 
 
 

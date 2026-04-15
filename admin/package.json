@@ -8,7 +8,7 @@
         "dev:prod": "vite --mode prod",
         "build": "vite build",
         "preview": "vite preview --port 4173 --mode development",
-        "build:all": "node ./scripts/build.mjs",
+
         "type-check": "vue-tsc --noEmit --checkJs true --skipLibCheck",
         "lint": "eslint src --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts src --fix",
         "preinstall": "npx only-allow pnpm",
@@ -59,9 +59,9 @@
         "eslint": "^9.39.2",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-vue": "^10.8.0",
-        "execa": "^9.5.2",
+
         "fast-glob": "^3.3.3",
-        "fs-extra": "^11.3.3",
+
         "globals": "^17.0.0",
         "jiti": "^2.6.1",
         "postcss": "^8.5.3",

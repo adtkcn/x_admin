@@ -1,5 +1,6 @@
-@import "tailwindcss";
-
+/* @import 'tailwindcss'; */
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
 /* 指定内容文件扫描路径 */
 @source "../**/*.{vue,js,ts,jsx,tsx}";
 
