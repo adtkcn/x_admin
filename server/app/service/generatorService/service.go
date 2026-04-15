@@ -352,7 +352,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (re
 	tplPaths := tpl_utils.TemplateUtil.GetTemplatePaths(genTable.GenTpl)
 	for _, tplPath := range tplPaths {
 		res[tplPath], err = tpl_utils.TemplateUtil.Render(tplPath, vars)
-		if e = response.CheckErr(err, "渲染模板失败"); e != nil {
+		if e = response.CheckErr(err, "渲染模板失败:"+tplPath); e != nil {
 			return
 		}
 	}

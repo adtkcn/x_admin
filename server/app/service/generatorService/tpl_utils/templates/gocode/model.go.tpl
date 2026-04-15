@@ -1,8 +1,11 @@
 package model
 import (
+    "x_admin/model/system_model"
+    "github.com/adtkcn/x_null"
+    
     "github.com/google/uuid"
     "gorm.io/gorm"
-	"x_admin/core"
+	
 	"gorm.io/plugin/soft_delete"
 )
 

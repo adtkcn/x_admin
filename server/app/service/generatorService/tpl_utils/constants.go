@@ -38,7 +38,7 @@ var SwagTypeConstants = SwagType{
 	String:  "string",
 	Integer: "integer",
 	Number:  "number",
-	Date:    "date-time",
+	Date:    "string",
 	Bool:    "boolean",
 	Array:   "array",
 	Object:  "object",

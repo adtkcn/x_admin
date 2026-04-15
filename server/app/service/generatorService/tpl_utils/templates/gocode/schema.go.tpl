@@ -1,6 +1,7 @@
 package schema
 import (
-	"x_admin/core"
+    "x_admin/app/schema/systemSchema"
+	"github.com/adtkcn/x_null"
 )
 
 type {{{ toUpperCamelCase .EntityName }}}Primarykey struct {
@@ -31,7 +32,7 @@ type {{{ toUpperCamelCase .EntityName }}}ListReq struct {
 type {{{ toUpperCamelCase .EntityName }}}AddReq struct {
     {{{- range .Columns }}}
     {{{- if .IsInsert }}}
-    {{{ .GoField }}}  {{{ .GoNullType }}} `binding:"{{{ if eq .IsRequired 1 }}}required;{{{ end }}}"`  // {{{ .ColumnComment }}}
+    {{{ .GoField }}}  {{{ .GoNullType }}} `binding:"{{{ if eq .IsRequired 1 }}}required{{{ end }}}"`  // {{{ .ColumnComment }}}
     {{{- end }}}
     {{{- end }}}
 }

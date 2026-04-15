@@ -19,7 +19,7 @@ var TemplateUtil = templateUtil{
 	tpl: template.New("").Delims("{{{", "}}}").Funcs(
 		template.FuncMap{
 			"sub":              sub,
-			"slice":            slice,
+			"strSlice":         strSlice,
 			"toSnakeCase":      util.StringUtil.ToSnakeCase,
 			"toCamelCase":      util.StringUtil.ToCamelCase,
 			"toUpperCamelCase": util.StringUtil.ToUpperCamelCase,
@@ -42,8 +42,8 @@ func sub(a, b int) int {
 	return a - b
 }
 
-// slice 模板-创建切片
-func slice(items ...any) []any {
+// strSlice 模板-创建字符串切片，返回 []string
+func strSlice(items ...string) []string {
 	return items
 }
 
@@ -343,12 +343,12 @@ func (tu templateUtil) GetTemplatePaths(genTpl string) []string {
 		"vue/edit.vue.tpl",
 		"vue/details.vue.tpl",
 
-		"uniapp/api.ts.tpl",
-		"uniapp/edit.vue.tpl",
-		"uniapp/index.vue.tpl",
-		"uniapp/details.vue.tpl",
-		"uniapp/search.vue.tpl",
-		"uniapp/pages.json.tpl",
+		// "uniapp/api.ts.tpl",
+		// "uniapp/edit.vue.tpl",
+		// "uniapp/index.vue.tpl",
+		// "uniapp/details.vue.tpl",
+		// "uniapp/search.vue.tpl",
+		// "uniapp/pages.json.tpl",
 	}
 	switch genTpl {
 	case GenConstants.TplCrud:
@@ -375,15 +375,15 @@ var templatesFs embed.FS
 func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e error) {
 
 	tpl, err := tu.tpl.ParseFS(templatesFs, "templates/"+tplPath)
-	if e = response.CheckErr(err, "tu.tpl.ParseFS err"); e != nil {
-		return "", e
+	if err != nil {
+		return "", err
 	}
 	buf := &bytes.Buffer{}
 	fileName := path.Base(tplPath)
 	err = tpl.ExecuteTemplate(buf, fileName, tplVars)
 
-	if e = response.CheckErr(err, "tpl.ExecuteTemplate err"); e != nil {
-		return "", e
+	if err != nil {
+		return "", err
 	}
 	return buf.String(), nil
 }

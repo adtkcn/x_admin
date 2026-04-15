@@ -47,7 +47,7 @@
                                 <dict-value :options="dictData.{{{ .DictType }}}" :value="formData.{{{ .TsField }}}" />
 
                                 {{{- else if ne .ListAllApi "" }}}
-                                <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" />
+                                <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="formData.{{{ .TsField }}}" labelKey="Name" valueKey="ID"/>
                                 {{{- end }}}
                     
                         </el-form-item>
@@ -74,7 +74,7 @@
                         </el-form-item>
                     {{{- else if eq .HtmlType "editor" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
-                            <div v-html="formData.{{{ .TsField }}}"></div>
+                            <div class="w-full" v-html="formData.{{{ .TsField }}}"></div>
                         </el-form-item>
                     {{{- else if eq .HtmlType "imageUpload" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">

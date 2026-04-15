@@ -11,6 +11,7 @@ import (
 	"x_admin/util/convert_util"
 	"x_admin/util/excel2"
 
+	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
 )
 
@@ -46,11 +47,11 @@ func (service {{{ .EntityName }}}Service) GetModel(listReq schema.{{{ toUpperCam
 	if listReq.CreatedBy.IsExistsAndNotNull() {
 		dbModel = dbModel.Where(tableName+".created_by = ?", listReq.CreatedBy.ValueOrZero())
 	}
-	if listReq.Nickname.IsExistsAndNotNull() {
-		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+listReq.Nickname.ValueOrZero()+"%")
+	if listReq.CreatedByNickname .IsExistsAndNotNull() {
+		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+listReq.CreatedByNickname.ValueOrZero()+"%")
 	}
-	if listReq.Username.IsExistsAndNotNull() {
-		dbModel = dbModel.Where("CreatedByUser.nickname like ?", "%"+listReq.Username.ValueOrZero()+"%")
+	if listReq.CreatedByUsername.IsExistsAndNotNull() {
+		dbModel = dbModel.Where("CreatedByUser.username like ?", "%"+listReq.CreatedByUsername.ValueOrZero()+"%")
 	}
 			{{{- else if eq .HtmlType "datetime" }}}
 	if listReq.{{{ toUpperCamelCase .ColumnName }}}Start.IsExistsAndNotNull() {
@@ -147,7 +148,7 @@ func (service {{{ .EntityName }}}Service) Detail({{{ toUpperCamelCase .PrimaryKe
 		}
 	
 		{{{- range .Columns }}}
-		{{{- if and .IsEdit (contains (slice "image" "avatar" "logo" "img") .GoField) }}}
+		{{{- if and .IsEdit (contains (strSlice "image" "avatar" "logo" "img") .GoField) }}}
 		res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 		{{{- end }}}
 		{{{- end }}}
@@ -163,9 +164,12 @@ func (service {{{ .EntityName }}}Service) Add(addReq schema.{{{ toUpperCamelCase
 	var obj model.{{{ toUpperCamelCase .EntityName }}}
 	convert_util.Copy(&obj, addReq)
 
-	// 需要判断有没有CreatedBy字段
-	//obj.CreatedBy = adminId
+ 
+	{{{- range .Columns }}}
+	{{{- if and .IsEdit (eq "CreatedBy" .GoField) }}}
 	obj.CreatedBy.SetValue(adminId)
+	{{{- end }}}
+	{{{- end }}}
 	
 	err := service.db.Create(&obj).Error
 	e = response.CheckMysqlErr(err)
@@ -188,7 +192,7 @@ func (service {{{ .EntityName }}}Service) Edit(editReq schema.{{{ toUpperCamelCa
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	// convert_util.Copy(&obj, editReq)
+
 	updateMap := service.GetUpdateMap(editReq)
 	if len(updateMap) == 0 {
 		return errors.New("没有可更新的字段")
@@ -205,28 +209,15 @@ func (service {{{ .EntityName }}}Service) Edit(editReq schema.{{{ toUpperCamelCa
 
 // Del {{{ .FunctionName }}}删除
 func (service {{{ .EntityName }}}Service) Del({{{ toUpperCamelCase .PrimaryKey }}} {{{.PrimaryKeyGoType}}}) (e error) {
-	var obj model.{{{ toUpperCamelCase .EntityName }}}
-	err := service.db.Where("{{{ $.PrimaryKey }}} = ?", {{{ toUpperCamelCase .PrimaryKey }}}).First(&obj).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
+	result := service.db.Where("{{{ $.PrimaryKey }}} = ?", {{{ toUpperCamelCase .PrimaryKey }}}).Delete(&model.{{{ toUpperCamelCase .EntityName }}}{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
 	}
-	if e = response.CheckErr(err, "查询数据失败"); e != nil {
-		return
+	if result.RowsAffected == 0 {
+		return errors.New("数据不存在")
 	}
-    // 删除
-	{{{- if contains .AllFields "is_delete" }}}
-	obj.IsDelete = 1
-	{{{- if contains .AllFields "delete_time" }}}
-	obj.DeleteTime = util.NullTimeUtil.Now()
-	{{{- end }}}
-	err = service.db.Save(&obj).Error
-	e = response.CheckErr(err, "删除失败")
-	{{{- else }}}
-	err = service.db.Delete(&obj).Error
-	e = response.CheckErr(err, "删除失败")
-	{{{- end }}}
-	service.CacheUtil.RemoveCache(obj.{{{ toUpperCamelCase .PrimaryKey }}})
+	service.CacheUtil.RemoveCache({{{ toUpperCamelCase .PrimaryKey }}})
+
 	return
 }
 
@@ -238,7 +229,7 @@ func (service {{{ .EntityName }}}Service) DelBatch(Ids []string) (e error) {
 		return err
 	}
 	// 删除缓存
-	service.CacheUtil.RemoveCache(Ids)
+	service.CacheUtil.RemoveCache(Ids...)
 	return nil
 }
 

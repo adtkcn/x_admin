@@ -16,7 +16,7 @@ import (
 
 3. 后台手动添加菜单和按钮
 
-INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES ('{{{makeID}}}',"0", 'C', '{{{ .FunctionName }}}', '{{{nameToPath .ModuleName }}}/index', '{{{nameToPath .ModuleName }}}/index', 0, 1, 0, now(), now());
+INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES ('{{{makeID}}}',"", 'C', '{{{ .FunctionName }}}', '{{{nameToPath .ModuleName }}}/index', '{{{nameToPath .ModuleName }}}/index', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}列表','admin:{{{ .ModuleName }}}:list', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}全部列表','admin:{{{ .ModuleName }}}:listAll', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}添加','admin:{{{ .ModuleName }}}:add', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';

@@ -215,10 +215,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ .TsType }}}Start: null,
-    {{{ .TsType }}}End: null,
+    {{{ .TsType }}}Start: undefined,
+    {{{ .TsType }}}End: undefined,
     {{{- else }}}
-    {{{ .TsType }}}: null,
+    {{{ .TsType }}}: undefined,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}

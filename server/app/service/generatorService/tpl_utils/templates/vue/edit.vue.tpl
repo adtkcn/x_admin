@@ -147,7 +147,7 @@
                         </el-form-item>
                     {{{- else if eq .HtmlType "editor" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
-                            <editor v-model="formData.{{{ .TsField }}}" :height="500" />
+                            <editor v-model="formData.{{{ .TsField }}}" :height="500"  width="100%" />
                         </el-form-item>
                     {{{- else if eq .HtmlType "imageUpload" }}}
                         <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
@@ -198,9 +198,9 @@ const formData = reactive({
     {{{- if eq .HtmlType "checkbox" }}}
     {{{ .TsField }}}: [],
     {{{- else if eq .HtmlType "number" }}}
-    {{{ .TsField }}}: null,
+    {{{ .TsField }}}: undefined,
     {{{- else }}}
-    {{{ .TsField }}}: null,
+    {{{ .TsField }}}: undefined,
     {{{- end }}}
     {{{- end }}}
     {{{- end }}}

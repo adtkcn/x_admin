@@ -214,14 +214,11 @@ const showDetails = ref(false)
 const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
-    {{{- if eq .ColumnName "created_by" }}}
-    CreatedBy: null,
-    CreatedByNickname: null,
-    {{{- else if eq .HtmlType "datetime" }}}
-    {{{ .TsField }}}Start: null,
-    {{{ .TsField }}}End: null,
+    {{{- if eq .HtmlType "datetime" }}}
+    {{{ .TsField }}}Start: undefined,
+    {{{ .TsField }}}End: undefined,
     {{{- else }}}
-    {{{ .TsField }}}: null,
+    {{{ .TsField }}}: undefined,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
