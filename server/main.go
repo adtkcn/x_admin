@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql/driver"
 	"fmt"
 	"log"
 	"net/http"
@@ -79,11 +78,23 @@ func initServer(router *gin.Engine) *http.Server {
 
 // ValidateValuer 将 NullInt等类型 转换为底层值（int64 或 nil）
 func ValidateValuer(field reflect.Value) any {
-	if valuer, ok := field.Interface().(driver.Valuer); ok {
-		val, _ := valuer.Value()
-		return val // 返回 int64 或 nil
+	// if valuer, ok := field.Interface().(driver.Valuer); ok {
+	// 	val, _ := valuer.Value()
+	// 	return val // 返回 int64 或 nil
+	// }
+	switch obj := field.Interface().(type) {
+	case x_null.String:
+		return obj.Val
+	case x_null.Int64:
+		return obj.Val
+	case x_null.Float64:
+		return obj.Val
+	case x_null.Time:
+		return obj.Val
+	default:
+		return nil
 	}
-	return nil
+
 }
 
 //	@description	x_admin是一个完整的后台管理系统
