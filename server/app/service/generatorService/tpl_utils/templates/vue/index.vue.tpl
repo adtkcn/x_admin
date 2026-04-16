@@ -6,7 +6,7 @@
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" class="w-[400px]">
                     <daterange-picker
                         v-model:startTime="queryParams.{{{ .TsField }}}Start"
                         v-model:endTime="queryParams.{{{ .TsField }}}End"
@@ -104,7 +104,7 @@
             {{{- range .Columns }}}
             {{{- if and .IsList .IsListShow }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="100">
+                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" width="100">
                     <template #default="{ row }">
                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{.TableColumnProp}}}" />
                     </template>
@@ -120,8 +120,7 @@
                 <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
-                            :width="40"
-                            :height="40"
+                            :height="100%"
                             :src="row.{{{.TableColumnProp}}}"
                             :preview-src-list="[row.{{{.TableColumnProp}}}]"
                             preview-teleported

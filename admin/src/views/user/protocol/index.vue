@@ -7,7 +7,7 @@
                 :model="queryParams"
                 :inline="true"
                 label-width="90px"
-                label-position="left"
+                label-position="right"
             >
                 <el-form-item label="标题" prop="Title" class="w-[280px]">
                     <el-input v-model="queryParams.Title" />
@@ -20,12 +20,14 @@
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
                         v-model:endTime="queryParams.CreateTimeEnd"
+                        type="daterange"
                     />
                 </el-form-item>
                 <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
                     <daterange-picker
                         v-model:startTime="queryParams.UpdateTimeStart"
                         v-model:endTime="queryParams.UpdateTimeEnd"
+                        type="daterange"
                     />
                 </el-form-item>
                 <el-form-item>
