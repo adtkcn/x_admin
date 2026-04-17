@@ -103,7 +103,7 @@ func MapToStruct(from any, to any) (err error) {
 func Copy(toValue any, fromValue any) any {
 	if err := copier.Copy(toValue, fromValue); err != nil {
 		// core.Logger.Errorf("Copy err: err=[%+v]", err)
-		panic("SystemError")
+		panic(err)
 	}
 	return toValue
 }
