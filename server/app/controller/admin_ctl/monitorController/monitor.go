@@ -2,9 +2,9 @@ package monitorController
 
 import (
 	"strings"
+	"x_admin/app/middleware"
 	"x_admin/app/service/monitorService"
 	"x_admin/core/response"
-	"x_admin/middleware"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"

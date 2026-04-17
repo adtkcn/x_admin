@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"x_admin/app/controller"
 	"x_admin/app/controller/admin_ctl/commonController"
+	"x_admin/app/middleware"
 	"x_admin/config"
 	"x_admin/core/response"
 	"x_admin/docs"
-	"x_admin/middleware"
-	"x_admin/routes/adminRoute"
+	"x_admin/routes/admin_route"
 
 	"github.com/gin-gonic/gin"
 )
@@ -76,7 +76,7 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 
 	wsHandler(api)
 	// /api/admin
-	adminRoute.RegisterRoute(api)
+	admin_route.RegisterRoute(api)
 
 	// /api/common/captcha 验证码
 	commonController.CaptchaRoute(api)

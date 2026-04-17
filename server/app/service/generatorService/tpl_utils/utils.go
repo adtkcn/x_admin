@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"x_admin/app/model/gen_model"
 	"x_admin/config"
-	"x_admin/model/gen_model"
 	"x_admin/util"
 
 	"gorm.io/gorm"

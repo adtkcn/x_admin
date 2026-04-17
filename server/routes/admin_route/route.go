@@ -1,4 +1,4 @@
-package adminRoute
+package admin_route
 
 import (
 	"x_admin/app/controller/admin_ctl/commonController"
@@ -49,15 +49,6 @@ func RegisterRoute(rg *gin.RouterGroup) {
 	systemController.RoleRoute(rg)
 	systemController.LogRoute(rg)
 	generatorController.GenRoute(rg)
-	// FlowTemplateRoute(rg)
-	// FlowApplyRoute(rg)
-	// FlowHistoryRoute(rg)
-
-	// MonitorProjectRoute(rg)
-	// MonitorClientRoute(rg)
-	// MonitorErrorRoute(rg)
-
-	// UserProtocolRoute(rg)
 
 	Autoload(rg)
 }

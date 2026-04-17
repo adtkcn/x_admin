@@ -3,11 +3,11 @@ package middleware
 import (
 	"strings"
 
+	"x_admin/app/model/system_model"
 	"x_admin/app/service/systemService"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
-	"x_admin/model/system_model"
 
 	"x_admin/util"
 

@@ -1,12 +1,12 @@
 package commonController
 
 import (
+	"x_admin/app/middleware"
 	"x_admin/app/schema/commonSchema"
 	"x_admin/app/service/commonService"
 	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/middleware"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"

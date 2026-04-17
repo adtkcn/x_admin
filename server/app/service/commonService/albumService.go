@@ -2,12 +2,12 @@ package commonService
 
 import (
 	"path"
+	"x_admin/app/model/common_model"
 	"x_admin/app/schema/commonSchema"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model/common_model"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 

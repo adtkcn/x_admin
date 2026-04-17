@@ -1,20 +1,8 @@
 ---
-name: "laravel-admin-migration"
-description: "Generates Go+Vue code from Laravel-Admin PHP code. Invoke when user wants to migrate code from PHP Laravel-Admin project to likeadmin Go."
+name: "代码生成"
+description: "代码生成"
 ---
 
-# Laravel-Admin 代码迁移指南
-
-本技能用于从 PHP Laravel-Admin 项目迁移代码到 likeadmin Go 项目。
-
-## 迁移流程概述
-
-### 步骤一：分析 Laravel-Admin 代码
-
-分析 Laravel-Admin 项目中的以下文件：
-- **Controller**：获取接口列表、业务逻辑
-- **Model**：获取数据库字段定义
-- **Form/Grid**：获取表单字段、验证规则
 
 ### 步骤二：使用现有代码生成系统
 
@@ -55,11 +43,10 @@ app/service/generatorService/tpl_utils/templates/
 | [app/schema/user_protocol_schema.go](file:///f:/xiangheng/go/likeadmin_go/server/app/schema/user_protocol_schema.go) | Schema 定义示例 |
 | [app/service/user_protocol_service.go](file:///f:/xiangheng/go/likeadmin_go/server/app/service/user_protocol_service.go) | Service 实现示例 |
 | [app/controller/admin_ctl/user_protocol_ctl.go](file:///f:/xiangheng/go/likeadmin_go/server/app/controller/admin_ctl/user_protocol_ctl.go) | Controller 实现示例 |
-| [routes/adminRoute/user_protocol_route.go](file:///f:/xiangheng/go/likeadmin_go/server/routes/adminRoute/user_protocol_route.go) | 路由注册示例 |
+| [routes/admin_route/user_protocol_route.go](file:///f:/xiangheng/go/likeadmin_go/server/routes/admin_route/user_protocol_route.go) | 路由注册示例 |
 
 ### 步骤四：数据库表结构
 
-根据 Laravel-Admin 的迁移文件生成 MySQL 表结构：
 
 ```sql
 CREATE TABLE `x_{table_name}` (
@@ -77,29 +64,6 @@ CREATE TABLE `x_{table_name}` (
 ### 步骤五：菜单 SQL
 
 ```sql
--- 菜单
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, paths, component, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'C', '{MenuName}', '{module}/index', '{module}/index', 0, 1, 0, now(), now());
-
--- 按钮（替换pid为菜单id）
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}添加', 'admin:{module}:add', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}编辑', 'admin:{module}:edit', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}删除', 'admin:{module}:del', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}批量删除', 'admin:{module}:delBatch', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}列表', 'admin:{module}:list', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}全部列表', 'admin:{module}:listAll', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}详情', 'admin:{module}:detail', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}导出', 'admin:{module}:ExportFile', 0, 1, 0, now(), now());
-INSERT INTO x_system_auth_menu (pid, menu_type, menu_name, perms, is_cache, is_show, is_disable, create_time, update_time) 
-VALUES (0, 'A', '{MenuName}导入', 'admin:{module}:ImportFile', 0, 1, 0, now(), now());
 ```
 
 ## 代码实现要点
@@ -187,16 +151,6 @@ type {Module}Resp struct {
 | `{ModelName}` | 模型名称 | UserProtocol |
 | `{table_name}` | 数据库表名 | user_protocol |
 
-## 使用示例
-
-当用户需要从 Laravel-Admin 迁移代码时：
-
-1. **分析 Laravel-Admin 代码**：获取字段列表、接口定义
-2. **创建数据库表**：根据字段生成 MySQL 表结构
-3. **生成后端代码**：参考现有模板生成 Go 代码
-4. **生成前端代码**：使用现有 Vue/Uniapp 模板
-5. **注册路由**：在 route.go 中注册新路由
-6. **创建菜单**：执行菜单 SQL
 
 ## 注意事项
 

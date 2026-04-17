@@ -2,11 +2,11 @@ package systemService
 
 import (
 	"errors"
+	"x_admin/app/model/system_model"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
-	"x_admin/model/system_model"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 

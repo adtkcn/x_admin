@@ -4,13 +4,13 @@ import (
 	"archive/zip"
 	"bytes"
 
+	"x_admin/app/model/gen_model"
 	"x_admin/app/schema/generatorSchema"
 	"x_admin/app/service/generatorService/tpl_utils"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model/gen_model"
 	"x_admin/util/convert_util"
 
 	"strings"

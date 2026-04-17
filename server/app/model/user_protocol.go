@@ -1,7 +1,7 @@
 package model
 
 import (
-	"x_admin/model/system_model"
+	"x_admin/app/model/system_model"
 
 	"github.com/adtkcn/x_null"
 	"github.com/google/uuid"

@@ -2,7 +2,7 @@ package settingService
 
 import (
 	"errors"
-	"x_admin/model/system_model"
+	"x_admin/app/model/system_model"
 	"x_admin/util"
 
 	"gorm.io/gorm"

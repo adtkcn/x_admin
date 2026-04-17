@@ -8,8 +8,8 @@ import (
 	"io"
 	"path"
 	"text/template"
+	"x_admin/app/model/gen_model"
 	"x_admin/core/response"
-	"x_admin/model/gen_model"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 )
@@ -392,8 +392,8 @@ func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName string) map[string]string {
 	//模板文件对应的输出文件
 	fmtMap := map[string]string{
-		"gocode/model.go.tpl": fmt.Sprintf("server/model/%s.go", ModuleName),                   //strings.Join([]string{"server/model/", ModuleName, ".go"}, ""),
-		"gocode/route.go.tpl": fmt.Sprintf("server/routes/adminRoute/%s_route.go", ModuleName), //strings.Join([]string{"server/routes/adminRoute/", ModuleName, "_route.go"}, ""),
+		"gocode/model.go.tpl": fmt.Sprintf("server/app/model/%s.go", ModuleName),                //strings.Join([]string{"server/model/", ModuleName, ".go"}, ""),
+		"gocode/route.go.tpl": fmt.Sprintf("server/routes/admin_route/%s_route.go", ModuleName), //strings.Join([]string{"server/routes/admin_route/", ModuleName, "_route.go"}, ""),
 
 		"gocode/schema.go.tpl":     fmt.Sprintf("server/app/schema/%s_schema.go", ModuleName),            //"server/app/schema/%s_schema.go"
 		"gocode/service.go.tpl":    fmt.Sprintf("server/app/service/%s_service.go", ModuleName),          //"server/app/service/%s_service.go",

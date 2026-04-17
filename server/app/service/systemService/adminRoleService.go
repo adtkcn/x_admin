@@ -1,8 +1,8 @@
 package systemService
 
 import (
+	"x_admin/app/model/system_model"
 	"x_admin/core"
-	"x_admin/model/system_model"
 
 	"gorm.io/gorm"
 )

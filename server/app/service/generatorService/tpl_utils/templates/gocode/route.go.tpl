@@ -1,8 +1,8 @@
-package adminRoute
+package admin_route
 
 import (
 	"github.com/gin-gonic/gin"
-	"x_admin/middleware" 
+	"x_admin/app/middleware" 
 	"x_admin/app/controller/admin_ctl"
 )
 

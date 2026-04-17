@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"x_admin/app/model"
+	"x_admin/app/model/system_model"
 	"x_admin/app/schema/flowSchema"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
@@ -13,8 +15,6 @@ import (
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model"
-	"x_admin/model/system_model"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 

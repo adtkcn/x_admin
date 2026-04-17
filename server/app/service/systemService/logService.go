@@ -2,11 +2,11 @@ package systemService
 
 import (
 	"fmt"
+	"x_admin/app/model/system_model"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
-	"x_admin/model/system_model"
 
 	"gorm.io/gorm"
 )

@@ -3,9 +3,9 @@ package settingController
 import (
 	"x_admin/app/schema/settingSchema"
 
+	"x_admin/app/middleware"
 	"x_admin/app/service/settingService"
 	"x_admin/core/response"
-	"x_admin/middleware"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
