@@ -16,15 +16,15 @@ import (
 // @Summary	静态文件路由
 // @Tags		公共接口
 // @Router		/api/static/* [get]
-func static(root *gin.RouterGroup) {
+func static(api *gin.RouterGroup) {
 	// 静态文件路由
-	root.Static("/static", "./public/static")
+	api.Static("/static", "./public/static")
 }
 
 // @Summary	上传文件的静态路径路由
 // @Tags		公共接口
 // @Router		/api/uploads/* [get]
-func uploads(root *gin.RouterGroup) {
+func uploads(root *gin.Engine) {
 	root.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
 }
 
@@ -67,7 +67,7 @@ func wsHandler(api *gin.RouterGroup) {
 
 func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	static(api)
-	uploads(api)
+	uploads(rootRouter)
 	// 设置中间件
 	RootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 	apiList(api, rootRouter)
