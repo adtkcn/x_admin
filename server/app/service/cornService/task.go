@@ -35,7 +35,7 @@ var TaskInfoList = []Task{
 
 		TaskFunc: func() {
 
-			core.Logger.Info("执行示例任务: exampleTask")
+			core.Logger.Debug("执行示例任务: exampleTask")
 			// 模拟任务执行时间
 			time.Sleep(7 * time.Second)
 		},

@@ -11,11 +11,6 @@ func NoRoute(c *gin.Context) {
 	Send(c, 404, "请求接口不存在", nil)
 }
 
-// NoMethod 无方法响应
-func NoMethod(c *gin.Context) {
-	Send(c, 405, "请求方法不允许", nil)
-}
-
 // HTTPError HTTP 错误响应
 func HTTPError(c *gin.Context, status int, msg string) {
 	c.JSON(status, Response{

@@ -17,7 +17,7 @@ type FileConfigStruct struct {
 
 var FileConfig = FileConfigStruct{
 	// 资源访问前缀
-	PublicPrefix: "/api/uploads",
+	PublicPrefix: "/uploads", // /api/uploads
 	// 上传文件路径
 	UploadDirectory: "/tmp/uploads/x_admin_go/",
 	UploadImageSize: 20 * 1024 * 1024,   // 20MB

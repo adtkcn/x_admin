@@ -46,14 +46,14 @@ type MonitorErrorDelBatchReq struct {
 
 // MonitorErrorResp 监控-错误列返回信息
 type MonitorErrorResp struct {
-	Id         string            // 错误id
-	ProjectKey string            // 项目key
-	EventType  string            // 事件类型
-	Path       string            // URL地址
-	Message    string            // 错误消息
-	Stack      string            // 错误堆栈
-	Width      x_null.Int64      `swaggertype:"integer"` // 屏幕
-	Height     x_null.Int64      `swaggertype:"integer"` // 屏幕高度
-	Md5        string            // md5
-	CreateTime x_null.Time       `swaggertype:"string"` // 创建时间
+	Id         string       // 错误id
+	ProjectKey string       // 项目key
+	EventType  string       // 事件类型
+	Path       string       // URL地址
+	Message    string       // 错误消息
+	Stack      string       // 错误堆栈
+	Width      x_null.Int64 `swaggertype:"integer"` // 屏幕
+	Height     x_null.Int64 `swaggertype:"integer"` // 屏幕高度
+	Md5        string       // md5
+	CreateTime x_null.Time  `swaggertype:"string"` // 创建时间
 }

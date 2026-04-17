@@ -56,16 +56,16 @@ func (hd *SystemCornHandler) List(c *gin.Context) {
 // @Summary	定时任务列表-所有
 // @Tags		system_corn-定时任务
 // @Produce	json
-// @Param		token			header		string										true	"token"
-// @Param		TaskName		query		string										false	"任务名称"
-// @Param		TaskCode		query		string										false	"任务编码"
-// @Param		CornExpr		query		string										false	"corn表达式"
-// @Param		Status			query		number										false	"状态"
-// @Param		CreatedBy		query		string										false	"创建人"
-// @Param		CreateTimeStart	query		string										false	"创建时间"
-// @Param		CreateTimeEnd	query		string										false	"创建时间"
-// @Param		UpdateTimeStart	query		string										false	"更新时间"
-// @Param		UpdateTimeEnd	query		string										false	"更新时间"
+// @Param		token			header		string											true	"token"
+// @Param		TaskName		query		string											false	"任务名称"
+// @Param		TaskCode		query		string											false	"任务编码"
+// @Param		CornExpr		query		string											false	"corn表达式"
+// @Param		Status			query		number											false	"状态"
+// @Param		CreatedBy		query		string											false	"创建人"
+// @Param		CreateTimeStart	query		string											false	"创建时间"
+// @Param		CreateTimeEnd	query		string											false	"创建时间"
+// @Param		UpdateTimeStart	query		string											false	"更新时间"
+// @Param		UpdateTimeEnd	query		string											false	"更新时间"
 // @Success	200				{object}	response.Response{data=[]schema.SystemCornResp}	"成功"
 // @Router		/api/admin/system_corn/listAll [get]
 func (hd *SystemCornHandler) ListAll(c *gin.Context) {
@@ -80,8 +80,8 @@ func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 // @Summary	定时任务详情
 // @Tags		system_corn-定时任务
 // @Produce	json
-// @Param		token	header		string									true	"token"
-// @Param		Id		query		string									false	"taskid"
+// @Param		token	header		string											true	"token"
+// @Param		Id		query		string											false	"taskid"
 // @Success	200		{object}	response.Response{data=schema.SystemCornResp}	"成功"
 // @Router		/api/admin/system_corn/detail [get]
 func (hd *SystemCornHandler) Detail(c *gin.Context) {

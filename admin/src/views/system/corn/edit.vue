@@ -26,7 +26,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="corn表达式" prop="CornExpr">
-                    <el-input v-model="formData.CornExpr" placeholder="请输入corn表达式" />
+                    <el-input
+                        v-model="formData.CornExpr"
+                        placeholder="请输入corn表达式,秒级示例*/5 * * * * *"
+                    />
                 </el-form-item>
                 <el-form-item label="状态" prop="Status">
                     <!-- <el-input v-model="formData.Status" type="number" placeholder="请输入禁用" /> -->

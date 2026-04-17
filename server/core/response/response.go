@@ -3,6 +3,7 @@ package response
 import (
 	"errors"
 	"strconv"
+	"x_admin/core"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
@@ -107,6 +108,7 @@ func CheckAndRespWithData(c *gin.Context, data any, err error) {
 // CheckErr 检查错误
 func CheckErr(err error, template string, args ...any) error {
 	if err != nil {
+		core.Logger.Error("CheckErr:", err)
 		return SystemError.SetMessage(template)
 	}
 	return nil

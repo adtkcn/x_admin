@@ -39,5 +39,12 @@
         "Warnf",
         "webp",
         "x_admin"
-    ]
+    ],
+  // 控制相关文件嵌套展示
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*go.mod": "go.sum", 
+    ".env.yaml": "$(capture).env.*"
+  },
 }

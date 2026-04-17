@@ -48,11 +48,11 @@ type MonitorProjectDelBatchReq struct {
 
 // MonitorProjectResp 监控项目返回信息
 type MonitorProjectResp struct {
-	Id          string            // 项目id
-	ProjectKey  string            // 项目uuid
-	ProjectName string            // 项目名称
-	ProjectType string            // 项目类型go java web node php 等
-	Status      x_null.Int64      `swaggertype:"integer"` // 是否启用: 0=否, 1=是
-	CreateTime  x_null.Time       `swaggertype:"string"`  // 创建时间
-	UpdateTime  x_null.Time       `swaggertype:"string"`  // 更新时间
+	Id          string       // 项目id
+	ProjectKey  string       // 项目uuid
+	ProjectName string       // 项目名称
+	ProjectType string       // 项目类型go java web node php 等
+	Status      x_null.Int64 `swaggertype:"integer"` // 是否启用: 0=否, 1=是
+	CreateTime  x_null.Time  `swaggertype:"string"`  // 创建时间
+	UpdateTime  x_null.Time  `swaggertype:"string"`  // 更新时间
 }

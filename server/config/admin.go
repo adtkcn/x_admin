@@ -33,11 +33,6 @@ var AdminConfig = adminConfig{
 		// "admin:setting:dict:data:all", // 所有字典数据
 	},
 	// #endregion NotAuth
-	// 演示模式白名单
-	ShowWhitelistUri: []string{
-		// "admin:system:login",  // 登录接口
-		// "admin:system:logout", // 退出登录
-	},
 
 	// 管理员账号id:1
 	SuperAdminId: "1",
@@ -67,8 +62,7 @@ type adminConfig struct {
 	NotLoginUri []string
 	// 免权限验证
 	NotAuthUri []string
-	// 演示模式白名单
-	ShowWhitelistUri []string
+
 	// 管理员账号id:1
 	SuperAdminId string
 	// 管理员账号key

@@ -160,13 +160,13 @@ const showEdit = ref(false)
 const detailsRef = useTemplateRef<InstanceType<typeof DetailsPopup>>('detailsRef')
 const showDetails = ref(false)
 const queryParams = reactive<type_user_protocol_query>({
-    Title: null,
-    Content: null,
-    Version: null,
-    CreateTimeStart: null,
-    CreateTimeEnd: null,
-    UpdateTimeStart: null,
-    UpdateTimeEnd: null
+    Title: undefined,
+    Content: undefined,
+    Version: undefined,
+    CreateTimeStart: undefined,
+    CreateTimeEnd: undefined,
+    UpdateTimeStart: undefined,
+    UpdateTimeEnd: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_user_protocol>({
