@@ -2,8 +2,6 @@ package settingController
 
 import (
 	"x_admin/app/schema/settingSchema"
-
-	"x_admin/app/middleware"
 	"x_admin/app/service/settingService"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -11,30 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func DictDataRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// permSrv := system.NewSystemAuthPermService(db)
-	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
-	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
-	// service := system.NewSystemLoginService(db, adminSrv)
+// DictDataHandler 字典数据控制器
+type DictDataHandler struct{}
 
-	// authSrv := NewSettingDictDataService(db)
-
-	handle := dictDataHandler{}
-	notAuth := rg.Group("/setting", middleware.LoginAuth())
-	notAuth.GET("/dict/data/all", handle.All)
-
-	rg = rg.Group("/setting", middleware.PermAuth())
-	rg.GET("/dict/data/detail", handle.Detail)
-	rg.POST("/dict/data/add", handle.Add)
-	rg.POST("/dict/data/edit", handle.Edit)
-	rg.POST("/dict/data/del", handle.Del)
-}
-
-type dictDataHandler struct{}
-
-// all 字典数据所有
-func (ddh dictDataHandler) All(c *gin.Context) {
+// All 字典数据所有
+func (ddh DictDataHandler) All(c *gin.Context) {
 	var allReq settingSchema.SettingDictDataListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &allReq)) {
 		return
@@ -43,8 +22,8 @@ func (ddh dictDataHandler) All(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// detail 字典数据详情
-func (ddh dictDataHandler) Detail(c *gin.Context) {
+// Detail 字典数据详情
+func (ddh DictDataHandler) Detail(c *gin.Context) {
 	var detailReq settingSchema.SettingDictDataDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
@@ -53,8 +32,8 @@ func (ddh dictDataHandler) Detail(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// detail 字典数据新增
-func (ddh dictDataHandler) Add(c *gin.Context) {
+// Add 字典数据新增
+func (ddh DictDataHandler) Add(c *gin.Context) {
 	var addReq settingSchema.SettingDictDataAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
@@ -62,8 +41,8 @@ func (ddh dictDataHandler) Add(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, settingService.DictDataService.Add(addReq))
 }
 
-// edit 字典数据编辑
-func (ddh dictDataHandler) Edit(c *gin.Context) {
+// Edit 字典数据编辑
+func (ddh DictDataHandler) Edit(c *gin.Context) {
 	var editReq settingSchema.SettingDictDataEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
@@ -71,8 +50,8 @@ func (ddh dictDataHandler) Edit(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, settingService.DictDataService.Edit(editReq))
 }
 
-// del 字典数据删除
-func (ddh dictDataHandler) Del(c *gin.Context) {
+// Del 字典数据删除
+func (ddh DictDataHandler) Del(c *gin.Context) {
 	var delReq settingSchema.SettingDictDataDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return

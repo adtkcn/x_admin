@@ -1,7 +1,6 @@
 package systemController
 
 import (
-	"x_admin/app/middleware"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/core/request"
@@ -11,32 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RoleRoute(rg *gin.RouterGroup) {
+// RoleHandler 角色控制器
+type RoleHandler struct{}
 
-	handle := RoleHandler{}
-	notAuth := rg.Group("/system", middleware.LoginAuth())
-	notAuth.GET("/role/all", handle.All)
-
-	rg = rg.Group("/system", middleware.PermAuth())
-	// rg.GET("/role/all", handle.All)
-	rg.GET("/role/list", handle.List)
-	rg.GET("/role/detail", middleware.RecordLog("角色详情"), handle.Detail)
-	rg.POST("/role/add", middleware.RecordLog("角色新增"), handle.Add)
-	rg.POST("/role/edit", middleware.RecordLog("角色编辑"), handle.Edit)
-	rg.POST("/role/del", middleware.RecordLog("角色删除"), handle.Del)
-}
-
-type RoleHandler struct {
-	// Service ISystemAuthRoleService
-}
-
-// all 角色所有
+// All 角色所有
 func (rh RoleHandler) All(c *gin.Context) {
 	res, err := systemService.RoleService.All()
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// list 角色列表
+// List 角色列表
 func (rh RoleHandler) List(c *gin.Context) {
 	var page request.PageReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
@@ -46,7 +29,7 @@ func (rh RoleHandler) List(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// detail 角色详情
+// Detail 角色详情
 func (rh RoleHandler) Detail(c *gin.Context) {
 	var detailReq systemSchema.SystemAuthRoleDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
@@ -56,7 +39,7 @@ func (rh RoleHandler) Detail(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// add 新增角色
+// Add 新增角色
 func (rh RoleHandler) Add(c *gin.Context) {
 	var addReq systemSchema.SystemAuthRoleAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
@@ -65,7 +48,7 @@ func (rh RoleHandler) Add(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, systemService.RoleService.Add(addReq))
 }
 
-// edit 编辑角色
+// Edit 编辑角色
 func (rh RoleHandler) Edit(c *gin.Context) {
 	var editReq systemSchema.SystemAuthRoleEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
@@ -74,7 +57,7 @@ func (rh RoleHandler) Edit(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, systemService.RoleService.Edit(editReq))
 }
 
-// del 删除角色
+// Del 删除角色
 func (rh RoleHandler) Del(c *gin.Context) {
 	var delReq systemSchema.SystemAuthRoleDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {

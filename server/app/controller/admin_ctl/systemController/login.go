@@ -11,19 +11,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func LoginRoute(rg *gin.RouterGroup) {
+// LoginHandler 登录控制器
+type LoginHandler struct{}
 
-	handle := loginHandler{}
-
-	rg = rg.Group("/system")
-	rg.POST("/login", handle.login)
-	rg.POST("/logout", handle.logout)
-}
-
-type loginHandler struct{}
-
-// login 登录系统
-func (lh loginHandler) login(c *gin.Context) {
+// Login 登录系统
+func (lh LoginHandler) Login(c *gin.Context) {
 	var params commonSchema.ClientParams
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &params)) {
 		return
@@ -42,8 +34,8 @@ func (lh loginHandler) login(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// logout 登录退出
-func (lh loginHandler) logout(c *gin.Context) {
+// Logout 登录退出
+func (lh LoginHandler) Logout(c *gin.Context) {
 	var logoutReq systemSchema.SystemLogoutReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyHeader(c, &logoutReq)) {
 		return

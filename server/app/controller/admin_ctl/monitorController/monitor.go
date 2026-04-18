@@ -2,7 +2,6 @@ package monitorController
 
 import (
 	"strings"
-	"x_admin/app/middleware"
 	"x_admin/app/service/monitorService"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -10,18 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoute(rg *gin.RouterGroup) {
-	handle := monitorHandler{}
+// MonitorHandler 监控控制器（服务端+缓存）
+type MonitorHandler struct{}
 
-	rg = rg.Group("/monitor", middleware.PermAuth())
-	rg.GET("/cache", handle.cache)
-	rg.GET("/server", handle.server)
-}
-
-type monitorHandler struct{}
-
-// cache 缓存监控
-func (mh monitorHandler) cache(c *gin.Context) {
+// Cache 缓存监控
+func (mh MonitorHandler) Cache(c *gin.Context) {
 	cmdStatsMap := util.RedisUtil.Info("commandstats")
 	var stats []map[string]string
 	for k, v := range cmdStatsMap {
@@ -37,8 +29,8 @@ func (mh monitorHandler) cache(c *gin.Context) {
 	})
 }
 
-// server 服务监控
-func (mh monitorHandler) server(c *gin.Context) {
+// Server 服务监控
+func (mh MonitorHandler) Server(c *gin.Context) {
 	data, err := monitorService.MonitorServerService.GetAllServerLatestInfo()
 	if err != nil {
 		response.Fail(c, "获取服务器信息失败:"+err.Error())

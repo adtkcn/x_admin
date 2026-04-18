@@ -8,33 +8,16 @@ import (
 
 	"net/http"
 	"strings"
-	"x_admin/app/middleware"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
 )
 
-func GenRoute(rg *gin.RouterGroup) {
-	handle := genHandler{}
+// GenHandler 代码生成器控制器
+type GenHandler struct{}
 
-	rg = rg.Group("/gen", middleware.PermAuth())
-	rg.GET("/db", handle.dbTables)
-	rg.GET("/list", handle.List)
-	rg.GET("/detail", handle.Detail)
-	rg.POST("/importTable", handle.importTable)
-	rg.POST("/syncTable", handle.syncTable)
-	rg.POST("/editTable", handle.editTable)
-	rg.POST("/delTable", handle.delTable)
-	rg.GET("/previewCode", handle.previewCode)
-	rg.GET("/downloadCode", handle.downloadCode)
-}
-
-type genHandler struct {
-	// Service IGenerateService
-}
-
-// dbTables 数据表列表
-func (gh genHandler) dbTables(c *gin.Context) {
+// DbTables 数据表列表
+func (gh GenHandler) DbTables(c *gin.Context) {
 	var page request.PageReq
 	var tbReq generatorSchema.DbTablesReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
@@ -48,7 +31,7 @@ func (gh genHandler) dbTables(c *gin.Context) {
 }
 
 // list 生成列表
-func (gh genHandler) List(c *gin.Context) {
+func (gh GenHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq generatorSchema.ListTableReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
@@ -62,7 +45,7 @@ func (gh genHandler) List(c *gin.Context) {
 }
 
 // detail 生成详情
-func (gh genHandler) Detail(c *gin.Context) {
+func (gh GenHandler) Detail(c *gin.Context) {
 	var detailReq generatorSchema.DetailTableReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
@@ -71,8 +54,8 @@ func (gh genHandler) Detail(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// importTable 导入表结构
-func (gh genHandler) importTable(c *gin.Context) {
+// ImportTable 导入表结构
+func (gh GenHandler) ImportTable(c *gin.Context) {
 	var importReq generatorSchema.ImportTableReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &importReq)) {
 		return
@@ -81,8 +64,8 @@ func (gh genHandler) importTable(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// syncTable 同步表结构
-func (gh genHandler) syncTable(c *gin.Context) {
+// SyncTable 同步表结构
+func (gh GenHandler) SyncTable(c *gin.Context) {
 	var syncReq generatorSchema.SyncTableReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &syncReq)) {
 		return
@@ -91,8 +74,8 @@ func (gh genHandler) syncTable(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// editTable 编辑表结构
-func (gh genHandler) editTable(c *gin.Context) {
+// EditTable 编辑表结构
+func (gh GenHandler) EditTable(c *gin.Context) {
 	var editReq generatorSchema.EditTableReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
@@ -101,8 +84,8 @@ func (gh genHandler) editTable(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// delTable 删除表结构
-func (gh genHandler) delTable(c *gin.Context) {
+// DelTable 删除表结构
+func (gh GenHandler) DelTable(c *gin.Context) {
 	var delReq generatorSchema.DelTableReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
@@ -111,8 +94,8 @@ func (gh genHandler) delTable(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// previewCode 预览代码
-func (gh genHandler) previewCode(c *gin.Context) {
+// PreviewCode 预览代码
+func (gh GenHandler) PreviewCode(c *gin.Context) {
 	var previewReq generatorSchema.PreviewCodeReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &previewReq)) {
 		return
@@ -121,8 +104,8 @@ func (gh genHandler) previewCode(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// downloadCode 下载代码
-func (gh genHandler) downloadCode(c *gin.Context) {
+// DownloadCode 下载代码
+func (gh GenHandler) DownloadCode(c *gin.Context) {
 	var downloadReq generatorSchema.DownloadReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &downloadReq)) {
 		return

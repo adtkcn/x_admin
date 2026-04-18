@@ -12,9 +12,7 @@ import (
 - 请先提交git避免文件覆盖!!!
 - 下载并解压压缩包后，直接复制server、admin文件夹到项目根目录即可
 
-2. 注册路由(通过init函数收集路由，Autoload自动注册)
-
-3. 后台手动添加菜单和按钮
+2. 后台手动添加菜单和按钮
 
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES ('{{{makeID}}}',"", 'C', '{{{ .FunctionName }}}', '{{{nameToPath .ModuleName }}}/index', '{{{nameToPath .ModuleName }}}/index', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}列表','admin:{{{ .ModuleName }}}:list', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
@@ -29,7 +27,7 @@ INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is
 */
 
 
-// {{{ toUpperCamelCase .ModuleName }}}Route(rg)
+
 func {{{ toUpperCamelCase .ModuleName }}}Route(rg *gin.RouterGroup) {
 	handle := admin_ctl.{{{ toUpperCamelCase .EntityName }}}Handler{}
 

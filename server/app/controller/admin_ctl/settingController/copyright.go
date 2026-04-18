@@ -9,27 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CopyrightRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// service := NewSettingCopyrightService(db)
-	handle := copyrightHandler{}
+// CopyrightHandler 版权设置控制器
+type CopyrightHandler struct{}
 
-	rg = rg.Group("/setting")
-	rg.GET("/copyright/detail", handle.Detail)
-	rg.POST("/copyright/save", handle.save)
-}
-
-type copyrightHandler struct {
-}
-
-// detail 获取备案信息
-func (ch copyrightHandler) Detail(c *gin.Context) {
+// Detail 获取备案信息
+func (ch CopyrightHandler) Detail(c *gin.Context) {
 	res, err := settingService.CopyrightService.Detail()
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// save 保存备案信息
-func (ch copyrightHandler) save(c *gin.Context) {
+// Save 保存备案信息
+func (ch CopyrightHandler) Save(c *gin.Context) {
 	var cReqs []settingSchema.SettingCopyrightItemReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSONArray(c, &cReqs)) {
 		return

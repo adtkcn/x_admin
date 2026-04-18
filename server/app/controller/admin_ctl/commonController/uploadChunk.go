@@ -12,42 +12,33 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UploadChunkRoute(rg *gin.RouterGroup) {
-	handle := uploadChunkHandler{
-		uploadPath: "./uploads",
-		tmpPath:    "./uploads/.tmp",
-	}
-	os.MkdirAll(handle.uploadPath, 0755)
-	os.MkdirAll(handle.tmpPath, 0755)
-
-	rg = rg.Group("/common")
-	rg.GET("/uploadChunk/CheckFileExist", handle.CheckFileExist)
-	// rg.GET("/uploadChunk/CheckChunkExist", handle.CheckChunkExist)
-	rg.GET("/uploadChunk/HasChunk", handle.HasChunk)
-
-	rg.POST("/uploadChunk/UploadChunk", handle.UploadChunk)
-	rg.POST("/uploadChunk/MergeChunk", handle.MergeChunk)
+// UploadChunkHandler 分片上传控制器
+type UploadChunkHandler struct {
+	UploadPath string
+	TmpPath    string
 }
 
-type uploadChunkHandler struct {
-	uploadPath string
-	tmpPath    string
+// NewUploadChunkHandler 创建分片上传处理器（初始化目录）
+func NewUploadChunkHandler(uploadPath, tmpPath string) UploadChunkHandler {
+	os.MkdirAll(uploadPath, 0755)
+	os.MkdirAll(tmpPath, 0755)
+	return UploadChunkHandler{UploadPath: uploadPath, TmpPath: tmpPath}
 }
 
-func (uh uploadChunkHandler) getFilePath(fileMd5 string, fileName string) string {
+func (uh UploadChunkHandler) GetFilePath(fileMd5 string, fileName string) string {
 	// 获取文件后缀
 	ext := filepath.Ext(fileName)
 
-	return fmt.Sprintf("%s/%s%s", uh.uploadPath, fileMd5, ext)
+	return fmt.Sprintf("%s/%s%s", uh.UploadPath, fileMd5, ext)
 }
-func (uh uploadChunkHandler) getChunkDir(fileMd5 string, chunkSize string) string {
-	return fmt.Sprintf("%s/%s_%s", uh.tmpPath, fileMd5, chunkSize)
+func (uh UploadChunkHandler) GetChunkDir(fileMd5 string, chunkSize string) string {
+	return fmt.Sprintf("%s/%s_%s", uh.TmpPath, fileMd5, chunkSize)
 }
-func (uh uploadChunkHandler) getChunkPath(fileMd5 string, chunkSize string, index string) string {
-	return fmt.Sprintf("%s/%s_%s/%s", uh.tmpPath, fileMd5, chunkSize, index)
+func (uh UploadChunkHandler) GetChunkPath(fileMd5 string, chunkSize string, index string) string {
+	return fmt.Sprintf("%s/%s_%s/%s", uh.TmpPath, fileMd5, chunkSize, index)
 }
 
-func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
+func (uh UploadChunkHandler) CheckFileExist(c *gin.Context) {
 	var fileMd5 = c.Query("fileMd5")
 	var fileName = c.Query("fileName")
 	if fileMd5 == "" {
@@ -124,7 +115,7 @@ func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
 		response.Fail(c, "文件hash错误")
 		return
 	}
-	var filePath = uh.getFilePath(fileMd5, fileName)
+	var filePath = uh.GetFilePath(fileMd5, fileName)
 	// 检查文件是否存在
 	if commonService.UploadChunkService.CheckFileExist(filePath) {
 		response.Ok(c, filePath)
@@ -132,7 +123,7 @@ func (uh uploadChunkHandler) CheckFileExist(c *gin.Context) {
 	}
 	response.Ok(c, nil)
 }
-func (uh uploadChunkHandler) HasChunk(c *gin.Context) {
+func (uh UploadChunkHandler) HasChunk(c *gin.Context) {
 	var fileMd5 = c.Query("fileMd5")
 	var chunkSize = c.Query("chunkSize")
 	if fileMd5 == "" {
@@ -143,13 +134,13 @@ func (uh uploadChunkHandler) HasChunk(c *gin.Context) {
 		response.Fail(c, "分片大小错误")
 		return
 	}
-	var chunkDir = uh.getChunkDir(fileMd5, chunkSize)
+	var chunkDir = uh.GetChunkDir(fileMd5, chunkSize)
 	var HasChunk = commonService.UploadChunkService.HasChunk(chunkDir)
 	response.Ok(c, HasChunk)
 }
 
 // UploadChunk 上传分片
-func (uh uploadChunkHandler) UploadChunk(c *gin.Context) {
+func (uh UploadChunkHandler) UploadChunk(c *gin.Context) {
 	chunk, _ := c.FormFile("chunk")      // 分片文件
 	chunkSize := c.PostForm("chunkSize") // 分片分割的大小
 	index := c.PostForm("index")         // 分片序号
@@ -171,8 +162,8 @@ func (uh uploadChunkHandler) UploadChunk(c *gin.Context) {
 		return
 	}
 
-	chunkDir := uh.getChunkDir(fileMd5, chunkSize)
-	chunkPath := uh.getChunkPath(fileMd5, chunkSize, index)
+	chunkDir := uh.GetChunkDir(fileMd5, chunkSize)
+	chunkPath := uh.GetChunkPath(fileMd5, chunkSize, index)
 	err := commonService.UploadChunkService.UploadChunk(chunkDir, chunkPath, chunk)
 	if err != nil {
 		response.Fail(c, err.Error())
@@ -180,37 +171,37 @@ func (uh uploadChunkHandler) UploadChunk(c *gin.Context) {
 	}
 	response.Ok(c)
 }
-func (uh uploadChunkHandler) MergeChunk(c *gin.Context) {
-	var MergeChunk struct {
+func (uh UploadChunkHandler) MergeChunk(c *gin.Context) {
+	var mergeReq struct {
 		FileMd5    string `json:"fileMd5"`    // 上传文件的md5
 		FileName   string `json:"fileName"`   // 文件名
 		ChunkCount int    `json:"chunkCount"` // 分片数量
 		ChunkSize  int    `json:"chunkSize"`  // 分片分割的大小,作用：确保不同分片大小不放在同一目录
 	}
-	bindErr := c.ShouldBindJSON(&MergeChunk)
+	bindErr := c.ShouldBindJSON(&mergeReq)
 	if bindErr != nil {
 		response.Fail(c, bindErr.Error())
 		return
 	}
-	if MergeChunk.FileMd5 == "" {
+	if mergeReq.FileMd5 == "" {
 		response.Fail(c, "文件hash错误")
 		return
 	}
-	if MergeChunk.FileName == "" {
+	if mergeReq.FileName == "" {
 		response.Fail(c, "文件名错误")
 		return
 	}
-	if MergeChunk.ChunkCount <= 0 {
+	if mergeReq.ChunkCount <= 0 {
 		response.Fail(c, "分片数量错误")
 		return
 	}
-	if MergeChunk.ChunkSize <= 0 {
+	if mergeReq.ChunkSize <= 0 {
 		response.Fail(c, "分片大小错误")
 		return
 	}
-	var filePath = uh.getFilePath(MergeChunk.FileMd5, MergeChunk.FileName)
-	var chunkDir = uh.getChunkDir(MergeChunk.FileMd5, fmt.Sprintf("%d", MergeChunk.ChunkSize))
-	err := commonService.UploadChunkService.MergeChunk(chunkDir, filePath, MergeChunk.ChunkCount)
+	var filePath = uh.GetFilePath(mergeReq.FileMd5, mergeReq.FileName)
+	var chunkDir = uh.GetChunkDir(mergeReq.FileMd5, fmt.Sprintf("%d", mergeReq.ChunkSize))
+	err := commonService.UploadChunkService.MergeChunk(chunkDir, filePath, mergeReq.ChunkCount)
 	if err != nil {
 		response.Fail(c, err.Error())
 		return

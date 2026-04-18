@@ -1,7 +1,6 @@
 package commonController
 
 import (
-	"x_admin/app/middleware"
 	"x_admin/app/schema/commonSchema"
 	"x_admin/app/service/commonService"
 	"x_admin/config"
@@ -11,18 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UploadRoute(rg *gin.RouterGroup) {
-	handle := uploadHandler{}
+// UploadHandler 上传控制器
+type UploadHandler struct{}
 
-	rg = rg.Group("/common", middleware.LoginAuth())
-	rg.POST("/upload/preUploadFile", middleware.RecordLog("文件预上传", middleware.RequestFile), handle.preUploadFile)
-	rg.POST("/upload/file", middleware.RecordLog("上传文件", middleware.RequestFile), handle.uploadFile)
-}
-
-type uploadHandler struct{}
-
-// 文件预上传
-func (uh uploadHandler) preUploadFile(c *gin.Context) {
+// PreUploadFile 文件预上传
+func (uh UploadHandler) PreUploadFile(c *gin.Context) {
 	// md5,fileName,fileSize,cid
 	// 检查MD5是否已存在
 	// 检查名称是否合规安全
@@ -33,8 +25,8 @@ func (uh uploadHandler) preUploadFile(c *gin.Context) {
 
 }
 
-// uploadFile 上传文件
-func (uh uploadHandler) uploadFile(c *gin.Context) {
+// UploadFile 上传文件
+func (uh UploadHandler) UploadFile(c *gin.Context) {
 	var uReq commonSchema.CommonUploadImageReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &uReq)) {
 		return

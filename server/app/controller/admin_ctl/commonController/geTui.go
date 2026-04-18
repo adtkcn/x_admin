@@ -7,18 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GeTuiRoute(rg *gin.RouterGroup) {
-	handle := geTuiHandler{}
+// GeTuiHandler 个推控制器
+type GeTuiHandler struct{}
 
-	rg = rg.Group("/common")
-	rg.GET("/push", handle.push)
-
-}
-
-type geTuiHandler struct{}
-
-// push 推送
-func (ih geTuiHandler) push(c *gin.Context) {
+// Push 推送
+func (ih GeTuiHandler) Push(c *gin.Context) {
 	var req []commonService.PushMessage
 	// if err := c.ShouldBindJSON(&req); err != nil {
 	// 	response.CheckAndRespWithData(c,nil, err)

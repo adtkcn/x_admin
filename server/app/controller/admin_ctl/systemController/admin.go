@@ -3,7 +3,6 @@ package systemController
 import (
 	"net/http"
 	"time"
-	"x_admin/app/middleware"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/config"
@@ -17,36 +16,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AdminRoute(rg *gin.RouterGroup) {
+// AdminHandler 管理员控制器
+type AdminHandler struct{}
 
-	handle := AdminHandler{}
-	notAuth := rg.Group("/system", middleware.LoginAuth())
-	notAuth.GET("/admin/self", handle.Self)
-	notAuth.POST("/admin/upInfo", middleware.RecordLog("管理员更新"), handle.UpInfo)
-
-	auth := rg.Group("/system", middleware.PermAuth())
-
-	auth.GET("/admin/list", handle.List)
-	auth.GET("/admin/listAll", handle.ListAll)
-	auth.GET("/admin/ListByDeptId", handle.ListByDeptId)
-	auth.GET("/admin/detail", handle.Detail)
-	auth.POST("/admin/add", middleware.RecordLog("管理员新增"), handle.Add)
-	auth.POST("/admin/edit", middleware.RecordLog("管理员编辑"), handle.Edit)
-
-	auth.POST("/admin/del", middleware.RecordLog("管理员删除"), handle.Del)
-	auth.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handle.Disable)
-
-	auth.GET("/admin/exportFile", middleware.RecordLog("管理员导出"), handle.ExportFile)
-
-	auth.POST("/admin/importFile", handle.ImportFile)
-
-}
-
-type AdminHandler struct {
-	// Service ISystemAuthAdminService
-}
-
-// self 管理员信息
+// Self 管理员信息
 func (ah AdminHandler) Self(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
 	res, err := systemService.AdminService.Self(adminId)

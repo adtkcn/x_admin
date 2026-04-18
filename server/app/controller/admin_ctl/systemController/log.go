@@ -1,7 +1,6 @@
 package systemController
 
 import (
-	"x_admin/app/middleware"
 	"x_admin/app/schema/systemSchema"
 	"x_admin/app/service/systemService"
 	"x_admin/core/request"
@@ -11,19 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func LogRoute(rg *gin.RouterGroup) {
-	handle := logHandler{}
+// LogHandler 日志控制器
+type LogHandler struct{}
 
-	rg = rg.Group("/system", middleware.PermAuth())
-	rg.GET("/log/operate", handle.operate)
-	rg.GET("/log/login", handle.login)
-}
-
-type logHandler struct {
-}
-
-// operate 操作日志
-func (lh logHandler) operate(c *gin.Context) {
+// Operate 操作日志
+func (lh LogHandler) Operate(c *gin.Context) {
 	var page request.PageReq
 	var logReq systemSchema.SystemLogOperateReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
@@ -36,8 +27,8 @@ func (lh logHandler) operate(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// login 登录日志
-func (lh logHandler) login(c *gin.Context) {
+// Login 登录日志
+func (lh LogHandler) Login(c *gin.Context) {
 	var page request.PageReq
 	var logReq systemSchema.SystemLogLoginReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {

@@ -1,7 +1,6 @@
 package settingController
 
 import (
-	"x_admin/app/middleware"
 	"x_admin/app/schema/settingSchema"
 	"x_admin/app/service/settingService"
 	"x_admin/core/response"
@@ -10,32 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func WebsiteRoute(rg *gin.RouterGroup) {
-	// db := core.GetDB()
-	// permSrv := system.NewSystemAuthPermService(db)
-	// roleSrv := system.NewSystemAuthRoleService(db, permSrv)
-	// adminSrv := system.NewSystemAuthAdminService(db, permSrv, roleSrv)
-	// service := system.NewSystemLoginService(db, adminSrv)
+// WebsiteHandler 网站设置控制器
+type WebsiteHandler struct{}
 
-	// server := NewSettingWebsiteService(db)
-
-	handle := websiteHandler{}
-
-	rg = rg.Group("/setting", middleware.PermAuth())
-	rg.GET("/website/detail", handle.Detail)
-	rg.POST("/website/save", handle.save)
-}
-
-type websiteHandler struct{}
-
-// detail 获取网站信息
-func (wh websiteHandler) Detail(c *gin.Context) {
+// Detail 获取网站信息
+func (wh WebsiteHandler) Detail(c *gin.Context) {
 	res, err := settingService.WebsiteService.Detail()
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// save 保存网站信息
-func (wh websiteHandler) save(c *gin.Context) {
+// Save 保存网站信息
+func (wh WebsiteHandler) Save(c *gin.Context) {
 	var wsReq settingSchema.SettingWebsiteReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &wsReq)) {
 		return

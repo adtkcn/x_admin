@@ -1,12 +1,6 @@
 package admin_route
 
 import (
-	"x_admin/app/controller/admin_ctl/commonController"
-	"x_admin/app/controller/admin_ctl/generatorController"
-	"x_admin/app/controller/admin_ctl/monitorController"
-	"x_admin/app/controller/admin_ctl/settingController"
-	"x_admin/app/controller/admin_ctl/systemController"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,33 +16,11 @@ func Autoload(rg *gin.RouterGroup) {
 	}
 }
 
+// RegisterRoute 后台管理路由入口（按模块分组注册）
 func RegisterRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/admin")
 	// 所有子路由需要加上前缀 /api/admin
-
-	commonController.UploadRoute(rg)
-	commonController.UploadChunkRoute(rg)
-	commonController.AlbumRoute(rg)
-	commonController.IndexRoute(rg)
-	commonController.GeTuiRoute(rg) //个推
-
-	monitorController.RegisterRoute(rg)
-
-	settingController.CopyrightRoute(rg)
-	settingController.DictDataRoute(rg)
-	settingController.DictTypeRoute(rg)
-	settingController.WebsiteRoute(rg)
-
-	systemController.LoginRoute(rg)
-	systemController.AdminRoute(rg)
-	systemController.MenuRoute(rg)
-	systemController.PostRoute(rg)
-
-	systemController.DeptRoute(rg)
-	systemController.RoleRoute(rg)
-	systemController.LogRoute(rg)
-	generatorController.GenRoute(rg)
 
 	Autoload(rg)
 }
