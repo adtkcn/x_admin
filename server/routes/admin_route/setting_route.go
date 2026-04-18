@@ -7,17 +7,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SettingRoute 系统设置模块路由（版权、字典数据、字典类型、网站）
-func SettingRoute(rg *gin.RouterGroup) {
-
-	// 版权设置
+// initCopyrightRoute 版权设置路由
+func initCopyrightRoute(rg *gin.RouterGroup) {
 	handleCopyright := settingController.CopyrightHandler{}
 	copyrightRg := rg.Group("/setting")
 	copyrightRg.GET("/copyright/detail", handleCopyright.Detail)
 	copyrightRg.POST("/copyright/save", handleCopyright.Save)
+}
 
-	// 字典数据
+// initDictDataRoute 字典数据路由（all 接口仅需登录）
+func initDictDataRoute(rg *gin.RouterGroup) {
 	handleDictData := settingController.DictDataHandler{}
+
 	notAuthDictData := rg.Group("/setting", middleware.LoginAuth())
 	notAuthDictData.GET("/dict/data/all", handleDictData.All)
 
@@ -26,9 +27,12 @@ func SettingRoute(rg *gin.RouterGroup) {
 	dictDataRg.POST("/dict/data/add", handleDictData.Add)
 	dictDataRg.POST("/dict/data/edit", handleDictData.Edit)
 	dictDataRg.POST("/dict/data/del", handleDictData.Del)
+}
 
-	// 字典类型
+// initDictTypeRoute 字典类型路由（all 接口仅需登录）
+func initDictTypeRoute(rg *gin.RouterGroup) {
 	handleDictType := settingController.DictTypeHandler{}
+
 	notAuthDictType := rg.Group("/setting", middleware.LoginAuth())
 	notAuthDictType.GET("/dict/type/all", handleDictType.All)
 
@@ -38,14 +42,17 @@ func SettingRoute(rg *gin.RouterGroup) {
 	dictTypeRg.POST("/dict/type/add", handleDictType.Add)
 	dictTypeRg.POST("/dict/type/edit", handleDictType.Edit)
 	dictTypeRg.POST("/dict/type/del", handleDictType.Del)
+}
 
-	// 网站设置
+// initWebsiteRoute 网站设置路由
+func initWebsiteRoute(rg *gin.RouterGroup) {
 	handleWebsite := settingController.WebsiteHandler{}
 	websiteRg := rg.Group("/setting", middleware.PermAuth())
 	websiteRg.GET("/website/detail", handleWebsite.Detail)
 	websiteRg.POST("/website/save", handleWebsite.Save)
 }
 
+// SettingRoute 系统设置模块路由入口（版权、字典数据、字典类型、网站）
 func init() {
-	routeHandlers = append(routeHandlers, SettingRoute)
+	routeHandlers = append(routeHandlers, initCopyrightRoute, initDictDataRoute, initDictTypeRoute, initWebsiteRoute)
 }

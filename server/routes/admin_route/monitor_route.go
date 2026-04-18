@@ -36,7 +36,6 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 	r.POST("/monitor_client/importFile", handle.ImportFile)
 }
 
-// MonitorErrorRoute(rg)
 func MonitorErrorRoute(rg *gin.RouterGroup) {
 	handle := monitorController.MonitorErrorHandler{}
 	rg.GET("/monitor_error/add", handle.Add)
@@ -53,7 +52,6 @@ func MonitorErrorRoute(rg *gin.RouterGroup) {
 	r.POST("/monitor_error/importFile", handle.ImportFile)
 }
 
-// MonitorProjectRoute(rg)
 func MonitorProjectRoute(rg *gin.RouterGroup) {
 	handle := monitorController.MonitorProjectHandler{}
 
