@@ -1,7 +1,7 @@
-package schema
+﻿package schema
 
 import (
-	"x_admin/app/schema/systemSchema"
+	"x_admin/app/schema/system_schema"
 
 	"github.com/adtkcn/x_null"
 )
@@ -51,5 +51,5 @@ type UserProtocolResp struct {
 	CreateTime    x_null.Time                            `swaggertype:"string"` // 创建时间
 	UpdateTime    x_null.Time                            `swaggertype:"string"` // 更新时间
 	CreatedBy     x_null.String                          `swaggertype:"string"` // 创建人id
-	CreatedByUser systemSchema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
+	CreatedByUser system_schema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
 }

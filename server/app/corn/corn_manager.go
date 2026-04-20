@@ -1,9 +1,9 @@
-package corn
+﻿package corn
 
 import (
 	"fmt"
 	"sync"
-	"x_admin/app/service/cornService"
+	"x_admin/app/service/corn_service"
 	"x_admin/core"
 	"x_admin/util"
 
@@ -49,7 +49,7 @@ func (tm *CronManager) RemoveAllTask() {
 }
 
 // AddTask 添加、更新任务
-func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) error {
+func (tm *CronManager) AddTask(taskID, CronExpr string, task corn_service.Task) error {
 
 	cmd := task.TaskFunc
 
@@ -96,7 +96,7 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) e
 }
 
 // 批量添加任务，先移除所有任务
-func (tm *CronManager) AddTasksBeforeRemoveAll(tasks []cornService.RunTask) error {
+func (tm *CronManager) AddTasksBeforeRemoveAll(tasks []corn_service.RunTask) error {
 	// 移除所有任务
 	tm.RemoveAllTask()
 	var errs []error

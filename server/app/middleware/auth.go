@@ -1,10 +1,10 @@
-package middleware
+﻿package middleware
 
 import (
 	"strings"
 
 	"x_admin/app/model/system_model"
-	"x_admin/app/service/systemService"
+	"x_admin/app/service/system_service"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
@@ -38,7 +38,7 @@ func Auth(c *gin.Context) response.RespType {
 	var adminUser system_model.SystemAuthAdmin
 	var userStr = util.RedisUtil.HGet(config.AdminConfig.BackstageAdminKey, uid)
 	if userStr == "" {
-		user, err2 := systemService.AdminService.CacheAdminById(uid) //缓存管理员信息
+		user, err2 := system_service.AdminService.CacheAdminById(uid) //缓存管理员信息
 		if err2 != nil {
 			core.Logger.Errorf("缓存管理员失败: err=[%+v]", err2)
 			return response.SystemError
@@ -111,7 +111,7 @@ func PermAuth() gin.HandlerFunc {
 			return
 		}
 		// 获取用户权限
-		perms, err := systemService.PermService.GetAdminPerms(adminId)
+		perms, err := system_service.PermService.GetAdminPerms(adminId)
 		if err != nil {
 			core.Logger.Errorf("获取用户权限失败: err=[%+v]", err)
 			response.FailWithResp(c, response.SystemError)

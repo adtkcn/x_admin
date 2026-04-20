@@ -1,7 +1,7 @@
-package admin_route
+﻿package admin_route
 
 import (
-	"x_admin/app/controller/admin_ctl/systemController"
+	"x_admin/app/controller/admin_ctl/system_controller"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 
 // initLoginRoute 登录路由（无需认证）
 func initLoginRoute(rg *gin.RouterGroup) {
-	handleLogin := systemController.LoginHandler{}
+	handleLogin := system_controller.LoginHandler{}
 	loginRg := rg.Group("/system")
 	loginRg.POST("/login", handleLogin.Login)
 	loginRg.POST("/logout", handleLogin.Logout)
@@ -17,7 +17,7 @@ func initLoginRoute(rg *gin.RouterGroup) {
 
 // initAdminRoute 管理员路由（部分接口仅登录即可，其余需权限认证）
 func initAdminRoute(rg *gin.RouterGroup) {
-	handleAdmin := systemController.AdminHandler{}
+	handleAdmin := system_controller.AdminHandler{}
 
 	notAuthAdmin := rg.Group("/system", middleware.LoginAuth())
 	notAuthAdmin.GET("/admin/self", handleAdmin.Self)
@@ -38,7 +38,7 @@ func initAdminRoute(rg *gin.RouterGroup) {
 
 // initMenuRoute 菜单路由（route 接口仅需登录）
 func initMenuRoute(rg *gin.RouterGroup) {
-	handleMenu := systemController.MenuHandler{}
+	handleMenu := system_controller.MenuHandler{}
 
 	notAuthMenu := rg.Group("/system", middleware.LoginAuth())
 	notAuthMenu.GET("/menu/route", handleMenu.Route)
@@ -53,7 +53,7 @@ func initMenuRoute(rg *gin.RouterGroup) {
 
 // initPostRoute 岗位路由（all 接口仅需登录）
 func initPostRoute(rg *gin.RouterGroup) {
-	handlePost := systemController.PostHandler{}
+	handlePost := system_controller.PostHandler{}
 
 	notAuthPost := rg.Group("/system", middleware.LoginAuth())
 	notAuthPost.GET("/post/all", handlePost.All)
@@ -68,7 +68,7 @@ func initPostRoute(rg *gin.RouterGroup) {
 
 // initDeptRoute 部门路由（list 接口仅需登录）
 func initDeptRoute(rg *gin.RouterGroup) {
-	handleDept := systemController.DeptHandler{}
+	handleDept := system_controller.DeptHandler{}
 
 	notAuthDept := rg.Group("/system", middleware.LoginAuth())
 	notAuthDept.GET("/dept/list", handleDept.List)
@@ -83,7 +83,7 @@ func initDeptRoute(rg *gin.RouterGroup) {
 
 // initRoleRoute 角色路由（all 接口仅需登录）
 func initRoleRoute(rg *gin.RouterGroup) {
-	handleRole := systemController.RoleHandler{}
+	handleRole := system_controller.RoleHandler{}
 
 	notAuthRole := rg.Group("/system", middleware.LoginAuth())
 	notAuthRole.GET("/role/all", handleRole.All)
@@ -98,7 +98,7 @@ func initRoleRoute(rg *gin.RouterGroup) {
 
 // initLogRoute 日志路由
 func initLogRoute(rg *gin.RouterGroup) {
-	handleLog := systemController.LogHandler{}
+	handleLog := system_controller.LogHandler{}
 	rgLog := rg.Group("/system", middleware.PermAuth())
 	rgLog.GET("/log/operate", handleLog.Operate)
 	rgLog.GET("/log/login", handleLog.Login)

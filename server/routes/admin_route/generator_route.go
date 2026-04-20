@@ -1,7 +1,7 @@
-package admin_route
+﻿package admin_route
 
 import (
-	"x_admin/app/controller/admin_ctl/generatorController"
+	"x_admin/app/controller/admin_ctl/generator_controller"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 
 // GeneratorRoute 代码生成器模块路由
 func GeneratorRoute(rg *gin.RouterGroup) {
-	handle := generatorController.GenHandler{}
+	handle := generator_controller.GenHandler{}
 
 	rg = rg.Group("/gen", middleware.PermAuth())
 	rg.GET("/db", handle.DbTables)

@@ -1,7 +1,7 @@
-package admin_route
+﻿package admin_route
 
 import (
-	"x_admin/app/controller/admin_ctl/monitorController"
+	"x_admin/app/controller/admin_ctl/monitor_controller"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -11,14 +11,14 @@ import (
 func MonitorRoute(rg *gin.RouterGroup) {
 
 	// 服务端监控 + 缓存监控
-	handleMonitor := monitorController.MonitorHandler{}
+	handleMonitor := monitor_controller.MonitorHandler{}
 	monitorRg := rg.Group("/monitor", middleware.PermAuth())
 	monitorRg.GET("/cache", handleMonitor.Cache)
 	monitorRg.GET("/server", handleMonitor.Server)
 
 }
 func MonitorClientRoute(rg *gin.RouterGroup) {
-	handle := monitorController.MonitorClientHandler{}
+	handle := monitor_controller.MonitorClientHandler{}
 	rg.GET("/monitor_client/add", middleware.RecordLog("监控-客户端信息新增"), handle.Add)
 
 	r := rg.Group("/", middleware.PermAuth())
@@ -37,7 +37,7 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 }
 
 func MonitorErrorRoute(rg *gin.RouterGroup) {
-	handle := monitorController.MonitorErrorHandler{}
+	handle := monitor_controller.MonitorErrorHandler{}
 	rg.GET("/monitor_error/add", handle.Add)
 
 	r := rg.Group("/", middleware.PermAuth())
@@ -53,7 +53,7 @@ func MonitorErrorRoute(rg *gin.RouterGroup) {
 }
 
 func MonitorProjectRoute(rg *gin.RouterGroup) {
-	handle := monitorController.MonitorProjectHandler{}
+	handle := monitor_controller.MonitorProjectHandler{}
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/monitor_project/list", handle.List)

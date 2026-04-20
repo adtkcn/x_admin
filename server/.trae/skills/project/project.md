@@ -58,12 +58,12 @@ server/
 │   │   ├── systemService/        # 系统管理服务
 │   │   └── user_protocol_service.go
 │   ├── schema/                   # 请求与响应结构体定义 (DTO)
-│   │   ├── commonSchema/
-│   │   ├── flowSchema/
-│   │   ├── generatorSchema/
-│   │   ├── monitorSchema/
-│   │   ├── settingSchema/
-│   │   ├── systemSchema/
+│   │   ├── common_schema/
+│   │   ├── flow_schema/
+│   │   ├── generator_schema/
+│   │   ├── monitor_schema/
+│   │   ├── setting_schema/
+│   │   ├── system_schema/
 │   │   ├── system_corn_schema.go
 │   │   └── user_protocol_schema.go
 │   ├── model/                    # 数据库模型层 (Entity)

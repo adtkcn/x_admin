@@ -1,9 +1,9 @@
-package routes
+﻿package routes
 
 import (
 	"fmt"
 	"x_admin/app/controller"
-	"x_admin/app/controller/admin_ctl/commonController"
+	"x_admin/app/controller/admin_ctl/common_controller"
 	"x_admin/app/middleware"
 	"x_admin/config"
 	"x_admin/core/response"
@@ -79,6 +79,6 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	admin_route.RegisterRoute(api)
 
 	// /api/common/captcha 验证码
-	commonController.CaptchaRoute(api)
+	common_controller.CaptchaRoute(api)
 
 }

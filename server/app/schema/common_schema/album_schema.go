@@ -1,0 +1,100 @@
+﻿package common_schema
+
+import "github.com/adtkcn/x_null"
+
+type CommonUploadImageReq struct {
+	Cid string `form:"cid"` // 主键
+}
+
+// CommonAlbumListReq 相册文件列表参数
+type CommonAlbumListReq struct {
+	Cid  string   `form:"cid"`   // 类目ID
+	Name string   `form:"name"`  // 文件名称
+	Ext  []string `form:"ext[]"` // 文件扩展
+
+}
+
+// CommonAlbumRenameReq 相册文件重命名参数
+type CommonAlbumRenameReq struct {
+	ID   string `form:"id"`                                   // 主键
+	Name string `form:"name" binding:"required,min=1,max=30"` // 文件名称
+}
+
+// CommonAlbumMoveReq 相册文件移动参数
+type CommonAlbumMoveReq struct {
+	Ids []string `form:"ids" binding:"required"` // 主键
+	Cid string   `form:"cid"`                    // 类目ID
+}
+
+// CommonAlbumAddReq 相册文件新增参数
+type CommonAlbumAddReq struct {
+	Cid     string `form:"cid"`      // 类目ID
+	AdminId string `form:"admin_id"` // 管理ID
+	Name    string `form:"name"`     // 文件名称
+	Uri     string `form:"uri"`      // 文件路径
+	Ext     string `form:"ext"`      // 文件扩展
+	Size    int64  `form:"size"`     // 文件大小
+	Hash    string `form:"hash"`
+}
+
+// CommonAlbumDelReq 相册文件删除参数
+type CommonAlbumDelReq struct {
+	Ids []string `form:"ids" binding:"required"` // 主键
+}
+
+// CommonCateListReq 相册分类列表参数
+type CommonCateListReq struct {
+	Name string `form:"name"` // 分类名称
+}
+
+// CommonCateAddReq 相册分类新增参数
+type CommonCateAddReq struct {
+	Pid  string `form:"pid" binding:"gte=0"`                  // 父级ID
+	Name string `form:"name" binding:"required,min=1,max=30"` // 分类名称
+}
+
+// CommonCateRenameReq 相册分类重命名参数
+type CommonCateRenameReq struct {
+	ID   string `form:"id" binding:"required,gt=0"`           // 主键
+	Name string `form:"name" binding:"required,min=1,max=30"` // 分类名称
+}
+
+// CommonCateDelReq 相册分类删除参数
+type CommonCateDelReq struct {
+	ID string `form:"id" binding:"required,gt=0"` // 主键
+}
+
+// CommonUploadFileResp 上传图片返回信息
+type CommonUploadFileResp struct {
+	ID      string `json:"id" structs:"id"`             // 主键
+	Cid     string `json:"cid" structs:"cid"`           // 类目ID
+	AdminId string `json:"admin_id" structs:"admin_id"` // 管理ID
+	Uid     uint   `json:"uid" structs:"uid"`           // 用户ID
+	Name    string `json:"name" structs:"name"`         // 文件名称
+	Uri     string `json:"url" structs:"url"`           // 文件路径
+	Path    string `json:"path" structs:"path"`         // 访问地址
+	Ext     string `json:"ext" structs:"ext"`           // 文件扩展
+	Size    int64  `json:"size" structs:"size"`         // 文件大小
+}
+
+// CommonAlbumListResp 相册文件列表返回信息
+type CommonAlbumListResp struct {
+	ID         string      `json:"id" structs:"id"`                 // 主键
+	Cid        string      `json:"cid" structs:"cid"`               // 所属类目
+	Name       string      `json:"name" structs:"name"`             // 文件名称
+	Path       string      `json:"path" structs:"path"`             // 相对路径
+	Uri        string      `json:"uri" structs:"uri"`               // 文件路径
+	Ext        string      `json:"ext" structs:"ext"`               // 文件扩展
+	Size       string      `json:"size" structs:"size"`             // 文件大小
+	CreateTime x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime x_null.Time `json:"updateTime" structs:"updateTime"` // 更新时间
+}
+
+// CommonCateListResp 相册分类列表返回信息
+type CommonCateListResp struct {
+	ID         string      `json:"id" structs:"id"`                 // 主键
+	Pid        string      `json:"pid" structs:"pid"`               // 父级ID
+	Name       string      `json:"name" structs:"name"`             // 分类名称
+	CreateTime x_null.Time `json:"createTime" structs:"createTime"` // 创建时间
+	UpdateTime x_null.Time `json:"updateTime" structs:"updateTime"` // 更新时间
+}

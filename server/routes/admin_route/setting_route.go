@@ -1,7 +1,7 @@
-package admin_route
+﻿package admin_route
 
 import (
-	"x_admin/app/controller/admin_ctl/settingController"
+	"x_admin/app/controller/admin_ctl/setting_controller"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 
 // initCopyrightRoute 版权设置路由
 func initCopyrightRoute(rg *gin.RouterGroup) {
-	handleCopyright := settingController.CopyrightHandler{}
+	handleCopyright := setting_controller.CopyrightHandler{}
 	copyrightRg := rg.Group("/setting")
 	copyrightRg.GET("/copyright/detail", handleCopyright.Detail)
 	copyrightRg.POST("/copyright/save", handleCopyright.Save)
@@ -17,7 +17,7 @@ func initCopyrightRoute(rg *gin.RouterGroup) {
 
 // initDictDataRoute 字典数据路由（all 接口仅需登录）
 func initDictDataRoute(rg *gin.RouterGroup) {
-	handleDictData := settingController.DictDataHandler{}
+	handleDictData := setting_controller.DictDataHandler{}
 
 	notAuthDictData := rg.Group("/setting", middleware.LoginAuth())
 	notAuthDictData.GET("/dict/data/all", handleDictData.All)
@@ -31,7 +31,7 @@ func initDictDataRoute(rg *gin.RouterGroup) {
 
 // initDictTypeRoute 字典类型路由（all 接口仅需登录）
 func initDictTypeRoute(rg *gin.RouterGroup) {
-	handleDictType := settingController.DictTypeHandler{}
+	handleDictType := setting_controller.DictTypeHandler{}
 
 	notAuthDictType := rg.Group("/setting", middleware.LoginAuth())
 	notAuthDictType.GET("/dict/type/all", handleDictType.All)
@@ -46,7 +46,7 @@ func initDictTypeRoute(rg *gin.RouterGroup) {
 
 // initWebsiteRoute 网站设置路由
 func initWebsiteRoute(rg *gin.RouterGroup) {
-	handleWebsite := settingController.WebsiteHandler{}
+	handleWebsite := setting_controller.WebsiteHandler{}
 	websiteRg := rg.Group("/setting", middleware.PermAuth())
 	websiteRg.GET("/website/detail", handleWebsite.Detail)
 	websiteRg.POST("/website/save", handleWebsite.Save)

@@ -1,0 +1,88 @@
+﻿package monitor_schema
+
+import "github.com/adtkcn/x_null"
+
+// MonitorClientListReq 监控-客户端信息列表参数
+type MonitorClientListReq struct {
+	ProjectKey *string // 项目key
+	ClientId   *string // sdk生成的客户端id
+	// UserId     *string // 用户id
+	Os      *string // 系统
+	Browser *string // 浏览器
+
+	// Country  *string // 国家
+	// Province *string // 省份
+	// City     *string // 城市
+	// Operator *string // 电信运营商
+	// Ip       *string // ip
+
+	Ua              *string // ua记录
+	CreateTimeStart *string // 开始创建时间
+	CreateTimeEnd   *string // 结束创建时间
+}
+
+// MonitorClientAddReq 监控-客户端信息新增参数
+type MonitorClientAddReq struct {
+	ProjectKey *string // 项目key
+	ClientId   *string // sdk生成的客户端id
+	// UserId     *string // 用户id
+	Os      *string // 系统
+	Browser *string // 浏览器
+	// Country    *string // 国家
+	// Province   *string // 省份
+	// City       *string // 城市
+	// Operator   *string // 电信运营商
+	// Ip         *string // ip
+	Ua *string // ua记录
+
+}
+
+// MonitorClientEditReq 监控-客户端信息编辑参数
+type MonitorClientEditReq struct {
+	Id         string  // uuid
+	ProjectKey *string // 项目key
+	ClientId   *string // sdk生成的客户端id
+	// UserId     *string // 用户id
+	Os      *string // 系统
+	Browser *string // 浏览器
+	// Country    *string // 国家
+	// Province   *string // 省份
+	// City       *string // 城市
+	// Operator   *string // 电信运营商
+	// Ip         *string // ip
+	Ua *string // ua记录
+}
+
+// MonitorClientDetailReq 监控-客户端信息详情参数
+type MonitorClientDetailReq struct {
+	Id string // uuid
+}
+
+// MonitorClientDelReq 监控-客户端信息删除参数
+type MonitorClientDelReq struct {
+	Id string // uuid
+}
+
+// MonitorClientDelReq 监控-客户端信息批量删除参数
+type MonitorClientDelBatchReq struct {
+	Ids string
+}
+
+// MonitorClientResp 监控-客户端信息返回信息
+type MonitorClientResp struct {
+	Id         string       // uuid
+	ProjectKey string       // 项目key
+	ClientId   string       // sdk生成的客户端id
+	UserId     string       // 用户id
+	Os         string       // 系统
+	Browser    string       // 浏览器
+	Country    string       // 国家
+	Province   string       // 省份
+	City       string       // 城市
+	Operator   string       // 电信运营商
+	Ip         string       // ip
+	Ua         string       // ua记录
+	CreateTime x_null.Time  `swaggertype:"string"`  // 创建时间
+	Width      x_null.Int64 `swaggertype:"integer"` // 屏幕
+	Height     x_null.Int64 `swaggertype:"integer"` // 屏幕高度
+}
