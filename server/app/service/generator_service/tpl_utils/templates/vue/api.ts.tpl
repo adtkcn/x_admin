@@ -65,13 +65,13 @@ export function {{{.ModuleName}}}_delete({{{toUpperCamelCase .PrimaryKey }}}: nu
 }
 // {{{.FunctionName}}}删除-批量
 export function {{{.ModuleName}}}_delete_batch(data: { Ids: string }) {
-    return request.post<null>({ url: '/{{{.ModuleName}}}/delBatch', data })
+    return request.post<null>({ url: '/{{{.ModuleName}}}/del_batch', data })
 }
 
 // {{{.FunctionName}}}导入
-export const {{{.ModuleName}}}_import_file = '/{{{.ModuleName}}}/importFile'
+export const {{{.ModuleName}}}_import_file = '/{{{.ModuleName}}}/import_file'
 
 // {{{.FunctionName}}}导出
 export function {{{.ModuleName}}}_export_file(params: type_{{{.ModuleName}}}_query) {
-    return (window.location.href =`${config.baseUrl}${config.urlPrefix}/{{{.ModuleName}}}/exportFile?token=${getToken()}&` + queryString.stringify(clearEmpty(params)))
+    return (window.location.href =`${config.baseUrl}${config.urlPrefix}/{{{.ModuleName}}}/export_file?token=${getToken()}&` + queryString.stringify(clearEmpty(params)))
 }

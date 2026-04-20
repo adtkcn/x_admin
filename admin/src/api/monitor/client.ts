@@ -80,15 +80,15 @@ export function monitor_client_delete(Id: number | string) {
 }
 // 监控-客户端信息删除-批量
 export function monitor_client_delete_batch(data: { Ids: string }) {
-    return request.post<null>({ url: '/monitor_client/delBatch', data })
+    return request.post<null>({ url: '/monitor_client/del_batch', data })
 }
 
 // 监控-客户端信息导入
-export const monitor_client_import_file = '/monitor_client/importFile'
+export const monitor_client_import_file = '/monitor_client/import_file'
 
 // 监控-客户端信息导出
 export function monitor_client_export_file(params: type_monitor_client_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/monitor_client/exportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/monitor_client/export_file?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

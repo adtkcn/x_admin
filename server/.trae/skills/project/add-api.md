@@ -96,7 +96,7 @@ func <ModelName>Route(rg *gin.RouterGroup) {
 
 ## 完整示例参考
 
-以下是一个标准 CRUD 接口的五件套文件清单（以 system_corn 为例,包含`list` / `listAll`/ `detail` / `add` / `edit` / `del`/ `delBatch` / `exportFile`/ `importFile`接口）:
+以下是一个标准 CRUD 接口的五件套文件清单（以 system_corn 为例,包含`list` / `listAll`/ `detail` / `add` / `edit` / `del`/ `del_batch` / `export_file`/ `import_file`接口）:
 
 ```
 app/model/system_corn.go

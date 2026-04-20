@@ -32,8 +32,8 @@ func initAdminRoute(rg *gin.RouterGroup) {
 	authAdmin.POST("/admin/edit", middleware.RecordLog("管理员编辑"), handleAdmin.Edit)
 	authAdmin.POST("/admin/del", middleware.RecordLog("管理员删除"), handleAdmin.Del)
 	authAdmin.POST("/admin/disable", middleware.RecordLog("管理员状态切换"), handleAdmin.Disable)
-	authAdmin.GET("/admin/exportFile", middleware.RecordLog("管理员导出"), handleAdmin.ExportFile)
-	authAdmin.POST("/admin/importFile", handleAdmin.ImportFile)
+	authAdmin.GET("/admin/export_file", middleware.RecordLog("管理员导出"), handleAdmin.ExportFile)
+	authAdmin.POST("/admin/import_file", handleAdmin.ImportFile)
 }
 
 // initMenuRoute 菜单路由（route 接口仅需登录）

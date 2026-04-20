@@ -30,10 +30,10 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 	// r.POST("/monitor_client/edit",middleware.RecordLog("监控-客户端信息编辑"), handle.Edit)
 
 	r.POST("/monitor_client/del", middleware.RecordLog("监控-客户端信息删除"), handle.Del)
-	r.POST("/monitor_client/delBatch", middleware.RecordLog("监控-客户端信息删除-批量"), handle.DelBatch)
+	r.POST("/monitor_client/del_batch", middleware.RecordLog("监控-客户端信息删除-批量"), handle.DelBatch)
 
-	r.GET("/monitor_client/exportFile", middleware.RecordLog("监控-客户端信息导出"), handle.ExportFile)
-	r.POST("/monitor_client/importFile", handle.ImportFile)
+	r.GET("/monitor_client/export_file", middleware.RecordLog("监控-客户端信息导出"), handle.ExportFile)
+	r.POST("/monitor_client/import_file", handle.ImportFile)
 }
 
 func MonitorErrorRoute(rg *gin.RouterGroup) {
@@ -46,10 +46,10 @@ func MonitorErrorRoute(rg *gin.RouterGroup) {
 	r.GET("/monitor_error/detail", handle.Detail)
 
 	r.POST("/monitor_error/del", middleware.RecordLog("监控-错误列删除"), handle.Del)
-	r.POST("/monitor_error/delBatch", middleware.RecordLog("监控-错误列删除-批量"), handle.DelBatch)
+	r.POST("/monitor_error/del_batch", middleware.RecordLog("监控-错误列删除-批量"), handle.DelBatch)
 
-	r.GET("/monitor_error/exportFile", middleware.RecordLog("监控-错误列导出"), handle.ExportFile)
-	r.POST("/monitor_error/importFile", handle.ImportFile)
+	r.GET("/monitor_error/export_file", middleware.RecordLog("监控-错误列导出"), handle.ExportFile)
+	r.POST("/monitor_error/import_file", handle.ImportFile)
 }
 
 func MonitorProjectRoute(rg *gin.RouterGroup) {
@@ -64,10 +64,10 @@ func MonitorProjectRoute(rg *gin.RouterGroup) {
 	r.POST("/monitor_project/edit", middleware.RecordLog("监控项目编辑"), handle.Edit)
 
 	r.POST("/monitor_project/del", middleware.RecordLog("监控项目删除"), handle.Del)
-	r.POST("/monitor_project/delBatch", middleware.RecordLog("监控项目删除-批量"), handle.DelBatch)
+	r.POST("/monitor_project/del_batch", middleware.RecordLog("监控项目删除-批量"), handle.DelBatch)
 
-	r.GET("/monitor_project/exportFile", middleware.RecordLog("监控项目导出"), handle.ExportFile)
-	r.POST("/monitor_project/importFile", handle.ImportFile)
+	r.GET("/monitor_project/export_file", middleware.RecordLog("监控项目导出"), handle.ExportFile)
+	r.POST("/monitor_project/import_file", handle.ImportFile)
 }
 
 func init() {

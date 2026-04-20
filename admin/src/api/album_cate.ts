@@ -64,11 +64,11 @@ export function album_cate_delete(id: number | string) {
 }
 
 // 相册分类导入
-export const album_cate_import_file = '/album_cate/importFile'
+export const album_cate_import_file = '/album_cate/import_file'
 
 // 相册分类导出
 export function album_cate_export_file(params: type_album_cate_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/album_cate/exportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/album_cate/export_file?token=${getToken()}&` +
         queryString.stringify(params))
 }

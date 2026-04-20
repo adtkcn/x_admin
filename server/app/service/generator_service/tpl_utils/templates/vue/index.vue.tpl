@@ -77,14 +77,14 @@
                         导入
                     </el-button>
                 </Upload>
-                <el-button v-perms="['admin:{{{ .ModuleName }}}:ExportFile']" type="primary" @click="exportFile">
+                <el-button v-perms="['admin:{{{ .ModuleName }}}:ExportFile']" type="primary" @click="export_file">
                     <template #icon>
                         <icon name="el-icon-Download" />
                     </template>
                     导出
                 </el-button>
                 <el-button
-                    v-perms="['admin:{{{ .ModuleName }}}:delBatch']"
+                    v-perms="['admin:{{{ .ModuleName }}}:del_batch']"
                     type="danger"
                     :disabled="!multipleSelection.length"
                     @click="deleteBatch"
@@ -299,7 +299,7 @@ const deleteBatch = async () => {
     } catch (error) {}
 }
 
-const exportFile = async () => {
+const export_file = async () => {
     try {
         await feedback.confirm('确定要导出？')
         await {{{.ModuleName}}}_export_file(queryParams)

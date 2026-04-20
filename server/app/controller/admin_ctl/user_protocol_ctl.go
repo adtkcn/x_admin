@@ -157,7 +157,7 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 // @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
-// @Router		/api/admin/user_protocol/delBatch [post]
+// @Router		/api/admin/user_protocol/del_batch [post]
 func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 	var delReq schema.UserProtocolDelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
@@ -186,7 +186,7 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 // @Param		UpdateTimeEnd	query		string				false	"更新时间"
 // @Success	200				{file}		string				"成功"
 // @Failure	500				{object}	response.Response	"失败"
-// @Router		/api/admin/user_protocol/exportFile [get]
+// @Router		/api/admin/user_protocol/export_file [get]
 func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 	var listReq schema.UserProtocolListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -211,7 +211,7 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 // @Param		token	header		string				true	"token"
 // @Param		file	formData	file				true	"导入文件"
 // @Success	200		{object}	response.Response	"成功"
-// @Router		/api/admin/user_protocol/importFile [post]
+// @Router		/api/admin/user_protocol/import_file [post]
 func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

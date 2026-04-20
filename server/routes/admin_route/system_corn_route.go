@@ -19,10 +19,10 @@ func SystemCornRoute(rg *gin.RouterGroup) {
 	r.POST("/system_corn/edit", middleware.RecordLog("定时任务编辑"), handle.Edit)
 
 	r.POST("/system_corn/del", middleware.RecordLog("定时任务删除"), handle.Del)
-	r.POST("/system_corn/delBatch", middleware.RecordLog("定时任务删除-批量"), handle.DelBatch)
+	r.POST("/system_corn/del_batch", middleware.RecordLog("定时任务删除-批量"), handle.DelBatch)
 
-	r.GET("/system_corn/exportFile", middleware.RecordLog("定时任务导出"), handle.ExportFile)
-	r.POST("/system_corn/importFile", handle.ImportFile)
+	r.GET("/system_corn/export_file", middleware.RecordLog("定时任务导出"), handle.ExportFile)
+	r.POST("/system_corn/import_file", handle.ImportFile)
 
 	r.GET("/system_corn/getTaskList", handle.GetTaskList)
 }

@@ -82,16 +82,16 @@ export function system_corn_delete(Id: number | string) {
 }
 // 定时任务删除-批量
 export function system_corn_delete_batch(data: { Ids: string }) {
-    return request.post<null>({ url: '/system_corn/delBatch', data })
+    return request.post<null>({ url: '/system_corn/del_batch', data })
 }
 
 // 定时任务导入
-export const system_corn_import_file = '/system_corn/importFile'
+export const system_corn_import_file = '/system_corn/import_file'
 
 // 定时任务导出
 export function system_corn_export_file(params: type_system_corn_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/system_corn/exportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/system_corn/export_file?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }
 

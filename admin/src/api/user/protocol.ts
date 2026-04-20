@@ -74,15 +74,15 @@ export function user_protocol_delete(Id: number | string) {
 }
 // 用户协议删除-批量
 export function user_protocol_delete_batch(data: { Ids: string }) {
-    return request.post<null>({ url: '/user_protocol/delBatch', data })
+    return request.post<null>({ url: '/user_protocol/del_batch', data })
 }
 
 // 用户协议导入
-export const user_protocol_import_file = '/user_protocol/importFile'
+export const user_protocol_import_file = '/user_protocol/import_file'
 
 // 用户协议导出
 export function user_protocol_export_file(params: type_user_protocol_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/user_protocol/exportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/user_protocol/export_file?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

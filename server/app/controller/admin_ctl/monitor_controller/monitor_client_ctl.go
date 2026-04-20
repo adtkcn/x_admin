@@ -157,7 +157,7 @@ func (hd *MonitorClientHandler) Del(c *gin.Context) {
 // @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
-// @Router		/api/admin/monitor_client/delBatch [post]
+// @Router		/api/admin/monitor_client/del_batch [post]
 func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 	var delReq monitor_schema.MonitorClientDelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
@@ -183,7 +183,7 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 // @Param		Ua				query	string	false	"ua记录"
 // @Param		CreateTimeStart	query	string	false	"创建时间"
 // @Param		CreateTimeEnd	query	string	false	"创建时间"
-// @Router		/api/admin/monitor_client/exportFile [get]
+// @Router		/api/admin/monitor_client/export_file [get]
 func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 	var listReq monitor_schema.MonitorClientListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -205,7 +205,7 @@ func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 // @Summary	监控-客户端信息导入
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Router		/api/admin/monitor_client/importFile [post]
+// @Router		/api/admin/monitor_client/import_file [post]
 func (hd *MonitorClientHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

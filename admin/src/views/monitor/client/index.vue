@@ -48,7 +48,7 @@
         <el-card class="border-none! mt-4" shadow="never">
             <div class="text-right">
                 <el-button
-                    v-perms="['admin:monitor_client:delBatch']"
+                    v-perms="['admin:monitor_client:del_batch']"
                     type="danger"
                     :disabled="!multipleSelection.length"
                     @click="deleteBatch"

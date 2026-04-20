@@ -73,15 +73,15 @@ export function monitor_project_delete(Id: number | string) {
 }
 // 监控项目删除-批量
 export function monitor_project_delete_batch(data: { Ids: string }) {
-    return request.post<null>({ url: '/monitor_project/delBatch', data })
+    return request.post<null>({ url: '/monitor_project/del_batch', data })
 }
 
 // 监控项目导入
-export const monitor_project_import_file = '/monitor_project/importFile'
+export const monitor_project_import_file = '/monitor_project/import_file'
 
 // 监控项目导出
 export function monitor_project_export_file(params: type_monitor_project_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/monitor_project/exportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/monitor_project/export_file?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

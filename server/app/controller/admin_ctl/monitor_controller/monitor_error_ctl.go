@@ -164,7 +164,7 @@ func (hd *MonitorErrorHandler) Del(c *gin.Context) {
 // @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
-// @Router		/api/admin/monitor_error/delBatch [post]
+// @Router		/api/admin/monitor_error/del_batch [post]
 func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 	var delReq MonitorErrorDelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
@@ -191,7 +191,7 @@ func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 // @Param		Md5				query	string	false	"md5"
 // @Param		CreateTimeStart	query	string	false	"创建时间"
 // @Param		CreateTimeEnd	query	string	false	"创建时间"
-// @Router		/api/admin/monitor_error/exportFile [get]
+// @Router		/api/admin/monitor_error/export_file [get]
 func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorErrorListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -213,7 +213,7 @@ func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 // @Summary	监控-错误列导入
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Router		/api/admin/monitor_error/importFile [post]
+// @Router		/api/admin/monitor_error/import_file [post]
 func (hd *MonitorErrorHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {

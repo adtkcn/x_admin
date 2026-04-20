@@ -106,11 +106,11 @@ export function adminListByDeptId(params: { deptId: string }) {
 }
 
 // 导入
-export const adminImportFile = '/system/admin/importFile'
+export const adminImportFile = '/system/admin/import_file'
 
 // 导出
 export function adminExportFile(params: type_system_admin_list) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/system/admin/exportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/system/admin/export_file?token=${getToken()}&` +
         queryString.stringify(params))
 }

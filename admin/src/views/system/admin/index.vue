@@ -49,7 +49,7 @@
                     </el-button>
                 </Upload>
 
-                <el-button type="primary" @click="exportFile">
+                <el-button type="primary" @click="export_file">
                     <template #icon>
                         <icon name="el-icon-Download" />
                     </template>
@@ -169,7 +169,7 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const exportFile = async () => {
+const export_file = async () => {
     await feedback.confirm('确定要导出？')
     await adminExportFile(formData)
 }

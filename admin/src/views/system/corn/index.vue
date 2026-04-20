@@ -69,7 +69,7 @@
                 <el-button
                     v-perms="['admin:system_corn:ExportFile']"
                     type="primary"
-                    @click="exportFile"
+                    @click="export_file"
                 >
                     <template #icon>
                         <icon name="el-icon-Download" />
@@ -77,7 +77,7 @@
                     导出
                 </el-button>
                 <el-button
-                    v-perms="['admin:system_corn:delBatch']"
+                    v-perms="['admin:system_corn:del_batch']"
                     type="danger"
                     :disabled="!multipleSelection.length"
                     @click="deleteBatch"
@@ -232,7 +232,7 @@ const deleteBatch = async () => {
     } catch (error) {}
 }
 
-const exportFile = async () => {
+const export_file = async () => {
     try {
         await feedback.confirm('确定要导出？')
         await system_corn_export_file(queryParams)

@@ -1354,7 +1354,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_client/delBatch": {
+        "/api/admin/monitor_client/del_batch": {
             "post": {
                 "produces": [
                     "application/json"
@@ -1436,7 +1436,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_client/exportFile": {
+        "/api/admin/monitor_client/export_file": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1499,7 +1499,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/admin/monitor_client/importFile": {
+        "/api/admin/monitor_client/import_file": {
             "post": {
                 "produces": [
                     "application/json"
@@ -1812,7 +1812,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_error/delBatch": {
+        "/api/admin/monitor_error/del_batch": {
             "post": {
                 "produces": [
                     "application/json"
@@ -1894,7 +1894,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_error/exportFile": {
+        "/api/admin/monitor_error/export_file": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1963,7 +1963,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/admin/monitor_error/importFile": {
+        "/api/admin/monitor_error/import_file": {
             "post": {
                 "produces": [
                     "application/json"
@@ -2272,7 +2272,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_project/delBatch": {
+        "/api/admin/monitor_project/del_batch": {
             "post": {
                 "produces": [
                     "application/json"
@@ -2422,7 +2422,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_project/exportFile": {
+        "/api/admin/monitor_project/export_file": {
             "get": {
                 "produces": [
                     "application/json"
@@ -2491,7 +2491,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/admin/monitor_project/importFile": {
+        "/api/admin/monitor_project/import_file": {
             "post": {
                 "produces": [
                     "application/json"
@@ -2800,7 +2800,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/system_corn/delBatch": {
+        "/api/admin/system_corn/del_batch": {
             "post": {
                 "produces": [
                     "application/json"
@@ -2950,7 +2950,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/system_corn/exportFile": {
+        "/api/admin/system_corn/export_file": {
             "get": {
                 "produces": [
                     "application/octet-stream",
@@ -3067,7 +3067,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/system_corn/importFile": {
+        "/api/admin/system_corn/import_file": {
             "post": {
                 "produces": [
                     "application/json"
@@ -3410,7 +3410,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user_protocol/delBatch": {
+        "/api/admin/user_protocol/del_batch": {
             "post": {
                 "produces": [
                     "application/json"
@@ -3552,7 +3552,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user_protocol/exportFile": {
+        "/api/admin/user_protocol/export_file": {
             "get": {
                 "produces": [
                     "application/json"
@@ -3628,7 +3628,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user_protocol/importFile": {
+        "/api/admin/user_protocol/import_file": {
             "post": {
                 "produces": [
                     "application/json"

@@ -69,15 +69,15 @@ export function monitor_error_delete(Id: number | string) {
 }
 // 监控-错误列删除-批量
 export function monitor_error_delete_batch(data: { Ids: string }) {
-    return request.post<null>({ url: '/monitor_error/delBatch', data })
+    return request.post<null>({ url: '/monitor_error/del_batch', data })
 }
 
 // 监控-错误列导入
-export const monitor_error_import_file = '/monitor_error/importFile'
+export const monitor_error_import_file = '/monitor_error/import_file'
 
 // 监控-错误列导出
 export function monitor_error_export_file(params: type_monitor_error_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/monitor_error/exportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/monitor_error/export_file?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }

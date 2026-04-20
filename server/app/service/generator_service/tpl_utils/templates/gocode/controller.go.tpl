@@ -167,7 +167,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
 // @Param		token		header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200			{object}	response.Response	"成功"
-// @Router		/api/admin/{{{ .ModuleName }}}/delBatch [post]
+// @Router		/api/admin/{{{ .ModuleName }}}/del_batch [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context) {
 	var delReq schema.{{{ toUpperCamelCase .EntityName }}}DelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
@@ -200,7 +200,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 {{{- end }}}
 //  @Success	200		{file} string	"成功"
 //  @Failure	500 	{object}	response.Response	"失败"
-//	@Router		/api/admin/{{{ .ModuleName }}}/exportFile [get]
+//	@Router		/api/admin/{{{ .ModuleName }}}/export_file [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Context) {
 	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -225,7 +225,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Contex
 //  @Param		token		header		string				true	"token"
 //  @Param		file	formData	file	true	"导入文件"
 //  @Success	200		{object}	response.Response	"成功"
-//	@Router		/api/admin/{{{ .ModuleName }}}/importFile [post]
+//	@Router		/api/admin/{{{ .ModuleName }}}/import_file [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
