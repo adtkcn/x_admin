@@ -1,4 +1,4 @@
-﻿package setting_service
+package setting_service
 
 import (
 	"x_admin/app/schema/setting_schema"

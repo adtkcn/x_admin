@@ -1,4 +1,4 @@
-﻿package setting_controller
+package setting_controller
 
 import (
 	"x_admin/app/schema/setting_schema"

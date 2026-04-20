@@ -1,4 +1,4 @@
-﻿package generator_schema
+package generator_schema
 
 import (
 	"time"

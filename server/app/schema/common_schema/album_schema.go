@@ -1,4 +1,4 @@
-﻿package common_schema
+package common_schema
 
 import "github.com/adtkcn/x_null"
 

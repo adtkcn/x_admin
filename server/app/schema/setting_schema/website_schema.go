@@ -1,4 +1,4 @@
-﻿package setting_schema
+package setting_schema
 
 // SettingWebsiteReq 保存网站信息参数
 type SettingWebsiteReq struct {

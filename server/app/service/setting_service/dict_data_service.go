@@ -1,4 +1,4 @@
-﻿package setting_service
+package setting_service
 
 import (
 	"x_admin/app/model/setting_model"

@@ -1,4 +1,4 @@
-﻿package schema
+package schema
 
 import (
 	"x_admin/app/schema/system_schema"
@@ -44,12 +44,12 @@ type UserProtocolDelBatchReq struct {
 // UserProtocolResp 用户协议返回信息
 type UserProtocolResp struct {
 	UserProtocolPrimarykey
-	Tag           x_null.String                          `swaggertype:"string"` // 标识
-	Version       x_null.Int64                           `swaggertype:"number"` // 版本
-	Title         x_null.String                          `swaggertype:"string"` // 标题
-	Content       x_null.String                          `swaggertype:"string"` // 协议内容
-	CreateTime    x_null.Time                            `swaggertype:"string"` // 创建时间
-	UpdateTime    x_null.Time                            `swaggertype:"string"` // 更新时间
-	CreatedBy     x_null.String                          `swaggertype:"string"` // 创建人id
+	Tag           x_null.String                           `swaggertype:"string"` // 标识
+	Version       x_null.Int64                            `swaggertype:"number"` // 版本
+	Title         x_null.String                           `swaggertype:"string"` // 标题
+	Content       x_null.String                           `swaggertype:"string"` // 协议内容
+	CreateTime    x_null.Time                             `swaggertype:"string"` // 创建时间
+	UpdateTime    x_null.Time                             `swaggertype:"string"` // 更新时间
+	CreatedBy     x_null.String                           `swaggertype:"string"` // 创建人id
 	CreatedByUser system_schema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
 }

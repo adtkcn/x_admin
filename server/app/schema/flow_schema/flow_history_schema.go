@@ -1,4 +1,4 @@
-﻿package flow_schema
+package flow_schema
 
 import "github.com/adtkcn/x_null"
 

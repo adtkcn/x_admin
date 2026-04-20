@@ -1,4 +1,4 @@
-﻿package common_controller
+package common_controller
 
 import (
 	"x_admin/app/service/common_service"

@@ -1,4 +1,4 @@
-﻿package system_controller
+package system_controller
 
 import (
 	"net/http"

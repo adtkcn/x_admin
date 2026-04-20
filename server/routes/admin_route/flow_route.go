@@ -1,4 +1,4 @@
-﻿package admin_route
+package admin_route
 
 import (
 	"x_admin/app/controller/admin_ctl/flow_controller"

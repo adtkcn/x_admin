@@ -1,4 +1,4 @@
-﻿package flow_service
+package flow_service
 
 import (
 	"errors"

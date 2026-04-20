@@ -1,4 +1,4 @@
-﻿package generator_controller
+package generator_controller
 
 import (
 	"x_admin/app/schema/generator_schema"

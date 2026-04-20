@@ -1,4 +1,4 @@
-﻿package system_controller
+package system_controller
 
 import (
 	"x_admin/app/schema/common_schema"

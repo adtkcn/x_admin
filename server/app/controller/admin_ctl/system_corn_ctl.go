@@ -1,4 +1,4 @@
-﻿package admin_ctl
+package admin_ctl
 
 import (
 	"fmt"

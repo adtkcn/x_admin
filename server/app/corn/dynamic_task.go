@@ -1,4 +1,4 @@
-﻿package corn
+package corn
 
 import (
 	"x_admin/app/schema"

@@ -1,4 +1,4 @@
-﻿package system_service
+package system_service
 
 import (
 	"x_admin/app/model/system_model"

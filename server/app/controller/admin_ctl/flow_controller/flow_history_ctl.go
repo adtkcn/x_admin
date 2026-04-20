@@ -1,4 +1,4 @@
-﻿package flow_controller
+package flow_controller
 
 import (
 	"fmt"

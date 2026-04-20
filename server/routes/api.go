@@ -1,4 +1,4 @@
-﻿package routes
+package routes
 
 import (
 	"fmt"

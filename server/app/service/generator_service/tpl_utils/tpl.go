@@ -1,4 +1,4 @@
-﻿package tpl_utils
+package tpl_utils
 
 import (
 	"archive/zip"

@@ -1,4 +1,4 @@
-﻿package common_schema
+package common_schema
 
 type CaptchaGetParams struct {
 	CaptchaType string `json:"captchaType"`

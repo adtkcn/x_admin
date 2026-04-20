@@ -34,9 +34,9 @@ func initServer(router *gin.Engine) *http.Server {
 //	@contact.url	http://x.adtk.cn
 //	@contact.email	x@adtk.cn
 
-// @license.name				MIT License
-// @license.url				https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
-// @BasePath					/
+// @license.name	MIT License
+// @license.url	https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
+// @BasePath		/
 func main() {
 	plugin.RegisterNullValidator()
 	// 刷新日志缓冲

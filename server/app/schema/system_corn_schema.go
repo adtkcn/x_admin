@@ -1,4 +1,4 @@
-﻿package schema
+package schema
 
 import (
 	"x_admin/app/schema/system_schema"
@@ -48,13 +48,13 @@ type SystemCornDelBatchReq struct {
 
 // SystemCornResp 定时任务返回信息
 type SystemCornResp struct {
-	Id            string                                 `swaggertype:"string"` //
-	TaskName      x_null.String                          `swaggertype:"string"` // 任务名称
-	TaskCode      x_null.String                          `swaggertype:"string"` // 任务编码
-	CornExpr      x_null.String                          `swaggertype:"string"` // corn表达式
-	Status        x_null.Int64                           `swaggertype:"number"` // 状态
-	CreatedBy     x_null.String                          `swaggertype:"string"` // 创建人
+	Id            string                                  `swaggertype:"string"` //
+	TaskName      x_null.String                           `swaggertype:"string"` // 任务名称
+	TaskCode      x_null.String                           `swaggertype:"string"` // 任务编码
+	CornExpr      x_null.String                           `swaggertype:"string"` // corn表达式
+	Status        x_null.Int64                            `swaggertype:"number"` // 状态
+	CreatedBy     x_null.String                           `swaggertype:"string"` // 创建人
 	CreatedByUser system_schema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
-	CreateTime    x_null.Time                            `swaggertype:"string"` // 创建时间
-	UpdateTime    x_null.Time                            `swaggertype:"string"` // 更新时间
+	CreateTime    x_null.Time                             `swaggertype:"string"` // 创建时间
+	UpdateTime    x_null.Time                             `swaggertype:"string"` // 更新时间
 }

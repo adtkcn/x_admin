@@ -1,4 +1,4 @@
-﻿package monitor_schema
+package monitor_schema
 
 import "github.com/adtkcn/x_null"
 

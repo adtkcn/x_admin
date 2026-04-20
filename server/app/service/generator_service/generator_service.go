@@ -1,4 +1,4 @@
-﻿package generator_service
+package generator_service
 
 import (
 	"archive/zip"

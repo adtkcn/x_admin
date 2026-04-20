@@ -1,4 +1,4 @@
-﻿package system_schema
+package system_schema
 
 import "github.com/adtkcn/x_null"
 

@@ -1,4 +1,4 @@
-﻿package system_service
+package system_service
 
 import (
 	"fmt"

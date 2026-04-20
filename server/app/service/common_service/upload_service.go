@@ -1,4 +1,4 @@
-﻿package common_service
+package common_service
 
 import (
 	"fmt"

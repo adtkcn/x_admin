@@ -1,4 +1,4 @@
-﻿package setting_schema
+package setting_schema
 
 import "github.com/adtkcn/x_null"
 

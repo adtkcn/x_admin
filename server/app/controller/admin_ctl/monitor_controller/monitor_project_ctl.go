@@ -1,4 +1,4 @@
-﻿package monitor_controller
+package monitor_controller
 
 import (
 	"net/http"

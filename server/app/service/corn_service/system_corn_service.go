@@ -1,4 +1,4 @@
-﻿package corn_service
+package corn_service
 
 import (
 	"errors"

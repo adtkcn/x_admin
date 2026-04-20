@@ -1,4 +1,4 @@
-﻿package monitor_service
+package monitor_service
 
 import (
 	"time"

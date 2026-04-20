@@ -1,4 +1,4 @@
-﻿package middleware
+package middleware
 
 import (
 	"strings"
