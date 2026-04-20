@@ -5,7 +5,7 @@ interface Options {
     page?: number
     size?: number
     fetchFun: (_arg: any) => Promise<any>
-    params?: Record<any, any>
+    params?: Record<string, any>
     firstLoading?: boolean
 }
 
@@ -23,7 +23,7 @@ interface Options {
 export function usePaging<T>(options: Options) {
     const { page = 1, size = 10, fetchFun, params = {}, firstLoading = false } = options
     // 记录分页初始参数
-    const paramsInit: Record<any, any> = Object.assign({}, toRaw(params))
+    const paramsInit: Record<string, any> = Object.assign({}, toRaw(params))
     // 分页数据
     const pager = reactive({
         page,

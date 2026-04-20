@@ -196,7 +196,14 @@
 <script lang="ts" setup>
 import { ref, computed, shallowRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
-import { menuLists, menuEdit, menuAdd, menuDetail } from '@/api/perms/menu'
+import {
+    menuLists,
+    menuEdit,
+    menuAdd,
+    menuDetail,
+    type type_system_menu_edit,
+    type type_system_menu_resp
+} from '@/api/perms/menu'
 import { getApiList } from '@/api/setting/website'
 import { getModulesKey } from '@/router'
 import { MenuEnum } from '@/enums/appEnums'
@@ -211,7 +218,7 @@ const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑菜单' : '新增菜单'
 })
-const permissionOptions = ref([])
+const permissionOptions = ref<{ value: string; label: string }[]>([])
 
 const componentsOptions = ref(getModulesKey())
 const querySearch = (queryString: string, cb: any) => {
@@ -223,34 +230,20 @@ const querySearch = (queryString: string, cb: any) => {
     cb(results.map((item) => ({ value: item })))
 }
 
-const formData = reactive({
+const formData = reactive<type_system_menu_edit>({
     id: '',
-    //父级id
     pid: '0',
-    //类型
     menuType: MenuEnum.CATALOGUE,
-    //图标
     menuIcon: '',
-    //名称
     menuName: '',
-    //排序号
     menuSort: 0,
-    // 路由路径
     paths: '',
-    //权限链接
     perms: '',
-    // permsArr: [],
-    //前端组件
     component: '',
-    //选中路径
     selected: '',
-    //路由参数
     params: '',
-    //是否缓存 0=否， 1=是
     isCache: 1,
-    //是否显示 0=否， 1=是
     isShow: 1,
-    //是否禁用 0=否， 1=是
     isDisable: 0
 })
 
@@ -284,11 +277,11 @@ const formRules = {
     //     }
     // ]
 }
-const menuOptions = ref<any[]>([])
+const menuOptions = ref<type_system_menu_resp[]>([])
 
 const getMenu = async () => {
-    const data: any = await menuLists()
-    const menu: any = { id: '0', menuName: '顶级', children: [] }
+    const data = await menuLists()
+    const menu: type_system_menu_resp = { id: '', menuName: '顶级', children: [] } as any
     menu.children = arrayToTree(
         data.filter((item) => item.menuType != MenuEnum.BUTTON),
         '0'
@@ -296,8 +289,8 @@ const getMenu = async () => {
     menuOptions.value.push(menu)
 }
 function getApiListFn() {
-    getApiList().then((res: any) => {
-        const arr = []
+    getApiList().then((res: string[]) => {
+        const arr: { value: string; label: string }[] = []
         res.forEach((item: string) => {
             if (item.indexOf('/api/admin/') == 0) {
                 const per = item.replace(/\/api\//, '').replace(/\//g, ':')
@@ -307,7 +300,6 @@ function getApiListFn() {
                 })
             }
         })
-        // console.log(pathsToTree(arr))
         permissionOptions.value = arr.sort()
     })
 }
@@ -335,15 +327,18 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = (data: Record<any, any>) => {
+const setFormData = (data: Partial<type_system_menu_edit>) => {
     for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
+        if (
+            data[key as keyof type_system_menu_edit] != null &&
+            data[key as keyof type_system_menu_edit] != undefined
+        ) {
             formData[key] = data[key]
         }
     }
 }
 
-const getDetail = async (row: Record<string, any>) => {
+const getDetail = async (row: type_system_menu_resp) => {
     const data = await menuDetail({
         id: row.id
     })

@@ -75,7 +75,7 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, nextTick } from 'vue'
-import { roleLists, roleDelete } from '@/api/perms/role'
+import { roleLists, roleDelete, type type_system_role_resp } from '@/api/perms/role'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -97,14 +97,14 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_system_role_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.setFormData(data)
 }
 
-const handleAuth = async (data: any) => {
+const handleAuth = async (data: type_system_role_resp) => {
     showAuth.value = true
     await nextTick()
     authRef.value?.open()
@@ -112,7 +112,7 @@ const handleAuth = async (data: any) => {
 }
 
 // 删除角色
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     await feedback.confirm('确定要删除？')
     await roleDelete({ id })
     feedback.msgSuccess('删除成功')

@@ -45,7 +45,12 @@
 import { ref, computed, reactive, shallowRef } from 'vue'
 import type { FormInstance } from 'element-plus'
 import Popup from '@/components/popup/index.vue'
-import { dictTypeAdd, dictTypeEdit } from '@/api/setting/dict'
+import {
+    dictTypeAdd,
+    dictTypeEdit,
+    type type_setting_dict_type_edit,
+    type type_setting_dict_type_resp
+} from '@/api/setting/dict'
 import feedback from '@/utils/feedback'
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
@@ -54,7 +59,8 @@ const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑字典类型' : '新增字典类型'
 })
-const formData = reactive({
+
+const formData = reactive<type_setting_dict_type_edit>({
     id: '',
     dictName: '',
     dictType: '',
@@ -96,12 +102,16 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = (data: Record<any, any>) => {
+const setFormData = (data: type_setting_dict_type_resp) => {
     for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            formData[key] = data[key]
+        // if (Object.hasOwnProperty.call(formData, key)) {
+        if (
+            data[key as keyof type_setting_dict_type_resp] != null &&
+            data[key as keyof type_setting_dict_type_resp] != undefined
+        ) {
+            formData[key] = data[key as keyof type_setting_dict_type_resp]
         }
+        // }
     }
 }
 

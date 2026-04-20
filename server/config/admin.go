@@ -4,14 +4,14 @@ import "github.com/gin-gonic/gin"
 
 // AdminConfig 后台公共配置
 var AdminConfig = adminConfig{
-	// 管理缓存键
-	BackstageManageKey: "backstage:manage",
-	// 角色缓存键
-	BackstageRolesKey: "backstage:roles",
+	// 用户缓存键 hash
+	BackstageAdminKey: "admin:users",
+	// 用户权限缓存键(菜单+按钮) hash
+	BackstageAdminPermsKey: "admin:perms",
 	// 令牌缓存键
-	BackstageTokenKey: "backstage:token:",
+	BackstageTokenKey: "admin:token:",
 	// 令牌的集合
-	BackstageTokenSet: "backstage:token:set:",
+	BackstageTokenSet: "admin:token_set:",
 	// #region NotAuth
 	// 免登录验证
 	NotLoginUri: []string{
@@ -33,49 +33,48 @@ var AdminConfig = adminConfig{
 		// "admin:setting:dict:data:all", // 所有字典数据
 	},
 	// #endregion NotAuth
-	// 演示模式白名单
-	ShowWhitelistUri: []string{
-		// "admin:system:login",  // 登录接口
-		// "admin:system:logout", // 退出登录
-	},
 
 	// 管理员账号id:1
 	SuperAdminId: "1",
 	// 管理员账号key
 	ReqAdminIdKey: "admin_id",
-	// 角色key
-	ReqRoleIdKey: "role",
+
 	// 用户名key
 	ReqUsernameKey: "username",
 	// 昵称key
 	ReqNicknameKey: "nickname",
+
+	// 登录有效期(秒)
+	TokenExpire: 60 * 60 * 24, // 1天
 }
 
 type adminConfig struct {
-	// 管理缓存键"backstage:manage"
-	BackstageManageKey string
-	// 角色缓存键"backstage:roles"
-	BackstageRolesKey string
-	// 令牌缓存键"backstage:token:"
+	// 管理缓存键"backstage:admin:users"，field为管理员id，value为管理员信息
+	BackstageAdminKey string
+
+	// 用户权限缓存键"backstage:admin:perms"，field为管理员id，value为权限列表(逗号分隔)
+	BackstageAdminPermsKey string
+	// 令牌缓存键"backstage:token:"，值为用户id
 	BackstageTokenKey string
-	// 令牌的集合 "backstage:token:set:"
+	// 令牌的集合 "backstage:token:set:"，值为token集合
 	BackstageTokenSet string
 	// 免登录验证
 	NotLoginUri []string
 	// 免权限验证
 	NotAuthUri []string
-	// 演示模式白名单
-	ShowWhitelistUri []string
+
 	// 管理员账号id:1
 	SuperAdminId string
 	// 管理员账号key
 	ReqAdminIdKey string
-	// 角色key
-	ReqRoleIdKey string
+
 	// 用户名key
 	ReqUsernameKey string
 	// 昵称key
 	ReqNicknameKey string
+
+	// 登录有效期(秒)
+	TokenExpire int
 }
 
 func (cnf adminConfig) GetAdminId(c *gin.Context) string {
@@ -84,14 +83,6 @@ func (cnf adminConfig) GetAdminId(c *gin.Context) string {
 		return ""
 	}
 	return adminId.(string)
-}
-
-func (cnf adminConfig) GetRoleId(c *gin.Context) string {
-	roleId, ok := c.Get(cnf.ReqRoleIdKey)
-	if !ok {
-		return ""
-	}
-	return roleId.(string)
 }
 
 func (cnf adminConfig) GetUsername(c *gin.Context) string {

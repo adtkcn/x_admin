@@ -22,16 +22,16 @@ export const addUnit = (value: string | number, unit = 'px') => {
 
 /**
  * @description 是否为空
- * @param {any} value
+ * @param {unknown} value
  * @return {Boolean}
  */
-export const isEmpty = (value: any) => {
+export const isEmpty = (value: unknown): boolean => {
     return value === '' || value === null || value === undefined
 }
 /**
  * 判读是否为对象
  */
-export const isObject = (val: any): boolean => {
+export const isObject = (val: unknown): boolean => {
     return val !== null && typeof val === 'object'
 }
 /**
@@ -39,17 +39,19 @@ export const isObject = (val: any): boolean => {
  * @param {Array} data  数据
  * @param {Object} props `{ children: 'children' }`
  */
-
-export const treeToArray = (data: any[], props = { children: 'children' }) => {
+export const treeToArray = <T extends Record<string, any>>(
+    data: T[],
+    props = { children: 'children' }
+): T[] => {
     data = cloneDeep(data)
-    const { children } = props
-    const newData = []
-    const queue: any[] = []
-    data.forEach((child: any) => queue.push(child))
+    const children = props.children
+    const newData: T[] = []
+    const queue: T[] = []
+    data.forEach((child) => queue.push(child))
     while (queue.length) {
-        const item: any = queue.shift()
+        const item = queue.shift()!
         if (item[children]) {
-            item[children].forEach((child: any) => queue.push(child))
+            ;(item[children] as T[]).forEach((child) => queue.push(child))
             delete item[children]
         }
         newData.push(item)
@@ -58,13 +60,15 @@ export const treeToArray = (data: any[], props = { children: 'children' }) => {
 }
 
 /**
- * @description 数组转
- * @param {Array} data  数据
- * @param {Object} props `{ parent: 'pid', children: 'children' }`
+ * @description 数组转树
+ * @param {Array} arr  数据
+ * @param {String} parentId 父节点ID
  */
 
-export function arrayToTree(arr, parentId = '') {
-    const tree = []
+export function arrayToTree<
+    T extends { id: string | number; pid: string | number; children?: T[] }
+>(arr: T[], parentId: string | number = ''): T[] {
+    const tree: T[] = []
     for (const item of arr) {
         if (item.pid == parentId) {
             const children = arrayToTree(arr, item.id)
@@ -106,10 +110,11 @@ export function objectToQuery(params: Record<string, any>): string {
         if (!isEmpty(value)) {
             if (isObject(value)) {
                 for (const key of Object.keys(value)) {
-                    if (!isEmpty(value[key])) {
-                        const params = props + '[' + key + ']'
-                        const subPart = encodeURIComponent(params) + '='
-                        query += subPart + encodeURIComponent(value[key]) + '&'
+                    const val = value[key]
+                    if (!isEmpty(val)) {
+                        const paramsStr = props + '[' + key + ']'
+                        const subPart = encodeURIComponent(paramsStr) + '='
+                        query += subPart + encodeURIComponent(String(val)) + '&'
                     }
                 }
             } else {
@@ -153,4 +158,38 @@ export const clearEmpty = (obj?: Record<string, any>) => {
         }
     }
     return obj
+}
+
+/**
+ * @description 格式化时间戳
+ * @param {Number} timestamp 时间戳（秒或毫秒）
+ * @param {String} format 格式化模板
+ * @return {String} 格式化后的时间字符串
+ */
+export const formatTime = (
+    timestamp: number | string | null | undefined,
+    format = 'YYYY-MM-DD HH:mm:ss'
+): string => {
+    if (!timestamp) return '-'
+    const ts = typeof timestamp === 'string' ? parseInt(timestamp, 10) : timestamp
+    // 判断是秒还是毫秒
+    const date = new Date(ts < 1e12 ? ts * 1000 : ts)
+    if (isNaN(date.getTime())) return '-'
+
+    const pad = (n: number) => n.toString().padStart(2, '0')
+    const year = date.getFullYear()
+    const month = pad(date.getMonth() + 1)
+    const day = pad(date.getDate())
+    const hours = pad(date.getHours())
+    const minutes = pad(date.getMinutes())
+    const seconds = pad(date.getSeconds())
+
+    return format
+        .replace('YYYY', year.toString())
+        .replace('MM', month)
+        .replace('DD', day)
+        .replace('HH', hours)
+        .replace('mm', minutes)
+        .replace('ss', seconds)
+        .replace('hh', hours)
 }

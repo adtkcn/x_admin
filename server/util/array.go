@@ -1,15 +1,10 @@
 package util
 
-var ArrayUtil = arrayUtil{}
-
-// arrayUtil 数组工具类
-type arrayUtil struct{}
-
 // ListToTree 列表转树形结构
-func (au arrayUtil) ListToTree(arr []map[string]interface{}, id string, pid string, child string) (mapList []interface{}) {
-	mapList = []interface{}{}
+func MapListToTree(arr []map[string]any, id string, pid string, child string) (mapList []any) {
+	mapList = []any{}
 	// 遍历以id_为key生成map
-	idValMap := make(map[string]interface{})
+	idValMap := make(map[string]any)
 	for _, m := range arr {
 		if idVal, ok := m[id]; ok {
 			idValMap[idVal.(string)] = m
@@ -21,17 +16,17 @@ func (au arrayUtil) ListToTree(arr []map[string]interface{}, id string, pid stri
 		if pidVal, ok := m[pid]; ok {
 			if pNode, pok := idValMap[pidVal.(string)]; pok {
 				// 有父节点则添加到父节点子集
-				if cVal, cok := pNode.(map[string]interface{})[child]; cok {
+				if cVal, cok := pNode.(map[string]any)[child]; cok {
 					if cVal == nil {
-						cVal = []interface{}{m}
+						cVal = []any{m}
 					} else {
-						cVal = append(cVal.([]interface{}), m)
+						cVal = append(cVal.([]any), m)
 					}
-					pNode.(map[string]interface{})[child] = cVal
+					pNode.(map[string]any)[child] = cVal
 					continue
 				} else {
-					cVal := []interface{}{m}
-					pNode.(map[string]interface{})[child] = cVal
+					cVal := []any{m}
+					pNode.(map[string]any)[child] = cVal
 					continue
 				}
 			}

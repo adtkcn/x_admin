@@ -7,23 +7,23 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_system_corn = {
-    Id?: string
-    TaskName?: string
-    TaskCode?: string
-    CornExpr?: string
-    Status?: number
-    CreatedBy?: string
-    IsDelete?: number
-    CreateTime?: string
-    UpdateTime?: string
-    DeleteTime?: string
+    Id: string
+    TaskName: string
+    TaskCode: string
+    CornExpr: string
+    Status: number
+    CreatedBy: string
+    IsDelete: number
+    CreateTime: string
+    UpdateTime: string
+    DeleteTime: string
 }
 // 查询
 export type type_system_corn_query = {
     TaskName?: string
     TaskCode?: string
     CornExpr?: string
-    Status?: any
+    Status?: number
     CreatedBy?: string
     CreateTimeStart?: string
     CreateTimeEnd?: string
@@ -40,7 +40,7 @@ export type type_system_corn_edit = {
     CornExpr?: string
     Status?: number
 }
-export type TaskType = {
+export type type_task = {
     Lock: boolean
     LockTTL: number
     TaskCode: string
@@ -82,22 +82,22 @@ export function system_corn_delete(Id: number | string) {
 }
 // 定时任务删除-批量
 export function system_corn_delete_batch(data: { Ids: string }) {
-    return request.post<null>({ url: '/system_corn/delBatch', data })
+    return request.post<null>({ url: '/system_corn/del_batch', data })
 }
 
 // 定时任务导入
-export const system_corn_import_file = '/system_corn/ImportFile'
+export const system_corn_import_file = '/system_corn/import_file'
 
 // 定时任务导出
 export function system_corn_export_file(params: type_system_corn_query) {
     return (window.location.href =
-        `${config.baseUrl}${config.urlPrefix}/system_corn/ExportFile?token=${getToken()}&` +
+        `${config.baseUrl}${config.urlPrefix}/system_corn/export_file?token=${getToken()}&` +
         queryString.stringify(clearEmpty(params)))
 }
 
 // 自定义任务列表-所有
 export function system_corn_getTaskList() {
-    return request.get<TaskType[]>({
+    return request.get<type_task[]>({
         url: '/system_corn/getTaskList'
     })
 }

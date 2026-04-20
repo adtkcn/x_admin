@@ -3,7 +3,6 @@
  */
 
 import request from '../utils/axios' //组件内部封装的axios
-// import request from "@/api/axios.js"       //调用项目封装的axios
 interface ResponseData {
     repData: {
         originalImageBase64: string

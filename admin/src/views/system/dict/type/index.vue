@@ -111,7 +111,13 @@
 
 <script lang="ts" setup>
 import { ref, shallowRef, reactive, nextTick } from 'vue'
-import { dictTypeDelete, dictTypeLists } from '@/api/setting/dict'
+import {
+    dictTypeDelete,
+    dictTypeLists,
+    type type_setting_dict_type_list,
+    type type_setting_dict_type_resp,
+    type type_setting_dict_type_del
+} from '@/api/setting/dict'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -127,7 +133,7 @@ const showEdit = ref(false)
 
 const dataRef = shallowRef<InstanceType<typeof Data>>()
 const showDataEdit = ref(false)
-const queryParams = reactive({
+const queryParams = reactive<type_setting_dict_type_list>({
     dictName: '',
     dictType: '',
     dictStatus: 1
@@ -138,13 +144,11 @@ const { pager, getLists, resetPage, resetParams } = usePaging({
     params: queryParams
 })
 
-const selectData = ref<any[]>([])
-function openDataEdit(row: any) {
-    console.log(dataRef, row)
-
+const selectData = ref<string[]>([])
+function openDataEdit(row: type_setting_dict_type_resp) {
     dataRef.value?.open(row)
 }
-const handleSelectionChange = (val: any[]) => {
+const handleSelectionChange = (val: type_setting_dict_type_resp[]) => {
     selectData.value = val.map(({ id }) => id)
 }
 
@@ -154,7 +158,7 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_setting_dict_type_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
@@ -162,7 +166,7 @@ const handleEdit = async (data: any) => {
 }
 
 // 删除角色
-const handleDelete = async (ids: any[]) => {
+const handleDelete = async (ids: string[]) => {
     await feedback.confirm('确定要删除？')
     await dictTypeDelete({ ids })
     feedback.msgSuccess('删除成功')

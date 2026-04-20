@@ -1,17 +1,29 @@
 import { defineStore } from 'pinia'
 import cache from '@/utils/cache'
 import type { RouteRecordRaw } from 'vue-router'
-import { getUserInfo, login, logout, getMenu } from '@/api/user'
+import { getUserInfo, login, logout, getMenu, type type_system_login, type type_system_admin_self } from '@/api/user'
 import router, { filterAsyncRoutes } from '@/router'
 import { TOKEN_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { clearAuthInfo, getToken } from '@/utils/auth'
+
 export interface UserState {
     token: string
-    userInfo: Record<string, any>
+    userInfo: type_system_admin_self['user']
     routes: RouteRecordRaw[]
-    menu: any[]
+    menu: MenuData[]
     perms: string[]
+}
+
+interface MenuData {
+    id: string
+    name: string
+    path: string
+    icon?: string
+    component?: string
+    children?: MenuData[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any
 }
 
 const useUserStore = defineStore('user', {
@@ -19,7 +31,7 @@ const useUserStore = defineStore('user', {
         return {
             token: getToken() || '',
             // 用户信息
-            userInfo: {},
+            userInfo: {} as type_system_admin_self['user'],
             // 路由
             routes: [],
             menu: [],
@@ -31,70 +43,67 @@ const useUserStore = defineStore('user', {
     actions: {
         resetState() {
             this.token = ''
-            this.userInfo = {}
+            this.userInfo = {} as type_system_admin_self['user']
             this.perms = []
         },
-        login(info: any) {
+        login(info: type_system_login): Promise<string> {
             return new Promise((resolve, reject) => {
-                login({
-                    ...info
-                })
+                login(info)
                     .then((data) => {
                         this.token = data.token
                         cache.set(TOKEN_KEY, data.token)
-                        resolve(data)
-                        // reject(data)
+                        resolve(data.token)
                     })
-                    .catch((error) => {
+                    .catch((error: Error) => {
                         reject(error)
                     })
             })
         },
-        logout() {
+        logout(): Promise<void> {
             return new Promise((resolve, reject) => {
                 logout()
-                    .then(async (data) => {
+                    .then(async () => {
                         this.token = ''
                         await router.push(PageEnum.LOGIN)
                         clearAuthInfo()
-                        resolve(data)
+                        resolve()
                     })
-                    .catch((error) => {
+                    .catch((error: Error) => {
                         reject(error)
                     })
             })
         },
-        getUserInfo() {
+        getUserInfo(): Promise<type_system_admin_self> {
             return new Promise((resolve, reject) => {
                 getUserInfo()
-                    .then((data) => {
+                    .then((data: type_system_admin_self) => {
                         this.userInfo = data.user
-                        const permissions = []
+                        const permissions: string[] = []
                         data.permissions &&
-                            data.permissions.forEach((item: any) => {
+                            data.permissions.forEach((item: string) => {
                                 if (item) {
-                                    item.split(',').forEach((item: any) => {
-                                        permissions.push(item)
+                                    item.split(',').forEach((perm: string) => {
+                                        permissions.push(perm)
                                     })
                                 }
                             })
                         this.perms = permissions
                         resolve(data)
                     })
-                    .catch((error) => {
+                    .catch((error: Error) => {
                         reject(error)
                     })
             })
         },
-        getMenu() {
+        getMenu(): Promise<MenuData[]> {
             return new Promise((resolve, reject) => {
                 getMenu()
-                    .then((data) => {
+                    .then((data: MenuData[]) => {
                         this.menu = data
                         this.routes = filterAsyncRoutes(data)
                         resolve(data)
                     })
-                    .catch((error) => {
+                    .catch((error: Error) => {
                         reject(error)
                     })
             })

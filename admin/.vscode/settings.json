@@ -15,7 +15,7 @@
         "datetimerange",
         "dbclick",
         "echarts",
-        "execa",
+
         "highlightjs",
         "iconfont",
         "logicflow",
@@ -29,5 +29,11 @@
         "vuedraggable",
         "vueuse",
         "wangeditor"
-    ]
+    ],
+    // 控制相关文件嵌套展示
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.expand": false,
+    "explorer.fileNesting.patterns": {
+        "package.json": ".env.*,pnpm-lock.yaml,tsconfig.json,global.d.ts,Dockerfile,.prettierrc,.npmrc,.editorconfig,.gitignore,.dockerignore,eslint.config.ts,components.d.ts"
+    }
 }

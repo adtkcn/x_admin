@@ -5,7 +5,7 @@ type RedisConfigStruct struct {
 	PoolSize        int    `mapstructure:"PoolSize"`        // Redis连接池大小
 	MaxIdleConns    int    `mapstructure:"MaxIdleConns"`    // Redis空闲连接池最大值
 	ConnMaxLifetime int    `mapstructure:"ConnMaxLifetime"` // Redis连接可复用的最大时间(秒：默认60秒)
-	RedisPrefix     string `mapstructure:"RedisPrefix"`     // Redis键前缀: x:
+	RedisPrefix     string `mapstructure:"RedisPrefix"`     // Redis键前缀: x:如果多个基于此项目使用同一个redis，应该更改前缀
 }
 
 var RedisConfig = RedisConfigStruct{

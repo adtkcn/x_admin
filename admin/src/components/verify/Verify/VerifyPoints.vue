@@ -21,7 +21,6 @@
                 <img
                     v-if="pointBackImgBase"
                     :src="pointBackImgBase"
-                    ref="canvas"
                     alt=""
                     style="width: 100%; height: 100%; display: block"
                     @click="bindingClick ? canvasClick($event) : undefined"
@@ -63,7 +62,7 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
 /**
  * VerifyPoints
  * @description 点选
@@ -101,19 +100,19 @@ export default {
     },
     setup(props, { emit }) {
         const { captchaType } = toRefs(props)
-        const { proxy } = getCurrentInstance()
+        const instance = getCurrentInstance()
         const secretKey = ref(''), //后端返回的ase加密秘钥
             checkNum = ref(3), //默认需要点击的字数
             fontPos = reactive([]), //选中的坐标信息
-            checkPosArr = reactive([]), //用户点击的坐标
+            checkPosArr = reactive<{ x: number; y: number }[]>([]), //用户点击的坐标
             num = ref(1), //点击的记数
             pointBackImgBase = ref(''), //后端获取到的背景图片
-            pointTextList = ref([]), //后端返回的点击字体顺序
+            pointTextList = ref<string[]>([]), //后端返回的点击字体顺序
             backToken = ref(''), //后端返回的token值
-            tempPoints = reactive([]),
+            tempPoints = reactive<{ x: number; y: number }[]>([]),
             text = ref(''),
-            barAreaColor = ref(undefined),
-            barAreaBorderColor = ref(undefined),
+            barAreaColor = ref(''),
+            barAreaBorderColor = ref(''),
             showRefresh = ref(true),
             bindingClick = ref(true)
 
@@ -127,15 +126,17 @@ export default {
         onMounted(() => {
             // 禁止拖拽
             init()
-            proxy.$el.onselectstart = function () {
-                return false
+            if (instance && instance?.proxy?.$el) {
+                return (instance.proxy.$el.onselectstart = function () {
+                    return false
+                })
             }
         })
-        const canvas = ref(null)
-        const canvasClick = (e) => {
-            checkPosArr.push(getMousePos(canvas, e))
+
+        const canvasClick = (e: MouseEvent) => {
+            checkPosArr.push(getMousePos(e))
             if (num.value == checkNum.value) {
-                num.value = createPoint(getMousePos(canvas, e))
+                num.value = createPoint(getMousePos(e))
                 //按比例转换坐标值
                 const arr = pointTransform(checkPosArr)
                 checkPosArr.length = 0
@@ -169,18 +170,18 @@ export default {
                 }, 400)
             }
             if (num.value < checkNum.value) {
-                num.value = createPoint(getMousePos(canvas, e))
+                num.value = createPoint(getMousePos(e))
             }
         }
         //获取坐标
-        const getMousePos = function (obj, e) {
+        const getMousePos = function (e: MouseEvent) {
             const x = e.offsetX
             const y = e.offsetY
             return { x, y }
         }
         //创建坐标点
-        const createPoint = function (pos) {
-            tempPoints.push(Object.assign({}, pos))
+        const createPoint = function (pos: { x: number; y: number }) {
+            tempPoints.push(pos)
             return num.value + 1
         }
         const refresh = function () {
@@ -220,7 +221,7 @@ export default {
             })
         }
         //坐标转换函数
-        const pointTransform = function (pointArr) {
+        const pointTransform = function (pointArr: { x: number; y: number }[]) {
             const newPointArr = pointArr.map((p) => {
                 const x = Math.round((310 * p.x) / parseInt(props.imgSize.width))
                 const y = Math.round((155 * p.y) / parseInt(props.imgSize.height))
@@ -245,7 +246,7 @@ export default {
             showRefresh,
             bindingClick,
             init,
-            canvas,
+
             canvasClick,
             getMousePos,
             createPoint,

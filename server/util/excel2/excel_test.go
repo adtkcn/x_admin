@@ -25,7 +25,7 @@ var cols = []Col{
 	{Name: "所属公司", Key: "Com", Width: 20},
 	{Name: "所在部门", Key: "Dept", Width: 21},
 	{Name: "角色代码", Key: "RoleKey", Width: 20},
-	{Name: "角色名称", Key: "RoleName", Width: 25, Replace: map[string]interface{}{"1": "1_超级管理员", "2": "2_普通用户"}},
+	{Name: "角色名称", Key: "RoleName", Width: 25, Replace: map[string]any{"1": "1_超级管理员", "2": "2_普通用户"}},
 	{Name: "备注", Key: "Remark", Width: 30},
 }
 

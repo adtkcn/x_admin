@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"x_admin/config"
 	"x_admin/core"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -52,7 +53,7 @@ func (su serverUtil) GetFmtTime(ms int64) (res string) {
 }
 
 // GetCpuInfo 获取CPU信息
-func (su serverUtil) GetCpuInfo() (data map[string]interface{}) {
+func (su serverUtil) GetCpuInfo() (data map[string]any) {
 	cnt, err := cpu.Counts(true)
 	if err != nil {
 		core.Logger.Errorf("GetCpuInfo Counts err: err=[%+v]", err)
@@ -64,7 +65,7 @@ func (su serverUtil) GetCpuInfo() (data map[string]interface{}) {
 		return data
 	}
 	ts := tss[0]
-	return map[string]interface{}{
+	return map[string]any{
 		"cpu_num": cnt,
 		"total":   ToolsUtil.Round(ts.Total(), 2),
 		"sys":     ToolsUtil.Round(ts.System/ts.Total(), 2),
@@ -75,14 +76,14 @@ func (su serverUtil) GetCpuInfo() (data map[string]interface{}) {
 }
 
 // GetMemInfo 获取内存信息
-func (su serverUtil) GetMemInfo() (data map[string]interface{}) {
+func (su serverUtil) GetMemInfo() (data map[string]any) {
 	number := math.Pow(1024, 3)
 	vm, err := mem.VirtualMemory()
 	if err != nil {
 		core.Logger.Errorf("GetMemInfo VirtualMemory err: err=[%+v]", err)
 		return data
 	}
-	return map[string]interface{}{
+	return map[string]any{
 		"total": ToolsUtil.Round(float64(vm.Total)/number, 2),
 		"used":  ToolsUtil.Round(float64(vm.Used)/number, 2),
 		"free":  ToolsUtil.Round(float64(vm.Available)/number, 2),
@@ -91,7 +92,7 @@ func (su serverUtil) GetMemInfo() (data map[string]interface{}) {
 }
 
 // GetSysInfo 获取服务器信息
-func (su serverUtil) GetSysInfo() (data map[string]interface{}) {
+func (su serverUtil) GetSysInfo() (data map[string]any) {
 	infoStat, err := host.Info()
 	if err != nil {
 		core.Logger.Errorf("GetSysInfo Info err: err=[%+v]", err)
@@ -102,7 +103,7 @@ func (su serverUtil) GetSysInfo() (data map[string]interface{}) {
 		core.Logger.Errorf("GetSysInfo Getwd err: err=[%+v]", err)
 		return data
 	}
-	return map[string]interface{}{
+	return map[string]any{
 		"computerName": infoStat.Hostname,
 		"computerIp":   IpUtil.GetHostIp(),
 		"userDir":      pwd,
@@ -112,7 +113,7 @@ func (su serverUtil) GetSysInfo() (data map[string]interface{}) {
 }
 
 // GetDiskInfo 获取磁盘信息
-func (su serverUtil) GetDiskInfo() (data []map[string]interface{}) {
+func (su serverUtil) GetDiskInfo() (data []map[string]any) {
 	partStats, err := disk.Partitions(false)
 	if err != nil {
 		core.Logger.Errorf("GetDiskInfo Partitions err: err=[%+v]", err)
@@ -125,7 +126,7 @@ func (su serverUtil) GetDiskInfo() (data []map[string]interface{}) {
 			core.Logger.Errorf("GetDiskInfo Usage err: err=[%+v]", err)
 			continue
 		}
-		data = append(data, map[string]interface{}{
+		data = append(data, map[string]any{
 			"dirName":     part.Mountpoint,
 			"sysTypeName": part.Fstype,
 			"typeName":    part.Device,
@@ -139,7 +140,7 @@ func (su serverUtil) GetDiskInfo() (data []map[string]interface{}) {
 }
 
 // GetGoInfo 获取Go环境及服务信息
-func (su serverUtil) GetGoInfo() (data map[string]interface{}) {
+func (su serverUtil) GetGoInfo() (data map[string]any) {
 	number := math.Pow(1024, 2)
 	curProc, err := process.NewProcess(int32(os.Getpid()))
 	if err != nil {
@@ -156,7 +157,7 @@ func (su serverUtil) GetGoInfo() (data map[string]interface{}) {
 		core.Logger.Errorf("GetGoInfo CreateTime err: err=[%+v]", err)
 		return data
 	}
-	return map[string]interface{}{
+	return map[string]any{
 		"name":      "Go",
 		"version":   runtime.Version(),
 		"home":      os.Args[0],
@@ -166,6 +167,6 @@ func (su serverUtil) GetGoInfo() (data map[string]interface{}) {
 		"free":      ToolsUtil.Round((float64(memInfo.VMS-memInfo.RSS))/number, 2),
 		"usage":     ToolsUtil.Round(float64(memInfo.RSS)/number, 2),
 		"runTime":   su.GetFmtTime(time.Now().UnixMilli() - startTime),
-		"startTime": time.UnixMilli(startTime).Format(core.TimeFormat),
+		"startTime": time.UnixMilli(startTime).Format(config.ConstantConfig.TimeFormat),
 	}
 }

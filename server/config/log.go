@@ -30,9 +30,9 @@ var LogConfig = LogConfigStruct{
 	Level:         "debug",
 	EnableConsole: true,
 	EnableFile:    true,
-	Filename:      "./logs/likeadmin.log",
-	MaxSize:       100,
-	MaxBackups:    7,
-	MaxAge:        30,
+	Filename:      "./logs/like-admin.log",
+	MaxSize:       10,
+	MaxBackups:    100,
+	MaxAge:        365,
 	Compress:      false,
 }

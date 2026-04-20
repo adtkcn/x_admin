@@ -177,8 +177,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, useTemplateRef, nextTick, computed, toRaw } from 'vue'
-import { menuDelete, menuLists, SystemAuthMenuResp } from '@/api/perms/menu'
-// import { arrayToTree } from '@/utils/util'
+import { menuDelete, menuLists, type type_system_menu_resp } from '@/api/perms/menu'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
@@ -207,14 +206,13 @@ const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 
 const loading = ref(false)
 const showEdit = ref(false)
-const lists = ref<SystemAuthMenuResp[]>([])
+const lists = ref<type_system_menu_resp[]>([])
 const menuName = ref('')
 const filterList = computed(() => {
     if (!menuName.value) {
         return lists.value
     }
     const raw = toRaw(lists.value)
-    console.log('raw', raw)
 
     const { all } = queryHierarchy(raw, menuName.value, {
         fields: ['menuName'],
@@ -227,17 +225,13 @@ const getLists = async () => {
     try {
         const data = await menuLists()
         lists.value = data
-        // lists.value = arrayToTree(data)
-        //  .map((item: any) => {
-        // return item
-        // })
         loading.value = false
     } catch (error) {
         loading.value = false
     }
 }
 
-const handleAdd = async (id?: number) => {
+const handleAdd = async (id?: string) => {
     showEdit.value = true
     await nextTick()
     if (id) {
@@ -248,14 +242,14 @@ const handleAdd = async (id?: number) => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_system_menu_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     await feedback.confirm('确定要删除？')
     await menuDelete({ id })
     feedback.msgSuccess('删除成功')

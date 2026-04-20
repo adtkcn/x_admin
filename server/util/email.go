@@ -19,32 +19,34 @@ type EmailOptions struct {
 	Attachments []map[string]string // 本地文件路径列表
 }
 
-var EmailUtil = &emailUtil{
-	Host:     config.Config.Email.Host,                                 // 如 "smtp.qq.com"
-	Port:     config.Config.Email.Port,                                 // 如 465
-	SSL:      config.Config.Email.SSL,                                  // 是否启用 SSL（465 用 true，587 用 false）
-	Username: config.Config.Email.Username,                             // 发件人邮箱
-	Password: config.Config.Email.Password,                             // 授权码或密码
-	Timeout:  time.Duration(config.Config.Email.Timeout) * time.Second, // 超时时间，单位秒，默认 10s
-}
+var EmailUtil = &emailUtil{}
 
-type emailUtil struct {
-	Host     string
-	Port     int
-	SSL      bool
-	Username string
-	Password string
-	Timeout  time.Duration
+type emailUtil struct{}
+
+// 直接从config.Config.Email随机读取配置
+func (cfg *emailUtil) GetEmailConfig(opts EmailOptions) (c config.EmailConfigStruct, err error) {
+
+	if len(config.EmailConfig) == 0 {
+		err = fmt.Errorf("没有可用的邮件配置")
+		return
+	}
+	all := config.EmailConfig
+	ran := ToolsUtil.Random(0, len(all))
+	var email = all[ran]
+	return email, nil
 }
 
 // SendEmail 发送邮件的统一入口
 func (cfg *emailUtil) SendEmail(opts EmailOptions) error {
-
+	sendEmail, err := cfg.GetEmailConfig(opts)
+	if err != nil {
+		return err
+	}
 	// 创建邮件消息
 	m := mail.NewMsg()
 
 	// 设置发件人
-	if err := m.From(cfg.Username); err != nil {
+	if err := m.From(sendEmail.Username); err != nil {
 		return fmt.Errorf("设置发件人失败: %w", err)
 	}
 
@@ -89,23 +91,23 @@ func (cfg *emailUtil) SendEmail(opts EmailOptions) error {
 
 	// 配置客户端
 	clientOpts := []mail.Option{
-		mail.WithPort(cfg.Port),
+		mail.WithPort(sendEmail.Port),
 		mail.WithSMTPAuth(mail.SMTPAuthPlain),
-		mail.WithUsername(cfg.Username),
-		mail.WithPassword(cfg.Password),
+		mail.WithUsername(sendEmail.Username),
+		mail.WithPassword(sendEmail.Password),
 	}
 
-	if cfg.SSL {
+	if sendEmail.SSL {
 		clientOpts = append(clientOpts, mail.WithSSL())
 	}
 
-	if cfg.Timeout <= 0 {
-		cfg.Timeout = 10 // 默认 10 秒
+	if sendEmail.Timeout <= 0 {
+		sendEmail.Timeout = 10 // 默认 10 秒
 	}
-	clientOpts = append(clientOpts, mail.WithTimeout(cfg.Timeout))
+	clientOpts = append(clientOpts, mail.WithTimeout(time.Duration(sendEmail.Timeout)*time.Second))
 
 	// 创建客户端
-	c, err := mail.NewClient(cfg.Host, clientOpts...)
+	c, err := mail.NewClient(sendEmail.Host, clientOpts...)
 	if err != nil {
 		return fmt.Errorf("创建 SMTP 客户端失败: %w", err)
 	}

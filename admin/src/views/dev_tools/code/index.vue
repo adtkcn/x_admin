@@ -150,7 +150,9 @@ import {
     syncColumn,
     generateDelete,
     generatePreview,
-    downloadCode
+    downloadCode,
+    type type_gen_table_list,
+    type type_gen_table_resp
 } from '@/api/tools/code'
 import { usePaging } from '@/hooks/usePaging'
 const DataTable = defineAsyncComponent(() => import('./components/data-table.vue'))
@@ -160,7 +162,7 @@ import { streamFileDownload } from '@/utils/file'
 defineOptions({
     name: 'codeGenerate'
 })
-const formData = reactive({
+const formData = reactive<type_gen_table_list>({
     tableName: '',
     tableComment: ''
 })
@@ -176,18 +178,18 @@ const { pager, getLists, resetParams, resetPage } = usePaging({
     params: formData
 })
 
-const selectData = ref<any[]>([])
-const handleSelectionChange = (val: any[]) => {
+const selectData = ref<type_gen_table_resp[]>([])
+const handleSelectionChange = (val: type_gen_table_resp[]) => {
     selectData.value = val
 }
 
-const handleSync = async (id: number) => {
+const handleSync = async (id: string) => {
     await feedback.confirm('确定要更新表结构？从数据库拉取最新表结构')
     await syncColumn({ id })
     feedback.msgSuccess('操作成功')
 }
 
-const handleDelete = async (ids?: number[]) => {
+const handleDelete = async (ids?: string[]) => {
     if (!ids) ids = selectData.value.map(({ id }) => id)
     await feedback.confirm('确定要删除？')
     await generateDelete({ ids })
@@ -195,13 +197,13 @@ const handleDelete = async (ids?: number[]) => {
     getLists()
 }
 
-const handlePreview = async (id: number) => {
+const handlePreview = async (id: string) => {
     const data: any = await generatePreview({ id })
     previewState.code = data
     previewState.show = true
 }
 
-const handleGenerate = async (selectData: any[]) => {
+const handleGenerate = async (selectData: type_gen_table_resp[]) => {
     const downloadTables = getTables(selectData)
     if (downloadTables) {
         const file = await downloadCode({ tables: downloadTables })
@@ -209,11 +211,11 @@ const handleGenerate = async (selectData: any[]) => {
     }
 }
 
-const getTables = (selectData: any[]) => {
+const getTables = (selectData: type_gen_table_resp[]) => {
     return selectData.map(({ tableName }) => tableName).join()
 }
 
-const handleCommand = (command: any, row: any) => {
+const handleCommand = (command: string, row: type_gen_table_resp) => {
     switch (command) {
         case 'generate':
             handleGenerate([row])

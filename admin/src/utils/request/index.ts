@@ -1,146 +1,140 @@
+import axios from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { merge } from 'lodash-es'
 import configs from '@/config'
-import { Axios } from './axios'
 import { ContentTypeEnum, RequestCodeEnum } from '@/enums/requestEnums'
-import type { AxiosHooks, NewAxiosRequestConfig, NewInternalAxiosRequestConfig } from './type'
 import { clearAuthInfo, getToken } from '../auth'
 import feedback from '../feedback'
 import NProgress from 'nprogress'
-import { AxiosError } from 'axios'
-// AxiosRequestConfig
-import type { AxiosResponse } from 'axios'
-
 import router from '@/router'
 import { PageEnum } from '@/enums/pageEnum'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface ApiResponse<T = any> {
+    code: number
+    data: T
+    message: string
+}
 export interface Pages<T> {
     count: number
     lists: T[]
     pageNo: number
     pageSize: number
 }
-export interface Response<T> {
-    code: number
-    message: string
-    data: T
+
+export interface RequestOptions {
+    /** 返回完整响应对象(含 headers 等) */
+    isReturnDefaultResponse?: boolean
+    /** 是否转换响应数据(提取 data) */
+    isTransformResponse?: boolean
 }
 
-// 处理axios的钩子函数
-const axiosHooks: AxiosHooks = {
-    requestInterceptorsHook(config) {
+interface InternalConfig extends AxiosRequestConfig {
+    requestOptions?: RequestOptions
+}
+
+// ========== 创建实例 ==========
+
+const service: AxiosInstance = axios.create({
+    timeout: configs.timeout,
+    baseURL: configs.baseUrl + configs.urlPrefix,
+    headers: {
+        'Content-Type': ContentTypeEnum.JSON,
+        version: configs.version
+    }
+})
+
+// ========== 请求拦截 ==========
+
+service.interceptors.request.use(
+    (config) => {
         NProgress.start()
-
-        // const params = config.params || {}
-        const headers = config.headers || {}
-
-        // 添加token
         const token = getToken()
         if (token) {
-            headers.token = token
+            config.headers = config.headers || {}
+            config.headers.token = token
         }
-
-        config.headers = headers
         return config
     },
-    requestInterceptorsCatchHook(err) {
+    (error) => {
         NProgress.done()
-        return err
-    },
-    async responseInterceptorsHook(response: AxiosResponse) {
-        // console.log('返回Hook', response)
+        return Promise.reject(error)
+    }
+)
 
+// ========== 响应拦截 ==========
+
+service.interceptors.response.use(
+    (response: AxiosResponse<ApiResponse>) => {
         NProgress.done()
-        const config: NewInternalAxiosRequestConfig = response.config
-        const { isTransformResponse, isReturnDefaultResponse } = config.requestOptions
+        const config = response.config as InternalConfig
+        const options = config.requestOptions || {}
 
-        //返回默认响应，当需要获取响应头及其他数据时可使用
-        if (isReturnDefaultResponse) {
+        // 返回原始响应
+        if (options.isReturnDefaultResponse) {
             return response
         }
-        // 是否需要对数据进行处理
-        if (!isTransformResponse) {
+
+        // 不转换响应，直接返回 data
+        if (!options.isTransformResponse) {
             return response.data
         }
+
+        // 转换响应数据
         const { code, data, message } = response.data
+
         switch (code) {
             case RequestCodeEnum.SUCCESS:
                 return data
-            case RequestCodeEnum.PARAMS_VALID_ERROR:
-                // 参数校验错误
-                if (Array.isArray(data)) {
-                    message && feedback.msgError(data.join('、'))
-                } else {
-                    message && feedback.msgError(message)
-                }
-
-                return Promise.reject(data)
-            case RequestCodeEnum.PARAMS_TYPE_ERROR:
-            case RequestCodeEnum.REQUEST_METHOD_ERROR:
-            case RequestCodeEnum.ASSERT_ARGUMENT_ERROR:
-            case RequestCodeEnum.ASSERT_MYBATIS_ERROR:
-            case RequestCodeEnum.LOGIN_ACCOUNT_ERROR:
-            case RequestCodeEnum.LOGIN_DISABLE_ERROR:
-            case RequestCodeEnum.NO_PERMISSTION:
-            case RequestCodeEnum.FAILED:
-            case RequestCodeEnum.SYSTEM_ERROR:
-                message && feedback.msgError(message)
-                return Promise.reject(data)
 
             case RequestCodeEnum.TOKEN_INVALID:
             case RequestCodeEnum.TOKEN_EMPTY:
                 clearAuthInfo()
                 router.push(PageEnum.LOGIN)
-                return Promise.reject()
+                return Promise.reject(new Error(message || '登录已过期'))
+
+            case RequestCodeEnum.PARAMS_VALID_ERROR:
+                feedback.msgError(
+                    (Array.isArray(data) ? data.join('、') : message) || '参数校验失败'
+                )
+                return Promise.reject(data)
 
             default:
-                return data
+                feedback.msgError(message || '请求失败')
+                return Promise.reject(data)
         }
     },
-
-    /**
-     * 错误处理
-     * @param error
-     * @returns
-     */
-    responseInterceptorsCatchHook(error) {
-        // console.log('返回异常Hook', error)
-
+    (error) => {
         NProgress.done()
-        if (error.code === AxiosError.ERR_BAD_RESPONSE) {
+        if (error.code === 'ERR_BAD_RESPONSE') {
             feedback.msgError('网络发生错误')
-        } else if (error.code !== AxiosError.ERR_CANCELED) {
-            error.message && feedback.msgError(error.message)
+        } else if (error.code !== 'ERR_CANCELED') {
+            feedback.msgError(error.message || '请求异常')
         }
         return Promise.reject(error)
     }
-}
+)
 
-const defaultOptions: NewAxiosRequestConfig = {
-    timeout: configs.timeout,
-    // 基础接口地址
-    baseURL: configs.baseUrl,
-    headers: { 'Content-Type': ContentTypeEnum.JSON, version: configs.version }
+// ========== 请求方法 ==========
 
-    // // 处理 axios的钩子函数
-    // axiosHooks: axiosHooks,
-    // 每个接口可以单独配置
-}
-const requestOptions = {
-    //是否返回默认的响应
+const defaultOptions: RequestOptions = {
     isReturnDefaultResponse: false,
-    // 需要对返回数据进行处理
-    isTransformResponse: true,
-    // 接口拼接地址
-    urlPrefix: configs.urlPrefix
+    isTransformResponse: true
 }
 
-function createAxios(opt?: Partial<NewAxiosRequestConfig>) {
-    return new Axios(
-        // 深度合并
-        merge(defaultOptions, opt || {}),
-        requestOptions,
-        axiosHooks
-    )
+function request<T = unknown>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+    const opts = merge({}, defaultOptions, options)
+    const requestConfig: InternalConfig = { ...config, requestOptions: opts }
+
+    return service.request<unknown, T>(requestConfig)
 }
-const request = createAxios()
-export default request
+
+function get<T = unknown>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+    return request<T>({ ...config, method: 'GET' }, options)
+}
+
+function post<T = unknown>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+    return request<T>({ ...config, method: 'POST' }, options)
+}
+
+export default { request, get, post, service }

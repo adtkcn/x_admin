@@ -1,8 +1,9 @@
 package schema
 
 import (
-	"x_admin/app/schema/systemSchema"
-	"x_admin/core"
+	"x_admin/app/schema/system_schema"
+
+	"github.com/adtkcn/x_null"
 )
 
 type SystemCornPrimarykey struct {
@@ -11,33 +12,33 @@ type SystemCornPrimarykey struct {
 
 // SystemCornListReq 定时任务列表参数
 type SystemCornListReq struct {
-	TaskName        core.NullString // 任务名称
-	TaskCode        core.NullString // 任务编码
-	CornExpr        core.NullString // corn表达式
-	Status          core.NullInt    // 状态
-	CreatedBy       core.NullString // 创建人
-	Nickname        core.NullString // 创建人名称
-	CreateTimeStart core.NullString // 开始创建时间
-	CreateTimeEnd   core.NullString // 结束创建时间
-	UpdateTimeStart core.NullString // 开始更新时间
-	UpdateTimeEnd   core.NullString // 结束更新时间
+	TaskName        x_null.String // 任务名称
+	TaskCode        x_null.String // 任务编码
+	CornExpr        x_null.String // corn表达式
+	Status          x_null.Int64  // 状态
+	CreatedBy       x_null.String // 创建人
+	Nickname        x_null.String // 创建人名称
+	CreateTimeStart x_null.String // 开始创建时间
+	CreateTimeEnd   x_null.String // 结束创建时间
+	UpdateTimeStart x_null.String // 开始更新时间
+	UpdateTimeEnd   x_null.String // 结束更新时间
 }
 
 // SystemCornAddReq 定时任务新增参数
 type SystemCornAddReq struct {
-	TaskName core.NullString // 任务名称
-	TaskCode core.NullString // 任务编码
-	CornExpr core.NullString // corn表达式
-	Status   core.NullInt    // 状态
+	TaskName x_null.String // 任务名称
+	TaskCode x_null.String // 任务编码
+	CornExpr x_null.String // corn表达式
+	Status   x_null.Int64  // 状态
 }
 
 // SystemCornEditReq 定时任务编辑参数
 type SystemCornEditReq struct {
-	Id       string          //
-	TaskName core.NullString // 任务名称
-	TaskCode core.NullString // 任务编码
-	CornExpr core.NullString // corn表达式
-	Status   core.NullInt    // 状态
+	Id       string        //
+	TaskName x_null.String // 任务名称
+	TaskCode x_null.String // 任务编码
+	CornExpr x_null.String // corn表达式
+	Status   x_null.Int64  // 状态
 }
 
 // SystemCornDelBatchReq 定时任务批量删除参数
@@ -47,13 +48,13 @@ type SystemCornDelBatchReq struct {
 
 // SystemCornResp 定时任务返回信息
 type SystemCornResp struct {
-	Id            string                                 `swaggertype:"string"` //
-	TaskName      core.NullString                        `swaggertype:"string"` // 任务名称
-	TaskCode      core.NullString                        `swaggertype:"string"` // 任务编码
-	CornExpr      core.NullString                        `swaggertype:"string"` // corn表达式
-	Status        core.NullInt                           `swaggertype:"number"` // 状态
-	CreatedBy     core.NullString                        `swaggertype:"string"` // 创建人
-	CreatedByUser systemSchema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
-	CreateTime    core.NullTime                          `swaggertype:"string"` // 创建时间
-	UpdateTime    core.NullTime                          `swaggertype:"string"` // 更新时间
+	Id            string                                  `swaggertype:"string"` //
+	TaskName      x_null.String                           `swaggertype:"string"` // 任务名称
+	TaskCode      x_null.String                           `swaggertype:"string"` // 任务编码
+	CornExpr      x_null.String                           `swaggertype:"string"` // corn表达式
+	Status        x_null.Int64                            `swaggertype:"number"` // 状态
+	CreatedBy     x_null.String                           `swaggertype:"string"` // 创建人
+	CreatedByUser system_schema.SystemAuthAdminSimpleInfo `swaggertype:"string"` // 创建人
+	CreateTime    x_null.Time                             `swaggertype:"string"` // 创建时间
+	UpdateTime    x_null.Time                             `swaggertype:"string"` // 更新时间
 }

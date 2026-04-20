@@ -3,7 +3,7 @@ package corn
 import (
 	"fmt"
 	"sync"
-	"x_admin/app/service/cornService"
+	"x_admin/app/service/corn_service"
 	"x_admin/core"
 	"x_admin/util"
 
@@ -45,12 +45,11 @@ func (tm *CronManager) RemoveAllTask() {
 		tm.cron.Remove(EntryID)
 	}
 	tm.taskIDs = make(map[string]cron.EntryID)
-	// fmt.Printf("所有任务已移除\n")
-	core.Logger.Debug("所有任务已移除")
+	// core.Logger.Debug("所有任务已移除")
 }
 
 // AddTask 添加、更新任务
-func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) error {
+func (tm *CronManager) AddTask(taskID, CronExpr string, task corn_service.Task) error {
 
 	cmd := task.TaskFunc
 
@@ -64,7 +63,6 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) e
 
 	// 添加新任务
 	id, err := tm.cron.AddFunc(CronExpr, func() {
-		core.Logger.Debugf("开始运行定时任务:%s", task.TaskCode)
 		// 不加锁
 		if !task.Lock {
 			cmd()
@@ -76,7 +74,7 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) e
 		lock := util.NewRedisLock(lockKey, task.LockTTL) // 锁自动过期 10s
 
 		if !lock.Lock() {
-			core.Logger.Errorf("任务加锁失败:%s: %s", task.TaskCode, task.TaskDesc)
+			// core.Logger.Debugf("任务抢占运行失败:%s: %s", task.TaskCode, task.TaskDesc)
 			return
 		}
 		defer func() {
@@ -93,12 +91,12 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task cornService.Task) e
 		return fmt.Errorf("添加任务失败: %w", err)
 	}
 	tm.taskIDs[taskID] = id
-	core.Logger.Debugf("任务 '%s' 已添加/更新", taskID)
+	// core.Logger.Debugf("任务 '%s' 已添加/更新", taskID)
 	return nil
 }
 
 // 批量添加任务，先移除所有任务
-func (tm *CronManager) AddTasksBeforeRemoveAll(tasks []cornService.RunTask) error {
+func (tm *CronManager) AddTasksBeforeRemoveAll(tasks []corn_service.RunTask) error {
 	// 移除所有任务
 	tm.RemoveAllTask()
 	var errs []error

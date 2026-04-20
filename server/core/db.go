@@ -60,6 +60,11 @@ func initMysql() *gorm.DB {
 		log.Fatal("initMysql gorm.Open err:", err)
 	}
 	db.InstanceSet("gorm:table_options", "ENGINE=InnoDB")
+	// 🚀 注册插件
+	// if err := db.Use(&ExistPlugin{}); err != nil {
+	// 	panic(err)
+	// }
+
 	sqlDB, err := db.DB() //通用的数据库接口 *sql.DB
 	if err != nil {
 		log.Fatal("initMysql db.DB err:", err)
@@ -82,7 +87,7 @@ func initMysql() *gorm.DB {
 	return db
 }
 
-func DBTableName(model interface{}) string {
+func DBTableName(model any) string {
 	stmt := &gorm.Statement{DB: db}
 	stmt.Parse(model)
 	return stmt.Schema.Table

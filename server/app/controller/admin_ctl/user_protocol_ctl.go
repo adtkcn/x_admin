@@ -111,8 +111,8 @@ func (hd *UserProtocolHandler) Add(c *gin.Context) {
 	// 添加创建人
 	var adminId = config.AdminConfig.GetAdminId(c)
 
-	createId, e := service.UserProtocolService.Add(addReq, adminId)
-	response.CheckAndRespWithData(c, createId, e)
+	createId, err := service.UserProtocolService.Add(addReq, adminId)
+	response.CheckAndRespWithData(c, createId, err)
 }
 
 // @Summary	用户协议编辑
@@ -130,7 +130,8 @@ func (hd *UserProtocolHandler) Edit(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, editReq.Id, service.UserProtocolService.Edit(editReq))
+	err := service.UserProtocolService.Edit(editReq)
+	response.CheckAndRespWithData(c, editReq.Id, err)
 }
 
 // @Summary	用户协议删除
@@ -145,7 +146,8 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndResp(c, service.UserProtocolService.Del(delReq.Id))
+	err := service.UserProtocolService.Del(delReq.Id)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // @Summary	用户协议删除-批量
@@ -155,19 +157,20 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 // @Param		token	header		string				true	"token"
 // @Param		Ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
-// @Router		/api/admin/user_protocol/delBatch [post]
+// @Router		/api/admin/user_protocol/del_batch [post]
 func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 	var delReq schema.UserProtocolDelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.FailWithMsg(c, response.SystemError, "请选择要删除的数据")
+		response.Fail(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndResp(c, service.UserProtocolService.DelBatch(Ids))
+	err := service.UserProtocolService.DelBatch(Ids)
+	response.CheckAndRespWithData(c, nil, err)
 }
 
 // @Summary	用户协议导出
@@ -183,7 +186,7 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 // @Param		UpdateTimeEnd	query		string				false	"更新时间"
 // @Success	200				{file}		string				"成功"
 // @Failure	500				{object}	response.Response	"失败"
-// @Router		/api/admin/user_protocol/ExportFile [get]
+// @Router		/api/admin/user_protocol/export_file [get]
 func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 	var listReq schema.UserProtocolListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -191,12 +194,12 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 	}
 	res, err := service.UserProtocolService.ExportFile(listReq)
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "查询信息失败")
+		response.Fail(c, "查询信息失败")
 		return
 	}
 	f, err := excel2.Export(res, service.UserProtocolService.GetExcelCol(), "Sheet1", "用户协议")
 	if err != nil {
-		response.FailWithMsg(c, response.SystemError, "导出失败")
+		response.Fail(c, "导出失败")
 		return
 	}
 	excel2.DownLoadExcel("用户协议"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -208,7 +211,7 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 // @Param		token	header		string				true	"token"
 // @Param		file	formData	file				true	"导入文件"
 // @Success	200		{object}	response.Response	"成功"
-// @Router		/api/admin/user_protocol/ImportFile [post]
+// @Router		/api/admin/user_protocol/import_file [post]
 func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
@@ -224,5 +227,5 @@ func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 	}
 
 	err = service.UserProtocolService.ImportFile(importList)
-	response.CheckAndResp(c, err)
+	response.CheckAndRespWithData(c, nil, err)
 }

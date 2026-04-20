@@ -74,7 +74,7 @@
 import { ref, shallowRef, reactive, nextTick, onMounted } from 'vue'
 import type { ElTable } from 'element-plus'
 import EditPopup from './edit.vue'
-import { deptDelete, deptAll } from '@/api/org/department'
+import { deptDelete, deptAll, type type_system_dept_resp } from '@/api/org/department'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
 defineOptions({
@@ -82,32 +82,19 @@ defineOptions({
 })
 const tableRef = shallowRef<InstanceType<typeof ElTable>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-// const formRef = shallowRef<FormInstance>()
 let isExpand = false
 const loading = ref(false)
-const lists = ref<any[]>([])
-const queryParams = reactive({
-    // isStop: '',
-    // name: ''
-})
+const lists = ref<type_system_dept_resp[]>([])
+
 const showEdit = ref(false)
 const getLists = async () => {
     loading.value = true
-    const list = await deptAll(queryParams)
-    // 根据id和pid处理层级关系
-
+    const list = await deptAll()
     lists.value = arrayToTree(list, '')
-    console.log('lists', lists)
-
     loading.value = false
 }
 
-// const resetParams = () => {
-//     formRef.value?.resetFields()
-//     getLists()
-// }
-
-const handleAdd = async (id?: number) => {
+const handleAdd = async (id?: string) => {
     showEdit.value = true
     await nextTick()
     if (id) {
@@ -118,14 +105,14 @@ const handleAdd = async (id?: number) => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_system_dept_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     await feedback.confirm('确定要删除？')
     await deptDelete({ id })
     feedback.msgSuccess('删除成功')
@@ -137,7 +124,7 @@ const handleExpand = () => {
     toggleExpand(lists.value, isExpand)
 }
 
-const toggleExpand = (children: any[], unfold = true) => {
+const toggleExpand = (children: type_system_dept_resp[], unfold = true) => {
     for (const key in children) {
         tableRef.value?.toggleRowExpansion(children[key], unfold)
         if (children[key].children) {

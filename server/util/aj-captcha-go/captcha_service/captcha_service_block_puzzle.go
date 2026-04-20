@@ -29,7 +29,7 @@ type BlockPuzzleCaptchaService struct {
 }
 
 // Get 获取验证码图片信息
-func (b *BlockPuzzleCaptchaService) Get() (map[string]interface{}, error) {
+func (b *BlockPuzzleCaptchaService) Get() (map[string]any, error) {
 
 	// 初始化背景图片
 	backgroundImage := img.GetBackgroundImage()
@@ -53,7 +53,7 @@ func (b *BlockPuzzleCaptchaService) Get() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	data := make(map[string]interface{})
+	data := make(map[string]any)
 	data["originalImageBase64"] = originalImageBase64
 	data["jigsawImageBase64"] = jigsawImageBase64
 	data["secretKey"] = b.point.SecretKey

@@ -7,7 +7,7 @@
                 :model="queryParams"
                 :inline="true"
                 label-width="90px"
-                label-position="left"
+                label-position="right"
             >
                 <el-form-item label="标题" prop="Title" class="w-[280px]">
                     <el-input v-model="queryParams.Title" />
@@ -20,12 +20,14 @@
                     <daterange-picker
                         v-model:startTime="queryParams.CreateTimeStart"
                         v-model:endTime="queryParams.CreateTimeEnd"
+                        type="daterange"
                     />
                 </el-form-item>
                 <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
                     <daterange-picker
                         v-model:startTime="queryParams.UpdateTimeStart"
                         v-model:endTime="queryParams.UpdateTimeEnd"
+                        type="daterange"
                     />
                 </el-form-item>
                 <el-form-item>
@@ -64,7 +66,7 @@
                 <el-button
                     v-perms="['admin:user_protocol:ExportFile']"
                     type="primary"
-                    @click="exportFile"
+                    @click="export_file"
                 >
                     <template #icon>
                         <icon name="el-icon-Download" />
@@ -72,7 +74,7 @@
                     导出
                 </el-button>
                 <el-button
-                    v-perms="['admin:user_protocol:delBatch']"
+                    v-perms="['admin:user_protocol:del_batch']"
                     type="danger"
                     :disabled="!multipleSelection.length"
                     @click="deleteBatch"
@@ -158,13 +160,13 @@ const showEdit = ref(false)
 const detailsRef = useTemplateRef<InstanceType<typeof DetailsPopup>>('detailsRef')
 const showDetails = ref(false)
 const queryParams = reactive<type_user_protocol_query>({
-    Title: null,
-    Content: null,
-    Version: null,
-    CreateTimeStart: null,
-    CreateTimeEnd: null,
-    UpdateTimeStart: null,
-    UpdateTimeEnd: null
+    Title: undefined,
+    Content: undefined,
+    Version: undefined,
+    CreateTimeStart: undefined,
+    CreateTimeEnd: undefined,
+    UpdateTimeStart: undefined,
+    UpdateTimeEnd: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_user_protocol>({
@@ -223,7 +225,7 @@ const deleteBatch = async () => {
     } catch (error) {}
 }
 
-const exportFile = async () => {
+const export_file = async () => {
     try {
         await feedback.confirm('确定要导出？')
         await user_protocol_export_file(queryParams)

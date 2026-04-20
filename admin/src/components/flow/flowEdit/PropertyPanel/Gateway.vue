@@ -9,7 +9,7 @@
                         v-for="item in fieldList"
                         :key="item.id"
                         :label="item.name"
-                        :value="item.id"
+                        :value="String(item.id)"
                     />
                 </el-select>
                 <el-button type="primary" style="margin-left: 10px" @click="addCondition"
@@ -52,10 +52,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-// import type { PropType } from 'vue'
 import { Close } from '@element-plus/icons-vue'
-// import { VxeTable, VxeColumn, VxeTableInstance } from 'vxe-table'
-// import 'vxe-table/lib/style.css'
 import type { NodeType, PropertiesType, FieldListType } from './property.type'
 const props = withDefaults(
     defineProps<{
@@ -93,7 +90,7 @@ const conditionList = [
     }
 ]
 const selectGateway = ref('')
-function getLabel(id) {
+function getLabel(id: string) {
     return props.fieldList.find((item) => {
         if (item.id === id) {
             return true

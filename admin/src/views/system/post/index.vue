@@ -72,7 +72,12 @@
 </template>
 <script lang="ts" setup>
 import { ref, shallowRef, reactive, nextTick } from 'vue'
-import { postDelete, postLists } from '@/api/org/post'
+import {
+    postDelete,
+    postLists,
+    type type_system_post_list,
+    type type_system_post_resp
+} from '@/api/org/post'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
@@ -83,10 +88,10 @@ defineOptions({
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
-const queryParams = reactive({
+const queryParams = reactive<type_system_post_list>({
     code: '',
     name: '',
-    isStop: ''
+    isStop: -1
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
@@ -100,14 +105,14 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_system_post_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     await feedback.confirm('确定要删除？')
     await postDelete({ id })
     feedback.msgSuccess('删除成功')

@@ -293,7 +293,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { ref, reactive, shallowRef } from 'vue'
 
-import { generateEdit, tableDetail } from '@/api/tools/code'
+import { generateEdit, tableDetail, type type_gen_edit_column } from '@/api/tools/code'
 import { dictTypeAll } from '@/api/setting/dict'
 import type { FormInstance } from 'element-plus'
 import feedback from '@/utils/feedback'
@@ -301,9 +301,9 @@ import { menuLists } from '@/api/perms/menu'
 import { getApiList } from '@/api/setting/website'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import useMultipleTabs from '@/hooks/useMultipleTabs'
-enum GenTpl {
-    CRUD = 'crud',
-    TREE = 'tree'
+const GenTpl = {
+    CRUD: 'crud',
+    TREE: 'tree'
 }
 defineOptions({
     name: 'tableEdit'
@@ -321,7 +321,7 @@ const formData = reactive({
         authorName: '',
         remarks: ''
     },
-    column: [] as any[],
+    column: [] as type_gen_edit_column[],
     gen: {
         functionName: '',
 
@@ -350,10 +350,9 @@ const rules = reactive({
 
 const getDetails = async () => {
     const data = await tableDetail({
-        id: route.query.id
+        id: route.query.id as string
     })
     Object.keys(formData).forEach((key) => {
-        //@ts-ignore
         formData[key] = data[key]
     })
 }
@@ -369,7 +368,7 @@ const { optionsData } = useDictOptions<{
     menu: {
         api: menuLists,
         transformData(data: any) {
-            const menu = { id: 0, name: '顶级', children: [] }
+            const menu = { id: '', name: '顶级', children: [] }
             menu.children = data
             return menu
         }
@@ -395,7 +394,9 @@ const handleSave = async () => {
     } catch (error: any) {
         for (const err in error) {
             const isInRules = Object.keys(rules).includes(err)
-            isInRules && feedback.msgError(error[err][0]?.message)
+            if (isInRules) {
+                feedback.msgError(error[err][0]?.message)
+            }
         }
     }
 }

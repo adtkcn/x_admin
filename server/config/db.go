@@ -8,7 +8,7 @@ type DBConfigStruct struct {
 	ConnMaxLifetimeSeconds int    `mapstructure:"ConnMaxLifetimeSeconds"` // 连接可复用的最大时间(秒：默认28800秒)
 	TablePrefix            string `mapstructure:"TablePrefix"`            // 数据库表前缀
 	SlowThreshold          int    `mapstructure:"SlowThreshold"`          // 数据库慢查询阈值(秒：默认1秒)
-	LogLevel               string `mapstructure:"LogLevel"`               // 数据库日志级别
+	LogLevel               string `mapstructure:"LogLevel"`               // 数据库日志级别,debug,info,warn,error
 	DefaultStringSize      uint   `mapstructure:"DefaultStringSize"`      // 数据库string类型字段的默认长度:256
 }
 

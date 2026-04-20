@@ -1,0 +1,616 @@
+package flow_service
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"strconv"
+
+	"x_admin/app/model"
+	"x_admin/app/model/system_model"
+	"x_admin/app/schema/flow_schema"
+	"x_admin/app/schema/system_schema"
+	"x_admin/app/service/system_service"
+	"x_admin/config"
+	"x_admin/core"
+	"x_admin/core/request"
+	"x_admin/core/response"
+	"x_admin/util"
+	"x_admin/util/convert_util"
+
+	"gorm.io/gorm"
+)
+
+var HistoryService = NewFlowHistoryService()
+
+// NewFlowHistoryService 初始化
+func NewFlowHistoryService() *flowHistoryService {
+	db := core.GetDB()
+	return &flowHistoryService{db: db}
+}
+
+// flowHistoryService 流程历史服务实现类
+type flowHistoryService struct {
+	db *gorm.DB
+}
+
+// List 流程历史列表
+func (service flowHistoryService) List(page request.PageReq, listReq flow_schema.FlowHistoryListReq) (res response.PageResp, e error) {
+	// 分页信息
+	limit := page.PageSize
+	offset := page.PageSize * (page.PageNo - 1)
+	// 查询
+	dbModel := service.db.Model(&model.FlowHistory{})
+	if listReq.ApplyId != "" {
+		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
+	}
+	if listReq.TemplateId != "" {
+		dbModel = dbModel.Where("template_id = ?", listReq.TemplateId)
+	}
+	if listReq.ApplyUserId != "" {
+		dbModel = dbModel.Where("apply_user_id = ?", listReq.ApplyUserId)
+	}
+	if listReq.ApplyUserNickname != "" {
+		dbModel = dbModel.Where("apply_user_nickname like ?", "%"+listReq.ApplyUserNickname+"%")
+	}
+	if listReq.ApproverId != "" {
+		dbModel = dbModel.Where("approver_id = ?", listReq.ApproverId)
+	}
+	if listReq.ApproverNickname != "" {
+		dbModel = dbModel.Where("approver_nickname like ?", "%"+listReq.ApproverNickname+"%")
+	}
+	if listReq.NodeId != "" {
+		dbModel = dbModel.Where("node_id = ?", listReq.NodeId)
+	}
+	if listReq.FormValue != "" {
+		dbModel = dbModel.Where("form_value = ?", listReq.FormValue)
+	}
+	if listReq.PassStatus > 0 {
+		dbModel = dbModel.Where("pass_status = ?", listReq.PassStatus)
+	}
+	if listReq.PassRemark != "" {
+		dbModel = dbModel.Where("pass_remark = ?", listReq.PassRemark)
+	}
+	// 总数
+	var count int64
+	err := dbModel.Count(&count).Error
+	if e = response.CheckErr(err, "列表总数获取失败"); e != nil {
+		return
+	}
+	// 数据
+	var modelList []model.FlowHistory
+	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
+	if e = response.CheckErr(err, "列表获取失败"); e != nil {
+		return
+	}
+	list := []flow_schema.FlowHistoryResp{}
+	convert_util.Copy(&list, modelList)
+	return response.PageResp{
+		PageNo:   page.PageNo,
+		PageSize: page.PageSize,
+		Count:    count,
+		Lists:    list,
+	}, nil
+}
+
+// ListAll 流程历史列表
+func (service flowHistoryService) ListAll(listReq flow_schema.FlowHistoryListReq) (res []flow_schema.FlowHistoryResp, e error) {
+
+	// 查询
+	dbModel := service.db.Model(&model.FlowHistory{})
+	if listReq.ApplyId != "" {
+		dbModel = dbModel.Where("apply_id = ?", listReq.ApplyId)
+	}
+	if listReq.PassStatus > 0 {
+		dbModel = dbModel.Where("pass_status = ?", listReq.PassStatus)
+	}
+	if listReq.NodeType != "" {
+		dbModel = dbModel.Where("node_type =?", listReq.NodeType)
+	}
+	// 数据
+	var modelList []model.FlowHistory
+	err := dbModel.Find(&modelList).Error
+	if e = response.CheckErr(err, "获取列表失败"); e != nil {
+		return
+	}
+	convert_util.Copy(&res, modelList)
+	return res, nil
+}
+
+// Detail 流程历史详情
+func (service flowHistoryService) Detail(id string) (res flow_schema.FlowHistoryResp, e error) {
+	var obj model.FlowHistory
+	err := service.db.Where("id = ?", id).First(&obj).Error
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
+		return
+	}
+	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+		return
+	}
+	convert_util.Copy(&res, obj)
+	return
+}
+
+// Add 流程历史新增
+func (service flowHistoryService) Add(addReq flow_schema.FlowHistoryAddReq) (e error) {
+	var obj model.FlowHistory
+	convert_util.Copy(&obj, addReq)
+	err := service.db.Create(&obj).Error
+	e = response.CheckErr(err, "添加失败")
+	return
+}
+
+// Edit 流程历史编辑
+func (service flowHistoryService) Edit(editReq flow_schema.FlowHistoryEditReq) (e error) {
+	var obj model.FlowHistory
+	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
+	// 校验
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
+		return
+	}
+	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
+		return
+	}
+	// 更新
+	convert_util.Copy(&obj, editReq)
+	err = service.db.Model(&obj).Updates(obj).Error
+	e = response.CheckErr(err, "编辑失败")
+	return
+}
+
+// Del 流程历史删除
+func (service flowHistoryService) Del(id string) (e error) {
+	var obj model.FlowHistory
+	err := service.db.Where("id = ?", id).First(&obj).Error
+	// 校验
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
+		return
+	}
+	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
+		return
+	}
+	// 删除
+	err = service.db.Delete(&obj).Error
+	e = response.CheckErr(err, "删除失败")
+	return
+}
+
+/**
+* 获取节点的审批用户
+ */
+func (service flowHistoryService) GetApprover(ApplyId string) (res []system_schema.SystemAuthAdminResp, e error) {
+	nextNodes, applyDetail, _, err := service.GetNextNode(ApplyId)
+	if err != nil {
+		return nil, err
+	}
+	var userTask flow_schema.FlowTree
+	for n := 0; n < len(nextNodes); n++ {
+		if nextNodes[n].Type == "bpmn:userTask" {
+			userTask = nextNodes[n]
+			break
+		}
+	}
+	// 没有审批节点不用获取审批人
+	if userTask.Id == "" {
+		return nil, nil
+	}
+
+	var userType = userTask.UserType //用户类型,1指定部门、岗位,2用户部门负责人,3指定审批人
+	var userId = userTask.UserId
+	var deptId = userTask.DeptId
+	var postId = userTask.PostId
+	if userType == 0 && userId == "" && deptId == "" && postId == "" {
+		// return nil, errors.New("未设置审批人")
+
+		// 未设置审批人时默认为2用户部门负责人
+		userType = 2
+	}
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
+
+	adminModel := service.db.Model(&system_model.SystemAuthAdmin{}).Table(adminTbName + " AS admin")
+
+	where := map[string]any{}
+	if userType == 1 {
+		if deptId != "" {
+			where["admin.dept_id"] = deptId
+			// adminModel.Or("admin.dept_id =?", deptId)
+		}
+		if postId != "" {
+			where["admin.post_id"] = postId
+			// adminModel.Or("admin.post_id =?", postId)
+		}
+	} else if userType == 2 {
+		// 申请人所在的部门负责人
+
+		applyUser, err := system_service.AdminService.Detail(applyDetail.ApplyUserId)
+		if err != nil {
+			return nil, err
+		}
+		if applyUser.DeptId == "" {
+			return nil, errors.New("申请人没有绑定部门")
+		}
+		deptDetails, err := system_service.DeptService.Detail(applyUser.DeptId)
+		if err != nil {
+			return nil, err
+		}
+		if deptDetails.DutyId == "" {
+			return nil, errors.New(deptDetails.Name + "部门没有绑定负责人")
+		}
+		where["admin.id"] = deptDetails.DutyId
+
+	} else if userType == 3 {
+		if userId != "" {
+			where["admin.id"] = userId
+			// adminModel.Or("admin.id =?", userId)
+		}
+	}
+
+	// 数据
+	var adminResp []system_schema.SystemAuthAdminResp
+	err = adminModel.Where(where).Find(&adminResp).Error
+	if e = response.CheckErr(err, "获取审批用户失败"); e != nil {
+		return
+	}
+	for i := 0; i < len(adminResp); i++ {
+		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
+		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
+			adminResp[i].Role = "系统管理员"
+		}
+	}
+	return adminResp, nil
+}
+
+// 通过审批
+func (service flowHistoryService) Pass(pass flow_schema.PassReq) (e error) {
+	nextNodes, applyDetail, LastHistory, err := service.GetNextNode(pass.ApplyId)
+
+	if err != nil {
+		return err
+	}
+	// nextNodes必须包含审批节点或结束节点，否则流程抛出异常
+
+	isUserTask := false //是否有用户节点
+	isEndTask := false  // 是否是最后一个节点
+
+	FormValue := applyDetail.FormValue
+	if LastHistory.Id != "" {
+		FormValue = LastHistory.FormValue
+	}
+	var flows = []model.FlowHistory{}
+
+	for _, v := range nextNodes {
+		// if v.Type == "bpmn:exclusiveGateway" {
+		// 这里网关不用处理，顶多加一条历史记录
+		// }
+		var flow = model.FlowHistory{
+			ApplyId:           applyDetail.Id,
+			NodeId:            v.Id,
+			NodeType:          v.Type,
+			NodeLabel:         v.Label,
+			FormValue:         FormValue,
+			PassStatus:        1,
+			ApplyUserId:       applyDetail.ApplyUserId,
+			TemplateId:        applyDetail.TemplateId,
+			ApplyUserNickname: applyDetail.ApplyUserNickname,
+			ApproverId:        "",
+			ApproverNickname:  "",
+		}
+		if v.Type == "bpmn:startEvent" {
+			flow.ApproverId = ""
+			flow.PassStatus = 2 //2通过
+		} else if v.Type == "bpmn:exclusiveGateway" {
+			flow.ApproverId = ""
+			flow.PassStatus = 2
+			// 发邮件之类的，待完善
+		} else if v.Type == "bpmn:serviceTask" {
+			flow.ApproverId = ""
+			flow.PassStatus = 1 //1待处理,异步任务可以失败
+			// 发邮件之类的，待完善
+		} else if v.Type == "bpmn:userTask" {
+			isUserTask = true
+			flow.PassStatus = 1 //1待处理
+			flow.ApproverId = pass.NextNodeAdminId
+			Approver, err := system_service.AdminService.Detail(pass.NextNodeAdminId)
+			if err != nil {
+				return err
+			} else {
+				flow.ApproverNickname = Approver.Nickname
+			}
+
+		} else if v.Type == "bpmn:endEvent" {
+			isEndTask = true
+			flow.ApproverId = ""
+			flow.PassStatus = 2 //2通过
+		}
+		flows = append(flows, flow)
+	}
+	if !isUserTask && !isEndTask {
+		return errors.New("必须包含审批节点或者结束节点")
+	}
+	err = service.db.Transaction(func(tx *gorm.DB) error {
+		// 在事务中执行一些 db 操作（从这里开始，您应该使用 'tx' 而不是 'db'）
+		if err := tx.Create(&flows).Error; err != nil {
+			// 返回任何错误都会回滚事务
+			return err
+		}
+		// LastHistory
+		if LastHistory.Id != "" {
+			LastHistory.PassStatus = 2
+			LastHistory.PassRemark = pass.PassRemark
+			err = tx.Save(&LastHistory).Error
+			if err != nil {
+				return err
+			}
+		}
+
+		// 待提交或者有结束节点，修改申请状态
+		if applyDetail.Status == 1 || isEndTask {
+			status := 2 //审批中
+			if isEndTask {
+				status = 3 //审批通过
+			}
+			err = tx.Model(&model.FlowApply{}).Where(model.FlowApply{
+				Id: pass.ApplyId,
+			}).Update("status", status).Error
+
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+	return err
+}
+
+// 驳回
+func (service flowHistoryService) Back(back flow_schema.BackReq) (e error) {
+	// 得判断一下驳回的人权限
+	// 获取最后一条历史记录
+	var LastHistory model.FlowHistory
+	err := service.db.Where(model.FlowHistory{
+		ApplyId: back.ApplyId,
+	}).Limit(1).Last(&LastHistory).Error
+	if err != nil {
+		return err
+	}
+
+	// 驳回到申请人，最后一条改驳回状态，驳回备注，新加一条
+	if back.HistoryId == "" {
+
+		var applyDetail, err = ApplyService.Detail(back.ApplyId)
+		if err != nil {
+			return err
+		}
+		err = service.db.Transaction(func(tx *gorm.DB) error {
+			// 获取最早的一条历史记录，nodeType为"bpmn:startEvent"
+			var FirstHistory model.FlowHistory
+			err = service.db.Where(model.FlowHistory{
+				ApplyId:  back.ApplyId,
+				NodeType: "bpmn:startEvent",
+			}).First(&FirstHistory).Error
+			if err != nil {
+				return err
+			}
+			var flow = model.FlowHistory{
+				ApplyId:   FirstHistory.ApplyId,
+				NodeId:    FirstHistory.NodeId,
+				NodeType:  FirstHistory.NodeType,
+				NodeLabel: FirstHistory.NodeLabel,
+				FormValue: FirstHistory.FormValue,
+
+				TemplateId:        FirstHistory.TemplateId,
+				ApplyUserId:       FirstHistory.ApplyUserId,
+				ApplyUserNickname: FirstHistory.ApplyUserNickname,
+				ApproverId:        "",
+				ApproverNickname:  "",
+				PassStatus:        1, //
+				PassRemark:        "",
+			}
+			err = tx.Create(&flow).Error
+			if err != nil {
+				return err
+			}
+
+			var obj model.FlowApply
+			convert_util.Copy(&obj, applyDetail)
+			obj.Status = 4
+			err = tx.Save(&obj).Error
+			if err != nil {
+				return err
+			}
+
+			LastHistory.PassStatus = 3
+			LastHistory.PassRemark = back.Remark
+			err = tx.Save(&LastHistory).Error
+
+			return err
+		})
+
+		return err
+	} else {
+
+		err = service.db.Transaction(func(tx *gorm.DB) error {
+			var historyDetail, err = service.Detail(back.HistoryId)
+			if err != nil {
+				return err
+			}
+
+			LastHistory.PassStatus = 3
+			LastHistory.PassRemark = back.Remark
+			tx.Save(&LastHistory)
+			var flow = model.FlowHistory{
+				ApplyId:   historyDetail.ApplyId,
+				NodeId:    historyDetail.NodeId,
+				NodeType:  historyDetail.NodeType,
+				NodeLabel: historyDetail.NodeLabel,
+				FormValue: historyDetail.FormValue,
+
+				ApplyUserId:       historyDetail.ApplyUserId,
+				TemplateId:        historyDetail.TemplateId,
+				ApplyUserNickname: historyDetail.ApplyUserNickname,
+				ApproverId:        historyDetail.ApproverId,
+				ApproverNickname:  historyDetail.ApplyUserNickname,
+
+				PassStatus: 1, //
+				PassRemark: "",
+			}
+			err = tx.Create(&flow).Error
+			return err
+		})
+
+		return err
+
+	}
+}
+
+/**
+ * 获取下一批流程，直到审批或结束节点
+ */
+func (service flowHistoryService) GetNextNode(ApplyId string) (res []flow_schema.FlowTree, apply flow_schema.FlowApplyResp, LastHistory model.FlowHistory, e error) {
+	var applyDetail, err = ApplyService.Detail(ApplyId)
+
+	if e = response.CheckErr(err, "获取审批申请失败"); e != nil {
+		return
+	}
+	// 获取最后一条历史记录
+	// var LastHistory model.FlowHistory
+	result := service.db.Where(model.FlowHistory{
+		ApplyId: ApplyId,
+	}).Limit(1).Last(&LastHistory)
+
+	// start
+	var flowTree []flow_schema.FlowTree
+	json.Unmarshal([]byte(applyDetail.FlowProcessDataList), &flowTree)
+	var formValue map[string]any
+
+	if result.RowsAffected == 1 { //有最新审批记录
+		json.Unmarshal([]byte(LastHistory.FormValue), &formValue)
+
+	} else {
+		json.Unmarshal([]byte(applyDetail.FormValue), &formValue)
+	}
+
+	var next []flow_schema.FlowTree
+	if result.RowsAffected == 0 {
+		for _, v := range flowTree {
+			if v.Type == "bpmn:startEvent" {
+				next = []flow_schema.FlowTree{v}
+				break
+			}
+		}
+	} else {
+		for _, v := range flowTree {
+			if v.Id == LastHistory.NodeId {
+				if v.Children == nil {
+					break
+				}
+				next = *v.Children
+				break
+			}
+		}
+	}
+	res = DeepNextNode(&next, formValue)
+	return res, applyDetail, LastHistory, e
+}
+
+// 返回节点数组，最后一个节点为用户或结束节点
+func DeepNextNode(flowTree *[]flow_schema.FlowTree, formValue map[string]any) []flow_schema.FlowTree {
+	var nextNodes []flow_schema.FlowTree
+	for _, v := range *flowTree {
+		if v.Type == "bpmn:startEvent" {
+			nextNodes = append(nextNodes, v)
+
+			// 开始节点
+			if v.Children == nil {
+				break
+			}
+			child := DeepNextNode(v.Children, formValue)
+			nextNodes = append(nextNodes, child...)
+			break
+		} else if v.Type == "bpmn:exclusiveGateway" {
+			// 网关
+			// v.Gateway
+			var haveFalse = false
+			var gateway = *v.Gateway
+			for i := 0; i < len(gateway); i++ {
+				var id = gateway[i].Id
+				var value = gateway[i].Value
+				var condition = gateway[i].Condition
+				if condition == "==" {
+					if formValue[id].(string) == value { // 等与
+
+					} else {
+						haveFalse = true
+					}
+				} else if condition == "!=" {
+					if formValue[id].(string) != value { // 不等与
+
+					} else {
+						haveFalse = true
+					}
+				} else if condition == ">=" {
+					var val, err = strconv.Atoi(value)
+					if err != nil {
+						fmt.Println(err)
+						continue
+					}
+					var formVal = formValue[id].(int64)
+					if formVal >= int64(val) { // 大于等于
+
+					} else {
+						haveFalse = true
+					}
+				} else if condition == "<=" {
+					var val, err = strconv.Atoi(value)
+					if err != nil {
+						fmt.Println(err)
+						continue
+					}
+					var formVal = formValue[id].(int64)
+
+					if formVal <= int64(val) { // 小于等于
+
+					} else {
+						haveFalse = true
+					}
+				} else {
+					haveFalse = true
+					fmt.Println("未知的条件")
+				}
+
+			}
+			// 不满足条件，继续循环
+			if haveFalse {
+				continue
+			} else {
+				nextNodes = append(nextNodes, v)
+
+				if v.Children == nil {
+					break
+				}
+				// 判断formValue值，决定是不是递归这个网关
+				child := DeepNextNode(v.Children, formValue)
+				nextNodes = append(nextNodes, child...)
+				break
+			}
+		} else if v.Type == "bpmn:serviceTask" {
+			nextNodes = append(nextNodes, v)
+			if v.Children == nil {
+				break
+			}
+			// 系统服务
+			child := DeepNextNode(v.Children, formValue)
+			nextNodes = append(nextNodes, child...)
+		} else if v.Type == "bpmn:userTask" {
+			//用户节点
+			nextNodes = append(nextNodes, v)
+			break
+		} else if v.Type == "bpmn:endEvent" {
+			// 结束节点
+			nextNodes = append(nextNodes, v)
+			break
+		}
+	}
+	return nextNodes
+}

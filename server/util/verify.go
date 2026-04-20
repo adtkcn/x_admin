@@ -58,7 +58,7 @@ var VerifyUtil = verifyUtil{}
 type verifyUtil struct{}
 
 func (vu verifyUtil) VerifyJSON(c *gin.Context, obj any) (e error) {
-	// var reqInfo interface{}
+	// var reqInfo any
 	if err := c.ShouldBindBodyWith(&obj, binding.JSON); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {

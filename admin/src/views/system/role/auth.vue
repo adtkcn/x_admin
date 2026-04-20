@@ -79,7 +79,7 @@ const rules = {
 
 const getOptions = async () => {
     const data = await menuLists()
-    menuTree.value = arrayToTree(data, '0')
+    menuTree.value = arrayToTree(data, '')
     menuArray.value = treeToArray(data)
 }
 

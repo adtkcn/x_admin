@@ -2,8 +2,8 @@ package corn
 
 import (
 	"time"
-	"x_admin/app/service/cornService"
-	"x_admin/app/service/monitorService"
+	"x_admin/app/service/corn_service"
+	"x_admin/app/service/monitor_service"
 	"x_admin/core"
 	"x_admin/util"
 )
@@ -28,7 +28,7 @@ func init() {
 	FixedTasks.Start()
 
 	// 每10秒执行一次拉取定时任务"*/10 * * * * *"
-	FixedTasks.AddTask("loadTasks", "0 * * * * *", cornService.Task{
+	FixedTasks.AddTask("loadTasks", "40 * * * * *", corn_service.Task{
 		Lock: false,
 		// LockTTL:  10 * time.Second,
 		TaskCode: "loadTasks",
@@ -43,7 +43,7 @@ func init() {
 	})
 
 	// 每5秒执行一次广播当前在线用户数
-	FixedTasks.AddTask("onlineCount", "*/5 * * * * *", cornService.Task{
+	FixedTasks.AddTask("onlineCount", "*/5 * * * * *", corn_service.Task{
 		Lock:     true,
 		LockTTL:  2 * time.Second,
 		TaskCode: "onlineCount",
@@ -60,14 +60,27 @@ func init() {
 	})
 
 	// 每2秒执行一次收集服务器信息并推送到Redis
-	FixedTasks.AddTask("CollectAndPushServerInfo", "*/2 * * * * *", cornService.Task{
+	FixedTasks.AddTask("CollectAndPushServerInfo", "*/5 * * * * *", corn_service.Task{
 		Lock:     false,
 		LockTTL:  2 * time.Second,
 		TaskCode: "CollectAndPushServerInfo",
 		TaskDesc: "收集服务器信息并推送到Redis",
 		TaskFunc: func() {
-			if err := monitorService.MonitorServerService.CollectAndPushServerInfo(); err != nil {
+			if err := monitor_service.MonitorServerService.CollectAndPushServerInfo(); err != nil {
 				core.Logger.Error("收集服务器信息并推送到Redis失败", err)
+			}
+		},
+	})
+
+	// 每天凌晨1点删除三个月前的错误监控数据
+	FixedTasks.AddTask("DelMonitorErrorListThreeMonthAgo", "0 1 * * * *", corn_service.Task{
+		Lock:     true,
+		LockTTL:  10 * time.Minute,
+		TaskCode: "DelMonitorErrorListThreeMonthAgo",
+		TaskDesc: "删除三个月前的错误监控数据",
+		TaskFunc: func() {
+			if err := monitor_service.MonitorErrorListService.DelThreeMonthAgo(); err != nil {
+				core.Logger.Error("删除三个月前的错误监控数据失败", err)
 			}
 		},
 	})

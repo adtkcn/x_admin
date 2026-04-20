@@ -82,7 +82,6 @@ const userStore = useUserStore()
 defineOptions({
     name: 'done'
 })
-const ApproveRef = shallowRef<InstanceType<typeof ApproveRef>>()
 const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 
 // const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
@@ -100,9 +99,7 @@ const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_apply>({
 const { dictData } = useDictData<{
     flow_history_status: any[]
 }>(['flow_history_status'])
-// const handleOpen = async (row) => {
-//     ApproveRef.value?.open(toRaw(row))
-// }
+
 const OpenViewForm = async (row: any) => {
     const applyDetail = await flow_apply_detail({ id: row.applyId })
 

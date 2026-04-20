@@ -1,15 +1,15 @@
 export type WithIdPid = {
     id?: string | number
-    pid?: string | number | null | undefined
+    pid?: string | number
 }
 
 // ---------- 1. 查询匹配节点 ----------
-export function findMatchedNodes<T extends WithIdPid>(
-    data: T[],
+export function findMatchedNodes(
+    data: Record<string, any>[],
     keyword: string,
     fields: string[] = ['name'],
     exact = false
-): T[] {
+): Record<string, any>[] {
     if (!keyword) return []
     return data.filter((node) =>
         fields.some((field) => {
@@ -20,16 +20,21 @@ export function findMatchedNodes<T extends WithIdPid>(
 }
 
 // ---------- 2. 查询所有子级（后代） ----------
-export function findDescendants<T extends WithIdPid>(data: T[], rootIds: (string | number)[]): T[] {
+export function findDescendants(
+    data: Record<string, any>[],
+    rootIds: (string | number)[],
+    idField = 'id',
+    pidField = 'pid'
+): Record<string, any>[] {
     // 构建 pid -> children 映射
-    const childrenMap = new Map<string | number, T[]>()
+    const childrenMap = new Map<string | number, Record<string, any>[]>()
     for (const node of data) {
-        const p = node.pid ?? '__null__'
+        const p = node[pidField] ?? '__null__'
         if (!childrenMap.has(p)) childrenMap.set(p, [])
         childrenMap.get(p)!.push(node)
     }
 
-    const result: T[] = []
+    const result: Record<string, any>[] = []
     const queue: (string | number)[] = [...rootIds]
     const visited = new Set<string | number>()
 
@@ -41,22 +46,27 @@ export function findDescendants<T extends WithIdPid>(data: T[], rootIds: (string
         const children = childrenMap.get(id) || []
         for (const child of children) {
             result.push(child)
-            queue.push(child.id)
+            queue.push(child[idField])
         }
     }
 
-    return Array.from(new Map(result.map((n) => [n.id, n])).values())
+    return Array.from(new Map(result.map((n) => [n[idField], n])).values())
 }
 
 // ---------- 3. 查询所有父级（祖先） ----------
-export function findAncestors<T extends WithIdPid>(data: T[], startIds: (string | number)[]): T[] {
+export function findAncestors(
+    data: Record<string, any>[],
+    startIds: (string | number)[],
+    idField = 'id',
+    pidField = 'pid'
+): Record<string, any>[] {
     // 构建 id -> node 映射
-    const nodeMap = new Map<string | number, T>()
+    const nodeMap = new Map<string | number, Record<string, any>>()
     for (const node of data) {
-        nodeMap.set(node.id, node)
+        nodeMap.set(node[idField], node)
     }
 
-    const result: T[] = []
+    const result: Record<string, any>[] = []
     const visited = new Set<string | number>()
 
     for (const id of startIds) {
@@ -71,41 +81,50 @@ export function findAncestors<T extends WithIdPid>(data: T[], startIds: (string 
                 result.push(node)
             }
 
-            currentId = node.pid
+            currentId = node[pidField]
         }
     }
 
-    return Array.from(new Map(result.map((n) => [n.id, n])).values())
+    return Array.from(new Map(result.map((n) => [n[idField], n])).values())
 }
 
 // ---------- 4. 合并所有层级 ----------
-export function collectAllLevels<T extends WithIdPid>(
-    matched: T[],
-    ancestors: T[],
-    descendants: T[]
-): T[] {
+export function collectAllLevels(
+    matched: Record<string, any>[],
+    ancestors: Record<string, any>[],
+    descendants: Record<string, any>[],
+    idField = 'id'
+): Record<string, any>[] {
     const all = [...matched, ...ancestors, ...descendants]
-    return Array.from(new Map(all.map((n) => [n.id, n])).values())
+    return Array.from(new Map(all.map((n) => [n[idField], n])).values())
 }
 
 // ---------- 5. 主入口：一键获取结构化结果 ----------
-export function queryHierarchy<T extends WithIdPid>(
-    data: T[],
+export function queryHierarchy(
+    data: Record<string, any>[],
     keyword: string,
     options: {
         fields?: string[]
+        idField?: string
+        pidField?: string
         exact?: boolean
     } = {}
 ) {
-    const { fields = ['name'], exact = false } = options
+    const { fields = ['name'], exact = false, idField = 'id', pidField = 'pid' } = options
 
-    const matched = findMatchedNodes(data, keyword, fields, exact)
-    const matchedIds = matched.map((n) => n.id)
+    const matched = findMatchedNodes(data, keyword, fields, exact) // 匹配的节点
+    const matchedIds = matched.map((n) => n[idField] as string | number)
 
-    const descendants = findDescendants(data, matchedIds)
-    const ancestors = findAncestors(data, matchedIds)
+    const descendants = findDescendants(data, matchedIds, idField, pidField) // 后代
+    const ancestors = findAncestors(data, matchedIds, idField, pidField) // 祖先
 
-    const all = collectAllLevels(matched, ancestors, descendants)
+    const all = collectAllLevels(matched, ancestors, descendants, idField)
+    console.log({
+        matched, // 匹配的节点
+        ancestors, // 所有父级（不包含 matched 自身）
+        descendants, // 所有子级
+        all // 合并后的完整列表（去重）
+    })
 
     return {
         matched, // 匹配的节点

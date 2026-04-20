@@ -70,8 +70,16 @@
 <script lang="ts" setup>
 import { ref, computed, shallowRef, reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
-import { deptLists, deptEdit, deptAdd, deptDetail } from '@/api/org/department'
-import { adminListByDeptId } from '@/api/perms/admin'
+import {
+    deptLists,
+    deptEdit,
+    deptAdd,
+    deptDetail,
+    type type_system_dept_add,
+    type type_system_dept_edit,
+    type type_system_dept_resp
+} from '@/api/org/department'
+import { adminListByDeptId, type type_system_admin_resp } from '@/api/perms/admin'
 
 import Popup from '@/components/popup/index.vue'
 import { useDictOptions } from '@/hooks/useDictOptions'
@@ -83,9 +91,10 @@ const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑部门' : '新增部门'
 })
-const formData = reactive({
+
+const formData = reactive<type_system_dept_edit>({
     id: '',
-    pid: '' as string,
+    pid: '',
     name: '',
     dutyId: '',
     duty: '',
@@ -93,22 +102,19 @@ const formData = reactive({
     sort: 0,
     isStop: 0
 })
-const DeptUsers = ref([])
+const DeptUsers = ref<type_system_admin_resp[]>([])
 // 部门下的管理员
 async function getDeptUsers(deptId: string) {
     const users = await adminListByDeptId({ deptId: deptId })
     DeptUsers.value = users
 }
 function dutyChange(id: string) {
-    console.log('params', id)
     if (id) {
         const duty = DeptUsers.value.find((item) => item.id == id)
-        formData.duty = duty.nickname
-        // formData.duty_id = duty.id
+        formData.duty = duty?.nickname || ''
     } else {
         formData.duty = ''
     }
-    // formData
 }
 const checkMobile = (rule: any, value: any, callback: any) => {
     if (!value) {
@@ -159,7 +165,7 @@ const formRules = {
 }
 
 const { optionsData } = useDictOptions<{
-    dept: any[]
+    dept: type_system_dept_resp[]
 }>({
     dept: {
         api: deptLists
@@ -177,25 +183,17 @@ const handleSubmit = async () => {
 const open = (type = 'add') => {
     mode.value = type
     popupRef.value?.open()
-    // if (type == 'edit') {
-    // }
 }
 
-const setFormData = (data: Record<any, any>) => {
+const setFormData = (data: Partial<type_system_dept_edit>) => {
     for (const key in formData) {
         if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
             formData[key] = data[key]
-        }
-        //TODO：因为后端返回字段为is_stop
-        else {
-            //@ts-ignore
-            formData[key] = data['is_stop']
         }
     }
 }
 
-const getDetail = async (row: Record<string, any>) => {
+const getDetail = async (row: type_system_dept_resp) => {
     const data = await deptDetail({
         id: row.id
     })

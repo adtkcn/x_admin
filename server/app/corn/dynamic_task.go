@@ -2,17 +2,19 @@ package corn
 
 import (
 	"x_admin/app/schema"
-	"x_admin/app/service/cornService"
+	"x_admin/app/service/corn_service"
 	"x_admin/core"
+
+	"github.com/adtkcn/x_null"
 )
 
 var DynamicTasks = NewCronManager()
 
 // 从数据库加载任务
-func loadTasks() []cornService.RunTask {
-	var Status = core.NullInt{}
+func loadTasks() []corn_service.RunTask {
+	var Status = x_null.Int64{}
 	Status.SetValue(1)
-	allList, err := cornService.SystemCornService.ListAll(schema.SystemCornListReq{
+	allList, err := corn_service.SystemCornService.ListAll(schema.SystemCornListReq{
 		Status: Status,
 	})
 	if err != nil {
@@ -20,16 +22,16 @@ func loadTasks() []cornService.RunTask {
 		return nil
 	}
 
-	var RunTaskList = []cornService.RunTask{} // 运行中的任务列表
+	var RunTaskList = []corn_service.RunTask{} // 运行中的任务列表
 
 	for _, task := range allList {
 		if task.Status.ValueOrZero() == 0 {
 			continue
 		}
-		for _, info := range cornService.TaskInfoList {
+		for _, info := range corn_service.TaskInfoList {
 			if task.TaskCode.ValueOrZero() == info.TaskCode {
 
-				RunTaskList = append(RunTaskList, cornService.RunTask{
+				RunTaskList = append(RunTaskList, corn_service.RunTask{
 					TaskId:   task.Id,
 					TaskName: task.TaskName.ValueOrZero(),
 					CronExpr: task.CornExpr.ValueOrZero(),
