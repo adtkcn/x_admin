@@ -377,7 +377,7 @@ const { optionsData } = useDictOptions<{
         api: getApiList,
         transformData(data: any) {
             return data.filter((item: any) => {
-                return item.endsWith('listAll')
+                return item.endsWith('list_all')
             })
         }
     }

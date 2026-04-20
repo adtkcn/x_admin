@@ -12,7 +12,7 @@ func SystemCornRoute(rg *gin.RouterGroup) {
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/system_corn/list", handle.List)
-	r.GET("/system_corn/listAll", handle.ListAll)
+	r.GET("/system_corn/list_all", handle.ListAll)
 	r.GET("/system_corn/detail", handle.Detail)
 
 	r.POST("/system_corn/add", middleware.RecordLog("定时任务新增"), handle.Add)

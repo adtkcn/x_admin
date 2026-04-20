@@ -106,13 +106,13 @@
                 <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
-                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll',{{{ end }}}'admin:{{{ .ModuleName }}}:detail']"
+                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:list_all',{{{ end }}}'admin:{{{ .ModuleName }}}:detail']"
                             type="primary"
                             link
                             @click="viewDetails(row)"
                         >详情</el-button>
                         <el-button
-                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll',{{{ end }}}'admin:{{{ .ModuleName }}}:add']"
+                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:list_all',{{{ end }}}'admin:{{{ .ModuleName }}}:add']"
                             type="primary"
                             link
                             @click="handleAdd(row.{{{ .Table.TreePrimary }}})"
@@ -120,7 +120,7 @@
                             新增
                         </el-button>
                         <el-button
-                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:listAll',{{{ end }}}'admin:{{{ .ModuleName }}}:edit','admin:{{{ .ModuleName }}}:detail']"
+                            v-perms="[{{{ if and .Table.TreePrimary .Table.TreeParent }}}'admin:{{{ .ModuleName }}}:list_all',{{{ end }}}'admin:{{{ .ModuleName }}}:edit','admin:{{{ .ModuleName }}}:detail']"
                             type="primary"
                             link
                             @click="handleEdit(row)"

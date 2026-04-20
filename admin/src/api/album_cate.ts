@@ -40,7 +40,7 @@ export function album_cate_list(params?: type_album_cate_query) {
 
 // 相册分类列表-所有
 export function album_cate_list_all(params?: type_album_cate_query) {
-    return request.get<Pages<type_album_cate>>({ url: '/album_cate/listAll', params })
+    return request.get<Pages<type_album_cate>>({ url: '/album_cate/list_all', params })
 }
 
 // 相册分类详情

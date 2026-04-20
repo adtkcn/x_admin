@@ -16,14 +16,14 @@ import (
 
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name,  paths, component, is_cache, is_show, is_disable, create_time, update_time) VALUES ('{{{makeID}}}',"", 'C', '{{{ .FunctionName }}}', '{{{nameToPath .ModuleName }}}/index', '{{{nameToPath .ModuleName }}}/index', 0, 1, 0, now(), now());
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}列表','admin:{{{ .ModuleName }}}:list', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
-INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}全部列表','admin:{{{ .ModuleName }}}:listAll', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
+INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}全部列表','admin:{{{ .ModuleName }}}:list_all', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}添加','admin:{{{ .ModuleName }}}:add', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}编辑','admin:{{{ .ModuleName }}}:edit', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}删除','admin:{{{ .ModuleName }}}:del', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}删除-批量','admin:{{{ .ModuleName }}}:del_batch', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}详情','admin:{{{ .ModuleName }}}:detail', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
-INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}导出excel','admin:{{{ .ModuleName }}}:ExportFile', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
-INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}导入excel','admin:{{{ .ModuleName }}}:ImportFile', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
+INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}导出excel','admin:{{{ .ModuleName }}}:export_file', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
+INSERT INTO x_system_auth_menu (id,pid, menu_type, menu_name, perms,is_cache, is_show, is_disable, create_time, update_time) SELECT '{{{makeID}}}',id, 'A', '{{{ .FunctionName }}}导入excel','admin:{{{ .ModuleName }}}:import_file', 0, 1, 0, now(), now() FROM x_system_auth_menu WHERE component='{{{nameToPath .ModuleName }}}/index';
 */
 
 
@@ -33,7 +33,7 @@ func {{{ toUpperCamelCase .ModuleName }}}Route(rg *gin.RouterGroup) {
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/{{{ .ModuleName }}}/list", handle.List)
-	r.GET("/{{{ .ModuleName }}}/listAll", handle.ListAll)
+	r.GET("/{{{ .ModuleName }}}/list_all", handle.ListAll)
 	r.GET("/{{{ .ModuleName }}}/detail", handle.Detail)
 	
 	r.POST("/{{{ .ModuleName }}}/add",middleware.RecordLog("{{{ .FunctionName }}}新增"), handle.Add)

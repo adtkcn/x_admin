@@ -42,7 +42,7 @@ export function user_protocol_list(params?: type_user_protocol_query) {
 // 用户协议列表-所有
 export function user_protocol_list_all(params?: type_user_protocol_query) {
     return request<type_user_protocol[]>({
-		url: '/user_protocol/listAll',
+		url: '/user_protocol/list_all',
 		method: 'GET',
 		data: clearObjEmpty(params)
 	})

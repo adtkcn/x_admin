@@ -61,7 +61,7 @@ func (hd *MonitorProjectHandler) List(c *gin.Context) {
 // @Param		UpdateTimeStart	query		string											false	"更新时间"
 // @Param		UpdateTimeEnd	query		string											false	"更新时间"
 // @Success	200				{object}	response.Response{ data=[]MonitorProjectResp}	"成功"
-// @Router		/api/admin/monitor_project/listAll [get]
+// @Router		/api/admin/monitor_project/list_all [get]
 func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 	var listReq MonitorProjectListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {

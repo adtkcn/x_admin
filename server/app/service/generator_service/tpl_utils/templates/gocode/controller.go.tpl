@@ -67,7 +67,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response{data=[]schema.{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
-//	@Router		/api/admin/{{{ .ModuleName }}}/listAll [get]
+//	@Router		/api/admin/{{{ .ModuleName }}}/list_all [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) {
 	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {

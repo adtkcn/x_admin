@@ -63,7 +63,7 @@
                     新增
                 </el-button>
                     <Upload
-                    v-perms="['admin:{{{ .ModuleName }}}:ImportFile']"
+                    v-perms="['admin:{{{ .ModuleName }}}:import_file']"
                     class="ml-3 mr-3"
                     :url="{{{.ModuleName}}}_import_file"
                     :ext="['xlsx']"
@@ -77,7 +77,7 @@
                         导入
                     </el-button>
                 </Upload>
-                <el-button v-perms="['admin:{{{ .ModuleName }}}:ExportFile']" type="primary" @click="export_file">
+                <el-button v-perms="['admin:{{{ .ModuleName }}}:export_file']" type="primary" @click="export_file">
                     <template #icon>
                         <icon name="el-icon-Download" />
                     </template>

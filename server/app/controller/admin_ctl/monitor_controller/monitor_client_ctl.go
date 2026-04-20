@@ -63,7 +63,7 @@ func (hd *MonitorClientHandler) List(c *gin.Context) {
 // @Param		CreateTimeStart	query		string														false	"创建时间"
 // @Param		CreateTimeEnd	query		string														false	"创建时间"
 // @Success	200				{object}	response.Response{ data=[]monitor_schema.MonitorClientResp}	"成功"
-// @Router		/api/admin/monitor_client/listAll [get]
+// @Router		/api/admin/monitor_client/list_all [get]
 func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 	var listReq monitor_schema.MonitorClientListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {

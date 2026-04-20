@@ -148,7 +148,7 @@ const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_clien
 const { listAllData } = useListAllData<{
     monitor_project_listAll: any[]
 }>({
-    monitor_project_listAll: '/monitor_project/listAll'
+    monitor_project_listAll: '/monitor_project/list_all'
 })
 
 const multipleSelection = ref<type_monitor_client[]>([])

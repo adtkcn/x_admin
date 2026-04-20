@@ -41,7 +41,7 @@ func (hd FlowTemplateHandler) List(c *gin.Context) {
 
 // @Summary	流程模板列表-所有
 // @Tags		flow_template-流程模板
-// @Router		/api/admin/flow/flow_template/listAll [get]
+// @Router		/api/admin/flow/flow_template/list_all [get]
 func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 	res, err := flow_service.TemplateService.ListAll()
 	response.CheckAndRespWithData(c, res, err)

@@ -40,7 +40,7 @@ export function monitor_project_list(params?: type_monitor_project_query) {
 // 监控项目列表-所有
 export function monitor_project_list_all(params?: type_monitor_project_query) {
     return request<type_monitor_project[]>({
-		url: '/monitor_project/listAll',
+		url: '/monitor_project/list_all',
 		method: 'GET',
 		data: params
 	})

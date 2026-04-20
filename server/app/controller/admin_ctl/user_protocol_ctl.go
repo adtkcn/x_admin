@@ -64,7 +64,7 @@ func (hd *UserProtocolHandler) List(c *gin.Context) {
 // @Param		UpdateTimeStart	query		string												false	"更新时间"
 // @Param		UpdateTimeEnd	query		string												false	"更新时间"
 // @Success	200				{object}	response.Response{data=[]schema.UserProtocolResp}	"成功"
-// @Router		/api/admin/user_protocol/listAll [get]
+// @Router		/api/admin/user_protocol/list_all [get]
 func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
 	var listReq schema.UserProtocolListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {

@@ -44,7 +44,7 @@ export function flow_template_lists(params?: type_flow_template_query) {
 }
 // 流程模板列表-所有
 export function flow_template_lists_all(params?: type_flow_template_query) {
-    return request.get<type_flow_template[]>({ url: '/flow/flow_template/listAll', params })
+    return request.get<type_flow_template[]>({ url: '/flow/flow_template/list_all', params })
 }
 
 // 流程模板详情

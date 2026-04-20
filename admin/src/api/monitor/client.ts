@@ -50,7 +50,7 @@ export function monitor_client_list(params?: type_monitor_client_query) {
 // 监控-客户端信息列表-所有
 export function monitor_client_list_all(params?: type_monitor_client_query) {
     return request.get<type_monitor_client[]>({
-        url: '/monitor_client/listAll',
+        url: '/monitor_client/list_all',
         params: clearEmpty(params)
     })
 }

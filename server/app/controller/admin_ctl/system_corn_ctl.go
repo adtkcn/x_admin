@@ -67,7 +67,7 @@ func (hd *SystemCornHandler) List(c *gin.Context) {
 // @Param		UpdateTimeStart	query		string											false	"更新时间"
 // @Param		UpdateTimeEnd	query		string											false	"更新时间"
 // @Success	200				{object}	response.Response{data=[]schema.SystemCornResp}	"成功"
-// @Router		/api/admin/system_corn/listAll [get]
+// @Router		/api/admin/system_corn/list_all [get]
 func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 	var listReq schema.SystemCornListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {

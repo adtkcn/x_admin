@@ -51,7 +51,7 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 // @Tags		flow_history-流程历史
 // @Produce	json
 // @Success	200	{object}	response.Response{data=FlowHistoryResp}	"成功"
-// @Router		/api/admin/flow/flow_history/listAll [get]
+// @Router		/api/admin/flow/flow_history/list_all [get]
 func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 	var listReq FlowHistoryListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {

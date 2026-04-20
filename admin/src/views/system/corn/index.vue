@@ -52,7 +52,7 @@
                     新增
                 </el-button>
                 <Upload
-                    v-perms="['admin:system_corn:ImportFile']"
+                    v-perms="['admin:system_corn:import_file']"
                     class="ml-3 mr-3"
                     :url="system_corn_import_file"
                     :ext="['xlsx']"
@@ -67,7 +67,7 @@
                     </el-button>
                 </Upload>
                 <el-button
-                    v-perms="['admin:system_corn:ExportFile']"
+                    v-perms="['admin:system_corn:export_file']"
                     type="primary"
                     @click="export_file"
                 >

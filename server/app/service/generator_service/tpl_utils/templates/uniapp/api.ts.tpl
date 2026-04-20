@@ -41,7 +41,7 @@ export function {{{.ModuleName}}}_list(params?: type_{{{.ModuleName}}}_query) {
 // {{{.FunctionName}}}列表-所有
 export function {{{.ModuleName}}}_list_all(params?: type_{{{.ModuleName}}}_query) {
     return request<type_{{{.ModuleName}}}[]>({
-		url: '/{{{.ModuleName}}}/listAll',
+		url: '/{{{.ModuleName}}}/list_all',
 		method: 'GET',
 		data: clearObjEmpty(params)
 	})

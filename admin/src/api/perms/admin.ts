@@ -72,7 +72,7 @@ export function adminLists(params: type_system_admin_list) {
 
 // 管理员列表
 export function adminListAll(params: type_system_admin_list) {
-    return request.get<type_system_admin_resp[]>({ url: '/system/admin/listAll', params })
+    return request.get<type_system_admin_resp[]>({ url: '/system/admin/list_all', params })
 }
 
 // 管理员详情

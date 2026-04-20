@@ -897,7 +897,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/flow/flow_history/listAll": {
+        "/api/admin/flow/flow_history/list_all": {
             "get": {
                 "produces": [
                     "application/json"
@@ -1241,7 +1241,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/flow/flow_template/listAll": {
+        "/api/admin/flow/flow_template/list_all": {
             "get": {
                 "tags": [
                     "flow_template-流程模板"
@@ -1622,7 +1622,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_client/listAll": {
+        "/api/admin/monitor_client/list_all": {
             "get": {
                 "produces": [
                     "application/json"
@@ -2092,7 +2092,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_error/listAll": {
+        "/api/admin/monitor_error/list_all": {
             "get": {
                 "produces": [
                     "application/json"
@@ -2620,7 +2620,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/monitor_project/listAll": {
+        "/api/admin/monitor_project/list_all": {
             "get": {
                 "produces": [
                     "application/json"
@@ -3225,7 +3225,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/system_corn/listAll": {
+        "/api/admin/system_corn/list_all": {
             "get": {
                 "produces": [
                     "application/json"
@@ -3774,7 +3774,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user_protocol/listAll": {
+        "/api/admin/user_protocol/list_all": {
             "get": {
                 "produces": [
                     "application/json"

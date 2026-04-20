@@ -25,7 +25,7 @@ func initAdminRoute(rg *gin.RouterGroup) {
 
 	authAdmin := rg.Group("/system", middleware.PermAuth())
 	authAdmin.GET("/admin/list", handleAdmin.List)
-	authAdmin.GET("/admin/listAll", handleAdmin.ListAll)
+	authAdmin.GET("/admin/list_all", handleAdmin.ListAll)
 	authAdmin.GET("/admin/ListByDeptId", handleAdmin.ListByDeptId)
 	authAdmin.GET("/admin/detail", handleAdmin.Detail)
 	authAdmin.POST("/admin/add", middleware.RecordLog("管理员新增"), handleAdmin.Add)

@@ -160,7 +160,7 @@ const { pager, getLists, resetPage, resetParams, handleIndex } = usePaging<type_
 const { listAllData } = useListAllData<{
     monitor_project_listAll: any[]
 }>({
-    monitor_project_listAll: '/monitor_project/listAll'
+    monitor_project_listAll: '/monitor_project/list_all'
 })
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
