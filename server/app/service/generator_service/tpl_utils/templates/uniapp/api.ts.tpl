@@ -4,7 +4,7 @@ import { clearObjEmpty } from "@/utils/utils";
 
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
-    {{{.TsField }}}?: {{{.TsType}}};
+    {{{.TsField }}}: {{{.TsType}}};
 {{{- end }}}
 }
 // 查询

@@ -9,7 +9,7 @@ import { clearEmpty } from '@/utils/util'
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
 {{{- if or .IsList .IsPk }}}
-    {{{.TsField }}}?: {{{.TsType}}}
+    {{{.TsField }}}: {{{.TsType}}}
 {{{- end }}}
 {{{- end }}}
 }

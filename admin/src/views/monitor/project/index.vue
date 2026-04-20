@@ -188,14 +188,14 @@ defineOptions({
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_monitor_project_query>({
-    ProjectKey: null,
-    ProjectName: null,
-    ProjectType: null,
-    Status: null,
-    CreateTimeStart: null,
-    CreateTimeEnd: null,
-    UpdateTimeStart: null,
-    UpdateTimeEnd: null
+    ProjectKey: undefined,
+    ProjectName: undefined,
+    ProjectType: undefined,
+    Status: undefined,
+    CreateTimeStart: undefined,
+    CreateTimeEnd: undefined,
+    UpdateTimeStart: undefined,
+    UpdateTimeEnd: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_project>({
