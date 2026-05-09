@@ -8,46 +8,52 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CaptchaRoute(rg *gin.RouterGroup) {
+type CaptchaHandler struct{}
 
-	rg = rg.Group("/common/captcha")
-	rg.POST("/get", func(c *gin.Context) {
-		var captchaGet common_schema.CaptchaGetParams
-		if err := c.ShouldBind(&captchaGet); err != nil {
-			// 返回错误信息
-			c.JSON(200, errorRes(err))
-			return
-		}
-		if captchaGet.CaptchaType == "" {
-			c.JSON(200, errorRes(errors.New("验证码类型不能为空")))
-			return
-		}
-		// 根据参数类型获取不同服务即可
-		data, err := common_service.CaptchaGet(captchaGet.CaptchaType)
-		if err != nil {
-			c.JSON(200, errorRes(err))
-			return
-		}
-		//输出json结果给调用方
-		c.JSON(200, successRes(data))
-	})
-	rg.POST("/check", func(c *gin.Context) {
-		var params common_schema.ClientParams
-		if err := c.ShouldBind(&params); err != nil {
-			// 返回错误信息
-			c.JSON(200, errorRes(err))
-			return
-		}
-		err := common_service.CaptchaCheck(params)
+// @Summary		获取验证码
+// @Description	获取验证码
+// @Tags			common_captcha-验证码
+// @Param			captchaType	body	string						true	"验证码类型"
+// @Success		200			{object}	map[string]any				"成功"
+// @Router			/api/admin/common/captcha/get [post]
+func (ch CaptchaHandler) Get(c *gin.Context) {
+	var captchaGet common_schema.CaptchaGetParams
+	if err := c.ShouldBind(&captchaGet); err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	if captchaGet.CaptchaType == "" {
+		c.JSON(200, errorRes(errors.New("验证码类型不能为空")))
+		return
+	}
+	data, err := common_service.CaptchaGet(captchaGet.CaptchaType)
+	if err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	c.JSON(200, successRes(data))
+}
 
-		if err != nil {
-			c.JSON(200, errorRes(err))
-			return
-		}
-		//输出json结果给调用方
-		c.JSON(200, successRes(nil))
-	})
-
+// @Summary		校验验证码
+// @Description	校验验证码
+// @Tags			common_captcha-验证码
+// @Param			token		body	string						true	"验证码token"
+// @Param			pointJson	body	string						false	"点选坐标"
+// @Param			captchaType	body	string						true	"验证码类型"
+// @Success		200			{object}	map[string]any				"成功"
+// @Router			/api/admin/common/captcha/check [post]
+func (ch CaptchaHandler) Check(c *gin.Context) {
+	var params common_schema.ClientParams
+	if err := c.ShouldBind(&params); err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	err := common_service.CaptchaCheck(params)
+	if err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	c.JSON(200, successRes(nil))
 }
 
 func successRes(data any) map[string]any {
@@ -57,9 +63,9 @@ func successRes(data any) map[string]any {
 	ret["repData"] = data
 	ret["repMsg"] = nil
 	ret["successRes"] = true
-
 	return ret
 }
+
 func errorRes(err error) map[string]any {
 	ret := make(map[string]any)
 	ret["error"] = true

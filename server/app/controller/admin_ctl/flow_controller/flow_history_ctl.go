@@ -170,9 +170,15 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 
 // 拒绝审批
 //
-//	@Tags	flow_history-流程历史
-//
-//	@Router	/api/admin/flow/flow_apply/back [post]
+//	@Summary	流程历史-拒绝审批
+//	@Tags		flow_history-流程历史
+//	@Produce	json
+//	@Param		token		header		string				true	"token"
+//	@Param		applyId		body		string				true	"申请id"
+//	@Param		historyId	body		string				true	"审批节点id"
+//	@Param		Remark		body		string				false	"备注"
+//	@Success	200			{object}	response.Response	"成功"
+//	@Router		/api/admin/flow/flow_apply/back [post]
 func (hd FlowHistoryHandler) Back(c *gin.Context) {
 	var back BackReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &back)) {
@@ -183,7 +189,13 @@ func (hd FlowHistoryHandler) Back(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// 获取下一个审批节点，中间可能存在系统任务节点和网关
+// @Summary	 获取下一个审批节点，中间可能存在系统任务节点和网关
+// @Tags		flow_history-流程历史
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Param		applyId	body		string				true	"申请id"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_history/next_node [post]
 func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 	var nextNode NextNodeReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {

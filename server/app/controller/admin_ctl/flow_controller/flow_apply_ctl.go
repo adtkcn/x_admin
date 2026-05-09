@@ -49,7 +49,7 @@ func (hd FlowApplyHandler) List(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		token	header		string									true	"token"
-// @Param		id		query		int										false	"申请id"
+// @Param			id		query		string									false	"申请id"
 // @Success	200		{object}	response.Response{data=FlowApplyResp}	"成功"
 // @Router		/api/admin/flow/flow_apply/detail [get]
 func (hd FlowApplyHandler) Detail(c *gin.Context) {
