@@ -1186,55 +1186,6 @@ paths:
       summary: 相册文件重命名
       tags:
       - common_album-相册管理
-  /api/admin/common/captcha/check:
-    post:
-      description: 校验验证码
-      parameters:
-      - description: 验证码token
-        in: body
-        name: token
-        required: true
-        schema:
-          type: string
-      - description: 点选坐标
-        in: body
-        name: pointJson
-        schema:
-          type: string
-      - description: 验证码类型
-        in: body
-        name: captchaType
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: 成功
-          schema:
-            additionalProperties: true
-            type: object
-      summary: 校验验证码
-      tags:
-      - common_captcha-验证码
-  /api/admin/common/captcha/get:
-    post:
-      description: 获取验证码
-      parameters:
-      - description: 验证码类型
-        in: body
-        name: captchaType
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: 成功
-          schema:
-            additionalProperties: true
-            type: object
-      summary: 获取验证码
-      tags:
-      - common_captcha-验证码
   /api/admin/common/geTui/push:
     post:
       description: 推送消息到客户端
@@ -6520,6 +6471,55 @@ paths:
       summary: 用户协议列表-所有
       tags:
       - user_protocol-用户协议
+  /api/common/captcha/check:
+    post:
+      description: 校验验证码
+      parameters:
+      - description: 验证码token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: 点选坐标
+        in: body
+        name: pointJson
+        schema:
+          type: string
+      - description: 验证码类型
+        in: body
+        name: captchaType
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 校验验证码
+      tags:
+      - common_captcha-验证码
+  /api/common/captcha/get:
+    post:
+      description: 获取验证码
+      parameters:
+      - description: 验证码类型
+        in: body
+        name: captchaType
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 获取验证码
+      tags:
+      - common_captcha-验证码
   /api/swagger/doc.json:
     get:
       responses: {}

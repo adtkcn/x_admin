@@ -33,7 +33,7 @@ func apiList(api *gin.RouterGroup, rootRouter *gin.Engine) {
 func swaggerDoc(api *gin.RouterGroup) {
 	api.GET("/swagger/doc.json", func(c *gin.Context) {
 		// 获取域名和端口号
-		host := c.Request.Host
+		host := ""
 		docs.SwaggerInfo.Host = fmt.Sprintf("%v", host)
 		docs.SwaggerInfo.Title = config.AppConfig.AppName
 		docs.SwaggerInfo.Version = config.AppConfig.Version
@@ -59,7 +59,7 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	rootRouter.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
 
 	// 设置中间件
-	RootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
+	rootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 	apiList(api, rootRouter)
 
 	swaggerDoc(api)

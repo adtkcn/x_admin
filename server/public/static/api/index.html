@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
   <head>
     <meta charset="utf-8" />
     <title>x-admin API Docs - Scalar</title>
@@ -12,6 +12,8 @@
     <script src="./api-reference.js"></script>
     <script>
       var x_admin_token_str = localStorage.getItem("x_admin_token");
+      console.log('x_admin_token_str',x_admin_token_str);
+      
       var token = "";
       if (x_admin_token_str) {
         try {
@@ -25,14 +27,14 @@
         withDefaultFonts: false,
         hideClientButton: true,
 
-        onBeforeRequest: ({ request }) => {
+        onBeforeRequest: ({ requestBuilder  }) => {
           // Add a custom header to all requests
           // console.log("request", request.headers.get("token"));
-          if (!request.headers.get("token")) {
+      
             if (token) {
-              request.headers.set("token", token);
+              requestBuilder.headers.set("token", token);
             }
-          }
+   
         },
       });
     </script>

@@ -417,81 +417,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/common/captcha/check": {
-            "post": {
-                "description": "校验验证码",
-                "tags": [
-                    "common_captcha-验证码"
-                ],
-                "summary": "校验验证码",
-                "parameters": [
-                    {
-                        "description": "验证码token",
-                        "name": "token",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "点选坐标",
-                        "name": "pointJson",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "验证码类型",
-                        "name": "captchaType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/common/captcha/get": {
-            "post": {
-                "description": "获取验证码",
-                "tags": [
-                    "common_captcha-验证码"
-                ],
-                "summary": "获取验证码",
-                "parameters": [
-                    {
-                        "description": "验证码类型",
-                        "name": "captchaType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/common/geTui/push": {
             "post": {
                 "description": "推送消息到客户端",
@@ -8890,6 +8815,81 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/common/captcha/check": {
+            "post": {
+                "description": "校验验证码",
+                "tags": [
+                    "common_captcha-验证码"
+                ],
+                "summary": "校验验证码",
+                "parameters": [
+                    {
+                        "description": "验证码token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "点选坐标",
+                        "name": "pointJson",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "验证码类型",
+                        "name": "captchaType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/common/captcha/get": {
+            "post": {
+                "description": "获取验证码",
+                "tags": [
+                    "common_captcha-验证码"
+                ],
+                "summary": "获取验证码",
+                "parameters": [
+                    {
+                        "description": "验证码类型",
+                        "name": "captchaType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
