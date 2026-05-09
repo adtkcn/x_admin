@@ -1,6 +1,84 @@
 basePath: /
 definitions:
-  flowSchema.FlowApplyResp:
+  common_schema.CommonAlbumListResp:
+    properties:
+      cid:
+        description: 所属类目
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      ext:
+        description: 文件扩展
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 文件名称
+        type: string
+      path:
+        description: 相对路径
+        type: string
+      size:
+        description: 文件大小
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+      uri:
+        description: 文件路径
+        type: string
+    type: object
+  common_schema.CommonCateListResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 分类名称
+        type: string
+      pid:
+        description: 父级ID
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  common_schema.CommonUploadFileResp:
+    properties:
+      admin_id:
+        description: 管理ID
+        type: string
+      cid:
+        description: 类目ID
+        type: string
+      ext:
+        description: 文件扩展
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 文件名称
+        type: string
+      path:
+        description: 访问地址
+        type: string
+      size:
+        description: 文件大小
+        type: integer
+      uid:
+        description: 用户ID
+        type: integer
+      url:
+        description: 文件路径
+        type: string
+    type: object
+  flow_schema.FlowApplyResp:
     properties:
       applyUserId:
         description: 申请人id
@@ -44,7 +122,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-  flowSchema.FlowHistoryResp:
+  flow_schema.FlowHistoryResp:
     properties:
       applyId:
         description: 申请id
@@ -92,7 +170,7 @@ definitions:
         description: 更新时间
         type: string
     type: object
-  flowSchema.FlowTemplateResp:
+  flow_schema.FlowTemplateResp:
     properties:
       flowFormData:
         description: 表单配置
@@ -115,7 +193,149 @@ definitions:
       id:
         type: string
     type: object
-  monitorSchema.MonitorClientResp:
+  generator_schema.DbTableResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      tableComment:
+        description: 表的描述
+        type: string
+      tableName:
+        description: 表的名称
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  generator_schema.EditColumn:
+    properties:
+      columnComment:
+        description: 列描述
+        maxLength: 200
+        type: string
+      columnLength:
+        description: 列长度
+        maximum: 5
+        type: integer
+      columnName:
+        description: 列名称
+        maxLength: 200
+        type: string
+      columnType:
+        description: 列类型
+        maxLength: 100
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      dictType:
+        description: 字典类型
+        maxLength: 200
+        type: string
+      goField:
+        description: 字段
+        maxLength: 100
+        type: string
+      goType:
+        description: 字段类型
+        maxLength: 100
+        type: string
+      htmlType:
+        description: 表单类型
+        maxLength: 30
+        type: string
+      id:
+        description: 主键
+        type: string
+      isEdit:
+        description: '是否编辑字段: [0=否, 1=是]'
+        enum:
+        - 0
+        - 1
+        type: integer
+      isIncrement:
+        description: '是否自增: [0=否, 1=是]'
+        enum:
+        - 0
+        - 1
+        type: integer
+      isInsert:
+        description: '是否新增字段: [0=否, 1=是]'
+        enum:
+        - 0
+        - 1
+        type: integer
+      isList:
+        description: '是否列表字段: [0=否, 1=是]'
+        enum:
+        - 0
+        - 1
+        type: integer
+      isPk:
+        description: '是否主键: [0=否, 1=是]'
+        enum:
+        - 0
+        - 1
+        type: integer
+      isQuery:
+        description: '是否查询字段: [0=否, 1=是]'
+        enum:
+        - 0
+        - 1
+        type: integer
+      isStop:
+        description: '是否必填: [0=否, 1=是]'
+        enum:
+        - 0
+        - 1
+        type: integer
+      listAllApi:
+        description: 下拉框数据来源listAll
+        maxLength: 200
+        type: string
+      queryType:
+        description: 查询方式
+        maxLength: 30
+        type: string
+      tableId:
+        description: 表ID
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    required:
+    - columnComment
+    - columnLength
+    - columnName
+    - columnType
+    - dictType
+    - goField
+    - goType
+    - htmlType
+    - id
+    - queryType
+    - tableId
+    type: object
+  generator_schema.GenTableResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      tableComment:
+        description: 表描述
+        type: string
+      tableName:
+        description: 表名称
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  monitor_schema.MonitorClientResp:
     properties:
       browser:
         description: 浏览器
@@ -163,7 +383,7 @@ definitions:
         description: 屏幕
         type: integer
     type: object
-  monitorSchema.MonitorErrorResp:
+  monitor_schema.MonitorErrorResp:
     properties:
       createTime:
         description: 创建时间
@@ -196,7 +416,7 @@ definitions:
         description: 屏幕
         type: integer
     type: object
-  monitorSchema.MonitorProjectResp:
+  monitor_schema.MonitorProjectResp:
     properties:
       createTime:
         description: 创建时间
@@ -300,15 +520,416 @@ definitions:
         description: 版本
         type: number
     type: object
-externalDocs:
-  description: OpenAPI
-  url: https://swagger.io/resources/open-api/
+  setting_schema.SettingCopyrightItemReq:
+    properties:
+      link:
+        description: 链接
+        type: string
+      name:
+        description: 名称
+        type: string
+    type: object
+  setting_schema.SettingDictDataResp:
+    properties:
+      color:
+        description: 颜色
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 键
+        type: string
+      remark:
+        description: 备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+      status:
+        description: '状态: [0=停用, 1=禁用]'
+        type: integer
+      typeId:
+        description: 类型
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+      value:
+        description: 值
+        type: string
+    type: object
+  setting_schema.SettingDictTypeResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      dictName:
+        description: 字典名称
+        type: string
+      dictRemark:
+        description: 字典备注
+        type: string
+      dictStatus:
+        description: 字典状态
+        type: integer
+      dictType:
+        description: 字典类型
+        type: string
+      id:
+        description: 主键
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  system_schema.SystemAuthAdminResp:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      dept:
+        description: 部门
+        type: string
+      deptId:
+        description: 部门ID
+        type: string
+      id:
+        description: 主键
+        type: string
+      isDisable:
+        description: '是否禁用: [0=否, 1=是]'
+        type: integer
+      lastLoginIp:
+        description: 最后登录IP
+        type: string
+      lastLoginTime:
+        description: 最后登录时间
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      post:
+        description: 岗位名称
+        type: string
+      postId:
+        description: 岗位ID
+        type: string
+      role:
+        description: 角色名称(逗号分隔)
+        type: string
+      roleIds:
+        description: 角色ID列表
+        items:
+          type: string
+        type: array
+      updateTime:
+        description: 更新时间
+        type: string
+      username:
+        description: 账号
+        type: string
+    type: object
+  system_schema.SystemAuthAdminSelfOneResp:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      dept:
+        description: 部门
+        type: string
+      id:
+        description: 主键
+        type: string
+      isDisable:
+        description: '是否禁用: [0=否, 1=是]'
+        type: integer
+      lastLoginIp:
+        description: 最后登录IP
+        type: string
+      lastLoginTime:
+        description: 最后登录时间
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      role:
+        description: 角色
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+      username:
+        description: 账号
+        type: string
+    type: object
+  system_schema.SystemAuthAdminSelfResp:
+    properties:
+      permissions:
+        description: '权限集合: [[*]=>所有权限, [''article:add'']=>部分权限]'
+        items:
+          type: string
+        type: array
+      user:
+        allOf:
+        - $ref: '#/definitions/system_schema.SystemAuthAdminSelfOneResp'
+        description: 用户信息
+    type: object
+  system_schema.SystemAuthDeptResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      duty:
+        description: 负责人
+        type: string
+      dutyId:
+        description: 负责人id
+        type: string
+      id:
+        description: 主键
+        type: string
+      isStop:
+        description: '是否停用: [0=否, 1=是]'
+        type: integer
+      mobile:
+        description: 联系电话
+        type: string
+      name:
+        description: 部门名称
+        type: string
+      pid:
+        description: 部门父级
+        type: string
+      sort:
+        description: 排序编号
+        type: integer
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  system_schema.SystemAuthMenuResp:
+    properties:
+      children:
+        description: 子集
+        items:
+          $ref: '#/definitions/system_schema.SystemAuthMenuResp'
+        type: array
+      component:
+        description: 前端组件
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      isCache:
+        description: '是否缓存: [0=否, 1=是]'
+        type: integer
+      isDisable:
+        description: '是否禁用: [0=否, 1=是]'
+        type: integer
+      isShow:
+        description: '是否显示: [0=否, 1=是]'
+        type: integer
+      menuIcon:
+        description: 菜单图标
+        type: string
+      menuName:
+        description: 菜单名称
+        type: string
+      menuSort:
+        description: 菜单排序
+        type: integer
+      menuType:
+        description: '权限类型: [M=目录, C=菜单, A=按钮]'
+        type: string
+      params:
+        description: 路由参数
+        type: string
+      paths:
+        description: 路由地址
+        type: string
+      perms:
+        description: 权限标识
+        type: string
+      pid:
+        description: 上级菜单
+        type: string
+      selected:
+        description: 选中路径
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  system_schema.SystemAuthPostResp:
+    properties:
+      code:
+        description: 岗位编号
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      isStop:
+        description: '是否停用: [0=否, 1=是]'
+        type: integer
+      name:
+        description: 岗位名称
+        type: string
+      remarks:
+        description: 岗位备注
+        type: string
+      sort:
+        description: 岗位排序
+        type: integer
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  system_schema.SystemAuthRoleResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      isDisable:
+        description: '是否禁用: [0=否, 1=是]'
+        type: integer
+      member:
+        description: 成员数量
+        type: integer
+      menus:
+        description: 关联菜单
+        items:
+          type: string
+        type: array
+      name:
+        description: 角色名称
+        type: string
+      remark:
+        description: 角色备注
+        type: string
+      sort:
+        description: 角色排序
+        type: integer
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  system_schema.SystemAuthRoleSimpleResp:
+    properties:
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      name:
+        description: 角色名称
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  system_schema.SystemLogLoginResp:
+    properties:
+      browser:
+        description: 浏览器
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      ip:
+        description: 来源IP
+        type: string
+      os:
+        description: 操作系统
+        type: string
+      status:
+        description: '操作状态: [1=成功, 2=失败]'
+        type: integer
+      username:
+        description: 登录账号
+        type: string
+    type: object
+  system_schema.SystemLogOperateResp:
+    properties:
+      args:
+        description: 请求参数
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      endTime:
+        description: 结束时间
+        type: string
+      error:
+        description: 错误信息
+        type: string
+      id:
+        description: 主键
+        type: string
+      ip:
+        description: 请求IP
+        type: string
+      method:
+        description: 请求方式
+        type: string
+      nickname:
+        description: 用户昵称
+        type: string
+      startTime:
+        description: 开始时间
+        type: string
+      status:
+        description: '执行状态: [1=成功, 2=失败]'
+        type: integer
+      taskTime:
+        description: 执行耗时
+        type: string
+      title:
+        description: 操作标题
+        type: string
+      type:
+        description: '请求类型: GET/POST/PUT'
+        type: string
+      url:
+        description: 请求地址
+        type: string
+      username:
+        description: 用户账号
+        type: string
+    type: object
+  system_schema.SystemLoginResp:
+    properties:
+      token:
+        type: string
+    type: object
 info:
   contact:
     email: x@adtk.cn
     name: xh
     url: http://x.adtk.cn
-  description: x_admin是一个完整的后台管理系统
+  description: x_admin后台管理系统
   license:
     name: MIT License
     url: https://gitee.com/xiangheng/x_admin/blob/main/LICENSE
@@ -320,6 +941,555 @@ paths:
       summary: 获取所有接口
       tags:
       - 公共接口
+  /api/admin/common/album/cateAdd:
+    post:
+      description: 新增相册类目
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 父类目ID
+        in: body
+        name: pid
+        schema:
+          type: string
+      - description: 类目名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 类目新增
+      tags:
+      - common_album-相册管理
+  /api/admin/common/album/cateDel:
+    post:
+      description: 删除相册类目
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 类目ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 类目删除
+      tags:
+      - common_album-相册管理
+  /api/admin/common/album/cateList:
+    get:
+      description: 获取相册类目列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 类目名称
+        in: query
+        name: name
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/common_schema.CommonCateListResp'
+                  type: array
+              type: object
+      summary: 类目列表
+      tags:
+      - common_album-相册管理
+  /api/admin/common/album/cateRename:
+    post:
+      description: 相册类目重命名
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 类目ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 新类目名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 类目重命名
+      tags:
+      - common_album-相册管理
+  /api/admin/common/album/del:
+    post:
+      description: 删除相册文件
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件ID列表
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 相册文件删除
+      tags:
+      - common_album-相册管理
+  /api/admin/common/album/list:
+    get:
+      description: 获取相册文件列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 分类ID
+        in: query
+        name: cid
+        type: string
+      - description: 文件名
+        in: query
+        name: name
+        type: string
+      - collectionFormat: csv
+        description: 文件扩展名
+        in: query
+        items:
+          type: string
+        name: ext
+        type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/common_schema.CommonAlbumListResp'
+                    type: object
+              type: object
+      summary: 相册文件列表
+      tags:
+      - common_album-相册管理
+  /api/admin/common/album/move:
+    post:
+      description: 相册文件移动到指定分类
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件ID列表
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      - description: 目标分类ID
+        in: body
+        name: cid
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 相册文件移动
+      tags:
+      - common_album-相册管理
+  /api/admin/common/album/rename:
+    post:
+      description: 相册文件重命名
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 新文件名
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 相册文件重命名
+      tags:
+      - common_album-相册管理
+  /api/admin/common/captcha/check:
+    post:
+      description: 校验验证码
+      parameters:
+      - description: 验证码token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: 点选坐标
+        in: body
+        name: pointJson
+        schema:
+          type: string
+      - description: 验证码类型
+        in: body
+        name: captchaType
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 校验验证码
+      tags:
+      - common_captcha-验证码
+  /api/admin/common/captcha/get:
+    post:
+      description: 获取验证码
+      parameters:
+      - description: 验证码类型
+        in: body
+        name: captchaType
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 获取验证码
+      tags:
+      - common_captcha-验证码
+  /api/admin/common/geTui/push:
+    post:
+      description: 推送消息到客户端
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 推送消息
+      tags:
+      - common_geTui-个推
+  /api/admin/common/index/config:
+    get:
+      description: 获取系统公共配置
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 公共配置
+      tags:
+      - common_index-首页
+  /api/admin/common/index/console:
+    get:
+      description: 获取控制台统计数据
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 控制台数据
+      tags:
+      - common_index-首页
+  /api/admin/common/upload/preUpload:
+    post:
+      description: 文件预上传检查
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件MD5
+        in: body
+        name: md5
+        required: true
+        schema:
+          type: string
+      - description: 文件名
+        in: body
+        name: fileName
+        required: true
+        schema:
+          type: string
+      - description: 文件大小
+        in: body
+        name: fileSize
+        required: true
+        schema:
+          type: integer
+      - description: 分类ID
+        in: body
+        name: cid
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 文件预上传
+      tags:
+      - common_upload-上传
+  /api/admin/common/upload/upload:
+    post:
+      description: 上传文件
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 分类ID
+        in: body
+        name: cid
+        schema:
+          type: string
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/common_schema.CommonUploadFileResp'
+              type: object
+      summary: 上传文件
+      tags:
+      - common_upload-上传
+  /api/admin/common/uploadChunk/checkFileExist:
+    get:
+      description: 检查文件是否已存在
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件MD5
+        in: query
+        name: fileMd5
+        required: true
+        type: string
+      - description: 文件名
+        in: query
+        name: fileName
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 检查文件是否存在
+      tags:
+      - common_uploadChunk-分片上传
+  /api/admin/common/uploadChunk/hasChunk:
+    get:
+      description: 检查已上传的分片列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件MD5
+        in: query
+        name: fileMd5
+        required: true
+        type: string
+      - description: 分片大小
+        in: query
+        name: chunkSize
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 检查已上传分片
+      tags:
+      - common_uploadChunk-分片上传
+  /api/admin/common/uploadChunk/merge:
+    post:
+      description: 合并所有分片为完整文件
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件MD5
+        in: body
+        name: fileMd5
+        required: true
+        schema:
+          type: string
+      - description: 文件名
+        in: body
+        name: fileName
+        required: true
+        schema:
+          type: string
+      - description: 分片数量
+        in: body
+        name: chunkCount
+        required: true
+        schema:
+          type: integer
+      - description: 分片大小
+        in: body
+        name: chunkSize
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 合并分片
+      tags:
+      - common_uploadChunk-分片上传
+  /api/admin/common/uploadChunk/upload:
+    post:
+      description: 上传文件分片
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 分片文件
+        in: formData
+        name: chunk
+        required: true
+        type: file
+      - description: 分片大小
+        in: formData
+        name: chunkSize
+        required: true
+        type: string
+      - description: 分片序号
+        in: formData
+        name: index
+        required: true
+        type: string
+      - description: 文件MD5
+        in: formData
+        name: fileMd5
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 上传分片
+      tags:
+      - common_uploadChunk-分片上传
   /api/admin/flow/flow_apply/add:
     post:
       parameters:
@@ -332,12 +1502,12 @@ paths:
         in: body
         name: templateId
         schema:
-          type: integer
+          type: string
       - description: 申请人id
         in: body
         name: applyUserId
         schema:
-          type: integer
+          type: string
       - description: 申请人昵称
         in: body
         name: applyUserNickname
@@ -348,24 +1518,9 @@ paths:
         name: flowName
         schema:
           type: string
-      - description: 流程分类
+      - description: 表单值
         in: body
-        name: flowGroup
-        schema:
-          type: integer
-      - description: 流程描述
-        in: body
-        name: flowRemark
-        schema:
-          type: string
-      - description: 表单配置
-        in: body
-        name: flowFormData
-        schema:
-          type: string
-      - description: 流程配置
-        in: body
-        name: flowProcessData
+        name: formValue
         schema:
           type: string
       - description: 状态：1待提交，2审批中，3审批完成，4审批失败
@@ -385,7 +1540,37 @@ paths:
       - flow_apply-申请流程
   /api/admin/flow/flow_apply/back:
     post:
-      responses: {}
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        required: true
+        schema:
+          type: string
+      - description: 审批节点id
+        in: body
+        name: historyId
+        required: true
+        schema:
+          type: string
+      - description: 备注
+        in: body
+        name: Remark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史-拒绝审批
       tags:
       - flow_history-流程历史
   /api/admin/flow/flow_apply/del:
@@ -399,8 +1584,9 @@ paths:
       - description: 申请id
         in: body
         name: id
+        required: true
         schema:
-          type: integer
+          type: string
       produces:
       - application/json
       responses:
@@ -422,7 +1608,7 @@ paths:
       - description: 申请id
         in: query
         name: id
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -433,7 +1619,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/flowSchema.FlowApplyResp'
+                  $ref: '#/definitions/flow_schema.FlowApplyResp'
               type: object
       summary: 申请流程详情
       tags:
@@ -450,45 +1636,15 @@ paths:
         in: body
         name: id
         schema:
-          type: integer
-      - description: 模板
-        in: body
-        name: templateId
-        schema:
-          type: integer
-      - description: 申请人id
-        in: body
-        name: applyUserId
-        schema:
-          type: integer
-      - description: 申请人昵称
-        in: body
-        name: applyUserNickname
-        schema:
           type: string
       - description: 流程名称
         in: body
         name: flowName
         schema:
           type: string
-      - description: 流程分类
+      - description: 表单值
         in: body
-        name: flowGroup
-        schema:
-          type: integer
-      - description: 流程描述
-        in: body
-        name: flowRemark
-        schema:
-          type: string
-      - description: 表单配置
-        in: body
-        name: flowFormData
-        schema:
-          type: string
-      - description: 流程配置
-        in: body
-        name: flowProcessData
+        name: formValue
         schema:
           type: string
       - description: 状态：1待提交，2审批中，3审批完成，4审批失败
@@ -527,11 +1683,11 @@ paths:
       - description: 模板
         in: query
         name: templateId
-        type: integer
+        type: string
       - description: 申请人id
         in: query
         name: applyUserId
-        type: integer
+        type: string
       - description: 申请人昵称
         in: query
         name: applyUserNickname
@@ -556,6 +1712,14 @@ paths:
         in: query
         name: flowProcessData
         type: string
+      - description: 流程配置list数据
+        in: query
+        name: flowProcessDataList
+        type: string
+      - description: 表单值
+        in: query
+        name: formValue
+        type: string
       - description: 状态：1待提交，2审批中，3审批完成，4审批失败
         in: query
         name: status
@@ -575,7 +1739,7 @@ paths:
                   - properties:
                       lists:
                         items:
-                          $ref: '#/definitions/flowSchema.FlowApplyResp'
+                          $ref: '#/definitions/flow_schema.FlowApplyResp'
                         type: array
                     type: object
               type: object
@@ -584,7 +1748,36 @@ paths:
       - flow_apply-申请流程
   /api/admin/flow/flow_apply/pass:
     post:
-      responses: {}
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        required: true
+        schema:
+          type: string
+      - description: 下一个节点的审批用户id
+        in: body
+        name: nextNodeAdminId
+        schema:
+          type: string
+      - description: 通过备注
+        in: body
+        name: passRemark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史-通过审批
       tags:
       - flow_history-流程历史
   /api/admin/flow/flow_history/add:
@@ -599,17 +1792,17 @@ paths:
         in: body
         name: applyId
         schema:
-          type: integer
+          type: string
       - description: 模板id
         in: body
         name: templateId
         schema:
-          type: integer
+          type: string
       - description: 申请人id
         in: body
         name: applyUserId
         schema:
-          type: integer
+          type: string
       - description: 申请人昵称
         in: body
         name: applyUserNickname
@@ -619,7 +1812,7 @@ paths:
         in: body
         name: approverId
         schema:
-          type: integer
+          type: string
       - description: 审批用户昵称
         in: body
         name: approverNickname
@@ -630,12 +1823,22 @@ paths:
         name: nodeId
         schema:
           type: string
+      - description: 节点名称
+        in: body
+        name: nodeLabel
+        schema:
+          type: string
+      - description: 节点类型
+        in: body
+        name: nodeType
+        schema:
+          type: string
       - description: 表单值
         in: body
         name: formValue
         schema:
           type: string
-      - description: 通过状态：0待处理，1通过，2拒绝
+      - description: 通过状态：1待处理，2通过，3拒绝
         in: body
         name: passStatus
         schema:
@@ -689,7 +1892,7 @@ paths:
       - description: 历史id
         in: query
         name: id
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -700,7 +1903,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/flowSchema.FlowHistoryResp'
+                  $ref: '#/definitions/flow_schema.FlowHistoryResp'
               type: object
       summary: 流程历史详情
       tags:
@@ -717,22 +1920,22 @@ paths:
         in: body
         name: id
         schema:
-          type: integer
+          type: string
       - description: 申请id
         in: body
         name: applyId
         schema:
-          type: integer
+          type: string
       - description: 模板id
         in: body
         name: templateId
         schema:
-          type: integer
+          type: string
       - description: 申请人id
         in: body
         name: applyUserId
         schema:
-          type: integer
+          type: string
       - description: 申请人昵称
         in: body
         name: applyUserNickname
@@ -742,7 +1945,7 @@ paths:
         in: body
         name: approverId
         schema:
-          type: integer
+          type: string
       - description: 审批用户昵称
         in: body
         name: approverNickname
@@ -753,12 +1956,22 @@ paths:
         name: nodeId
         schema:
           type: string
+      - description: 节点名称
+        in: body
+        name: nodeLabel
+        schema:
+          type: string
+      - description: 节点类型
+        in: body
+        name: nodeType
+        schema:
+          type: string
       - description: 表单值
         in: body
         name: formValue
         schema:
           type: string
-      - description: 通过状态：0待处理，1通过，2拒绝
+      - description: 通过状态：1待处理，2通过，3拒绝
         in: body
         name: passStatus
         schema:
@@ -776,6 +1989,30 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: 流程历史编辑
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/get_approver:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史-获取节点可审批用户
       tags:
       - flow_history-流程历史
   /api/admin/flow/flow_history/list:
@@ -799,15 +2036,15 @@ paths:
       - description: 申请id
         in: query
         name: applyId
-        type: integer
+        type: string
       - description: 模板id
         in: query
         name: templateId
-        type: integer
+        type: string
       - description: 申请人id
         in: query
         name: applyUserId
-        type: integer
+        type: string
       - description: 申请人昵称
         in: query
         name: applyUserNickname
@@ -815,7 +2052,7 @@ paths:
       - description: 审批人id
         in: query
         name: approverId
-        type: integer
+        type: string
       - description: 审批用户昵称
         in: query
         name: approverNickname
@@ -824,11 +2061,19 @@ paths:
         in: query
         name: nodeId
         type: string
+      - description: 节点名称
+        in: query
+        name: nodeLabel
+        type: string
+      - description: 节点类型
+        in: query
+        name: nodeType
+        type: string
       - description: 表单值
         in: query
         name: formValue
         type: string
-      - description: 通过状态：0待处理，1通过，2拒绝
+      - description: 通过状态：1待处理，2通过，3拒绝
         in: query
         name: passStatus
         type: integer
@@ -851,14 +2096,14 @@ paths:
                   - properties:
                       lists:
                         items:
-                          $ref: '#/definitions/flowSchema.FlowHistoryResp'
+                          $ref: '#/definitions/flow_schema.FlowHistoryResp'
                         type: array
                     type: object
               type: object
       summary: 流程历史列表
       tags:
       - flow_history-流程历史
-  /api/admin/flow/flow_history/listAll:
+  /api/admin/flow/flow_history/list_all:
     get:
       produces:
       - application/json
@@ -870,9 +2115,33 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/flowSchema.FlowHistoryResp'
+                  $ref: '#/definitions/flow_schema.FlowHistoryResp'
               type: object
       summary: 流程历史列表-所有
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/next_node:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取下一个审批节点，中间可能存在系统任务节点和网关
       tags:
       - flow_history-流程历史
   /api/admin/flow/flow_template/add:
@@ -908,6 +2177,11 @@ paths:
         name: flowProcessData
         schema:
           type: string
+      - description: 流程配置list数据
+        in: body
+        name: flowProcessDataList
+        schema:
+          type: string
       produces:
       - application/json
       responses:
@@ -926,11 +2200,12 @@ paths:
         name: token
         required: true
         type: string
-      - description: 历史id
+      - description: 模板id
         in: body
         name: id
+        required: true
         schema:
-          type: integer
+          type: string
       produces:
       - application/json
       responses:
@@ -949,17 +2224,17 @@ paths:
         name: token
         required: true
         type: string
-      - description: 历史id
+      - description: 模板id
         in: query
         name: id
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/flowSchema.FlowTemplateResp'
+            $ref: '#/definitions/flow_schema.FlowTemplateResp'
       summary: 流程模板详情
       tags:
       - flow_template-流程模板
@@ -971,11 +2246,11 @@ paths:
         name: token
         required: true
         type: string
-      - description: .
+      - description: 模板id
         in: body
         name: id
         schema:
-          type: integer
+          type: string
       - description: 流程名称
         in: body
         name: flowName
@@ -999,6 +2274,11 @@ paths:
       - description: 流程配置
         in: body
         name: flowProcessData
+        schema:
+          type: string
+      - description: 流程配置list数据
+        in: body
+        name: flowProcessDataList
         schema:
           type: string
       produces:
@@ -1049,6 +2329,10 @@ paths:
         in: query
         name: flowProcessData
         type: string
+      - description: 流程配置list数据
+        in: query
+        name: flowProcessDataList
+        type: string
       produces:
       - application/json
       responses:
@@ -1064,19 +2348,389 @@ paths:
                   - properties:
                       lists:
                         items:
-                          $ref: '#/definitions/flowSchema.FlowTemplateResp'
+                          $ref: '#/definitions/flow_schema.FlowTemplateResp'
                         type: array
                     type: object
               type: object
       summary: 流程模板列表
       tags:
       - flow_template-流程模板
-  /api/admin/flow/flow_template/listAll:
+  /api/admin/flow/flow_template/list_all:
     get:
       responses: {}
       summary: 流程模板列表-所有
       tags:
       - flow_template-流程模板
+  /api/admin/generator/dbTables:
+    get:
+      description: 获取数据库表列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 表名
+        in: query
+        name: tableName
+        type: string
+      - description: 表描述
+        in: query
+        name: tableComment
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/generator_schema.DbTableResp'
+                    type: object
+              type: object
+      summary: 数据表列表
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/delTable:
+    post:
+      description: 删除表结构
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键列表
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除表结构
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/detail:
+    get:
+      description: 获取生成详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/generator_schema.GenTableResp'
+              type: object
+      summary: 生成详情
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/downloadCode:
+    get:
+      description: 下载生成的代码
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 表名列表(逗号分隔)
+        in: query
+        name: tables
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 文件流(zip格式)
+      summary: 下载代码
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/editTable:
+    post:
+      description: 编辑表结构信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 表名
+        in: body
+        name: tableName
+        required: true
+        schema:
+          type: string
+      - description: 实体名称
+        in: body
+        name: entityName
+        required: true
+        schema:
+          type: string
+      - description: 表描述
+        in: body
+        name: tableComment
+        required: true
+        schema:
+          type: string
+      - description: 作者名称
+        in: body
+        name: authorName
+        schema:
+          type: string
+      - description: 备注信息
+        in: body
+        name: remarks
+        schema:
+          type: string
+      - description: '生成模板方式: [crud=单表, tree=树表]'
+        in: body
+        name: genTpl
+        schema:
+          type: string
+      - description: 模块名
+        in: body
+        name: moduleName
+        required: true
+        schema:
+          type: string
+      - description: 功能名
+        in: body
+        name: functionName
+        required: true
+        schema:
+          type: string
+      - description: 树表主键
+        in: body
+        name: treePrimary
+        schema:
+          type: string
+      - description: 树表父键
+        in: body
+        name: treeParent
+        schema:
+          type: string
+      - description: 树表名称
+        in: body
+        name: treeName
+        schema:
+          type: string
+      - description: 子表名称
+        in: body
+        name: subTableName
+        schema:
+          type: string
+      - description: 子表外键
+        in: body
+        name: subTableFk
+        schema:
+          type: string
+      - description: 字段列表
+        in: body
+        name: columns
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/generator_schema.EditColumn'
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 编辑表结构
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/importTable:
+    get:
+      description: 导入数据库表结构
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 表名列表(逗号分隔)
+        in: query
+        name: tables
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 导入表结构
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/list:
+    get:
+      description: 获取生成列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 表名
+        in: query
+        name: tableName
+        type: string
+      - description: 表描述
+        in: query
+        name: tableComment
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/generator_schema.GenTableResp'
+                    type: object
+              type: object
+      summary: 生成列表
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/previewCode:
+    get:
+      description: 预览生成的代码
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      summary: 预览代码
+      tags:
+      - generator-代码生成器
+  /api/admin/generator/syncTable:
+    get:
+      description: 同步数据库表结构
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 同步表结构
+      tags:
+      - generator-代码生成器
+  /api/admin/monitor/cache:
+    get:
+      description: 获取Redis缓存监控信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 缓存监控
+      tags:
+      - monitor-监控
+  /api/admin/monitor/server:
+    get:
+      description: 获取服务器监控信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 服务监控
+      tags:
+      - monitor-监控
   /api/admin/monitor_client/add:
     post:
       parameters:
@@ -1132,7 +2786,7 @@ paths:
         in: body
         name: Id
         schema:
-          type: number
+          type: string
       produces:
       - application/json
       responses:
@@ -1143,7 +2797,7 @@ paths:
       summary: 监控-客户端信息删除
       tags:
       - monitor_client-监控-客户端信息
-  /api/admin/monitor_client/delBatch:
+  /api/admin/monitor_client/del_batch:
     post:
       parameters:
       - description: token
@@ -1177,7 +2831,7 @@ paths:
       - description: uuid
         in: query
         name: Id
-        type: number
+        type: string
       produces:
       - application/json
       responses:
@@ -1188,12 +2842,34 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 ' data':
-                  $ref: '#/definitions/monitorSchema.MonitorClientResp'
+                  $ref: '#/definitions/monitor_schema.MonitorClientResp'
               type: object
       summary: 监控-客户端信息详情
       tags:
       - monitor_client-监控-客户端信息
-  /api/admin/monitor_client/exportFile:
+  /api/admin/monitor_client/error_users:
+    get:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: uuid
+        in: query
+        name: Id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 监控-客户端信息错误用户列表
+      tags:
+      - monitor_client-监控-客户端信息
+  /api/admin/monitor_client/export_file:
     get:
       parameters:
       - description: token
@@ -1221,11 +2897,11 @@ paths:
         in: query
         name: Ua
         type: string
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
@@ -1235,7 +2911,7 @@ paths:
       summary: 监控-客户端信息导出
       tags:
       - monitor_client-监控-客户端信息
-  /api/admin/monitor_client/importFile:
+  /api/admin/monitor_client/import_file:
     post:
       produces:
       - application/json
@@ -1281,11 +2957,11 @@ paths:
         in: query
         name: Ua
         type: string
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
@@ -1304,14 +2980,14 @@ paths:
                   - properties:
                       ' lists':
                         items:
-                          $ref: '#/definitions/monitorSchema.MonitorClientResp'
+                          $ref: '#/definitions/monitor_schema.MonitorClientResp'
                         type: array
                     type: object
               type: object
       summary: 监控-客户端信息列表
       tags:
       - monitor_client-监控-客户端信息
-  /api/admin/monitor_client/listAll:
+  /api/admin/monitor_client/list_all:
     get:
       parameters:
       - description: 项目key
@@ -1334,11 +3010,11 @@ paths:
         in: query
         name: Ua
         type: string
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
@@ -1353,7 +3029,7 @@ paths:
             - properties:
                 ' data':
                   items:
-                    $ref: '#/definitions/monitorSchema.MonitorClientResp'
+                    $ref: '#/definitions/monitor_schema.MonitorClientResp'
                   type: array
               type: object
       summary: 监控-客户端信息列表-所有
@@ -1370,6 +3046,16 @@ paths:
       - description: 项目key
         in: body
         name: ProjectKey
+        schema:
+          type: string
+      - description: sdk生成的客户端id
+        in: body
+        name: ClientId
+        schema:
+          type: string
+      - description: 用户id
+        in: body
+        name: UserId
         schema:
           type: string
       - description: 事件类型
@@ -1392,11 +3078,16 @@ paths:
         name: Stack
         schema:
           type: string
-      - description: md5
+      - description: 屏幕宽度
         in: body
-        name: Md5
+        name: Width
         schema:
-          type: string
+          type: integer
+      - description: 屏幕高度
+        in: body
+        name: Height
+        schema:
+          type: integer
       produces:
       - application/json
       responses:
@@ -1419,7 +3110,7 @@ paths:
         in: body
         name: Id
         schema:
-          type: number
+          type: string
       produces:
       - application/json
       responses:
@@ -1430,7 +3121,7 @@ paths:
       summary: 监控-错误列删除
       tags:
       - monitor_error-监控-错误列
-  /api/admin/monitor_error/delBatch:
+  /api/admin/monitor_error/del_batch:
     post:
       parameters:
       - description: token
@@ -1464,7 +3155,7 @@ paths:
       - description: 错误id
         in: query
         name: Id
-        type: number
+        type: string
       produces:
       - application/json
       responses:
@@ -1475,12 +3166,12 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 ' data':
-                  $ref: '#/definitions/monitorSchema.MonitorErrorResp'
+                  $ref: '#/definitions/monitor_schema.MonitorErrorResp'
               type: object
       summary: 监控-错误列详情
       tags:
       - monitor_error-监控-错误列
-  /api/admin/monitor_error/exportFile:
+  /api/admin/monitor_error/export_file:
     get:
       parameters:
       - description: token
@@ -1512,11 +3203,11 @@ paths:
         in: query
         name: Md5
         type: string
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
@@ -1526,11 +3217,26 @@ paths:
       summary: 监控-错误列导出
       tags:
       - monitor_error-监控-错误列
-  /api/admin/monitor_error/importFile:
+  /api/admin/monitor_error/import_file:
     post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
       summary: 监控-错误列导入
       tags:
       - monitor_error-监控-错误列
@@ -1576,11 +3282,11 @@ paths:
         in: query
         name: Md5
         type: string
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
@@ -1599,14 +3305,14 @@ paths:
                   - properties:
                       ' lists':
                         items:
-                          $ref: '#/definitions/monitorSchema.MonitorErrorResp'
+                          $ref: '#/definitions/monitor_schema.MonitorErrorResp'
                         type: array
                     type: object
               type: object
       summary: 监控-错误列列表
       tags:
       - monitor_error-监控-错误列
-  /api/admin/monitor_error/listAll:
+  /api/admin/monitor_error/list_all:
     get:
       parameters:
       - description: 项目key
@@ -1633,11 +3339,11 @@ paths:
         in: query
         name: Md5
         type: string
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
@@ -1652,7 +3358,7 @@ paths:
             - properties:
                 ' data':
                   items:
-                    $ref: '#/definitions/monitorSchema.MonitorErrorResp'
+                    $ref: '#/definitions/monitor_schema.MonitorErrorResp'
                   type: array
               type: object
       summary: 监控-错误列列表-所有
@@ -1707,8 +3413,9 @@ paths:
       - description: 项目id
         in: body
         name: Id
+        required: true
         schema:
-          type: number
+          type: string
       produces:
       - application/json
       responses:
@@ -1719,7 +3426,7 @@ paths:
       summary: 监控项目删除
       tags:
       - monitor_project-监控项目
-  /api/admin/monitor_project/delBatch:
+  /api/admin/monitor_project/del_batch:
     post:
       parameters:
       - description: token
@@ -1753,7 +3460,7 @@ paths:
       - description: 项目id
         in: query
         name: Id
-        type: number
+        type: string
       produces:
       - application/json
       responses:
@@ -1764,7 +3471,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 ' data':
-                  $ref: '#/definitions/monitorSchema.MonitorProjectResp'
+                  $ref: '#/definitions/monitor_schema.MonitorProjectResp'
               type: object
       summary: 监控项目详情
       tags:
@@ -1781,7 +3488,7 @@ paths:
         in: body
         name: Id
         schema:
-          type: number
+          type: string
       - description: 项目uuid
         in: body
         name: ProjectKey
@@ -1812,7 +3519,7 @@ paths:
       summary: 监控项目编辑
       tags:
       - monitor_project-监控项目
-  /api/admin/monitor_project/exportFile:
+  /api/admin/monitor_project/export_file:
     get:
       parameters:
       - description: token
@@ -1836,19 +3543,19 @@ paths:
         in: query
         name: Status
         type: number
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
-      - description: 更新时间
+      - description: 开始更新时间
         in: query
         name: UpdateTimeStart
         type: string
-      - description: 更新时间
+      - description: 结束更新时间
         in: query
         name: UpdateTimeEnd
         type: string
@@ -1858,7 +3565,7 @@ paths:
       summary: 监控项目导出
       tags:
       - monitor_project-监控项目
-  /api/admin/monitor_project/importFile:
+  /api/admin/monitor_project/import_file:
     post:
       produces:
       - application/json
@@ -1900,19 +3607,19 @@ paths:
         in: query
         name: Status
         type: number
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
-      - description: 更新时间
+      - description: 开始更新时间
         in: query
         name: UpdateTimeStart
         type: string
-      - description: 更新时间
+      - description: 结束更新时间
         in: query
         name: UpdateTimeEnd
         type: string
@@ -1931,14 +3638,14 @@ paths:
                   - properties:
                       ' lists':
                         items:
-                          $ref: '#/definitions/monitorSchema.MonitorProjectResp'
+                          $ref: '#/definitions/monitor_schema.MonitorProjectResp'
                         type: array
                     type: object
               type: object
       summary: 监控项目列表
       tags:
       - monitor_project-监控项目
-  /api/admin/monitor_project/listAll:
+  /api/admin/monitor_project/list_all:
     get:
       parameters:
       - description: 项目uuid
@@ -1957,19 +3664,19 @@ paths:
         in: query
         name: Status
         type: number
-      - description: 创建时间
+      - description: 开始创建时间
         in: query
         name: CreateTimeStart
         type: string
-      - description: 创建时间
+      - description: 结束创建时间
         in: query
         name: CreateTimeEnd
         type: string
-      - description: 更新时间
+      - description: 开始更新时间
         in: query
         name: UpdateTimeStart
         type: string
-      - description: 更新时间
+      - description: 结束更新时间
         in: query
         name: UpdateTimeEnd
         type: string
@@ -1984,12 +3691,2084 @@ paths:
             - properties:
                 ' data':
                   items:
-                    $ref: '#/definitions/monitorSchema.MonitorProjectResp'
+                    $ref: '#/definitions/monitor_schema.MonitorProjectResp'
                   type: array
               type: object
       summary: 监控项目列表-所有
       tags:
       - monitor_project-监控项目
+  /api/admin/setting/copyright/detail:
+    get:
+      description: 获取网站备案信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    additionalProperties: true
+                    type: object
+                  type: array
+              type: object
+      summary: 获取备案信息
+      tags:
+      - setting_copyright-版权设置
+  /api/admin/setting/copyright/save:
+    post:
+      description: 保存网站备案信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 备案信息列表
+        in: body
+        name: list
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/setting_schema.SettingCopyrightItemReq'
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 保存备案信息
+      tags:
+      - setting_copyright-版权设置
+  /api/admin/setting/dictData/add:
+    post:
+      description: 新增字典数据
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 类型ID
+        in: body
+        name: typeId
+        required: true
+        schema:
+          type: string
+      - description: 键
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 值
+        in: body
+        name: value
+        required: true
+        schema:
+          type: string
+      - description: 颜色
+        in: body
+        name: color
+        schema:
+          type: string
+      - description: 备注
+        in: body
+        name: remark
+        schema:
+          type: string
+      - description: 排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      - description: '状态: 0=停用,1=启用'
+        in: body
+        name: status
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 字典数据新增
+      tags:
+      - setting_dictData-字典数据
+  /api/admin/setting/dictData/all:
+    get:
+      description: 获取字典数据列表(不分页)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 字典类型
+        in: query
+        name: dictType
+        type: string
+      - description: 键
+        in: query
+        name: name
+        type: string
+      - description: 值
+        in: query
+        name: value
+        type: string
+      - description: '状态: 0=停用,1=启用'
+        format: int32
+        in: query
+        name: status
+        type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/setting_schema.SettingDictDataResp'
+                  type: array
+              type: object
+      summary: 字典数据所有
+      tags:
+      - setting_dictData-字典数据
+  /api/admin/setting/dictData/del:
+    post:
+      description: 删除字典数据
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键列表
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 字典数据删除
+      tags:
+      - setting_dictData-字典数据
+  /api/admin/setting/dictData/detail:
+    get:
+      description: 获取字典数据详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/setting_schema.SettingDictDataResp'
+              type: object
+      summary: 字典数据详情
+      tags:
+      - setting_dictData-字典数据
+  /api/admin/setting/dictData/edit:
+    post:
+      description: 编辑字典数据
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 类型ID
+        in: body
+        name: typeId
+        required: true
+        schema:
+          type: string
+      - description: 键
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 值
+        in: body
+        name: value
+        required: true
+        schema:
+          type: string
+      - description: 颜色
+        in: body
+        name: color
+        schema:
+          type: string
+      - description: 备注
+        in: body
+        name: remark
+        schema:
+          type: string
+      - description: 排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      - description: '状态: 0=停用,1=启用'
+        in: body
+        name: status
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 字典数据编辑
+      tags:
+      - setting_dictData-字典数据
+  /api/admin/setting/dictType/add:
+    post:
+      description: 新增字典类型
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 字典名称
+        in: body
+        name: dictName
+        required: true
+        schema:
+          type: string
+      - description: 字典类型
+        in: body
+        name: dictType
+        required: true
+        schema:
+          type: string
+      - description: 字典备注
+        in: body
+        name: dictRemark
+        schema:
+          type: string
+      - description: '字典状态: 0/1'
+        in: body
+        name: dictStatus
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 字典类型新增
+      tags:
+      - setting_dictType-字典类型
+  /api/admin/setting/dictType/all:
+    get:
+      description: 获取所有字典类型列表(不分页)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/setting_schema.SettingDictTypeResp'
+                  type: array
+              type: object
+      summary: 字典类型所有
+      tags:
+      - setting_dictType-字典类型
+  /api/admin/setting/dictType/del:
+    post:
+      description: 删除字典类型
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键列表
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 字典类型删除
+      tags:
+      - setting_dictType-字典类型
+  /api/admin/setting/dictType/detail:
+    get:
+      description: 获取字典类型详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/setting_schema.SettingDictTypeResp'
+              type: object
+      summary: 字典类型详情
+      tags:
+      - setting_dictType-字典类型
+  /api/admin/setting/dictType/edit:
+    post:
+      description: 编辑字典类型
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 字典名称
+        in: body
+        name: dictName
+        required: true
+        schema:
+          type: string
+      - description: 字典类型
+        in: body
+        name: dictType
+        required: true
+        schema:
+          type: string
+      - description: 字典备注
+        in: body
+        name: dictRemark
+        schema:
+          type: string
+      - description: '字典状态: 0/1'
+        in: body
+        name: dictStatus
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 字典类型编辑
+      tags:
+      - setting_dictType-字典类型
+  /api/admin/setting/dictType/list:
+    get:
+      description: 获取字典类型列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 字典名称
+        in: query
+        name: dictName
+        type: string
+      - description: 字典类型
+        in: query
+        name: dictType
+        type: string
+      - description: '字典状态: 0/1'
+        format: int32
+        in: query
+        name: dictStatus
+        type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/setting_schema.SettingDictTypeResp'
+                    type: object
+              type: object
+      summary: 字典类型列表
+      tags:
+      - setting_dictType-字典类型
+  /api/admin/setting/website/detail:
+    get:
+      description: 获取网站设置信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      summary: 获取网站信息
+      tags:
+      - setting_website-网站设置
+  /api/admin/setting/website/save:
+    post:
+      description: 保存网站设置信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 网站名称
+        in: body
+        name: name
+        schema:
+          type: string
+      - description: 网站图标
+        in: body
+        name: logo
+        schema:
+          type: string
+      - description: 网站LOGO
+        in: body
+        name: favicon
+        schema:
+          type: string
+      - description: 登录页广告图
+        in: body
+        name: backdrop
+        schema:
+          type: string
+      - description: 商城名称
+        in: body
+        name: shopName
+        schema:
+          type: string
+      - description: 商城Logo
+        in: body
+        name: shopLogo
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 保存网站信息
+      tags:
+      - setting_website-网站设置
+  /api/admin/system/admin/ListByDeptId:
+    get:
+      description: 获取部门的用户
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 部门id
+        in: query
+        name: deptId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code": 200, "data": []}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthAdminResp'
+                  type: array
+              type: object
+      summary: 获取部门的用户
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/add:
+    post:
+      description: 新增管理员
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 部门ID
+        in: body
+        name: deptId
+        schema:
+          type: string
+      - description: 岗位ID
+        in: body
+        name: postId
+        schema:
+          type: string
+      - description: 角色ID列表
+        in: body
+        name: roleIds
+        schema:
+          items:
+            type: string
+          type: array
+      - description: 账号
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: 昵称
+        in: body
+        name: nickname
+        required: true
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 头像
+        in: body
+        name: avatar
+        schema:
+          type: string
+      - description: 排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      - description: '是否禁用: [0=否, 1=是]'
+        in: body
+        name: isDisable
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 管理员新增
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/del:
+    post:
+      description: 删除管理员
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 管理员删除
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/detail:
+    get:
+      description: 获取管理员详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemAuthAdminResp'
+              type: object
+      summary: 管理员详情
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/disable:
+    post:
+      description: 切换管理员禁用状态
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 管理员状态切换
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/edit:
+    post:
+      description: 编辑管理员信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 部门ID
+        in: body
+        name: deptId
+        schema:
+          type: string
+      - description: 岗位ID
+        in: body
+        name: postId
+        schema:
+          type: string
+      - description: 角色ID列表
+        in: body
+        name: roleIds
+        schema:
+          items:
+            type: string
+          type: array
+      - description: 账号
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: 昵称
+        in: body
+        name: nickname
+        required: true
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        schema:
+          type: string
+      - description: 头像
+        in: body
+        name: avatar
+        schema:
+          type: string
+      - description: 排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      - description: '是否禁用: [0=否, 1=是]'
+        in: body
+        name: isDisable
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 管理员编辑
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/export:
+    get:
+      description: 导出管理员列表到Excel
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 账号
+        in: query
+        name: username
+        type: string
+      - description: 昵称
+        in: query
+        name: nickname
+        type: string
+      - description: 角色ID
+        in: query
+        name: roleId
+        type: string
+      responses:
+        "200":
+          description: 文件流
+      summary: 导出管理员文件
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/import:
+    post:
+      description: 从Excel导入管理员数据
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Excel文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 导入管理员文件
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/list:
+    get:
+      description: 获取管理员列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 账号
+        in: query
+        name: username
+        type: string
+      - description: 昵称
+        in: query
+        name: nickname
+        type: string
+      - description: 角色ID
+        in: query
+        name: roleId
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/system_schema.SystemAuthAdminResp'
+                    type: object
+              type: object
+      summary: 管理员列表
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/list_all:
+    get:
+      description: 获取所有管理员列表(不分页)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 账号
+        in: query
+        name: username
+        type: string
+      - description: 昵称
+        in: query
+        name: nickname
+        type: string
+      - description: 角色ID
+        in: query
+        name: roleId
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthAdminResp'
+                  type: array
+              type: object
+      summary: 所有管理员列表
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/self:
+    get:
+      description: 获取当前管理员信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemAuthAdminSelfResp'
+              type: object
+      summary: 管理员信息
+      tags:
+      - system_admin-管理员
+  /api/admin/system/admin/upInfo:
+    post:
+      description: 当前管理员更新自己的信息
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 昵称
+        in: body
+        name: nickname
+        required: true
+        schema:
+          type: string
+      - description: 头像
+        in: body
+        name: avatar
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        schema:
+          type: string
+      - description: 当前密码
+        in: body
+        name: currPassword
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 管理员更新信息
+      tags:
+      - system_admin-管理员
+  /api/admin/system/dept/add:
+    post:
+      description: 新增部门
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 部门父级
+        in: body
+        name: pid
+        schema:
+          type: string
+      - description: 部门名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 负责人id
+        in: body
+        name: dutyId
+        schema:
+          type: string
+      - description: 负责人
+        in: body
+        name: duty
+        schema:
+          type: string
+      - description: 联系电话
+        in: body
+        name: mobile
+        schema:
+          type: string
+      - description: '是否停用: [0=否, 1=是]'
+        in: body
+        name: isStop
+        schema:
+          type: integer
+      - description: 排序编号
+        in: body
+        name: sort
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 部门新增
+      tags:
+      - system_dept-部门
+  /api/admin/system/dept/all:
+    get:
+      description: 获取所有部门列表(不分页)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthDeptResp'
+                  type: array
+              type: object
+      summary: 部门所有
+      tags:
+      - system_dept-部门
+  /api/admin/system/dept/del:
+    post:
+      description: 删除部门
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 部门删除
+      tags:
+      - system_dept-部门
+  /api/admin/system/dept/detail:
+    get:
+      description: 获取部门详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemAuthDeptResp'
+              type: object
+      summary: 部门详情
+      tags:
+      - system_dept-部门
+  /api/admin/system/dept/edit:
+    post:
+      description: 编辑部门
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 部门父级
+        in: body
+        name: pid
+        schema:
+          type: string
+      - description: 部门名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 负责人id
+        in: body
+        name: dutyId
+        schema:
+          type: string
+      - description: 负责人
+        in: body
+        name: duty
+        schema:
+          type: string
+      - description: 联系电话
+        in: body
+        name: mobile
+        schema:
+          type: string
+      - description: '是否停用: [0=否, 1=是]'
+        in: body
+        name: isStop
+        schema:
+          type: integer
+      - description: 排序编号
+        in: body
+        name: sort
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 部门编辑
+      tags:
+      - system_dept-部门
+  /api/admin/system/dept/list:
+    get:
+      description: 获取部门列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 部门名称
+        in: query
+        name: name
+        type: string
+      - description: '是否停用: [0=否, 1=是]'
+        format: int32
+        in: query
+        name: isStop
+        type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthDeptResp'
+                  type: array
+              type: object
+      summary: 部门列表
+      tags:
+      - system_dept-部门
+  /api/admin/system/log/login:
+    get:
+      description: 获取登录日志列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 登录账号
+        in: query
+        name: username
+        type: string
+      - description: '执行状态: [1=成功, 2=失败]'
+        in: query
+        name: status
+        type: integer
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/system_schema.SystemLogLoginResp'
+                    type: object
+              type: object
+      summary: 登录日志
+      tags:
+      - system_log-日志
+  /api/admin/system/log/operate:
+    get:
+      description: 获取操作日志列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 用户账号
+        in: query
+        name: username
+        type: string
+      - description: 操作标题
+        in: query
+        name: title
+        type: string
+      - description: '请求类型: GET/POST/PUT'
+        in: query
+        name: type
+        type: string
+      - description: 请求IP
+        in: query
+        name: ip
+        type: string
+      - description: '执行状态: [1=成功, 2=失败]'
+        in: query
+        name: status
+        type: integer
+      - description: 请求地址
+        in: query
+        name: url
+        type: string
+      - description: 开始时间
+        in: query
+        name: startTime
+        type: string
+      - description: 结束时间
+        in: query
+        name: endTime
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/system_schema.SystemLogOperateResp'
+                    type: object
+              type: object
+      summary: 操作日志
+      tags:
+      - system_log-日志
+  /api/admin/system/login:
+    post:
+      description: 管理员登录系统
+      parameters:
+      - description: 账号
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 验证码token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: 点选坐标
+        in: body
+        name: pointJson
+        schema:
+          type: string
+      - description: 验证码类型
+        in: body
+        name: captchaType
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemLoginResp'
+              type: object
+      summary: 登录系统
+      tags:
+      - system_login-登录
+  /api/admin/system/logout:
+    post:
+      description: 管理员退出登录
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 登录退出
+      tags:
+      - system_login-登录
+  /api/admin/system/menu/add:
+    post:
+      description: 新增菜单
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 上级菜单
+        in: body
+        name: pid
+        schema:
+          type: string
+      - description: '权限类型: [M=目录, C=菜单, A=按钮]'
+        in: body
+        name: menuType
+        required: true
+        schema:
+          type: string
+      - description: 菜单名称
+        in: body
+        name: menuName
+        required: true
+        schema:
+          type: string
+      - description: 菜单图标
+        in: body
+        name: menuIcon
+        schema:
+          type: string
+      - description: 菜单排序
+        in: body
+        name: menuSort
+        schema:
+          type: integer
+      - description: 权限标识
+        in: body
+        name: perms
+        schema:
+          type: string
+      - description: 路由地址
+        in: body
+        name: paths
+        schema:
+          type: string
+      - description: 前端组件
+        in: body
+        name: component
+        schema:
+          type: string
+      - description: 选中路径
+        in: body
+        name: selected
+        schema:
+          type: string
+      - description: 路由参数
+        in: body
+        name: params
+        schema:
+          type: string
+      - description: '是否缓存: [0=否, 1=是]'
+        in: body
+        name: isCache
+        schema:
+          type: integer
+      - description: '是否显示: [0=否, 1=是]'
+        in: body
+        name: isShow
+        schema:
+          type: integer
+      - description: '是否禁用: [0=否, 1=是]'
+        in: body
+        name: isDisable
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 新增菜单
+      tags:
+      - system_menu-菜单
+  /api/admin/system/menu/del:
+    post:
+      description: 删除菜单
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除菜单
+      tags:
+      - system_menu-菜单
+  /api/admin/system/menu/detail:
+    get:
+      description: 获取菜单详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemAuthMenuResp'
+              type: object
+      summary: 菜单详情
+      tags:
+      - system_menu-菜单
+  /api/admin/system/menu/edit:
+    post:
+      description: 编辑菜单
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 上级菜单
+        in: body
+        name: pid
+        schema:
+          type: string
+      - description: '权限类型: [M=目录, C=菜单, A=按钮]'
+        in: body
+        name: menuType
+        required: true
+        schema:
+          type: string
+      - description: 菜单名称
+        in: body
+        name: menuName
+        required: true
+        schema:
+          type: string
+      - description: 菜单图标
+        in: body
+        name: menuIcon
+        schema:
+          type: string
+      - description: 菜单排序
+        in: body
+        name: menuSort
+        schema:
+          type: integer
+      - description: 权限标识
+        in: body
+        name: perms
+        schema:
+          type: string
+      - description: 路由地址
+        in: body
+        name: paths
+        schema:
+          type: string
+      - description: 前端组件
+        in: body
+        name: component
+        schema:
+          type: string
+      - description: 选中路径
+        in: body
+        name: selected
+        schema:
+          type: string
+      - description: 路由参数
+        in: body
+        name: params
+        schema:
+          type: string
+      - description: '是否缓存: [0=否, 1=是]'
+        in: body
+        name: isCache
+        schema:
+          type: integer
+      - description: '是否显示: [0=否, 1=是]'
+        in: body
+        name: isShow
+        schema:
+          type: integer
+      - description: '是否禁用: [0=否, 1=是]'
+        in: body
+        name: isDisable
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 编辑菜单
+      tags:
+      - system_menu-菜单
+  /api/admin/system/menu/list:
+    get:
+      description: 获取菜单列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthMenuResp'
+                  type: array
+              type: object
+      summary: 菜单列表
+      tags:
+      - system_menu-菜单
+  /api/admin/system/menu/route:
+    get:
+      description: 获取当前管理员的菜单路由
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthMenuResp'
+                  type: array
+              type: object
+      summary: 菜单路由
+      tags:
+      - system_menu-菜单
+  /api/admin/system/post/add:
+    post:
+      description: 新增岗位
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 岗位名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 岗位编码
+        in: body
+        name: code
+        schema:
+          type: string
+      - description: 岗位备注
+        in: body
+        name: remarks
+        schema:
+          type: string
+      - description: '是否停用: [0=否, 1=是]'
+        in: body
+        name: isStop
+        schema:
+          type: integer
+      - description: 排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 岗位新增
+      tags:
+      - system_post-岗位
+  /api/admin/system/post/all:
+    get:
+      description: 获取所有岗位列表(不分页)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthPostResp'
+                  type: array
+              type: object
+      summary: 岗位所有
+      tags:
+      - system_post-岗位
+  /api/admin/system/post/del:
+    post:
+      description: 删除岗位
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 岗位删除
+      tags:
+      - system_post-岗位
+  /api/admin/system/post/detail:
+    get:
+      description: 获取岗位详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemAuthPostResp'
+              type: object
+      summary: 岗位详情
+      tags:
+      - system_post-岗位
+  /api/admin/system/post/edit:
+    post:
+      description: 编辑岗位
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 岗位名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 岗位编码
+        in: body
+        name: code
+        schema:
+          type: string
+      - description: 岗位备注
+        in: body
+        name: remarks
+        schema:
+          type: string
+      - description: '是否停用: [0=否, 1=是]'
+        in: body
+        name: isStop
+        schema:
+          type: integer
+      - description: 排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 岗位编辑
+      tags:
+      - system_post-岗位
+  /api/admin/system/post/list:
+    get:
+      description: 获取岗位列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 岗位名称
+        in: query
+        name: name
+        type: string
+      - description: 岗位编码
+        in: query
+        name: code
+        type: string
+      - description: '是否停用: [0=否, 1=是]'
+        format: int32
+        in: query
+        name: isStop
+        type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/system_schema.SystemAuthPostResp'
+                    type: object
+              type: object
+      summary: 岗位列表
+      tags:
+      - system_post-岗位
+  /api/admin/system/role/add:
+    post:
+      description: 新增角色
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 角色名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 角色排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      - description: '是否禁用: [0=否, 1=是]'
+        in: body
+        name: isDisable
+        schema:
+          type: integer
+      - description: 角色备注
+        in: body
+        name: remark
+        schema:
+          type: string
+      - description: 关联菜单
+        in: body
+        name: menuIds
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 新增角色
+      tags:
+      - system_role-角色
+  /api/admin/system/role/all:
+    get:
+      description: 获取所有角色列表(不分页)
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system_schema.SystemAuthRoleSimpleResp'
+                  type: array
+              type: object
+      summary: 角色所有
+      tags:
+      - system_role-角色
+  /api/admin/system/role/del:
+    post:
+      description: 删除角色
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除角色
+      tags:
+      - system_role-角色
+  /api/admin/system/role/detail:
+    get:
+      description: 获取角色详情
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemAuthRoleResp'
+              type: object
+      summary: 角色详情
+      tags:
+      - system_role-角色
+  /api/admin/system/role/edit:
+    post:
+      description: 编辑角色
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 主键
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: 角色名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 角色排序
+        in: body
+        name: sort
+        schema:
+          type: integer
+      - description: '是否禁用: [0=否, 1=是]'
+        in: body
+        name: isDisable
+        schema:
+          type: integer
+      - description: 角色备注
+        in: body
+        name: remark
+        schema:
+          type: string
+      - description: 关联菜单
+        in: body
+        name: menuIds
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 编辑角色
+      tags:
+      - system_role-角色
+  /api/admin/system/role/list:
+    get:
+      description: 获取角色列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/system_schema.SystemAuthRoleResp'
+                    type: object
+              type: object
+      summary: 角色列表
+      tags:
+      - system_role-角色
   /api/admin/system_corn/add:
     post:
       parameters:
@@ -2051,7 +5830,7 @@ paths:
       summary: 定时任务删除
       tags:
       - system_corn-定时任务
-  /api/admin/system_corn/delBatch:
+  /api/admin/system_corn/del_batch:
     post:
       parameters:
       - description: token
@@ -2144,7 +5923,7 @@ paths:
       summary: 定时任务编辑
       tags:
       - system_corn-定时任务
-  /api/admin/system_corn/exportFile:
+  /api/admin/system_corn/export_file:
     get:
       parameters:
       - description: token
@@ -2171,6 +5950,10 @@ paths:
       - description: 创建人
         in: query
         name: CreatedBy
+        type: string
+      - description: 创建人名称
+        in: query
+        name: Nickname
         type: string
       - description: 创建时间
         in: query
@@ -2221,7 +6004,7 @@ paths:
       summary: 获取任务列表
       tags:
       - system_corn-定时任务
-  /api/admin/system_corn/importFile:
+  /api/admin/system_corn/import_file:
     post:
       parameters:
       - description: token
@@ -2282,6 +6065,10 @@ paths:
         in: query
         name: CreatedBy
         type: string
+      - description: 创建人名称
+        in: query
+        name: Nickname
+        type: string
       - description: 创建时间
         in: query
         name: CreateTimeStart
@@ -2320,7 +6107,7 @@ paths:
       summary: 定时任务列表
       tags:
       - system_corn-定时任务
-  /api/admin/system_corn/listAll:
+  /api/admin/system_corn/list_all:
     get:
       parameters:
       - description: token
@@ -2347,6 +6134,10 @@ paths:
       - description: 创建人
         in: query
         name: CreatedBy
+        type: string
+      - description: 创建人名称
+        in: query
+        name: Nickname
         type: string
       - description: 创建时间
         in: query
@@ -2389,6 +6180,16 @@ paths:
         name: token
         required: true
         type: string
+      - description: 标识
+        in: body
+        name: Tag
+        schema:
+          type: string
+      - description: 版本
+        in: body
+        name: Version
+        schema:
+          type: number
       - description: 标题
         in: body
         name: Title
@@ -2399,11 +6200,6 @@ paths:
         name: Content
         schema:
           type: string
-      - description: 排序
-        in: body
-        name: Sort
-        schema:
-          type: number
       produces:
       - application/json
       responses:
@@ -2426,7 +6222,7 @@ paths:
         in: body
         name: Id
         schema:
-          type: number
+          type: string
       produces:
       - application/json
       responses:
@@ -2437,7 +6233,7 @@ paths:
       summary: 用户协议删除
       tags:
       - user_protocol-用户协议
-  /api/admin/user_protocol/delBatch:
+  /api/admin/user_protocol/del_batch:
     post:
       parameters:
       - description: token
@@ -2471,7 +6267,7 @@ paths:
       - description: Id
         in: query
         name: Id
-        type: number
+        type: string
       produces:
       - application/json
       responses:
@@ -2499,6 +6295,16 @@ paths:
         in: body
         name: Id
         schema:
+          type: string
+      - description: 标识
+        in: body
+        name: Tag
+        schema:
+          type: string
+      - description: 版本
+        in: body
+        name: Version
+        schema:
           type: number
       - description: 标题
         in: body
@@ -2510,11 +6316,6 @@ paths:
         name: Content
         schema:
           type: string
-      - description: 排序
-        in: body
-        name: Sort
-        schema:
-          type: number
       produces:
       - application/json
       responses:
@@ -2525,7 +6326,7 @@ paths:
       summary: 用户协议编辑
       tags:
       - user_protocol-用户协议
-  /api/admin/user_protocol/exportFile:
+  /api/admin/user_protocol/export_file:
     get:
       parameters:
       - description: token
@@ -2541,9 +6342,9 @@ paths:
         in: query
         name: Content
         type: string
-      - description: 排序
+      - description: 版本
         in: query
-        name: Sort
+        name: Version
         type: number
       - description: 创建时间
         in: query
@@ -2575,7 +6376,7 @@ paths:
       summary: 用户协议导出
       tags:
       - user_protocol-用户协议
-  /api/admin/user_protocol/importFile:
+  /api/admin/user_protocol/import_file:
     post:
       parameters:
       - description: token
@@ -2624,9 +6425,9 @@ paths:
         in: query
         name: Content
         type: string
-      - description: 排序
+      - description: 版本
         in: query
-        name: Sort
+        name: Version
         type: number
       - description: 创建时间
         in: query
@@ -2666,7 +6467,7 @@ paths:
       summary: 用户协议列表
       tags:
       - user_protocol-用户协议
-  /api/admin/user_protocol/listAll:
+  /api/admin/user_protocol/list_all:
     get:
       parameters:
       - description: token
@@ -2682,9 +6483,9 @@ paths:
         in: query
         name: Content
         type: string
-      - description: 排序
+      - description: 版本
         in: query
-        name: Sort
+        name: Version
         type: number
       - description: 创建时间
         in: query
@@ -2727,29 +6528,24 @@ paths:
       - 公共接口
   /api/ws:
     get:
-      responses:
-        "101":
-          description: ws连接成功
-          schema:
-            type: string
-      summary: ws通用接口
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 用户ID
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 房间ID
+        in: query
+        name: room
+        required: true
+        type: string
+      responses: {}
+      summary: websocket连接
       tags:
       - 公共接口
-  /system/admin/ListByDeptId/{deptId}:
-    get:
-      description: 获取部门的用户
-      parameters:
-      - description: 部门id
-        in: path
-        name: deptId
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: '{"code": 200, "data": []}'
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 获取部门的用户
-      tags:
-      - 管理员
 swagger: "2.0"

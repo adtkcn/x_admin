@@ -19,13 +19,27 @@ import (
 // AdminHandler 管理员控制器
 type AdminHandler struct{}
 
-// Self 管理员信息
+// @Summary		管理员信息
+// @Description	获取当前管理员信息
+// @Tags			system_admin-管理员
+// @Param			token	header		string					true	"token"
+// @Success		200		{object}	response.Response{data=system_schema.SystemAuthAdminSelfResp}	"成功"
+// @Router			/api/admin/system/admin/self [get]
 func (ah AdminHandler) Self(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
 	res, err := system_service.AdminService.Self(adminId)
 	response.CheckAndRespWithData(c, res, err)
 }
 
+// @Summary		导出管理员文件
+// @Description	导出管理员列表到Excel
+// @Tags			system_admin-管理员
+// @Param			token		header		string					true	"token"
+// @Param			username	query		string					false	"账号"
+// @Param			nickname	query		string					false	"昵称"
+// @Param			roleId		query		string					false	"角色ID"
+// @Success		200					"文件流"
+// @Router			/api/admin/system/admin/export [get]
 func (ah AdminHandler) ExportFile(c *gin.Context) {
 	var listReq system_schema.SystemAuthAdminListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -45,7 +59,13 @@ func (ah AdminHandler) ExportFile(c *gin.Context) {
 	excel2.DownLoadExcel("用户信息"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
-// 导入文件
+// @Summary		导入管理员文件
+// @Description	从Excel导入管理员数据
+// @Tags			system_admin-管理员
+// @Param			token	header		string					true	"token"
+// @Param			file	formData	file					true	"Excel文件"
+// @Success		200		{object}	response.Response		"成功"
+// @Router			/api/admin/system/admin/import [post]
 func (ah AdminHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
@@ -63,7 +83,17 @@ func (ah AdminHandler) ImportFile(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// list 管理员列表
+// @Summary		管理员列表
+// @Description	获取管理员列表
+// @Tags			system_admin-管理员
+// @Param			token		header		string					true	"token"
+// @Param			pageNo		query		int						true	"页码"
+// @Param			pageSize	query		int						true	"每页数量"
+// @Param			username	query		string					false	"账号"
+// @Param			nickname	query		string					false	"昵称"
+// @Param			roleId		query		string					false	"角色ID"
+// @Success		200			{object}	response.Response{data=response.PageResp{lists=system_schema.SystemAuthAdminResp}}	"成功"
+// @Router			/api/admin/system/admin/list [get]
 func (ah AdminHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq system_schema.SystemAuthAdminListReq
@@ -77,7 +107,15 @@ func (ah AdminHandler) List(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// ListAll 所有管理员列表
+// @Summary		所有管理员列表
+// @Description	获取所有管理员列表(不分页)
+// @Tags			system_admin-管理员
+// @Param			token		header		string					true	"token"
+// @Param			username	query		string					false	"账号"
+// @Param			nickname	query		string					false	"昵称"
+// @Param			roleId		query		string					false	"角色ID"
+// @Success		200			{object}	response.Response{data=[]system_schema.SystemAuthAdminResp}	"成功"
+// @Router			/api/admin/system/admin/list_all [get]
 func (ah AdminHandler) ListAll(c *gin.Context) {
 
 	var listReq system_schema.SystemAuthAdminListReq
@@ -89,7 +127,13 @@ func (ah AdminHandler) ListAll(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// detail 管理员详细
+// @Summary		管理员详情
+// @Description	获取管理员详情
+// @Tags			system_admin-管理员
+// @Param			token	header		string					true	"token"
+// @Param			id		query		string					true	"主键"
+// @Success		200		{object}	response.Response{data=system_schema.SystemAuthAdminResp}	"成功"
+// @Router			/api/admin/system/admin/detail [get]
 func (ah AdminHandler) Detail(c *gin.Context) {
 	var detailReq system_schema.SystemAuthAdminDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
@@ -99,7 +143,21 @@ func (ah AdminHandler) Detail(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
-// add 管理员新增
+// @Summary		管理员新增
+// @Description	新增管理员
+// @Tags			system_admin-管理员
+// @Param			token		header		string					true	"token"
+// @Param			deptId		body		string					false	"部门ID"
+// @Param			postId		body		string					false	"岗位ID"
+// @Param			roleIds		body		[]string				false	"角色ID列表"
+// @Param			username	body		string					true	"账号"
+// @Param			nickname	body		string					true	"昵称"
+// @Param			password	body		string					true	"密码"
+// @Param			avatar		body		string					false	"头像"
+// @Param			sort		body		int						false	"排序"
+// @Param			isDisable	body		uint8					false	"是否禁用: [0=否, 1=是]"
+// @Success		200			{object}	response.Response		"成功"
+// @Router			/api/admin/system/admin/add [post]
 func (ah AdminHandler) Add(c *gin.Context) {
 	var addReq system_schema.SystemAuthAdminAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
@@ -109,7 +167,22 @@ func (ah AdminHandler) Add(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// edit 管理员编辑
+// @Summary		管理员编辑
+// @Description	编辑管理员信息
+// @Tags			system_admin-管理员
+// @Param			token		header		string					true	"token"
+// @Param			id			body		string					true	"主键"
+// @Param			deptId		body		string					false	"部门ID"
+// @Param			postId		body		string					false	"岗位ID"
+// @Param			roleIds		body		[]string				false	"角色ID列表"
+// @Param			username	body		string					true	"账号"
+// @Param			nickname	body		string					true	"昵称"
+// @Param			password	body		string					false	"密码"
+// @Param			avatar		body		string					false	"头像"
+// @Param			sort		body		int						false	"排序"
+// @Param			isDisable	body		uint8					false	"是否禁用: [0=否, 1=是]"
+// @Success		200			{object}	response.Response		"成功"
+// @Router			/api/admin/system/admin/edit [post]
 func (ah AdminHandler) Edit(c *gin.Context) {
 	var editReq system_schema.SystemAuthAdminEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
@@ -119,7 +192,16 @@ func (ah AdminHandler) Edit(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// upInfo 管理员更新
+// @Summary		管理员更新信息
+// @Description	当前管理员更新自己的信息
+// @Tags			system_admin-管理员
+// @Param			token			header		string					true	"token"
+// @Param			nickname		body		string					true	"昵称"
+// @Param			avatar			body		string					false	"头像"
+// @Param			password		body		string					false	"密码"
+// @Param			currPassword	body		string					false	"当前密码"
+// @Success		200				{object}	response.Response		"成功"
+// @Router			/api/admin/system/admin/upInfo [post]
 func (ah AdminHandler) UpInfo(c *gin.Context) {
 	var updateReq system_schema.SystemAuthAdminUpdateReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &updateReq)) {
@@ -130,7 +212,13 @@ func (ah AdminHandler) UpInfo(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// del 管理员删除
+// @Summary		管理员删除
+// @Description	删除管理员
+// @Tags			system_admin-管理员
+// @Param			token	header		string					true	"token"
+// @Param			id		body		string					true	"主键"
+// @Success		200		{object}	response.Response		"成功"
+// @Router			/api/admin/system/admin/del [post]
 func (ah AdminHandler) Del(c *gin.Context) {
 	var delReq system_schema.SystemAuthAdminDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
@@ -140,7 +228,13 @@ func (ah AdminHandler) Del(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// disable 管理员状态切换
+// @Summary		管理员状态切换
+// @Description	切换管理员禁用状态
+// @Tags			system_admin-管理员
+// @Param			token	header		string					true	"token"
+// @Param			id		body		string					true	"主键"
+// @Success		200		{object}	response.Response		"成功"
+// @Router			/api/admin/system/admin/disable [post]
 func (ah AdminHandler) Disable(c *gin.Context) {
 	var disableReq system_schema.SystemAuthAdminDisableReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &disableReq)) {
@@ -152,10 +246,11 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 
 // @Summary		获取部门的用户
 // @Description	获取部门的用户
-// @Tags			管理员
-// @Param			deptId	path		int					true	"部门id"
-// @Success		200		{object}	response.Response	"{"code": 200, "data": []}"
-// @Router			/system/admin/ListByDeptId/{deptId} [get]
+// @Tags			system_admin-管理员
+// @Param			token	header		string					true	"token"
+// @Param			deptId	query		string					true	"部门id"
+// @Success		200		{object}	response.Response{data=[]system_schema.SystemAuthAdminResp}		"{"code": 200, "data": []}"
+// @Router			/api/admin/system/admin/ListByDeptId [get]
 func (ah AdminHandler) ListByDeptId(c *gin.Context) {
 	deptId, bool := c.GetQuery("deptId")
 	if !bool {

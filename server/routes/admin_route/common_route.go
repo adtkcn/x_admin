@@ -57,7 +57,15 @@ func initGeTuiRoute(rg *gin.RouterGroup) {
 	geTuiRg.GET("/push", handleGeTui.Push)
 }
 
-// 通用模块路由入口（上传、分片上传、相册、首页、个推）
+// initCaptchaRoute 验证码路由
+func initCaptchaRoute(rg *gin.RouterGroup) {
+	handleCaptcha := common_controller.CaptchaHandler{}
+	captchaRg := rg.Group("/common/captcha")
+	captchaRg.POST("/get", handleCaptcha.Get)
+	captchaRg.POST("/check", handleCaptcha.Check)
+}
+
+// 通用模块路由入口（上传、分片上传、相册、首页、个推、验证码）
 func init() {
-	routeHandlers = append(routeHandlers, initUploadRoute, initChunkRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute)
+	routeHandlers = append(routeHandlers, initUploadRoute, initChunkRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute, initCaptchaRoute)
 }

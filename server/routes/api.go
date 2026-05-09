@@ -3,7 +3,6 @@ package routes
 import (
 	"fmt"
 	"x_admin/app/controller"
-	"x_admin/app/controller/admin_ctl/common_controller"
 	"x_admin/app/middleware"
 	"x_admin/config"
 	"x_admin/core/response"
@@ -12,21 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-// @Summary	静态文件路由
-// @Tags		公共接口
-// @Router		/api/static/* [get]
-func static(api *gin.RouterGroup) {
-	// 静态文件路由
-	api.Static("/static", "./public/static")
-}
-
-// @Summary	上传文件的静态路径路由
-// @Tags		公共接口
-// @Router		/api/uploads/* [get]
-func uploads(root *gin.Engine) {
-	root.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
-}
 
 // @Summary	获取所有接口
 // @Tags		公共接口
@@ -56,18 +40,15 @@ func swaggerDoc(api *gin.RouterGroup) {
 	})
 }
 
-// @Summary	ws通用接口
-// @schemes	ws
-// @Tags		公共接口
-// @Success	101	{string}	string	"ws连接成功"
-// @Router		/api/ws [get]
 func wsHandler(api *gin.RouterGroup) {
 	api.GET("/ws", middleware.LoginAuth(), controller.WsHandler)
 }
 
 func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
-	static(api)
-	uploads(rootRouter)
+	// 静态文件路由
+	api.Static("/static", "./public/static")
+	rootRouter.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
+
 	// 设置中间件
 	RootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 	apiList(api, rootRouter)
@@ -77,8 +58,5 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	wsHandler(api)
 	// /api/admin
 	admin_route.RegisterRoute(api)
-
-	// /api/common/captcha 验证码
-	common_controller.CaptchaRoute(api)
 
 }
