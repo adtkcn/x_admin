@@ -57,6 +57,7 @@ export const setTheme = (options: Record<string, string>, isDark = false) => {
     }, {})
 
     let theme = Object.keys(varsMap).reduce((prev, key) => {
+        // Convert a color function CSS string into an RGB color string
         const color = colors.convert(varsMap[key])
         return `${prev}${key}:${color};`
     }, '')
