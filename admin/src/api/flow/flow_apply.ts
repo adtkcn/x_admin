@@ -2,22 +2,22 @@ import request from '@/utils/request'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_apply = {
-    id?: string
-    templateId?: string
-    applyUserId?: number
-    applyUserNickname?: string
-    flowName?: string
-    flowGroup?: number
-    flowRemark?: string
-    flowFormData?: string
-    flowProcessData?: string
-    flowProcessDataList?: string
-    formValue?: string
-    status?: number // 状态：1待提交，2审批中，3审批完成，4审批失败
-    isDelete?: number
-    createTime?: string
-    updateTime?: string
-    deleteTime?: string
+    id: string | null
+    templateId: string | null
+    applyUserId: number | null
+    applyUserNickname: string | null
+    flowName: string | null
+    flowGroup: number | null
+    flowRemark: string | null
+    flowFormData: string | null
+    flowProcessData: string | null
+    flowProcessDataList: string | null
+    formValue: string | null
+    status: number | null // 状态：1待提交，2审批中，3审批完成，4审批失败
+    isDelete: number | null
+    createTime: string | null
+    updateTime: string | null
+    deleteTime: string | null
 }
 // 查询
 export type type_flow_apply_query = {

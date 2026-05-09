@@ -149,7 +149,7 @@ const OpenViewForm = async (row: any) => {
     }
     let form_json = {}
     try {
-        form_json = JSON.parse(detail.flowFormData)
+        detail.flowFormData && (form_json = JSON.parse(detail.flowFormData))
     } catch (error) {
         // 解析失败
     }
@@ -158,7 +158,7 @@ const OpenViewForm = async (row: any) => {
     viewFormRef.value?.open(detail, form_json, form_data)
 }
 
-const SaveViewForm = (id, form_data) => {
+const SaveViewForm = (id: string, form_data: any) => {
     return new Promise((resolve, reject) => {
         flow_apply_edit({
             id: id,
@@ -170,7 +170,7 @@ const SaveViewForm = (id, form_data) => {
 
                 const row = pager.lists.find((item) => item.id === id)
 
-                ApplySubmitRef.value?.open(row.id)
+                ApplySubmitRef.value?.open(row?.id)
 
                 resolve(true)
             })

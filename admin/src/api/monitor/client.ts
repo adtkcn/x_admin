@@ -21,6 +21,9 @@ export type type_monitor_client = {
 
     Ua?: string
     CreateTime?: string
+
+    Width?: string
+    Height?: string
 }
 // 查询
 export type type_monitor_client_query = {

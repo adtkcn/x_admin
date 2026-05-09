@@ -143,14 +143,14 @@ const showEdit = ref(false)
 const showDetails = ref(false)
 
 const queryParams = reactive<type_monitor_error_query>({
-    ProjectKey: null,
-    EventType: null,
-    Path: null,
-    Message: null,
-    Stack: null,
-    Md5: null,
-    CreateTimeStart: null,
-    CreateTimeEnd: null
+    ProjectKey: undefined,
+    EventType: undefined,
+    Path: undefined,
+    Message: undefined,
+    Stack: undefined,
+    Md5: undefined,
+    CreateTimeStart: undefined,
+    CreateTimeEnd: undefined
 })
 
 const { pager, getLists, resetPage, resetParams, handleIndex } = usePaging<type_monitor_error>({

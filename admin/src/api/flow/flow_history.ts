@@ -2,30 +2,30 @@ import request from '@/utils/request/index'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_history = {
-    id?: string
-    applyId?: string
-    templateId?: string
-    applyUserId?: number
-    applyUserNickname?: string
-    approverId?: number
-    approverNickname?: string
-    nodeId?: string
-    nodeType?: string
-    nodeLabel?: string
-    formValue?: string
-    passStatus?: number
-    passRemark?: string
-    createTime?: string
-    updateTime?: string
-    deleteTime?: string
+    id: string | null
+    applyId: string | null
+    templateId: string | null
+    applyUserId: string | null
+    applyUserNickname: string | null
+    approverId: string | null
+    approverNickname: string | null
+    nodeId: string | null
+    nodeType: string | null
+    nodeLabel: string | null
+    formValue: string | null
+    passStatus: number | null
+    passRemark: string | null
+    createTime: string | null
+    updateTime: string | null
+    deleteTime: string | null
 }
 // 查询
 export type type_flow_history_query = {
     applyId?: string
     templateId?: string
-    applyUserId?: number
+    applyUserId?: string
     applyUserNickname?: string
-    approverId?: number
+    approverId?: string
     approverNickname?: string
     nodeId?: string
     nodeType?: string
@@ -43,9 +43,9 @@ export type type_flow_history_edit = {
     id?: string
     applyId?: string
     templateId?: string
-    applyUserId?: number
+    applyUserId?: string
     applyUserNickname?: string
-    approverId?: number
+    approverId?: string
     approverNickname?: string
     nodeId?: string
     nodeType?: string

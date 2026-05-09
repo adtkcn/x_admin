@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { flow_history_back, flow_history_list_all } from '@/api/flow/flow_history'
+import type { type_flow_history } from '@/api/flow/flow_history'
 const props = defineProps({
     title: {
         type: String,
@@ -79,7 +80,7 @@ class formDataState {
     remark = '' // 备注
 }
 const formData = reactive(new formDataState())
-const back_nodes = ref([])
+const back_nodes = ref<type_flow_history[]>([])
 
 const formRules = {
     applyUserId: [
