@@ -4,7 +4,7 @@ import type { Pages } from '@/utils/request'
 export type type_flow_apply = {
     id: string | null
     templateId: string | null
-    applyUserId: number | null
+    applyUserId: string | null
     applyUserNickname: string | null
     flowName: string | null
     flowGroup: number | null
@@ -22,7 +22,7 @@ export type type_flow_apply = {
 // 查询
 export type type_flow_apply_query = {
     templateId?: string
-    applyUserId?: number
+    applyUserId?: string
     applyUserNickname?: string
     flowName?: string
     flowGroup?: number
@@ -41,14 +41,9 @@ export type type_flow_apply_query = {
 export type type_flow_apply_edit = {
     id?: string
     templateId?: string
-    applyUserId?: number
+    applyUserId?: string
     applyUserNickname?: string
     flowName?: string
-    flowGroup?: number
-    flowRemark?: string
-    flowFormData?: string
-    flowProcessData?: string
-    flowProcessDataList?: string
     formValue?: string
     status?: number
 }
@@ -62,8 +57,13 @@ export function flow_apply_list_all(params?: type_flow_apply_query) {
     return request.get<type_flow_apply[]>({ url: '/flow/flow_apply/list_all', params })
 }
 
+// 申请流程错误用户列表
+export function flow_apply_error_users(params: { id: string }) {
+    return request.get<any[]>({ url: '/flow/flow_apply/error_users', params })
+}
+
 // 申请流程详情
-export function flow_apply_detail(params: Record<string, any>) {
+export function flow_apply_detail(params: { id: string }) {
     return request.get<type_flow_apply>({ url: '/flow/flow_apply/detail', params: params })
 }
 
@@ -78,6 +78,6 @@ export function flow_apply_edit(data: type_flow_apply_edit) {
 }
 
 // 申请流程删除
-export function flow_apply_delete(id: number | string) {
+export function flow_apply_delete(id: string) {
     return request.post<null>({ url: '/flow/flow_apply/del', data: { id } })
 }

@@ -22,7 +22,7 @@
                     v-model="formData.historyId"
                     placeholder="请选择驳回节点"
                 >
-                    <el-option label="发起人" :value="0" clearable />
+                    <el-option label="发起人" value="" clearable />
                     <el-option
                         v-for="item in back_nodes"
                         :key="item.id"
@@ -76,7 +76,7 @@ const dialogVisible = ref(false)
 
 class formDataState {
     applyId = '' // 申请id
-    historyId: 0 //审批节点,0为发起人
+    historyId: string | number = '' //审批节点,空为发起人
     remark = '' // 备注
 }
 const formData = reactive(new formDataState())

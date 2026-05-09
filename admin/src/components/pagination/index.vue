@@ -31,9 +31,26 @@ const emit = defineEmits<{
     (event: 'change'): void
     // (event: 'update:modelValue', value: any): void
 }>()
-const pager = defineModel<Record<string, any>>({})
-const sizeChange = () => {
-    pager.value.page = 1
+const pager = defineModel<{
+    page: number
+    size: number
+    count: number
+    loading: boolean
+    lists: any[]
+}>({
+    default: () => ({
+        page: 1,
+        size: 10,
+        count: 0,
+        loading: false,
+        lists: []
+    })
+})
+function sizeChange() {
+    if (pager.value) {
+        pager.value.page = 1
+    }
+
     emit('change')
 }
 const pageChange = () => {

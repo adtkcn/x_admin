@@ -87,7 +87,7 @@ const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 // const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 
 const queryParams = reactive({
-    approverId: userStore?.userInfo?.id,
+    approverId: String(userStore?.userInfo?.id),
     applyUserNickname: '',
     passStatus: 2
 })

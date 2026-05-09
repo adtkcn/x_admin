@@ -47,12 +47,12 @@ export type type_file_del = {
 // 文件移动参数
 export type type_file_move = {
     ids: string[]
-    cateId: string
+    cid: string
 }
 
 // 文件重命名参数
 export type type_file_rename = {
-    id: number
+    id: string
     name: string
 }
 

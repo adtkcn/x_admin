@@ -51,7 +51,7 @@ func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 // @Tags		flow_template-流程模板
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		id		query		int					false	"历史id"
+// @Param		id		query		string				false	"模板id"
 // @Success	200		{object}	FlowTemplateResp	"成功"
 // @Router		/api/admin/flow/flow_template/detail [get]
 func (hd FlowTemplateHandler) Detail(c *gin.Context) {
@@ -66,13 +66,14 @@ func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 // @Summary	流程模板新增
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		token			header		string				true	"token"
-// @Param		flowName		body		string				false	"流程名称"
-// @Param		flowGroup		body		int					false	"流程分类"
-// @Param		flowRemark		body		string				false	"流程描述"
-// @Param		flowFormData	body		string				false	"表单配置"
-// @Param		flowProcessData	body		string				false	"流程配置"
-// @Success	200				{object}	response.Response	"成功"
+// @Param		token				header		string				true	"token"
+// @Param		flowName			body		string				false	"流程名称"
+// @Param		flowGroup			body		int					false	"流程分类"
+// @Param		flowRemark			body		string				false	"流程描述"
+// @Param		flowFormData		body		string				false	"表单配置"
+// @Param		flowProcessData		body		string				false	"流程配置"
+// @Param		flowProcessDataList	body		string				false	"流程配置list数据"
+// @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_template/add [post]
 func (hd FlowTemplateHandler) Add(c *gin.Context) {
 	var addReq FlowTemplateAddReq
@@ -85,14 +86,15 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 // @Summary	流程模板编辑
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		token			header		string				true	"token"
-// @Param		id				body		int					false	"."
-// @Param		flowName		body		string				false	"流程名称"
-// @Param		flowGroup		body		int					false	"流程分类"
-// @Param		flowRemark		body		string				false	"流程描述"
-// @Param		flowFormData	body		string				false	"表单配置"
-// @Param		flowProcessData	body		string				false	"流程配置"
-// @Success	200				{object}	response.Response	"成功"
+// @Param		token				header		string				true	"token"
+// @Param		id					body		string				false	"模板id"
+// @Param		flowName			body		string				false	"流程名称"
+// @Param		flowGroup			body		int					false	"流程分类"
+// @Param		flowRemark			body		string				false	"流程描述"
+// @Param		flowFormData		body		string				false	"表单配置"
+// @Param		flowProcessData		body		string				false	"流程配置"
+// @Param		flowProcessDataList	body		string				false	"流程配置list数据"
+// @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_template/edit [post]
 func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 	var editReq FlowTemplateEditReq
@@ -106,7 +108,7 @@ func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 // @Tags		flow_template-流程模板
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		id		body		int					false	"历史id"
+// @Param		id		body		string				true	"模板id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_template/del [post]
 func (hd FlowTemplateHandler) Del(c *gin.Context) {

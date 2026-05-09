@@ -20,15 +20,17 @@ type FlowHistoryHandler struct {
 // @Param		token				header		string																true	"token"
 // @Param		pageNo				query		int																	true	"页码"
 // @Param		pageSize			query		int																	true	"每页数量"
-// @Param		applyId				query		int																	false	"申请id"
-// @Param		templateId			query		int																	false	"模板id"
-// @Param		applyUserId			query		int																	false	"申请人id"
+// @Param		applyId				query		string																false	"申请id"
+// @Param		templateId			query		string																false	"模板id"
+// @Param		applyUserId			query		string																false	"申请人id"
 // @Param		applyUserNickname	query		string																false	"申请人昵称"
-// @Param		approverId			query		int																	false	"审批人id"
+// @Param		approverId			query		string																false	"审批人id"
 // @Param		approverNickname	query		string																false	"审批用户昵称"
 // @Param		nodeId				query		string																false	"节点"
+// @Param		nodeLabel			query		string																false	"节点名称"
+// @Param		nodeType			query		string																false	"节点类型"
 // @Param		formValue			query		string																false	"表单值"
-// @Param		passStatus			query		int																	false	"通过状态：0待处理，1通过，2拒绝"
+// @Param		passStatus			query		int																	false	"通过状态：1待处理，2通过，3拒绝"
 // @Param		passRemark			query		string																false	"通过备注"
 // @Success	200					{object}	response.Response{data=response.PageResp{lists=[]FlowHistoryResp}}	"成功"
 // @Router		/api/admin/flow/flow_history/list [get]
@@ -65,7 +67,7 @@ func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 // @Tags		flow_history-流程历史
 // @Produce	json
 // @Param		token	header		string									true	"token"
-// @Param		id		query		int										false	"历史id"
+// @Param		id		query		string									false	"历史id"
 // @Success	200		{object}	response.Response{data=FlowHistoryResp}	"成功"
 // @Router		/api/admin/flow/flow_history/detail [get]
 func (hd FlowHistoryHandler) Detail(c *gin.Context) {
@@ -81,15 +83,17 @@ func (hd FlowHistoryHandler) Detail(c *gin.Context) {
 // @Tags		flow_history-流程历史
 // @Produce	json
 // @Param		token				header		string				true	"token"
-// @Param		applyId				body		int					false	"申请id"
-// @Param		templateId			body		int					false	"模板id"
-// @Param		applyUserId			body		int					false	"申请人id"
+// @Param		applyId				body		string				false	"申请id"
+// @Param		templateId			body		string				false	"模板id"
+// @Param		applyUserId			body		string				false	"申请人id"
 // @Param		applyUserNickname	body		string				false	"申请人昵称"
-// @Param		approverId			body		int					false	"审批人id"
+// @Param		approverId			body		string				false	"审批人id"
 // @Param		approverNickname	body		string				false	"审批用户昵称"
 // @Param		nodeId				body		string				false	"节点"
+// @Param		nodeLabel			body		string				false	"节点名称"
+// @Param		nodeType			body		string				false	"节点类型"
 // @Param		formValue			body		string				false	"表单值"
-// @Param		passStatus			body		int					false	"通过状态：0待处理，1通过，2拒绝"
+// @Param		passStatus			body		int					false	"通过状态：1待处理，2通过，3拒绝"
 // @Param		passRemark			body		string				false	"通过备注"
 // @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_history/add [post]
@@ -105,16 +109,18 @@ func (hd FlowHistoryHandler) Add(c *gin.Context) {
 // @Tags		flow_history-流程历史
 // @Produce	json
 // @Param		token				header		string				true	"token"
-// @Param		id					body		int					false	"历史id"
-// @Param		applyId				body		int					false	"申请id"
-// @Param		templateId			body		int					false	"模板id"
-// @Param		applyUserId			body		int					false	"申请人id"
+// @Param		id					body		string				false	"历史id"
+// @Param		applyId				body		string				false	"申请id"
+// @Param		templateId			body		string				false	"模板id"
+// @Param		applyUserId			body		string				false	"申请人id"
 // @Param		applyUserNickname	body		string				false	"申请人昵称"
-// @Param		approverId			body		int					false	"审批人id"
+// @Param		approverId			body		string				false	"审批人id"
 // @Param		approverNickname	body		string				false	"审批用户昵称"
 // @Param		nodeId				body		string				false	"节点"
+// @Param		nodeLabel			body		string				false	"节点名称"
+// @Param		nodeType			body		string				false	"节点类型"
 // @Param		formValue			body		string				false	"表单值"
-// @Param		passStatus			body		int					false	"通过状态：0待处理，1通过，2拒绝"
+// @Param		passStatus			body		int					false	"通过状态：1待处理，2通过，3拒绝"
 // @Param		passRemark			body		string				false	"通过备注"
 // @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_history/edit [post]
@@ -143,9 +149,15 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 
 // 提交申请,通过审批
 //
-//	@Tags	flow_history-流程历史
-//
-//	@Router	/api/admin/flow/flow_apply/pass [post]
+//	@Summary	流程历史-通过审批
+//	@Tags		flow_history-流程历史
+//	@Produce	json
+//	@Param		token				header		string				true	"token"
+//	@Param		applyId				body		string				true	"申请id"
+//	@Param		nextNodeAdminId		body		string				false	"下一个节点的审批用户id"
+//	@Param		passRemark			body		string				false	"通过备注"
+//	@Success	200					{object}	response.Response	"成功"
+//	@Router		/api/admin/flow/flow_apply/pass [post]
 func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	var pass PassReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &pass)) {
@@ -182,6 +194,14 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 }
 
 // 获取节点的可审批用户
+//
+//	@Summary	流程历史-获取节点可审批用户
+//	@Tags		flow_history-流程历史
+//	@Produce	json
+//	@Param		token	header		string				true	"token"
+//	@Param		applyId	body		string				true	"申请id"
+//	@Success	200		{object}	response.Response	"成功"
+//	@Router		/api/admin/flow/flow_history/get_approver [post]
 func (hd FlowHistoryHandler) GetApprover(c *gin.Context) {
 	var nextNode NextNodeReq
 	// var node FlowTree

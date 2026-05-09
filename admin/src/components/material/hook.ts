@@ -49,7 +49,7 @@ export function useCate() {
     }
 
     // 编辑分组
-    const handleEditCate = async (value: string, id: number) => {
+    const handleEditCate = async (value: string, id: string) => {
         await fileCateEdit({
             id,
             name: value
@@ -58,7 +58,7 @@ export function useCate() {
     }
 
     // 删除分组
-    const handleDeleteCate = async (id: number) => {
+    const handleDeleteCate = async (id: string) => {
         await feedback.confirm('确定要删除？')
         await fileCateDelete({ id })
         cateId.value = ''
@@ -90,7 +90,7 @@ export function useFile(
     size: number
 ) {
     const tableRef = shallowRef()
-    const moveId = ref(0)
+    const moveId = ref('')
     const select = ref<any[]>([])
     const isCheckAll = ref(false)
     const isIndeterminate = ref(false)
@@ -129,7 +129,7 @@ export function useFile(
     const batchFileMove = async () => {
         const ids = select.value.map((item: any) => item.id)
         await fileMove({ ids, cid: moveId.value })
-        moveId.value = 0
+        moveId.value = ''
         getFileList()
         clearSelect()
     }
@@ -172,7 +172,7 @@ export function useFile(
         clearSelect()
     }
 
-    const handleFileRename = async (value: string, id: number) => {
+    const handleFileRename = async (value: string, id: string) => {
         await fileRename({
             id,
             name: value

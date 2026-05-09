@@ -94,7 +94,7 @@ const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 const backRef = shallowRef<InstanceType<typeof Back>>()
 
 const queryParams = reactive<type_flow_history_query>({
-    approverId: userStore?.userInfo?.id,
+    approverId: String(userStore?.userInfo?.id),
     applyUserNickname: '',
     passStatus: 1
 })
@@ -110,7 +110,7 @@ const { dictData } = useDictData<{
 //     ApproveRef.value?.open(toRaw(row))
 // }
 const OpenViewForm = async (history_row: type_flow_history) => {
-    const applyDetail = await flow_apply_detail({ id: history_row.applyId })
+    const applyDetail = await flow_apply_detail({ id: history_row.applyId || '' })
 
     let form_data = {}
     try {

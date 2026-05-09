@@ -132,7 +132,7 @@ const { dictData } = useDictData<{
     flow_group: any[]
 }>(['flow_apply_status', 'flow_group'])
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     await feedback.confirm('确定要删除？')
     await flow_apply_delete(id)
     feedback.msgSuccess('删除成功')
