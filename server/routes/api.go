@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"x_admin/app/controller"
+	"x_admin/app/controller/admin_ctl/common_controller"
 	"x_admin/app/middleware"
 	"x_admin/config"
 	"x_admin/core/response"
@@ -40,6 +41,14 @@ func swaggerDoc(api *gin.RouterGroup) {
 	})
 }
 
+// initCaptchaRoute 验证码路由
+func initCaptchaRoute(api *gin.RouterGroup) {
+	handleCaptcha := common_controller.CaptchaHandler{}
+	captchaRg := api.Group("/common/captcha")
+	captchaRg.POST("/get", handleCaptcha.Get)
+	captchaRg.POST("/check", handleCaptcha.Check)
+}
+
 func wsHandler(api *gin.RouterGroup) {
 	api.GET("/ws", middleware.LoginAuth(), controller.WsHandler)
 }
@@ -54,6 +63,7 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	apiList(api, rootRouter)
 
 	swaggerDoc(api)
+	initCaptchaRoute(api)
 
 	wsHandler(api)
 	// /api/admin

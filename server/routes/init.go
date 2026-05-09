@@ -24,6 +24,7 @@ func InitRouter() *gin.Engine {
 
 	// 注册路由
 	apiGroup := RootRouter.Group("/api")
+
 	registerApiRoute(apiGroup, RootRouter)
 
 	return RootRouter

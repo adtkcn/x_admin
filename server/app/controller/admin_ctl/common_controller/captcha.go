@@ -15,7 +15,7 @@ type CaptchaHandler struct{}
 // @Tags			common_captcha-验证码
 // @Param			captchaType	body	string						true	"验证码类型"
 // @Success		200			{object}	map[string]any				"成功"
-// @Router			/api/admin/common/captcha/get [post]
+// @Router			/api/common/captcha/get [post]
 func (ch CaptchaHandler) Get(c *gin.Context) {
 	var captchaGet common_schema.CaptchaGetParams
 	if err := c.ShouldBind(&captchaGet); err != nil {
@@ -41,7 +41,7 @@ func (ch CaptchaHandler) Get(c *gin.Context) {
 // @Param			pointJson	body	string						false	"点选坐标"
 // @Param			captchaType	body	string						true	"验证码类型"
 // @Success		200			{object}	map[string]any				"成功"
-// @Router			/api/admin/common/captcha/check [post]
+// @Router			/api/common/captcha/check [post]
 func (ch CaptchaHandler) Check(c *gin.Context) {
 	var params common_schema.ClientParams
 	if err := c.ShouldBind(&params); err != nil {
