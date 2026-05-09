@@ -34,6 +34,16 @@ func (t nullTimeUtil) Now() x_null.Time {
 	}
 }
 
+// 今日0点
+func (t nullTimeUtil) TodayZero() x_null.Time {
+	now := time.Now()
+	todayZero := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	return x_null.Time{
+		Val:   &todayZero,
+		Exist: true,
+	}
+}
+
 // DecodeTime 时间解码
 // func (t nullTimeUtil) DecodeTime(value any) (any, error) {
 // 	tt, e := t.Parse(value)

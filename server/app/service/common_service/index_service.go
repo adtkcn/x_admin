@@ -3,6 +3,7 @@ package common_service
 import (
 	"time"
 	"x_admin/app/service/setting_service"
+	"x_admin/app/service/system_service"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
@@ -34,25 +35,23 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 	version := map[string]any{
 		"name":    name,
 		"version": config.AppConfig.Version,
-		"website": "x.adtk.cn",
-		"based":   "Vue3.x、ElementUI、MySQL",
-		"channel": map[string]string{
-			"gitee":   "https://gitee.com/xiangheng/x_admin",
-			"website": "https://x.adtk.cn",
-		},
 	}
+	adminCount, err := system_service.AdminService.GetTodayCount()
 	// 今日数据
 	today := map[string]any{
 		"time":        util.NullTimeUtil.Now(),
-		"todayVisits": 10,  // 访问量(人)
-		"totalVisits": 100, // 总访问量
-		"todaySales":  30,  // 销售额(元)
-		"totalSales":  65,  // 总销售额
-		"todayOrder":  12,  // 订单量(笔)
-		"totalOrder":  255, // 总订单量
-		"todayUsers":  120, // 新增用户
-		"totalUsers":  360, // 总访用户
+		"todayVisits": 0,                     // 访问量(人)
+		"totalVisits": 0,                     // 总访问量
+		"flow_todo":   0,                     // 待办审批
+		"todayOrder":  0,                     // 订单量(笔)
+		"totalOrder":  0,                     // 总订单量
+		"todayUsers":  adminCount.TodayUsers, // 新增用户
+		"totalUsers":  adminCount.TotalUsers, // 总访用户
 	}
+
+	// 在线用户
+	onlineCount := util.RedisUtil.LRange("onlineCount", 0, -1)
+
 	// 访客图表
 	now := time.Now()
 	var date []string
@@ -61,7 +60,7 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 	}
 	visitor := map[string]any{
 		"date": date,
-		"list": []int{12, 13, 11, 5, 100, 22, 14, 9, 456, 62, 78, 12, 18, 22, 46},
+		"list": onlineCount,
 	}
 	return map[string]any{
 		"version": version,

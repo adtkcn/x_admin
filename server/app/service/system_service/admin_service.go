@@ -717,3 +717,20 @@ func (adminSrv systemAuthAdminService) ClearOtherTokens(id string, nowToken stri
 	util.RedisUtil.SSet(adminSetKey, nowToken)
 	return nil
 }
+
+// 获取今日新增用户数量和总用户数量
+func (adminSrv systemAuthAdminService) GetTodayCount() (res system_schema.SystemAuthAdminTodayCountResp, e error) {
+	var totalCount int64
+	var todayCount int64
+	err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Count(&totalCount).Error
+	if e = response.CheckErr(err, "GetTodayCount Count err"); e != nil {
+		return
+	}
+	err = adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Where("create_time >= ?", util.NullTimeUtil.TodayZero()).Count(&todayCount).Error
+	if e = response.CheckErr(err, "GetTodayCount Count err"); e != nil {
+		return
+	}
+	res.TotalUsers = totalCount
+	res.TodayUsers = todayCount
+	return
+}
