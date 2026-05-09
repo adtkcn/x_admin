@@ -77,7 +77,11 @@ func (adminSrv systemAuthAdminService) ListByDeptId(deptId string) (res []system
 	var adminResp []system_schema.SystemAuthAdminResp
 	err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Where("dept_id =?", deptId).Find(&adminResp).Error
 
-	if e = response.CheckErr(err, "列表获取失败"); e != nil {
+	if e = response.CheckDBNotRecord(err, "获取部门下用户列表失败"); e != nil {
+		return
+	}
+	if err != nil {
+		e = err
 		return
 	}
 

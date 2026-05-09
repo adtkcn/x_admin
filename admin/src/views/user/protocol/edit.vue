@@ -52,11 +52,11 @@ const popupTitle = computed(() => {
 })
 
 const formData = reactive({
-    Tag: null,
-    Version: null,
-    Id: null,
-    Title: null,
-    Content: null
+    Tag: undefined,
+    Version: undefined,
+    Id: undefined,
+    Title: undefined,
+    Content: undefined
 })
 
 const formRules = {

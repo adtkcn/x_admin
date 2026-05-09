@@ -113,7 +113,7 @@ const workbenchData: Console = reactive({
 const visitorOption = {
     xAxis: {
         type: 'category',
-        data: []
+        data: [] as string[]
     },
     yAxis: {
         type: 'value'
@@ -137,7 +137,7 @@ const visitorOption = {
     series: [
         {
             name: '访问量',
-            data: [],
+            data: [] as number[],
             type: 'line',
             smooth: true
         }
@@ -173,35 +173,40 @@ function updateChart(val: number) {
 interface ChatMessage {
     onlineCount: number
 }
-const ws = useWebSocket(`ws://localhost:8080/api/ws?token=${userStore.token}&room=room1`, {
-    heartbeat: {
-        message: 'ping',
-        interval: 10000,
-        pongTimeout: 1000
-    },
-    autoReconnect: true,
+var domain = window.location.host
+var isHttps = window.location.protocol === 'https:'
+const ws = useWebSocket(
+    `${isHttps ? 'wss' : 'ws'}://${domain}/api/ws?token=${userStore.token}&room=room1`,
+    {
+        heartbeat: {
+            message: 'ping',
+            interval: 10000,
+            pongTimeout: 1000
+        },
+        autoReconnect: true,
 
-    onMessage(ws, e) {
-        if (e.data === 'pong') {
-            console.log('Received pong message')
-            return
-        }
-        try {
-            const data = JSON.parse(e.data) as ChatMessage
-            updateChart(data.onlineCount)
-        } catch (error) {
-            console.error('JSON parse error:', error)
-            return
-        }
-    },
-    onError: (ws, event) => {
-        console.error('WebSocket error:', event)
-    },
+        onMessage(ws, e) {
+            if (e.data === 'pong') {
+                console.log('Received pong message')
+                return
+            }
+            try {
+                const data = JSON.parse(e.data) as ChatMessage
+                updateChart(data.onlineCount)
+            } catch (error) {
+                console.error('JSON parse error:', error)
+                return
+            }
+        },
+        onError: (ws, event) => {
+            console.error('WebSocket error:', event)
+        },
 
-    onDisconnected: (ws, event) => {
-        console.log('WebSocket closed:', event)
+        onDisconnected: (ws, event) => {
+            console.log('WebSocket closed:', event)
+        }
     }
-})
+)
 // setInterval(() => {
 //     ws.send('ping')
 // }, 1000)

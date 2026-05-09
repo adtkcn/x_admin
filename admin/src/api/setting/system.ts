@@ -42,7 +42,19 @@ export function systemLogLists(params: type_system_log_operate) {
     return request.get<Pages<type_system_log_resp>>({ url: '/system/log/operate', params })
 }
 
+export type type_info = Record<string, string | number>
+export type type_commandStats = {
+    name: string
+    value: string
+}
+export type type_dbSize = number
+
+export type SystemCache = {
+    info: type_info
+    commandStats: type_commandStats[]
+    dbSize: type_dbSize
+}
 // 系统缓存监控
 export function systemCache() {
-    return request.get({ url: '/monitor/cache' })
+    return request.get<SystemCache>({ url: '/monitor/cache' })
 }

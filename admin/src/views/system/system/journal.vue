@@ -95,7 +95,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { systemLogLists, SystemLogResp } from '@/api/setting/system'
+import { systemLogLists, type_system_log_resp } from '@/api/setting/system'
 import { usePaging } from '@/hooks/usePaging'
 defineOptions({
     name: 'journal'
@@ -126,7 +126,7 @@ const visitType = ref<Array<any>>([
     }
 ])
 
-const { pager, getLists, resetParams, resetPage, handleIndex } = usePaging<SystemLogResp>({
+const { pager, getLists, resetParams, resetPage, handleIndex } = usePaging<type_system_log_resp>({
     fetchFun: systemLogLists,
     params: formData.value
 })

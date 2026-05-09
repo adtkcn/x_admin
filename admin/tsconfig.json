@@ -22,6 +22,6 @@
         "paths": {
             "@/*": ["./src/*"]
         },
-        "types": ["node", "element-plus/global"]
+        "types": ["node", "element-plus/global.d.ts"]
     }
 }

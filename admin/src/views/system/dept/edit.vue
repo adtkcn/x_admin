@@ -17,7 +17,6 @@
                         clearable
                         node-key="id"
                         :props="{
-                            value: 'id',
                             label: 'name'
                         }"
                         check-strictly
