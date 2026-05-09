@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-cn">
   <head>
     <meta charset="utf-8" />
@@ -12,8 +12,8 @@
     <script src="./api-reference.js"></script>
     <script>
       var x_admin_token_str = localStorage.getItem("x_admin_token");
-      console.log('x_admin_token_str',x_admin_token_str);
-      
+      console.log("x_admin_token_str", x_admin_token_str);
+
       var token = "";
       if (x_admin_token_str) {
         try {
@@ -26,15 +26,20 @@
         theme: "kepler",
         withDefaultFonts: false,
         hideClientButton: true,
-
-        onBeforeRequest: ({ requestBuilder  }) => {
+        showDeveloperTools: "never",
+        agent: {
+          disabled: true,
+        },
+        mcp: {
+          disabled: true,
+        },
+        onBeforeRequest: ({ requestBuilder }) => {
           // Add a custom header to all requests
           // console.log("request", request.headers.get("token"));
-      
-            if (token) {
-              requestBuilder.headers.set("token", token);
-            }
-   
+
+          if (token) {
+            requestBuilder.headers.set("token", token);
+          }
         },
       });
     </script>
