@@ -35,9 +35,8 @@ type MonitorErrorHandler struct {
 // @Param		Message			query		string																	false	"错误消息"
 // @Param		Stack			query		string																	false	"错误堆栈"
 // @Param		Md5				query		string																	false	"md5"
-// @Param		CreateTimeStart	query		string																	false	"创建时间"
-// @Param		CreateTimeEnd	query		string																	false	"创建时间"
-//
+// @Param		CreateTimeStart	query		string																	false	"开始创建时间"
+// @Param		CreateTimeEnd	query		string																	false	"结束创建时间"
 // @Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]MonitorErrorResp}}	"成功"
 // @Router		/api/admin/monitor_error/list [get]
 func (hd *MonitorErrorHandler) List(c *gin.Context) {
@@ -62,8 +61,8 @@ func (hd *MonitorErrorHandler) List(c *gin.Context) {
 // @Param		Message			query		string										false	"错误消息"
 // @Param		Stack			query		string										false	"错误堆栈"
 // @Param		Md5				query		string										false	"md5"
-// @Param		CreateTimeStart	query		string										false	"创建时间"
-// @Param		CreateTimeEnd	query		string										false	"创建时间"
+// @Param		CreateTimeStart	query		string										false	"开始创建时间"
+// @Param		CreateTimeEnd	query		string										false	"结束创建时间"
 // @Success	200				{object}	response.Response{ data=[]MonitorErrorResp}	"成功"
 // @Router		/api/admin/monitor_error/list_all [get]
 func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
@@ -79,7 +78,7 @@ func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
 // @Param		token	header		string										true	"token"
-// @Param		Id		query		number										false	"错误id"
+// @Param		Id		query		string										false	"错误id"
 // @Success	200		{object}	response.Response{ data=MonitorErrorResp}	"成功"
 // @Router		/api/admin/monitor_error/detail [get]
 func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
@@ -146,7 +145,7 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Id		body		number				false	"错误id"
+// @Param		Id		body		string				false	"错误id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_error/del [post]
 func (hd *MonitorErrorHandler) Del(c *gin.Context) {
@@ -189,8 +188,8 @@ func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 // @Param		Message			query	string	false	"错误消息"
 // @Param		Stack			query	string	false	"错误堆栈"
 // @Param		Md5				query	string	false	"md5"
-// @Param		CreateTimeStart	query	string	false	"创建时间"
-// @Param		CreateTimeEnd	query	string	false	"创建时间"
+// @Param		CreateTimeStart	query	string	false	"开始创建时间"
+// @Param		CreateTimeEnd	query	string	false	"结束创建时间"
 // @Router		/api/admin/monitor_error/export_file [get]
 func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorErrorListReq
