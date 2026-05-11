@@ -13,21 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary	静态文件路由
-// @Tags		公共接口
-// @Router		/api/static/* [get]
-func static(api *gin.RouterGroup) {
-	// 静态文件路由
-	api.Static("/static", "./public/static")
-}
-
-// @Summary	上传文件的静态路径路由
-// @Tags		公共接口
-// @Router		/api/uploads/* [get]
-func uploads(root *gin.Engine) {
-	root.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
-}
-
 // @Summary	获取所有接口
 // @Tags		公共接口
 // @Router		/api/admin/apiList [get]
@@ -48,7 +33,7 @@ func apiList(api *gin.RouterGroup, rootRouter *gin.Engine) {
 func swaggerDoc(api *gin.RouterGroup) {
 	api.GET("/swagger/doc.json", func(c *gin.Context) {
 		// 获取域名和端口号
-		host := c.Request.Host
+		host := ""
 		docs.SwaggerInfo.Host = fmt.Sprintf("%v", host)
 		docs.SwaggerInfo.Title = config.AppConfig.AppName
 		docs.SwaggerInfo.Version = config.AppConfig.Version
@@ -56,29 +41,32 @@ func swaggerDoc(api *gin.RouterGroup) {
 	})
 }
 
-// @Summary	ws通用接口
-// @schemes	ws
-// @Tags		公共接口
-// @Success	101	{string}	string	"ws连接成功"
-// @Router		/api/ws [get]
+// initCaptchaRoute 验证码路由
+func initCaptchaRoute(api *gin.RouterGroup) {
+	handleCaptcha := common_controller.CaptchaHandler{}
+	captchaRg := api.Group("/common/captcha")
+	captchaRg.POST("/get", handleCaptcha.Get)
+	captchaRg.POST("/check", handleCaptcha.Check)
+}
+
 func wsHandler(api *gin.RouterGroup) {
 	api.GET("/ws", middleware.LoginAuth(), controller.WsHandler)
 }
 
 func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
-	static(api)
-	uploads(rootRouter)
+	// 静态文件路由
+	api.Static("/static", "./public/static")
+	rootRouter.Static(config.FileConfig.PublicPrefix, config.FileConfig.UploadDirectory)
+
 	// 设置中间件
-	RootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
+	rootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 	apiList(api, rootRouter)
 
 	swaggerDoc(api)
+	initCaptchaRoute(api)
 
 	wsHandler(api)
 	// /api/admin
 	admin_route.RegisterRoute(api)
-
-	// /api/common/captcha 验证码
-	common_controller.CaptchaRoute(api)
 
 }

@@ -23,7 +23,7 @@ func MonitorClientRoute(rg *gin.RouterGroup) {
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/monitor_client/list", handle.List)
-	r.GET("/monitor_client/listAll", handle.ListAll)
+	r.GET("/monitor_client/list_all", handle.ListAll)
 	r.GET("/monitor_client/detail", handle.Detail)
 	r.GET("/monitor_client/errorUsers", handle.ErrorUsers)
 
@@ -42,7 +42,7 @@ func MonitorErrorRoute(rg *gin.RouterGroup) {
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/monitor_error/list", handle.List)
-	r.GET("/monitor_error/listAll", handle.ListAll)
+	r.GET("/monitor_error/list_all", handle.ListAll)
 	r.GET("/monitor_error/detail", handle.Detail)
 
 	r.POST("/monitor_error/del", middleware.RecordLog("监控-错误列删除"), handle.Del)
@@ -57,7 +57,7 @@ func MonitorProjectRoute(rg *gin.RouterGroup) {
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/monitor_project/list", handle.List)
-	r.GET("/monitor_project/listAll", handle.ListAll)
+	r.GET("/monitor_project/list_all", handle.ListAll)
 	r.GET("/monitor_project/detail", handle.Detail)
 
 	r.POST("/monitor_project/add", middleware.RecordLog("监控项目新增"), handle.Add)

@@ -7,15 +7,15 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_project = {
-    Id?: string
-    ProjectKey?: string
-    ProjectName?: string
-    ProjectType?: string
-    Status?: number
-    IsDelete?: number
-    CreateTime?: string
-    UpdateTime?: string
-    DeleteTime?: string
+    Id: string
+    ProjectKey: string
+    ProjectName: string
+    ProjectType: string
+    Status: number
+    IsDelete: number
+    CreateTime: string
+    UpdateTime: string
+    DeleteTime: string
 }
 // 查询
 export type type_monitor_project_query = {
@@ -47,7 +47,7 @@ export function monitor_project_list(params?: type_monitor_project_query) {
 // 监控项目列表-所有
 export function monitor_project_list_all(params?: type_monitor_project_query) {
     return request.get<type_monitor_project[]>({
-        url: '/monitor_project/listAll',
+        url: '/monitor_project/list_all',
         params: clearEmpty(params)
     })
 }

@@ -34,9 +34,8 @@ type MonitorClientHandler struct {
 // @Param		Os				query		string																					false	"系统"
 // @Param		Browser			query		string																					false	"浏览器"
 // @Param		Ua				query		string																					false	"ua记录"
-// @Param		CreateTimeStart	query		string																					false	"创建时间"
-// @Param		CreateTimeEnd	query		string																					false	"创建时间"
-//
+// @Param		CreateTimeStart	query		string																					false	"开始创建时间"
+// @Param		CreateTimeEnd	query		string																					false	"结束创建时间"
 // @Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]monitor_schema.MonitorClientResp}}	"成功"
 // @Router		/api/admin/monitor_client/list [get]
 func (hd *MonitorClientHandler) List(c *gin.Context) {
@@ -60,10 +59,10 @@ func (hd *MonitorClientHandler) List(c *gin.Context) {
 // @Param		Os				query		string														false	"系统"
 // @Param		Browser			query		string														false	"浏览器"
 // @Param		Ua				query		string														false	"ua记录"
-// @Param		CreateTimeStart	query		string														false	"创建时间"
-// @Param		CreateTimeEnd	query		string														false	"创建时间"
+// @Param		CreateTimeStart	query		string														false	"开始创建时间"
+// @Param		CreateTimeEnd	query		string														false	"结束创建时间"
 // @Success	200				{object}	response.Response{ data=[]monitor_schema.MonitorClientResp}	"成功"
-// @Router		/api/admin/monitor_client/listAll [get]
+// @Router		/api/admin/monitor_client/list_all [get]
 func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 	var listReq monitor_schema.MonitorClientListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -73,6 +72,13 @@ func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 	response.CheckAndRespWithData(c, res, err)
 }
 
+// @Summary	监控-客户端信息错误用户列表
+// @Tags		monitor_client-监控-客户端信息
+// @Produce	json
+// @Param		token	header		string	true	"token"
+// @Param		Id		query		string	false	"uuid"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/monitor_client/error_users [get]
 func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
 	var Req monitor_schema.MonitorClientDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &Req)) {
@@ -86,7 +92,7 @@ func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
 // @Param		token	header		string														true	"token"
-// @Param		Id		query		number														false	"uuid"
+// @Param		Id		query		string														false	"uuid"
 // @Success	200		{object}	response.Response{ data=monitor_schema.MonitorClientResp}	"成功"
 // @Router		/api/admin/monitor_client/detail [get]
 func (hd *MonitorClientHandler) Detail(c *gin.Context) {
@@ -139,7 +145,7 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Id		body		number				false	"uuid"
+// @Param		Id		body		string				false	"uuid"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_client/del [post]
 func (hd *MonitorClientHandler) Del(c *gin.Context) {
@@ -181,8 +187,8 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 // @Param		Os				query	string	false	"系统"
 // @Param		Browser			query	string	false	"浏览器"
 // @Param		Ua				query	string	false	"ua记录"
-// @Param		CreateTimeStart	query	string	false	"创建时间"
-// @Param		CreateTimeEnd	query	string	false	"创建时间"
+// @Param		CreateTimeStart	query	string	false	"开始创建时间"
+// @Param		CreateTimeEnd	query	string	false	"结束创建时间"
 // @Router		/api/admin/monitor_client/export_file [get]
 func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 	var listReq monitor_schema.MonitorClientListReq

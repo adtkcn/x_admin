@@ -88,6 +88,7 @@ import { computed, ref, shallowRef, nextTick } from 'vue'
 
 import Popup from '@/components/popup/index.vue'
 import { dictDataDelete, dictDataAll } from '@/api/setting/dict'
+import { type_setting_dict_data_resp } from '@/api/setting/dict'
 // import { useDictOptions } from '@/hooks/useDictOptions'
 
 import feedback from '@/utils/feedback'
@@ -106,7 +107,7 @@ const typeTitle = computed(() => {
     return `${selectRow.value?.dictName} [ ${selectRow.value?.dictType} ]`
 })
 
-const lists = ref([])
+const lists = ref<type_setting_dict_data_resp[]>([])
 function getLists() {
     lists.value = []
     dictDataAll({
@@ -124,9 +125,9 @@ const open = (row: any) => {
     popupRef.value?.open()
 }
 
-const selectData = ref<any[]>([])
+const selectData = ref<string[]>([])
 
-const handleSelectionChange = (val: any[]) => {
+const handleSelectionChange = (val: type_setting_dict_data_resp[]) => {
     selectData.value = val.map(({ id }) => id)
 }
 
@@ -140,14 +141,14 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_setting_dict_data_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.setFormData({ ...data, typeValue: selectRow.value?.dictType })
 }
 
-const handleDelete = async (ids: any[] | number) => {
+const handleDelete = async (ids: string[]) => {
     try {
         await feedback.confirm('确定要删除？')
         await dictDataDelete({ ids })

@@ -190,7 +190,7 @@ const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_flow_apply_query>({
     templateId: undefined,
-    applyUserId: userStore.userInfo?.id,
+    applyUserId: String(userStore.userInfo?.id),
     applyUserNickname: undefined,
     flowName: undefined,
     flowGroup: undefined,
@@ -222,7 +222,7 @@ const handleAdd = async () => {
 //     editRef.value?.getDetail(data)
 // }
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     await feedback.confirm('确定要删除？')
     await flow_apply_delete(id)
     feedback.msgSuccess('删除成功')
@@ -239,7 +239,7 @@ const OpenViewForm = async (row: any) => {
     }
     let form_json = {}
     try {
-        form_json = JSON.parse(detail.flowFormData)
+        detail.flowFormData && (form_json = JSON.parse(detail.flowFormData))
     } catch (error) {
         // 解析失败
     }
@@ -252,7 +252,7 @@ const OpenApplySubmit = async (data: any) => {
 
     ApplySubmitRef.value?.open(data.id)
 }
-const SaveViewForm = (id, form_data) => {
+const SaveViewForm = (id: string, form_data) => {
     return new Promise((resolve, reject) => {
         flow_apply_edit({
             id: id,
@@ -263,7 +263,11 @@ const SaveViewForm = (id, form_data) => {
                 await getLists()
 
                 const row = pager.lists.find((item) => item.id === id)
-
+                if (!row) {
+                    feedback.msgError('申请不存在')
+                    reject()
+                    return
+                }
                 ApplySubmitRef.value?.open(row.id)
 
                 resolve(true)

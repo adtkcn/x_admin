@@ -7,8 +7,10 @@ export const All_EXT = [...imageExt, ...videoExt, ...audioExt, ...fileExt]
 
 // 获取文件类型
 export function GetFileType(url: string) {
-    const ext = url.split('.').pop()
-
+    const ext = url.split('.').pop()?.toLowerCase()
+    if (!ext) {
+        return 'file'
+    }
     if (officeExt.includes(ext)) {
         return 'office'
     }

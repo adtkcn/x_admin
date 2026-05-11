@@ -53,7 +53,7 @@
                     </el-col>
                     <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
                         <div class="info-label">Key数量</div>
-                        <div class="info-value">{{ baseInfo.dbSize }}</div>
+                        <div class="info-value">{{ dbSize }}</div>
                     </el-col>
                     <el-col :xl="4" :lg="6" :md="8" :sm="12" class="info-item">
                         <div class="info-label">网络入/出口</div>
@@ -99,13 +99,15 @@
 
 <script setup lang="ts">
 import { systemCache } from '@/api/setting/system'
+import type { type_info, type_commandStats, type_dbSize } from '@/api/setting/system'
 
 import { reactive, ref } from 'vue'
 // import { ElTable } from 'element-plus'
 defineOptions({
     name: 'cache'
 })
-const baseInfo = ref<any>({})
+const baseInfo = ref<type_info>({})
+const dbSize = ref<type_dbSize>(0)
 
 const chartOptions = reactive({
     commandChartOption: {
@@ -201,12 +203,12 @@ const chartOptions = reactive({
 const getSystemCache = async () => {
     const data = await systemCache()
     baseInfo.value = data.info
-    baseInfo.value.dbSize = data.dbSize
+    dbSize.value = data.dbSize
 
     chartOptions.commandChartOption.series[0].data = data.commandStats
 
     chartOptions.memoryChartOption.series[0].data[0].value = (
-        data.info.used_memory /
+        Number(data.info.used_memory) /
         1024 /
         1024
     ).toFixed(2)

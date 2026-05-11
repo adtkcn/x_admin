@@ -1,30 +1,37 @@
 import { defineStore } from 'pinia'
 import cache from '@/utils/cache'
 import type { RouteRecordRaw } from 'vue-router'
-import { getUserInfo, login, logout, getMenu, type type_system_login, type type_system_admin_self } from '@/api/user'
+import {
+    getUserInfo,
+    login,
+    logout,
+    getMenu,
+    type type_system_login,
+    type type_system_admin_self
+} from '@/api/user'
 import router, { filterAsyncRoutes } from '@/router'
 import { TOKEN_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { clearAuthInfo, getToken } from '@/utils/auth'
-
+import type { type_system_menu_resp } from '@/api/perms/menu'
 export interface UserState {
     token: string
     userInfo: type_system_admin_self['user']
     routes: RouteRecordRaw[]
-    menu: MenuData[]
+    menu: type_system_menu_resp[]
     perms: string[]
 }
 
-interface MenuData {
-    id: string
-    name: string
-    path: string
-    icon?: string
-    component?: string
-    children?: MenuData[]
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any
-}
+// interface MenuData {
+//     id: string
+//     name: string
+//     path: string
+//     icon?: string
+//     component?: string
+//     children?: MenuData[]
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     [key: string]: any
+// }
 
 const useUserStore = defineStore('user', {
     state: (): UserState => {
@@ -95,10 +102,10 @@ const useUserStore = defineStore('user', {
                     })
             })
         },
-        getMenu(): Promise<MenuData[]> {
+        getMenu(): Promise<type_system_menu_resp[]> {
             return new Promise((resolve, reject) => {
                 getMenu()
-                    .then((data: MenuData[]) => {
+                    .then((data) => {
                         this.menu = data
                         this.routes = filterAsyncRoutes(data)
                         resolve(data)

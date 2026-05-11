@@ -72,7 +72,7 @@
 import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
 import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
-import type { type_flow_history } from '@/api/flow/flow_history'
+import type { type_flow_history, type_flow_history_query } from '@/api/flow/flow_history'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -88,13 +88,13 @@ const userStore = useUserStore()
 defineOptions({
     name: 'todo'
 })
-const ApproveRef = shallowRef<InstanceType<typeof ApproveRef>>()
+// const ApproveRef = shallowRef<InstanceType<typeof ApproveRef>>()
 const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 const backRef = shallowRef<InstanceType<typeof Back>>()
 
-const queryParams = reactive({
-    approverId: userStore?.userInfo?.id,
+const queryParams = reactive<type_flow_history_query>({
+    approverId: String(userStore?.userInfo?.id),
     applyUserNickname: '',
     passStatus: 1
 })
@@ -110,17 +110,17 @@ const { dictData } = useDictData<{
 //     ApproveRef.value?.open(toRaw(row))
 // }
 const OpenViewForm = async (history_row: type_flow_history) => {
-    const applyDetail = await flow_apply_detail({ id: history_row.applyId })
+    const applyDetail = await flow_apply_detail({ id: history_row.applyId || '' })
 
     let form_data = {}
     try {
-        form_data = JSON.parse(history_row.formValue)
+        form_data = JSON.parse(history_row.formValue || '')
     } catch (error) {
         // 解析失败
     }
     let form_json = {}
     try {
-        form_json = JSON.parse(applyDetail.flowFormData)
+        form_json = JSON.parse(applyDetail.flowFormData || '')
     } catch (error) {
         // 解析失败
     }
@@ -129,7 +129,7 @@ const OpenViewForm = async (history_row: type_flow_history) => {
 
     viewFormRef.value?.open(applyDetail, history_row, form_json, form_data)
 }
-const SaveViewForm = (historyId, form_data) => {
+const SaveViewForm = (historyId: string, form_data: Record<string, any>) => {
     return new Promise((resolve, reject) => {
         flow_history_edit({
             id: historyId,

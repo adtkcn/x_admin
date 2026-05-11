@@ -22,7 +22,7 @@ const loginPath = PageEnum.LOGIN
 const defaultPath = PageEnum.INDEX
 // 免登录白名单
 const whiteList: string[] = [PageEnum.LOGIN, PageEnum.ERROR_403]
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
     // 开始 Progress Bar
     NProgress.start()
     document.title = to.meta.title ?? config.title
@@ -30,15 +30,16 @@ router.beforeEach(async (to, from, next) => {
     const tabsStore = useTabsStore()
     if (whiteList.includes(to.path)) {
         // 在免登录白名单，直接进入
-        next()
+        return true
     } else if (userStore.token) {
         // 获取用户信息
         const hasGetUserInfo = Object.keys(userStore.userInfo).length !== 0
         if (hasGetUserInfo) {
             if (to.path === loginPath) {
-                next({ path: defaultPath })
+                // next({ path: defaultPath })
+                return { path: defaultPath }
             } else {
-                next()
+                return true
             }
         } else {
             try {
@@ -50,8 +51,8 @@ router.beforeEach(async (to, from, next) => {
                 // 没有有效路由跳转到403页面
                 if (!routeName) {
                     clearAuthInfo()
-                    next(PageEnum.ERROR_403)
-                    return
+                    // next()
+                    return PageEnum.ERROR_403
                 }
                 tabsStore.setRouteName(routeName!)
                 INDEX_ROUTE.redirect = { name: routeName }
@@ -70,14 +71,17 @@ router.beforeEach(async (to, from, next) => {
                     // 动态添加可访问路由表
                     router.addRoute(route)
                 })
-                next({ ...to, replace: true })
+                // next({ ...to, replace: true })
+                return { ...to, replace: true }
             } catch (err) {
                 clearAuthInfo()
-                next({ path: loginPath, query: { redirect: to.fullPath } })
+                // next({ path: loginPath, query: { redirect: to.fullPath } })
+                return { path: loginPath, query: { redirect: to.fullPath } }
             }
         }
     } else {
-        next({ path: loginPath, query: { redirect: to.fullPath } })
+        // next({ path: loginPath, query: { redirect: to.fullPath } })
+        return { path: loginPath, query: { redirect: to.fullPath } }
     }
 })
 

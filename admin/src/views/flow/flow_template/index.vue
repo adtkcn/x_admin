@@ -140,7 +140,7 @@ const handleAdd = async () => {
 //     editRef.value?.getDetail(data)
 // }
 
-const handleDelete = async (id: number) => {
+const handleDelete = async (id: string) => {
     await feedback.confirm('确定要删除？')
     await flow_template_delete(id)
     feedback.msgSuccess('删除成功')

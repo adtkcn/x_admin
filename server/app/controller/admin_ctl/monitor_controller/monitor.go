@@ -12,7 +12,12 @@ import (
 // MonitorHandler 监控控制器（服务端+缓存）
 type MonitorHandler struct{}
 
-// Cache 缓存监控
+// @Summary		缓存监控
+// @Description	获取Redis缓存监控信息
+// @Tags			monitor-监控
+// @Param			token	header		string						true	"token"
+// @Success		200		{object}	response.Response			"成功"
+// @Router			/api/admin/monitor/cache [get]
 func (mh MonitorHandler) Cache(c *gin.Context) {
 	cmdStatsMap := util.RedisUtil.Info("commandstats")
 	var stats []map[string]string
@@ -29,7 +34,12 @@ func (mh MonitorHandler) Cache(c *gin.Context) {
 	})
 }
 
-// Server 服务监控
+// @Summary		服务监控
+// @Description	获取服务器监控信息
+// @Tags			monitor-监控
+// @Param			token	header		string						true	"token"
+// @Success		200		{object}	response.Response			"成功"
+// @Router			/api/admin/monitor/server [get]
 func (mh MonitorHandler) Server(c *gin.Context) {
 	data, err := monitor_service.MonitorServerService.GetAllServerLatestInfo()
 	if err != nil {

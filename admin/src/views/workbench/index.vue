@@ -1,7 +1,7 @@
 <template>
     <div class="workbench">
         <div class="md:flex">
-            <el-card class="border-none! mb-4 md:mr-4" shadow="never">
+            <!-- <el-card class="border-none! mb-4 md:mr-4" shadow="never">
                 <template #header>
                     <span class="card-title">版本信息</span>
                 </template>
@@ -10,31 +10,12 @@
                         <div class="w-20 flex-none">当前版本</div>
                         <span> {{ workbenchData.version.version }}</span>
                     </div>
-                    <div class="flex leading-9">
-                        <div class="w-20 flex-none">基于框架</div>
-                        <span> {{ workbenchData.version.based }}</span>
-                    </div>
-                    <div class="flex leading-9">
-                        <div class="w-20 felx-none">获取渠道</div>
-                        <div>
-                            <a :href="workbenchData.version.channel.website" target="_blank">
-                                <el-button type="success" size="small">官网</el-button>
-                            </a>
-                            <a
-                                class="ml-3"
-                                href="https://github.com/adtkcn/x_admin.git"
-                                target="_blank"
-                            >
-                                <el-button type="danger" size="small">Github</el-button>
-                            </a>
-                        </div>
-                    </div>
                 </div>
-            </el-card>
+            </el-card> -->
             <el-card class="border-none! mb-4 flex-1" shadow="never">
                 <template #header>
                     <div>
-                        <span class="card-title">今日数据</span>
+                        <span class="card-title">数据统计</span>
                         <span class="text-tx-secondary text-xs ml-4">
                             更新时间：{{ workbenchData.today.time }}
                         </span>
@@ -50,11 +31,8 @@
                         </div>
                     </div>
                     <div class="w-1/2 md:w-1/4">
-                        <div class="leading-10">销售额(元)</div>
-                        <div class="text-6xl">{{ workbenchData.today.todaySales }}</div>
-                        <div class="text-tx-secondary text-xs">
-                            总销售额：{{ workbenchData.today.totalSales }}
-                        </div>
+                        <div class="leading-10">待办审批</div>
+                        <div class="text-6xl">{{ workbenchData.today.flow_todo }}</div>
                     </div>
                     <div class="w-1/2 md:w-1/4">
                         <div class="leading-10">订单量(笔)</div>
@@ -96,6 +74,7 @@
 <script lang="ts" setup>
 import { reactive, onDeactivated, onActivated, onMounted, useTemplateRef, onUnmounted } from 'vue'
 import { getWorkbench } from '@/api/app'
+import type { Console } from '@/api/app'
 
 // import feedback from '@/utils/feedback'
 import { useWebSocket } from '@vueuse/core'
@@ -109,26 +88,32 @@ defineOptions({
 })
 
 // 表单数据
-const workbenchData: any = reactive({
+const workbenchData: Console = reactive({
     version: {
         version: '', // 版本号
-        website: '', // 官网
-        based: '',
-        channel: {
-            gitee: '',
-            website: ''
-        }
+        name: '' // 官网
     },
 
-    today: {}, // 今日数据
+    today: {
+        time: '', // 更新时间
+        todayVisits: 0, // 访问量(人)
+        totalVisits: 0, // 总访问量
+        flow_todo: 0, // 待办审批
+        todayOrder: 0, // 订单量(笔)
+        totalOrder: 0, // 总订单量
+        todayUsers: 0, // 新增用户
+        totalUsers: 0 // 总访用户
+    }, // 今日数据
 
-    visitor: [], // 访问量
-    article: [] // 文章阅读量
+    visitor: {
+        date: [],
+        list: []
+    } // 访问量
 })
 const visitorOption = {
     xAxis: {
         type: 'category',
-        data: []
+        data: [] as string[]
     },
     yAxis: {
         type: 'value'
@@ -143,10 +128,16 @@ const visitorOption = {
     tooltip: {
         trigger: 'axis'
     },
+    grid: {
+        left: '3%',
+        right: '4%',
+        // bottom: '3%',
+        containLabel: true
+    },
     series: [
         {
             name: '访问量',
-            data: [],
+            data: [] as number[],
             type: 'line',
             smooth: true
         }
@@ -166,7 +157,7 @@ const getData = async () => {
     visitorChartRef.value?.setOption(visitorOption as ECOption)
 }
 
-function updateChart(val) {
+function updateChart(val: number) {
     visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
     visitorOption.series[0].data.push(val)
 
@@ -182,35 +173,40 @@ function updateChart(val) {
 interface ChatMessage {
     onlineCount: number
 }
-const ws = useWebSocket(`ws://localhost:8080/api/ws?token=${userStore.token}&room=room1`, {
-    heartbeat: {
-        message: 'ping',
-        interval: 10000,
-        pongTimeout: 1000
-    },
-    autoReconnect: true,
+var domain = window.location.host
+var isHttps = window.location.protocol === 'https:'
+const ws = useWebSocket(
+    `${isHttps ? 'wss' : 'ws'}://${domain}/api/ws?token=${userStore.token}&room=room1`,
+    {
+        heartbeat: {
+            message: 'ping',
+            interval: 10000,
+            pongTimeout: 1000
+        },
+        autoReconnect: true,
 
-    onMessage(ws, e) {
-        if (e.data === 'pong') {
-            console.log('Received pong message')
-            return
-        }
-        try {
-            const data = JSON.parse(e.data) as ChatMessage
-            updateChart(data.onlineCount)
-        } catch (error) {
-            console.error('JSON parse error:', error)
-            return
-        }
-    },
-    onError: (ws, event) => {
-        console.error('WebSocket error:', event)
-    },
+        onMessage(ws, e) {
+            if (e.data === 'pong') {
+                console.log('Received pong message')
+                return
+            }
+            try {
+                const data = JSON.parse(e.data) as ChatMessage
+                updateChart(data.onlineCount)
+            } catch (error) {
+                console.error('JSON parse error:', error)
+                return
+            }
+        },
+        onError: (ws, event) => {
+            console.error('WebSocket error:', event)
+        },
 
-    onDisconnected: (ws, event) => {
-        console.log('WebSocket closed:', event)
+        onDisconnected: (ws, event) => {
+            console.log('WebSocket closed:', event)
+        }
     }
-})
+)
 // setInterval(() => {
 //     ws.send('ping')
 // }, 1000)

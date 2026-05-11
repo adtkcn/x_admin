@@ -12,7 +12,7 @@ func UserProtocolRoute(rg *gin.RouterGroup) {
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/user_protocol/list", handle.List)
-	r.GET("/user_protocol/listAll", handle.ListAll)
+	r.GET("/user_protocol/list_all", handle.ListAll)
 	r.GET("/user_protocol/detail", handle.Detail)
 
 	r.POST("/user_protocol/add", middleware.RecordLog("用户协议新增"), handle.Add)

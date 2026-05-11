@@ -81,7 +81,7 @@ const formData = reactive({
     sort: 0,
     status: 1,
     remark: '',
-    typeId: 0
+    typeId: ''
 })
 
 const rules = {

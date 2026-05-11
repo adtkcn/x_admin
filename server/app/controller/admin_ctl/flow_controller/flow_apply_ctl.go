@@ -19,14 +19,16 @@ type FlowApplyHandler struct{}
 // @Param		token				header		string																true	"token"
 // @Param		pageNo				query		int																	true	"页码"
 // @Param		pageSize			query		int																	true	"每页数量"
-// @Param		templateId			query		int																	false	"模板"
-// @Param		applyUserId			query		int																	false	"申请人id"
+// @Param		templateId			query		string																false	"模板"
+// @Param		applyUserId			query		string																false	"申请人id"
 // @Param		applyUserNickname	query		string																false	"申请人昵称"
 // @Param		flowName			query		string																false	"流程名称"
 // @Param		flowGroup			query		int																	false	"流程分类"
 // @Param		flowRemark			query		string																false	"流程描述"
 // @Param		flowFormData		query		string																false	"表单配置"
 // @Param		flowProcessData		query		string																false	"流程配置"
+// @Param		flowProcessDataList	query		string																false	"流程配置list数据"
+// @Param		formValue			query		string																false	"表单值"
 // @Param		status				query		int																	false	"状态：1待提交，2审批中，3审批完成，4审批失败"
 // @Success	200					{object}	response.Response{data=response.PageResp{lists=[]FlowApplyResp}}	"成功"
 // @Router		/api/admin/flow/flow_apply/list [get]
@@ -47,7 +49,7 @@ func (hd FlowApplyHandler) List(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		token	header		string									true	"token"
-// @Param		id		query		int										false	"申请id"
+// @Param			id		query		string									false	"申请id"
 // @Success	200		{object}	response.Response{data=FlowApplyResp}	"成功"
 // @Router		/api/admin/flow/flow_apply/detail [get]
 func (hd FlowApplyHandler) Detail(c *gin.Context) {
@@ -63,14 +65,11 @@ func (hd FlowApplyHandler) Detail(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		token				header		string				true	"token"
-// @Param		templateId			body		int					false	"模板"
-// @Param		applyUserId			body		int					false	"申请人id"
+// @Param		templateId			body		string				false	"模板"
+// @Param		applyUserId			body		string				false	"申请人id"
 // @Param		applyUserNickname	body		string				false	"申请人昵称"
 // @Param		flowName			body		string				false	"流程名称"
-// @Param		flowGroup			body		int					false	"流程分类"
-// @Param		flowRemark			body		string				false	"流程描述"
-// @Param		flowFormData		body		string				false	"表单配置"
-// @Param		flowProcessData		body		string				false	"流程配置"
+// @Param		formValue			body		string				false	"表单值"
 // @Param		status				body		int					false	"状态：1待提交，2审批中，3审批完成，4审批失败"
 // @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_apply/add [post]
@@ -93,15 +92,9 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		token				header		string				true	"token"
-// @Param		id					body		int					false	"申请id"
-// @Param		templateId			body		int					false	"模板"
-// @Param		applyUserId			body		int					false	"申请人id"
-// @Param		applyUserNickname	body		string				false	"申请人昵称"
+// @Param		id					body		string				false	"申请id"
 // @Param		flowName			body		string				false	"流程名称"
-// @Param		flowGroup			body		int					false	"流程分类"
-// @Param		flowRemark			body		string				false	"流程描述"
-// @Param		flowFormData		body		string				false	"表单配置"
-// @Param		flowProcessData		body		string				false	"流程配置"
+// @Param		formValue			body		string				false	"表单值"
 // @Param		status				body		int					false	"状态：1待提交，2审批中，3审批完成，4审批失败"
 // @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_apply/edit [post]
@@ -117,7 +110,7 @@ func (hd FlowApplyHandler) Edit(c *gin.Context) {
 // @Tags		flow_apply-申请流程
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		id		body		int					false	"申请id"
+// @Param		id		body		string				true	"申请id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_apply/del [post]
 func (hd FlowApplyHandler) Del(c *gin.Context) {

@@ -1,7 +1,16 @@
 // import { isObject } from '@vue/shared'
 import { cloneDeep } from 'lodash-es'
 // import { md5 } from 'js-md5'
-import MD5 from 'crypto-js/md5'
+// import MD5 from 'crypto-js/md5'
+import SparkMD5 from 'spark-md5'
+
+/**
+ * 封装一个兼容 crypto-js 行为的 MD5 函数
+ * 使用 hashBinary 以匹配 crypto-js 默认的 Latin1 编码行为
+ */
+const MD5 = (str: string): string => {
+    return SparkMD5.hashBinary(str)
+}
 /**
  * 密码加密
  * @param {String} password 密码
@@ -9,7 +18,9 @@ import MD5 from 'crypto-js/md5'
  * @returns {String} 加密后的密码
  */
 export const encryptPassword = (password: string, salt = 'asdjioewurtjfgiopu'): string => {
-    return MD5(MD5(password).toString() + salt).toString()
+    const firstHash = MD5(password)
+    const finalString = firstHash + salt
+    return MD5(finalString)
 }
 /**
  * @description 添加单位

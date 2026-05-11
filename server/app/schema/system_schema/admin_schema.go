@@ -30,6 +30,12 @@ type SystemAuthAdminAddReq struct {
 
 }
 
+// SystemAuthAdminTodayCountResp 管理员今日新增用户数量和总用户数量
+type SystemAuthAdminTodayCountResp struct {
+	TotalUsers int64 // 总用户数量
+	TodayUsers int64 // 今日新增用户数量
+}
+
 // SystemAuthAdminEditReq 管理员编辑参数
 type SystemAuthAdminEditReq struct {
 	ID       string   `form:"id" binding:"required"`                    // 主键

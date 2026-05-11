@@ -1,6 +1,6 @@
 import config from '@/config'
 import request from '@/utils/request'
-
+import type { type_system_menu_resp } from '@/api/perms/menu'
 // 登录参数
 export type type_system_login = {
     username: string
@@ -58,7 +58,7 @@ export function getUserInfo() {
 
 // 菜单路由
 export function getMenu() {
-    return request.get({ url: '/system/menu/route' })
+    return request.get<type_system_menu_resp[]>({ url: '/system/menu/route' })
 }
 
 // 编辑管理员信息

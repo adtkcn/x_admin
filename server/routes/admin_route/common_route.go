@@ -57,7 +57,7 @@ func initGeTuiRoute(rg *gin.RouterGroup) {
 	geTuiRg.GET("/push", handleGeTui.Push)
 }
 
-// 通用模块路由入口（上传、分片上传、相册、首页、个推）
+// 通用模块路由入口（上传、分片上传、相册、首页、个推、验证码）
 func init() {
 	routeHandlers = append(routeHandlers, initUploadRoute, initChunkRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute)
 }

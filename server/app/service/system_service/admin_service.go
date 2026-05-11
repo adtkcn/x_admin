@@ -77,7 +77,11 @@ func (adminSrv systemAuthAdminService) ListByDeptId(deptId string) (res []system
 	var adminResp []system_schema.SystemAuthAdminResp
 	err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Where("dept_id =?", deptId).Find(&adminResp).Error
 
-	if e = response.CheckErr(err, "列表获取失败"); e != nil {
+	if e = response.CheckDBNotRecord(err, "获取部门下用户列表失败"); e != nil {
+		return
+	}
+	if err != nil {
+		e = err
 		return
 	}
 
@@ -716,4 +720,21 @@ func (adminSrv systemAuthAdminService) ClearOtherTokens(id string, nowToken stri
 	// 添加当前token到集合
 	util.RedisUtil.SSet(adminSetKey, nowToken)
 	return nil
+}
+
+// 获取今日新增用户数量和总用户数量
+func (adminSrv systemAuthAdminService) GetTodayCount() (res system_schema.SystemAuthAdminTodayCountResp, e error) {
+	var totalCount int64
+	var todayCount int64
+	err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Count(&totalCount).Error
+	if e = response.CheckErr(err, "GetTodayCount Count err"); e != nil {
+		return
+	}
+	err = adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Where("create_time >= ?", util.NullTimeUtil.TodayZero()).Count(&todayCount).Error
+	if e = response.CheckErr(err, "GetTodayCount Count err"); e != nil {
+		return
+	}
+	res.TotalUsers = totalCount
+	res.TodayUsers = todayCount
+	return
 }

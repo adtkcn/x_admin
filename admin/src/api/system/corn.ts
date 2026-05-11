@@ -56,7 +56,7 @@ export function system_corn_list(params?: type_system_corn_query) {
 // 定时任务列表-所有
 export function system_corn_list_all(params?: type_system_corn_query) {
     return request.get<type_system_corn[]>({
-        url: '/system_corn/listAll',
+        url: '/system_corn/list_all',
         params: clearEmpty(params)
     })
 }

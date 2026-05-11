@@ -11,13 +11,13 @@ const designerRef = useTemplateRef<InstanceType<typeof FcDesigner>>('designerRef
 const config = {}
 function setData(json: any[]) {
     console.log('setFormJson', json)
-    json && designerRef.value.setRule(json)
+    json && designerRef.value?.setRule(json)
 
     // 使用 getJson和 getOptionsJson导出数据。
     // 使用 setRule和 setOptions方法回显数据。
 }
 function getFieldWidgets() {
-    const description = designerRef.value.getDescription()
+    const description = designerRef.value?.getDescription()
     console.log('description', description)
     const fieldList: { id: string; name: string }[] = []
     function deepChild(item: any) {
@@ -45,11 +45,11 @@ function getData() {
         formData: any
     }>((resolve, reject) => {
         try {
-            const jsonData = designerRef.value.getRule()
-            const getOption = designerRef.value.getOption()
-            const getDescription = designerRef.value.getDescription()
+            const jsonData = designerRef.value?.getRule()
+            const getOption = designerRef.value?.getOption()
+            const getDescription = designerRef.value?.getDescription()
             // 表单组件的层级结构数据
-            const getFormDescription = designerRef.value.getFormDescription()
+            const getFormDescription = designerRef.value?.getFormDescription()
             console.log('jsonData', jsonData)
             console.log('getOption', getOption)
             console.log('getDescription', getDescription)

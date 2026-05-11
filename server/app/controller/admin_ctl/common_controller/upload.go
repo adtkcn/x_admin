@@ -13,7 +13,16 @@ import (
 // UploadHandler 上传控制器
 type UploadHandler struct{}
 
-// PreUploadFile 文件预上传
+// @Summary		文件预上传
+// @Description	文件预上传检查
+// @Tags			common_upload-上传
+// @Param			token		header		string						true	"token"
+// @Param			md5			body		string						true	"文件MD5"
+// @Param			fileName	body		string						true	"文件名"
+// @Param			fileSize	body		int64						true	"文件大小"
+// @Param			cid			body		string						false	"分类ID"
+// @Success		200			{object}	response.Response			"成功"
+// @Router			/api/admin/common/upload/preUpload [post]
 func (uh UploadHandler) PreUploadFile(c *gin.Context) {
 	// md5,fileName,fileSize,cid
 	// 检查MD5是否已存在
@@ -25,7 +34,14 @@ func (uh UploadHandler) PreUploadFile(c *gin.Context) {
 
 }
 
-// UploadFile 上传文件
+// @Summary		上传文件
+// @Description	上传文件
+// @Tags			common_upload-上传
+// @Param			token	header		string						true	"token"
+// @Param			cid		body		string						false	"分类ID"
+// @Param			file	formData	file						true	"文件"
+// @Success		200		{object}	response.Response{data=common_schema.CommonUploadFileResp}	"成功"
+// @Router			/api/admin/common/upload/upload [post]
 func (uh UploadHandler) UploadFile(c *gin.Context) {
 	var uReq common_schema.CommonUploadImageReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &uReq)) {

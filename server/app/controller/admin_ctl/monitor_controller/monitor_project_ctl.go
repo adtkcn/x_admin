@@ -29,11 +29,10 @@ type MonitorProjectHandler struct {
 // @Param		ProjectName		query		string																	false	"项目名称"
 // @Param		ProjectType		query		string																	false	"项目类型go java web node php 等"
 // @Param		Status			query		number																	false	"是否启用: 0=否, 1=是"
-// @Param		CreateTimeStart	query		string																	false	"创建时间"
-// @Param		CreateTimeEnd	query		string																	false	"创建时间"
-// @Param		UpdateTimeStart	query		string																	false	"更新时间"
-// @Param		UpdateTimeEnd	query		string																	false	"更新时间"
-//
+// @Param		CreateTimeStart	query		string																	false	"开始创建时间"
+// @Param		CreateTimeEnd	query		string																	false	"结束创建时间"
+// @Param		UpdateTimeStart	query		string																	false	"开始更新时间"
+// @Param		UpdateTimeEnd	query		string																	false	"结束更新时间"
 // @Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]MonitorProjectResp}}	"成功"
 // @Router		/api/admin/monitor_project/list [get]
 func (hd *MonitorProjectHandler) List(c *gin.Context) {
@@ -56,12 +55,12 @@ func (hd *MonitorProjectHandler) List(c *gin.Context) {
 // @Param		ProjectName		query		string											false	"项目名称"
 // @Param		ProjectType		query		string											false	"项目类型go java web node php 等"
 // @Param		Status			query		number											false	"是否启用: 0=否, 1=是"
-// @Param		CreateTimeStart	query		string											false	"创建时间"
-// @Param		CreateTimeEnd	query		string											false	"创建时间"
-// @Param		UpdateTimeStart	query		string											false	"更新时间"
-// @Param		UpdateTimeEnd	query		string											false	"更新时间"
+// @Param		CreateTimeStart	query		string											false	"开始创建时间"
+// @Param		CreateTimeEnd	query		string											false	"结束创建时间"
+// @Param		UpdateTimeStart	query		string											false	"开始更新时间"
+// @Param		UpdateTimeEnd	query		string											false	"结束更新时间"
 // @Success	200				{object}	response.Response{ data=[]MonitorProjectResp}	"成功"
-// @Router		/api/admin/monitor_project/listAll [get]
+// @Router		/api/admin/monitor_project/list_all [get]
 func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 	var listReq MonitorProjectListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
@@ -75,7 +74,7 @@ func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 // @Tags		monitor_project-监控项目
 // @Produce	json
 // @Param		token	header		string										true	"token"
-// @Param		Id		query		number										false	"项目id"
+// @Param		Id		query		string										false	"项目id"
 // @Success	200		{object}	response.Response{ data=MonitorProjectResp}	"成功"
 // @Router		/api/admin/monitor_project/detail [get]
 func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
@@ -114,7 +113,7 @@ func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 // @Tags		monitor_project-监控项目
 // @Produce	json
 // @Param		token		header		string				true	"token"
-// @Param		Id			body		number				false	"项目id"
+// @Param		Id			body		string				false	"项目id"
 // @Param		ProjectKey	body		string				false	"项目uuid"
 // @Param		ProjectName	body		string				false	"项目名称"
 // @Param		ProjectType	body		string				false	"项目类型go java web node php 等"
@@ -133,7 +132,7 @@ func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 // @Tags		monitor_project-监控项目
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Id		body		number				false	"项目id"
+// @Param		Id		body		string				true	"项目id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/del [post]
 func (hd *MonitorProjectHandler) Del(c *gin.Context) {
@@ -174,10 +173,10 @@ func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 // @Param		ProjectName		query	string	false	"项目名称"
 // @Param		ProjectType		query	string	false	"项目类型go java web node php 等"
 // @Param		Status			query	number	false	"是否启用: 0=否, 1=是"
-// @Param		CreateTimeStart	query	string	false	"创建时间"
-// @Param		CreateTimeEnd	query	string	false	"创建时间"
-// @Param		UpdateTimeStart	query	string	false	"更新时间"
-// @Param		UpdateTimeEnd	query	string	false	"更新时间"
+// @Param		CreateTimeStart	query	string	false	"开始创建时间"
+// @Param		CreateTimeEnd	query	string	false	"结束创建时间"
+// @Param		UpdateTimeStart	query	string	false	"开始更新时间"
+// @Param		UpdateTimeEnd	query	string	false	"结束更新时间"
 // @Router		/api/admin/monitor_project/export_file [get]
 func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorProjectListReq

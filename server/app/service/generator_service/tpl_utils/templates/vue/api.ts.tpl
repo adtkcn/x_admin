@@ -9,7 +9,7 @@ import { clearEmpty } from '@/utils/util'
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
 {{{- if or .IsList .IsPk }}}
-    {{{.TsField }}}?: {{{.TsType}}}
+    {{{.TsField }}}: {{{.TsType}}}
 {{{- end }}}
 {{{- end }}}
 }
@@ -41,7 +41,7 @@ export function {{{.ModuleName}}}_list(params?: type_{{{.ModuleName}}}_query) {
 }
 // {{{.FunctionName}}}列表-所有
 export function {{{.ModuleName}}}_list_all(params?: type_{{{.ModuleName}}}_query) {
-    return request.get<type_{{{.ModuleName}}}[]>({ url: '/{{{.ModuleName}}}/listAll', params: clearEmpty(params) })
+    return request.get<type_{{{.ModuleName}}}[]>({ url: '/{{{.ModuleName}}}/list_all', params: clearEmpty(params) })
 }
 
 // {{{.FunctionName}}}详情

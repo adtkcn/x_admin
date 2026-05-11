@@ -27,7 +27,7 @@ func FlowHistoryRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/flow", middleware.PermAuth())
 	rg.GET("/flow_history/list", handle.List)
-	rg.GET("/flow_history/listAll", handle.ListAll)
+	rg.GET("/flow_history/list_all", handle.ListAll)
 	rg.GET("/flow_history/detail", handle.Detail)
 	rg.POST("/flow_history/add", handle.Add)
 	rg.POST("/flow_history/edit", handle.Edit)
@@ -47,7 +47,7 @@ func FlowTemplateRoute(rg *gin.RouterGroup) {
 
 	rg = rg.Group("/flow", middleware.PermAuth())
 	rg.GET("/flow_template/list", handle.List)
-	rg.GET("/flow_template/listAll", handle.ListAll)
+	rg.GET("/flow_template/list_all", handle.ListAll)
 	rg.GET("/flow_template/detail", handle.Detail)
 	rg.POST("/flow_template/add", handle.Add)
 	rg.POST("/flow_template/edit", handle.Edit)

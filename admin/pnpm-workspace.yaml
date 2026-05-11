@@ -1,0 +1,4 @@
+allowBuilds:
+  '@parcel/watcher': true
+  core-js-pure: true
+  es5-ext: true

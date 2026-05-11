@@ -37,7 +37,8 @@ export default defineComponent({
     props: {
         // 图片地址
         uri: {
-            type: String
+            type: String,
+            default: ''
         },
         // 图片尺寸
         fileSize: {
@@ -54,7 +55,6 @@ export default defineComponent({
     computed: {
         fileType() {
             const fileType = GetFileType(this.uri)
-
             return fileType
         }
     }

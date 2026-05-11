@@ -56,7 +56,7 @@
                         clearable
                         node-key="id"
                         :props="{
-                            value: 'id',
+                            // value: 'id',
                             label: 'name',
                             disabled(data: any) {
                                 return !!data.isStop

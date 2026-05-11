@@ -121,6 +121,7 @@ import {
     monitor_client_list
 } from '@/api/monitor/client'
 import type { type_monitor_client, type_monitor_client_query } from '@/api/monitor/client'
+import type { type_monitor_project } from '@/api/monitor/project'
 
 import { useListAllData } from '@/hooks/useDictOptions'
 // import type { type_dict } from '@/hooks/useDictOptions'
@@ -146,9 +147,9 @@ const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_clien
     params: queryParams
 })
 const { listAllData } = useListAllData<{
-    monitor_project_listAll: any[]
+    monitor_project_listAll: type_monitor_project[]
 }>({
-    monitor_project_listAll: '/monitor_project/listAll'
+    monitor_project_listAll: '/monitor_project/list_all'
 })
 
 const multipleSelection = ref<type_monitor_client[]>([])

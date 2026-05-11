@@ -15,13 +15,6 @@
             v-model:api="api"
             :option="options"
         ></FormCreate>
-        <!-- <v-form-render
-            :form-json="formJson"
-            :form-data="formData"
-            :option-data="optionData"
-            ref="vFormRef"
-        >
-        </v-form-render> -->
 
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
@@ -42,7 +35,7 @@ import type { Api } from '@form-create/element-ui'
 
 // import { flow_apply_detail } from '@/api/flow/flow_apply'
 
-const api = ref<Api>(null)
+const api = ref<Api>()
 // 表单组件配置
 const formJson = ref([])
 // 表单数据
@@ -57,6 +50,7 @@ const dialogVisible = ref(false)
 const applyDetail = ref({
     flowName: ''
 })
+
 const historyDetail = ref({
     id: null,
     passStatus: null
@@ -70,7 +64,12 @@ const props = defineProps({
 })
 const emit = defineEmits(['back'])
 
-function open(row, history, form_json, form_data) {
+function open(
+    row: any,
+    history: { id: string | null; passStatus: number | null },
+    form_json: Record<string, any>,
+    form_data: Record<string, any>
+) {
     applyDetail.value = row
     historyDetail.value = history
     formData.value = form_data
@@ -80,12 +79,6 @@ function open(row, history, form_json, form_data) {
     dialogVisible.value = true
 }
 
-function disableWidgets(widgetNames) {
-    // vFormRef.value.disableWidgets(widgetNames)
-}
-function hideWidgets(widgetNames) {
-    // vFormRef.value.hideWidgets(widgetNames)
-}
 function closeFn() {
     dialogVisible.value = false
     applyDetail.value = { flowName: '' }
@@ -101,10 +94,10 @@ function onBack() {
 }
 function onSubmit() {
     console.log('formData', formData.value)
-    api.value.validate().then(() => {
+    api.value?.validate().then(() => {
         //todo 验证通过
         props
-            .save(historyDetail.value?.id, formData.value)
+            .save(historyDetail.value.id, formData.value)
             .then(() => {
                 closeFn()
             })
@@ -113,8 +106,7 @@ function onSubmit() {
 }
 defineExpose({
     open,
-    disableWidgets,
-    hideWidgets,
+
     closeFn
 })
 </script>

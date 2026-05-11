@@ -18,10 +18,10 @@
         "checkJs": true,
         "outDir": "./dist",
         "isolatedModules": true,
-        "baseUrl": ".",
+        "rootDir": ".",
         "paths": {
             "@/*": ["./src/*"]
         },
-        "types": ["node", "element-plus/global"]
+        "types": ["node", "element-plus/global.d.ts"]
     }
 }

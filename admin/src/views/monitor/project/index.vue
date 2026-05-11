@@ -76,7 +76,7 @@
                     新增
                 </el-button>
                 <Upload
-                    v-perms="['admin:monitor_project:ImportFile']"
+                    v-perms="['admin:monitor_project:import_file']"
                     class="ml-3 mr-3"
                     :url="monitor_project_import_file"
                     :ext="['xlsx']"
@@ -91,7 +91,7 @@
                     </el-button>
                 </Upload>
                 <el-button
-                    v-perms="['admin:monitor_project:ExportFile']"
+                    v-perms="['admin:monitor_project:export_file']"
                     type="primary"
                     @click="export_file"
                 >
@@ -188,14 +188,14 @@ defineOptions({
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_monitor_project_query>({
-    ProjectKey: null,
-    ProjectName: null,
-    ProjectType: null,
-    Status: null,
-    CreateTimeStart: null,
-    CreateTimeEnd: null,
-    UpdateTimeStart: null,
-    UpdateTimeEnd: null
+    ProjectKey: undefined,
+    ProjectName: undefined,
+    ProjectType: undefined,
+    Status: undefined,
+    CreateTimeStart: undefined,
+    CreateTimeEnd: undefined,
+    UpdateTimeStart: undefined,
+    UpdateTimeEnd: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_project>({

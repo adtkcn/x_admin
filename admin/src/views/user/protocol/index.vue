@@ -49,7 +49,7 @@
                     新增
                 </el-button>
                 <Upload
-                    v-perms="['admin:user_protocol:ImportFile']"
+                    v-perms="['admin:user_protocol:import_file']"
                     class="ml-3 mr-3"
                     :url="user_protocol_import_file"
                     :ext="['xlsx']"
@@ -64,7 +64,7 @@
                     </el-button>
                 </Upload>
                 <el-button
-                    v-perms="['admin:user_protocol:ExportFile']"
+                    v-perms="['admin:user_protocol:export_file']"
                     type="primary"
                     @click="export_file"
                 >

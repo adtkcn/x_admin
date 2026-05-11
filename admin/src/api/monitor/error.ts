@@ -48,7 +48,7 @@ export function monitor_error_list(params?: type_monitor_error_query) {
 // 监控-错误列列表-所有
 export function monitor_error_list_all(params?: type_monitor_error_query) {
     return request.get<type_monitor_error[]>({
-        url: '/monitor_error/listAll',
+        url: '/monitor_error/list_all',
         params: clearEmpty(params)
     })
 }

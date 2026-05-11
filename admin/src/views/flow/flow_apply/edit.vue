@@ -149,7 +149,7 @@ const flow_template = ref<type_flow_template[]>([])
 const get_flow_template = async () => {
     flow_template.value = await flow_template_lists_all()
 }
-function handleTemplateChange(id: number) {
+function handleTemplateChange(id: string) {
     console.log(id)
     flow_template.value.find((item: any) => {
         if (item.id == id) {

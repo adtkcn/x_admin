@@ -14,7 +14,7 @@
                     <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
                 </el-form-item>
                 <el-form-item label="流程分类" prop="flowGroup">
-                    <el-input v-model.number="formData.flowGroup" placeholder="请输入流程分类" />
+                    <el-input v-model="formData.flowGroup" placeholder="请输入流程分类" />
                 </el-form-item>
                 <el-form-item label="流程描述" prop="flowRemark">
                     <el-input v-model="formData.flowRemark" placeholder="请输入流程描述" />

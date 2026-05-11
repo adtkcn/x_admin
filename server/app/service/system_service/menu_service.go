@@ -63,7 +63,7 @@ func (menuSrv systemAuthMenuService) SelectMenuByAdminId(adminId string) (menuLi
 }
 
 // List 菜单列表
-func (menuSrv systemAuthMenuService) List() (res any, e error) {
+func (menuSrv systemAuthMenuService) List() (res []system_schema.SystemAuthMenuResp, e error) {
 	var menus []system_model.SystemAuthMenu
 	err := menuSrv.db.Order("menu_sort desc, id").Find(&menus).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
