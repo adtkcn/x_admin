@@ -30,7 +30,7 @@
                 <el-table-column label="审批备注" prop="passRemark" min-width="100" />
                 <el-table-column label="更新时间" prop="updateTime" min-width="150" />
                 <el-table-column label="创建时间" prop="createTime" min-width="150" />
-                <el-table-column label="操作" width="120" fixed="right">
+                <el-table-column label="操作" width="200" fixed="right">
                     <template #default="{ row }">
                         <!-- <el-button
                             v-perms="['admin:flow_history:edit']"
@@ -47,6 +47,14 @@
                             @click="OpenViewForm(row)"
                         >
                             {{ row.passStatus == 1 ? '审批' : '预览' }}
+                        </el-button>
+                        <el-button
+                            v-perms="['admin:flow:flow_history:del']"
+                            type="danger"
+                            link
+                            @click="handleDelete(row)"
+                        >
+                            删除
                         </el-button>
                         <!-- <el-button
                             v-perms="['admin:flow:flow_apply:edit']"
@@ -70,12 +78,13 @@
 <script lang="ts" setup>
 import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
 import { flow_apply_detail } from '@/api/flow/flow_apply'
-import { flow_history_list } from '@/api/flow/flow_history'
+import { flow_history_list, flow_history_done_hidden } from '@/api/flow/flow_history'
 import type { type_flow_apply } from '@/api/flow/flow_apply'
 
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import useUserStore from '@/stores/modules/user'
+import feedback from '@/utils/feedback'
 const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
 const userStore = useUserStore()
 
@@ -89,7 +98,8 @@ const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 const queryParams = reactive({
     approverId: String(userStore?.userInfo?.id),
     applyUserNickname: '',
-    passStatus: 2
+    passStatus: 2,
+    isShow: 1
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_apply>({
@@ -119,6 +129,13 @@ const OpenViewForm = async (row: any) => {
     console.log(applyDetail, row, form_data, form_json)
 
     viewFormRef.value?.open(applyDetail, row, form_json, form_data)
+}
+
+const handleDelete = async (row: any) => {
+    await feedback.confirm('确定要隐藏这条记录？')
+    await flow_history_done_hidden(row.id)
+    feedback.msgSuccess('操作成功')
+    getLists()
 }
 
 onMounted(() => {

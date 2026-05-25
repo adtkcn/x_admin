@@ -62,7 +62,12 @@ func (service systemAuthPermService) SelectMenuIdsByRoleIds(roleIds []string) (m
 	return
 }
 
-// CacheAdminPermsByRoleIds 缓存用户权限(基于多个角色)并返回权限字符串
+/**
+ * 缓存用户权限(基于多个角色)并返回权限字符串
+ * @param adminId 用户ID
+ * @param roleIds 角色ID列表
+ * @return 权限字符串
+ */
 func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, roleIds []string) (string, error) {
 	if len(roleIds) == 0 {
 		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
@@ -76,8 +81,23 @@ func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, ro
 		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
 		return "", nil
 	}
+	return service.CacheAdminPermsByMenuIds(adminId, menuIds)
+}
+
+/**
+ * 缓存用户权限(基于多个菜单)并返回权限字符串
+ * @param adminId 用户ID
+ * @param menuIds 菜单ID列表
+ * @return 权限字符串
+ */
+func (service systemAuthPermService) CacheAdminPermsByMenuIds(adminId string, menuIds []string) (string, error) {
+
+	if len(menuIds) == 0 {
+		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
+		return "", nil
+	}
 	var menus []system_model.SystemAuthMenu
-	err = service.db.Where(
+	err := service.db.Where(
 		"is_disable = ? and id in ? and menu_type in ?", 0, menuIds, []string{"C", "A"}).Order(
 		"menu_sort, id").Find(&menus).Error
 	if err != nil {

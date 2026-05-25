@@ -101,7 +101,7 @@ service.interceptors.response.use(
 
             default:
                 feedback.msgError(message || '请求失败')
-                return Promise.reject(data)
+                return Promise.reject(response.data)
         }
     },
     (error) => {

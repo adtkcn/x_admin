@@ -2,8 +2,9 @@ package flow_controller
 
 import (
 	"fmt"
-	. "x_admin/app/schema/flow_schema"
+	"x_admin/app/schema/flow_schema"
 	"x_admin/app/service/flow_service"
+	"x_admin/config"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -36,8 +37,9 @@ type FlowHistoryHandler struct {
 // @Router		/api/admin/flow/flow_history/list [get]
 func (hd FlowHistoryHandler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq = FlowHistoryListReq{
+	var listReq = flow_schema.FlowHistoryListReq{
 		PassStatus: -9999,
+		IsShow:     -9999,
 	}
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
@@ -55,7 +57,7 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 // @Success	200	{object}	response.Response{data=FlowHistoryResp}	"成功"
 // @Router		/api/admin/flow/flow_history/list_all [get]
 func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
-	var listReq FlowHistoryListReq
+	var listReq flow_schema.FlowHistoryListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
@@ -71,7 +73,7 @@ func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 // @Success	200		{object}	response.Response{data=FlowHistoryResp}	"成功"
 // @Router		/api/admin/flow/flow_history/detail [get]
 func (hd FlowHistoryHandler) Detail(c *gin.Context) {
-	var detailReq FlowHistoryDetailReq
+	var detailReq flow_schema.FlowHistoryDetailReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
@@ -98,7 +100,7 @@ func (hd FlowHistoryHandler) Detail(c *gin.Context) {
 // @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_history/add [post]
 func (hd FlowHistoryHandler) Add(c *gin.Context) {
-	var addReq FlowHistoryAddReq
+	var addReq flow_schema.FlowHistoryAddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
@@ -125,7 +127,7 @@ func (hd FlowHistoryHandler) Add(c *gin.Context) {
 // @Success	200					{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_history/edit [post]
 func (hd FlowHistoryHandler) Edit(c *gin.Context) {
-	var editReq FlowHistoryEditReq
+	var editReq flow_schema.FlowHistoryEditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
@@ -140,11 +142,26 @@ func (hd FlowHistoryHandler) Edit(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_history/del [post]
 func (hd FlowHistoryHandler) Del(c *gin.Context) {
-	var delReq FlowHistoryDelReq
+	var delReq flow_schema.FlowHistoryDelReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
 	response.CheckAndRespWithData(c, nil, flow_service.HistoryService.Del(delReq.Id))
+}
+
+// @Summary	已处理页面隐藏（软删除）
+// @Tags		flow_history-流程历史
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Param		id		body		string				true	"历史id"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_history/done_hidden [post]
+func (hd FlowHistoryHandler) DoneHidden(c *gin.Context) {
+	var delReq flow_schema.FlowHistoryDelReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+		return
+	}
+	response.CheckAndRespWithData(c, nil, flow_service.HistoryService.DoneHidden(delReq.Id))
 }
 
 // 提交申请,通过审批
@@ -159,7 +176,7 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 //	@Success	200					{object}	response.Response	"成功"
 //	@Router		/api/admin/flow/flow_apply/pass [post]
 func (hd FlowHistoryHandler) Pass(c *gin.Context) {
-	var pass PassReq
+	var pass flow_schema.PassReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &pass)) {
 		return
 	}
@@ -176,15 +193,16 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 //	@Param		token		header		string				true	"token"
 //	@Param		applyId		body		string				true	"申请id"
 //	@Param		historyId	body		string				true	"审批节点id"
-//	@Param		Remark		body		string				false	"备注"
+//	@Param		remark		body		string				false	"备注"
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/flow/flow_apply/back [post]
 func (hd FlowHistoryHandler) Back(c *gin.Context) {
-	var back BackReq
+	var back flow_schema.BackReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &back)) {
 		return
 	}
-	err := flow_service.HistoryService.Back(back)
+	var AdminId = config.AdminConfig.GetAdminId(c)
+	err := flow_service.HistoryService.Back(back, AdminId)
 	fmt.Println(err)
 	response.CheckAndRespWithData(c, nil, err)
 }
@@ -197,7 +215,7 @@ func (hd FlowHistoryHandler) Back(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_history/next_node [post]
 func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
-	var nextNode NextNodeReq
+	var nextNode flow_schema.NextNodeReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
 		return
 	}
@@ -215,7 +233,7 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 //	@Success	200		{object}	response.Response	"成功"
 //	@Router		/api/admin/flow/flow_history/get_approver [post]
 func (hd FlowHistoryHandler) GetApprover(c *gin.Context) {
-	var nextNode NextNodeReq
+	var nextNode flow_schema.NextNodeReq
 	// var node FlowTree
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
 		return

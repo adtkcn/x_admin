@@ -232,7 +232,7 @@ const querySearch = (queryString: string, cb: any) => {
 
 const formData = reactive<type_system_menu_edit>({
     id: '',
-    pid: '0',
+    pid: '',
     menuType: MenuEnum.CATALOGUE,
     menuIcon: '',
     menuName: '',
@@ -248,13 +248,13 @@ const formData = reactive<type_system_menu_edit>({
 })
 
 const formRules = {
-    pid: [
-        {
-            required: true,
-            message: '请选择父级菜单',
-            trigger: ['blur', 'change']
-        }
-    ],
+    // pid: [
+    //     {
+    //         required: true,
+    //         message: '请选择父级菜单',
+    //         trigger: ['blur', 'change']
+    //     }
+    // ],
     menuName: [
         {
             required: true,
@@ -284,7 +284,7 @@ const getMenu = async () => {
     const menu: type_system_menu_resp = { id: '', menuName: '顶级', children: [] } as any
     menu.children = arrayToTree(
         data.filter((item) => item.menuType != MenuEnum.BUTTON),
-        '0'
+        ''
     )
     menuOptions.value.push(menu)
 }
@@ -327,15 +327,13 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = (data: Partial<type_system_menu_edit>) => {
-    for (const key in formData) {
-        if (
-            data[key as keyof type_system_menu_edit] != null &&
-            data[key as keyof type_system_menu_edit] != undefined
-        ) {
-            formData[key] = data[key]
-        }
-    }
+const setFormData = (data: type_system_menu_edit) => {
+    // for (const key in formData) {
+    //     if (data[key] != null && data[key] != undefined) {
+    //         formData[key] = data[key]
+    //     }
+    // }
+    Object.assign(formData, data)
 }
 
 const getDetail = async (row: type_system_menu_resp) => {

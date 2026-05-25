@@ -34,6 +34,7 @@ func (s *adminRoleService) GetRoleIdsByAdminId(adminId string) ([]string, error)
 
 // GetRolesByAdminId 根据用户ID获取角色列表
 func (s *adminRoleService) GetRolesByAdminId(adminId string) ([]system_model.SystemAuthRole, error) {
+	// 获取角色id列表
 	roleIds, err := s.GetRoleIdsByAdminId(adminId)
 	if err != nil {
 		return nil, err

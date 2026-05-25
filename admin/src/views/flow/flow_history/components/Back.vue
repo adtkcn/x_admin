@@ -21,12 +21,13 @@
                     style="width: 100%"
                     v-model="formData.historyId"
                     placeholder="请选择驳回节点"
+                    :empty-values="[null, undefined]"
                 >
                     <el-option label="发起人" value="" clearable />
                     <el-option
                         v-for="item in back_nodes"
                         :key="item.id"
-                        :label="item.nodeLabel"
+                        :label="`${item.nodeLabel}`"
                         :value="item.id"
                         clearable
                     />
@@ -75,15 +76,15 @@ const dialogVisible = ref(false)
 // })
 
 class formDataState {
-    applyId = '' // 申请id
-    historyId: string | number = '' //审批节点,空为发起人
+    applyId = '' // 申请 id
+    historyId = '' //审批节点，空为发起人
     remark = '' // 备注
 }
 const formData = reactive(new formDataState())
 const back_nodes = ref<type_flow_history[]>([])
 
 const formRules = {
-    applyUserId: [
+    historyId: [
         {
             required: true,
             message: '请选择',
@@ -91,7 +92,7 @@ const formRules = {
         }
     ]
 }
-function open(applyId) {
+function open(applyId: string) {
     console.log('open')
     Object.assign(formData, new formDataState())
     formData.applyId = applyId

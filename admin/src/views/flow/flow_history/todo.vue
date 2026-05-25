@@ -145,7 +145,8 @@ const SaveViewForm = (historyId: string, form_data: Record<string, any>) => {
                 resolve(true)
             })
             .catch((err) => {
-                feedback.msgError(err.message)
+                console.log(err)
+                err && feedback.msgError(err.message)
                 reject()
             })
     })

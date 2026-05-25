@@ -71,6 +71,9 @@ func (service flowHistoryService) List(page request.PageReq, listReq flow_schema
 	if listReq.PassRemark != "" {
 		dbModel = dbModel.Where("pass_remark = ?", listReq.PassRemark)
 	}
+	if listReq.IsShow >= 0 {
+		dbModel = dbModel.Where("is_show = ?", listReq.IsShow)
+	}
 	// 总数
 	var count int64
 	err := dbModel.Count(&count).Error
@@ -175,6 +178,24 @@ func (service flowHistoryService) Del(id string) (e error) {
 	return
 }
 
+// DoneHidden 已处理页面软删除（隐藏记录）
+func (service flowHistoryService) DoneHidden(id string) (e error) {
+	var obj model.FlowHistory
+	err := service.db.Where("id = ?", id).First(&obj).Error
+	// 校验
+	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
+		return
+	}
+	if e = response.CheckErr(err, "待操作数据查找失败"); e != nil {
+		return
+	}
+	// 软删除：设置 is_show 为 0
+	obj.IsShow = 0
+	err = service.db.Save(&obj).Error
+	e = response.CheckErr(err, "操作失败")
+	return
+}
+
 /**
 * 获取节点的审批用户
  */
@@ -246,18 +267,21 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []system_sche
 	}
 
 	// 数据
-	var adminResp []system_schema.SystemAuthAdminResp
+	var adminResp []system_model.SystemAuthAdmin
 	err = adminModel.Where(where).Find(&adminResp).Error
 	if e = response.CheckErr(err, "获取审批用户失败"); e != nil {
 		return
 	}
-	for i := 0; i < len(adminResp); i++ {
-		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
-		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
-			adminResp[i].Role = "系统管理员"
+	convert_util.Copy(&res, &adminResp)
+
+	for i := 0; i < len(res); i++ {
+		res[i].Avatar = util.UrlUtil.ToAbsoluteUrl(res[i].Avatar)
+		if res[i].ID == config.AdminConfig.SuperAdminId {
+			res[i].Role = "系统管理员"
 		}
 	}
-	return adminResp, nil
+
+	return res, nil
 }
 
 // 通过审批
@@ -295,18 +319,19 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq) (e error) {
 			ApproverId:        "",
 			ApproverNickname:  "",
 		}
-		if v.Type == "bpmn:startEvent" {
+		switch v.Type {
+		case "bpmn:startEvent":
 			flow.ApproverId = ""
 			flow.PassStatus = 2 //2通过
-		} else if v.Type == "bpmn:exclusiveGateway" {
+		case "bpmn:exclusiveGateway":
 			flow.ApproverId = ""
 			flow.PassStatus = 2
 			// 发邮件之类的，待完善
-		} else if v.Type == "bpmn:serviceTask" {
+		case "bpmn:serviceTask":
 			flow.ApproverId = ""
 			flow.PassStatus = 1 //1待处理,异步任务可以失败
 			// 发邮件之类的，待完善
-		} else if v.Type == "bpmn:userTask" {
+		case "bpmn:userTask":
 			isUserTask = true
 			flow.PassStatus = 1 //1待处理
 			flow.ApproverId = pass.NextNodeAdminId
@@ -317,7 +342,7 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq) (e error) {
 				flow.ApproverNickname = Approver.Nickname
 			}
 
-		} else if v.Type == "bpmn:endEvent" {
+		case "bpmn:endEvent":
 			isEndTask = true
 			flow.ApproverId = ""
 			flow.PassStatus = 2 //2通过
@@ -344,7 +369,7 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq) (e error) {
 		}
 
 		// 待提交或者有结束节点，修改申请状态
-		if applyDetail.Status == 1 || isEndTask {
+		if applyDetail.Status != 3 || isEndTask {
 			status := 2 //审批中
 			if isEndTask {
 				status = 3 //审批通过
@@ -363,9 +388,14 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq) (e error) {
 	return err
 }
 
-// 驳回
-func (service flowHistoryService) Back(back flow_schema.BackReq) (e error) {
-	// 得判断一下驳回的人权限
+/**
+ * 驳回审批
+ * @Description: 驳回审批
+ * @param back 驳回请求
+ * @param AdminId 管理员id
+ * @return error
+ */
+func (service flowHistoryService) Back(back flow_schema.BackReq, AdminId string) (e error) {
 	// 获取最后一条历史记录
 	var LastHistory model.FlowHistory
 	err := service.db.Where(model.FlowHistory{
@@ -373,6 +403,11 @@ func (service flowHistoryService) Back(back flow_schema.BackReq) (e error) {
 	}).Limit(1).Last(&LastHistory).Error
 	if err != nil {
 		return err
+	}
+
+	// 权限校验：只有当前审批人才能驳回
+	if LastHistory.ApproverId != AdminId {
+		return errors.New("没有权限驳回，只有当前审批人才能驳回")
 	}
 
 	// 驳回到申请人，最后一条改驳回状态，驳回备注，新加一条
@@ -450,7 +485,7 @@ func (service flowHistoryService) Back(back flow_schema.BackReq) (e error) {
 				TemplateId:        historyDetail.TemplateId,
 				ApplyUserNickname: historyDetail.ApplyUserNickname,
 				ApproverId:        historyDetail.ApproverId,
-				ApproverNickname:  historyDetail.ApplyUserNickname,
+				ApproverNickname:  historyDetail.ApproverNickname,
 
 				PassStatus: 1, //
 				PassRemark: "",

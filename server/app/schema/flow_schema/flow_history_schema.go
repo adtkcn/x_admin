@@ -16,6 +16,7 @@ type FlowHistoryListReq struct {
 	FormValue         string `form:"formValue"`         // 表单值
 	PassStatus        int    `form:"passStatus"`        // 通过状态：1待处理，2通过，3拒绝
 	PassRemark        string `form:"passRemark"`        // 通过备注
+	IsShow            int    `form:"isShow"`            // 是否显示：0隐藏，1显示
 }
 
 // FlowHistoryDetailReq 流程历史详情参数
@@ -76,6 +77,7 @@ type FlowHistoryResp struct {
 	FormValue         string      `json:"formValue" structs:"formValue"`                 // 表单值
 	PassStatus        int         `json:"passStatus" structs:"passStatus"`               // 通过状态：1待处理，2通过，3拒绝
 	PassRemark        string      `json:"passRemark" structs:"passRemark"`               // 通过备注
+	IsShow            int         `json:"isShow" structs:"isShow"`                       // 是否显示：0隐藏，1显示
 	UpdateTime        x_null.Time `json:"updateTime" structs:"updateTime"`               // 更新时间
 	CreateTime        x_null.Time `json:"createTime" structs:"createTime"`               // 创建时间
 }
@@ -112,7 +114,7 @@ type PassReq struct {
 	PassRemark      string `form:"passRemark"`      // 通过备注
 }
 type BackReq struct {
-	ApplyId   string `form:"applyId"`   // 申请id
+	ApplyId   string `form:"applyId"`   // 申请 id
 	HistoryId string `form:"historyId"` //审批节点
-	Remark    string `form:"Remark"`    // 备注
+	Remark    string `form:"remark"`    // 备注
 }

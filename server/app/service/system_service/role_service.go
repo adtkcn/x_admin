@@ -5,9 +5,11 @@ import (
 	"strings"
 	"x_admin/app/model/system_model"
 	"x_admin/app/schema/system_schema"
+	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	"x_admin/util"
 	"x_admin/util/convert_util"
 
 	"github.com/fatih/structs"
@@ -168,6 +170,9 @@ func (roleSrv systemAuthRoleService) Edit(editReq system_schema.SystemAuthRoleEd
 		if te = PermService.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
 			return te
 		}
+
+		// 清空redis角色权限缓存
+		util.RedisUtil.HDel(config.AdminConfig.BackstageAdminPermsKey)
 		return nil
 	})
 
@@ -196,6 +201,8 @@ func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 		if te := PermService.BatchDeleteByRoleId(id, tx); te != nil {
 			return te
 		}
+		// 清空redis角色权限缓存
+		util.RedisUtil.HDel(config.AdminConfig.BackstageAdminPermsKey)
 
 		return nil
 	})

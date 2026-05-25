@@ -1,7 +1,7 @@
 <h2 align="center">x_admin通用管理后台（GoLang、gin）(vue3、element-plus)</h2>
 
 <p align="center">
-<a href=""><img src="https://img.shields.io/badge/Go-1.21+-69d6e1
+<a href=""><img src="https://img.shields.io/badge/Go-1.26+-69d6e1
 "> </a><a href="#"> <img src="https://img.shields.io/badge/Gin-1.9.1-3176d9"> </a><a href="https://www.tslang.cn/"><img src="https://img.shields.io/badge/TypeScript-5-3176d9"></a> <a href="#"><img src="https://img.shields.io/badge/Vue.js-3-4eb883"> </a><a href="#"><img src="https://img.shields.io/badge/vite-7-4eb883"> </a><a href="#"><img src="https://img.shields.io/badge/Element Plus-2-4eb883"> </a>
 <!-- <a target="_blank" href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker--139cff"></a> -->
 <br>

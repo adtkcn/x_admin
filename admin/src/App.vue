@@ -55,7 +55,11 @@ watch(
 </script>
 
 <template>
-    <el-config-provider :locale="elConfig.locale" :z-index="elConfig.zIndex">
+    <el-config-provider
+        :locale="elConfig.locale"
+        :z-index="elConfig.zIndex"
+        :empty-values="[null, undefined]"
+    >
         <router-view />
     </el-config-provider>
 </template>

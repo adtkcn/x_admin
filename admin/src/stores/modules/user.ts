@@ -22,17 +22,6 @@ export interface UserState {
     perms: string[]
 }
 
-// interface MenuData {
-//     id: string
-//     name: string
-//     path: string
-//     icon?: string
-//     component?: string
-//     children?: MenuData[]
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     [key: string]: any
-// }
-
 const useUserStore = defineStore('user', {
     state: (): UserState => {
         return {

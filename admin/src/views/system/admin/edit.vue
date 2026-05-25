@@ -52,7 +52,7 @@
                     <el-tree-select
                         class="flex-1"
                         v-model="formData.deptId"
-                        :data="optionsData.dept"
+                        :data="deptTreeList"
                         clearable
                         node-key="id"
                         :props="{
@@ -127,7 +127,7 @@ import { roleAll, type type_system_role_simple_resp } from '@/api/perms/role'
 import { postAll, type type_system_post_resp } from '@/api/org/post'
 import { deptLists, type type_system_dept_resp } from '@/api/org/department'
 import feedback from '@/utils/feedback'
-import { encryptPassword } from '@/utils/util'
+import { encryptPassword, arrayToTree } from '@/utils/util'
 
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
@@ -217,7 +217,10 @@ const { optionsData } = useDictOptions<{
         api: deptLists
     }
 })
-
+const deptTreeList = computed(() => {
+    const treeList = arrayToTree(optionsData.dept, '')
+    return treeList
+})
 const handleSubmit = async () => {
     await formRef.value?.validate()
     const data: any = {

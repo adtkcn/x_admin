@@ -2,7 +2,7 @@ import request from '@/utils/request/index'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_history = {
-    id: string | null
+    id: string
     applyId: string | null
     templateId: string | null
     applyUserId: string | null
@@ -15,6 +15,7 @@ export type type_flow_history = {
     formValue: string | null
     passStatus: number | null // 通过状态：1待处理，2通过，3拒绝
     passRemark: string | null
+    isShow: number | null // 是否显示：0隐藏，1显示
     createTime: string | null
     updateTime: string | null
     deleteTime: string | null
@@ -33,6 +34,7 @@ export type type_flow_history_query = {
     formValue?: string
     passStatus?: number
     passRemark?: string
+    isShow?: number
     createTimeStart?: string
     createTimeEnd?: string
     updateTimeStart?: string
@@ -97,6 +99,10 @@ export function flow_history_edit(data: type_flow_history_edit) {
 
 export function flow_history_delete(id: string) {
     return request.post<null>({ url: '/flow/flow_history/del', data: { id } })
+}
+
+export function flow_history_done_hidden(id: string) {
+    return request.post<null>({ url: '/flow/flow_history/done_hidden', data: { id } })
 }
 
 export function flow_history_next_node(data: type_flow_history_next_node) {

@@ -72,12 +72,6 @@ const props = defineProps({
     }
 })
 const dialogVisible = ref(false)
-// const props = defineProps({
-//     save: {
-//         type: Function,
-//         default: () => {}
-//     }
-// })
 
 class formDataState {
     id = ''
