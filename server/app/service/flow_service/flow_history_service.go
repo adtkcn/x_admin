@@ -285,12 +285,31 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []system_sche
 }
 
 // 通过审批
-func (service flowHistoryService) Pass(pass flow_schema.PassReq) (e error) {
+func (service flowHistoryService) Pass(pass flow_schema.PassReq, AdminId string) (e error) {
 	nextNodes, applyDetail, LastHistory, err := service.GetNextNode(pass.ApplyId)
 
 	if err != nil {
 		return err
 	}
+
+	// 审批人身份校验：验证当前用户是否为合法审批人
+	approvers, err := service.GetApprover(pass.ApplyId)
+	if err != nil {
+		return err
+	}
+	if len(approvers) > 0 {
+		isApprover := false
+		for _, approver := range approvers {
+			if approver.ID == AdminId {
+				isApprover = true
+				break
+			}
+		}
+		if !isApprover {
+			return errors.New("没有权限通过审批，您不是当前节点的审批人")
+		}
+	}
+
 	// nextNodes必须包含审批节点或结束节点，否则流程抛出异常
 
 	isUserTask := false //是否有用户节点
@@ -417,16 +436,17 @@ func (service flowHistoryService) Back(back flow_schema.BackReq, AdminId string)
 		if err != nil {
 			return err
 		}
+		// 获取最早的一条历史记录，nodeType为"bpmn:startEvent"
+		var FirstHistory model.FlowHistory
+		err = service.db.Where(model.FlowHistory{
+			ApplyId:  back.ApplyId,
+			NodeType: "bpmn:startEvent",
+		}).First(&FirstHistory).Error
+		if err != nil {
+			return err
+		}
 		err = service.db.Transaction(func(tx *gorm.DB) error {
-			// 获取最早的一条历史记录，nodeType为"bpmn:startEvent"
-			var FirstHistory model.FlowHistory
-			err = service.db.Where(model.FlowHistory{
-				ApplyId:  back.ApplyId,
-				NodeType: "bpmn:startEvent",
-			}).First(&FirstHistory).Error
-			if err != nil {
-				return err
-			}
+
 			var flow = model.FlowHistory{
 				ApplyId:   FirstHistory.ApplyId,
 				NodeId:    FirstHistory.NodeId,

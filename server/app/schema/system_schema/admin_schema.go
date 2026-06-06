@@ -24,6 +24,7 @@ type SystemAuthAdminAddReq struct {
 	Nickname string `form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Password string `form:"password" binding:"required"`              // 密码
 	Avatar   string `form:"avatar" binding:""`                        // 头像
+	Email    string `form:"email" binding:""`                         // 邮箱
 
 	Sort      int   `form:"sort" binding:"gte=0"`          // 排序
 	IsDisable uint8 `form:"isDisable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
@@ -46,6 +47,7 @@ type SystemAuthAdminEditReq struct {
 	Nickname string   `form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Password string   `form:"password"`                                 // 密码
 	Avatar   string   `form:"avatar"`                                   // 头像
+	Email    string   `form:"email" binding:""`                         // 邮箱
 
 	Sort      int   `form:"sort" binding:"gte=0"`          // 排序
 	IsDisable uint8 `form:"isDisable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
@@ -55,6 +57,7 @@ type SystemAuthAdminEditReq struct {
 type SystemAuthAdminUpdateReq struct {
 	Nickname     string `form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Avatar       string `form:"avatar"`                                   // 头像
+	Email        string `form:"email" binding:""`                         // 邮箱
 	Password     string `form:"password" binding:""`                      // 密码
 	CurrPassword string `form:"currPassword" binding:""`                  // 密码
 }
@@ -75,6 +78,7 @@ type SystemAuthAdminResp struct {
 	Username string `json:"username" excel:"name:账号;"` // 账号
 	Nickname string `json:"nickname" excel:"name:昵称;"` // 昵称
 	Avatar   string `json:"avatar" excel:"name:头像;"`   // 头像
+	Email    string `json:"email" excel:"name:邮箱;"`    // 邮箱
 
 	DeptId string `json:"deptId" excel:"name:部门ID;"` // 部门ID
 	Dept   string `json:"dept" excel:"name:部门;"`     // 部门
@@ -98,6 +102,7 @@ type SystemAuthAdminSelfOneResp struct {
 	Username      string      `json:"username"`      // 账号
 	Nickname      string      `json:"nickname"`      // 昵称
 	Avatar        string      `json:"avatar"`        // 头像
+	Email         string      `json:"email"`         // 邮箱
 	Role          string      `json:"role"`          // 角色
 	Dept          string      `json:"dept"`          // 部门
 	IsDisable     uint8       `json:"isDisable"`     // 是否禁用: [0=否, 1=是]

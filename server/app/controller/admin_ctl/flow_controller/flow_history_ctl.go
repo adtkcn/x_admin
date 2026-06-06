@@ -174,13 +174,14 @@ func (hd FlowHistoryHandler) DoneHidden(c *gin.Context) {
 //	@Param		nextNodeAdminId		body		string				false	"下一个节点的审批用户id"
 //	@Param		passRemark			body		string				false	"通过备注"
 //	@Success	200					{object}	response.Response	"成功"
-//	@Router		/api/admin/flow/flow_apply/pass [post]
+//	@Router		/api/admin/flow/flow_history/pass [post]
 func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	var pass flow_schema.PassReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &pass)) {
 		return
 	}
-	err := flow_service.HistoryService.Pass(pass)
+	var AdminId = config.AdminConfig.GetAdminId(c)
+	err := flow_service.HistoryService.Pass(pass, AdminId)
 
 	response.CheckAndRespWithData(c, nil, err)
 }
@@ -195,7 +196,7 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 //	@Param		historyId	body		string				true	"审批节点id"
 //	@Param		remark		body		string				false	"备注"
 //	@Success	200			{object}	response.Response	"成功"
-//	@Router		/api/admin/flow/flow_apply/back [post]
+//	@Router		/api/admin/flow/flow_history/back [post]
 func (hd FlowHistoryHandler) Back(c *gin.Context) {
 	var back flow_schema.BackReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &back)) {
