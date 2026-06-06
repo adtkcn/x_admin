@@ -51,11 +51,17 @@ type SystemAuthAdminEditReq struct {
 	IsDisable uint8 `form:"isDisable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
 }
 
+// SystemAuthAdminSendEmailCodeReq 发送邮箱验证码参数
+type SystemAuthAdminSendEmailCodeReq struct {
+	Email string `form:"email" binding:"required,email,min=5,max=200"` // 目标邮箱
+}
+
 // SystemAuthAdminUpdateReq 管理员更新参数
 type SystemAuthAdminUpdateReq struct {
 	Nickname     string `form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Avatar       string `form:"avatar"`                                   // 头像
 	Email        string `form:"email" binding:""`                         // 邮箱
+	EmailCode    string `form:"emailCode" binding:""`                     // 邮箱验证码（改邮箱时必填）
 	Password     string `form:"password" binding:""`                      // 密码
 	CurrPassword string `form:"currPassword" binding:""`                  // 密码
 }

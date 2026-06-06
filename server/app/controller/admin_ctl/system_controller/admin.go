@@ -192,12 +192,30 @@ func (ah AdminHandler) Edit(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
+// @Summary		发送邮箱验证码
+// @Description	修改邮箱时发送验证码到新邮箱
+// @Tags			system_admin-管理员
+// @Param			token	header		string					true	"token"
+// @Param			email	body		string					true	"目标邮箱"
+// @Success		200		{object}	response.Response		"成功"
+// @Router			/api/admin/system/admin/sendEmailCode [post]
+func (ah AdminHandler) SendEmailCode(c *gin.Context) {
+	var req system_schema.SystemAuthAdminSendEmailCodeReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+		return
+	}
+	err := system_service.AdminService.SendBindEmailCode(config.AdminConfig.GetAdminId(c), req.Email)
+	response.CheckAndRespWithData(c, nil, err)
+}
+
 // @Summary		管理员更新信息
 // @Description	当前管理员更新自己的信息
 // @Tags			system_admin-管理员
 // @Param			token			header		string					true	"token"
 // @Param			nickname		body		string					true	"昵称"
 // @Param			avatar			body		string					false	"头像"
+// @Param			email			body		string					false	"邮箱"
+// @Param			emailCode		body		string					false	"邮箱验证码"
 // @Param			password		body		string					false	"密码"
 // @Param			currPassword	body		string					false	"当前密码"
 // @Success		200				{object}	response.Response		"成功"

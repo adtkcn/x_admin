@@ -8,7 +8,7 @@ import (
 
 // SystemNotice 系统通知记录
 type SystemNotice struct {
-	ID         string      `gorm:"primarykey;type:char(32);comment:'UUIDv7'" json:"id"`
+	ID         string      `gorm:"primarykey;type:char(36);comment:'UUIDv7'" json:"id"`
 	Type       string      `gorm:"not null;default:'';type:varchar(32);comment:'通知类型: flow_pass/flow_back/flow_new/flow_finish/system'" json:"type"`
 	Title      string      `gorm:"not null;default:'';type:varchar(200);comment:'通知标题'" json:"title"`
 	Content    string      `gorm:"type:text;comment:'通知正文'" json:"content"`
@@ -38,10 +38,10 @@ func (m *SystemNotice) BeforeCreate(tx *gorm.DB) (err error) {
 
 // SystemNoticeSetting 用户通知渠道偏好
 type SystemNoticeSetting struct {
-	ID        string      `gorm:"primarykey;type:char(32);comment:'UUIDv7'" json:"id"`
+	ID        string      `gorm:"primarykey;type:char(36);comment:'UUIDv7'" json:"id"`
 	AdminID   string      `gorm:"not null;uniqueIndex:uk_admin_channel;type:char(36);comment:'用户ID'" json:"adminId"`
 	Channel   string      `gorm:"not null;uniqueIndex:uk_admin_channel;type:varchar(32);comment:'渠道: site/email/app'" json:"channel"`
-	IsEnabled uint8       `gorm:"not null;default:1;comment:'0关闭 1开启'" json:"isEnabled"`
+	IsEnabled uint8       `gorm:"not null;default:0;comment:'0关闭 1开启'" json:"isEnabled"`
 	CreateTime x_null.Time `gorm:"autoCreateTime;not null;comment:'创建时间'" json:"createTime"`
 	UpdateTime x_null.Time `gorm:"autoUpdateTime;not null;comment:'更新时间'" json:"updateTime"`
 }

@@ -566,6 +566,38 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 	return
 }
 
+// SendBindEmailCode 发送邮箱绑定验证码
+func (adminSrv systemAuthAdminService) SendBindEmailCode(adminId string, email string) (e error) {
+	// 检查邮箱是否已被其他用户使用
+	var existAdmin system_model.SystemAuthAdmin
+	err := adminSrv.db.Where("email = ? AND id != ?", email, adminId).First(&existAdmin).Error
+	if err == nil {
+		return errors.New("该邮箱已被其他账号使用")
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return response.CheckErr(err, "检查邮箱失败")
+	}
+
+	// 生成6位数字验证码
+	code := util.ToolsUtil.Random(100000, 999999)
+	codeKey := config.AdminConfig.BackstageAdminKey + ":email_code:" + adminId
+	util.RedisUtil.Set(codeKey, email+":"+convert_util.ToString(code), 300) // 5分钟有效
+
+	// 发送邮件
+	opts := util.EmailOptions{
+		To:      []string{email},
+		Subject: fmt.Sprintf(`【%s】邮箱绑定验证码`, config.AppConfig.AppName),
+		HTMLBody: fmt.Sprintf(`
+			<h3>邮箱绑定验证</h3>
+			<p>您的验证码是：<b style="font-size:24px;color:#409eff">%d</b></p>
+			<p>验证码 5 分钟内有效，请勿泄露给他人。</p>`, code),
+	}
+	if err := util.EmailUtil.SendEmail(opts); err != nil {
+		core.Logger.Error("发送邮箱验证码失败:", err)
+		return errors.New("验证码发送失败，请稍后重试")
+	}
+	return nil
+}
+
 // Update 管理员更新自己
 func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_schema.SystemAuthAdminUpdateReq, adminId string) (e error) {
 	// 检查id
@@ -577,9 +609,34 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 	if e = response.CheckErr(err, "Update First err"); e != nil {
 		return
 	}
+
+	// 邮箱变更校验
+	if updateReq.Email != "" && updateReq.Email != admin.Email {
+		if updateReq.EmailCode == "" {
+			return response.Failed.SetMessage("修改邮箱需要输入验证码")
+		}
+		codeKey := config.AdminConfig.BackstageAdminKey + ":email_code:" + adminId
+		stored := util.RedisUtil.Get(codeKey)
+		if stored == "" {
+			return response.Failed.SetMessage("验证码已过期，请重新获取")
+		}
+		expected := updateReq.Email + ":" + updateReq.EmailCode
+		if stored != expected {
+			return response.Failed.SetMessage("验证码错误")
+		}
+		// 检查邮箱是否被占用
+		var existAdmin system_model.SystemAuthAdmin
+		err = adminSrv.db.Where("email = ? AND id != ?", updateReq.Email, adminId).First(&existAdmin).Error
+		if err == nil {
+			return response.Failed.SetMessage("该邮箱已被其他账号使用")
+		}
+		util.RedisUtil.Del(codeKey) // 验证通过，删除验证码
+	}
+
 	// 更新管理员信息
 	adminMap := structs.Map(updateReq)
 	delete(adminMap, "CurrPassword")
+	delete(adminMap, "EmailCode")
 	avatar := "/api/static/backend_avatar.png"
 	if updateReq.Avatar != "" {
 		avatar = updateReq.Avatar

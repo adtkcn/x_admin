@@ -16,6 +16,8 @@ export type type_system_login_resp = {
 export type type_system_admin_update = {
     nickname: string
     avatar?: string
+    email?: string
+    emailCode?: string
     password?: string
     currPassword?: string
 }
@@ -64,4 +66,9 @@ export function getMenu() {
 // 编辑管理员信息
 export function setUserInfo(data: type_system_admin_update) {
     return request.post({ url: '/system/admin/upInfo', data })
+}
+
+// 发送邮箱绑定验证码
+export function sendEmailCode(data: { email: string }) {
+    return request.post({ url: '/system/admin/sendEmailCode', data })
 }

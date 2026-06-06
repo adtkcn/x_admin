@@ -14,6 +14,9 @@
             </div>
             <div class="flex">
                 <div class="navbar-item" v-if="!isMobile">
+                    <header-notice />
+                </div>
+                <div class="navbar-item" v-if="!isMobile">
                     <full-screen />
                 </div>
                 <div class="navbar-item">
@@ -34,6 +37,7 @@ import useAppStore from '@/stores/modules/app'
 import Fold from './fold.vue'
 import Refresh from './refresh.vue'
 import Breadcrumb from './breadcrumb.vue'
+import HeaderNotice from './notice.vue'
 import FullScreen from './full-screen.vue'
 import UserDropDown from './user-drop-down.vue'
 import Setting from '../setting/index.vue'

@@ -21,6 +21,7 @@ func initAdminRoute(rg *gin.RouterGroup) {
 
 	notAuthAdmin := rg.Group("/system", middleware.LoginAuth())
 	notAuthAdmin.GET("/admin/self", handleAdmin.Self)
+	notAuthAdmin.POST("/admin/sendEmailCode", middleware.LimitIP(2, 60), middleware.LimitEmail(2, 60), handleAdmin.SendEmailCode)
 	notAuthAdmin.POST("/admin/upInfo", middleware.RecordLog("管理员更新"), handleAdmin.UpInfo)
 
 	authAdmin := rg.Group("/system", middleware.PermAuth())

@@ -30,7 +30,7 @@ func (m *SystemConfig) BeforeCreate(tx *gorm.DB) (err error) {
 // SystemAuthMenu 系统菜单实体
 type SystemAuthMenu struct {
 	ID         string      `gorm:"primarykey;type:char(36);comment:'uuid'"`
-	Pid        string      `gorm:"not null;default:0;comment:'上级菜单'"`
+	Pid        string      `gorm:"not null;default:'';comment:'上级菜单'"`
 	MenuType   string      `gorm:"not null;default:'';comment:'权限类型: M=目录，C=菜单，A=按钮''"`
 	MenuName   string      `gorm:"not null;default:'';comment:'菜单名称'"`
 	MenuIcon   string      `gorm:"not null;default:'';comment:'菜单图标'"`

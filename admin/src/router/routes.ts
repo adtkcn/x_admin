@@ -37,12 +37,26 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import('@/views/account/login.vue')
     },
     {
+        path: '/system',
+        component: LAYOUT,
+        children: [
+            {
+                path: 'notice',
+                name: 'system_notice',
+                component: () => import('@/views/system/system/notice.vue'),
+                meta: {
+                    title: '消息通知'
+                }
+            }
+        ]
+    },
+    {
         path: '/user',
         component: LAYOUT,
         children: [
             {
                 path: 'setting',
-                name: Symbol(),
+                name: 'user_setting',
                 component: () => import('@/views/user/setting.vue'),
                 meta: {
                     title: '个人设置'

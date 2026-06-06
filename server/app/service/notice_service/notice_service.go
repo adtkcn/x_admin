@@ -6,6 +6,7 @@ import (
 	"time"
 	"x_admin/app/model"
 	"x_admin/app/model/system_model"
+	"x_admin/app/schema/system_schema"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/util"
@@ -146,6 +147,113 @@ func (s *noticeService) ProcessEmailDelayPush() {
 
 		core.Logger.Info(fmt.Sprintf("邮件延迟补推成功: receiverID=%s, email=%s, 通知数=%d", receiverID, email, len(userNoteList)))
 	}
+}
+
+// List 通知列表
+func (s *noticeService) List(receiverID string, pageNo, pageSize int, listReq *system_schema.SystemNoticeListReq) ([]system_schema.SystemNoticeResp, int64, error) {
+	db := core.GetDB()
+	model := db.Model(&model.SystemNotice{}).Where("receiver_id = ?", receiverID)
+
+	if listReq.Type != "" {
+		model = model.Where("type = ?", listReq.Type)
+	}
+	if listReq.IsRead == 0 {
+		model = model.Where("is_read = 0")
+	} else if listReq.IsRead == 1 {
+		model = model.Where("is_read = 1")
+	}
+
+	var count int64
+	if err := model.Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+
+	var list []system_schema.SystemNoticeResp
+	offset := pageSize * (pageNo - 1)
+	err := model.Order("create_time DESC").Limit(pageSize).Offset(offset).Find(&list).Error
+	return list, count, err
+}
+
+// UnreadCount 未读数量
+func (s *noticeService) UnreadCount(receiverID string) (int64, error) {
+	db := core.GetDB()
+	var count int64
+	err := db.Model(&model.SystemNotice{}).Where("receiver_id = ? AND is_read = 0", receiverID).Count(&count).Error
+	return count, err
+}
+
+// Read 标记单条已读（同时设置阅读时间）
+func (s *noticeService) Read(noticeID, receiverID string) error {
+	db := core.GetDB()
+	now := util.NullTimeUtil.Now()
+	return db.Model(&model.SystemNotice{}).
+		Where("id = ? AND receiver_id = ? AND is_read = 0", noticeID, receiverID).
+		Updates(map[string]any{"is_read": 1, "read_time": now}).Error
+}
+
+// ReadAll 全部标为已读
+func (s *noticeService) ReadAll(receiverID string) error {
+	db := core.GetDB()
+	now := util.NullTimeUtil.Now()
+	return db.Model(&model.SystemNotice{}).
+		Where("receiver_id = ? AND is_read = 0", receiverID).
+		Updates(map[string]any{"is_read": 1, "read_time": now}).Error
+}
+
+// Del 删除通知
+func (s *noticeService) Del(noticeID, receiverID string) error {
+	db := core.GetDB()
+	return db.Where("id = ? AND receiver_id = ?", noticeID, receiverID).Delete(&model.SystemNotice{}).Error
+}
+
+// GetSetting 获取通知偏好
+func (s *noticeService) GetSetting(adminID string) (*system_schema.SystemNoticeSettingResp, error) {
+	db := core.GetDB()
+	resp := &system_schema.SystemNoticeSettingResp{SiteEnabled: 1, EmailEnabled: 1}
+	// 默认开启
+	var settings []model.SystemNoticeSetting
+	if err := db.Where("admin_id = ?", adminID).Find(&settings).Error; err != nil {
+		return nil, err
+	}
+	for _, st := range settings {
+		switch st.Channel {
+		case "site":
+			resp.SiteEnabled = st.IsEnabled
+		case "email":
+			resp.EmailEnabled = st.IsEnabled
+		}
+	}
+	return resp, nil
+}
+
+// SaveSetting 保存通知偏好
+func (s *noticeService) SaveSetting(adminID string, saveReq *system_schema.SystemNoticeSettingSaveReq) error {
+	db := core.GetDB()
+	channels := []struct {
+		Channel string
+		Enabled uint8
+	}{
+		{"site", saveReq.SiteEnabled},
+		{"email", saveReq.EmailEnabled},
+	}
+	for _, ch := range channels {
+		var setting model.SystemNoticeSetting
+		result := db.Where("admin_id = ? AND channel = ?", adminID, ch.Channel).First(&setting)
+		if result.Error != nil {
+			// 不存在则创建（Select 强制写入零值字段）
+			setting = model.SystemNoticeSetting{
+				AdminID:   adminID,
+				Channel:   ch.Channel,
+				IsEnabled: ch.Enabled,
+			}
+			if err := db.Create(&setting).Error; err != nil {
+				return err
+			}
+		} else {
+			db.Model(&setting).Update("is_enabled", ch.Enabled)
+		}
+	}
+	return nil
 }
 
 // GetAdminsByIDs 批量获取管理员信息（含邮箱）
