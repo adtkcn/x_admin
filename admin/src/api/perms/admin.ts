@@ -5,7 +5,7 @@ import config from '@/config'
 import type { Pages } from '@/utils/request'
 
 export type type_system_admin_list = {
-    username?: string
+    email?: string
     nickname?: string
     roleId?: string
 }
@@ -18,7 +18,7 @@ export type type_system_admin_add = {
     deptId: string
     postId: string
     roleIds: string[]
-    username: string
+    email: string
     nickname: string
     password: string
     avatar: string
@@ -31,7 +31,7 @@ export type type_system_admin_edit = {
     deptId: string
     postId: string
     roleIds: string[]
-    username: string
+    email: string
     nickname: string
     password: string
     avatar: string
@@ -49,7 +49,7 @@ export type type_system_admin_disable = {
 
 export type type_system_admin_resp = {
     id: string
-    username: string
+    email: string
     nickname: string
     avatar: string
     role: string

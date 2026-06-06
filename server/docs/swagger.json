@@ -1,4 +1,4 @@
-{
+﻿{
     "swagger": "2.0",
     "info": {
         "description": "x_admin后台管理系统",
@@ -5262,7 +5262,7 @@
                     },
                     {
                         "description": "账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5490,7 +5490,7 @@
                     },
                     {
                         "description": "账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5567,7 +5567,7 @@
                     {
                         "type": "string",
                         "description": "账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "query"
                     },
                     {
@@ -5655,7 +5655,7 @@
                     {
                         "type": "string",
                         "description": "账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "query"
                     },
                     {
@@ -5723,7 +5723,7 @@
                     {
                         "type": "string",
                         "description": "账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "query"
                     },
                     {
@@ -6243,7 +6243,7 @@
                     {
                         "type": "string",
                         "description": "登录账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "query"
                     },
                     {
@@ -6331,7 +6331,7 @@
                     {
                         "type": "string",
                         "description": "用户账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "query"
                     },
                     {
@@ -6421,7 +6421,7 @@
                 "parameters": [
                     {
                         "description": "账号",
-                        "name": "username",
+                        "name": "email",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -9787,7 +9787,7 @@
                     "description": "更新时间",
                     "type": "string"
                 },
-                "username": {
+                "email": {
                     "description": "账号",
                     "type": "string"
                 }
@@ -9836,7 +9836,7 @@
                     "description": "更新时间",
                     "type": "string"
                 },
-                "username": {
+                "email": {
                     "description": "账号",
                     "type": "string"
                 }
@@ -10112,7 +10112,7 @@
                     "description": "操作状态: [1=成功, 2=失败]",
                     "type": "integer"
                 },
-                "username": {
+                "email": {
                     "description": "登录账号",
                     "type": "string"
                 }
@@ -10177,7 +10177,7 @@
                     "description": "请求地址",
                     "type": "string"
                 },
-                "username": {
+                "email": {
                     "description": "用户账号",
                     "type": "string"
                 }

@@ -5,7 +5,7 @@ import "github.com/adtkcn/x_null"
 // //SystemLogOperateReq 操作日志列表参数
 type SystemLogOperateReq struct {
 	Title     string `form:"title"`                                       // 操作标题
-	Username  string `form:"username"`                                    // 用户账号
+	Email     string `form:"email"`                                       // 邮箱(账号)
 	Ip        string `form:"ip"`                                          // 请求IP
 	Type      string `form:"type" binding:"omitempty,oneof=GET POST PUT"` // 请求类型: GET/POST/PUT
 	Status    int    `form:"status" binding:"omitempty,oneof=1 2"`        // 执行状态: [1=成功, 2=失败]
@@ -24,7 +24,7 @@ type SystemLogOperateReq struct {
 // SystemLogOperateResp 操作日志返回信息
 type SystemLogOperateResp struct {
 	ID         string      `json:"id" structs:"id"`                 // 主键
-	Username   string      `json:"username" structs:"username"`     // 用户账号
+	Email      string      `json:"email" structs:"email"`           // 邮箱(账号)
 	Nickname   string      `json:"nickname" structs:"nickname"`     // 用户昵称
 	Type       string      `json:"type" structs:"type"`             // 请求类型: GET/POST/PUT
 	Title      string      `json:"title" structs:"title"`           // 操作标题

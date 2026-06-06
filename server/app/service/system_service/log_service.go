@@ -34,13 +34,13 @@ func (logSrv systemLogsServer) OperateLog(page request.PageReq, logReq system_sc
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 	logModel := logSrv.db.Table(logTbName + " AS log").Joins(
 		fmt.Sprintf("LEFT JOIN %s AS admin ON log.admin_id = admin.id", adminTbName)).Select(
-		"log.*, admin.username, admin.nickname")
+		"log.*, admin.email, admin.nickname")
 	// 条件
 	if logReq.Title != "" {
 		logModel = logModel.Where("title like ?", "%"+logReq.Title+"%")
 	}
-	if logReq.Username != "" {
-		logModel = logModel.Where("username like ?", "%"+logReq.Username+"%")
+	if logReq.Email != "" {
+		logModel = logModel.Where("email like ?", "%"+logReq.Email+"%")
 	}
 	if logReq.Ip != "" {
 		logModel = logModel.Where("ip like ?", "%"+logReq.Ip+"%")
@@ -88,8 +88,8 @@ func (logSrv systemLogsServer) LoginLog(page request.PageReq, logReq system_sche
 	// 查询
 	logModel := logSrv.db.Model(&system_model.SystemLogLogin{})
 	// 条件
-	if logReq.Username != "" {
-		logModel = logModel.Where("username like ?", "%"+logReq.Username+"%")
+	if logReq.Email != "" {
+		logModel = logModel.Where("email like ?", "%"+logReq.Email+"%")
 	}
 	if logReq.Status > 0 {
 		logModel = logModel.Where("status = ?", logReq.Status)

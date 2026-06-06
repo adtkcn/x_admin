@@ -30,7 +30,7 @@ export type type_system_corn_query = {
     UpdateTimeStart?: string
     UpdateTimeEnd?: string
     CreatedByNickname?: string
-    CreatedByUsername?: string
+    CreatedByEmail?: string
 }
 // 添加编辑
 export type type_system_corn_edit = {

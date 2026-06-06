@@ -3,7 +3,7 @@ import request from '@/utils/request'
 import type { type_system_menu_resp } from '@/api/perms/menu'
 // 登录参数
 export type type_system_login = {
-    username: string
+    email: string
     password: string
 }
 
@@ -24,7 +24,7 @@ export type type_system_admin_update = {
 export type type_system_admin_self = {
     user: {
         id: string
-        username: string
+        email: string
         nickname: string
         avatar: string
         role: string

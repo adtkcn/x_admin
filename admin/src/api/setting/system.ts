@@ -4,7 +4,7 @@ import type { Pages } from '@/utils/request'
 // 系统日志列表参数
 export type type_system_log_operate = {
     title?: string
-    username?: string
+    email?: string
     ip?: string
     type?: string
     status?: number
@@ -16,7 +16,7 @@ export type type_system_log_operate = {
 // 系统日志返回信息
 export type type_system_log_resp = {
     id: string
-    username: string
+    email: string
     nickname: string
     type: string
     title: string

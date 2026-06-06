@@ -3,7 +3,7 @@ package system_schema
 import "github.com/adtkcn/x_null"
 
 type SystemLogLoginReq struct {
-	Username  string `form:"username"`                             // 登录账号
+	Email     string `form:"email"`                                // 登录邮箱
 	Status    int    `form:"status" binding:"omitempty,oneof=1 2"` // 执行状态: [1=成功, 2=失败]
 	StartTime string `form:"startTime" time_format:"2006-01-02"`   // 开始时间
 	EndTime   string `form:"endTime" time_format:"2006-01-02"`     // 结束时间
@@ -15,7 +15,7 @@ type SystemLoginResp struct {
 
 // SystemLoginReq 系统登录参数
 type SystemLoginReq struct {
-	Username string `json:"username" binding:"required,min=2,max=20"` // 账号
+	Email    string `json:"email" binding:"required,min=5,max=200"`   // 邮箱(账号)
 	Password string `json:"password" binding:"required,min=6,max=32"` // 密码
 }
 
@@ -27,7 +27,7 @@ type SystemLogoutReq struct {
 // SystemLogLoginResp 登录日志返回信息
 type SystemLogLoginResp struct {
 	ID         string      `json:"id" structs:"id"`                 // 主键
-	Username   string      `json:"username" structs:"username"`     // 登录账号
+	Email      string      `json:"email" structs:"email"`           // 登录邮箱
 	Ip         string      `json:"ip" structs:"ip"`                 // 来源IP
 	Os         string      `json:"os" structs:"os"`                 // 操作系统
 	Browser    string      `json:"browser" structs:"browser"`       // 浏览器

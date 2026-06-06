@@ -13,9 +13,9 @@
                     <material-picker v-model="formData.avatar" :limit="1" />
                 </el-form-item>
 
-                <el-form-item label="账号：" prop="username">
+                <el-form-item label="邮箱(账号)：" prop="email">
                     <div class="w-80">
-                        <el-input v-model="formData.username" disabled />
+                        <el-input v-model="formData.email" disabled />
                     </div>
                 </el-form-item>
 
@@ -95,7 +95,7 @@ const userStore = useUserStore()
 // 表单数据
 const formData = reactive({
     avatar: '', // 头像
-    username: '', // 账号
+    email: '', // 邮箱(账号)
     nickname: '', // 名称
     currPassword: '', // 当前密码
     password: '', // 新的密码

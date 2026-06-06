@@ -85,7 +85,7 @@ type ExtentGenTableColumn struct {
 
 	SwagType string //swagger类型
 
-	TableColumnProp string //表格列表prop属性,默认赋值TsField,用户名称赋值xxxUser.nickname、xxxUser.username
+	TableColumnProp string //表格列表prop属性,默认赋值TsField,用户名称赋值xxxUser.nickname、xxxUser.email
 }
 
 // TplVars 模板变量
@@ -207,18 +207,18 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 					ListAllApi:  "",
 					Sort:        6,
 				}, {
-					// 查询用户账号（一般不用）
-					ColumnName:    column.ColumnName + "_username",
-					ColumnComment: column.ColumnComment + "账号",
+					// 查询用户邮箱
+					ColumnName:    column.ColumnName + "_email",
+					ColumnComment: column.ColumnComment + "邮箱",
 					ColumnLength:  32,
 					ColumnType:    "char",
 					GoType:        GoConstants.TypeString,
 					GoNullType:    GenUtil.GoTypeToNullType(column.GoType),
 
-					GoField: column.GoField + "Username",
+					GoField: column.GoField + "Email",
 
 					TsType:   "string",
-					TsField:  column.GoField + "Username",
+					TsField:  column.GoField + "Email",
 					SwagType: SwagTypeConstants.String,
 
 					IsPk:        0,

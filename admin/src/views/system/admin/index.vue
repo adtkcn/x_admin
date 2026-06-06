@@ -2,8 +2,8 @@
     <div class="admin">
         <el-card class="border-none!" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
-                <el-form-item label="管理员账号" class="w-[280px]">
-                    <el-input v-model="formData.username" clearable @keyup.enter="resetPage" />
+                <el-form-item label="管理员邮箱" class="w-[280px]">
+                    <el-input v-model="formData.email" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="管理员名称" class="w-[280px]">
                     <el-input v-model="formData.nickname" clearable @keyup.enter="resetPage" />
@@ -71,7 +71,7 @@
                             <el-avatar :size="40" :src="row.avatar"></el-avatar>
                         </template>
                     </vxe-column>
-                    <vxe-column title="账号" field="username" min-width="100" />
+                    <vxe-column title="邮箱(账号)" field="email" min-width="100" />
                     <vxe-column title="名称" field="nickname" min-width="100" />
                     <vxe-column title="角色" field="role" min-width="100" />
                     <vxe-column title="部门" field="dept" min-width="100" />
@@ -143,7 +143,7 @@ defineOptions({
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 // 表单数据
 const formData = reactive<type_system_admin_list>({
-    username: '',
+    email: '',
     nickname: '',
     roleId: ''
 })

@@ -9,11 +9,11 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
-                <el-form-item label="账号" prop="username">
+                <el-form-item label="邮箱(账号)" prop="email">
                     <el-input
-                        v-model="formData.username"
+                        v-model="formData.email"
                         :disabled="isRoot"
-                        placeholder="请输入账号"
+                        placeholder="请输入邮箱"
                         clearable
                     />
                 </el-form-item>
@@ -144,7 +144,7 @@ type type_admin_form = type_system_admin_add & {
 
 const formData = reactive<type_admin_form>({
     id: '',
-    username: '',
+    email: '',
     nickname: '',
     deptId: '',
     postId: '',
@@ -168,10 +168,10 @@ const passwordConfirmValidator = (rule: object, value: string, callback: any) =>
     callback()
 }
 const formRules = reactive({
-    username: [
+    email: [
         {
             required: true,
-            message: '请输入账号',
+            message: '请输入邮箱',
             trigger: ['blur']
         }
     ],

@@ -149,7 +149,7 @@ func (m *SystemAuthPost) BeforeCreate(tx *gorm.DB) (err error) {
 type SystemLogLogin struct {
 	ID         string      `gorm:"primarykey;type:char(36);comment:'uuid'"`
 	AdminId    string      `gorm:"not null;comment:'管理员ID'"`
-	Username   string      `gorm:"not null;default:'';comment:'登录账号'"`
+	Email      string      `gorm:"not null;default:'';comment:'登录邮箱'"`
 	Ip         string      `gorm:"not null;default:'';comment:'登录地址'"`
 	Os         string      `gorm:"not null;default:'';comment:'操作系统'"`
 	Browser    string      `gorm:"not null;default:'';comment:'浏览器'"`

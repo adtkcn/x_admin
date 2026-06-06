@@ -4,7 +4,7 @@ import "github.com/adtkcn/x_null"
 
 // SystemAuthAdminListReq 管理员列表参数
 type SystemAuthAdminListReq struct {
-	Username string `form:"username"` // 账号
+	Email    string `form:"email"`    // 邮箱(账号)
 	Nickname string `form:"nickname"` // 昵称
 	RoleId   string `form:"roleId"`   // 角色ID(用于筛选)
 }
@@ -20,11 +20,10 @@ type SystemAuthAdminAddReq struct {
 	PostId  string   `form:"postId" binding:""`  // 岗位ID
 	RoleIds []string `form:"roleIds" binding:""` // 角色ID列表
 
-	Username string `form:"username" binding:"required,min=2,max=32"` // 账号
+	Email    string `form:"email" binding:"required,min=5,max=200"` // 邮箱(账号)
 	Nickname string `form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Password string `form:"password" binding:"required"`              // 密码
 	Avatar   string `form:"avatar" binding:""`                        // 头像
-	Email    string `form:"email" binding:""`                         // 邮箱
 
 	Sort      int   `form:"sort" binding:"gte=0"`          // 排序
 	IsDisable uint8 `form:"isDisable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
@@ -43,11 +42,10 @@ type SystemAuthAdminEditReq struct {
 	DeptId   string   `form:"deptId" binding:""`                        // 部门ID
 	PostId   string   `form:"postId" binding:""`                        // 岗位ID
 	RoleIds  []string `form:"roleIds" binding:""`                       // 角色ID列表
-	Username string   `form:"username" binding:"required,min=2,max=32"` // 账号
+	Email    string   `form:"email" binding:"required,min=5,max=200"`   // 邮箱(账号)
 	Nickname string   `form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Password string   `form:"password"`                                 // 密码
 	Avatar   string   `form:"avatar"`                                   // 头像
-	Email    string   `form:"email" binding:""`                         // 邮箱
 
 	Sort      int   `form:"sort" binding:"gte=0"`          // 排序
 	IsDisable uint8 `form:"isDisable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
@@ -75,10 +73,9 @@ type SystemAuthAdminDisableReq struct {
 // SystemAuthAdminResp 管理员返回信息
 type SystemAuthAdminResp struct {
 	ID       string `json:"id"`                        // 主键
-	Username string `json:"username" excel:"name:账号;"` // 账号
+	Email    string `json:"email" excel:"name:账号;"`    // 邮箱(账号)
 	Nickname string `json:"nickname" excel:"name:昵称;"` // 昵称
 	Avatar   string `json:"avatar" excel:"name:头像;"`   // 头像
-	Email    string `json:"email" excel:"name:邮箱;"`    // 邮箱
 
 	DeptId string `json:"deptId" excel:"name:部门ID;"` // 部门ID
 	Dept   string `json:"dept" excel:"name:部门;"`     // 部门
@@ -99,10 +96,9 @@ type SystemAuthAdminResp struct {
 // SystemAuthAdminSelfOneResp 当前管理员返回部分信息
 type SystemAuthAdminSelfOneResp struct {
 	ID            string      `json:"id"`            // 主键
-	Username      string      `json:"username"`      // 账号
+	Email         string      `json:"email"`         // 邮箱(账号)
 	Nickname      string      `json:"nickname"`      // 昵称
 	Avatar        string      `json:"avatar"`        // 头像
-	Email         string      `json:"email"`         // 邮箱
 	Role          string      `json:"role"`          // 角色
 	Dept          string      `json:"dept"`          // 部门
 	IsDisable     uint8       `json:"isDisable"`     // 是否禁用: [0=否, 1=是]

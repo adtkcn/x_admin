@@ -90,7 +90,7 @@ function getAdminList() {
         adminUserList.value = res.map((item) => {
             return {
                 value: item.id,
-                label: item.nickname + ' (' + item.username + ')'
+                label: item.nickname + ' (' + item.email + ')'
             }
         })
     })

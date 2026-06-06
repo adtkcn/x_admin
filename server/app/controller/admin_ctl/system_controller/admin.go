@@ -35,7 +35,7 @@ func (ah AdminHandler) Self(c *gin.Context) {
 // @Description	导出管理员列表到Excel
 // @Tags			system_admin-管理员
 // @Param			token		header		string					true	"token"
-// @Param			username	query		string					false	"账号"
+// @Param			email		query		string					false	"邮箱(账号)"
 // @Param			nickname	query		string					false	"昵称"
 // @Param			roleId		query		string					false	"角色ID"
 // @Success		200					"文件流"
@@ -89,7 +89,7 @@ func (ah AdminHandler) ImportFile(c *gin.Context) {
 // @Param			token		header		string					true	"token"
 // @Param			pageNo		query		int						true	"页码"
 // @Param			pageSize	query		int						true	"每页数量"
-// @Param			username	query		string					false	"账号"
+// @Param			email		query		string					false	"邮箱(账号)"
 // @Param			nickname	query		string					false	"昵称"
 // @Param			roleId		query		string					false	"角色ID"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=system_schema.SystemAuthAdminResp}}	"成功"
@@ -111,7 +111,7 @@ func (ah AdminHandler) List(c *gin.Context) {
 // @Description	获取所有管理员列表(不分页)
 // @Tags			system_admin-管理员
 // @Param			token		header		string					true	"token"
-// @Param			username	query		string					false	"账号"
+// @Param			email		query		string					false	"邮箱(账号)"
 // @Param			nickname	query		string					false	"昵称"
 // @Param			roleId		query		string					false	"角色ID"
 // @Success		200			{object}	response.Response{data=[]system_schema.SystemAuthAdminResp}	"成功"
@@ -150,7 +150,7 @@ func (ah AdminHandler) Detail(c *gin.Context) {
 // @Param			deptId		body		string					false	"部门ID"
 // @Param			postId		body		string					false	"岗位ID"
 // @Param			roleIds		body		[]string				false	"角色ID列表"
-// @Param			username	body		string					true	"账号"
+// @Param			email		body		string					true	"邮箱(账号)"
 // @Param			nickname	body		string					true	"昵称"
 // @Param			password	body		string					true	"密码"
 // @Param			avatar		body		string					false	"头像"
@@ -175,7 +175,7 @@ func (ah AdminHandler) Add(c *gin.Context) {
 // @Param			deptId		body		string					false	"部门ID"
 // @Param			postId		body		string					false	"岗位ID"
 // @Param			roleIds		body		[]string				false	"角色ID列表"
-// @Param			username	body		string					true	"账号"
+// @Param			email		body		string					true	"邮箱(账号)"
 // @Param			nickname	body		string					true	"昵称"
 // @Param			password	body		string					false	"密码"
 // @Param			avatar		body		string					false	"头像"

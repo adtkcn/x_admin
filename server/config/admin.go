@@ -39,8 +39,8 @@ var AdminConfig = adminConfig{
 	// 管理员账号key
 	ReqAdminIdKey: "admin_id",
 
-	// 用户名key
-	ReqUsernameKey: "username",
+	// 邮箱key(账号)
+	ReqEmailKey: "email",
 	// 昵称key
 	ReqNicknameKey: "nickname",
 
@@ -68,8 +68,8 @@ type adminConfig struct {
 	// 管理员账号key
 	ReqAdminIdKey string
 
-	// 用户名key
-	ReqUsernameKey string
+	// 邮箱key(账号)
+	ReqEmailKey string
 	// 昵称key
 	ReqNicknameKey string
 
@@ -85,12 +85,12 @@ func (cnf adminConfig) GetAdminId(c *gin.Context) string {
 	return adminId.(string)
 }
 
-func (cnf adminConfig) GetUsername(c *gin.Context) string {
-	username, ok := c.Get(cnf.ReqUsernameKey)
+func (cnf adminConfig) GetEmail(c *gin.Context) string {
+	email, ok := c.Get(cnf.ReqEmailKey)
 	if !ok {
 		return ""
 	}
-	return username.(string)
+	return email.(string)
 }
 
 func (cnf adminConfig) GetNickname(c *gin.Context) string {

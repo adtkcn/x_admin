@@ -12,7 +12,7 @@
                 <el-form-item label="管理员" class="w-[360px]">
                     <el-input
                         placeholder="请输入"
-                        v-model="formData.username"
+                        v-model="formData.email"
                         clearable
                         @keyup.enter="resetPage"
                     />
@@ -75,7 +75,7 @@
                         min-width="60"
                     />
                     <el-table-column label="操作" prop="title" min-width="120" />
-                    <el-table-column label="管理员" prop="username" min-width="120" />
+                    <el-table-column label="管理员" prop="email" min-width="120" />
                     <el-table-column label="访问链接" prop="url" min-width="240">
                         <template #default="{ row }"> {{ row.type }}：{{ row.url }} </template>
                     </el-table-column>
@@ -102,7 +102,7 @@ defineOptions({
 })
 // 查询表单
 const formData = ref({
-    username: '',
+    email: '',
     url: '',
     ip: '',
     type: '',

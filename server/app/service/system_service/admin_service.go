@@ -36,9 +36,9 @@ type systemAuthAdminService struct {
 	db *gorm.DB
 }
 
-// FindByUsername 根据账号查找管理员
-func (adminSrv systemAuthAdminService) FindByUsername(username string) (admin system_model.SystemAuthAdmin, err error) {
-	err = adminSrv.db.Where("username = ?", username).First(&admin).Error
+// FindByEmail 根据邮箱(账号)查找管理员
+func (adminSrv systemAuthAdminService) FindByEmail(email string) (admin system_model.SystemAuthAdmin, err error) {
+	err = adminSrv.db.Where("email = ?", email).First(&admin).Error
 	return
 }
 
@@ -106,8 +106,8 @@ func (adminSrv systemAuthAdminService) ExportFile(listReq system_schema.SystemAu
 	)
 
 	// 条件
-	if listReq.Username != "" {
-		adminModel = adminModel.Where("username like ?", "%"+listReq.Username+"%")
+	if listReq.Email != "" {
+		adminModel = adminModel.Where("email like ?", "%"+listReq.Email+"%")
 	}
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
@@ -192,24 +192,24 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []system_schema.Syst
 		return nil
 	}
 
-	// 批量查询已存在的用户名
-	var usernames []string
+	// 批量查询已存在的邮箱
+	var emails []string
 	for _, item := range importReq {
-		usernames = append(usernames, item.Username)
+		emails = append(emails, item.Email)
 	}
 	var existingAdmins []system_model.SystemAuthAdmin
-	if err := adminSrv.db.Where("username IN ?", usernames).Find(&existingAdmins).Error; err != nil {
+	if err := adminSrv.db.Where("email IN ?", emails).Find(&existingAdmins).Error; err != nil {
 		return response.CheckErr(err, "检查用户是否存在失败")
 	}
-	// 构建已存在的用户名 map
+	// 构建已存在的邮箱 map
 	existingMap := make(map[string]bool)
 	for _, admin := range existingAdmins {
-		existingMap[admin.Username] = true
+		existingMap[admin.Email] = true
 	}
 
 	for _, importItem := range importReq {
 		// 检查用户是否已存在（内存判断）
-		if existingMap[importItem.Username] {
+		if existingMap[importItem.Email] {
 			continue
 		}
 
@@ -250,7 +250,7 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []system_schema.Syst
 		})
 
 		if err != nil {
-			e = response.CheckErr(err, "添加用户失败: "+importItem.Username)
+			e = response.CheckErr(err, "添加用户失败: "+importItem.Email)
 			return
 		}
 	}
@@ -261,7 +261,7 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []system_schema.Syst
 // 获取Excel的列
 func (adminSrv systemAuthAdminService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "账号", Key: "Username", Width: 15, Decode: x_null.DecodeString},
+		{Name: "账号", Key: "Email", Width: 15, Decode: x_null.DecodeString},
 		{Name: "名称", Key: "Nickname", Width: 15, Decode: x_null.DecodeString},
 		{Name: "头像", Key: "Avatar", Width: 15, Decode: x_null.DecodeString},
 
@@ -295,8 +295,8 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 	adminModel := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Table(adminTbName + " AS admin").Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept", deptTbName))
-	if listReq.Username != "" {
-		adminModel = adminModel.Where("username like ?", "%"+listReq.Username+"%")
+	if listReq.Email != "" {
+		adminModel = adminModel.Where("email like ?", "%"+listReq.Email+"%")
 	}
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
@@ -392,8 +392,8 @@ func (adminSrv systemAuthAdminService) ListAll(listReq system_schema.SystemAuthA
 	adminModel := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Table(adminTbName + " AS admin").Joins(
 		fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).Select(
 		fmt.Sprintf("admin.*, %s.name as dept", deptTbName))
-	if listReq.Username != "" {
-		adminModel = adminModel.Where("username like ?", "%"+listReq.Username+"%")
+	if listReq.Email != "" {
+		adminModel = adminModel.Where("email like ?", "%"+listReq.Email+"%")
 	}
 	if listReq.Nickname != "" {
 		adminModel = adminModel.Where("nickname like ?", "%"+listReq.Nickname+"%")
@@ -441,11 +441,11 @@ func (adminSrv systemAuthAdminService) Detail(id string) (res system_schema.Syst
 
 // Add 管理员新增
 func (adminSrv systemAuthAdminService) Add(addReq system_schema.SystemAuthAdminAddReq) (e error) {
-	// 合并查询：检查 username 和 nickname 是否已存在
+	// 合并查询：检查 email 和 nickname 是否已存在
 	var existAdmin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("username = ? OR nickname = ?", addReq.Username, addReq.Nickname).First(&existAdmin).Error
+	err := adminSrv.db.Where("email = ? OR nickname = ?", addReq.Email, addReq.Nickname).First(&existAdmin).Error
 	if err == nil {
-		if existAdmin.Username == addReq.Username {
+		if existAdmin.Email == addReq.Email {
 			return errors.New("账号已存在换一个吧！")
 		}
 		return errors.New("名称已存在换一个吧！")
@@ -505,11 +505,11 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 		return
 	}
 
-	// 合并查询：检查 username 和 nickname 是否已被其他用户使用
+	// 合并查询：检查 email 和 nickname 是否已被其他用户使用
 	var existAdmin system_model.SystemAuthAdmin
-	err = adminSrv.db.Where("(username = ? OR nickname = ?) AND id != ?", editReq.Username, editReq.Nickname, editReq.ID).First(&existAdmin).Error
+	err = adminSrv.db.Where("(email = ? OR nickname = ?) AND id != ?", editReq.Email, editReq.Nickname, editReq.ID).First(&existAdmin).Error
 	if err == nil {
-		if existAdmin.Username == editReq.Username {
+		if existAdmin.Email == editReq.Email {
 			return errors.New("账号已存在换一个吧！")
 		}
 		return errors.New("名称已存在换一个吧！")

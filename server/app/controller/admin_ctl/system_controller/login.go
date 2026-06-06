@@ -17,7 +17,7 @@ type LoginHandler struct{}
 // @Summary		登录系统
 // @Description	管理员登录系统
 // @Tags			system_login-登录
-// @Param			username	body		string						true	"账号"
+// @Param			email		body		string						true	"邮箱(账号)"
 // @Param			password	body		string						true	"密码"
 // @Param			token		body		string						true	"验证码token"
 // @Param			pointJson	body		string						false	"点选坐标"

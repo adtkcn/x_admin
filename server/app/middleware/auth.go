@@ -64,7 +64,7 @@ func Auth(c *gin.Context) response.RespType {
 
 	// 单次请求信息保存
 	c.Set(config.AdminConfig.ReqAdminIdKey, uid)
-	c.Set(config.AdminConfig.ReqUsernameKey, adminUser.Username)
+	c.Set(config.AdminConfig.ReqEmailKey, adminUser.Email)
 	c.Set(config.AdminConfig.ReqNicknameKey, adminUser.Nickname)
 
 	return response.Success

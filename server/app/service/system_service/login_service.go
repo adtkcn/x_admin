@@ -30,23 +30,23 @@ type systemLoginService struct {
 
 // Login 登录
 func (loginSrv systemLoginService) Login(c *gin.Context, req *system_schema.SystemLoginReq) (res system_schema.SystemLoginResp, e error) {
-	sysAdmin, err := AdminService.FindByUsername(req.Username)
+	sysAdmin, err := AdminService.FindByEmail(req.Email)
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		if e = loginSrv.RecordLoginLog(c, "", req.Username, response.LoginAccountError.Msg()); e != nil {
+		if e = loginSrv.RecordLoginLog(c, "", req.Email, response.LoginAccountError.Msg()); e != nil {
 			return
 		}
 		e = response.LoginAccountError
 		return
 	} else if err != nil {
-		core.Logger.Errorf("Login FindByUsername err: err=[%+v]", err)
-		if e = loginSrv.RecordLoginLog(c, "", req.Username, response.Failed.Msg()); e != nil {
+		core.Logger.Errorf("Login FindByEmail err: err=[%+v]", err)
+		if e = loginSrv.RecordLoginLog(c, "", req.Email, response.Failed.Msg()); e != nil {
 			return
 		}
 		e = response.Failed
 		return
 	}
 	if sysAdmin.IsDisable == 1 {
-		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.LoginDisableError.Msg()); e != nil {
+		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Email, response.LoginDisableError.Msg()); e != nil {
 			return
 		}
 		e = response.LoginDisableError
@@ -54,7 +54,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *system_schema.Syst
 	}
 	md5Pwd := util.ToolsUtil.MakeMd5(req.Password + sysAdmin.Salt)
 	if sysAdmin.Password != md5Pwd {
-		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.LoginAccountError.Msg()); e != nil {
+		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Email, response.LoginAccountError.Msg()); e != nil {
 			return
 		}
 		e = response.LoginAccountError
@@ -71,7 +71,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *system_schema.Syst
 	// 更新登录信息
 	err = loginSrv.db.Model(&sysAdmin).Updates(u).Error
 	if err != nil {
-		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, response.SystemError.Msg()); e != nil {
+		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Email, response.SystemError.Msg()); e != nil {
 			return
 		}
 		if e = response.CheckErr(err, "Login Updates err"); e != nil {
@@ -79,7 +79,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *system_schema.Syst
 		}
 	}
 	// 记录登录日志
-	if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Username, ""); e != nil {
+	if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Email, ""); e != nil {
 		return
 	}
 	// 返回登录信息
@@ -93,7 +93,7 @@ func (loginSrv systemLoginService) Logout(req *system_schema.SystemLogoutReq) (e
 }
 
 // RecordLoginLog 记录登录日志
-func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId string, username string, errStr string) (e error) {
+func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId string, email string, errStr string) (e error) {
 	ua := util.UAUtils.Parse(c.GetHeader("user-agent"))
 	var status uint8
 	if errStr == "" {
@@ -101,7 +101,7 @@ func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId string
 	}
 	err := loginSrv.db.Create(&system_model.SystemLogLogin{
 		AdminId:    adminId,
-		Username:   username,
+		Email:      email,
 		Ip:         c.ClientIP(),
 		Os:         ua.OsName,
 		Browser:    ua.BrowserName,

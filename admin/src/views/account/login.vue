@@ -17,12 +17,12 @@
                         :rules="rules"
                         autoComplete="off"
                     >
-                        <el-form-item prop="username">
+                        <el-form-item prop="email">
                             <el-input
-                                v-model.trim="formData.username"
+                                v-model.trim="formData.email"
                                 type="text"
                                 autocomplete="off"
-                                placeholder="请输入账号"
+                                placeholder="请输入邮箱"
                                 tabindex="1"
                             >
                                 <template #prepend>
@@ -31,9 +31,9 @@
                             </el-input>
                         </el-form-item>
                         <input
-                            v-model.trim="formData.username"
+                            v-model.trim="formData.email"
                             type="text"
-                            name="username-hide"
+                            name="email-hide"
                             tabindex="-1"
                             style="
                                 position: absolute;
@@ -139,14 +139,14 @@ const router = useRouter()
 // const remAccount = ref(false)
 const config = computed(() => appStore.config)
 const formData = reactive({
-    username: '',
+    email: '',
     password: ''
 })
 const rules = {
-    username: [
+    email: [
         {
             required: true,
-            message: '请输入账号',
+            message: '请输入邮箱',
             trigger: ['blur']
         }
     ],
@@ -162,7 +162,7 @@ const rules = {
 // 登录处理
 const handleLogin = async (captchaInfo) => {
     console.log('captchaInfo', {
-        username: formData.username,
+        email: formData.email,
         password: encryptPassword(formData.password),
         ...captchaInfo
     })
@@ -170,10 +170,10 @@ const handleLogin = async (captchaInfo) => {
     await formRef.value?.validate()
     // 记住账号，缓存
     cache.set(ACCOUNT_KEY, {
-        username: formData.username
+        email: formData.email
     })
     await userStore.login({
-        username: formData.username,
+        email: formData.email,
         password: encryptPassword(formData.password),
         ...verifyInfo
     })
@@ -188,7 +188,7 @@ const { isLock, lockFn: lockLogin } = useLockFn(handleLogin)
 onMounted(() => {
     const value = cache.get(ACCOUNT_KEY)
 
-    formData.username = value?.username
+    formData.email = value?.email
 })
 </script>
 
