@@ -56,3 +56,35 @@ func (lh LoginHandler) Logout(c *gin.Context) {
 	}
 	response.CheckAndRespWithData(c, nil, system_service.LoginService.Logout(&logoutReq))
 }
+
+// @Summary		忘记密码-发送验证码
+// @Description	向注册邮箱发送密码重置验证码
+// @Tags			system_login-登录
+// @Param			email	body		string						true	"注册邮箱"
+// @Success		200		{object}	response.Response			"成功"
+// @Router			/api/admin/system/forgot-pwd/send-code [post]
+func (lh LoginHandler) ForgotPwdSendCode(c *gin.Context) {
+	var req system_schema.SystemForgotPwdSendCodeReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+		return
+	}
+	err := system_service.ForgetPwdService.SendResetCode(&req)
+	response.CheckAndRespWithData(c, nil, err)
+}
+
+// @Summary		忘记密码-重置密码
+// @Description	使用邮箱验证码重置密码
+// @Tags			system_login-登录
+// @Param			email		body		string					true	"注册邮箱"
+// @Param			code		body		string					true	"6位验证码"
+// @Param			password	body		string					true	"新密码(MD5加密后)"
+// @Success		200			{object}	response.Response		"成功"
+// @Router			/api/admin/system/forgot-pwd/reset [post]
+func (lh LoginHandler) ForgotPwdReset(c *gin.Context) {
+	var req system_schema.SystemForgotPwdResetReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+		return
+	}
+	err := system_service.ForgetPwdService.ResetPassword(&req)
+	response.CheckAndRespWithData(c, nil, err)
+}

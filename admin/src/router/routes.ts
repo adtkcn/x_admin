@@ -37,6 +37,10 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import('@/views/account/login.vue')
     },
     {
+        path: PageEnum.FORGOT_PASSWORD,
+        component: () => import('@/views/account/forgot-password.vue')
+    },
+    {
         path: '/system',
         component: LAYOUT,
         children: [

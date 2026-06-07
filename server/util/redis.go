@@ -87,6 +87,16 @@ func (ru redisUtil) Set(key string, value any, timeSec int) bool {
 	return true
 }
 
+// Incr 将 key 中存储的数字值加 1
+func (ru redisUtil) Incr(key string) int {
+	res, err := ru.redis.Incr(context.Background(), config.RedisConfig.RedisPrefix+key).Result()
+	if err != nil {
+		core.Logger.Errorf("redisUtil.Incr err: err=[%+v]", err)
+		return 0
+	}
+	return int(res)
+}
+
 // Get 获取key的值
 func (ru redisUtil) Get(key string) string {
 	res, err := ru.redis.Get(context.Background(), config.RedisConfig.RedisPrefix+key).Result()

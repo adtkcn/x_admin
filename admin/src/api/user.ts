@@ -72,3 +72,13 @@ export function setUserInfo(data: type_system_admin_update) {
 export function sendEmailCode(data: { email: string }) {
     return request.post({ url: '/system/admin/sendEmailCode', data })
 }
+
+// 忘记密码-发送验证码
+export function forgotPwdSendCode(data: { email: string }) {
+    return request.post({ url: '/system/forgot-pwd/send-code', data })
+}
+
+// 忘记密码-重置密码
+export function forgotPwdReset(data: { email: string; code: string; password: string }) {
+    return request.post({ url: '/system/forgot-pwd/reset', data })
+}

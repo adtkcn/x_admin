@@ -1,19 +1,20 @@
 <template>
     <div class="header-notice">
         <el-popover
-            :visible="popoverVisible"
+            ref="popoverRef"
             placement="bottom-end"
             :width="360"
             trigger="click"
             @show="onPopoverShow"
-            @hide="popoverVisible = false"
         >
             <template #reference>
-                <el-badge :value="unreadCount" :max="99" :hidden="unreadCount === 0">
-                    <el-button class="notice-btn" text @click="popoverVisible = !popoverVisible">
-                        <icon name="el-icon-Bell" :size="20" />
-                    </el-button>
-                </el-badge>
+                <div class="notice-btn-wrap">
+                    <el-badge :value="unreadCount" :max="99" :hidden="unreadCount === 0">
+                        <el-button class="notice-btn" text>
+                            <icon name="el-icon-Bell" :size="20" />
+                        </el-button>
+                    </el-badge>
+                </div>
             </template>
 
             <div class="notice-popover">
@@ -88,7 +89,7 @@ defineOptions({
 
 const router = useRouter()
 const userStore = useUserStore()
-const popoverVisible = ref(false)
+const popoverRef = ref()
 const loading = ref(false)
 const unreadCount = ref(0)
 const recentList = ref<type_notice_resp[]>([])
@@ -132,7 +133,7 @@ function onPopoverShow() {
 
 // 点击通知项
 async function handleItemClick(item: type_notice_resp) {
-    popoverVisible.value = false
+    popoverRef.value?.hide()
     if (item.isRead === 0) {
         await noticeRead({ id: item.id })
         unreadCount.value = Math.max(0, unreadCount.value - 1)
@@ -154,7 +155,7 @@ async function handleReadAll() {
 
 // 跳转通知页
 function goNoticePage() {
-    popoverVisible.value = false
+    popoverRef.value?.hide()
     router.push('/system/notice')
 }
 
@@ -200,6 +201,14 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .header-notice {
+    .notice-btn-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+    }
+
     .notice-btn {
         font-size: 18px;
         padding: 4px;
@@ -208,6 +217,7 @@ onUnmounted(() => {
 
 .notice-popover {
     .notice-list {
+        min-height: 244px;
         max-height: 360px;
         overflow-y: auto;
 

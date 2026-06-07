@@ -1,6 +1,8 @@
 export enum PageEnum {
     //登录页面
     LOGIN = '/login',
+    //忘记密码页面
+    FORGOT_PASSWORD = '/forgot-password',
     //无权限页面
     ERROR_403 = '/403',
     // 404

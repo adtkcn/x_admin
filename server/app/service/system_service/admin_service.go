@@ -441,14 +441,11 @@ func (adminSrv systemAuthAdminService) Detail(id string) (res system_schema.Syst
 
 // Add 管理员新增
 func (adminSrv systemAuthAdminService) Add(addReq system_schema.SystemAuthAdminAddReq) (e error) {
-	// 合并查询：检查 email 和 nickname 是否已存在
+	// 检查 email 是否已存在
 	var existAdmin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("email = ? OR nickname = ?", addReq.Email, addReq.Nickname).First(&existAdmin).Error
+	err := adminSrv.db.Where("email = ?", addReq.Email).First(&existAdmin).Error
 	if err == nil {
-		if existAdmin.Email == addReq.Email {
-			return errors.New("账号已存在换一个吧！")
-		}
-		return errors.New("名称已存在换一个吧！")
+		return errors.New("账号已存在换一个吧！")
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return response.CheckErr(err, "Add Find err")
 	}
@@ -505,14 +502,11 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 		return
 	}
 
-	// 合并查询：检查 email 和 nickname 是否已被其他用户使用
+	// 检查 email 是否已被其他用户使用
 	var existAdmin system_model.SystemAuthAdmin
-	err = adminSrv.db.Where("(email = ? OR nickname = ?) AND id != ?", editReq.Email, editReq.Nickname, editReq.ID).First(&existAdmin).Error
+	err = adminSrv.db.Where("email = ? AND id != ?", editReq.Email, editReq.ID).First(&existAdmin).Error
 	if err == nil {
-		if existAdmin.Email == editReq.Email {
-			return errors.New("账号已存在换一个吧！")
-		}
-		return errors.New("名称已存在换一个吧！")
+		return errors.New("账号已存在换一个吧！")
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return response.CheckErr(err, "Edit Find err")
 	}
@@ -637,6 +631,9 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 	adminMap := structs.Map(updateReq)
 	delete(adminMap, "CurrPassword")
 	delete(adminMap, "EmailCode")
+	if updateReq.Email == "" {
+		delete(adminMap, "Email") // 不传邮箱则不更新，避免覆盖为空
+	}
 	avatar := "/api/static/backend_avatar.png"
 	if updateReq.Avatar != "" {
 		avatar = updateReq.Avatar

@@ -87,6 +87,10 @@
                         登录
                     </el-button>
 
+                    <div class="mt-3 text-right">
+                        <el-button link type="primary" @click="goForgotPwd">忘记密码？</el-button>
+                    </div>
+
                     <Verify
                         mode="pop"
                         captchaType="clickWord"
@@ -111,6 +115,7 @@ import useUserStore from '@/stores/modules/user'
 import cache from '@/utils/cache'
 import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
+
 import { useLockFn } from '@/hooks/useLockFn'
 import { encryptPassword } from '@/utils/util'
 defineOptions({
@@ -184,6 +189,10 @@ const handleLogin = async (captchaInfo) => {
     router.push(path)
 }
 const { isLock, lockFn: lockLogin } = useLockFn(handleLogin)
+
+const goForgotPwd = () => {
+    router.push(PageEnum.FORGOT_PASSWORD)
+}
 
 onMounted(() => {
     const value = cache.get(ACCOUNT_KEY)

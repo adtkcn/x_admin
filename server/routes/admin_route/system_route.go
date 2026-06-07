@@ -13,6 +13,9 @@ func initLoginRoute(rg *gin.RouterGroup) {
 	loginRg := rg.Group("/system")
 	loginRg.POST("/login", handleLogin.Login)
 	loginRg.POST("/logout", handleLogin.Logout)
+	// 忘记密码（无需认证）
+	loginRg.POST("/forgot-pwd/send-code", handleLogin.ForgotPwdSendCode)
+	loginRg.POST("/forgot-pwd/reset", handleLogin.ForgotPwdReset)
 }
 
 // initAdminRoute 管理员路由（部分接口仅登录即可，其余需权限认证）
