@@ -73,9 +73,16 @@ func (adminSrv systemAuthAdminService) ListByDeptId(deptId string) (res []system
 		e = errors.New("部门ID不能为空")
 		return
 	}
+	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
+	deptTbName := core.DBTableName(&system_model.SystemAuthDept{})
 	// 数据
 	var adminResp []system_schema.SystemAuthAdminResp
-	err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).Where("dept_id =?", deptId).Find(&adminResp).Error
+	err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).
+		Table(adminTbName+" AS admin").
+		Joins(fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).
+		Select(fmt.Sprintf("admin.*, %s.name as dept", deptTbName)).
+		Where("admin.dept_id = ?", deptId).
+		Find(&adminResp).Error
 
 	if e = response.CheckDBNotRecord(err, "获取部门下用户列表失败"); e != nil {
 		return
