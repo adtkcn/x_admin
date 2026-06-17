@@ -211,7 +211,7 @@ func (service systemCornService) GetExcelCol() []excel2.Col {
 		{Name: "任务名称", Key: "TaskName", Width: 15, Decode: x_null.DecodeString},
 		{Name: "任务编码", Key: "TaskCode", Width: 15, Decode: x_null.DecodeString},
 		{Name: "corn表达式", Key: "CornExpr", Width: 15, Decode: x_null.DecodeString},
-		{Name: "禁用", Key: "Status", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "状态", Key: "Status", Width: 15, Decode: x_null.DecodeInt64},
 		{Name: "创建人", Key: "CreatedBy", Width: 15, Decode: x_null.DecodeString},
 		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
 		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},

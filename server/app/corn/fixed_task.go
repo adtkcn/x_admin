@@ -2,6 +2,7 @@ package corn
 
 import (
 	"time"
+	"x_admin/plugin"
 	"x_admin/app/service/corn_service"
 	"x_admin/app/service/monitor_service"
 	"x_admin/app/service/notice_service"
@@ -94,6 +95,17 @@ func init() {
 		TaskDesc: "邮件延迟补推：扫描未读通知，对配置了邮箱的用户发送邮件提醒",
 		TaskFunc: func() {
 			notice_service.NoticeService.ProcessEmailDelayPush()
+		},
+	})
+
+	// 每小时执行一次清理过期的分片临时目录
+	FixedTasks.AddTask("CleanChunkTmpDir", "0 0 * * * *", corn_service.Task{
+		Lock:     true,
+		LockTTL:  10 * time.Minute,
+		TaskCode: "CleanChunkTmpDir",
+		TaskDesc: "清理过期的分片临时目录",
+		TaskFunc: func() {
+			plugin.CleanChunkTmpDir()
 		},
 	})
 

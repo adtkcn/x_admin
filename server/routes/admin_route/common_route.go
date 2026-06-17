@@ -15,19 +15,6 @@ func initUploadRoute(rg *gin.RouterGroup) {
 	uploadRg.POST("/upload/file", middleware.RecordLog("上传文件", middleware.RequestFile), handleUpload.UploadFile)
 }
 
-// initChunkRoute 分片上传路由
-func initChunkRoute(rg *gin.RouterGroup) {
-	handleChunk := common_controller.UploadChunkHandler{
-		UploadPath: "./uploads",
-		TmpPath:    "./uploads/.tmp",
-	}
-	chunkRg := rg.Group("/common")
-	chunkRg.GET("/upload_chunk/CheckFileExist", handleChunk.CheckFileExist)
-	chunkRg.GET("/upload_chunk/HasChunk", handleChunk.HasChunk)
-	chunkRg.POST("/upload_chunk/UploadChunk", handleChunk.UploadChunk)
-	chunkRg.POST("/upload_chunk/MergeChunk", handleChunk.MergeChunk)
-}
-
 // initAlbumRoute 相册路由
 func initAlbumRoute(rg *gin.RouterGroup) {
 	handleAlbum := common_controller.AlbumHandler{}
@@ -59,5 +46,5 @@ func initGeTuiRoute(rg *gin.RouterGroup) {
 
 // 通用模块路由入口（上传、分片上传、相册、首页、个推、验证码）
 func init() {
-	routeHandlers = append(routeHandlers, initUploadRoute, initChunkRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute)
+	routeHandlers = append(routeHandlers, initUploadRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute)
 }

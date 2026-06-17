@@ -11,6 +11,14 @@ type FileConfigStruct struct {
 	UploadImageExt []string `mapstructure:"UploadImageExt"` // 上传图片扩展
 	UploadVideoExt []string `mapstructure:"UploadVideoExt"` // 上传视频扩展
 	UploadFileExt  []string `mapstructure:"UploadFileExt"`  // 上传文件扩展
+
+	// 分片上传配置
+	ChunkSize       int64  `mapstructure:"ChunkSize"`       // 分片大小（字节），默认 5MB
+	ChunkTmpDir     string `mapstructure:"ChunkTmpDir"`     // 本地分片临时目录，默认 "./uploads/.tmp"
+	ChunkExpireHour int    `mapstructure:"ChunkExpireHour"` // 未完成分片过期时间（小时），默认 24
+	// 预签名配置
+	PresignSecret string `mapstructure:"PresignSecret"` // 预签名 URL 密钥（留空则自动生成随机密钥）
+	PresignExpire int    `mapstructure:"PresignExpire"` // 预签名有效期（秒），默认 3600
 }
 
 // var uploadImageExtDefault = []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp", "avif"}
@@ -29,4 +37,12 @@ var FileConfig = FileConfigStruct{
 	UploadVideoExt: []string{"mp4", "avi", "flv", "wmv", "rmvb", "mov", "mp3", "wav", "flac", "m4a"},
 
 	UploadFileExt: []string{"pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip", "rar", "7z", "txt"},
+
+	// 分片上传配置
+	ChunkSize:       5 * 1024 * 1024, // 5MB
+	ChunkTmpDir:     "./uploads/.tmp",
+	ChunkExpireHour: 24,
+	// 预签名配置（Secret 留空则自动生成随机密钥）
+	PresignSecret: "",
+	PresignExpire: 3600,
 }
