@@ -9,6 +9,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/docs"
 	"x_admin/routes/admin_route"
+	"x_admin/routes/user_route"
 
 	"github.com/gin-gonic/gin"
 )
@@ -69,4 +70,7 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	// /api/admin
 	admin_route.RegisterRoute(api)
 
+	// /api/user（用户系统）
+	userRg := api.Group("/user")
+	user_route.UserRoute(userRg)
 }

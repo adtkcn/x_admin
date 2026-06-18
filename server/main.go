@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"x_admin/app/model/user_model"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/plugin"
@@ -46,6 +47,9 @@ func main() {
 		db, _ := core.GetDB().DB()
 		defer db.Close()
 	}
+
+	// 自动迁移用户表
+	core.AutoMigrate(&user_model.User{}, &user_model.UserAuth{})
 
 	// 初始化router
 	router := routes.InitRouter()

@@ -16,6 +16,7 @@ type config struct {
 	GeTui *GeTuiConfigStruct
 	Email *[]EmailConfigStruct
 	Log   *LogConfigStruct
+	JWT   *jwtConfig
 }
 
 func loadConfig(config config) config {
@@ -51,6 +52,7 @@ func init() {
 		GeTui: &GeTuiConfig,
 		Email: &EmailConfig,
 		Log:   &LogConfig,
+		JWT:   &JWTConfig,
 	})
 
 	fmt.Printf("AppConfig: %+v\n", AppConfig)
@@ -60,4 +62,5 @@ func init() {
 	fmt.Printf("GeTuiConfig: %+v\n", GeTuiConfig)
 	fmt.Printf("EmailConfig: %+v\n", EmailConfig)
 	fmt.Printf("LogConfig: %+v\n", LogConfig)
+	fmt.Printf("JWTConfig: %+v\n", JWTConfig)
 }
