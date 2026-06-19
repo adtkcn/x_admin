@@ -1,6 +1,6 @@
 ---
 name: "用户系统"
-description: "C端用户系统完整技术文档 — JWT鉴权、邮箱/手机登录、验证码、踢人下线机制"
+description: "C端用户系统完整技术文档 — JWT鉴权、邮箱/手机/微信登录、验证码、踢人下线机制"
 ---
 
 # 用户系统技术文档
@@ -14,6 +14,7 @@ description: "C端用户系统完整技术文档 — JWT鉴权、邮箱/手机�
 **核心特性：**
 - JWT access_token + refresh_token 双 token 方案
 - 邮箱注册/登录 + 手机号登录（密码/短信验证码两种方式）
+- 微信小程序/公众号登录（自动注册 + 绑定）
 - 邮箱验证码（注册/重置密码/解绑手机） + 短信验证码（绑定手机/手机登录/手机重置密码）
 - token_version 机制实现踢人下线
 - Redis 缓存 token_version，避免每次鉴权查 MySQL
@@ -29,14 +30,16 @@ app/model/user_model/
 
 app/schema/user_schema/
 ├── register.go                      # RegisterReq
-├── login.go                         # LoginReq, PhoneLoginReq, PhoneCodeLoginReq, LoginResp
+├── login.go                         # LoginReq, PhoneLoginReq, PhoneCodeLoginReq, LoginResp(含IsNew)
 ├── user.go                          # UserInfoResp, UpdateUserReq
 ├── auth.go                          # RefreshTokenReq, BindPhoneReq, UnbindPhoneReq, UserAuthItem
+├── wechat.go                        # WechatMiniLoginReq, WechatMpLoginReq, WechatBindReq, WechatUnbindReq
 └── email_code.go                    # SendCodeReq, SendSmsCodeReq, ResetPasswordReq, ResetPhonePasswordReq
 
 app/service/user_service/
 ├── user_service.go                  # 注册/邮箱登录/手机登录/短信登录/验证码/重置密码/踢人下线/token_version缓存
-└── auth_service.go                  # 绑定手机号/解绑手机号/获取绑定列表
+├── auth_service.go                  # 绑定手机号/解绑手机号/获取绑定列表
+└── wechat_service.go                # 小程序登录/公众号登录/微信绑定/解绑
 
 app/controller/user_ctl/
 ├── user_controller.go               # 用户相关 Handler（含 Swagger 注释）
@@ -49,12 +52,14 @@ routes/user_route/
 └── user_route.go                    # /api/user 路由注册
 
 config/
-└── jwt.go                           # JWT 配置 + GetUserID() 辅助方法
+├── jwt.go                           # JWT 配置 + GetUserID() 辅助方法
+└── wechat.go                        # 微信配置（MiniAppID/Secret, MpAppID/Secret）
 
 util/
 ├── jwt.go                           # JWT 生成/解析/续签（UserClaims 仅含 userID+tokenVersion+tokenType）
 ├── email_code.go                    # 邮箱验证码发送/校验（Redis 存储+频率限制）
-└── sms_code.go                      # 短信验证码发送/校验（Redis 存储+频率限制）
+├── sms_code.go                      # 短信验证码发送/校验（Redis 存储+频率限制）
+└── wechat.go                        # PowerWeChat 客户端初始化（小程序+公众号）
 
 docs/migration/
 └── add_user_tables.sql              # 手动建表 SQL（备用）
@@ -237,6 +242,8 @@ util.SmsCodeUtil.VerifyCode(phone, scene, code)
 | POST | /api/user/refresh | 刷新token |
 | POST | /api/user/resetPassword | 邮箱重置密码（邮箱验证码+新密码） |
 | POST | /api/user/resetPhonePassword | 手机号重置密码（短信验证码+新密码） |
+| POST | /api/user/wechatMiniLogin | 小程序登录（code→自动注册/登录） |
+| POST | /api/user/wechatMpLogin | 公众号登录（OAuth code→自动注册/登录） |
 
 ### 需要登录的接口（JWT）
 
@@ -247,6 +254,9 @@ util.SmsCodeUtil.VerifyCode(phone, scene, code)
 | POST | /api/user/kickOffline | 踢人下线 |
 | POST | /api/user/bindPhone | 绑定手机号（需短信验证码） |
 | POST | /api/user/unbindPhone | 解绑手机号（需邮箱验证码） |
+| POST | /api/user/bindWechatMini | 绑定小程序 |
+| POST | /api/user/bindWechatMp | 绑定公众号 |
+| POST | /api/user/unbindWechat | 解绑微信（wechat_mini/wechat_mp） |
 | GET | /api/user/authList | 获取第三方绑定列表（微信/QQ，不含手机号） |
 
 ---
@@ -275,7 +285,77 @@ JWT:
   RefreshSecret: 'your_refresh_secret'
   AccessExpireSec: 7200     # access_token 有效期(秒)
   RefreshExpireSec: 604800  # refresh_token 有效期(秒)
+
+# 微信 (小程序+公众号)
+WECHAT:
+  MiniAppID: 'your_mini_app_id'
+  MiniSecret: 'your_mini_secret'
+  MpAppID: 'your_mp_app_id'
+  MpSecret: 'your_mp_secret'
+  MpRedirectURI: 'https://yourdomain.com/wechat/callback'
 ```
+
+---
+
+## 微信登录
+
+基于 **PowerWeChat/v3** SDK 实现。客户端在 `main.go` 启动时通过 `util.InitWechatClients()` 初始化。
+
+### 小程序登录流程
+
+```
+前端 wx.login() → 获取 code
+    ↓
+后端 POST /api/user/wechatMiniLogin {code}
+    ↓
+PowerWeChat app.Auth.Session(code) → openid + session_key
+    ↓
+查找 user_auth (identity_type=wechat_mini, identifier=openid)
+    ├── 未找到 → 自动注册用户 + 创建绑定记录 → isNew=true
+    └── 找到 → 查找关联用户 → isNew=false
+    ↓
+生成 JWT，返回 LoginResp{isNew}
+```
+
+### 公众号登录流程
+
+```
+前端跳转微信 OAuth 授权页 → 用户授权 → 回调获取 code
+    ↓
+后端 POST /api/user/wechatMpLogin {code}
+    ↓
+PowerWeChat app.OAuth.TokenFromCode(code) → openid + access_token
+    ↓
+(可选) app.OAuth.UserFromToken() → 昵称/头像
+    ↓
+查找 user_auth (identity_type=wechat_mp, identifier=openid)
+    ├── 未找到 → 自动注册用户 + 创建绑定记录 → isNew=true
+    └── 找到 → 查找关联用户 → isNew=false
+    ↓
+生成 JWT，返回 LoginResp{isNew}
+```
+
+### 自动注册用户规则
+
+- `email` = `{openid}@{identityType}`（占位，避免 unique 冲突）
+- `nickname` = 微信昵称（如有）或 “微信用户” + 随机6位
+- `password` = 空（微信登录不需要密码，可后续绑定邮箱设置密码）
+- `LoginResp.IsNew` = true，前端可引导用户完善资料
+
+### user_auth 存储字段
+
+| 字段 | 小程序 | 公众号 |
+|------|---------|--------|
+| identity_type | `wechat_mini` | `wechat_mp` |
+| identifier | openid | openid |
+| credential | session_key | OAuth access_token |
+| extra | 空 | 微信用户信息 JSON |
+
+### 绑定/解绑规则
+
+- **绑定**（已登录用户）：`POST /api/user/bindWechatMini` 或 `bindWechatMp`，传 `{code}`
+- **解绑**：`POST /api/user/unbindWechat`，传 `{identityType: "wechat_mini"/"wechat_mp"}`，软删除绑定记录
+- 同一用户每种类型只能绑定一个，同一 openid 只能被一个用户绑定
 
 ---
 
@@ -301,9 +381,9 @@ JWT:
 
 ### 第三方绑定扩展
 
-后续新增微信/QQ绑定时：
-1. 在 `user_auth.go` 中使用已有的 `IdentityType` 常量（wechat_mini/wechat_mp/wechat_app/qq）
-2. 在 `auth_service.go` 中新增对应绑定/解绑方法
+后续新增 QQ 等绑定时：
+1. 在 `user_auth.go` 中使用已有的 `IdentityType` 常量（wechat_app/qq）
+2. 在 `wechat_service.go`（或新建 service）中新增对应绑定/解绑方法
 3. 在 `auth_controller.go` 中新增 Handler + Swagger 注释
 4. 在 `user_route.go` 的 auth 分组中追加路由
 

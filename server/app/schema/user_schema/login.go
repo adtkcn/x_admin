@@ -25,4 +25,5 @@ type LoginResp struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 	ExpiresIn    int    `json:"expiresIn"` // access_token 有效期(秒)
+	IsNew        bool   `json:"isNew"`     // 是否新注册用户（微信登录时自动注册）
 }

@@ -24,6 +24,10 @@ func UserRoute(rg *gin.RouterGroup) {
 	rg.POST("/resetPassword", handle.ResetPassword)           // 邮箱重置密码
 	rg.POST("/resetPhonePassword", handle.ResetPhonePassword) // 手机号重置密码
 
+	// 微信登录（免登录）
+	rg.POST("/wechatMiniLogin", authHandle.WechatMiniLogin) // 小程序登录
+	rg.POST("/wechatMpLogin", authHandle.WechatMpLogin)     // 公众号登录
+
 	// 需要登录的接口
 	auth := rg.Group("/", middleware.UserLoginAuth())
 	{
@@ -35,7 +39,12 @@ func UserRoute(rg *gin.RouterGroup) {
 		auth.POST("/bindPhone", authHandle.BindPhone)     // 绑定手机号（需短信验证码）
 		auth.POST("/unbindPhone", authHandle.UnbindPhone) // 解绑手机号（需邮箱验证码）
 
-		// 第三方绑定列表（微信/QQ等，手机号不在其中）
+		// 微信绑定/解绑
+		auth.POST("/bindWechatMini", authHandle.BindWechatMini) // 绑定小程序
+		auth.POST("/bindWechatMp", authHandle.BindWechatMp)     // 绑定公众号
+		auth.POST("/unbindWechat", authHandle.UnbindWechat)     // 解绑微信
+
+		// 第三方绑定列表
 		auth.GET("/authList", authHandle.GetUserAuthList) // 获取绑定列表
 	}
 }

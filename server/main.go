@@ -11,6 +11,7 @@ import (
 	"x_admin/core"
 	"x_admin/plugin"
 	"x_admin/routes"
+	"x_admin/util"
 
 	_ "x_admin/app/corn"
 
@@ -50,6 +51,9 @@ func main() {
 
 	// 自动迁移用户表
 	core.AutoMigrate(&user_model.User{}, &user_model.UserAuth{})
+
+	// 初始化微信 SDK 客户端（小程序+公众号）
+	util.InitWechatClients()
 
 	// 初始化router
 	router := routes.InitRouter()

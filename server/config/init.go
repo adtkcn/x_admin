@@ -9,14 +9,15 @@ import (
 )
 
 type config struct {
-	APP   *AppConfigStruct
-	DB    *DBConfigStruct
-	REDIS *RedisConfigStruct
-	FILE  *FileConfigStruct
-	GeTui *GeTuiConfigStruct
-	Email *[]EmailConfigStruct
-	Log   *LogConfigStruct
-	JWT   *jwtConfig
+	APP    *AppConfigStruct
+	DB     *DBConfigStruct
+	REDIS  *RedisConfigStruct
+	FILE   *FileConfigStruct
+	GeTui  *GeTuiConfigStruct
+	Email  *[]EmailConfigStruct
+	Log    *LogConfigStruct
+	JWT    *jwtConfig
+	Wechat *wechatConfig
 }
 
 func loadConfig(config config) config {
@@ -45,14 +46,15 @@ func loadConfig(config config) config {
 
 func init() {
 	loadConfig(config{
-		APP:   &AppConfig,
-		DB:    &DBConfig,
-		REDIS: &RedisConfig,
-		FILE:  &FileConfig,
-		GeTui: &GeTuiConfig,
-		Email: &EmailConfig,
-		Log:   &LogConfig,
-		JWT:   &JWTConfig,
+		APP:    &AppConfig,
+		DB:     &DBConfig,
+		REDIS:  &RedisConfig,
+		FILE:   &FileConfig,
+		GeTui:  &GeTuiConfig,
+		Email:  &EmailConfig,
+		Log:    &LogConfig,
+		JWT:    &JWTConfig,
+		Wechat: &WechatConfig,
 	})
 
 	fmt.Printf("AppConfig: %+v\n", AppConfig)
@@ -63,4 +65,5 @@ func init() {
 	fmt.Printf("EmailConfig: %+v\n", EmailConfig)
 	fmt.Printf("LogConfig: %+v\n", LogConfig)
 	fmt.Printf("JWTConfig: %+v\n", JWTConfig)
+	fmt.Printf("WechatConfig: %+v\n", WechatConfig)
 }
