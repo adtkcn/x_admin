@@ -61,7 +61,7 @@ util/
 ├── sms_code.go                      # 短信验证码发送/校验（Redis 存储+频率限制）
 └── wechat.go                        # PowerWeChat 客户端初始化（小程序+公众号）
 
-docs/migration/
+../docs/sql/
 └── add_user_tables.sql              # 手动建表 SQL（备用）
 ```
 

@@ -2,11 +2,12 @@ package corn
 
 import (
 	"time"
-	"x_admin/plugin"
+	"x_admin/app/service/common_service"
 	"x_admin/app/service/corn_service"
 	"x_admin/app/service/monitor_service"
 	"x_admin/app/service/notice_service"
 	"x_admin/core"
+	"x_admin/plugin"
 	"x_admin/util"
 )
 
@@ -106,6 +107,17 @@ func init() {
 		TaskDesc: "清理过期的分片临时目录",
 		TaskFunc: func() {
 			plugin.CleanChunkTmpDir()
+		},
+	})
+
+	// 每天凌晨2点清理上传超过7天且无业务引用的文件
+	FixedTasks.AddTask("CleanOrphanFiles", "0 0 2 * * *", corn_service.Task{
+		Lock:     true,
+		LockTTL:  30 * time.Minute,
+		TaskCode: "CleanOrphanFiles",
+		TaskDesc: "清理超过7天未使用的文件（无业务引用）",
+		TaskFunc: func() {
+			common_service.FileRefService.CleanOrphanFiles(7)
 		},
 	})
 
