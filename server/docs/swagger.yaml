@@ -148,6 +148,9 @@ definitions:
       id:
         description: 历史id
         type: string
+      isShow:
+        description: 是否显示：0隐藏，1显示
+        type: integer
       nodeId:
         description: 节点
         type: string
@@ -600,6 +603,9 @@ definitions:
       deptId:
         description: 部门ID
         type: string
+      email:
+        description: 邮箱(账号)
+        type: string
       id:
         description: 主键
         type: string
@@ -632,9 +638,6 @@ definitions:
       updateTime:
         description: 更新时间
         type: string
-      username:
-        description: 账号
-        type: string
     type: object
   system_schema.SystemAuthAdminSelfOneResp:
     properties:
@@ -646,6 +649,9 @@ definitions:
         type: string
       dept:
         description: 部门
+        type: string
+      email:
+        description: 邮箱(账号)
         type: string
       id:
         description: 主键
@@ -667,9 +673,6 @@ definitions:
         type: string
       updateTime:
         description: 更新时间
-        type: string
-      username:
-        description: 账号
         type: string
     type: object
   system_schema.SystemAuthAdminSelfResp:
@@ -855,6 +858,9 @@ definitions:
       createTime:
         description: 创建时间
         type: string
+      email:
+        description: 登录邮箱
+        type: string
       id:
         description: 主键
         type: string
@@ -867,9 +873,6 @@ definitions:
       status:
         description: '操作状态: [1=成功, 2=失败]'
         type: integer
-      username:
-        description: 登录账号
-        type: string
     type: object
   system_schema.SystemLogOperateResp:
     properties:
@@ -878,6 +881,9 @@ definitions:
         type: string
       createTime:
         description: 创建时间
+        type: string
+      email:
+        description: 邮箱(账号)
         type: string
       endTime:
         description: 结束时间
@@ -915,14 +921,104 @@ definitions:
       url:
         description: 请求地址
         type: string
-      username:
-        description: 用户账号
-        type: string
     type: object
   system_schema.SystemLoginResp:
     properties:
       token:
         type: string
+    type: object
+  system_schema.SystemNoticeResp:
+    properties:
+      content:
+        description: 正文
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      isRead:
+        description: 0未读 1已读
+        type: integer
+      readTime:
+        description: 阅读时间
+        type: string
+      receiverId:
+        description: 接收人ID
+        type: string
+      senderId:
+        description: 发送人ID
+        type: string
+      title:
+        description: 标题
+        type: string
+      type:
+        description: 通知类型
+        type: string
+      url:
+        description: 跳转URL
+        type: string
+    type: object
+  system_schema.SystemNoticeSettingResp:
+    properties:
+      emailEnabled:
+        description: 邮件开关
+        type: integer
+      siteEnabled:
+        description: 站内信开关
+        type: integer
+    type: object
+  system_schema.SystemNoticeUnreadCountResp:
+    properties:
+      count:
+        description: 未读数量
+        type: integer
+    type: object
+  user_schema.LoginResp:
+    properties:
+      accessToken:
+        type: string
+      expiresIn:
+        description: access_token 有效期(秒)
+        type: integer
+      isNew:
+        description: 是否新注册用户（微信登录时自动注册）
+        type: boolean
+      refreshToken:
+        type: string
+    type: object
+  user_schema.UserAuthItem:
+    properties:
+      createTime:
+        type: string
+      identifier:
+        type: string
+      identityType:
+        type: string
+    type: object
+  user_schema.UserInfoResp:
+    properties:
+      avatar:
+        type: string
+      createTime:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      lastLoginIp:
+        type: string
+      lastLoginTime:
+        type: string
+      nickname:
+        type: string
+      phone:
+        type: string
+      phoneCode:
+        type: string
+      status:
+        type: integer
     type: object
 info:
   contact:
@@ -1309,138 +1405,6 @@ paths:
       summary: 上传文件
       tags:
       - common_upload-上传
-  /api/admin/common/uploadChunk/checkFileExist:
-    get:
-      description: 检查文件是否已存在
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 文件MD5
-        in: query
-        name: fileMd5
-        required: true
-        type: string
-      - description: 文件名
-        in: query
-        name: fileName
-        required: true
-        type: string
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 检查文件是否存在
-      tags:
-      - common_uploadChunk-分片上传
-  /api/admin/common/uploadChunk/hasChunk:
-    get:
-      description: 检查已上传的分片列表
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 文件MD5
-        in: query
-        name: fileMd5
-        required: true
-        type: string
-      - description: 分片大小
-        in: query
-        name: chunkSize
-        required: true
-        type: string
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 检查已上传分片
-      tags:
-      - common_uploadChunk-分片上传
-  /api/admin/common/uploadChunk/merge:
-    post:
-      description: 合并所有分片为完整文件
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 文件MD5
-        in: body
-        name: fileMd5
-        required: true
-        schema:
-          type: string
-      - description: 文件名
-        in: body
-        name: fileName
-        required: true
-        schema:
-          type: string
-      - description: 分片数量
-        in: body
-        name: chunkCount
-        required: true
-        schema:
-          type: integer
-      - description: 分片大小
-        in: body
-        name: chunkSize
-        required: true
-        schema:
-          type: integer
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 合并分片
-      tags:
-      - common_uploadChunk-分片上传
-  /api/admin/common/uploadChunk/upload:
-    post:
-      description: 上传文件分片
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 分片文件
-        in: formData
-        name: chunk
-        required: true
-        type: file
-      - description: 分片大小
-        in: formData
-        name: chunkSize
-        required: true
-        type: string
-      - description: 分片序号
-        in: formData
-        name: index
-        required: true
-        type: string
-      - description: 文件MD5
-        in: formData
-        name: fileMd5
-        required: true
-        type: string
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 上传分片
-      tags:
-      - common_uploadChunk-分片上传
   /api/admin/flow/flow_apply/add:
     post:
       parameters:
@@ -1489,41 +1453,6 @@ paths:
       summary: 申请流程新增
       tags:
       - flow_apply-申请流程
-  /api/admin/flow/flow_apply/back:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 申请id
-        in: body
-        name: applyId
-        required: true
-        schema:
-          type: string
-      - description: 审批节点id
-        in: body
-        name: historyId
-        required: true
-        schema:
-          type: string
-      - description: 备注
-        in: body
-        name: Remark
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 流程历史-拒绝审批
-      tags:
-      - flow_history-流程历史
   /api/admin/flow/flow_apply/del:
     post:
       parameters:
@@ -1697,40 +1626,6 @@ paths:
       summary: 申请流程列表
       tags:
       - flow_apply-申请流程
-  /api/admin/flow/flow_apply/pass:
-    post:
-      parameters:
-      - description: token
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 申请id
-        in: body
-        name: applyId
-        required: true
-        schema:
-          type: string
-      - description: 下一个节点的审批用户id
-        in: body
-        name: nextNodeAdminId
-        schema:
-          type: string
-      - description: 通过备注
-        in: body
-        name: passRemark
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 成功
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 流程历史-通过审批
-      tags:
-      - flow_history-流程历史
   /api/admin/flow/flow_history/add:
     post:
       parameters:
@@ -1809,6 +1704,41 @@ paths:
       summary: 流程历史新增
       tags:
       - flow_history-流程历史
+  /api/admin/flow/flow_history/back:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        required: true
+        schema:
+          type: string
+      - description: 审批节点id
+        in: body
+        name: historyId
+        required: true
+        schema:
+          type: string
+      - description: 备注
+        in: body
+        name: remark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史-拒绝审批
+      tags:
+      - flow_history-流程历史
   /api/admin/flow/flow_history/del:
     post:
       parameters:
@@ -1857,6 +1787,30 @@ paths:
                   $ref: '#/definitions/flow_schema.FlowHistoryResp'
               type: object
       summary: 流程历史详情
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/done_hidden:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 历史id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 已处理页面隐藏（软删除）
       tags:
       - flow_history-流程历史
   /api/admin/flow/flow_history/edit:
@@ -2093,6 +2047,40 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: 获取下一个审批节点，中间可能存在系统任务节点和网关
+      tags:
+      - flow_history-流程历史
+  /api/admin/flow/flow_history/pass:
+    post:
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 申请id
+        in: body
+        name: applyId
+        required: true
+        schema:
+          type: string
+      - description: 下一个节点的审批用户id
+        in: body
+        name: nextNodeAdminId
+        schema:
+          type: string
+      - description: 通过备注
+        in: body
+        name: passRemark
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 流程历史-通过审批
       tags:
       - flow_history-流程历史
   /api/admin/flow/flow_template/add:
@@ -4245,9 +4233,9 @@ paths:
           items:
             type: string
           type: array
-      - description: 账号
+      - description: 邮箱(账号)
         in: body
-        name: username
+        name: email
         required: true
         schema:
           type: string
@@ -4391,9 +4379,9 @@ paths:
           items:
             type: string
           type: array
-      - description: 账号
+      - description: 邮箱(账号)
         in: body
-        name: username
+        name: email
         required: true
         schema:
           type: string
@@ -4440,9 +4428,9 @@ paths:
         name: token
         required: true
         type: string
-      - description: 账号
+      - description: 邮箱(账号)
         in: query
-        name: username
+        name: email
         type: string
       - description: 昵称
         in: query
@@ -4499,9 +4487,9 @@ paths:
         name: pageSize
         required: true
         type: integer
-      - description: 账号
+      - description: 邮箱(账号)
         in: query
-        name: username
+        name: email
         type: string
       - description: 昵称
         in: query
@@ -4538,9 +4526,9 @@ paths:
         name: token
         required: true
         type: string
-      - description: 账号
+      - description: 邮箱(账号)
         in: query
-        name: username
+        name: email
         type: string
       - description: 昵称
         in: query
@@ -4587,6 +4575,29 @@ paths:
       summary: 管理员信息
       tags:
       - system_admin-管理员
+  /api/admin/system/admin/sendEmailCode:
+    post:
+      description: 修改邮箱时发送验证码到新邮箱
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 目标邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 发送邮箱验证码
+      tags:
+      - system_admin-管理员
   /api/admin/system/admin/upInfo:
     post:
       description: 当前管理员更新自己的信息
@@ -4605,6 +4616,16 @@ paths:
       - description: 头像
         in: body
         name: avatar
+        schema:
+          type: string
+      - description: 邮箱
+        in: body
+        name: email
+        schema:
+          type: string
+      - description: 邮箱验证码
+        in: body
+        name: emailCode
         schema:
           type: string
       - description: 密码
@@ -4844,6 +4865,54 @@ paths:
       summary: 部门列表
       tags:
       - system_dept-部门
+  /api/admin/system/forgot-pwd/reset:
+    post:
+      description: 使用邮箱验证码重置密码
+      parameters:
+      - description: 注册邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 6位验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      - description: 新密码(MD5加密后)
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 忘记密码-重置密码
+      tags:
+      - system_login-登录
+  /api/admin/system/forgot-pwd/send-code:
+    post:
+      description: 向注册邮箱发送密码重置验证码
+      parameters:
+      - description: 注册邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 忘记密码-发送验证码
+      tags:
+      - system_login-登录
   /api/admin/system/log/login:
     get:
       description: 获取登录日志列表
@@ -4863,9 +4932,9 @@ paths:
         name: pageSize
         required: true
         type: integer
-      - description: 登录账号
+      - description: 邮箱(账号)
         in: query
-        name: username
+        name: email
         type: string
       - description: '执行状态: [1=成功, 2=失败]'
         in: query
@@ -4916,9 +4985,9 @@ paths:
         name: pageSize
         required: true
         type: integer
-      - description: 用户账号
+      - description: 邮箱(账号)
         in: query
-        name: username
+        name: email
         type: string
       - description: 操作标题
         in: query
@@ -4970,9 +5039,9 @@ paths:
     post:
       description: 管理员登录系统
       parameters:
-      - description: 账号
+      - description: 邮箱(账号)
         in: body
-        name: username
+        name: email
         required: true
         schema:
           type: string
@@ -5301,6 +5370,187 @@ paths:
       summary: 菜单路由
       tags:
       - system_menu-菜单
+  /api/admin/system/notice/del:
+    post:
+      description: 删除指定通知
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 通知ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除通知
+      tags:
+      - system_notice-通知
+  /api/admin/system/notice/list:
+    get:
+      description: 获取当前管理员的通知列表
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: pageNo
+        required: true
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 通知类型
+        in: query
+        name: type
+        type: string
+      - description: 0未读 1已读 -1全部
+        in: query
+        name: isRead
+        type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResp'
+                  - properties:
+                      lists:
+                        $ref: '#/definitions/system_schema.SystemNoticeResp'
+                    type: object
+              type: object
+      summary: 通知列表
+      tags:
+      - system_notice-通知
+  /api/admin/system/notice/read:
+    post:
+      description: 标记单条通知为已读
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 通知ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 标记已读
+      tags:
+      - system_notice-通知
+  /api/admin/system/notice/read_all:
+    post:
+      description: 将当前管理员所有未读通知标记为已读
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 全部已读
+      tags:
+      - system_notice-通知
+  /api/admin/system/notice/setting:
+    get:
+      description: 获取当前管理员的渠道通知偏好
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemNoticeSettingResp'
+              type: object
+      summary: 获取通知偏好
+      tags:
+      - system_notice-通知
+  /api/admin/system/notice/setting/save:
+    post:
+      description: 保存当前管理员的渠道通知偏好
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: '站内信: 0关闭 1开启'
+        in: body
+        name: siteEnabled
+        required: true
+        schema:
+          type: integer
+      - description: '邮件: 0关闭 1开启'
+        in: body
+        name: emailEnabled
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 保存通知偏好
+      tags:
+      - system_notice-通知
+  /api/admin/system/notice/unread_count:
+    get:
+      description: 获取当前管理员的未读通知数量
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system_schema.SystemNoticeUnreadCountResp'
+              type: object
+      summary: 未读数量
+      tags:
+      - system_notice-通知
   /api/admin/system/post/add:
     post:
       description: 新增岗位
@@ -6526,6 +6776,536 @@ paths:
       summary: swagger文档数据
       tags:
       - 公共接口
+  /api/user/authList:
+    get:
+      description: 获取当前用户所有第三方绑定信息（不含手机号，手机号在用户信息中）
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/user_schema.UserAuthItem'
+                  type: array
+              type: object
+      summary: 获取绑定列表
+      tags:
+      - user_auth-用户绑定
+  /api/user/bindPhone:
+    post:
+      description: 绑定手机号到当前用户（需短信验证码）
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 手机号
+        in: body
+        name: phone
+        required: true
+        schema:
+          type: string
+      - description: 区号(默认86)
+        in: body
+        name: phoneCode
+        schema:
+          type: string
+      - description: 短信验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 绑定手机号
+      tags:
+      - user_auth-用户绑定
+  /api/user/bindWechatMini:
+    post:
+      description: 绑定微信小程序到当前已登录用户
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 小程序 wx.login code
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 绑定小程序
+      tags:
+      - user_wechat-微信登录
+  /api/user/bindWechatMp:
+    post:
+      description: 绑定微信公众号到当前已登录用户
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 微信 OAuth code
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 绑定公众号
+      tags:
+      - user_wechat-微信登录
+  /api/user/info:
+    get:
+      description: 获取当前登录用户信息
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user_schema.UserInfoResp'
+              type: object
+      summary: 获取用户信息
+      tags:
+      - user-用户系统
+    post:
+      description: 更新昵称、头像等
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 昵称
+        in: body
+        name: nickname
+        schema:
+          type: string
+      - description: 头像
+        in: body
+        name: avatar
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 更新用户信息
+      tags:
+      - user-用户系统
+  /api/user/kickOffline:
+    post:
+      description: 使当前用户所有旧token失效（修改密码后建议调用）
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 踢人下线
+      tags:
+      - user-用户系统
+  /api/user/login:
+    post:
+      description: 邮箱+密码登录，返回JWT token对
+      parameters:
+      - description: 邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user_schema.LoginResp'
+              type: object
+      summary: 邮箱登录
+      tags:
+      - user-用户系统
+  /api/user/phoneCodeLogin:
+    post:
+      description: 手机号+短信验证码登录
+      parameters:
+      - description: 手机号
+        in: body
+        name: phone
+        required: true
+        schema:
+          type: string
+      - description: 区号(默认86)
+        in: body
+        name: phoneCode
+        schema:
+          type: string
+      - description: 6位验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user_schema.LoginResp'
+              type: object
+      summary: 手机号+短信验证码登录
+      tags:
+      - user-用户系统
+  /api/user/phoneLogin:
+    post:
+      description: 手机号+密码登录，返回JWT token对
+      parameters:
+      - description: 手机号
+        in: body
+        name: phone
+        required: true
+        schema:
+          type: string
+      - description: 区号(默认86)
+        in: body
+        name: phoneCode
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user_schema.LoginResp'
+              type: object
+      summary: 手机号+密码登录
+      tags:
+      - user-用户系统
+  /api/user/refresh:
+    post:
+      description: 使用refresh_token换取新的token对
+      parameters:
+      - description: refreshToken
+        in: body
+        name: refreshToken
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user_schema.LoginResp'
+              type: object
+      summary: 刷新token
+      tags:
+      - user-用户系统
+  /api/user/register:
+    post:
+      description: 邮箱+密码+验证码注册
+      parameters:
+      - description: 邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 密码(6-32位)
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: 6位验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      - description: 昵称
+        in: body
+        name: nickname
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 用户注册
+      tags:
+      - user-用户系统
+  /api/user/resetPassword:
+    post:
+      description: 使用邮箱验证码重置密码
+      parameters:
+      - description: 邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 6位验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      - description: 新密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 邮箱重置密码
+      tags:
+      - user-用户系统
+  /api/user/resetPhonePassword:
+    post:
+      description: 使用短信验证码重置密码
+      parameters:
+      - description: 手机号
+        in: body
+        name: phone
+        required: true
+        schema:
+          type: string
+      - description: 6位验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      - description: 新密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 手机号重置密码
+      tags:
+      - user-用户系统
+  /api/user/sendCode:
+    post:
+      description: 发送注册/重置密码/解绑手机邮箱验证码
+      parameters:
+      - description: 邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 场景:register/reset/unbind
+        in: body
+        name: scene
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 发送邮箱验证码
+      tags:
+      - user-用户系统
+  /api/user/sendSmsCode:
+    post:
+      description: 发送绑定手机/短信登录/手机重置密码短信验证码
+      parameters:
+      - description: 手机号
+        in: body
+        name: phone
+        required: true
+        schema:
+          type: string
+      - description: 场景:sms_bind/sms_login/sms_reset
+        in: body
+        name: scene
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 发送短信验证码
+      tags:
+      - user-用户系统
+  /api/user/unbindPhone:
+    post:
+      description: 解绑当前用户手机号（需邮箱验证码确认身份）
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 邮箱
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 邮箱验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 解绑手机号
+      tags:
+      - user_auth-用户绑定
+  /api/user/unbindWechat:
+    post:
+      description: '解绑微信小程序或公众号（identityType: wechat_mini / wechat_mp）'
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: wechat_mini/wechat_mp
+        in: body
+        name: identityType
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 解绑微信
+      tags:
+      - user_wechat-微信登录
+  /api/user/wechatMiniLogin:
+    post:
+      description: 微信小程序登录（wx.login code → openid → 自动注册/登录），返回JWT token对
+      parameters:
+      - description: 小程序 wx.login 返回的 code
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功(isNew=true表示新注册用户)
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user_schema.LoginResp'
+              type: object
+      summary: 小程序登录
+      tags:
+      - user_wechat-微信登录
+  /api/user/wechatMpLogin:
+    post:
+      description: 微信公众号 OAuth 登录（前端跳转微信授权页获取 code → openid → 自动注册/登录）
+      parameters:
+      - description: 微信 OAuth 回调返回的 code
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: 成功(isNew=true表示新注册用户)
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user_schema.LoginResp'
+              type: object
+      summary: 公众号登录
+      tags:
+      - user_wechat-微信登录
   /api/ws:
     get:
       parameters:

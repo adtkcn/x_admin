@@ -33,7 +33,7 @@ type FlowHistoryHandler struct {
 // @Param		formValue			query		string																false	"表单值"
 // @Param		passStatus			query		int																	false	"通过状态：1待处理，2通过，3拒绝"
 // @Param		passRemark			query		string																false	"通过备注"
-// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]FlowHistoryResp}}	"成功"
+// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]flow_schema.FlowHistoryResp}}	"成功"
 // @Router		/api/admin/flow/flow_history/list [get]
 func (hd FlowHistoryHandler) List(c *gin.Context) {
 	var page request.PageReq
@@ -54,7 +54,7 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 // @Summary	流程历史列表-所有
 // @Tags		flow_history-流程历史
 // @Produce	json
-// @Success	200	{object}	response.Response{data=FlowHistoryResp}	"成功"
+// @Success	200	{object}	response.Response{data=flow_schema.FlowHistoryResp}	"成功"
 // @Router		/api/admin/flow/flow_history/list_all [get]
 func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 	var listReq flow_schema.FlowHistoryListReq
@@ -70,7 +70,7 @@ func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 // @Produce	json
 // @Param		token	header		string									true	"token"
 // @Param		id		query		string									false	"历史id"
-// @Success	200		{object}	response.Response{data=FlowHistoryResp}	"成功"
+// @Success	200		{object}	response.Response{data=flow_schema.FlowHistoryResp}	"成功"
 // @Router		/api/admin/flow/flow_history/detail [get]
 func (hd FlowHistoryHandler) Detail(c *gin.Context) {
 	var detailReq flow_schema.FlowHistoryDetailReq
@@ -169,11 +169,11 @@ func (hd FlowHistoryHandler) DoneHidden(c *gin.Context) {
 //	@Summary	流程历史-通过审批
 //	@Tags		flow_history-流程历史
 //	@Produce	json
-//	@Param		token				header		string				true	"token"
-//	@Param		applyId				body		string				true	"申请id"
-//	@Param		nextNodeAdminId		body		string				false	"下一个节点的审批用户id"
-//	@Param		passRemark			body		string				false	"通过备注"
-//	@Success	200					{object}	response.Response	"成功"
+//	@Param		token			header		string				true	"token"
+//	@Param		applyId			body		string				true	"申请id"
+//	@Param		nextNodeAdminId	body		string				false	"下一个节点的审批用户id"
+//	@Param		passRemark		body		string				false	"通过备注"
+//	@Success	200				{object}	response.Response	"成功"
 //	@Router		/api/admin/flow/flow_history/pass [post]
 func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	var pass flow_schema.PassReq
@@ -208,7 +208,7 @@ func (hd FlowHistoryHandler) Back(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, err)
 }
 
-// @Summary	 获取下一个审批节点，中间可能存在系统任务节点和网关
+// @Summary	获取下一个审批节点，中间可能存在系统任务节点和网关
 // @Tags		flow_history-流程历史
 // @Produce	json
 // @Param		token	header		string				true	"token"

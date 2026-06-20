@@ -42,7 +42,7 @@ type SystemForgotPwdSendCodeReq struct {
 
 // SystemForgotPwdResetReq 忘记密码-重置密码请求
 type SystemForgotPwdResetReq struct {
-	Email    string `json:"email" binding:"required,email,min=5,max=200"`   // 注册邮箱
-	Code     string `json:"code" binding:"required,len=6"`                  // 6位验证码
+	Email    string `json:"email" binding:"required,email,min=5,max=200"` // 注册邮箱
+	Code     string `json:"code" binding:"required,len=6"`                // 6位验证码
 	Password string `json:"password" binding:"required,min=6,max=32"`     // 新密码(MD5加密后)
 }

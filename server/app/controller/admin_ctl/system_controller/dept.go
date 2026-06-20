@@ -15,7 +15,7 @@ type DeptHandler struct{}
 // @Summary		部门所有
 // @Description	获取所有部门列表(不分页)
 // @Tags			system_dept-部门
-// @Param			token	header		string					true	"token"
+// @Param			token	header		string														true	"token"
 // @Success		200		{object}	response.Response{data=[]system_schema.SystemAuthDeptResp}	"成功"
 // @Router			/api/admin/system/dept/all [get]
 func (dh DeptHandler) All(c *gin.Context) {
@@ -26,10 +26,10 @@ func (dh DeptHandler) All(c *gin.Context) {
 // @Summary		部门列表
 // @Description	获取部门列表
 // @Tags			system_dept-部门
-// @Param			token		header		string					true	"token"
-// @Param			name		query		string					false	"部门名称"
-// @Param			isStop		query		int8					false	"是否停用: [0=否, 1=是]"
-// @Success		200			{object}	response.Response{data=[]system_schema.SystemAuthDeptResp}	"成功"
+// @Param			token	header		string														true	"token"
+// @Param			name	query		string														false	"部门名称"
+// @Param			isStop	query		int8														false	"是否停用: [0=否, 1=是]"
+// @Success		200		{object}	response.Response{data=[]system_schema.SystemAuthDeptResp}	"成功"
 // @Router			/api/admin/system/dept/list [get]
 func (dh DeptHandler) List(c *gin.Context) {
 	var listReq system_schema.SystemAuthDeptListReq
@@ -43,8 +43,8 @@ func (dh DeptHandler) List(c *gin.Context) {
 // @Summary		部门详情
 // @Description	获取部门详情
 // @Tags			system_dept-部门
-// @Param			token	header		string					true	"token"
-// @Param			id		query		string					true	"主键"
+// @Param			token	header		string														true	"token"
+// @Param			id		query		string														true	"主键"
 // @Success		200		{object}	response.Response{data=system_schema.SystemAuthDeptResp}	"成功"
 // @Router			/api/admin/system/dept/detail [get]
 func (dh DeptHandler) Detail(c *gin.Context) {
@@ -59,15 +59,15 @@ func (dh DeptHandler) Detail(c *gin.Context) {
 // @Summary		部门新增
 // @Description	新增部门
 // @Tags			system_dept-部门
-// @Param			token	header		string					true	"token"
-// @Param			pid		body		string					false	"部门父级"
-// @Param			name	body		string					true	"部门名称"
-// @Param			dutyId	body		string					false	"负责人id"
-// @Param			duty	body		string					false	"负责人"
-// @Param			mobile	body		string					false	"联系电话"
-// @Param			isStop	body		uint8					false	"是否停用: [0=否, 1=是]"
-// @Param			sort	body		int						false	"排序编号"
-// @Success		200		{object}	response.Response		"成功"
+// @Param			token	header		string				true	"token"
+// @Param			pid		body		string				false	"部门父级"
+// @Param			name	body		string				true	"部门名称"
+// @Param			dutyId	body		string				false	"负责人id"
+// @Param			duty	body		string				false	"负责人"
+// @Param			mobile	body		string				false	"联系电话"
+// @Param			isStop	body		uint8				false	"是否停用: [0=否, 1=是]"
+// @Param			sort	body		int					false	"排序编号"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/dept/add [post]
 func (dh DeptHandler) Add(c *gin.Context) {
 	var addReq system_schema.SystemAuthDeptAddReq
@@ -81,16 +81,16 @@ func (dh DeptHandler) Add(c *gin.Context) {
 // @Summary		部门编辑
 // @Description	编辑部门
 // @Tags			system_dept-部门
-// @Param			token	header		string					true	"token"
-// @Param			id		body		string					true	"主键"
-// @Param			pid		body		string					false	"部门父级"
-// @Param			name	body		string					true	"部门名称"
-// @Param			dutyId	body		string					false	"负责人id"
-// @Param			duty	body		string					false	"负责人"
-// @Param			mobile	body		string					false	"联系电话"
-// @Param			isStop	body		uint8					false	"是否停用: [0=否, 1=是]"
-// @Param			sort	body		int						false	"排序编号"
-// @Success		200		{object}	response.Response		"成功"
+// @Param			token	header		string				true	"token"
+// @Param			id		body		string				true	"主键"
+// @Param			pid		body		string				false	"部门父级"
+// @Param			name	body		string				true	"部门名称"
+// @Param			dutyId	body		string				false	"负责人id"
+// @Param			duty	body		string				false	"负责人"
+// @Param			mobile	body		string				false	"联系电话"
+// @Param			isStop	body		uint8				false	"是否停用: [0=否, 1=是]"
+// @Param			sort	body		int					false	"排序编号"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/dept/edit [post]
 func (dh DeptHandler) Edit(c *gin.Context) {
 	var editReq system_schema.SystemAuthDeptEditReq
@@ -104,9 +104,9 @@ func (dh DeptHandler) Edit(c *gin.Context) {
 // @Summary		部门删除
 // @Description	删除部门
 // @Tags			system_dept-部门
-// @Param			token	header		string					true	"token"
-// @Param			id		body		string					true	"主键"
-// @Success		200		{object}	response.Response		"成功"
+// @Param			token	header		string				true	"token"
+// @Param			id		body		string				true	"主键"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/dept/del [post]
 func (dh DeptHandler) Del(c *gin.Context) {
 	var delReq system_schema.SystemAuthDeptDelReq

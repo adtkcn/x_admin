@@ -97,16 +97,16 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 // @Summary	监控-错误列新增
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param			token		header		string				true	"token"
-// @Param			ProjectKey	body		string				false	"项目key"
-// @Param			ClientId	body		string				false	"sdk生成的客户端id"
-// @Param			UserId		body		string				false	"用户id"
-// @Param			EventType	body		string				false	"事件类型"
-// @Param			Path		body		string				false	"URL地址"
-// @Param			Message		body		string				false	"错误消息"
-// @Param			Stack		body		string				false	"错误堆栈"
-// @Param			Width		body		int					false	"屏幕宽度"
-// @Param			Height		body		int					false	"屏幕高度"
+// @Param		token		header		string				true	"token"
+// @Param		ProjectKey	body		string				false	"项目key"
+// @Param		ClientId	body		string				false	"sdk生成的客户端id"
+// @Param		UserId		body		string				false	"用户id"
+// @Param		EventType	body		string				false	"事件类型"
+// @Param		Path		body		string				false	"URL地址"
+// @Param		Message		body		string				false	"错误消息"
+// @Param		Stack		body		string				false	"错误堆栈"
+// @Param		Width		body		int					false	"屏幕宽度"
+// @Param		Height		body		int					false	"屏幕高度"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_error/add [post]
 func (hd *MonitorErrorHandler) Add(c *gin.Context) {

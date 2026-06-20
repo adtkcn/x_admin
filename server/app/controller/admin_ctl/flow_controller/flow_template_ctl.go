@@ -16,16 +16,16 @@ type FlowTemplateHandler struct {
 // @Summary	流程模板列表
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		token			header		string																true	"token"
-// @Param		pageNo			query		int																	true	"页码"
-// @Param		pageSize		query		int																	true	"每页数量"
-// @Param		flowName		query		string																false	"流程名称"
-// @Param		flowGroup		query		int																	false	"流程分类"
-// @Param		flowRemark		query		string																false	"流程描述"
-// @Param			flowFormData		query		string																false	"表单配置"
-// @Param			flowProcessData		query		string																false	"流程配置"
-// @Param			flowProcessDataList	query		string																false	"流程配置list数据"
-// @Success	200				{object}	response.Response{data=response.PageResp{lists=[]FlowTemplateResp}}	"成功"
+// @Param		token				header		string																true	"token"
+// @Param		pageNo				query		int																	true	"页码"
+// @Param		pageSize			query		int																	true	"每页数量"
+// @Param		flowName			query		string																false	"流程名称"
+// @Param		flowGroup			query		int																	false	"流程分类"
+// @Param		flowRemark			query		string																false	"流程描述"
+// @Param		flowFormData		query		string																false	"表单配置"
+// @Param		flowProcessData		query		string																false	"流程配置"
+// @Param		flowProcessDataList	query		string																false	"流程配置list数据"
+// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]FlowTemplateResp}}	"成功"
 // @Router		/api/admin/flow/flow_template/list [get]
 func (hd FlowTemplateHandler) List(c *gin.Context) {
 	var page request.PageReq

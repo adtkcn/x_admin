@@ -75,8 +75,8 @@ func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 // @Summary	监控-客户端信息错误用户列表
 // @Tags		monitor_client-监控-客户端信息
 // @Produce	json
-// @Param		token	header		string	true	"token"
-// @Param		Id		query		string	false	"uuid"
+// @Param		token	header		string				true	"token"
+// @Param		Id		query		string				false	"uuid"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_client/error_users [get]
 func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {

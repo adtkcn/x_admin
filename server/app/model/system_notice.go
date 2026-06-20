@@ -38,10 +38,10 @@ func (m *SystemNotice) BeforeCreate(tx *gorm.DB) (err error) {
 
 // SystemNoticeSetting 用户通知渠道偏好
 type SystemNoticeSetting struct {
-	ID        string      `gorm:"primarykey;type:char(36);comment:'UUIDv7'" json:"id"`
-	AdminID   string      `gorm:"not null;uniqueIndex:uk_admin_channel;type:char(36);comment:'用户ID'" json:"adminId"`
-	Channel   string      `gorm:"not null;uniqueIndex:uk_admin_channel;type:varchar(32);comment:'渠道: site/email/app'" json:"channel"`
-	IsEnabled uint8       `gorm:"not null;default:0;comment:'0关闭 1开启'" json:"isEnabled"`
+	ID         string      `gorm:"primarykey;type:char(36);comment:'UUIDv7'" json:"id"`
+	AdminID    string      `gorm:"not null;uniqueIndex:uk_admin_channel;type:char(36);comment:'用户ID'" json:"adminId"`
+	Channel    string      `gorm:"not null;uniqueIndex:uk_admin_channel;type:varchar(32);comment:'渠道: site/email/app'" json:"channel"`
+	IsEnabled  uint8       `gorm:"not null;default:0;comment:'0关闭 1开启'" json:"isEnabled"`
 	CreateTime x_null.Time `gorm:"autoCreateTime;not null;comment:'创建时间'" json:"createTime"`
 	UpdateTime x_null.Time `gorm:"autoUpdateTime;not null;comment:'更新时间'" json:"updateTime"`
 }

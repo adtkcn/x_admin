@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"x_admin/config"
 	"x_admin/core"
+	"x_admin/core/ws"
 	"x_admin/util"
-	"x_admin/util/ws_util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -41,7 +41,7 @@ func WsHandler(c *gin.Context) {
 		return
 	}
 
-	client := ws_util.NewClient(uuid, adminId, roomID, conn, core.Ws)
+	client := ws.NewClient(uuid, adminId, roomID, conn, core.Ws)
 	core.Ws.Register <- client
 
 	// 启动读写协程

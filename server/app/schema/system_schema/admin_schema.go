@@ -20,7 +20,7 @@ type SystemAuthAdminAddReq struct {
 	PostId  string   `form:"postId" binding:""`  // 岗位ID
 	RoleIds []string `form:"roleIds" binding:""` // 角色ID列表
 
-	Email    string `form:"email" binding:"required,min=5,max=200"` // 邮箱(账号)
+	Email    string `form:"email" binding:"required,min=5,max=200"`   // 邮箱(账号)
 	Nickname string `form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Password string `form:"password" binding:"required"`              // 密码
 	Avatar   string `form:"avatar" binding:""`                        // 头像

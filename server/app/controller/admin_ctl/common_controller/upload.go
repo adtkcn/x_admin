@@ -16,12 +16,12 @@ type UploadHandler struct{}
 // @Summary		文件预上传
 // @Description	文件预上传检查
 // @Tags			common_upload-上传
-// @Param			token		header		string						true	"token"
-// @Param			md5			body		string						true	"文件MD5"
-// @Param			fileName	body		string						true	"文件名"
-// @Param			fileSize	body		int64						true	"文件大小"
-// @Param			cid			body		string						false	"分类ID"
-// @Success		200			{object}	response.Response			"成功"
+// @Param			token		header		string				true	"token"
+// @Param			md5			body		string				true	"文件MD5"
+// @Param			fileName	body		string				true	"文件名"
+// @Param			fileSize	body		int64				true	"文件大小"
+// @Param			cid			body		string				false	"分类ID"
+// @Success		200			{object}	response.Response	"成功"
 // @Router			/api/admin/common/upload/preUpload [post]
 func (uh UploadHandler) PreUploadFile(c *gin.Context) {
 	// md5,fileName,fileSize,cid
@@ -37,9 +37,9 @@ func (uh UploadHandler) PreUploadFile(c *gin.Context) {
 // @Summary		上传文件
 // @Description	上传文件
 // @Tags			common_upload-上传
-// @Param			token	header		string						true	"token"
-// @Param			cid		body		string						false	"分类ID"
-// @Param			file	formData	file						true	"文件"
+// @Param			token	header		string														true	"token"
+// @Param			cid		body		string														false	"分类ID"
+// @Param			file	formData	file														true	"文件"
 // @Success		200		{object}	response.Response{data=common_schema.CommonUploadFileResp}	"成功"
 // @Router			/api/admin/common/upload/upload [post]
 func (uh UploadHandler) UploadFile(c *gin.Context) {

@@ -1,4 +1,4 @@
-﻿{
+{
     "swagger": "2.0",
     "info": {
         "description": "x_admin后台管理系统",
@@ -600,202 +600,6 @@
                 }
             }
         },
-        "/api/admin/common/uploadChunk/checkFileExist": {
-            "get": {
-                "description": "检查文件是否已存在",
-                "tags": [
-                    "common_uploadChunk-分片上传"
-                ],
-                "summary": "检查文件是否存在",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "文件MD5",
-                        "name": "fileMd5",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "文件名",
-                        "name": "fileName",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/common/uploadChunk/hasChunk": {
-            "get": {
-                "description": "检查已上传的分片列表",
-                "tags": [
-                    "common_uploadChunk-分片上传"
-                ],
-                "summary": "检查已上传分片",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "文件MD5",
-                        "name": "fileMd5",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "分片大小",
-                        "name": "chunkSize",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/common/uploadChunk/merge": {
-            "post": {
-                "description": "合并所有分片为完整文件",
-                "tags": [
-                    "common_uploadChunk-分片上传"
-                ],
-                "summary": "合并分片",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "文件MD5",
-                        "name": "fileMd5",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "文件名",
-                        "name": "fileName",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "分片数量",
-                        "name": "chunkCount",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "分片大小",
-                        "name": "chunkSize",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/common/uploadChunk/upload": {
-            "post": {
-                "description": "上传文件分片",
-                "tags": [
-                    "common_uploadChunk-分片上传"
-                ],
-                "summary": "上传分片",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "file",
-                        "description": "分片文件",
-                        "name": "chunk",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "分片大小",
-                        "name": "chunkSize",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "分片序号",
-                        "name": "index",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "文件MD5",
-                        "name": "fileMd5",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/flow/flow_apply/add": {
             "post": {
                 "produces": [
@@ -859,60 +663,6 @@
                         "in": "body",
                         "schema": {
                             "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/flow/flow_apply/back": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史-拒绝审批",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "申请id",
-                        "name": "applyId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "审批节点id",
-                        "name": "historyId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "备注",
-                        "name": "Remark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 ],
@@ -1204,59 +954,6 @@
                 }
             }
         },
-        "/api/admin/flow/flow_apply/pass": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "flow_history-流程历史"
-                ],
-                "summary": "流程历史-通过审批",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "申请id",
-                        "name": "applyId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "下一个节点的审批用户id",
-                        "name": "nextNodeAdminId",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "通过备注",
-                        "name": "passRemark",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/flow/flow_history/add": {
             "post": {
                 "produces": [
@@ -1381,6 +1078,60 @@
                 }
             }
         },
+        "/api/admin/flow/flow_history/back": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史-拒绝审批",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "审批节点id",
+                        "name": "historyId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "备注",
+                        "name": "remark",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/flow/flow_history/del": {
             "post": {
                 "produces": [
@@ -1458,6 +1209,43 @@
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_history/done_hidden": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "已处理页面隐藏（软删除）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "历史id",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -1826,6 +1614,59 @@
                         "name": "applyId",
                         "in": "body",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/flow/flow_history/pass": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "flow_history-流程历史"
+                ],
+                "summary": "流程历史-通过审批",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "申请id",
+                        "name": "applyId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "下一个节点的审批用户id",
+                        "name": "nextNodeAdminId",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "通过备注",
+                        "name": "passRemark",
+                        "in": "body",
                         "schema": {
                             "type": "string"
                         }
@@ -5261,7 +5102,7 @@
                         }
                     },
                     {
-                        "description": "账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "body",
                         "required": true,
@@ -5489,7 +5330,7 @@
                         }
                     },
                     {
-                        "description": "账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "body",
                         "required": true,
@@ -5566,7 +5407,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "query"
                     },
@@ -5654,7 +5495,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "query"
                     },
@@ -5722,7 +5563,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "query"
                     },
@@ -5802,6 +5643,41 @@
                 }
             }
         },
+        "/api/admin/system/admin/sendEmailCode": {
+            "post": {
+                "description": "修改邮箱时发送验证码到新邮箱",
+                "tags": [
+                    "system_admin-管理员"
+                ],
+                "summary": "发送邮箱验证码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "目标邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/system/admin/upInfo": {
             "post": {
                 "description": "当前管理员更新自己的信息",
@@ -5829,6 +5705,22 @@
                     {
                         "description": "头像",
                         "name": "avatar",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "邮箱验证码",
+                        "name": "emailCode",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -6211,6 +6103,80 @@
                 }
             }
         },
+        "/api/admin/system/forgot-pwd/reset": {
+            "post": {
+                "description": "使用邮箱验证码重置密码",
+                "tags": [
+                    "system_login-登录"
+                ],
+                "summary": "忘记密码-重置密码",
+                "parameters": [
+                    {
+                        "description": "注册邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "6位验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "新密码(MD5加密后)",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/forgot-pwd/send-code": {
+            "post": {
+                "description": "向注册邮箱发送密码重置验证码",
+                "tags": [
+                    "system_login-登录"
+                ],
+                "summary": "忘记密码-发送验证码",
+                "parameters": [
+                    {
+                        "description": "注册邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/system/log/login": {
             "get": {
                 "description": "获取登录日志列表",
@@ -6242,7 +6208,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "登录账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "query"
                     },
@@ -6330,7 +6296,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "用户账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "query"
                     },
@@ -6420,7 +6386,7 @@
                 "summary": "登录系统",
                 "parameters": [
                     {
-                        "description": "账号",
+                        "description": "邮箱(账号)",
                         "name": "email",
                         "in": "body",
                         "required": true,
@@ -6938,6 +6904,298 @@
                                             "items": {
                                                 "$ref": "#/definitions/system_schema.SystemAuthMenuResp"
                                             }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/notice/del": {
+            "post": {
+                "description": "删除指定通知",
+                "tags": [
+                    "system_notice-通知"
+                ],
+                "summary": "删除通知",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "通知ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/notice/list": {
+            "get": {
+                "description": "获取当前管理员的通知列表",
+                "tags": [
+                    "system_notice-通知"
+                ],
+                "summary": "通知列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "通知类型",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "0未读 1已读 -1全部",
+                        "name": "isRead",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "$ref": "#/definitions/system_schema.SystemNoticeResp"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/notice/read": {
+            "post": {
+                "description": "标记单条通知为已读",
+                "tags": [
+                    "system_notice-通知"
+                ],
+                "summary": "标记已读",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "通知ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/notice/read_all": {
+            "post": {
+                "description": "将当前管理员所有未读通知标记为已读",
+                "tags": [
+                    "system_notice-通知"
+                ],
+                "summary": "全部已读",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/notice/setting": {
+            "get": {
+                "description": "获取当前管理员的渠道通知偏好",
+                "tags": [
+                    "system_notice-通知"
+                ],
+                "summary": "获取通知偏好",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/system_schema.SystemNoticeSettingResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/notice/setting/save": {
+            "post": {
+                "description": "保存当前管理员的渠道通知偏好",
+                "tags": [
+                    "system_notice-通知"
+                ],
+                "summary": "保存通知偏好",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "站内信: 0关闭 1开启",
+                        "name": "siteEnabled",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "邮件: 0关闭 1开启",
+                        "name": "emailEnabled",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/notice/unread_count": {
+            "get": {
+                "description": "获取当前管理员的未读通知数量",
+                "tags": [
+                    "system_notice-通知"
+                ],
+                "summary": "未读数量",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/system_schema.SystemNoticeUnreadCountResp"
                                         }
                                     }
                                 }
@@ -8895,6 +9153,855 @@
                 "responses": {}
             }
         },
+        "/api/user/authList": {
+            "get": {
+                "description": "获取当前用户所有第三方绑定信息（不含手机号，手机号在用户信息中）",
+                "tags": [
+                    "user_auth-用户绑定"
+                ],
+                "summary": "获取绑定列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/user_schema.UserAuthItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/bindPhone": {
+            "post": {
+                "description": "绑定手机号到当前用户（需短信验证码）",
+                "tags": [
+                    "user_auth-用户绑定"
+                ],
+                "summary": "绑定手机号",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "区号(默认86)",
+                        "name": "phoneCode",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "短信验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/bindWechatMini": {
+            "post": {
+                "description": "绑定微信小程序到当前已登录用户",
+                "tags": [
+                    "user_wechat-微信登录"
+                ],
+                "summary": "绑定小程序",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "小程序 wx.login code",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/bindWechatMp": {
+            "post": {
+                "description": "绑定微信公众号到当前已登录用户",
+                "tags": [
+                    "user_wechat-微信登录"
+                ],
+                "summary": "绑定公众号",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "微信 OAuth code",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/info": {
+            "get": {
+                "description": "获取当前登录用户信息",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "获取用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user_schema.UserInfoResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "更新昵称、头像等",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "更新用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "头像",
+                        "name": "avatar",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/kickOffline": {
+            "post": {
+                "description": "使当前用户所有旧token失效（修改密码后建议调用）",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "踢人下线",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "post": {
+                "description": "邮箱+密码登录，返回JWT token对",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "邮箱登录",
+                "parameters": [
+                    {
+                        "description": "邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "密码",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user_schema.LoginResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/phoneCodeLogin": {
+            "post": {
+                "description": "手机号+短信验证码登录",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "手机号+短信验证码登录",
+                "parameters": [
+                    {
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "区号(默认86)",
+                        "name": "phoneCode",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "6位验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user_schema.LoginResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/phoneLogin": {
+            "post": {
+                "description": "手机号+密码登录，返回JWT token对",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "手机号+密码登录",
+                "parameters": [
+                    {
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "区号(默认86)",
+                        "name": "phoneCode",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "密码",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user_schema.LoginResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/refresh": {
+            "post": {
+                "description": "使用refresh_token换取新的token对",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "刷新token",
+                "parameters": [
+                    {
+                        "description": "refreshToken",
+                        "name": "refreshToken",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user_schema.LoginResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/register": {
+            "post": {
+                "description": "邮箱+密码+验证码注册",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "用户注册",
+                "parameters": [
+                    {
+                        "description": "邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "密码(6-32位)",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "6位验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/resetPassword": {
+            "post": {
+                "description": "使用邮箱验证码重置密码",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "邮箱重置密码",
+                "parameters": [
+                    {
+                        "description": "邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "6位验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "新密码",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/resetPhonePassword": {
+            "post": {
+                "description": "使用短信验证码重置密码",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "手机号重置密码",
+                "parameters": [
+                    {
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "6位验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "新密码",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/sendCode": {
+            "post": {
+                "description": "发送注册/重置密码/解绑手机邮箱验证码",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "发送邮箱验证码",
+                "parameters": [
+                    {
+                        "description": "邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "场景:register/reset/unbind",
+                        "name": "scene",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/sendSmsCode": {
+            "post": {
+                "description": "发送绑定手机/短信登录/手机重置密码短信验证码",
+                "tags": [
+                    "user-用户系统"
+                ],
+                "summary": "发送短信验证码",
+                "parameters": [
+                    {
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "场景:sms_bind/sms_login/sms_reset",
+                        "name": "scene",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/unbindPhone": {
+            "post": {
+                "description": "解绑当前用户手机号（需邮箱验证码确认身份）",
+                "tags": [
+                    "user_auth-用户绑定"
+                ],
+                "summary": "解绑手机号",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "邮箱",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "邮箱验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/unbindWechat": {
+            "post": {
+                "description": "解绑微信小程序或公众号（identityType: wechat_mini / wechat_mp）",
+                "tags": [
+                    "user_wechat-微信登录"
+                ],
+                "summary": "解绑微信",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "wechat_mini/wechat_mp",
+                        "name": "identityType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/wechatMiniLogin": {
+            "post": {
+                "description": "微信小程序登录（wx.login code → openid → 自动注册/登录），返回JWT token对",
+                "tags": [
+                    "user_wechat-微信登录"
+                ],
+                "summary": "小程序登录",
+                "parameters": [
+                    {
+                        "description": "小程序 wx.login 返回的 code",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功(isNew=true表示新注册用户)",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user_schema.LoginResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/wechatMpLogin": {
+            "post": {
+                "description": "微信公众号 OAuth 登录（前端跳转微信授权页获取 code → openid → 自动注册/登录）",
+                "tags": [
+                    "user_wechat-微信登录"
+                ],
+                "summary": "公众号登录",
+                "parameters": [
+                    {
+                        "description": "微信 OAuth 回调返回的 code",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功(isNew=true表示新注册用户)",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user_schema.LoginResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/ws": {
             "get": {
                 "tags": [
@@ -9130,6 +10237,10 @@
                 "id": {
                     "description": "历史id",
                     "type": "string"
+                },
+                "isShow": {
+                    "description": "是否显示：0隐藏，1显示",
+                    "type": "integer"
                 },
                 "nodeId": {
                     "description": "节点",
@@ -9744,6 +10855,10 @@
                     "description": "部门ID",
                     "type": "string"
                 },
+                "email": {
+                    "description": "邮箱(账号)",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键",
                     "type": "string"
@@ -9786,10 +10901,6 @@
                 "updateTime": {
                     "description": "更新时间",
                     "type": "string"
-                },
-                "email": {
-                    "description": "账号",
-                    "type": "string"
                 }
             }
         },
@@ -9806,6 +10917,10 @@
                 },
                 "dept": {
                     "description": "部门",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮箱(账号)",
                     "type": "string"
                 },
                 "id": {
@@ -9834,10 +10949,6 @@
                 },
                 "updateTime": {
                     "description": "更新时间",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "账号",
                     "type": "string"
                 }
             }
@@ -10096,6 +11207,10 @@
                     "description": "创建时间",
                     "type": "string"
                 },
+                "email": {
+                    "description": "登录邮箱",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键",
                     "type": "string"
@@ -10111,10 +11226,6 @@
                 "status": {
                     "description": "操作状态: [1=成功, 2=失败]",
                     "type": "integer"
-                },
-                "email": {
-                    "description": "登录账号",
-                    "type": "string"
                 }
             }
         },
@@ -10127,6 +11238,10 @@
                 },
                 "createTime": {
                     "description": "创建时间",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮箱(账号)",
                     "type": "string"
                 },
                 "endTime": {
@@ -10176,10 +11291,6 @@
                 "url": {
                     "description": "请求地址",
                     "type": "string"
-                },
-                "email": {
-                    "description": "用户账号",
-                    "type": "string"
                 }
             }
         },
@@ -10188,6 +11299,141 @@
             "properties": {
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "system_schema.SystemNoticeResp": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "正文",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "isRead": {
+                    "description": "0未读 1已读",
+                    "type": "integer"
+                },
+                "readTime": {
+                    "description": "阅读时间",
+                    "type": "string"
+                },
+                "receiverId": {
+                    "description": "接收人ID",
+                    "type": "string"
+                },
+                "senderId": {
+                    "description": "发送人ID",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "标题",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "通知类型",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "跳转URL",
+                    "type": "string"
+                }
+            }
+        },
+        "system_schema.SystemNoticeSettingResp": {
+            "type": "object",
+            "properties": {
+                "emailEnabled": {
+                    "description": "邮件开关",
+                    "type": "integer"
+                },
+                "siteEnabled": {
+                    "description": "站内信开关",
+                    "type": "integer"
+                }
+            }
+        },
+        "system_schema.SystemNoticeUnreadCountResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "未读数量",
+                    "type": "integer"
+                }
+            }
+        },
+        "user_schema.LoginResp": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "expiresIn": {
+                    "description": "access_token 有效期(秒)",
+                    "type": "integer"
+                },
+                "isNew": {
+                    "description": "是否新注册用户（微信登录时自动注册）",
+                    "type": "boolean"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "user_schema.UserAuthItem": {
+            "type": "object",
+            "properties": {
+                "createTime": {
+                    "type": "string"
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "identityType": {
+                    "type": "string"
+                }
+            }
+        },
+        "user_schema.UserInfoResp": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastLoginIp": {
+                    "type": "string"
+                },
+                "lastLoginTime": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "phoneCode": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         }
