@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 	"x_admin/config"
+	"x_admin/core"
 	"x_admin/util"
 )
 
@@ -36,18 +37,52 @@ type PushResponse struct {
 	Data    any
 }
 
+const (
+	// Redis key：个推 auth token（所有实例共享）
+	geTuiTokenRedisKey = "getui:auth:token"
+	// Redis key：个推 auth 刷新分布式锁
+	geTuiAuthLockKey = "lock:getui:auth"
+	// 本地缓存提前刷新时间（秒）：token 距过期不足此时间时主动刷新
+	localRefreshAheadSec = 120
+	// Redis token 存储 TTL（秒）：个推 token 有效期通常 24h，这里设 2h 留余量
+	redisTokenTTLSec = 2 * 3600
+)
+
+// localTokenCache 本地 token 缓存（单实例内高速读取）
+type localTokenCache struct {
+	mu         sync.RWMutex
+	token      string
+	expireTime int64 // unix 毫秒
+}
+
+// get 从本地缓存获取 token，返回 token 和是否有效
+func (c *localTokenCache) get() (string, bool) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if c.token == "" {
+		return "", false
+	}
+	// 提前 localRefreshAheadSec 秒认为过期，避免使用即将过期的 token
+	if c.expireTime <= time.Now().UnixMilli()+int64(localRefreshAheadSec)*1000 {
+		return "", false
+	}
+	return c.token, true
+}
+
+// set 写入本地缓存
+func (c *localTokenCache) set(token string, expireTimeMs int64) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.token = token
+	c.expireTime = expireTimeMs
+}
+
 var GeTuiService = NewGeTuiService()
 
 // NewGeTuiService 初始化
 func NewGeTuiService() *geTuiService {
 	return &geTuiService{
-		authData: AuthData{
-			ExpireTime: "0",
-			Token:      "",
-		},
-		authLock: sync.Mutex{},
-
-		// appSecret    : config.GeTuiConfig.APPSECRET,
+		localCache:   &localTokenCache{},
 		baseURL:      config.GeTuiConfig.Host + config.GeTuiConfig.AppID,
 		appKey:       config.GeTuiConfig.AppKEY,
 		masterSecret: config.GeTuiConfig.MasterSecret,
@@ -55,52 +90,101 @@ func NewGeTuiService() *geTuiService {
 	}
 }
 
-// indexService 主页服务实现类
+// geTuiService 个推服务
 type geTuiService struct {
-	authData AuthData
-	authLock sync.Mutex
-
-	// appSecret    string
+	localCache   *localTokenCache // L1: 本地缓存（进程内高速读取）
 	baseURL      string
 	appKey       string
 	masterSecret string
 	packageName  string
 }
 
-// GetAuthToken 获取个推认证token
+// GetAuthToken 获取个推认证 token（两级缓存：本地 → Redis → 远程请求）
 func (gt *geTuiService) GetAuthToken() (string, error) {
-
-	gt.authLock.Lock()
-	defer gt.authLock.Unlock()
-
-	// 检查缓存token是否有效（提前1分钟过期）
-	if gt.authData.Token != "" {
-		expireTime, err := strconv.ParseInt(gt.authData.ExpireTime, 10, 64)
-		if err == nil && expireTime > time.Now().UnixNano()/1e6+60*1000 {
-			fmt.Println("获取缓存token", gt.authData)
-			return gt.authData.Token, nil
-		}
+	// ---- L1: 本地缓存 ----
+	if token, ok := gt.localCache.get(); ok {
+		return token, nil
 	}
 
-	// 生成签名:将 appkey、timestamp、mastersecret 对应的字符串按此固定顺序拼接后，使用 SHA256 算法加密。
-	timestamp := time.Now().UnixNano() / 1e6
+	// ---- L2: Redis 共享缓存 ----
+	if token := gt.getTokenFromRedis(); token != "" {
+		return token, nil
+	}
+
+	// ---- L3: 分布式锁 + 远程请求 ----
+	return gt.refreshTokenWithLock()
+}
+
+// getTokenFromRedis 从 Redis 读取 token 并回填本地缓存
+func (gt *geTuiService) getTokenFromRedis() string {
+	raw := util.RedisUtil.Get(geTuiTokenRedisKey)
+	if raw == "" {
+		return ""
+	}
+
+	var data AuthData
+	if err := json.Unmarshal([]byte(raw), &data); err != nil {
+		core.Logger.Warnf("geTuiService: Redis token 解析失败: %+v", err)
+		return ""
+	}
+
+	expireMs, err := strconv.ParseInt(data.ExpireTime, 10, 64)
+	if err != nil || expireMs <= time.Now().UnixMilli()+int64(localRefreshAheadSec)*1000 {
+		return ""
+	}
+
+	// 回填本地缓存
+	gt.localCache.set(data.Token, expireMs)
+	core.Logger.Debugf("geTuiService: 从 Redis 缓存获取 token")
+	return data.Token
+}
+
+// refreshTokenWithLock 通过分布式锁保证多实例只有一个请求远程刷新
+func (gt *geTuiService) refreshTokenWithLock() (string, error) {
+	lock := util.NewRedisLock(geTuiAuthLockKey, 10*time.Second)
+
+	if !lock.Lock() {
+		// 未拿到锁，说明其他实例正在刷新；等待后从 Redis 读取
+		time.Sleep(200 * time.Millisecond)
+		if token := gt.getTokenFromRedis(); token != "" {
+			return token, nil
+		}
+		// 兜底：自己请求
+		return gt.doAuthRequest()
+	}
+	defer func() {
+		if err := lock.Unlock(); err != nil {
+			core.Logger.Warnf("geTuiService: 释放分布式锁失败: %+v", err)
+		}
+	}()
+
+	// 拿到锁后 double-check Redis（可能其他实例刚刷新完）
+	if token := gt.getTokenFromRedis(); token != "" {
+		return token, nil
+	}
+
+	// 远程请求新 token
+	return gt.doAuthRequest()
+}
+
+// doAuthRequest 请求个推 auth 接口获取新 token，并写入 Redis + 本地缓存
+func (gt *geTuiService) doAuthRequest() (string, error) {
+	// 生成签名
+	timestamp := time.Now().UnixMilli()
 	signStr := gt.appKey + strconv.FormatInt(timestamp, 10) + gt.masterSecret
 	hash := sha256.Sum256([]byte(signStr))
 	sign := hex.EncodeToString(hash[:])
 
-	// 构建请求数据
 	reqData := map[string]any{
 		"sign":      sign,
 		"timestamp": timestamp,
 		"appkey":    gt.appKey,
 	}
-
 	reqBody, err := json.Marshal(reqData)
 	if err != nil {
 		return "", fmt.Errorf("JSON编码失败: %v", err)
 	}
 
-	// 发送认证请求
 	resp, err := http.Post(gt.baseURL+"/auth", "application/json", strings.NewReader(string(reqBody)))
 	if err != nil {
 		return "", fmt.Errorf("认证请求失败: %v", err)
@@ -115,23 +199,28 @@ func (gt *geTuiService) GetAuthToken() (string, error) {
 			Token      string `json:"token"`
 		} `json:"data"`
 	}
-
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return "", fmt.Errorf("解析响应失败: %v", err)
 	}
-
 	if result.Code != 0 {
 		return "", fmt.Errorf("认证失败: %s", result.Msg)
 	}
 
-	// 更新缓存
-	gt.authData = AuthData{
-		ExpireTime: result.Data.ExpireTime,
-		Token:      result.Data.Token,
-	}
+	token := result.Data.Token
+	expireMs, _ := strconv.ParseInt(result.Data.ExpireTime, 10, 64)
 
-	fmt.Println("新的auth", gt.authData)
-	return gt.authData.Token, nil
+	// 写入本地缓存
+	gt.localCache.set(token, expireMs)
+
+	// 写入 Redis（所有实例共享）
+	cacheData, _ := json.Marshal(AuthData{
+		ExpireTime: result.Data.ExpireTime,
+		Token:      token,
+	})
+	util.RedisUtil.Set(geTuiTokenRedisKey, string(cacheData), redisTokenTTLSec)
+
+	core.Logger.Infof("geTuiService: 获取新 token 成功，已写入 Redis + 本地缓存")
+	return token, nil
 }
 
 // PushToSingleBatchCID 批量单推消息
