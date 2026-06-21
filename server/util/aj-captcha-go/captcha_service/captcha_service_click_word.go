@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"image/color"
 	"log"
 	"x_admin/util/aj-captcha-go/captcha_config"
 	"x_admin/util/aj-captcha-go/model/vo"
@@ -26,7 +27,10 @@ type ClickWordCaptchaService struct {
 
 // 校验点击文字验证码
 func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
-	cache := c.factory.GetCache()
+	cache, err := c.factory.GetCache()
+	if err != nil {
+		return err
+	}
 	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
 
 	cachePointInfo := cache.Get(codeKey)
@@ -40,7 +44,7 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 
 	var userPoint []vo.PointVO
 
-	err := json.Unmarshal([]byte(cachePointInfo), &cachePoint)
+	err = json.Unmarshal([]byte(cachePointInfo), &cachePoint)
 
 	if err != nil {
 		return err
@@ -55,6 +59,12 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 		return err
 	}
 
+	// 校验用户提交的点数是否与期望数量一致
+	if len(userPoint) < len(cachePoint) {
+		cache.Delete(codeKey)
+		return errors.New("验证失败：点击数量不足")
+	}
+
 	fontSize := c.factory.config.ClickWord.FontSize
 	for i, pointVO := range cachePoint {
 		userTargetPoint := userPoint[i]
@@ -66,7 +76,7 @@ func (c *ClickWordCaptchaService) Check(token string, pointJson string) error {
 		if userTargetPoint.X >= startX && userTargetPoint.X <= endX && userTargetPoint.Y >= startY && userTargetPoint.Y <= endY {
 
 		} else {
-			c.factory.GetCache().Delete(codeKey)
+			cache.Delete(codeKey)
 			return errors.New("验证失败")
 		}
 	}
@@ -81,13 +91,18 @@ func (c *ClickWordCaptchaService) Verification(token string, pointJson string) e
 		return err
 	}
 	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
-	c.factory.GetCache().Delete(codeKey)
+	if cache, err := c.factory.GetCache(); err == nil {
+		cache.Delete(codeKey)
+	}
 	return nil
 }
 
 func (c *ClickWordCaptchaService) Get() (map[string]any, error) {
 	// 初始化背景图片
-	backgroundImage := img.GetClickBackgroundImage()
+	backgroundImage, err := img.GetClickBackgroundImage()
+	if err != nil {
+		return nil, err
+	}
 	// 为背景图片设置水印
 	if c.factory.config.Watermark.Text != "" {
 		backgroundImage.SetText(c.factory.config.Watermark.Text, c.factory.config.Watermark.FontSize, c.factory.config.Watermark.Color)
@@ -116,67 +131,203 @@ func (c *ClickWordCaptchaService) Get() (map[string]any, error) {
 		return nil, err
 	}
 
-	c.factory.GetCache().Set(codeKey, string(jsonPoint), c.factory.config.CacheExpireSec)
+	cache, err := c.factory.GetCache()
+	if err != nil {
+		return nil, err
+	}
+	cache.Set(codeKey, string(jsonPoint), c.factory.config.CacheExpireSec)
 	return data, nil
 }
 
 func (c *ClickWordCaptchaService) getImageData(image *util.ImageUtil) ([]vo.PointVO, []string, error) {
-	AllFontNum := c.factory.config.ClickWord.AllFontNum
-	FontNum := c.factory.config.ClickWord.FontNum
+	cfg := c.factory.config.ClickWord
+	fontNum := cfg.FontNum
+	interferenceNum := cfg.InterferenceFontNum
+	totalNum := fontNum + interferenceNum
 
-	AllWord := c.getRandomWords(AllFontNum)
-	// currentWord := AllWord[:FontNum]
+	// 1. 选取点击文字
+	clickWords := c.getRandomWords(fontNum)
 
-	var pointList []vo.PointVO
-	var wordList []string
+	// 2. 选取干扰文字（排除已选中的点击文字，避免重复）
+	interferenceWords := c.getRandomWordsExcluding(interferenceNum, clickWords)
+
+	// 3. 网格均匀分布：根据图片尺寸计算网格
+	allWords := make([]string, 0, totalNum)
+	allWords = append(allWords, clickWords...)
+	allWords = append(allWords, interferenceWords...)
+
+	points := c.generateGridPoints(image.Width, image.Height, totalNum, cfg.FontSize)
+
+	// 4. 打乱点位顺序（让点击文字不总是出现在固定位置）
+	c.shufflePoints(points)
 
 	// 构建本次的 secret
 	key := util.RandString(16)
 
-	for k, s := range AllWord {
-		fontSize := util.RandomInt(c.factory.config.ClickWord.FontSize-3, c.factory.config.ClickWord.FontSize+1)
+	var pointList []vo.PointVO
+	var wordList []string
 
-		point := c.randomWordPoint(image.Width, image.Height, fontSize)
-		point.SetSecretKey(key)
-		// 随机设置文字 TODO 角度未设置
-		err := image.SetArtText(s, fontSize, point)
-		if err != nil {
+	// 5. 绘制点击文字（大字体、醒目颜色）
+	for i := 0; i < fontNum; i++ {
+		fontSize := util.RandomInt(cfg.FontSize-2, cfg.FontSize+1)
+		points[i].SetSecretKey(key)
+
+		clr := c.clickColor()
+		if err := image.SetArtTextWithColor(allWords[i], fontSize, points[i], clr); err != nil {
 			return nil, nil, err
 		}
 
-		if k < FontNum {
-			pointList = append(pointList, point)
-			wordList = append(wordList, s)
+		pointList = append(pointList, points[i])
+		wordList = append(wordList, allWords[i])
+	}
+
+	// 6. 绘制干扰文字（小字体、淡色）
+	interferenceFontSize := cfg.InterferenceFontSize
+	if interferenceFontSize <= 0 {
+		interferenceFontSize = cfg.FontSize * 2 / 3 // 默认点击文字的 2/3
+	}
+	for i := fontNum; i < len(allWords); i++ {
+		fs := util.RandomInt(interferenceFontSize-2, interferenceFontSize+1)
+		points[i].SetSecretKey(key)
+
+		clr := c.interferenceColor()
+		if err := image.SetArtTextWithColor(allWords[i], fs, points[i], clr); err != nil {
+			return nil, nil, err
 		}
 	}
 
 	return pointList, wordList, nil
 }
 
-// getRandomWords 获取随机文件
+// getRandomWords 获取 count 个不重复的随机文字
 func (c *ClickWordCaptchaService) getRandomWords(count int) []string {
+	runesArray := []rune(TEXT)
+	size := len(runesArray)
+
+	if count > size {
+		count = size
+	}
+
+	set := make(map[string]bool)
+	var wordList []string
+
+	for attempt := 0; attempt < count*3 && len(set) < count; attempt++ {
+		word := runesArray[util.RandomInt(0, size)]
+		set[string(word)] = true
+	}
+	for str := range set {
+		wordList = append(wordList, str)
+	}
+	return wordList
+}
+
+// getRandomWordsExcluding 获取 count 个随机文字，排除 exclude 中已有的文字
+func (c *ClickWordCaptchaService) getRandomWordsExcluding(count int, exclude []string) []string {
+	excludeSet := make(map[string]bool, len(exclude))
+	for _, w := range exclude {
+		excludeSet[w] = true
+	}
+
 	runesArray := []rune(TEXT)
 	size := len(runesArray)
 
 	set := make(map[string]bool)
 	var wordList []string
 
-	for {
-		word := runesArray[util.RandomInt(0, size-1)]
-		set[string(word)] = true
-		if len(set) >= count {
-			for str := range set {
-				wordList = append(wordList, str)
-			}
-			break
+	for attempt := 0; attempt < count*5 && len(set) < count; attempt++ {
+		word := string(runesArray[util.RandomInt(0, size)])
+		if excludeSet[word] || set[word] {
+			continue
 		}
+		set[word] = true
+		wordList = append(wordList, word)
 	}
 	return wordList
 }
 
-func (c *ClickWordCaptchaService) randomWordPoint(width int, height int, fontSize int) vo.PointVO {
+// generateGridPoints 基于最小距离约束的随机采样，生成自然分布的点位
+func (c *ClickWordCaptchaService) generateGridPoints(imgWidth, imgHeight, count, fontSize int) []vo.PointVO {
+	padding := fontSize
+	xMin, xMax := padding, imgWidth-fontSize-padding
+	yMin, yMax := padding, imgHeight-fontSize-padding
 
-	x := util.RandomInt(fontSize, width-fontSize)
-	y := util.RandomInt(fontSize, height-fontSize)
-	return vo.PointVO{X: x, Y: y}
+	if xMax <= xMin {
+		xMax = xMin + 1
+	}
+	if yMax <= yMin {
+		yMax = yMin + 1
+	}
+
+	// 初始最小间距（根据图片和文字数量动态计算）
+	baseMinDist := fontSize * 3 / 2
+	points := make([]vo.PointVO, 0, count)
+
+	for i := 0; i < count; i++ {
+		placed := false
+		// 逐步放宽间距约束，确保一定能放下
+		for relax := 0; relax < 5; relax++ {
+			minDist := baseMinDist * (5 - relax) / 5 // 100% → 80% → 60% → 40% → 20%
+			maxTries := 60
+
+			for try := 0; try < maxTries; try++ {
+				x := util.RandomInt(xMin, xMax)
+				y := util.RandomInt(yMin, yMax)
+
+				// 检查与已有点位的最小距离
+				tooClose := false
+				for _, p := range points {
+					dx := x - p.X
+					dy := y - p.Y
+					if dx*dx+dy*dy < minDist*minDist {
+						tooClose = true
+						break
+					}
+				}
+				if !tooClose {
+					points = append(points, vo.PointVO{X: x, Y: y})
+					placed = true
+					break
+				}
+			}
+			if placed {
+				break
+			}
+		}
+		// 极端情况：强制放置
+		if !placed {
+			x := util.RandomInt(xMin, xMax)
+			y := util.RandomInt(yMin, yMax)
+			points = append(points, vo.PointVO{X: x, Y: y})
+		}
+	}
+
+	return points
+}
+
+// shufflePoints 打乱点位顺序
+func (c *ClickWordCaptchaService) shufflePoints(points []vo.PointVO) {
+	for i := len(points) - 1; i > 0; i-- {
+		j := util.RandomInt(0, i+1)
+		points[i], points[j] = points[j], points[i]
+	}
+}
+
+// clickColor 生成点击文字颜色（醒目深色）
+func (c *ClickWordCaptchaService) clickColor() color.RGBA {
+	return color.RGBA{
+		R: uint8(util.RandomInt(10, 120)),
+		G: uint8(util.RandomInt(10, 120)),
+		B: uint8(util.RandomInt(10, 120)),
+		A: 255,
+	}
+}
+
+// interferenceColor 生成干扰文字颜色（浅色淡色）
+func (c *ClickWordCaptchaService) interferenceColor() color.RGBA {
+	return color.RGBA{
+		R: uint8(util.RandomInt(160, 210)),
+		G: uint8(util.RandomInt(160, 210)),
+		B: uint8(util.RandomInt(160, 210)),
+		A: 255,
+	}
 }

@@ -1,79 +1,106 @@
 package image
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 	"x_admin/util/aj-captcha-go/captcha_config"
 	"x_admin/util/aj-captcha-go/util"
 )
 
-var backgroundImageArr []string
-var clickBackgroundImageArr []string
-var templateImageArr []string
+var (
+	backgroundImageArr      []string
+	clickBackgroundImageArr []string
+	templateImageArr        []string
+	setupOnce               sync.Once
+)
 
+// SetUp 初始化图片资源目录（通过 sync.Once 保证只执行一次）
 func SetUp() {
+	setupOnce.Do(func() {
+		backgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultBackgroundImageDirectory
+		templateImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultTemplateImageDirectory
+		clickBackgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultClickBackgroundImageDirectory
 
-	backgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultBackgroundImageDirectory
-	templateImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultTemplateImageDirectory
-	clickBackgroundImageRoot := captcha_config.DefaultResourceRoot + captcha_config.DefaultClickBackgroundImageDirectory
+		backgroundImageArr = walkDir(backgroundImageRoot)
+		templateImageArr = walkDir(templateImageRoot)
+		clickBackgroundImageArr = walkDir(clickBackgroundImageRoot)
 
-	err1 := filepath.Walk(backgroundImageRoot, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return nil
+		if len(backgroundImageArr) == 0 {
+			log.Printf("警告: 背景图片目录为空: %s", backgroundImageRoot)
 		}
-		backgroundImageArr = append(backgroundImageArr, path)
-		return nil
-	})
-
-	err2 := filepath.Walk(templateImageRoot, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return nil
+		if len(templateImageArr) == 0 {
+			log.Printf("警告: 模板图片目录为空: %s", templateImageRoot)
 		}
-		templateImageArr = append(templateImageArr, path)
-		return nil
-	})
-
-	err3 := filepath.Walk(clickBackgroundImageRoot, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return nil
+		if len(clickBackgroundImageArr) == 0 {
+			log.Printf("警告: 点击背景图目录为空: %s", clickBackgroundImageRoot)
 		}
-		clickBackgroundImageArr = append(clickBackgroundImageArr, path)
-		return nil
 	})
-
-	if err1 != nil {
-		log.Printf("初始化resource目录失败，请检查该目录是否存在 err: %v", err1)
-	}
-	if err2 != nil {
-		log.Printf("初始化resource目录失败，请检查该目录是否存在 err: %v", err2)
-	}
-	if err3 != nil {
-		log.Printf("初始化resource目录失败，请检查该目录是否存在 err: %v", err3)
-	}
-
 }
 
-func GetBackgroundImage() *util.ImageUtil {
-	max := len(backgroundImageArr) - 1
-	if max <= 0 {
-		max = 1
+// walkDir 遍历目录收集所有文件路径
+func walkDir(root string) []string {
+	var result []string
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			result = append(result, path)
+		}
+		return nil
+	})
+	if err != nil {
+		log.Printf("初始化resource目录失败: %s, err: %v", root, err)
 	}
-	return util.NewImageUtil(backgroundImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
+	return result
 }
 
-func GetTemplateImage() *util.ImageUtil {
-	max := len(templateImageArr) - 1
-	if max <= 0 {
-		max = 1
+// GetBackgroundImage 随机获取一张背景图
+func GetBackgroundImage() (*util.ImageUtil, error) {
+	path := randomPick(backgroundImageArr)
+	if path == "" {
+		return nil, fmt.Errorf("背景图片目录为空")
 	}
-	return util.NewImageUtil(templateImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
+	img := util.NewImageUtil(path, captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
+	if img == nil {
+		return nil, fmt.Errorf("加载背景图片失败: %s", path)
+	}
+	return img, nil
 }
 
-func GetClickBackgroundImage() *util.ImageUtil {
-	max := len(templateImageArr) - 1
-	if max <= 0 {
-		max = 1
+// GetTemplateImage 随机获取一张模板图
+func GetTemplateImage() (*util.ImageUtil, error) {
+	path := randomPick(templateImageArr)
+	if path == "" {
+		return nil, fmt.Errorf("模板图片目录为空")
 	}
-	return util.NewImageUtil(clickBackgroundImageArr[util.RandomInt(0, max)], captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
+	img := util.NewImageUtil(path, captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
+	if img == nil {
+		return nil, fmt.Errorf("加载模板图片失败: %s", path)
+	}
+	return img, nil
+}
+
+// GetClickBackgroundImage 随机获取一张点击背景图
+func GetClickBackgroundImage() (*util.ImageUtil, error) {
+	path := randomPick(clickBackgroundImageArr)
+	if path == "" {
+		return nil, fmt.Errorf("点击背景图目录为空")
+	}
+	img := util.NewImageUtil(path, captcha_config.DefaultResourceRoot+captcha_config.DefaultFont)
+	if img == nil {
+		return nil, fmt.Errorf("加载点击背景图失败: %s", path)
+	}
+	return img, nil
+}
+
+// randomPick 从数组中随机选取一个元素
+func randomPick(arr []string) string {
+	if len(arr) == 0 {
+		return ""
+	}
+	return arr[util.RandomInt(0, len(arr))]
 }

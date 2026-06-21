@@ -17,11 +17,12 @@ var captchaConfig = captcha_config.Config{
 		Text:     "",
 	},
 	ClickWord: &captcha_config.ClickWordConfig{
-		FontSize:   24,
-		FontNum:    3,
-		AllFontNum: 7,
-		XOffset:    8,
-		YOffset:    8,
+		FontSize:             24,
+		FontNum:              3,
+		XOffset:              8,
+		YOffset:              8,
+		InterferenceFontNum:  20,
+		InterferenceFontSize: 16,
 	},
 	BlockPuzzle:    &captcha_config.BlockPuzzleConfig{Offset: 8},
 	CacheExpireSec: 2 * 60, // 缓存有效时间
@@ -43,24 +44,28 @@ func init() {
 }
 
 func CaptchaGet(captchaType string) (any, error) {
-	// 根据参数类型获取不同服务即可
-	data, err := factory.GetService(captchaType).Get()
-
-	return data, err
+	// 根据参数类型获取不同服务
+	ser, err := factory.GetService(captchaType)
+	if err != nil {
+		return nil, err
+	}
+	return ser.Get()
 }
 
 // 检查是否正确
 func CaptchaCheck(params common_schema.ClientParams) error {
-	ser := factory.GetService(params.CaptchaType)
-	// 登录验证并删除
-	err := ser.Check(params.Token, params.PointJson)
-	return err
+	ser, err := factory.GetService(params.CaptchaType)
+	if err != nil {
+		return err
+	}
+	return ser.Check(params.Token, params.PointJson)
 }
 
 // 登录等场景验证，并删除
 func CaptchaVerify(params common_schema.ClientParams) error {
-	ser := factory.GetService(params.CaptchaType)
-	// 登录验证并删除
-	err := ser.Verification(params.Token, params.PointJson)
-	return err
+	ser, err := factory.GetService(params.CaptchaType)
+	if err != nil {
+		return err
+	}
+	return ser.Verification(params.Token, params.PointJson)
 }

@@ -1,7 +1,7 @@
 package captcha_service
 
 import (
-	"log"
+	"fmt"
 	"sync"
 	"x_admin/util/aj-captcha-go/captcha_config"
 )
@@ -26,14 +26,15 @@ type CaptchaServiceFactory struct {
 	CacheLock sync.RWMutex
 }
 
-func (c *CaptchaServiceFactory) GetCache() CacheCaptchaInterface {
+func (c *CaptchaServiceFactory) GetCache() (CacheCaptchaInterface, error) {
 	key := c.config.CacheType
 	c.CacheLock.RLock()
 	defer c.CacheLock.RUnlock()
-	if _, ok := c.CacheMap[key]; !ok {
-		log.Printf("未注册%s类型的Cache", key)
+	cache, ok := c.CacheMap[key]
+	if !ok {
+		return nil, fmt.Errorf("未注册 %s 类型的 Cache", key)
 	}
-	return c.CacheMap[key]
+	return cache, nil
 }
 
 func (c *CaptchaServiceFactory) RegisterCache(key string, cacheInterface CacheCaptchaInterface) {
@@ -48,11 +49,12 @@ func (c *CaptchaServiceFactory) RegisterService(key string, service CaptchaInter
 	c.ServiceMap[key] = service
 }
 
-func (c *CaptchaServiceFactory) GetService(key string) CaptchaInterface {
+func (c *CaptchaServiceFactory) GetService(key string) (CaptchaInterface, error) {
 	c.ServiceLock.RLock()
 	defer c.ServiceLock.RUnlock()
-	if _, ok := c.ServiceMap[key]; !ok {
-		log.Printf("未注册%s类型的Service", key)
+	service, ok := c.ServiceMap[key]
+	if !ok {
+		return nil, fmt.Errorf("未注册 %s 类型的 Service", key)
 	}
-	return c.ServiceMap[key]
+	return service, nil
 }

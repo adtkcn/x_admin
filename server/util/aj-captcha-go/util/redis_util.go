@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,56 +12,43 @@ type RedisUtil struct {
 }
 
 func NewConfigRedisUtil(client redis.UniversalClient) *RedisUtil {
-	redisUtil := &RedisUtil{
+	return &RedisUtil{
 		Rdb: client,
 	}
-	return redisUtil
 }
 
+// Exists 检查 key 是否存在（利用 Redis 原生 TTL 管理过期）
 func (l *RedisUtil) Exists(key string) bool {
-	timeVal := l.Rdb.Get(context.Background(), key+"_HoldTime").Val()
-	cacheHoldTime, err := strconv.ParseInt(timeVal, 10, 64)
-
+	result, err := l.Rdb.Exists(context.Background(), key).Result()
 	if err != nil {
 		return false
 	}
-
-	if cacheHoldTime == 0 {
-		return true
-	}
-
-	if cacheHoldTime < time.Now().Unix() {
-		l.Delete(key)
-		return false
-	}
-	return true
+	return result > 0
 }
 
+// Get 获取 key 的值（Redis 自动管理过期）
 func (l *RedisUtil) Get(key string) string {
-	val := l.Rdb.Get(context.Background(), key).Val()
+	val, err := l.Rdb.Get(context.Background(), key).Result()
+	if err != nil {
+		return ""
+	}
 	return val
 }
 
+// Set 设置 key 的值，expiresInSeconds 为过期时间（秒）
 func (l *RedisUtil) Set(key string, val string, expiresInSeconds int) {
-	//设置阈值，达到即clear缓存
-	l.Rdb.Set(context.Background(), key, val, time.Duration(expiresInSeconds)*time.Second)
-
+	var expiration time.Duration
 	if expiresInSeconds > 0 {
-		// 缓存失效时间
-		nowTime := time.Now().Unix() + int64(expiresInSeconds)
-		l.Rdb.Set(context.Background(), key+"_HoldTime", strconv.FormatInt(nowTime, 10), time.Duration(expiresInSeconds)*time.Second)
-	} else {
-		l.Rdb.Set(context.Background(), key+"_HoldTime", strconv.FormatInt(0, 10), time.Duration(expiresInSeconds)*time.Second)
+		expiration = time.Duration(expiresInSeconds) * time.Second
 	}
+	l.Rdb.Set(context.Background(), key, val, expiration)
 }
 
+// Delete 删除 key
 func (l *RedisUtil) Delete(key string) {
 	l.Rdb.Del(context.Background(), key)
-	l.Rdb.Del(context.Background(), key+"_HoldTime")
 }
 
+// Clear 清空（不实现，Redis 由 TTL 自动管理）
 func (l *RedisUtil) Clear() {
-	//for key, _ := range l.Data {
-	//	l.Delete(key)
-	//}
 }

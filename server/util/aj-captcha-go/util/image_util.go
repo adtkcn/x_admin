@@ -30,6 +30,10 @@ type ImageUtil struct {
 // NewImageUtil src为绝对路径
 func NewImageUtil(src string, fontPath string) *ImageUtil {
 	srcImage := OpenPngImage(src)
+	if srcImage == nil {
+		log.Printf("加载图片失败: %s", src)
+		return nil
+	}
 
 	return &ImageUtil{
 		Src:       src,
@@ -54,13 +58,14 @@ func (i *ImageUtil) DecodeImageToFile() {
 	file, err := os.Create(filename)
 	if err != nil {
 		log.Printf("创建 %s 失败 %v", filename, err)
+		return
 	}
+	defer file.Close()
 
 	err = png.Encode(file, i.RgbaImage)
 	if err != nil {
 		log.Printf("png %s Encode 失败 %v", filename, err)
 	}
-
 }
 
 // SetText 为图片设置文字
@@ -93,33 +98,32 @@ func (i *ImageUtil) SetText(text string, fontsize int, color color.RGBA) {
 	}
 }
 
-// SetArtText 为图片设置文字
+// SetArtText 为图片设置文字（随机颜色）
 func (i *ImageUtil) SetArtText(text string, fontsize int, point vo.PointVO) error {
+	return i.SetArtTextWithColor(text, fontsize, point, color.RGBA{
+		R: uint8(RandomInt(1, 200)),
+		G: uint8(RandomInt(1, 200)),
+		B: uint8(RandomInt(1, 200)),
+		A: 255,
+	})
+}
 
+// SetArtTextWithColor 为图片设置文字（指定颜色）
+func (i *ImageUtil) SetArtTextWithColor(text string, fontsize int, point vo.PointVO, c color.RGBA) error {
 	font := NewFontUtil(i.FontPath)
 
 	fc := freetype.NewContext()
-	// 设置屏幕每英寸的分辨率
-	//fc.SetDPI(72)
-	// 设置用于绘制文本的字体
 	fc.SetFont(font.GetFont())
-	// 以磅为单位设置字体大小
 	fc.SetFontSize(float64(fontsize))
-	// 设置剪裁矩形以进行绘制
 	fc.SetClip(i.RgbaImage.Bounds())
-	// 设置目标图像
 	fc.SetDst(i.RgbaImage)
-	// 设置绘制操作的源图像，通常为 image.Uniform
-	fc.SetSrc(image.NewUniform(color.RGBA{R: uint8(RandomInt(1, 200)), G: uint8(RandomInt(1, 200)), B: uint8(RandomInt(1, 200)), A: 255}))
-	// 设置水印地址
+	fc.SetSrc(image.NewUniform(c))
 	pt := freetype.Pt(point.X, point.Y+fontsize)
-	// 根据 Pt 的坐标值绘制给定的文本内容
 	_, err := fc.DrawString(text, pt)
 	if err != nil {
 		log.Printf("构造水印失败 err: %v", err)
 		return err
 	}
-
 	return nil
 }
 
@@ -182,12 +186,14 @@ func OpenPngImage(src string) image.Image {
 	ff, err := os.Open(src)
 	if err != nil {
 		log.Printf("打开 %s 图片失败: %v", src, err)
+		return nil
 	}
+	defer ff.Close()
 
 	img, err := png.Decode(ff)
-
 	if err != nil {
-		log.Printf("png %s decode  失败: %v", src, err)
+		log.Printf("png %s decode 失败: %v", src, err)
+		return nil
 	}
 
 	return img

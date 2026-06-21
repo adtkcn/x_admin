@@ -32,17 +32,25 @@ type BlockPuzzleCaptchaService struct {
 func (b *BlockPuzzleCaptchaService) Get() (map[string]any, error) {
 
 	// 初始化背景图片
-	backgroundImage := img.GetBackgroundImage()
+	backgroundImage, err := img.GetBackgroundImage()
+	if err != nil {
+		return nil, err
+	}
 
 	// 为背景图片设置水印
 	if b.factory.config.Watermark.Text != "" {
 		backgroundImage.SetText(b.factory.config.Watermark.Text, b.factory.config.Watermark.FontSize, b.factory.config.Watermark.Color)
 	}
 	// 初始化模板图片
-	templateImage := img.GetTemplateImage()
+	templateImage, err := img.GetTemplateImage()
+	if err != nil {
+		return nil, err
+	}
 
 	// 构造前端所需图片
-	b.pictureTemplatesCut(backgroundImage, templateImage)
+	if err := b.pictureTemplatesCut(backgroundImage, templateImage); err != nil {
+		return nil, err
+	}
 
 	originalImageBase64, err := backgroundImage.Base64()
 	if err != nil {
@@ -66,20 +74,27 @@ func (b *BlockPuzzleCaptchaService) Get() (map[string]any, error) {
 		return nil, err
 	}
 
-	b.factory.GetCache().Set(codeKey, string(jsonPoint), b.factory.config.CacheExpireSec)
+	cache, err := b.factory.GetCache()
+	if err != nil {
+		return nil, err
+	}
+	cache.Set(codeKey, string(jsonPoint), b.factory.config.CacheExpireSec)
 
 	return data, nil
 }
 
-func (b *BlockPuzzleCaptchaService) pictureTemplatesCut(backgroundImage *util.ImageUtil, templateImage *util.ImageUtil) {
+func (b *BlockPuzzleCaptchaService) pictureTemplatesCut(backgroundImage *util.ImageUtil, templateImage *util.ImageUtil) error {
 	// 生成拼图坐标点
 	b.generateJigsawPoint(backgroundImage, templateImage)
 	// 裁剪模板图
 	b.cutByTemplate(backgroundImage, templateImage, b.point.X, 0)
 
-	// 插入干扰图
-	for {
-		newTemplateImage := img.GetTemplateImage()
+	// 插入干扰图（最多尝试 10 次，避免模板图不足时死循环）
+	for attempt := 0; attempt < 10; attempt++ {
+		newTemplateImage, err := img.GetTemplateImage()
+		if err != nil {
+			return err
+		}
 		if newTemplateImage.Src != templateImage.Src {
 			offsetX := util.RandomInt(0, backgroundImage.Width-newTemplateImage.Width-5)
 			if math.Abs(float64(newTemplateImage.Width-offsetX)) > float64(newTemplateImage.Width/2) {
@@ -88,6 +103,7 @@ func (b *BlockPuzzleCaptchaService) pictureTemplatesCut(backgroundImage *util.Im
 			}
 		}
 	}
+	return nil
 }
 
 // 插入干扰图
@@ -189,7 +205,10 @@ func (b *BlockPuzzleCaptchaService) generateJigsawPoint(backgroundImage *util.Im
 }
 
 func (b *BlockPuzzleCaptchaService) Check(token string, pointJson string) error {
-	cache := b.factory.GetCache()
+	cache, err := b.factory.GetCache()
+	if err != nil {
+		return err
+	}
 
 	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
 
@@ -202,7 +221,7 @@ func (b *BlockPuzzleCaptchaService) Check(token string, pointJson string) error 
 	// 解析结构体
 	cachePoint := &vo.PointVO{}
 	userPoint := &vo.PointVO{}
-	err := json.Unmarshal([]byte(cachePointInfo), cachePoint)
+	err = json.Unmarshal([]byte(cachePointInfo), cachePoint)
 
 	if err != nil {
 		return err
@@ -232,6 +251,8 @@ func (b *BlockPuzzleCaptchaService) Verification(token string, pointJson string)
 		return err
 	}
 	codeKey := fmt.Sprintf(captcha_config.CodeKeyPrefix, token)
-	b.factory.GetCache().Delete(codeKey)
+	if cache, err := b.factory.GetCache(); err == nil {
+		cache.Delete(codeKey)
+	}
 	return nil
 }

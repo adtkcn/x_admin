@@ -83,7 +83,7 @@ func (l *CacheUtil) Delete(key string) {
 }
 
 func (l *CacheUtil) Clear() {
-	for key := range l.Data {
-		l.Delete(key)
-	}
+	l.DataRWLock.Lock()
+	defer l.DataRWLock.Unlock()
+	l.Data = make(map[string]string)
 }

@@ -18,11 +18,14 @@ type BlockPuzzleConfig struct {
 
 // 点击文字配置
 type ClickWordConfig struct {
-	FontSize   int // 点击文字字体大小
-	FontNum    int // 点击文字数量
-	AllFontNum int // 点击文字显示数量
-	XOffset    int // 点击文字X轴偏移量
-	YOffset    int // 点击文字Y轴偏移量
+	FontSize int // 点击文字字体大小
+	FontNum  int // 需要点击的文字数量
+	XOffset  int // 点击文字X轴容错偏移量
+	YOffset  int // 点击文字Y轴容错偏移量
+
+	// 干扰文字配置
+	InterferenceFontNum  int // 干扰文字数量
+	InterferenceFontSize int // 干扰文字字体大小（建议比点击文字小）
 }
 
 type Config struct {
@@ -49,11 +52,12 @@ func NewMemCacheConfig() *Config {
 		},
 		// 点击文字配置（参数可从业务系统自定义）
 		ClickWord: &ClickWordConfig{
-			FontSize:   25,
-			FontNum:    4,
-			AllFontNum: 10,
-			XOffset:    10,
-			YOffset:    10,
+			FontSize:             25,
+			FontNum:              4,
+			XOffset:              10,
+			YOffset:              10,
+			InterferenceFontNum:  6,
+			InterferenceFontSize: 16,
 		},
 		// 滑动模块配置（参数可从业务系统自定义）
 		BlockPuzzle: &BlockPuzzleConfig{Offset: 10},
