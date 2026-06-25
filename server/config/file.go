@@ -2,7 +2,7 @@ package config
 
 type FileConfigStruct struct {
 	UploadDirectory string `mapstructure:"UploadDirectory"` // 文件目录
-	PublicPrefix    string `mapstructure:"PublicPrefix"`    // 资源访问前缀
+	UploadPrefix    string `mapstructure:"UploadPrefix"`    // 资源访问前缀
 
 	UploadImageSize int64 `mapstructure:"UploadImageSize"` // 上传图片大小限制
 	UploadVideoSize int64 `mapstructure:"UploadVideoSize"` // 上传视频大小限制
@@ -25,7 +25,7 @@ type FileConfigStruct struct {
 
 var FileConfig = FileConfigStruct{
 	// 资源访问前缀
-	PublicPrefix: "/api/uploads", // /api/uploads
+	UploadPrefix: "/api/uploads", // /api/uploads
 	// 上传文件路径
 	UploadDirectory: "/tmp/uploads/x_admin_go/",
 	UploadImageSize: 20 * 1024 * 1024,   // 20MB

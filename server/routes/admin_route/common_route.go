@@ -1,8 +1,11 @@
 package admin_route
 
 import (
+	"fmt"
 	"x_admin/app/controller/admin_ctl/common_controller"
 	"x_admin/app/middleware"
+	"x_admin/config"
+	"x_admin/docs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,7 +47,21 @@ func initGeTuiRoute(rg *gin.RouterGroup) {
 	geTuiRg.GET("/push", handleGeTui.Push)
 }
 
+// @Summary	swagger文档数据
+// @Tags		公共接口
+// @Router		/api/swagger/doc.json [get]
+func swaggerDoc(rg *gin.RouterGroup) {
+	rg.GET("/swagger/doc.json", func(c *gin.Context) {
+		// 获取域名和端口号
+		host := ""
+		docs.SwaggerInfo.Host = fmt.Sprintf("%v", host)
+		docs.SwaggerInfo.Title = config.AppConfig.AppName
+		docs.SwaggerInfo.Version = config.AppConfig.Version
+		c.String(200, docs.SwaggerInfo.ReadDoc())
+	})
+}
+
 // 通用模块路由入口（上传、分片上传、相册、首页、个推、验证码）
 func init() {
-	routeHandlers = append(routeHandlers, initUploadRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute)
+	routeHandlers = append(routeHandlers, initUploadRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute, swaggerDoc)
 }

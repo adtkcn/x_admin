@@ -1,7 +1,7 @@
-package user_route
+package web_route
 
 import (
-	"x_admin/app/controller/user_ctl"
+	"x_admin/app/controller/web_ctl"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -10,8 +10,8 @@ import (
 // UserRoute 注册用户路由
 // 路由前缀: /api/user
 func UserRoute(rg *gin.RouterGroup) {
-	handle := user_ctl.UserController{}
-	authHandle := user_ctl.AuthController{}
+	handle := web_ctl.UserController{}
+	authHandle := web_ctl.AuthController{}
 
 	// 免登录接口
 	rg.POST("/sendCode", handle.SendEmailCode)                // 发送邮箱验证码
@@ -47,4 +47,7 @@ func UserRoute(rg *gin.RouterGroup) {
 		// 第三方绑定列表
 		auth.GET("/authList", authHandle.GetUserAuthList) // 获取绑定列表
 	}
+}
+func init() {
+	webRouteHandlers = append(webRouteHandlers, UserRoute)
 }

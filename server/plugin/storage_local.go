@@ -55,7 +55,7 @@ func (e *localStorageEngine) ObjectExists(key string) (bool, error) {
 // GetObjectURL 获取对象访问 URL
 func (e *localStorageEngine) GetObjectURL(key string) (string, error) {
 	// 构建相对 URL 路径，如 /api/uploads/images/20240101/xxx.png
-	publicURL := filepath.ToSlash(filepath.Join(config.FileConfig.PublicPrefix, key))
+	publicURL := filepath.ToSlash(filepath.Join(config.FileConfig.UploadPrefix, key))
 	return publicURL, nil
 }
 

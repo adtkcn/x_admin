@@ -66,7 +66,7 @@ func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listR
 	engine := "local"
 	for i := 0; i < len(albumResps); i++ {
 		if engine == "local" {
-			albumResps[i].Path = path.Join(config.FileConfig.PublicPrefix, albums[i].Uri)
+			albumResps[i].Path = path.Join(config.FileConfig.UploadPrefix, albums[i].Uri)
 		} else {
 			// TODO: 其他engine
 		}

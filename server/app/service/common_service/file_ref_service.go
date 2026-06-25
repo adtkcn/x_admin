@@ -23,60 +23,15 @@ func newFileRefService() *fileRefService {
 	}
 }
 
-// AddRef 新增文件业务关联
-// fileHashID: x_common_file_hash.id
-// bizType: 业务类型，如 "user_avatar"、"article_cover"、"album"
-// bizID: 业务实体 ID
-// func (s *fileRefService) AddRef(fileHashID, bizType, bizID string) error {
-// 	db := core.GetDB()
-// 	// 幂等：已存在相同关联则跳过
-// 	var count int64
-// 	err := db.Model(&common_model.CommonFileRef{}).
-// 		Where("file_hash_id = ? AND biz_type = ? AND biz_id = ?", fileHashID, bizType, bizID).
-// 		Count(&count).Error
-// 	if err != nil {
-// 		core.Logger.Errorf("FileRefService.AddRef count err: %+v", err)
-// 		return err
-// 	}
-// 	if count > 0 {
-// 		return nil
-// 	}
-
-// 	ref := common_model.CommonFileRef{
-// 		FileHashID: fileHashID,
-// 		BizType:    bizType,
-// 		BizID:      bizID,
-// 	}
-// 	if err := db.Create(&ref).Error; err != nil {
-// 		core.Logger.Errorf("FileRefService.AddRef create err: %+v", err)
-// 		return err
-// 	}
-// 	return nil
-// }
-
-// // RemoveRef 移除文件业务关联（业务删除时调用）
-// func (s *fileRefService) RemoveRef(fileHashID, bizType, bizID string) error {
-// 	db := core.GetDB()
-// 	err := db.Where("file_hash_id = ? AND biz_type = ? AND biz_id = ?", fileHashID, bizType, bizID).
-// 		Delete(&common_model.CommonFileRef{}).Error
-// 	if err != nil {
-// 		core.Logger.Errorf("FileRefService.RemoveRef err: %+v", err)
-// 		return err
-// 	}
-// 	return nil
-// }
-
-// // RemoveByBiz 按业务类型+业务ID移除所有关联（业务实体整体删除时调用）
-// func (s *fileRefService) RemoveByBiz(bizType, bizID string) error {
-// 	db := core.GetDB()
-// 	err := db.Where("biz_type = ? AND biz_id = ?", bizType, bizID).
-// 		Delete(&common_model.CommonFileRef{}).Error
-// 	if err != nil {
-// 		core.Logger.Errorf("FileRefService.RemoveByBiz err: %+v", err)
-// 		return err
-// 	}
-// 	return nil
-// }
+// RemoveByBiz 按业务类型+业务ID移除所有关联（业务实体整体删除时调用）
+func (s *fileRefService) RemoveByBiz(bizType, bizID string) error {
+	err := s.db.Where("biz_type = ? AND biz_id = ?", bizType, bizID).Delete(&common_model.CommonFileRef{}).Error
+	if err != nil {
+		core.Logger.Errorf("FileRefService.RemoveByBiz err: %+v", err)
+		return err
+	}
+	return nil
+}
 
 // HasRef 检查文件是否有业务引用
 func (s *fileRefService) HasRef(fileHashID string) (bool, error) {
@@ -91,12 +46,18 @@ func (s *fileRefService) HasRef(fileHashID string) (bool, error) {
 	return count > 0, nil
 }
 
+// SaveFileRefItem 保存文件关联的入参项
+type SaveFileRefItem struct {
+	FileHashID string
+	FileName   string
+}
+
 // SaveFileRefs 在同一个事务中：删除旧关联 + 批量插入新关联
 // tx: 外部传入的事务对象（由调用方 db.Transaction 创建）
 // bizType: 业务类型，如 "article_cover"
 // bizID: 业务实体 ID
-// newFileHashIDs: 需要关联的新文件哈希 ID 列表
-func (s *fileRefService) SaveFileRefs(tx *gorm.DB, bizType, bizID string, newFileHashIDs []string) error {
+// items: 需要关联的文件列表
+func (s *fileRefService) SaveFileRefs(tx *gorm.DB, bizType, bizID string, items []SaveFileRefItem) error {
 	// 1. 删除旧关联
 	if err := tx.Where("biz_type = ? AND biz_id = ?", bizType, bizID).
 		Delete(&common_model.CommonFileRef{}).Error; err != nil {
@@ -104,17 +65,48 @@ func (s *fileRefService) SaveFileRefs(tx *gorm.DB, bizType, bizID string, newFil
 		return err
 	}
 
-	// 2. 批量插入新关联
-	if len(newFileHashIDs) == 0 {
+	if len(items) == 0 {
 		return nil
 	}
-	refs := make([]common_model.CommonFileRef, 0, len(newFileHashIDs))
-	for _, hashID := range newFileHashIDs {
-		if hashID == "" {
+
+	// 过滤空值，收集有效 hashID
+	validItems := make([]SaveFileRefItem, 0, len(items))
+	hashIDs := make([]string, 0, len(items))
+	for _, item := range items {
+		if item.FileHashID != "" {
+			validItems = append(validItems, item)
+			hashIDs = append(hashIDs, item.FileHashID)
+		}
+	}
+	if len(validItems) == 0 {
+		return nil
+	}
+
+	// 联查文件信息（FileSize、FilePath、Ext）
+	var files []common_model.CommonFileHash
+	if err := tx.Where("id IN ?", hashIDs).Find(&files).Error; err != nil {
+		core.Logger.Errorf("FileRefService.SaveFileRefs query files err: bizType=%s bizID=%s err=%+v", bizType, bizID, err)
+		return err
+	}
+	fileMap := make(map[string]common_model.CommonFileHash, len(files))
+	for _, f := range files {
+		fileMap[f.ID] = f
+	}
+
+	// 构建关联记录
+	refs := make([]common_model.CommonFileRef, 0, len(validItems))
+	for _, item := range validItems {
+		file, ok := fileMap[item.FileHashID]
+		if !ok {
+			core.Logger.Warnf("FileRefService.SaveFileRefs file not found: hashID=%s", item.FileHashID)
 			continue
 		}
 		refs = append(refs, common_model.CommonFileRef{
-			FileHashID: hashID,
+			FileHashID: item.FileHashID,
+			FileName:   item.FileName,
+			FileSize:   file.FileSize,
+			FilePath:   file.FilePath,
+			Ext:        file.Ext,
 			BizType:    bizType,
 			BizID:      bizID,
 		})

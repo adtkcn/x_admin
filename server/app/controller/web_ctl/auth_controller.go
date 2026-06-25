@@ -1,4 +1,4 @@
-package user_ctl
+package web_ctl
 
 import (
 	"x_admin/app/schema/user_schema"
