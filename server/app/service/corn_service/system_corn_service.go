@@ -250,8 +250,7 @@ func (service systemCornService) GetTaskList() (list []map[string]any) {
 	// var list []map[string]any
 	for _, task := range TaskInfoList {
 		list = append(list, map[string]any{
-			"Lock":     task.Lock,
-			"LockTTL":  task.LockTTL.Seconds(),
+			"LockTTL":  task.LockTTL,
 			"TaskCode": task.TaskCode,
 			"TaskDesc": task.TaskDesc,
 		})

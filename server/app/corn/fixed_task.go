@@ -1,7 +1,6 @@
 package corn
 
 import (
-	"time"
 	"x_admin/app/service/common_service"
 	"x_admin/app/service/corn_service"
 	"x_admin/app/service/monitor_service"
@@ -32,8 +31,8 @@ func init() {
 
 	// 每10秒执行一次拉取定时任务"*/10 * * * * *"
 	FixedTasks.AddTask("loadTasks", "40 * * * * *", corn_service.Task{
-		Lock: false,
-		// LockTTL:  10 * time.Second,
+
+		LockTTL:  0,
 		TaskCode: "loadTasks",
 		TaskDesc: "拉取定时任务",
 		TaskFunc: func() {
@@ -47,8 +46,8 @@ func init() {
 
 	// 每5秒执行一次广播当前在线用户数
 	FixedTasks.AddTask("onlineCount", "*/5 * * * * *", corn_service.Task{
-		Lock:     true,
-		LockTTL:  2 * time.Second,
+
+		LockTTL:  3,
 		TaskCode: "onlineCount",
 		TaskDesc: "广播当前在线用户数",
 		TaskFunc: func() {
@@ -64,8 +63,8 @@ func init() {
 
 	// 每2秒执行一次收集服务器信息并推送到Redis
 	FixedTasks.AddTask("CollectAndPushServerInfo", "*/5 * * * * *", corn_service.Task{
-		Lock:     false,
-		LockTTL:  2 * time.Second,
+
+		LockTTL:  0,
 		TaskCode: "CollectAndPushServerInfo",
 		TaskDesc: "收集服务器信息并推送到Redis",
 		TaskFunc: func() {
@@ -77,8 +76,8 @@ func init() {
 
 	// 每天凌晨1点删除三个月前的错误监控数据
 	FixedTasks.AddTask("DelMonitorErrorListThreeMonthAgo", "0 1 * * * *", corn_service.Task{
-		Lock:     true,
-		LockTTL:  10 * time.Minute,
+
+		LockTTL:  10,
 		TaskCode: "DelMonitorErrorListThreeMonthAgo",
 		TaskDesc: "删除三个月前的错误监控数据",
 		TaskFunc: func() {
@@ -90,8 +89,8 @@ func init() {
 
 	// 每60秒执行一次邮件延迟补推
 	FixedTasks.AddTask("EmailDelayPush", "*/60 * * * * *", corn_service.Task{
-		Lock:     true,
-		LockTTL:  55 * time.Second,
+
+		LockTTL:  55,
 		TaskCode: "EmailDelayPush",
 		TaskDesc: "邮件延迟补推：扫描未读通知，对配置了邮箱的用户发送邮件提醒",
 		TaskFunc: func() {
@@ -101,8 +100,7 @@ func init() {
 
 	// 每小时执行一次清理过期的分片临时目录
 	FixedTasks.AddTask("CleanChunkTmpDir", "0 0 * * * *", corn_service.Task{
-		Lock:     true,
-		LockTTL:  10 * time.Minute,
+		LockTTL:  30,
 		TaskCode: "CleanChunkTmpDir",
 		TaskDesc: "清理过期的分片临时目录",
 		TaskFunc: func() {
@@ -112,8 +110,7 @@ func init() {
 
 	// 每天凌晨2点清理上传超过7天且无业务引用的文件
 	FixedTasks.AddTask("CleanOrphanFiles", "0 0 2 * * *", corn_service.Task{
-		Lock:     true,
-		LockTTL:  30 * time.Minute,
+		LockTTL:  30,
 		TaskCode: "CleanOrphanFiles",
 		TaskDesc: "清理超过7天未使用的文件（无业务引用）",
 		TaskFunc: func() {

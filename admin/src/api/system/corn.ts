@@ -41,7 +41,6 @@ export type type_system_corn_edit = {
     Status?: number
 }
 export type type_task = {
-    Lock: boolean
     LockTTL: number
     TaskCode: string
     TaskDesc: string
