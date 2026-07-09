@@ -16,15 +16,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, ref } from 'vue'
-// 节流
-// import { throttle } from 'lodash-es'
+import { computed, watch, ref, onMounted, onUnmounted } from 'vue'
 import LayoutMain from './components/main.vue'
 import LayoutSidebar from './components/sidebar/index.vue'
 import LayoutHeader from './components/header/index.vue'
 
 import useSettingStore from '@/stores/modules/setting'
 import useAppStore from '@/stores/modules/app'
+import { initGlobalWs, destroyGlobalWs } from '@/hooks/useGlobalWs'
 
 defineOptions({
     name: 'LayoutDefault'
@@ -57,6 +56,14 @@ watch(
         }, 600)
     }
 )
+
+// 全局 WebSocket：登录后初始化，离开布局时销毁
+onMounted(() => {
+    initGlobalWs()
+})
+onUnmounted(() => {
+    destroyGlobalWs()
+})
 </script>
 
 <style scoped lang="scss">

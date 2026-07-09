@@ -46,16 +46,13 @@ func (s *noticeService) Send(payload NoticePayload) error {
 	}
 
 	// WebSocket实时推送
-	core.Ws.SendToUser(payload.ReceiverID, map[string]any{
-		"type": "notice",
-		"data": map[string]any{
-			"id":         notice.ID,
-			"noticeType": payload.Type,
-			"title":      payload.Title,
-			"content":    payload.Content,
-			"url":        payload.URL,
-			"createTime": notice.CreateTime,
-		},
+	core.Ws.SendToUser(payload.ReceiverID, "notice", map[string]any{
+		"id":         notice.ID,
+		"noticeType": payload.Type,
+		"title":      payload.Title,
+		"content":    payload.Content,
+		"url":        payload.URL,
+		"createTime": notice.CreateTime,
 	})
 
 	return nil

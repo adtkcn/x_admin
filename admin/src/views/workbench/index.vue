@@ -1,17 +1,6 @@
 <template>
     <div class="workbench">
         <div class="md:flex">
-            <!-- <el-card class="border-none! mb-4 md:mr-4" shadow="never">
-                <template #header>
-                    <span class="card-title">版本信息</span>
-                </template>
-                <div>
-                    <div class="flex leading-9">
-                        <div class="w-20 flex-none">当前版本</div>
-                        <span> {{ workbenchData.version.version }}</span>
-                    </div>
-                </div>
-            </el-card> -->
             <el-card class="border-none! mb-4 flex-1" shadow="never">
                 <template #header>
                     <div>
@@ -55,7 +44,7 @@
         <div class="md:flex">
             <el-card class="flex-1 border-none! mb-4" shadow="never">
                 <template #header>
-                    <span>访问量趋势图</span>
+                    <span>在线人数趋势</span>
                 </template>
 
                 <div>
@@ -72,43 +61,44 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onDeactivated, onActivated, onMounted, useTemplateRef, onUnmounted } from 'vue'
+import { reactive, onActivated, onMounted, useTemplateRef } from 'vue'
 import { getWorkbench } from '@/api/app'
 import type { Console } from '@/api/app'
-
-// import feedback from '@/utils/feedback'
-import { useWebSocket } from '@vueuse/core'
-import useUserStore from '@/stores/modules/user'
+import { onWsMessage } from '@/hooks/useGlobalWs'
 
 import type { ECOption } from '@/utils/echart'
 
-const userStore = useUserStore()
 defineOptions({
     name: 'workbench'
+})
+
+// 订阅 WS 在线人数消息（组件卸载自动取消订阅）
+onWsMessage('onlineCount', (msg) => {
+    updateChart(msg.data.count)
 })
 
 // 表单数据
 const workbenchData: Console = reactive({
     version: {
-        version: '', // 版本号
-        name: '' // 官网
+        version: '',
+        name: ''
     },
 
     today: {
-        time: '', // 更新时间
-        todayVisits: 0, // 访问量(人)
-        totalVisits: 0, // 总访问量
-        flow_todo: 0, // 待办审批
-        todayOrder: 0, // 订单量(笔)
-        totalOrder: 0, // 总订单量
-        todayUsers: 0, // 新增用户
-        totalUsers: 0 // 总访用户
-    }, // 今日数据
+        time: '',
+        todayVisits: 0,
+        totalVisits: 0,
+        flow_todo: 0,
+        todayOrder: 0,
+        totalOrder: 0,
+        todayUsers: 0,
+        totalUsers: 0
+    },
 
     visitor: {
         date: [],
         list: []
-    } // 访问量
+    }
 })
 const visitorOption = {
     xAxis: {
@@ -119,10 +109,9 @@ const visitorOption = {
         type: 'value'
     },
     legend: {
-        data: ['访问量']
+        data: ['在线人数']
     },
     itemStyle: {
-        // 点的颜色。
         color: 'red'
     },
     tooltip: {
@@ -131,19 +120,20 @@ const visitorOption = {
     grid: {
         left: '3%',
         right: '4%',
-        // bottom: '3%',
         containLabel: true
     },
     series: [
         {
-            name: '访问量',
+            name: '在线人数',
             data: [] as number[],
             type: 'line',
-            smooth: true
+            smooth: true,
+            symbol: 'none'
         }
     ]
 }
 const visitorChartRef = useTemplateRef('visitorChartRef')
+
 // 获取工作台主页数据
 const getData = async () => {
     const res = await getWorkbench()
@@ -161,7 +151,7 @@ function updateChart(val: number) {
     visitorOption.xAxis.data.push(new Date().toLocaleTimeString())
     visitorOption.series[0].data.push(val)
 
-    // 保持数据长度在10个
+    // 保持数据长度在20个
     if (visitorOption.xAxis.data.length > 20) {
         visitorOption.xAxis.data.shift()
         visitorOption.series[0].data.shift()
@@ -169,61 +159,11 @@ function updateChart(val: number) {
     visitorChartRef.value?.setOption(visitorOption as ECOption)
 }
 
-// 定义你的消息类型
-interface ChatMessage {
-    onlineCount: number
-}
-var domain = window.location.host
-var isHttps = window.location.protocol === 'https:'
-const ws = useWebSocket(
-    `${isHttps ? 'wss' : 'ws'}://${domain}/api/ws?token=${userStore.token}&room=room1`,
-    {
-        heartbeat: {
-            message: 'ping',
-            interval: 10000,
-            pongTimeout: 1000
-        },
-        autoReconnect: true,
-
-        onMessage(ws, e) {
-            if (e.data === 'pong') {
-                console.log('Received pong message')
-                return
-            }
-            try {
-                const data = JSON.parse(e.data) as ChatMessage
-                updateChart(data.onlineCount)
-            } catch (error) {
-                console.error('JSON parse error:', error)
-                return
-            }
-        },
-        onError: (ws, event) => {
-            console.error('WebSocket error:', event)
-        },
-
-        onDisconnected: (ws, event) => {
-            console.log('WebSocket closed:', event)
-        }
-    }
-)
-// setInterval(() => {
-//     ws.send('ping')
-// }, 1000)
 onActivated(() => {
     console.log('onActivated')
 })
-onDeactivated(() => {
-    // ws.close()
-})
 onMounted(() => {
-    console.log('onMounted')
-    // ws.connect()
     getData()
-    // updateChart()
-})
-onUnmounted(() => {
-    console.log('onUnmounted')
 })
 </script>
 

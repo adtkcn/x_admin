@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"x_admin/config"
@@ -18,18 +19,43 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// clientMessage 客户端发送的业务消息结构
+type clientMessage struct {
+	Type string `json:"type"` // 消息类型: "join_room" | "leave_room" | ...
+	Data string `json:"data"` // 数据部分
+}
+
+// handleWsMessage 处理客户端发来的业务消息。
+// 由 ws.Client 的 OnMessage 回调触发，负责消息解析和业务路由。
+func handleWsMessage(client *ws.Client, data []byte) {
+	var msg clientMessage
+	if err := json.Unmarshal(data, &msg); err != nil {
+		log.Printf("[ws] invalid message from %s: %s", client.UUID, string(data))
+		return
+	}
+
+	switch msg.Type {
+	case "join_room":
+		if msg.Data != "" {
+			client.Manager.JoinRoom(client.UUID, msg.Data)
+		}
+	case "leave_room":
+		if msg.Data != "" {
+			client.Manager.LeaveRoom(client.UUID, msg.Data)
+		}
+	default:
+		log.Printf("[ws] unknown message type %q from %s", msg.Type, client.UUID)
+	}
+}
+
 // @Summary	websocket连接
 // @Tags		公共接口
 // @Router		/api/ws [get]
 // @Param		token	header	string	true	"token"
-// @Param		uid		query	string	true	"用户ID"
-// @Param		room	query	string	true	"房间ID"
 // @Schemes	ws
 func WsHandler(c *gin.Context) {
 	uuid := util.ToolsUtil.MakeUuidV7()
-	// 从查询参数获取用户ID和房间ID（实际项目中应通过认证获取）
 	var adminId = config.AdminConfig.GetAdminId(c)
-	roomID := c.Query("room")
 	if adminId == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "adminId is required"})
 		return
@@ -41,7 +67,9 @@ func WsHandler(c *gin.Context) {
 		return
 	}
 
-	client := ws.NewClient(uuid, adminId, roomID, conn, core.Ws)
+	client := ws.NewClient(uuid, adminId, conn, core.Ws)
+	// 设置业务消息回调，在 Controller 层处理业务逻辑
+	client.OnMessage = handleWsMessage
 	core.Ws.Register <- client
 
 	// 启动读写协程

@@ -70,9 +70,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useWebSocket } from '@vueuse/core'
 import {
     noticeList,
     noticeUnreadCount,
@@ -80,7 +79,7 @@ import {
     noticeReadAll,
     type type_notice_resp
 } from '@/api/setting/notice'
-import useUserStore from '@/stores/modules/user'
+import { onWsMessage } from '@/hooks/useGlobalWs'
 import feedback from '@/utils/feedback'
 
 defineOptions({
@@ -88,7 +87,6 @@ defineOptions({
 })
 
 const router = useRouter()
-const userStore = useUserStore()
 const popoverRef = ref()
 const loading = ref(false)
 const unreadCount = ref(0)
@@ -159,43 +157,14 @@ function goNoticePage() {
     router.push('/system/notice')
 }
 
-// WebSocket 实时推送
-let ws: ReturnType<typeof useWebSocket> | null = null
-
-function connectWs() {
-    const domain = window.location.host
-    const isHttps = window.location.protocol === 'https:'
-    const token = userStore.token
-    if (!token) return
-
-    ws = useWebSocket(`${isHttps ? 'wss' : 'ws'}://${domain}/api/ws?token=${token}`, {
-        heartbeat: {
-            message: 'ping',
-            interval: 10000,
-            pongTimeout: 1000
-        },
-        autoReconnect: true,
-        onMessage(_ws, e) {
-            if (e.data === 'pong') return
-            try {
-                const msg = JSON.parse(e.data)
-                if (msg.type === 'notice') {
-                    // 收到新通知：刷新未读数和列表
-                    unreadCount.value++
-                    fetchNoticeData()
-                }
-            } catch {}
-        }
-    })
-}
+// 订阅 WS 通知消息（组件卸载自动取消订阅）
+onWsMessage('notice', () => {
+    unreadCount.value++
+    fetchNoticeData()
+})
 
 onMounted(() => {
     fetchNoticeData()
-    nextTick(() => connectWs())
-})
-
-onUnmounted(() => {
-    ws?.close()
 })
 </script>
 

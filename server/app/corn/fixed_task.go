@@ -1,6 +1,7 @@
 package corn
 
 import (
+	"time"
 	"x_admin/app/service/common_service"
 	"x_admin/app/service/corn_service"
 	"x_admin/app/service/monitor_service"
@@ -51,12 +52,18 @@ func init() {
 		TaskCode: "onlineCount",
 		TaskDesc: "广播当前在线用户数",
 		TaskFunc: func() {
-			// 存入redis
-			util.RedisUtil.RPush("onlineCount", []any{core.Ws.GetOnlineCount()}, 10)
+			count := core.Ws.GetOnlineCount()
+
+			// 存入redis，保留最近1小时数据（3600/5=720条）
+			record, _ := util.ToolsUtil.ObjToJson(map[string]any{
+				"time":  time.Now().Format("15:04:05"),
+				"count": count,
+			})
+			util.RedisUtil.RPush("onlineCount", []any{record}, 720)
 
 			// 广播当前在线用户数
-			core.Ws.SendToAll(map[string]any{
-				"onlineCount": core.Ws.GetOnlineCount(),
+			core.Ws.SendToAll("onlineCount", map[string]any{
+				"count": count,
 			})
 		},
 	})

@@ -8,33 +8,45 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// WebSocket 连接相关常量配置
 const (
 	writeWait      = 10 * time.Second
 	pongWait       = 60 * time.Second
 	pingPeriod     = (pongWait * 9) / 10
-	maxMessageSize = 512
+	maxMessageSize = 2048
 	sendChanSize   = 256
 )
 
-// Client WebSocket 客户端连接
-type Client struct {
-	UUID    string // 客户端唯一标识（用于单推）
-	Uid     string // 用户 ID（用于按用户推送）
-	RoomID  string // 房间 ID（用于群推）
-	conn    *websocket.Conn
-	send    chan []byte
-	Manager *Manager
+// MessageHandler 业务消息处理回调，由 Controller 层设置。
+// 收到非心跳消息时调用，data 为原始消息字节。
+type MessageHandler func(client *Client, data []byte)
 
-	closeOnce sync.Once // 保证 closeConn 只执行一次
+// Client 表示一个 WebSocket 客户端连接。
+//
+// 职责边界：
+//   - 基础设施层：连接生命周期管理、心跳、消息读写
+//   - 不处理业务消息：非心跳消息通过 OnMessage 回调上抛给 Controller 层
+//
+// 并发模型：
+//   - Read goroutine: 读取消息，心跳内部处理，业务消息回调 OnMessage
+//   - Write goroutine: 发送消息，定期 Ping 保活
+type Client struct {
+	UUID string // 客户端唯一标识（UUID v7）
+	Uid  string // 用户 ID
+
+	conn      *websocket.Conn
+	send      chan []byte
+	Manager   *Manager
+	closeOnce sync.Once
 	closed    chan struct{}
+	OnMessage MessageHandler // 业务消息回调，由 Controller 层设置
 }
 
-// NewClient 创建客户端实例
-func NewClient(uuid, uid, roomID string, conn *websocket.Conn, manager *Manager) *Client {
+// NewClient 创建 WebSocket 客户端实例。
+func NewClient(uuid, uid string, conn *websocket.Conn, manager *Manager) *Client {
 	return &Client{
 		UUID:    uuid,
 		Uid:     uid,
-		RoomID:  roomID,
 		conn:    conn,
 		send:    make(chan []byte, sendChanSize),
 		Manager: manager,
@@ -42,20 +54,20 @@ func NewClient(uuid, uid, roomID string, conn *websocket.Conn, manager *Manager)
 	}
 }
 
-// closeConn 保证只执行一次：注销 + 关闭连接 + 关闭 send channel
+// closeConn 关闭连接并清理资源，保证只执行一次。
+// 直接调用 unregisterClient，避免 channel 满时资源泄漏。
 func (c *Client) closeConn() {
 	c.closeOnce.Do(func() {
 		close(c.closed)
 		c.conn.Close()
-		// 通知 Manager 注销（非阻塞，防止死锁）
-		select {
-		case c.Manager.UnRegister <- c:
-		default:
-		}
+		c.Manager.unregisterClient(c)
 	})
 }
 
-// Read 读取客户端消息（goroutine 运行）
+// Read 持续读取客户端消息。
+//
+// 仅处理心跳（ping→pong），其他所有消息通过 OnMessage 回调上抛给 Controller 层。
+// 不在基础设施层解析任何业务消息。
 func (c *Client) Read() {
 	defer c.closeConn()
 
@@ -78,16 +90,24 @@ func (c *Client) Read() {
 			}
 			return
 		}
-		msg := string(data)
-		if msg == "ping" {
-			c.conn.WriteMessage(websocket.TextMessage, []byte("pong"))
+
+		// 心跳消息：基础设施层内部处理
+		if string(data) == "ping" {
+			select {
+			case c.send <- []byte("pong"):
+			default:
+			}
 			continue
 		}
-		log.Printf("[ws] message from %s: %s", c.UUID, msg)
+
+		// 业务消息：回调给 Controller 层处理
+		if c.OnMessage != nil {
+			c.OnMessage(c, data)
+		}
 	}
 }
 
-// Write 向客户端写入消息（goroutine 运行）
+// Write 持续向客户端发送消息。
 func (c *Client) Write() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
@@ -97,6 +117,8 @@ func (c *Client) Write() {
 
 	for {
 		select {
+		case <-c.closed:
+			return
 		case message, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
@@ -116,12 +138,12 @@ func (c *Client) Write() {
 	}
 }
 
-// Close 主动关闭连接（外部调用，幂等安全）
+// Close 主动关闭连接。幂等安全。
 func (c *Client) Close() {
 	c.closeConn()
 }
 
-// Send 非阻塞发送消息到 send channel，返回是否成功
+// Send 非阻塞发送消息到 send 通道。
 func (c *Client) Send(data []byte) bool {
 	select {
 	case <-c.closed:
@@ -129,7 +151,6 @@ func (c *Client) Send(data []byte) bool {
 	case c.send <- data:
 		return true
 	default:
-		// channel 满，丢弃消息并记录
 		log.Printf("[ws] client %s send buffer full, message dropped", c.UUID)
 		return false
 	}

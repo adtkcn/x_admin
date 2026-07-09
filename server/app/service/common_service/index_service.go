@@ -1,7 +1,6 @@
 package common_service
 
 import (
-	"time"
 	"x_admin/app/service/setting_service"
 	"x_admin/app/service/system_service"
 	"x_admin/config"
@@ -49,18 +48,26 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 		"totalUsers":  adminCount.TotalUsers, // 总访用户
 	}
 
-	// 在线用户
-	onlineCount := util.RedisUtil.LRange("onlineCount", 0, -1)
+	// 在线用户（从 Redis 取最近1小时的在线数据）
+	onlineRecords := util.RedisUtil.LRange("onlineCount", 0, -1)
 
-	// 访客图表
-	now := time.Now()
-	var date []string
-	for i := 14; i >= 0; i-- {
-		date = append(date, now.AddDate(0, 0, -i).Format(config.ConstantConfig.DateFormat))
+	// 从 Redis 数据中提取时间和在线数
+	var dateList []string
+	var countList []any
+	for _, record := range onlineRecords {
+		var item map[string]any
+		if err := util.ToolsUtil.JsonToObj(record, &item); err != nil {
+			continue
+		}
+		if t, ok := item["time"].(string); ok {
+			dateList = append(dateList, t)
+		}
+		countList = append(countList, item["count"])
 	}
+
 	visitor := map[string]any{
-		"date": date,
-		"list": onlineCount,
+		"date": dateList,
+		"list": countList,
 	}
 	return map[string]any{
 		"version": version,
