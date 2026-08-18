@@ -8,7 +8,7 @@ import {
     getMenu,
     type type_system_login,
     type type_system_admin_self
-} from '@/api/user'
+} from '@/api/system/user'
 import router, { filterAsyncRoutes } from '@/router'
 import { TOKEN_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
@@ -21,17 +21,6 @@ export interface UserState {
     menu: type_system_menu_resp[]
     perms: string[]
 }
-
-// interface MenuData {
-//     id: string
-//     name: string
-//     path: string
-//     icon?: string
-//     component?: string
-//     children?: MenuData[]
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     [key: string]: any
-// }
 
 const useUserStore = defineStore('user', {
     state: (): UserState => {

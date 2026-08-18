@@ -2,14 +2,14 @@
     <div class="admin">
         <el-card class="border-none!" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
-                <el-form-item label="管理员账号" class="w-[280px]">
-                    <el-input v-model="formData.username" clearable @keyup.enter="resetPage" />
+                <el-form-item label="管理员邮箱" class="w-[280px]">
+                    <el-input v-model="formData.email" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="管理员名称" class="w-[280px]">
                     <el-input v-model="formData.nickname" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="管理员角色" class="w-[280px]">
-                    <el-select v-model="formData.roleId" :empty-values="[null, undefined]">
+                    <el-select v-model="formData.role_id" :empty-values="[null, undefined]">
                         <el-option label="全部" value="" />
                         <el-option
                             v-for="(item, index) in optionsData.role"
@@ -71,19 +71,19 @@
                             <el-avatar :size="40" :src="row.avatar"></el-avatar>
                         </template>
                     </vxe-column>
-                    <vxe-column title="账号" field="username" min-width="100" />
+                    <vxe-column title="邮箱(账号)" field="email" min-width="100" />
                     <vxe-column title="名称" field="nickname" min-width="100" />
                     <vxe-column title="角色" field="role" min-width="100" />
                     <vxe-column title="部门" field="dept" min-width="100" />
-                    <vxe-column title="创建时间" field="createTime" width="150" />
-                    <vxe-column title="最近登录时间" field="lastLoginTime" width="150" />
-                    <vxe-column title="最近登录IP" field="lastLoginIp" width="120" />
+                    <vxe-column title="创建时间" field="create_time" width="150" />
+                    <vxe-column title="最近登录时间" field="last_login_time" width="150" />
+                    <vxe-column title="最近登录IP" field="last_login_ip" width="120" />
                     <vxe-column title="状态" width="80">
                         <template #default="{ row }">
                             <el-switch
                                 v-perms="['admin:system:admin:disable']"
                                 v-if="row.id != 1"
-                                :model-value="row.isDisable"
+                                :model-value="row.is_disable"
                                 :active-value="0"
                                 :inactive-value="1"
                                 @change="(val) => changeStatus(val as number, row.id)"
@@ -143,9 +143,9 @@ defineOptions({
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 // 表单数据
 const formData = reactive<type_system_admin_list>({
-    username: '',
+    email: '',
     nickname: '',
-    roleId: ''
+    role_id: ''
 })
 const showEdit = ref(false)
 const { pager, getLists, resetParams, resetPage } = usePaging({
@@ -160,6 +160,7 @@ const changeStatus = async (active: number, id: string) => {
         feedback.msgSuccess('修改成功')
         getLists()
     } catch (error) {
+        console.error('管理员状态修改失败:', error)
         getLists()
     }
 }
@@ -170,8 +171,12 @@ const handleAdd = async () => {
 }
 
 const export_file = async () => {
-    await feedback.confirm('确定要导出？')
-    await adminExportFile(formData)
+    try {
+        await feedback.confirm('确定要导出？')
+        await adminExportFile(formData)
+    } catch (error) {
+        console.error('管理员导出失败:', error)
+    }
 }
 const handleEdit = async (data: type_system_admin_resp) => {
     showEdit.value = true
@@ -186,7 +191,9 @@ const handleDelete = async (id: string) => {
         await adminDelete({ id })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('管理员删除失败:', error)
+    }
 }
 const { optionsData } = useDictOptions<{
     role: type_system_role_simple_resp[]

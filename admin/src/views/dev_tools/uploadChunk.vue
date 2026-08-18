@@ -1,73 +1,49 @@
 <template>
-    <div class="card">
-        <input type="file" ref="fileInput" @change="handleChange" />
-        <el-button type="primary" @click="btn">上传</el-button>
-        <el-button type="primary" @click="cancel">取消</el-button>
-        <el-button type="primary" @click="merge">合并</el-button>
+    <div class="p-4 upload-chunk-demo">
+        <el-card>
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <span class="font-medium">分片上传 / 秒传（调试）</span>
+                </div>
+            </template>
 
-        {{ status }}
+            <UploadChunk
+                ref="uploadChunkRef"
+                bucket="files"
+                @change="handleUploadResult"
+                @error="handleError"
+            >
+                <template #actions="{ file }">
+                    <span v-if="file" class="text-info mr-2">已选：{{ file.name }}</span>
+                </template>
+            </UploadChunk>
+        </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import FileUploader from '@/utils/FileUploader'
+import UploadChunk, { ChunkUploadResult } from '@/components/upload-chunk'
+import feedback from '@/utils/feedback'
 
-const fileInput = ref<HTMLInputElement>()
-const status = ref('')
-const fileUploader = new FileUploader({
-    chunkSize: 1024 * 1024 * 1,
-    onSuccess(filePath) {
-        ElMessage.success('上传成功:' + filePath)
-    },
-    onError(error) {
-        // console.error('error', error)
-        ElMessage.error(error.message)
-    },
-    onChunkSuccess(chunkIndex: number) {
-        console.log(`分片 ${chunkIndex}/${this.chunkCount} 上传成功`)
-    },
-    onChunkError(chunkIndex: number, error: Error) {
-        console.log(`分片 ${chunkIndex}/${this.chunkCount} 上传失败`, error)
-    },
-    onUploadProgress(
-        chunkIndex: number,
-        chunkCount: number,
-        chunkLoaded: number,
-        chunkTotal: number,
-        chunkPercent: number
-    ) {
-        status.value = `分片${chunkIndex}/${chunkCount}进度：${chunkPercent}%`
+const uploadChunkRef = ref<InstanceType<typeof UploadChunk>>()
+
+const handleUploadResult = async (result: ChunkUploadResult) => {
+    if (!result.fileHashId) {
+        feedback.msgSuccess('未生成文件哈希（秒传命中或注册失败），不挂载相册')
+        return
     }
-})
-function handleChange(e) {
-    const files = (e.target as HTMLInputElement).files
-    // console.log('e.target', e.target)
-    console.log('files', files)
-    if (files) {
-        fileUploader.loadFile(files[0])
-    }
+    feedback.msgSuccess('已上传')
 }
-function btn() {
-    fileUploader.start()
-}
-function cancel() {
-    fileUploader.cancel()
-}
-function merge() {
-    fileUploader.mergeChunk()
+
+const handleError = (e: Error) => {
+    feedback.msgError('上传失败：' + (e?.message || '未知错误'))
 }
 </script>
 
 <style scoped>
-button {
-    color: #fff;
-    background-color: rgb(150, 149, 149);
-    border: 0;
-    padding: 6px 10px;
-    margin: 6px;
-    font-size: 14px;
-    line-height: 18px;
+.upload-chunk-demo {
+    max-width: 720px;
+    margin: 0 auto;
 }
 </style>

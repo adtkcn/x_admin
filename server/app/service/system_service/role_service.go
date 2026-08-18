@@ -5,12 +5,13 @@ import (
 	"strings"
 	"x_admin/app/model/system_model"
 	"x_admin/app/schema/system_schema"
+	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
+	"x_admin/util"
 	"x_admin/util/convert_util"
 
-	"github.com/fatih/structs"
 	"gorm.io/gorm"
 )
 
@@ -149,10 +150,12 @@ func (roleSrv systemAuthRoleService) Edit(editReq system_schema.SystemAuthRoleEd
 		return errors.New("角色名称已存在!")
 	}
 	role.ID = editReq.ID
-	roleMap := structs.Map(editReq)
-	delete(roleMap, "ID")
-	delete(roleMap, "MenuIds")
-	roleMap["Name"] = strings.Trim(editReq.Name, " ")
+	roleMap := map[string]interface{}{
+		"Name":      strings.Trim(editReq.Name, " "),
+		"Sort":      editReq.Sort,
+		"IsDisable": editReq.IsDisable,
+		"Remark":    editReq.Remark,
+	}
 	// 事务
 	err = roleSrv.db.Transaction(func(tx *gorm.DB) error {
 		txErr := tx.Model(&role).Updates(roleMap).Error
@@ -168,13 +171,12 @@ func (roleSrv systemAuthRoleService) Edit(editReq system_schema.SystemAuthRoleEd
 		if te = PermService.BatchSaveByMenuIds(editReq.ID, editReq.MenuIds, tx); te != nil {
 			return te
 		}
+
+		// 清空redis角色权限缓存(按前缀批量删除所有管理员权限键)
+		util.RedisUtil.DelByPrefix(config.AdminConfig.BackstageAdminPermsKey + ":")
 		return nil
 	})
-
-	if e != nil {
-		return e
-	}
-	e = response.CheckErr(err, "Edit Transaction err")
+	e = response.CheckErr(err, "编辑角色失败")
 	return
 }
 
@@ -187,7 +189,7 @@ func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 	err := roleSrv.db.Transaction(func(tx *gorm.DB) error {
 		result := tx.Delete(&system_model.SystemAuthRole{}, "id = ?", id)
 		if result.Error != nil {
-			return result.Error
+			return response.CheckMysqlErr(result.Error)
 		}
 		if result.RowsAffected == 0 {
 			return errors.New("角色已不存在")
@@ -196,6 +198,8 @@ func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 		if te := PermService.BatchDeleteByRoleId(id, tx); te != nil {
 			return te
 		}
+		// 清空redis角色权限缓存(按前缀批量删除所有管理员权限键)
+		util.RedisUtil.DelByPrefix(config.AdminConfig.BackstageAdminPermsKey + ":")
 
 		return nil
 	})

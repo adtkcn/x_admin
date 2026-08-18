@@ -98,6 +98,29 @@ func (menuSrv systemAuthMenuService) Add(addReq system_schema.SystemAuthMenuAddR
 	return
 }
 
+// getMenuDescendantIds 获取某菜单的所有后代菜单ID（用于防止将上级设为自身或子孙）
+func (menuSrv systemAuthMenuService) getMenuDescendantIds(id string) (descendantIds []string, e error) {
+	var menus []system_model.SystemAuthMenu
+	if e = menuSrv.db.Select("id, pid").Find(&menus).Error; e != nil {
+		return
+	}
+	childrenMap := make(map[string][]string)
+	for _, m := range menus {
+		childrenMap[m.Pid] = append(childrenMap[m.Pid], m.ID)
+	}
+	// 广度优先收集所有后代
+	queue := []string{id}
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+		for _, childId := range childrenMap[current] {
+			descendantIds = append(descendantIds, childId)
+			queue = append(queue, childId)
+		}
+	}
+	return
+}
+
 func (menuSrv systemAuthMenuService) Edit(editReq system_schema.SystemAuthMenuEditReq) (e error) {
 	// 检查菜单是否存在
 	var menu system_model.SystemAuthMenu
@@ -107,6 +130,22 @@ func (menuSrv systemAuthMenuService) Edit(editReq system_schema.SystemAuthMenuEd
 			return errors.New("菜单已不存在")
 		}
 		return response.CheckErr(err, "查询菜单失败")
+	}
+
+	// 禁止将上级菜单设为自身或自身的子孙，避免形成环路
+	if editReq.Pid != "" {
+		if editReq.Pid == editReq.ID {
+			return response.AssertArgumentError.SetMessage("上级菜单不能是自己!")
+		}
+		descendantIds, dErr := menuSrv.getMenuDescendantIds(editReq.ID)
+		if dErr != nil {
+			return dErr
+		}
+		for _, dId := range descendantIds {
+			if dId == editReq.Pid {
+				return response.AssertArgumentError.SetMessage("上级菜单不能是自己的子级!")
+			}
+		}
 	}
 
 	convert_util.Copy(&menu, editReq)

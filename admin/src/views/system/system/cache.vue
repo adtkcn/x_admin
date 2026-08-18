@@ -201,18 +201,22 @@ const chartOptions = reactive({
 })
 
 const getSystemCache = async () => {
-    const data = await systemCache()
-    baseInfo.value = data.info
-    dbSize.value = data.dbSize
+    try {
+        const data = await systemCache()
+        baseInfo.value = data.info
+        dbSize.value = data.dbSize
 
-    chartOptions.commandChartOption.series[0].data = data.commandStats
+        chartOptions.commandChartOption.series[0].data = data.commandStats
 
-    chartOptions.memoryChartOption.series[0].data[0].value = (
-        Number(data.info.used_memory) /
-        1024 /
-        1024
-    ).toFixed(2)
-    chartOptions.memoryChartOption.series[0].detail.formatter = '{value}' + 'M'
+        chartOptions.memoryChartOption.series[0].data[0].value = (
+            Number(data.info.used_memory) /
+            1024 /
+            1024
+        ).toFixed(2)
+        chartOptions.memoryChartOption.series[0].detail.formatter = '{value}' + 'M'
+    } catch (error) {
+        console.error('系统缓存信息获取失败:', error)
+    }
 }
 
 getSystemCache()

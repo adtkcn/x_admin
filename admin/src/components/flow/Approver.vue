@@ -44,7 +44,7 @@
             />
             <XForm2
                 ref="formDesign"
-                :conf="mockData.flowFormData"
+                :conf="mockData.flow_form_data"
                 v-show="activeStep === 'formDesign'"
                 tabName="formDesign"
             />
@@ -53,7 +53,7 @@
                 v-show="activeStep === 'flowEdit'"
                 tabName="flowEdit"
                 :fieldList="fieldList"
-                :conf="mockData.flowProcessData"
+                :conf="mockData.flow_process_data"
             ></FlowEdit>
         </div>
     </el-dialog>
@@ -61,16 +61,44 @@
 
 <script setup lang="ts">
 import { ref, useTemplateRef, watch, defineAsyncComponent } from 'vue'
-// import XForm from './XForm/index.vue'
-// import XForm2 from './XForm2/index.vue'
 const XForm2 = defineAsyncComponent(() => import('./XForm/index.vue'))
-// import FlowEdit from './flowEdit/index.vue'
 const FlowEdit = defineAsyncComponent(() => import('./flowEdit/index.vue'))
 import BasicSetting from './BasicSetting/index.vue'
 
 import feedback from '@/utils/feedback'
 
-const beforeUnload = function (e) {
+/** 流程基础设置 */
+interface BasicSettingData {
+    flow_name?: string
+    flow_group?: number
+    flow_remark?: string
+}
+
+/** 流程配置数据（表单设计/流程设计内部结构较复杂，此处保持宽松） */
+interface FlowConfigData {
+    id?: string
+    basicSetting: BasicSettingData
+    /** 表单设计器字段列表 */
+    flow_form_data: any[]
+    /** 流程设计器节点树 */
+    flow_process_data: Record<string, any>
+}
+
+/** 发布时提交给外部 save 的参数 */
+interface FlowPublishParams extends FlowConfigData {
+    /** 流程节点树拍平后的列表 */
+    flow_process_data_list?: any[]
+}
+
+/** 步骤标识 */
+type StepKey = 'basicSetting' | 'formDesign' | 'flowEdit'
+
+interface StepItem {
+    label: string
+    key: StepKey
+}
+
+const beforeUnload = function (e: BeforeUnloadEvent) {
     e.preventDefault()
 
     e.returnValue = '离开网站可能会丢失您编辑得内容' // Gecko and Trident
@@ -79,30 +107,31 @@ const beforeUnload = function (e) {
 defineOptions({
     name: 'Approver'
 })
-const props = defineProps({
-    title: {
-        type: String,
-        default: '流程配置'
-    },
-    save: {
-        type: Function,
-        default: () => {}
+const props = withDefaults(
+    defineProps<{
+        title?: string
+        /** 保存回调，由父组件传入，需返回 Promise */
+        save?: (param: FlowPublishParams) => Promise<any>
+    }>(),
+    {
+        title: '流程配置',
+        save: () => Promise.resolve()
     }
-})
+)
 
 const basicSetting = useTemplateRef<InstanceType<typeof BasicSetting>>('basicSetting')
 const formDesign = useTemplateRef<InstanceType<typeof XForm2>>('formDesign')
 const flowEdit = useTemplateRef<InstanceType<typeof FlowEdit>>('flowEdit')
 const dialogVisible = ref(false)
-const activeStep = ref('basicSetting')
-const mockData = ref({
+const activeStep = ref<StepKey>('basicSetting')
+const mockData = ref<FlowConfigData>({
     id: '',
     basicSetting: {},
-    flowFormData: [],
-    flowProcessData: {}
+    flow_form_data: [],
+    flow_process_data: {}
 })
-const fieldList = ref([])
-const steps = [
+const fieldList = ref<any[]>([])
+const steps: StepItem[] = [
     { label: '基础设置', key: 'basicSetting' },
     { label: '表单设计', key: 'formDesign' },
     { label: '流程设计', key: 'flowEdit' }
@@ -121,13 +150,13 @@ function reset() {
     mockData.value = {
         id: '',
         basicSetting: {},
-        flowFormData: [],
-        flowProcessData: {}
+        flow_form_data: [],
+        flow_process_data: {}
     }
     activeStep.value = 'basicSetting'
     fieldList.value = []
 }
-function open(data) {
+function open(data?: FlowConfigData) {
     reset()
     console.log('data', data)
     if (data) {
@@ -136,45 +165,42 @@ function open(data) {
         mockData.value = {
             id: '',
             basicSetting: {},
-            flowFormData: [],
-            flowProcessData: {}
+            flow_form_data: [],
+            flow_process_data: {}
         }
     }
 
     dialogVisible.value = true
 }
-function changeSteps(item) {
-    fieldList.value = formDesign.value.getFieldWidgets()
+function changeSteps(item: StepItem) {
+    fieldList.value = formDesign.value?.getFieldWidgets() ?? []
     console.log('fieldList', fieldList.value)
 
     activeStep.value = item.key
 }
 // 发布
-function publish() {
-    const p1 = basicSetting.value.getData()
-    const p2 = formDesign.value.getData()
-    const p3 = flowEdit.value.getData()
-    Promise.all([p1, p2, p3])
-        .then((res) => {
-            console.log('res', res)
-            const param = {
-                id: mockData.value?.id,
-                basicSetting: res[0].formData,
-                flowFormData: res[1].formData,
-                flowProcessData: res[2].formData,
-                flowProcessDataList: res[2].treeToList
-            }
-            console.log(param)
-            sendToServer(param)
-        })
-        .catch((err) => {
-            console.error(err)
-            err.target && (activeStep.value = err.target)
-            err.message && feedback.msgError(err.message)
-        })
+async function publish() {
+    try {
+        const p1 = await basicSetting.value?.getData()
+        const p2 = await formDesign.value?.getData()
+        const p3 = await flowEdit.value?.getData()
+
+        const param: FlowPublishParams = {
+            id: mockData.value?.id,
+            basicSetting: p1?.formData,
+            flow_form_data: p2?.formData || [],
+            flow_process_data: p3?.formData || {},
+            flow_process_data_list: p3?.treeToList
+        }
+        console.log(param)
+        sendToServer(param)
+    } catch (error: any) {
+        error.target && (activeStep.value = error.target)
+        error.message && feedback.msgError(error.message)
+    }
 }
 
-function sendToServer(param) {
+function sendToServer(param: FlowPublishParams) {
     feedback.notify('数据已整合完成')
     props
         .save(param)

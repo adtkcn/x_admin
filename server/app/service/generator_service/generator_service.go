@@ -378,7 +378,7 @@ func (genSrv generateService) PreviewCode(id string) (res map[string]string, e e
 	// for tplPath, tplCode := range tplCodeMap {
 	// 	res[strings.ReplaceAll(tplPath, ".tpl", "")] = tplCode
 	// }
-	res = tpl_utils.TemplateUtil.GetFilePaths(tplCodeMap, genTable.ModuleName)
+	res = tpl_utils.TemplateUtil.GetFilePaths(tplCodeMap, genTable.ModuleName, tpl_utils.GenUtil.ToDomain(genTable.TableName))
 	return
 }
 
@@ -398,7 +398,7 @@ func (genSrv generateService) genZipCode(zipWriter *zip.Writer, tableName string
 		return
 	}
 	//压缩文件
-	err = tpl_utils.TemplateUtil.GenZip(zipWriter, tplCodeMap, genTable.ModuleName)
+	err = tpl_utils.TemplateUtil.GenZip(zipWriter, tplCodeMap, genTable.ModuleName, tpl_utils.GenUtil.ToDomain(genTable.TableName))
 	if e = response.CheckErr(err, "genZipCode GenZip err"); e != nil {
 		return
 	}

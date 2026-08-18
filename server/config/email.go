@@ -9,11 +9,12 @@ type EmailConfigStruct struct {
 	Timeout  int    `mapstructure:"Timeout"`  // 超时时间，单位秒，默认 10s
 }
 
-var EmailConfig = []EmailConfigStruct{{
-	Host:     "smtp.qq.com",
-	Port:     465,
-	SSL:      true,
-	Username: "",
-	Password: "",
-	Timeout:  10,
-}}
+//	var EmailConfig = []EmailConfigStruct{{
+//		Host:     "smtp.qq.com",
+//		Port:     465,
+//		SSL:      true,
+//		Username: "",
+//		Password: "",
+//		Timeout:  10,
+//	}}
+var EmailConfig = []EmailConfigStruct{}

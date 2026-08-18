@@ -9,9 +9,9 @@
                 label-width="90px"
                 label-position="right"
             >
-                <el-form-item label="项目" prop="ProjectKey" class="w-[270px]">
+                <el-form-item label="项目" prop="project_key" class="w-[270px]">
                     <el-select
-                        v-model="queryParams.ProjectKey"
+                        v-model="queryParams.project_key"
                         clearable
                         :empty-values="[null, undefined]"
                     >
@@ -19,23 +19,23 @@
                         <el-option
                             v-for="(item, index) in listAllData.monitor_project_listAll"
                             :key="index"
-                            :label="item.ProjectName"
-                            :value="item.ProjectKey"
+                            :label="item.project_name"
+                            :value="item.project_key"
                         />
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="系统" prop="Os" class="w-[270px]">
-                    <el-input v-model="queryParams.Os" />
+                <el-form-item label="系统" prop="os" class="w-[270px]">
+                    <el-input v-model="queryParams.os" />
                 </el-form-item>
-                <el-form-item label="浏览器" prop="Browser" class="w-[270px]">
-                    <el-input v-model="queryParams.Browser" />
+                <el-form-item label="浏览器" prop="browser" class="w-[270px]">
+                    <el-input v-model="queryParams.browser" />
                 </el-form-item>
 
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[425px]">
+                <el-form-item label="创建时间" prop="create_time" class="w-[425px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.CreateTimeStart"
-                        v-model:endTime="queryParams.CreateTimeEnd"
+                        v-model:startTime="queryParams.create_time_start"
+                        v-model:endTime="queryParams.create_time_end"
                     />
                 </el-form-item>
 
@@ -56,57 +56,61 @@
                     批量删除
                 </el-button>
             </div>
-            <el-table
+            <vxe-table
+                ref="tableRef"
                 class="mt-4"
-                size="large"
                 v-loading="pager.loading"
                 :data="pager.lists"
-                @selection-change="handleSelectionChange"
+                :row-config="{ keyField: 'id' }"
+                :checkbox-config="{ checkRowKeys: [] }"
+                @checkbox-change="multipleSelection = $event.$table.getCheckboxRecords()"
+                @checkbox-all="multipleSelection = $event.$table.getCheckboxRecords()"
+                :border="'inner'"
             >
-                <el-table-column type="selection" width="55" />
-                <el-table-column label="项目" prop="ProjectKey" min-width="100">
+                <vxe-column type="checkbox" width="55" />
+                <vxe-column title="项目" field="project_key" min-width="100">
                     <template #default="{ row }">
                         <dict-value
                             :options="listAllData.monitor_project_listAll"
-                            :value="row.ProjectKey"
-                            labelKey="ProjectName"
-                            valueKey="ProjectKey"
+                            :value="row.project_key"
+                            labelKey="project_name"
+                            valueKey="project_key"
                         />
                     </template>
-                </el-table-column>
-                <el-table-column label="客户端id" prop="ClientId" min-width="130" />
+                </vxe-column>
+                <vxe-column title="客户端id" field="client_id" min-width="130" />
 
-                <el-table-column label="浏览器" prop="Browser" min-width="150">
+                <vxe-column title="浏览器" field="browser" min-width="150">
                     <template #default="{ row }">
                         <el-popover
                             placement="top-start"
                             title="浏览器ua"
                             :width="500"
                             trigger="hover"
-                            :content="row.Ua"
+                            :content="row.ua"
                         >
                             <template #reference>
-                                <el-link type="primary">{{ row.Os }} / {{ row.Browser }}</el-link>
+                                <el-link type="primary">{{ row.os }} / {{ row.browser }}</el-link>
                             </template>
                         </el-popover>
                     </template>
-                </el-table-column>
+                </vxe-column>
 
-                <el-table-column label="创建时间" prop="CreateTime" width="180" />
+                <vxe-column title="创建时间" field="create_time" width="180" />
 
-                <el-table-column label="操作" width="80" fixed="right">
+                <vxe-column title="操作" width="80" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:monitor_client:del']"
                             type="danger"
                             link
-                            @click="handleDelete(row.Id)"
+                            @click="handleDelete(row.id)"
                         >
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -134,12 +138,12 @@ defineOptions({
 })
 
 const queryParams = reactive<type_monitor_client_query>({
-    ProjectKey: undefined,
-    Os: undefined,
-    Browser: undefined,
-    Ua: undefined,
-    CreateTimeStart: undefined,
-    CreateTimeEnd: undefined
+    project_key: undefined,
+    os: undefined,
+    browser: undefined,
+    ua: undefined,
+    create_time_start: undefined,
+    create_time_end: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_client>({
@@ -152,19 +156,18 @@ const { listAllData } = useListAllData<{
     monitor_project_listAll: '/monitor_project/list_all'
 })
 
+const tableRef = ref<any>()
 const multipleSelection = ref<type_monitor_client[]>([])
-const handleSelectionChange = (val: type_monitor_client[]) => {
-    console.log(val)
-    multipleSelection.value = val
-}
 
-const handleDelete = async (Id: number) => {
+const handleDelete = async (id: string) => {
     try {
         await feedback.confirm('确定要删除？')
-        await monitor_client_delete(Id)
+        await monitor_client_delete(id)
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控客户端删除失败:', error)
+    }
 }
 // 批量删除
 const deleteBatch = async () => {
@@ -175,11 +178,13 @@ const deleteBatch = async () => {
     try {
         await feedback.confirm('确定要删除？')
         await monitor_client_delete_batch({
-            Ids: multipleSelection.value.map((item) => item.Id).join(',')
+            ids: multipleSelection.value.map((item) => item.id).join(',')
         })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控客户端批量删除失败:', error)
+    }
 }
 getLists()
 </script>

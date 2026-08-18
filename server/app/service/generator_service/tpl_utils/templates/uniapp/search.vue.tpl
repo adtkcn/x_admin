@@ -3,18 +3,18 @@
 		<uv-form labelPosition="left" labelWidth="80" :model="form">
 			{{{- range .Columns }}}
 			{{{- if eq .IsQuery 1 }}}
-			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ .GoField }}}" borderBottom>
+			<uv-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" borderBottom>
 				{{{- if eq .HtmlType "datetime" }}}
-					<x-date-range v-model:startTime="form.{{{ .GoField }}}Start"
-							v-model:endTime="form.{{{ .GoField }}}End"></x-date-range>
+					<x-date-range v-model:startTime="form.{{{ .TsField }}}_start"
+							v-model:endTime="form.{{{ .TsField }}}_end"></x-date-range>
 				{{{- else if or (eq .HtmlType "checkbox") (eq .HtmlType "radio") (eq .HtmlType "select") }}}
 					{{{- if ne .DictType "" }}}
-						<x-picker v-model="form.{{{ .GoField }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
+						<x-picker v-model="form.{{{ .TsField }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
 					{{{- else if ne .ListAllApi "" }}}
-							<x-picker v-model="form.{{{ .GoField }}}" valueKey="{{{toUpperCamelCase .PrimaryKey }}}" labelKey="{{{toUpperCamelCase .PrimaryKey }}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+							<x-picker v-model="form.{{{ .TsField }}}" valueKey="{{{.PrimaryTsField}}}" labelKey="{{{.PrimaryTsField}}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- end }}}
 				{{{- else if eq .HtmlType "input" }}}
-					<uv-input v-model="form.{{{ .GoField }}}"> </uv-input>
+					<uv-input v-model="form.{{{ .TsField }}}"> </uv-input>
 				{{{- end }}}
 			</uv-form-item>
 			{{{- end }}}
@@ -44,7 +44,7 @@
 		useDictData,useListAllData
 	} from "@/hooks/useDictOptions";
 	import xDateRange from "@/components/x-date-range/x-date-range.vue";
-	import type {type_{{{.ModuleName}}}_query} from "@/api/{{{nameToPath .ModuleName}}}";
+	import type {type_{{{.ModuleName}}}_query} from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 {{{- if ge (len .DictFields) 1 }}}
 {{{- $dictSize := sub (len .DictFields) 1 }}}
 const { dictData } = useDictData<{
@@ -71,10 +71,10 @@ const { listAllData } = useListAllData<{
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ .GoField }}}Start: null,
-    {{{ .GoField }}}End: null,
+    {{{ .TsField }}}_start: null,
+    {{{ .TsField }}}_end: null,
     {{{- else }}}
-    {{{ .GoField }}}: null,
+    {{{ .TsField }}}: null,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -89,7 +89,7 @@ const { listAllData } = useListAllData<{
 			return toast("请输入查询条件");
 		}
 
-		toPath("/pages/{{{nameToPath .ModuleName }}}/index", search);
+		toPath("/pages/{{{.Domain}}}/{{{.ModuleName}}}/index", search);
 	}
 </script>
 

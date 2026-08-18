@@ -15,16 +15,16 @@
           :columns="dictData.project_type"
         ></x-picker>
       </uv-form-item>
-      <uv-form-item label="创建时间" prop="createTime" borderBottom>
+      <uv-form-item label="创建时间" prop="CreateTime" borderBottom>
         <xDateRange
-          v-model:startTime="form.createTimeStart"
-          v-model:endTime="form.createTimeEnd"
+          v-model:startTime="form.CreateTimeStart"
+          v-model:endTime="form.CreateTimeEnd"
         ></xDateRange>
       </uv-form-item>
-      <uv-form-item label="更新时间" prop="updateTime" borderBottom>
+      <uv-form-item label="更新时间" prop="UpdateTime" borderBottom>
         <xDateRange
-          v-model:startTime="form.updateTimeStart"
-          v-model:endTime="form.updateTimeEnd"
+          v-model:startTime="form.UpdateTimeStart"
+          v-model:endTime="form.UpdateTimeEnd"
         ></xDateRange>
       </uv-form-item>
 
@@ -53,10 +53,10 @@ let form = ref<type_monitor_project_query>({
   projectKey: "",
   projectName: "",
   projectType: "",
-  createTimeStart: "",
-  createTimeEnd: "",
-  updateTimeStart: "",
-  updateTimeEnd: "",
+  CreateTimeStart: "",
+  CreateTimeEnd: "",
+  UpdateTimeStart: "",
+  UpdateTimeEnd: "",
 });
 
 function submit() {

@@ -4,19 +4,19 @@ import type { Pages } from '@/utils/request'
 // 系统日志列表参数
 export type type_system_log_operate = {
     title?: string
-    username?: string
+    email?: string
     ip?: string
     type?: string
     status?: number
     url?: string
-    startTime?: string
-    endTime?: string
+    start_time?: string
+    end_time?: string
 }
 
 // 系统日志返回信息
 export type type_system_log_resp = {
     id: string
-    username: string
+    email: string
     nickname: string
     type: string
     title: string
@@ -26,10 +26,10 @@ export type type_system_log_resp = {
     args: string
     error: string
     status: number
-    taskTime: string
-    startTime: string
-    endTime: string
-    createTime: string
+    task_time: string
+    start_time: string
+    end_time: string
+    create_time: string
 }
 
 // 获取系统环境

@@ -1,4 +1,4 @@
-package admin_ctl
+package {{{.Domain}}}_controller
 
 import (
 	"net/http"
@@ -12,8 +12,8 @@ import (
 	"x_admin/util"
 	"x_admin/util/excel2"
 	"golang.org/x/sync/singleflight"
-	"x_admin/app/schema"
-	"x_admin/app/service"
+	"x_admin/app/schema/{{{.Domain}}}_schema"
+	"x_admin/app/service/{{{.Domain}}}_service"
 )
 
  
@@ -30,10 +30,10 @@ type {{{ toUpperCamelCase .ModuleName }}}Handler struct {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ .GoField }}}Start  query {{{.TsType }}} false "开始{{{ .ColumnComment }}}"
-//	@Param {{{ .GoField }}}End  query {{{.TsType }}} false "结束{{{ .ColumnComment }}}"	
+//	@Param {{{ .TsField }}}_start  query {{{.TsType }}} false "开始{{{ .ColumnComment }}}"
+//	@Param {{{ .TsField }}}_end  query {{{.TsType }}} false "结束{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ .GoField }}} query {{{.TsType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .TsField }}} query {{{.TsType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -41,14 +41,14 @@ type {{{ toUpperCamelCase .ModuleName }}}Handler struct {
 //@Router	/api/admin/{{{ .ModuleName }}}/list [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
+	var listReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := service.{{{ toUpperCamelCase .EntityName }}}Service.List(page, listReq)
+	res, err := {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.List(page, listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -59,21 +59,21 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) List(c *gin.Context) {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}	
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ .GoField }}}Start  query {{{.TsType }}} false "开始{{{ .ColumnComment }}}"
-//	@Param {{{ .GoField }}}End  query {{{.TsType }}} false "结束{{{ .ColumnComment }}}"	
+//	@Param {{{ .TsField }}}_start  query {{{.TsType }}} false "开始{{{ .ColumnComment }}}"
+//	@Param {{{ .TsField }}}_end  query {{{.TsType }}} false "结束{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ .GoField }}} query {{{.TsType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .TsField }}} query {{{.TsType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{data=[]schema.{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{data=[]{{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/list_all [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) {
-	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
+	var listReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := service.{{{ toUpperCamelCase .EntityName }}}Service.ListAll(listReq)
+	res, err := {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.ListAll(listReq)
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -83,18 +83,18 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ListAll(c *gin.Context) 
 //	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ .GoField }}}		query		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .TsField }}}		query		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
-//	@Success	200			{object}	response.Response{data=schema.{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
+//	@Success	200			{object}	response.Response{data={{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}Resp}	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/detail [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
-	var detailReq schema.{{{ toUpperCamelCase .EntityName }}}Primarykey
+	var detailReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}Primarykey
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
-	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("{{{ toUpperCamelCase .EntityName }}}:Detail:%v", detailReq.{{{ toUpperCamelCase .PrimaryKey }}}), func() (any, error) {
-		v, err := service.{{{ toUpperCamelCase .EntityName }}}Service.Detail(detailReq.{{{ toUpperCamelCase .PrimaryKey }}})
+	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("{{{ toUpperCamelCase .EntityName }}}:Detail:%v", detailReq.{{{ .PrimaryGoField }}}), func() (any, error) {
+		v, err := {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.Detail(detailReq.{{{ .PrimaryGoField }}})
 		return v, err
 	})
 
@@ -108,20 +108,20 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Detail(c *gin.Context) {
 //	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsInsert }}}
-//	@Param		{{{ .GoField }}}		body		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .TsField }}}		body		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/add [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
-	var addReq schema.{{{ toUpperCamelCase .EntityName }}}AddReq
+	var addReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}AddReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
 	
 	var adminId = config.AdminConfig.GetAdminId(c)// 创建人
 	
-	createId, e := service.{{{ toUpperCamelCase .EntityName }}}Service.Add(addReq, adminId)
+	createId, e := {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.Add(addReq, adminId)
 	response.CheckAndRespWithData(c,createId, e)
 }
 //	@Summary	{{{ .FunctionName }}}编辑
@@ -130,17 +130,17 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Add(c *gin.Context) {
 //	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsEdit }}}
-//	@Param		{{{ .GoField }}}		body		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .TsField }}}		body		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/edit [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
-	var editReq schema.{{{ toUpperCamelCase .EntityName }}}EditReq
+	var editReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}EditReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c,editReq.{{{ toUpperCamelCase .PrimaryKey }}}, service.{{{ toUpperCamelCase .EntityName }}}Service.Edit(editReq))
+	response.CheckAndRespWithData(c,editReq.{{{ .PrimaryGoField }}}, {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.Edit(editReq))
 }
 //	@Summary	{{{ .FunctionName }}}删除
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
@@ -148,28 +148,28 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Edit(c *gin.Context) {
 //	@Param		token		header		string				true	"token"
 {{{- range .Columns }}}
 {{{- if .IsPk }}}
-//	@Param		{{{ .GoField }}}		body		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
+//	@Param		{{{ .TsField }}}		body		{{{.TsType }}}				false	"{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 //	@Success	200			{object}	response.Response	"成功"
 //	@Router		/api/admin/{{{ .ModuleName }}}/del [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) Del(c *gin.Context) {
-	var delReq schema.{{{ toUpperCamelCase .EntityName }}}Primarykey
+	var delReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}Primarykey
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c,nil, service.{{{ toUpperCamelCase .EntityName }}}Service.Del(delReq.{{{ toUpperCamelCase .PrimaryKey }}}))
+	response.CheckAndRespWithData(c,nil, {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.Del(delReq.{{{ .PrimaryGoField }}}))
 }
 
 //	@Summary	{{{ .FunctionName }}}删除-批量
 //	@Tags		{{{ .ModuleName }}}-{{{ .FunctionName }}}
 // @Produce	json
 // @Param		token		header		string				true	"token"
-// @Param		Ids		body		string				false	"逗号分割的id"
+// @Param		ids		body		string				false	"逗号分割的id"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/{{{ .ModuleName }}}/del_batch [post]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context) {
-	var delReq schema.{{{ toUpperCamelCase .EntityName }}}DelBatchReq
+	var delReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}DelBatchReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
@@ -177,9 +177,9 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 		response.Fail(c, "请选择要删除的数据")
 		return
 	}
-	var Ids = strings.Split(delReq.Ids, ",")
+	var ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndRespWithData(c,nil, service.{{{ toUpperCamelCase .EntityName }}}Service.DelBatch(Ids))
+	response.CheckAndRespWithData(c,nil, {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.DelBatch(ids))
 }
 
 
@@ -191,10 +191,10 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-//	@Param {{{ .GoField }}}Start  query {{{.TsType }}} false "{{{ .ColumnComment }}}"
-//	@Param {{{ .GoField }}}End  query {{{.TsType }}} false "{{{ .ColumnComment }}}"	
+//	@Param {{{ .TsField }}}_start  query {{{.TsType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .TsField }}}_end  query {{{.TsType }}} false "{{{ .ColumnComment }}}"	
 {{{- else }}}
-//	@Param {{{ .GoField }}} query {{{.TsType }}} false "{{{ .ColumnComment }}}"
+//	@Param {{{ .TsField }}} query {{{.TsType }}} false "{{{ .ColumnComment }}}"
 {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -202,16 +202,16 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) DelBatch(c *gin.Context)
 //  @Failure	500 	{object}	response.Response	"失败"
 //	@Router		/api/admin/{{{ .ModuleName }}}/export_file [get]
 func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Context) {
-	var listReq schema.{{{ toUpperCamelCase .EntityName }}}ListReq
+	var listReq {{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}ListReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	res, err := service.{{{ toUpperCamelCase .EntityName }}}Service.ExportFile(listReq)
+	res, err := {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.ExportFile(listReq)
 	if err != nil {
 		response.Fail(c, "查询信息失败")
 		return
 	}
-	f, err := excel2.Export(res,service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
+	f, err := excel2.Export(res,{{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
 	if err != nil {
 		response.Fail(c, "导出失败")
 		return
@@ -233,13 +233,13 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Contex
 		return
 	}
 	defer file.Close()
-	importList := []schema.{{{ toUpperCamelCase .EntityName }}}Resp{}
-	err = excel2.GetExcelData(file, &importList,service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol())
+	importList := []{{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}Resp{}
+	err = excel2.GetExcelData(file, &importList,{{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = service.{{{ toUpperCamelCase .EntityName }}}Service.ImportFile(importList)
+	err = {{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.ImportFile(importList)
 	response.CheckAndRespWithData(c,nil, err)
 }

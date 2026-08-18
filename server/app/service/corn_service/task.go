@@ -7,8 +7,7 @@ import (
 
 // 定义任务结构体
 type Task struct {
-	Lock    bool          // 是否使用分布式锁
-	LockTTL time.Duration // 锁过期时间
+	LockTTL uint // 锁过期时间（秒）,为0表示不使用锁机制
 
 	TaskCode string // 任务编码
 	TaskDesc string // 任务描述
@@ -27,8 +26,7 @@ type RunTask struct {
 // 定义任务列表
 var TaskInfoList = []Task{
 	{
-		Lock:    true,
-		LockTTL: 10 * time.Second,
+		LockTTL: 10,
 
 		TaskCode: "exampleTask",
 		TaskDesc: "这是一个示例任务",
@@ -37,7 +35,7 @@ var TaskInfoList = []Task{
 
 			core.Logger.Debug("执行示例任务: exampleTask")
 			// 模拟任务执行时间
-			time.Sleep(7 * time.Second)
+			time.Sleep(3 * time.Second)
 		},
 	},
 }

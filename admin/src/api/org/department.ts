@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 部门列表参数
 export type type_system_dept_list = {
     name?: string
-    isStop?: number
+    is_stop?: number
 }
 
 // 部门详情参数
@@ -14,23 +14,23 @@ export type type_system_dept_detail = {
 // 部门添加参数
 export type type_system_dept_add = {
     pid?: string
-    name: string
-    dutyId?: string
+    name?: string
+    duty_id?: string
     duty?: string
     mobile?: string
-    isStop?: number
+    is_stop?: number
     sort?: number
 }
 
 // 部门编辑参数
 export type type_system_dept_edit = {
-    id: string
+    id?: string
     pid?: string
-    name: string
-    dutyId?: string
+    name?: string
+    duty_id?: string
     duty?: string
     mobile?: string
-    isStop?: number
+    is_stop?: number
     sort?: number
 }
 
@@ -44,13 +44,13 @@ export type type_system_dept_resp = {
     id: string
     pid: string
     name: string
-    dutyId: string
+    duty_id: string
     duty: string
     mobile: string
     sort: number
-    isStop: number
-    createTime: string
-    updateTime: string
+    is_stop: number
+    create_time: string
+    update_time: string
     children?: type_system_dept_resp[]
 }
 

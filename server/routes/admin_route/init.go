@@ -1,6 +1,9 @@
 package admin_route
 
 import (
+	"x_admin/app/middleware"
+	"x_admin/core/response"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,11 +19,21 @@ func Autoload(rg *gin.RouterGroup) {
 	}
 }
 
+// @Summary	获取所有接口
+// @Tags		公共接口
+// @Router		/api/admin/apiList [get]
+func apiList(api *gin.RouterGroup, rootRouter *gin.Engine) {
+	api.GET("/apiList", middleware.PermAuth(), func(ctx *gin.Context) {
+		var path = []string{}
+		for _, route := range rootRouter.Routes() {
+			path = append(path, route.Path)
+		}
+		response.Ok(ctx, path)
+	})
+}
+
 // RegisterRoute 后台管理路由入口（按模块分组注册）
-func RegisterRoute(rg *gin.RouterGroup) {
-
-	rg = rg.Group("/admin")
-	// 所有子路由需要加上前缀 /api/admin
-
-	Autoload(rg)
+func RegisterRoute(admin *gin.RouterGroup, rootRouter *gin.Engine) {
+	apiList(admin, rootRouter)
+	Autoload(admin)
 }

@@ -78,10 +78,10 @@ const queryParams = reactive<type_monitor_client_query>({
     width: null,
     height: null,
     ua: '',
-    createTimeStart: '',
-    createTimeEnd: '',
-    clientTimeStart: '',
-    clientTimeEnd: '',
+    CreateTimeStart: '',
+    CreateTimeEnd: '',
+    ClientTimeStart: '',
+    ClientTimeEnd: '',
 });
 let activeFab = ref(false);
 let fromSearch=ref(false);

@@ -53,12 +53,12 @@ class Web implements IErrorEvent {
 
   public getEnvInfo(): LogWithEnv {
     const env: LogWithEnv = {
-      Height: 0,
-      Width: 0,
+      height: 0,
+      width: 0,
     };
     if (window) {
-      env.Height = window.innerHeight || 0; // 获取显示屏信息
-      env.Width = window.innerWidth || 0;
+      env.height = window.innerHeight || 0; // 获取显示屏信息
+      env.width = window.innerWidth || 0;
     }
     return env;
   }
@@ -74,27 +74,27 @@ class Web implements IErrorEvent {
     if (target?.localName) {
       if (target?.localName === "img" || target?.localName === "script") {
         this.callback({
-          Type: "resources",
-          EventType: target?.localName,
-          Path: target.src,
-          Message: "",
-          Stack: "",
-          Height: 0,
+          type: "resources",
+          event_type: target?.localName,
+          path: target.src,
+          message: "",
+          stack: "",
+          height: 0,
         });
       } else if (target?.localName === "link") {
         this.callback({
-          Type: "resources",
-          EventType: target?.localName,
-          Path: target.href,
+          type: "resources",
+          event_type: target?.localName,
+          path: target.href,
         });
       }
     } else {
       this.callback({
-        Type: "error",
-        EventType: err.type,
-        Path: window.location.href,
-        Message: err.message,
-        Stack: this.handleStack(err.error?.stack || ""),
+        type: "error",
+        event_type: err.type,
+        path: window.location.href,
+        message: err.message,
+        stack: this.handleStack(err.error?.stack || ""),
         ...this.getEnvInfo(),
       });
     }
@@ -103,20 +103,20 @@ class Web implements IErrorEvent {
     console.error(err);
     if (err && typeof err.reason === "string") {
       this.callback({
-        Type: "error",
-        EventType: err.type,
-        Path: window.location.href,
-        Message: err.reason,
-        Stack: "",
+        type: "error",
+        event_type: err.type,
+        path: window.location.href,
+        message: err.reason,
+        stack: "",
         ...this.getEnvInfo(),
       });
     } else if (err && typeof err.reason === "object") {
       this.callback({
-        Type: "error",
-        EventType: err.type,
-        Path: window.location.href,
-        Message: err.reason?.message || "",
-        Stack: this.handleStack(err.reason?.stack || ""),
+        type: "error",
+        event_type: err.type,
+        path: window.location.href,
+        message: err.reason?.message || "",
+        stack: this.handleStack(err.reason?.stack || ""),
         ...this.getEnvInfo(),
       });
     }

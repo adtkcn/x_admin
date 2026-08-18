@@ -37,13 +37,25 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import('@/views/account/login.vue')
     },
     {
-        path: '/user',
+        path: PageEnum.FORGOT_PASSWORD,
+        component: () => import('@/views/account/forgot-password.vue')
+    },
+    {
+        path: '/system',
         component: LAYOUT,
         children: [
             {
-                path: 'setting',
-                name: Symbol(),
-                component: () => import('@/views/user/setting.vue'),
+                path: 'notice',
+                name: 'system_notice',
+                component: () => import('@/views/system/system/notice.vue'),
+                meta: {
+                    title: '消息通知'
+                }
+            },
+            {
+                path: 'admin/setting',
+                name: 'admin_setting',
+                component: () => import('@/views/system/admin/setting.vue'),
                 meta: {
                     title: '个人设置'
                 }

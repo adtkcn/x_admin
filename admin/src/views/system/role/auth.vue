@@ -8,36 +8,28 @@
             @confirm="handleSubmit"
             @close="handleClose"
         >
-            <el-form
-                class="ls-form"
-                ref="formRef"
-                :rules="rules"
-                :model="formData"
-                label-width="60px"
-            >
-                <el-scrollbar class="h-[400px] sm:h-[500px]">
-                    <el-form-item label="权限" prop="menus">
-                        <div>
-                            <el-checkbox label="展开/折叠" @change="handleExpand" />
-                            <el-checkbox label="全选/不全选" @change="handleSelectAll" />
-                            <el-checkbox v-model="checkStrictly" label="父子联动" />
-                            <div>
-                                <el-tree
-                                    ref="treeRef"
-                                    :data="menuTree"
-                                    :props="{
-                                        label: 'menuName',
-                                        children: 'children'
-                                    }"
-                                    :check-strictly="!checkStrictly"
-                                    node-key="id"
-                                    :default-expand-all="isExpand"
-                                    show-checkbox
-                                />
-                            </div>
-                        </div>
-                    </el-form-item>
-                </el-scrollbar>
+            <el-form class="ls-form" ref="formRef" :model="formData">
+                <el-form-item label="">
+                    <el-checkbox label="展开/折叠" @change="handleExpand" />
+                    <el-checkbox label="全选/不全选" @change="handleSelectAll" />
+                    <el-checkbox v-model="checkStrictly" label="父子联动" />
+                </el-form-item>
+                <el-form-item label="">
+                    <el-scrollbar class="h-[calc(100vh-270px)]! w-full">
+                        <el-tree
+                            ref="treeRef"
+                            :data="menuTree"
+                            :props="{
+                                label: 'menu_name',
+                                children: 'children'
+                            }"
+                            :check-strictly="!checkStrictly"
+                            node-key="id"
+                            :default-expand-all="isExpand"
+                            show-checkbox
+                        />
+                    </el-scrollbar>
+                </el-form-item>
             </el-form>
         </popup>
     </div>
@@ -63,24 +55,18 @@ const formData = reactive({
     name: '',
     remark: '',
     sort: 0,
-    isDisable: 0,
+    is_disable: 0,
     menus: [] as any[]
 })
 
-const rules = {
-    name: [
-        {
-            required: true,
-            message: '请输入名称',
-            trigger: ['blur']
-        }
-    ]
-}
-
 const getOptions = async () => {
-    const data = await menuLists()
-    menuTree.value = arrayToTree(data, '')
-    menuArray.value = treeToArray(data)
+    try {
+        const data = await menuLists()
+        menuTree.value = arrayToTree(data, '')
+        menuArray.value = treeToArray(data)
+    } catch (error) {
+        console.error('菜单选项获取失败:', error)
+    }
 }
 
 // 获取所有选择的节点包括半选中节点
@@ -100,11 +86,11 @@ const setDeptAllCheckedKeys = () => {
 }
 
 const handleExpand = (check: CheckboxValueType) => {
-    const treeList = menuTree.value
-    for (let i = 0; i < treeList.length; i++) {
-        //@ts-ignore
-        treeRef.value.store.nodesMap[treeList[i].id].expanded = check
-    }
+    //@ts-ignore
+    const nodes = treeRef.value?.store._getAllNodes() as any[]
+    nodes.forEach((node) => {
+        node.expanded = check
+    })
 }
 
 const handleSelectAll = (check: CheckboxValueType) => {
@@ -116,12 +102,16 @@ const handleSelectAll = (check: CheckboxValueType) => {
 }
 
 const handleSubmit = async () => {
-    await formRef.value?.validate()
-    formData.menus = getDeptAllCheckedKeys()!
-    await roleEdit({ ...formData, menuIds: formData.menus.join() })
-    popupRef.value?.close()
-    feedback.msgSuccess('操作成功')
-    emit('success')
+    try {
+        await formRef.value?.validate()
+        formData.menus = getDeptAllCheckedKeys()!
+        await roleEdit({ ...formData, menuIds: formData.menus.join() })
+        popupRef.value?.close()
+        feedback.msgSuccess('操作成功')
+        emit('success')
+    } catch (error) {
+        console.error('角色权限保存失败:', error)
+    }
 }
 
 const handleClose = () => {
@@ -133,11 +123,13 @@ const open = () => {
 }
 
 const setFormData = async (row: Record<any, any>) => {
-    await getOptions()
-    const data = await roleDetail({
-        id: row.id
-    })
+    try {
+        await getOptions()
+        const data = await roleDetail({
+            id: row.id
+        })
     for (const key in formData) {
+        //@ts-ignore
         if (data[key] != null && data[key] != undefined) {
             //@ts-ignore
             formData[key] = data[key]
@@ -146,6 +138,9 @@ const setFormData = async (row: Record<any, any>) => {
     nextTick(() => {
         setDeptAllCheckedKeys()
     })
+    } catch (error) {
+        console.error('角色权限详情获取失败:', error)
+    }
 }
 
 defineExpose({

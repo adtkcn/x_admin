@@ -1,5 +1,4 @@
 import { fileURLToPath, URL } from 'url'
-import { DevTools } from '@vitejs/devtools'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 // import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -8,7 +7,6 @@ import Components from 'unplugin-vue-components/vite'
 import tailwindcss from '@tailwindcss/vite'
 
 // import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-// import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // import viteCompression from 'vite-plugin-compression'
@@ -35,6 +33,7 @@ export default defineConfig(({ mode }) => {
         base: '/',
         build: {
             sourcemap: false,
+            cssMinify: 'lightningcss',
             rolldownOptions: {
                 // devtools: {}, // enable devtools mode
                 external: ['XErr'],
@@ -82,16 +81,16 @@ export default defineConfig(({ mode }) => {
                                 name: 'vuedraggable',
                                 test: /node_modules\/vuedraggable\//
                             },
-                            // vue3-video-play
-                            {
-                                name: 'vue3-video-play',
-                                test: /node_modules\/vue3-video-play\//
-                            },
 
                             // zrender
                             {
                                 name: 'zrender',
                                 test: /node_modules\/zrender\//
+                            },
+                            // video.js
+                            {
+                                name: 'video.js',
+                                test: /node_modules\/video\.js\//
                             },
                             // echarts
                             {
@@ -162,9 +161,8 @@ export default defineConfig(({ mode }) => {
             }
         },
         plugins: [
-            // DevTools(),
-            vue(),
             tailwindcss(),
+            vue(),
 
             // vueJsx(),
             // AutoImport({

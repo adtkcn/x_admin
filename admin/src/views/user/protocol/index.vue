@@ -9,24 +9,24 @@
                 label-width="90px"
                 label-position="right"
             >
-                <el-form-item label="标题" prop="Title" class="w-[280px]">
-                    <el-input v-model="queryParams.Title" />
+                <el-form-item label="标题" prop="title" class="w-[280px]">
+                    <el-input v-model="queryParams.title" />
                 </el-form-item>
-                <el-form-item label="版本" prop="Version" class="w-[280px]">
-                    <el-input v-model="queryParams.Version" />
+                <el-form-item label="版本" prop="version" class="w-[280px]">
+                    <el-input v-model="queryParams.version" />
                 </el-form-item>
 
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
+                <el-form-item label="创建时间" prop="create_time" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.CreateTimeStart"
-                        v-model:endTime="queryParams.CreateTimeEnd"
+                        v-model:startTime="queryParams.create_time_start"
+                        v-model:endTime="queryParams.create_time_end"
                         type="daterange"
                     />
                 </el-form-item>
-                <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
+                <el-form-item label="更新时间" prop="update_time" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.UpdateTimeStart"
-                        v-model:endTime="queryParams.UpdateTimeEnd"
+                        v-model:startTime="queryParams.update_time_start"
+                        v-model:endTime="queryParams.update_time_end"
                         type="daterange"
                     />
                 </el-form-item>
@@ -84,7 +84,7 @@
             </div>
             <vxe-table
                 ref="tableRef"
-                border
+                :border="'inner'"
                 size="medium"
                 class="mt-4"
                 :data="pager.lists"
@@ -93,13 +93,17 @@
                 @checkbox-all="handleSelectionChange"
             >
                 <vxe-column type="checkbox" width="55"></vxe-column>
-                <vxe-column field="Title" title="标题" min-width="130"></vxe-column>
-                <vxe-column field="Tag" title="标识" min-width="130"></vxe-column>
-                <vxe-column field="Version" title="版本" width="100"></vxe-column>
-                <vxe-column field="CreatedByUser.nickname" title="创建人" width="120"></vxe-column>
+                <vxe-column field="title" title="标题" min-width="130"></vxe-column>
+                <vxe-column field="tag" title="标识" min-width="130"></vxe-column>
+                <vxe-column field="version" title="版本" width="100"></vxe-column>
+                <vxe-column
+                    field="created_by_user.nickname"
+                    title="创建人"
+                    width="120"
+                ></vxe-column>
 
-                <vxe-column field="CreateTime" title="创建时间" width="180"></vxe-column>
-                <vxe-column field="UpdateTime" title="更新时间" width="180"></vxe-column>
+                <vxe-column field="create_time" title="创建时间" width="180"></vxe-column>
+                <vxe-column field="update_time" title="更新时间" width="180"></vxe-column>
                 <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
@@ -146,7 +150,8 @@ import {
     user_protocol_export_file
 } from '@/api/user/protocol'
 import type { type_user_protocol, type_user_protocol_query } from '@/api/user/protocol'
-import type { VxeTableInstance } from 'vxe-table'
+// import type { VxeUI } from 'vxe-table'
+import { VxeUI, VxeTableInstance, VxeTableEvents, VxeTablePropTypes } from 'vxe-table'
 
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -160,13 +165,13 @@ const showEdit = ref(false)
 const detailsRef = useTemplateRef<InstanceType<typeof DetailsPopup>>('detailsRef')
 const showDetails = ref(false)
 const queryParams = reactive<type_user_protocol_query>({
-    Title: undefined,
-    Content: undefined,
-    Version: undefined,
-    CreateTimeStart: undefined,
-    CreateTimeEnd: undefined,
-    UpdateTimeStart: undefined,
-    UpdateTimeEnd: undefined
+    title: undefined,
+    content: undefined,
+    version: undefined,
+    create_time_start: undefined,
+    create_time_end: undefined,
+    update_time_start: undefined,
+    update_time_end: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_user_protocol>({
@@ -201,13 +206,15 @@ const handleSelectionChange = () => {
     }
 }
 
-const handleDelete = async (Id: number) => {
+const handleDelete = async (id: string) => {
     try {
         await feedback.confirm('确定要删除？')
-        await user_protocol_delete(Id)
+        await user_protocol_delete(id)
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('协议删除失败:', error)
+    }
 }
 // 批量删除
 const deleteBatch = async () => {
@@ -218,18 +225,22 @@ const deleteBatch = async () => {
     try {
         await feedback.confirm('确定要删除？')
         await user_protocol_delete_batch({
-            Ids: multipleSelection.value.map((item) => item.Id).join(',')
+            ids: multipleSelection.value.map((item) => item.id).join(',')
         })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('协议批量删除失败:', error)
+    }
 }
 
 const export_file = async () => {
     try {
         await feedback.confirm('确定要导出？')
         await user_protocol_export_file(queryParams)
-    } catch (error) {}
+    } catch (error) {
+        console.error('协议导出失败:', error)
+    }
 }
 getLists()
 </script>

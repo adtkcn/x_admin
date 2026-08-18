@@ -3,6 +3,7 @@ package corn
 import (
 	"fmt"
 	"sync"
+	"time"
 	"x_admin/app/service/corn_service"
 	"x_admin/core"
 	"x_admin/util"
@@ -64,14 +65,14 @@ func (tm *CronManager) AddTask(taskID, CronExpr string, task corn_service.Task) 
 	// 添加新任务
 	id, err := tm.cron.AddFunc(CronExpr, func() {
 		// 不加锁
-		if !task.Lock {
+		if task.LockTTL == 0 {
 			cmd()
 			return
 		}
 
 		// 加锁
-		lockKey := fmt.Sprintf("lock:%s", taskID)
-		lock := util.NewRedisLock(lockKey, task.LockTTL) // 锁自动过期 10s
+		lockKey := "lock:" + taskID
+		lock := util.NewRedisLock(lockKey, time.Duration(task.LockTTL)*time.Second) // 锁自动过期 10s
 
 		if !lock.Lock() {
 			// core.Logger.Debugf("任务抢占运行失败:%s: %s", task.TaskCode, task.TaskDesc)

@@ -32,25 +32,25 @@ jobs:
           echo "构建完成，文件大小: $(du -h ${{ env.APP_NAME }} | cut -f1)"
         working-directory: ${{ env.PROJECT_DIR }}  # 在 server 目录下构建
 
-      - name: Upload binary via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORLD }}
-          port: 22
-          source: "${{ env.PROJECT_DIR }}/${{ env.APP_NAME }}"
-          target: ${{ env.DEPLOY_PATH }}
-          overwrite: true
+      # - name: Upload binary via SCP
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ secrets.SERVER_HOST }}
+      #     username: ${{ secrets.SERVER_USERNAME }}
+      #     password: ${{ secrets.SERVER_PASSWORLD }}
+      #     port: 22
+      #     source: "${{ env.PROJECT_DIR }}/${{ env.APP_NAME }}"
+      #     target: ${{ env.DEPLOY_PATH }}
+      #     overwrite: true
 
-      - name: Restart Docker container via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORLD }}
-          port: 22
-          script: |
-            cd ${{ env.DEPLOY_PATH }}
-            chmod +x ${{ env.APP_NAME }}
-            docker restart x_admin
+      # - name: Restart Docker container via SSH
+      #   uses: appleboy/ssh-action@v1
+      #   with:
+      #     host: ${{ secrets.SERVER_HOST }}
+      #     username: ${{ secrets.SERVER_USERNAME }}
+      #     password: ${{ secrets.SERVER_PASSWORLD }}
+      #     port: 22
+      #     script: |
+      #       cd ${{ env.DEPLOY_PATH }}
+      #       chmod +x ${{ env.APP_NAME }}
+      #       docker restart x_admin

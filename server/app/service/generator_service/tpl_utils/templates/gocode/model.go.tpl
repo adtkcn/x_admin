@@ -1,4 +1,4 @@
-package model
+package {{{.Domain}}}_model
 import (
     "x_admin/app/model/system_model"
     "github.com/adtkcn/x_null"
@@ -28,15 +28,15 @@ type {{{ toUpperCamelCase .EntityName }}} struct {
 {{{- end }}}
 {{{- end }}}
 }
-{{{- if eq .PrimaryKeyGoType "string" }}}
+{{{- if eq .PrimaryGoType "string" }}}
 // 自动在创建时设置 UUIDv7
 func (u *{{{ toUpperCamelCase .EntityName }}}) BeforeCreate(tx *gorm.DB) error {
-    if u.{{{toUpperCamelCase .PrimaryKey }}} == "" {
+    if u.{{{.PrimaryGoField }}} == "" {
         id, err := uuid.NewV7()
         if err != nil {
             return err
         }
-        u.{{{toUpperCamelCase .PrimaryKey }}} = id.String()
+        u.{{{.PrimaryGoField }}} = id.String()
     }
 	return nil
 }

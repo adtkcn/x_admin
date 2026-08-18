@@ -6,7 +6,8 @@ import {
     fileDelete,
     fileList,
     fileMove,
-    fileRename
+    fileRename,
+    type type_file_cate
 } from '@/api/file'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
@@ -18,18 +19,18 @@ import type { Ref } from 'vue'
 export function useCate() {
     const treeRef = shallowRef<InstanceType<typeof ElTree>>()
     // 分组列表
-    const cateLists = ref<any[]>([])
+    const cateLists = ref<type_file_cate[]>([])
 
     // 选中的分组id
-    const cateId = ref<number | string>(0)
+    const cateId = ref<string>('')
 
     // 获取分组列表
     const getCateLists = async () => {
         const data = await fileCateLists({})
-        const item: any[] = [
+        const item: type_file_cate[] = [
             {
                 name: '全部',
-                id: 0
+                id: ''
             }
         ]
         cateLists.value = data
@@ -116,7 +117,7 @@ export function useFile(
 
     const batchFileDelete = async (id?: number[]) => {
         try {
-            await feedback.confirm('确认删除记录，不会删除文件')
+            await feedback.confirm('从相册中删除，但不会删除文件')
             const ids = id ? id : select.value.map((item: any) => item.id)
             await fileDelete({ ids })
             getFileList()
@@ -156,7 +157,7 @@ export function useFile(
         select.value = []
     }
 
-    const cancelSelect = (id: number) => {
+    const cancelSelect = (id: string) => {
         select.value = select.value.filter((item: any) => item.id != id)
     }
     const selectItems = (items: any[]) => {

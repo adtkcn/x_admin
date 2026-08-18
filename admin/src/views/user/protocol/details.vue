@@ -2,7 +2,7 @@
     <div class="edit-popup">
         <popup
             ref="popupRef"
-            :title="popupTitle"
+            :title="popuptitle"
             :async="true"
             width="550px"
             :clickModalClose="true"
@@ -10,11 +10,11 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
-                <el-form-item label="标题" prop="Title">
-                    <span v-text="formData.Title"></span>
+                <el-form-item label="标题" prop="title">
+                    <span v-text="formData.title"></span>
                 </el-form-item>
-                <el-form-item label="协议内容" prop="Content">
-                    <div v-html="formData.Content"></div>
+                <el-form-item label="协议内容" prop="content">
+                    <div v-html="formData.content"></div>
                 </el-form-item>
                 <el-form-item label="排序" prop="Sort">
                     <span v-text="formData.Sort"></span>
@@ -44,33 +44,33 @@ const emit = defineEmits(['close'])
 const formRef = useTemplateRef<FormInstance>('formRef')
 const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 
-const popupTitle = computed(() => {
+const popuptitle = computed(() => {
     return '预览用户协议'
 })
 
 const formData = reactive({
-    Id: null,
-    Title: null,
-    Content: null,
+    id: null,
+    title: null,
+    content: null,
     Sort: null
 })
 
 const formRules = {
-    Id: [
+    id: [
         {
             required: true,
             message: '请输入',
             trigger: ['blur']
         }
     ],
-    Title: [
+    title: [
         {
             required: true,
             message: '请输入标题',
             trigger: ['blur']
         }
     ],
-    Content: [
+    content: [
         {
             required: true,
             message: '请输入协议内容',
@@ -91,9 +91,11 @@ const open = () => {
 }
 const getDetail = async (row: Record<string, any>) => {
     try {
-        const data = await user_protocol_detail(row.Id)
+        const data = await user_protocol_detail(row.id)
         setFormData(data)
-    } catch (error) {}
+    } catch (error) {
+        console.error('协议详情获取失败:', error)
+    }
 }
 const setFormData = async (data: Record<string, any>) => {
     for (const key in formData) {

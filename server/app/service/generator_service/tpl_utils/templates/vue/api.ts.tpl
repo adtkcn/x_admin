@@ -9,7 +9,7 @@ import { clearEmpty } from '@/utils/util'
 export type type_{{{.ModuleName}}} = {
 {{{- range .Columns }}}
 {{{- if or .IsList .IsPk }}}
-    {{{.TsField }}}: {{{.TsType}}}
+    {{{.TsField }}}: {{{.TsType}}}{{{ if eq .IsRequired 0 }}}|null{{{ end }}}
 {{{- end }}}
 {{{- end }}}
 }
@@ -18,8 +18,8 @@ export type type_{{{.ModuleName}}}_query = {
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
 {{{- if eq .HtmlType "datetime" }}}
-    {{{.TsField }}}Start?: string
-    {{{.TsField }}}End?: string
+    {{{.TsField }}}_start?: string
+    {{{.TsField }}}_end?: string
 {{{- else }}}
     {{{.TsField }}}?: {{{.TsType}}}
 {{{- end }}}
@@ -30,7 +30,7 @@ export type type_{{{.ModuleName}}}_query = {
 export type type_{{{.ModuleName}}}_edit = {
 {{{- range .Columns }}}
 {{{- if or .IsEdit .IsInsert }}}
-    {{{.TsField }}}?: {{{.TsType}}}
+    {{{.TsField }}}?: {{{.TsType}}}{{{ if eq .IsRequired 0 }}}|null{{{ end }}}
 {{{- end }}}
 {{{- end }}}
 }
@@ -45,8 +45,8 @@ export function {{{.ModuleName}}}_list_all(params?: type_{{{.ModuleName}}}_query
 }
 
 // {{{.FunctionName}}}详情
-export function {{{.ModuleName}}}_detail({{{toUpperCamelCase .PrimaryKey }}}: number | string) {
-    return request.get<type_{{{.ModuleName}}}>({ url: '/{{{.ModuleName}}}/detail', params: { {{{toUpperCamelCase .PrimaryKey }}} } })
+export function {{{.ModuleName}}}_detail({{{ .PrimaryTsField }}}: {{{.PrimaryTsType}}}) {
+    return request.get<type_{{{.ModuleName}}}>({ url: '/{{{.ModuleName}}}/detail', params: { {{{ .PrimaryTsField }}} } })
 }
 
 // {{{.FunctionName}}}新增
@@ -60,11 +60,11 @@ export function {{{.ModuleName}}}_edit(data: type_{{{.ModuleName}}}_edit) {
 }
 
 // {{{.FunctionName}}}删除
-export function {{{.ModuleName}}}_delete({{{toUpperCamelCase .PrimaryKey }}}: number | string) {
-    return request.post<null>({ url: '/{{{.ModuleName}}}/del', data: { {{{toUpperCamelCase .PrimaryKey }}} } })
+export function {{{.ModuleName}}}_delete({{{ .PrimaryTsField }}}: {{{.PrimaryTsType}}}) {
+    return request.post<null>({ url: '/{{{.ModuleName}}}/del', data: { {{{ .PrimaryTsField }}} } })
 }
 // {{{.FunctionName}}}删除-批量
-export function {{{.ModuleName}}}_delete_batch(data: { Ids: string }) {
+export function {{{.ModuleName}}}_delete_batch(data: { ids: string }) {
     return request.post<null>({ url: '/{{{.ModuleName}}}/del_batch', data })
 }
 

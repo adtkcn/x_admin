@@ -10,19 +10,13 @@
                 >
                     <div class="text-center text-3xl font-medium mb-8">{{ config.webName }}</div>
 
-                    <el-form
-                        ref="formRef"
-                        :model="formData"
-                        size="large"
-                        :rules="rules"
-                        autoComplete="off"
-                    >
-                        <el-form-item prop="username">
+                    <el-form ref="formRef" :model="formData" :rules="rules" autoComplete="off">
+                        <el-form-item prop="email">
                             <el-input
-                                v-model.trim="formData.username"
+                                v-model.trim="formData.email"
                                 type="text"
                                 autocomplete="off"
-                                placeholder="请输入账号"
+                                placeholder="请输入邮箱"
                                 tabindex="1"
                             >
                                 <template #prepend>
@@ -31,42 +25,19 @@
                             </el-input>
                         </el-form-item>
                         <input
-                            v-model.trim="formData.username"
+                            v-model.trim="formData.email"
                             type="text"
-                            name="username-hide"
-                            tabindex="-1"
-                            style="
-                                position: absolute;
-                                height: 0;
-                                width: 0;
-                                line-height: 0;
-                                border: 0;
-                                opacity: 0;
-                                overflow: hidden;
-                            "
+                            name="email-hide"
+                            class="hide-input"
                         />
-                        <input
-                            v-model="formData.password"
-                            type="password"
-                            tabindex="-1"
-                            style="
-                                position: absolute;
-                                height: 0;
-                                width: 0;
-                                line-height: 0;
-                                border: 0;
-                                opacity: 0;
-                                overflow: hidden;
-                            "
-                        />
+                        <input v-model="formData.password" type="password" class="hide-input" />
                         <el-form-item prop="password">
                             <el-input
-                                ref="passwordRef"
                                 v-model="formData.password"
                                 tabindex="1"
                                 show-password
                                 placeholder="请输入密码"
-                                @keyup.enter="onShowCaptcha"
+                                @keyup.enter="handleLoginClick"
                             >
                                 <template #prepend>
                                     <icon name="el-icon-Lock" />
@@ -74,25 +45,26 @@
                             </el-input>
                         </el-form-item>
                     </el-form>
-                    <!-- <div class="mb-5">
-                        <el-checkbox v-model="remAccount" label="记住账号"></el-checkbox>
-                    </div> -->
+
                     <el-button
                         type="primary"
-                        size="large"
                         tabindex="1"
                         :loading="isLock"
-                        @click="onShowCaptcha"
+                        @click="handleLoginClick"
                     >
                         登录
                     </el-button>
+
+                    <div class="mt-3 text-right">
+                        <el-button link type="primary" @click="goForgotPwd">忘记密码？</el-button>
+                    </div>
 
                     <Verify
                         mode="pop"
                         captchaType="clickWord"
                         :imgSize="{ width: 400, height: 200 }"
                         ref="verifyRef"
-                        @success="handleSuccess"
+                        @success="handleCaptchaSuccess"
                     ></Verify>
                 </div>
             </div>
@@ -104,7 +76,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, useTemplateRef, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { InputInstance, FormInstance } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
 import useAppStore from '@/stores/modules/app'
 import useUserStore from '@/stores/modules/user'
@@ -113,95 +85,88 @@ import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
 import { encryptPassword } from '@/utils/util'
+
 defineOptions({
     name: 'AccountLogin'
 })
+
 const Verify = defineAsyncComponent(() => import('@/components/verify/Verify.vue'))
 const ImageContain = defineAsyncComponent(() => import('@/components/image-contain/index.vue'))
-// const verifyRef = ref(null)
-const verifyRef = useTemplateRef<InstanceType<typeof Verify>>('verifyRef')
-const onShowCaptcha = () => {
-    verifyRef.value.show()
-}
-let verifyInfo = null
-const handleSuccess = (res) => {
-    console.log(res)
-    verifyInfo = res
-    lockLogin(res)
-}
 
-const passwordRef = useTemplateRef<InputInstance>('passwordRef')
 const formRef = useTemplateRef<FormInstance>('formRef')
+const verifyRef = useTemplateRef<InstanceType<typeof Verify>>('verifyRef')
 const appStore = useAppStore()
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
-// const remAccount = ref(false)
 const config = computed(() => appStore.config)
+
 const formData = reactive({
-    username: '',
-    password: ''
+    email: 'x@qq.com',
+    password: '123456'
 })
+
 const rules = {
-    username: [
-        {
-            required: true,
-            message: '请输入账号',
-            trigger: ['blur']
-        }
-    ],
-    password: [
-        {
-            required: true,
-            message: '请输入密码',
-            trigger: ['blur']
-        }
-    ]
+    email: [{ required: true, message: '请输入邮箱', trigger: ['blur'] }],
+    password: [{ required: true, message: '请输入密码', trigger: ['blur'] }]
+}
+
+// 点击登录：先校验表单，通过后再弹出验证码
+const handleLoginClick = async () => {
+    await formRef.value?.validate()
+    verifyRef.value?.show()
+}
+
+// 验证码通过后执行登录
+const handleCaptchaSuccess = (captcha: Record<string, any>) => {
+    lockLogin(captcha)
 }
 
 // 登录处理
-const handleLogin = async (captchaInfo) => {
-    console.log('captchaInfo', {
-        username: formData.username,
+const handleLogin = async (captcha: Record<string, any>) => {
+    await userStore.login({
+        email: formData.email,
         password: encryptPassword(formData.password),
-        ...captchaInfo
+        ...captcha
     })
 
-    await formRef.value?.validate()
-    // 记住账号，缓存
-    cache.set(ACCOUNT_KEY, {
-        username: formData.username
-    })
-    await userStore.login({
-        username: formData.username,
-        password: encryptPassword(formData.password),
-        ...verifyInfo
-    })
-    const {
-        query: { redirect }
-    } = route
-    const path = typeof redirect === 'string' ? redirect : PageEnum.INDEX
+    cache.set(ACCOUNT_KEY, { email: formData.email })
+
+    const path = typeof route.query.redirect === 'string' ? route.query.redirect : PageEnum.INDEX
     router.push(path)
 }
 const { isLock, lockFn: lockLogin } = useLockFn(handleLogin)
 
-onMounted(() => {
-    const value = cache.get(ACCOUNT_KEY)
+const goForgotPwd = () => {
+    router.push(PageEnum.FORGOT_PASSWORD)
+}
 
-    formData.username = value?.username
+onMounted(() => {
+    const value: { email?: string } | null = cache.get(ACCOUNT_KEY)
+    formData.email = value?.email || ''
 })
 </script>
 
 <style lang="scss" scoped>
 .login {
-    // background-image: url('./images/login_bg.png');
     background-color: #f8f8f8;
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
+    background-image: url(./images/login_bg.png);
 
     .login-card {
         height: 400px;
     }
+}
+
+.hide-input {
+    position: absolute;
+    height: 0;
+    width: 0;
+    line-height: 0;
+    border: 0;
+    opacity: 0;
+    overflow: hidden;
 }
 </style>

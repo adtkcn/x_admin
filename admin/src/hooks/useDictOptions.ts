@@ -42,12 +42,12 @@ export function useDictOptions<T = any>(options: Options) {
 export type type_dict = {
     color: string
     createTime?: string
-    id: number
+    id: string
     name: string
     remark: string
     sort: number
     status: number
-    typeId: number
+    typeId: string
     updateTime: string
     value: string
 }
@@ -57,7 +57,7 @@ export function useDictData<T = any>(dict: string[]) {
         options[type] = {
             api: dictDataAll,
             params: {
-                dictType: type
+                dict_type: type
             }
         }
     }
@@ -77,10 +77,6 @@ export function useListAllData<T = any>(paths: Record<string, string>) {
 
                 return data
             }
-
-            // params: {
-            //     dictType: path
-            // }
         }
     }
     const { optionsData } = useDictOptions<T>(options)

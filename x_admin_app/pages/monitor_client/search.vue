@@ -27,13 +27,13 @@
 			<uv-form-item label="ua记录" prop="ua" borderBottom>
 					<uv-input v-model="form.ua"> </uv-input>
 			</uv-form-item>
-			<uv-form-item label="创建时间" prop="createTime" borderBottom>
-					<x-date-range v-model:startTime="form.createTimeStart"
-							v-model:endTime="form.createTimeEnd"></x-date-range>
+			<uv-form-item label="创建时间" prop="CreateTime" borderBottom>
+					<x-date-range v-model:startTime="form.CreateTimeStart"
+							v-model:endTime="form.CreateTimeEnd"></x-date-range>
 			</uv-form-item>
-			<uv-form-item label="更新时间" prop="clientTime" borderBottom>
-					<x-date-range v-model:startTime="form.clientTimeStart"
-							v-model:endTime="form.clientTimeEnd"></x-date-range>
+			<uv-form-item label="更新时间" prop="ClientTime" borderBottom>
+					<x-date-range v-model:startTime="form.ClientTimeStart"
+							v-model:endTime="form.ClientTimeEnd"></x-date-range>
 			</uv-form-item>
 
 			<uv-button type="primary" text="搜索" customStyle="margin-top: 20rpx" @click="submit"></uv-button>
@@ -73,10 +73,10 @@
     width: '',
     height: '',
     ua: '',
-    createTimeStart: '',
-    createTimeEnd: '',
-    clientTimeStart: '',
-    clientTimeEnd: '',
+    CreateTimeStart: '',
+    CreateTimeEnd: '',
+    ClientTimeStart: '',
+    ClientTimeEnd: '',
 	});
 
 	function submit() {

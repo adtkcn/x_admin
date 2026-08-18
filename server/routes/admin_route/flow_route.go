@@ -32,6 +32,7 @@ func FlowHistoryRoute(rg *gin.RouterGroup) {
 	rg.POST("/flow_history/add", handle.Add)
 	rg.POST("/flow_history/edit", handle.Edit)
 	rg.POST("/flow_history/del", handle.Del)
+	rg.POST("/flow_history/done_hidden", handle.DoneHidden)
 
 	rg.POST("/flow_history/pass", handle.Pass)
 	rg.POST("/flow_history/back", handle.Back)

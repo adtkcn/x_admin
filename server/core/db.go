@@ -87,6 +87,13 @@ func initMysql() *gorm.DB {
 	return db
 }
 
+// AutoMigrate 自动迁移（启动时自动建表/更新表结构）
+func AutoMigrate(models ...any) {
+	if err := db.AutoMigrate(models...); err != nil {
+		log.Fatal("AutoMigrate err:", err)
+	}
+}
+
 func DBTableName(model any) string {
 	stmt := &gorm.Statement{DB: db}
 	stmt.Parse(model)

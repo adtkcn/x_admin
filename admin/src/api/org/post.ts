@@ -5,7 +5,7 @@ import type { Pages } from '@/utils/request'
 export type type_system_post_list = {
     code?: string
     name?: string
-    isStop?: number
+    is_stop?: number
 }
 
 // 岗位详情参数
@@ -19,7 +19,7 @@ export type type_system_post_edit = {
     code?: string
     name?: string
     remarks?: string
-    isStop?: number
+    is_stop?: number
     sort?: number
 }
 
@@ -35,9 +35,9 @@ export type type_system_post_resp = {
     name: string
     remarks: string
     sort: number
-    isStop: number
-    createTime: string
-    updateTime: string
+    is_stop: number
+    create_time: string
+    update_time: string
 }
 
 // 岗位详情

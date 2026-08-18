@@ -53,7 +53,7 @@ import { ref, reactive ,shallowRef} from "vue";
 import uvForm from "@/uni_modules/uv-form/components/uv-form/uv-form.vue";
 import Verify from "@/components/verify/verify.vue";
 
-import { login } from "@/api/user";
+import { login } from "@/api/system/user";
 import { setLocalStorage } from "@/utils/storage";
 import { alert ,encryptPassword} from "@/utils/utils";
 // import appicon from "@/static/appicon.png";

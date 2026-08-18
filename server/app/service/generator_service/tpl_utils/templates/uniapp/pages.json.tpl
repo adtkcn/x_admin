@@ -2,7 +2,7 @@
 {
 	"pages": [
         {
-			"path": "pages/{{{nameToPath .ModuleName }}}/index",
+			"path": "pages/{{{.Domain}}}/{{{.ModuleName}}}/index",
 			"style": {
 				"navigationBarTitleText": "{{{.FunctionName}}}",
 				"enablePullDownRefresh": true,
@@ -10,20 +10,20 @@
 			}
 		},
 		{
-			"path": "pages/{{{nameToPath .ModuleName }}}/details",
+			"path": "pages/{{{.Domain}}}/{{{.ModuleName}}}/details",
 			"style": {
 				"navigationBarTitleText": "{{{.FunctionName}}}详情",
 				"enablePullDownRefresh": true
 			}
 		},
 		{
-			"path": "pages/{{{nameToPath .ModuleName }}}/edit",
+			"path": "pages/{{{.Domain}}}/{{{.ModuleName}}}/edit",
 			"style": {
 				"navigationBarTitleText": "编辑{{{.FunctionName}}}"
 			}
 		},
 		{
-			"path": "pages/{{{nameToPath .ModuleName }}}/search",
+			"path": "pages/{{{.Domain}}}/{{{.ModuleName}}}/search",
 			"style": {
 				"navigationBarTitleText": "搜索{{{.FunctionName}}}"
 			}

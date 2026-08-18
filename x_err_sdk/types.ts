@@ -1,13 +1,13 @@
 export type LogWithEnv = {
-  Height?: number;
-  Width?: number;
+  height?: number;
+  width?: number;
 };
 export type LogWithError =LogWithEnv& {
-  Type: "error" | "event" | "resources" | "click";
-  EventType: string;
-  Path: string;
-  Message?: string;
-  Stack?: string;  
+  type: "error" | "event" | "resources" | "click";
+  event_type: string;
+  path: string;
+  message?: string;
+  stack?: string;  
 };
 
 //  扩展必须实现的接口

@@ -10,7 +10,7 @@ export type type_system_role_detail = {
 export type type_system_role_add = {
     name: string
     sort?: number
-    isDisable?: number
+    is_disable?: number
     remark?: string
     menuIds?: string
 }
@@ -20,7 +20,7 @@ export type type_system_role_edit = {
     id: string
     name: string
     sort?: number
-    isDisable?: number
+    is_disable?: number
     remark?: string
     menuIds?: string
 }
@@ -38,17 +38,17 @@ export type type_system_role_resp = {
     menus: string[]
     member: number
     sort: number
-    isDisable: number
-    createTime: string
-    updateTime: string
+    is_disable: number
+    create_time: string
+    update_time: string
 }
 
 // 角色简单返回信息
 export type type_system_role_simple_resp = {
     id: string
     name: string
-    createTime: string
-    updateTime: string
+    create_time: string
+    update_time: string
 }
 
 // 角色列表

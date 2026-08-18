@@ -3,10 +3,10 @@
         <el-card class="border-none!" shadow="never">
             <el-form class="mb-[-16px]" :model="formData" inline>
                 <el-form-item label="表名称">
-                    <el-input v-model="formData.tableName" clearable @keyup.enter="resetPage" />
+                    <el-input v-model="formData.table_name" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="表描述">
-                    <el-input v-model="formData.tableComment" clearable @keyup.enter="resetPage" />
+                    <el-input v-model="formData.table_comment" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
@@ -48,17 +48,21 @@
                 </el-button> -->
             </div>
             <div class="mt-4">
-                <el-table
+                <vxe-table
+                    ref="tableRef"
                     :data="pager.lists"
-                    size="large"
-                    @selection-change="handleSelectionChange"
+                    :row-config="{ keyField: 'id' }"
+                    :checkbox-config="{ checkRowKeys: [] }"
+                    @checkbox-change="selectData = $event.$table.getCheckboxRecords()"
+                    @checkbox-all="selectData = $event.$table.getCheckboxRecords()"
+                    :border="'inner'"
                 >
-                    <el-table-column type="selection" width="55" />
-                    <el-table-column label="表名称" prop="tableName" min-width="180" />
-                    <el-table-column label="表描述" prop="tableComment" min-width="180" />
-                    <el-table-column label="创建时间" prop="createTime" min-width="180" />
-                    <el-table-column label="更新时间" prop="updateTime" min-width="180" />
-                    <el-table-column label="操作" width="160" fixed="right">
+                    <vxe-column type="checkbox" width="55" />
+                    <vxe-column title="表名称" field="table_name" min-width="180" />
+                    <vxe-column title="表描述" field="table_comment" min-width="180" />
+                    <vxe-column title="创建时间" field="create_time" min-width="180" />
+                    <vxe-column title="更新时间" field="update_time" min-width="180" />
+                    <vxe-column title="操作" width="160" fixed="right">
                         <template #default="{ row }">
                             <div class="flex items-center">
                                 <el-button
@@ -128,8 +132,8 @@
                                 </el-dropdown>
                             </div>
                         </template>
-                    </el-table-column>
-                </el-table>
+                    </vxe-column>
+                </vxe-table>
             </div>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
@@ -163,8 +167,8 @@ defineOptions({
     name: 'codeGenerate'
 })
 const formData = reactive<type_gen_table_list>({
-    tableName: '',
-    tableComment: ''
+    table_name: '',
+    table_comment: ''
 })
 
 const previewState = reactive({
@@ -178,10 +182,8 @@ const { pager, getLists, resetParams, resetPage } = usePaging({
     params: formData
 })
 
+const tableRef = ref<any>()
 const selectData = ref<type_gen_table_resp[]>([])
-const handleSelectionChange = (val: type_gen_table_resp[]) => {
-    selectData.value = val
-}
 
 const handleSync = async (id: string) => {
     await feedback.confirm('确定要更新表结构？从数据库拉取最新表结构')
@@ -212,7 +214,7 @@ const handleGenerate = async (selectData: type_gen_table_resp[]) => {
 }
 
 const getTables = (selectData: type_gen_table_resp[]) => {
-    return selectData.map(({ tableName }) => tableName).join()
+    return selectData.map(({ table_name }) => table_name).join()
 }
 
 const handleCommand = (command: string, row: type_gen_table_resp) => {

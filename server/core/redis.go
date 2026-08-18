@@ -14,7 +14,7 @@ var Redis = initRedis()
 func initRedis() *redis.Client {
 	opt, err := redis.ParseURL(config.RedisConfig.Url)
 	if err != nil {
-		log.Fatal("initRedis redis.ParseURL err: ", err)
+		log.Fatal("解析redis url失败: ", err)
 	}
 	opt.MaxIdleConns = config.RedisConfig.MaxIdleConns
 	opt.ConnMaxLifetime = time.Duration(config.RedisConfig.ConnMaxLifetime) * time.Second

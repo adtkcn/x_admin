@@ -7,35 +7,34 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_user_protocol = {
-    Id?: string
-    Tag?: string
-    Version?: number
-    Title?: string
-    Content?: string
+    id?: string
+    tag?: string
+    version?: number
+    title?: string
+    content?: string
 
-    IsDelete?: number
-    CreateTime?: string
-    UpdateTime?: string
-    DeleteTime?: string
+    create_time?: string
+    update_time?: string
+    created_by?: string
 }
 // 查询
 export type type_user_protocol_query = {
-    Title?: string
-    Content?: string
-    Version?: number
+    title?: string
+    content?: string
+    version?: number
 
-    CreateTimeStart?: string
-    CreateTimeEnd?: string
-    UpdateTimeStart?: string
-    UpdateTimeEnd?: string
+    create_time_start?: string
+    create_time_end?: string
+    update_time_start?: string
+    update_time_end?: string
 }
 // 添加编辑
 export type type_user_protocol_edit = {
-    Id?: string
-    Tag?: string
-    Version?: number
-    Title?: string
-    Content?: string
+    id?: string
+    tag?: string
+    version?: number
+    title?: string
+    content?: string
 }
 
 // 用户协议列表
@@ -54,8 +53,8 @@ export function user_protocol_list_all(params?: type_user_protocol_query) {
 }
 
 // 用户协议详情
-export function user_protocol_detail(Id: number | string) {
-    return request.get<type_user_protocol>({ url: '/user_protocol/detail', params: { Id } })
+export function user_protocol_detail(id: string) {
+    return request.get<type_user_protocol>({ url: '/user_protocol/detail', params: { id } })
 }
 
 // 用户协议新增
@@ -69,11 +68,11 @@ export function user_protocol_edit(data: type_user_protocol_edit) {
 }
 
 // 用户协议删除
-export function user_protocol_delete(Id: number | string) {
-    return request.post<null>({ url: '/user_protocol/del', data: { Id } })
+export function user_protocol_delete(id: string) {
+    return request.post<null>({ url: '/user_protocol/del', data: { id } })
 }
 // 用户协议删除-批量
-export function user_protocol_delete_batch(data: { Ids: string }) {
+export function user_protocol_delete_batch(data: { ids: string }) {
     return request.post<null>({ url: '/user_protocol/del_batch', data })
 }
 

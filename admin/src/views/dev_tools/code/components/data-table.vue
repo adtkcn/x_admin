@@ -13,10 +13,10 @@
             </template>
             <el-form class="ls-form" :model="formData" inline>
                 <el-form-item label="表名称">
-                    <el-input v-model="formData.tableName" clearable @keyup.enter="resetPage" />
+                    <el-input v-model="formData.table_name" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item label="表描述">
-                    <el-input v-model="formData.tableComment" clearable @keyup.enter="resetPage" />
+                    <el-input v-model="formData.table_comment" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
@@ -24,17 +24,19 @@
                 </el-form-item>
             </el-form>
             <div class="m-4" v-loading="pager.loading">
-                <el-table
+                <vxe-table
+                    ref="tableRef"
                     height="400"
-                    size="large"
                     :data="pager.lists"
-                    @selection-change="handleSelectionChange"
+                    :row-config="{ keyField: 'table_name' }"
+                    :checkbox-config="{ checkRowKeys: [] }"
+                    :border="'inner'"
                 >
-                    <el-table-column type="selection" width="55" />
-                    <el-table-column label="表名称" prop="tableName" min-width="150" />
-                    <el-table-column label="表描述" prop="tableComment" min-width="160" />
-                    <el-table-column label="创建时间" prop="createTime" min-width="180" />
-                </el-table>
+                    <vxe-column type="checkbox" width="55" />
+                    <vxe-column title="表名称" field="table_name" min-width="150" />
+                    <vxe-column title="表描述" field="table_comment" min-width="160" />
+                    <vxe-column title="创建时间" field="create_time" min-width="180" />
+                </vxe-table>
             </div>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
@@ -56,10 +58,11 @@ const emit = defineEmits<{
 }>()
 
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const tableRef = ref<any>()
 
 const formData = reactive({
-    tableName: '', // 表名称
-    tableComment: '' // 表描述
+    table_name: '', // 表名称
+    table_comment: '' // 表描述
 })
 
 const { pager, getLists, resetParams, resetPage } = usePaging({
@@ -70,11 +73,9 @@ const { pager, getLists, resetParams, resetPage } = usePaging({
 
 const selectData = ref<any[]>([])
 
-const handleSelectionChange = (val: any[]) => {
-    selectData.value = val.map(({ tableName }) => tableName)
-}
-
 const handleConfirm = async () => {
+    const checkedRows = tableRef.value?.getCheckboxRecords() ?? []
+    selectData.value = checkedRows.map(({ table_name }: any) => table_name)
     if (!selectData.value.length) return feedback.msgError('请选择数据表')
     await selectTable({
         tables: selectData.value.join()

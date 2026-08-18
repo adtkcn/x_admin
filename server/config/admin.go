@@ -8,10 +8,6 @@ var AdminConfig = adminConfig{
 	BackstageAdminKey: "admin:users",
 	// 用户权限缓存键(菜单+按钮) hash
 	BackstageAdminPermsKey: "admin:perms",
-	// 令牌缓存键
-	BackstageTokenKey: "admin:token:",
-	// 令牌的集合
-	BackstageTokenSet: "admin:token_set:",
 	// #region NotAuth
 	// 免登录验证
 	NotLoginUri: []string{
@@ -39,13 +35,10 @@ var AdminConfig = adminConfig{
 	// 管理员账号key
 	ReqAdminIdKey: "admin_id",
 
-	// 用户名key
-	ReqUsernameKey: "username",
+	// 邮箱key(账号)
+	ReqEmailKey: "email",
 	// 昵称key
 	ReqNicknameKey: "nickname",
-
-	// 登录有效期(秒)
-	TokenExpire: 60 * 60 * 24, // 1天
 }
 
 type adminConfig struct {
@@ -54,10 +47,6 @@ type adminConfig struct {
 
 	// 用户权限缓存键"backstage:admin:perms"，field为管理员id，value为权限列表(逗号分隔)
 	BackstageAdminPermsKey string
-	// 令牌缓存键"backstage:token:"，值为用户id
-	BackstageTokenKey string
-	// 令牌的集合 "backstage:token:set:"，值为token集合
-	BackstageTokenSet string
 	// 免登录验证
 	NotLoginUri []string
 	// 免权限验证
@@ -68,13 +57,10 @@ type adminConfig struct {
 	// 管理员账号key
 	ReqAdminIdKey string
 
-	// 用户名key
-	ReqUsernameKey string
+	// 邮箱key(账号)
+	ReqEmailKey string
 	// 昵称key
 	ReqNicknameKey string
-
-	// 登录有效期(秒)
-	TokenExpire int
 }
 
 func (cnf adminConfig) GetAdminId(c *gin.Context) string {
@@ -85,12 +71,12 @@ func (cnf adminConfig) GetAdminId(c *gin.Context) string {
 	return adminId.(string)
 }
 
-func (cnf adminConfig) GetUsername(c *gin.Context) string {
-	username, ok := c.Get(cnf.ReqUsernameKey)
+func (cnf adminConfig) GetEmail(c *gin.Context) string {
+	email, ok := c.Get(cnf.ReqEmailKey)
 	if !ok {
 		return ""
 	}
-	return username.(string)
+	return email.(string)
 }
 
 func (cnf adminConfig) GetNickname(c *gin.Context) string {

@@ -9,20 +9,20 @@
                 :inline="true"
             >
                 <!-- <el-form-item label="模板" prop="templateId">
-                    <el-input v-model="queryParams.templateId" />
+                    <el-input v-model="queryParams.template_id" />
                 </el-form-item> -->
                 <!-- <el-form-item label="申请人id" prop="applyUserId">
-                    <el-input   v-model="queryParams.applyUserId" />
+                    <el-input   v-model="queryParams.apply_user_id" />
                 </el-form-item>
-                <el-form-item label="申请人昵称" prop="applyUserNickname">
-                    <el-input   v-model="queryParams.applyUserNickname" />
+                <el-form-item label="申请人昵称" prop="apply_user_nickname">
+                    <el-input   v-model="queryParams.apply_user_nickname" />
                 </el-form-item> -->
-                <el-form-item label="流程名称" prop="flowName" class="w-[280px]">
-                    <el-input v-model="queryParams.flowName" />
+                <el-form-item label="流程名称" prop="flow_name" class="w-[280px]">
+                    <el-input v-model="queryParams.flow_name" />
                 </el-form-item>
-                <el-form-item label="流程分类" prop="flowGroup" class="w-[280px]">
+                <el-form-item label="流程分类" prop="flow_group" class="w-[280px]">
                     <el-select
-                        v-model="queryParams.flowGroup"
+                        v-model="queryParams.flow_group"
                         clearable
                         :empty-values="[null, undefined]"
                     >
@@ -35,8 +35,8 @@
                         />
                     </el-select>
                 </el-form-item>
-                <!-- <el-form-item label="流程描述" prop="flowRemark">
-                    <el-input v-model="queryParams.flowRemark" />
+                <!-- <el-form-item label="流程描述" prop="flow_remark">
+                    <el-input v-model="queryParams.flow_remark" />
                 </el-form-item> -->
                 <el-form-item label="状态" prop="status" class="w-[280px]">
                     <el-select
@@ -72,25 +72,32 @@
                     申请
                 </el-button>
             </div>
-            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
-                <el-table-column label="申请人昵称" prop="applyUserNickname" min-width="100" />
-                <el-table-column label="流程名称" prop="flowName" min-width="160" />
-                <el-table-column label="流程分类" prop="flowGroup" min-width="100">
+            <vxe-table
+                class="mt-4"
+                v-loading="pager.loading"
+                :data="pager.lists"
+                :row-config="{ keyField: 'id' }"
+                :scroll-y="{ enabled: false }"
+                :border="'inner'"
+            >
+                <vxe-column title="申请人昵称" field="apply_user_nickname" min-width="100" />
+                <vxe-column title="流程名称" field="flow_name" min-width="160" />
+                <vxe-column title="流程分类" field="flow_group" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.flow_group" :value="row.flowGroup" />
+                        <dict-value :options="dictData.flow_group" :value="row.flow_group" />
                     </template>
-                </el-table-column>
-                <el-table-column label="流程描述" prop="flowRemark" min-width="100" />
-                <!-- <el-table-column label="formValue" prop="formValue" min-width="100" /> -->
+                </vxe-column>
+                <vxe-column title="流程描述" field="flow_remark" min-width="100" />
+                <!-- <vxe-column title="formValue" field="formValue" min-width="100" /> -->
 
-                <el-table-column label="状态" prop="status" width="100">
+                <vxe-column title="状态" field="status" width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.flow_apply_status" :value="row.status" />
                     </template>
-                </el-table-column>
-                <el-table-column label="更新时间" prop="updateTime" width="180" />
-                <el-table-column label="创建时间" prop="createTime" width="180" />
-                <el-table-column label="操作" width="180" fixed="right">
+                </vxe-column>
+                <vxe-column title="更新时间" field="update_time" width="180" />
+                <vxe-column title="创建时间" field="create_time" width="180" />
+                <vxe-column title="操作" width="150" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:flow:flow_apply:edit']"
@@ -101,7 +108,7 @@
                             {{ row.status == 1 || row.status == 4 ? '编辑' : '预览' }}
                         </el-button>
                         <el-button
-                            v-if="(row.status == 1 || row.status == 4) && row.formValue"
+                            v-if="(row.status == 1 || row.status == 4) && row.form_value"
                             v-perms="['admin:flow:flow_apply:edit']"
                             type="primary"
                             link
@@ -127,8 +134,8 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -189,14 +196,14 @@ const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_flow_apply_query>({
-    templateId: undefined,
-    applyUserId: String(userStore.userInfo?.id),
-    applyUserNickname: undefined,
-    flowName: undefined,
-    flowGroup: undefined,
-    flowRemark: undefined,
-    flowFormData: undefined,
-    flowProcessData: undefined,
+    template_id: undefined,
+    apply_user_id: String(userStore.userInfo?.id),
+    apply_user_nickname: undefined,
+    flow_name: undefined,
+    flow_group: undefined,
+    flow_remark: undefined,
+    flow_form_data: undefined,
+    flow_process_data: undefined,
     status: undefined
 })
 
@@ -233,13 +240,13 @@ const OpenViewForm = async (row: any) => {
     const detail = await flow_apply_detail({ id: row.id })
     let form_data = {}
     try {
-        form_data = JSON.parse(row.formValue)
+        form_data = JSON.parse(row.form_value)
     } catch (error) {
         // 解析失败
     }
     let form_json = {}
     try {
-        detail.flowFormData && (form_json = JSON.parse(detail.flowFormData))
+        detail.flow_form_data && (form_json = JSON.parse(detail.flow_form_data))
     } catch (error) {
         // 解析失败
     }
@@ -252,11 +259,11 @@ const OpenApplySubmit = async (data: any) => {
 
     ApplySubmitRef.value?.open(data.id)
 }
-const SaveViewForm = (id: string, form_data) => {
+const SaveViewForm = (id: string, form_data: Record<string, any>) => {
     return new Promise((resolve, reject) => {
         flow_apply_edit({
             id: id,
-            formValue: JSON.stringify(form_data)
+            form_value: JSON.stringify(form_data)
         })
             .then(async () => {
                 feedback.msgSuccess('保存成功')

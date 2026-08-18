@@ -3,8 +3,8 @@
     <div class="index-lists">
         <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
-                <el-form-item label="申请人昵称" prop="applyUserNickname">
-                    <el-input v-model="queryParams.applyUserNickname" />
+                <el-form-item label="申请人昵称" prop="apply_user_nickname">
+                    <el-input v-model="queryParams.apply_user_nickname" />
                 </el-form-item>
 
                 <el-form-item>
@@ -15,22 +15,29 @@
         </el-card>
         <el-card class="border-none! mt-4" shadow="never">
             <!-- <div></div> -->
-            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
-                <el-table-column label="申请人" prop="applyUserNickname" min-width="100" />
+            <vxe-table
+                class="mt-4"
+                v-loading="pager.loading"
+                :data="pager.lists"
+                :row-config="{ keyField: 'id' }"
+                :scroll-y="{ enabled: false }"
+                :border="'inner'"
+            >
+                <vxe-column title="申请人" field="apply_user_nickname" min-width="100" />
 
-                <!-- <el-table-column label="表单值" prop="formValue" min-width="100" /> -->
-                <el-table-column label="通过状态" prop="passStatus" min-width="100">
+                <!-- <vxe-column title="表单值" field="formValue" min-width="100" /> -->
+                <vxe-column title="通过状态" field="pass_status" min-width="100">
                     <template #default="{ row }">
                         <dict-value
                             :options="dictData.flow_history_status"
-                            :value="row.passStatus"
+                            :value="row.pass_status"
                         />
                     </template>
-                </el-table-column>
-                <el-table-column label="审批备注" prop="passRemark" min-width="100" />
-                <el-table-column label="更新时间" prop="updateTime" min-width="150" />
-                <el-table-column label="创建时间" prop="createTime" min-width="150" />
-                <el-table-column label="操作" width="120" fixed="right">
+                </vxe-column>
+                <vxe-column title="审批备注" field="pass_remark" min-width="100" />
+                <vxe-column title="更新时间" field="update_time" min-width="150" />
+                <vxe-column title="创建时间" field="create_time" min-width="150" />
+                <vxe-column title="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <!-- <el-button
                             v-perms="['admin:flow_history:edit']"
@@ -41,7 +48,7 @@
                             审批
                         </el-button> -->
                         <el-button type="primary" link @click="OpenViewForm(row)">
-                            {{ row.passStatus == 1 ? '审批' : '预览' }}
+                            {{ row.pass_status == 1 ? '审批' : '预览' }}
                         </el-button>
                         <!-- <el-button
                             v-perms="['admin:flow:flow_apply:edit']"
@@ -52,8 +59,8 @@
                             审批
                         </el-button> -->
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -94,9 +101,9 @@ const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 const backRef = shallowRef<InstanceType<typeof Back>>()
 
 const queryParams = reactive<type_flow_history_query>({
-    approverId: String(userStore?.userInfo?.id),
-    applyUserNickname: '',
-    passStatus: 1
+    approver_id: String(userStore?.userInfo?.id),
+    apply_user_nickname: '',
+    pass_status: 1
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_history>({
@@ -110,17 +117,17 @@ const { dictData } = useDictData<{
 //     ApproveRef.value?.open(toRaw(row))
 // }
 const OpenViewForm = async (history_row: type_flow_history) => {
-    const applyDetail = await flow_apply_detail({ id: history_row.applyId || '' })
+    const applyDetail = await flow_apply_detail({ id: history_row.apply_id || '' })
 
     let form_data = {}
     try {
-        form_data = JSON.parse(history_row.formValue || '')
+        form_data = JSON.parse(history_row.form_value || '')
     } catch (error) {
         // 解析失败
     }
-    let form_json = {}
+    let form_json = []
     try {
-        form_json = JSON.parse(applyDetail.flowFormData || '')
+        form_json = JSON.parse(applyDetail.flow_form_data || '')
     } catch (error) {
         // 解析失败
     }
@@ -133,7 +140,7 @@ const SaveViewForm = (historyId: string, form_data: Record<string, any>) => {
     return new Promise((resolve, reject) => {
         flow_history_edit({
             id: historyId,
-            formValue: JSON.stringify(form_data)
+            form_value: JSON.stringify(form_data)
         })
             .then(async () => {
                 feedback.msgSuccess('保存成功')
@@ -145,7 +152,8 @@ const SaveViewForm = (historyId: string, form_data: Record<string, any>) => {
                 resolve(true)
             })
             .catch((err) => {
-                feedback.msgError(err.message)
+                console.log(err)
+                err && feedback.msgError(err.message)
                 reject()
             })
     })
@@ -153,12 +161,12 @@ const SaveViewForm = (historyId: string, form_data: Record<string, any>) => {
 const OpenApplySubmit = async (row: any) => {
     console.log('OpenApplySubmit')
 
-    ApplySubmitRef.value?.open(row.applyId)
+    ApplySubmitRef.value?.open(row.apply_id)
 }
 const OpenBack = async (row: any) => {
     console.log('OpenBack')
 
-    backRef.value?.open(row.applyId)
+    backRef.value?.open(row.apply_id)
 }
 const closeBack = () => {
     console.log('closeBack')

@@ -2,6 +2,7 @@ package tpl_utils
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"x_admin/app/model/gen_model"
@@ -183,6 +184,37 @@ func (gu genUtil) ToClassName(name string) string {
 	return util.StringUtil.ToCamelCase(name)
 }
 
+// ToDomain 从表名提取业务域（去掉表前缀后按 _ 首段），如 x_admin_activation_code -> admin
+func (gu genUtil) ToDomain(name string) string {
+	tablePrefix := config.DBConfig.TablePrefix
+	name = strings.TrimPrefix(name, tablePrefix)
+	parts := strings.Split(name, "_")
+	if len(parts) > 0 && parts[0] != "" {
+		return parts[0]
+	}
+	return name
+}
+
+// CleanColumnComment 清洗字段注释：去掉中英文括号内的内容，去掉中英文冒号(:：)及其后的内容
+func (gu genUtil) CleanColumnComment(comment string) string {
+	// 去掉中英文括号内的内容（处理嵌套，反复替换直至稳定）
+	bracket := regexp.MustCompile(`[（(][^（）()]*[）)]`)
+	for {
+		newComment := bracket.ReplaceAllString(comment, "")
+		if newComment == comment {
+			break
+		}
+		comment = newComment
+	}
+	// 去掉中英文冒号及其后的内容
+	if idx := strings.IndexAny(comment, ":："); idx >= 0 {
+		comment = comment[:idx]
+	}
+	// 去掉单双引号
+	comment = strings.NewReplacer("'", "", "\"", "").Replace(comment)
+	return strings.TrimSpace(comment)
+}
+
 // GetDbType 获取数据库类型字段
 func (gu genUtil) GetDbType(columnType string) string {
 	index := strings.IndexRune(columnType, '(')
@@ -224,29 +256,32 @@ func (gu genUtil) MakeID() string {
  * @description: Go类型转TS类型
  */
 func (gu genUtil) GoToTsType(s string) string {
+	var tsType string
 	switch s {
 	case "int", "int8", "int16", "int32", "int64":
-		return "number"
+		tsType = "number"
 	case "float", "float32", "float64":
-		return "number"
+		tsType = "number"
 	case "string":
-		return "string"
+		tsType = "string"
 	case "bool":
-		return "boolean"
+		tsType = "boolean"
 	case "time.Time":
-		return "string"
+		tsType = "string"
 	case "[]byte":
-		return "string"
+		tsType = "string"
 	case "[]string":
-		return "string[]"
+		tsType = "string[]"
 	case "[]int":
-		return "number[]"
+		tsType = "number[]"
 	case "[]float":
-		return "number[]"
+		tsType = "number[]"
 	case "x_null.Time":
-		return "string"
+		tsType = "string"
+	default:
+		tsType = "any"
 	}
-	return "any"
+	return tsType
 }
 
 /**
@@ -285,33 +320,11 @@ func (gu genUtil) GoTypeToSwagType(s string) string {
 	return ""
 }
 
-/**
- * @description: Go类型转为Param类型
- */
-// func (gu genUtil) GoToParamType(s string) string {
-// 	if s == "int" || s == "int8" || s == "int16" || s == "int32" || s == "int64" {
-// 		return "int"
-// 	} else if s == "float" || s == "float32" || s == "float64" {
-// 		return "float"
-// 	} else if s == "string" {
-// 		return "string"
-// 	} else if s == "bool" {
-// 		return "bool"
-// 	} else if s == "x_null.Time" {
-// 		return "string"
-// 	}
-// 	return "string"
-// }
-
 // 拼接字符串
 func (gu genUtil) GetPageResp(s string) string {
 	return `response.Response{data=response.PageResp{lists=[]schema.` + s + `Resp}}`
 }
 
-// NameToPath 下划线文件路径
-func (gu genUtil) NameToPath(s string) string {
-	return strings.ReplaceAll(s, "_", "/")
-}
 func (gu genUtil) PathToName(s string) string {
 	// 去掉前缀urlPrefix
 	s = strings.Replace(s, "/api/admin/", "", 1)

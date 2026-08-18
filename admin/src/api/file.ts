@@ -8,7 +8,7 @@ export type type_file_cate_add = {
 }
 
 // 文件分类编辑参数
-export type type_file_cate_edit = {
+export type type_file_cate = {
     id: string
     name: string
 }
@@ -28,7 +28,7 @@ export type type_file_cate_resp = {
     id: string
     pid: string
     name: string
-    createTime: string
+    create_time: string
 }
 
 // 文件列表参数
@@ -59,13 +59,13 @@ export type type_file_rename = {
 // 文件返回信息
 export type type_file_resp = {
     id: string
-    cateId: string
+    cid: string
     name: string
     path: string
-    url: string
-    size: number
-    type: string
-    createTime: string
+    uri: string
+    ext: string
+    size: string
+    create_time: string
 }
 
 // 添加文件分类
@@ -74,7 +74,7 @@ export function fileCateAdd(data: type_file_cate_add) {
 }
 
 // 编辑文件分类
-export function fileCateEdit(data: type_file_cate_edit) {
+export function fileCateEdit(data: type_file_cate) {
     return request.post({ url: '/common/album/cateRename', data })
 }
 
@@ -106,4 +106,27 @@ export function fileMove(data: type_file_move) {
 // 文件重命名
 export function fileRename(data: type_file_rename) {
     return request.post({ url: '/common/album/albumRename', data })
+}
+
+// 文件挂载到相册（从已上传文件）：把 file_hash_id 关联为相册分类下的文件
+export type type_file_add_from_upload = {
+    file_hash_id: string
+    cid: string
+    file_name: string
+}
+
+// 文件挂载到相册
+export function albumAddFromFile(data: type_file_add_from_upload) {
+    return request.post({ url: '/common/album/albumAddFromFile', data })
+}
+
+// 文件秒传检查参数
+export type type_file_check_instant = {
+    file_md5: string
+    file_name: string
+}
+
+// 文件秒传检查：根据 MD5 查询是否已上传
+export function checkInstant(data: type_file_check_instant) {
+    return request.post({ url: '/common/upload/checkInstant', data })
 }

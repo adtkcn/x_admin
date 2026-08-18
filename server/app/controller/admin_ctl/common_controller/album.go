@@ -17,12 +17,12 @@ type AlbumHandler struct{}
 // @Summary		相册文件列表
 // @Description	获取相册文件列表
 // @Tags			common_album-相册管理
-// @Param			token		header		string									true	"token"
-// @Param			pageNo		query		int										true	"页码"
-// @Param			pageSize	query		int										true	"每页数量"
-// @Param			cid			query		string									false	"分类ID"
-// @Param			name		query		string									false	"文件名"
-// @Param			ext		query		[]string									false	"文件扩展名"
+// @Param			token		header		string																				true	"token"
+// @Param			pageNo		query		int																					true	"页码"
+// @Param			pageSize	query		int																					true	"每页数量"
+// @Param			cid			query		string																				false	"分类ID"
+// @Param			name		query		string																				false	"文件名"
+// @Param			ext			query		[]string																			false	"文件扩展名"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=common_schema.CommonAlbumListResp}}	"成功"
 // @Router			/api/admin/common/album/list [get]
 func (ah AlbumHandler) AlbumList(c *gin.Context) {
@@ -42,10 +42,10 @@ func (ah AlbumHandler) AlbumList(c *gin.Context) {
 // @Summary		相册文件重命名
 // @Description	相册文件重命名
 // @Tags			common_album-相册管理
-// @Param			token	header		string						true	"token"
-// @Param			id		body		string						true	"文件ID"
-// @Param			name	body		string						true	"新文件名"
-// @Success		200		{object}	response.Response			"成功"
+// @Param			token	header		string				true	"token"
+// @Param			id		body		string				true	"文件ID"
+// @Param			name	body		string				true	"新文件名"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/album/rename [post]
 func (ah AlbumHandler) AlbumRename(c *gin.Context) {
 	var rnReq common_schema.CommonAlbumRenameReq
@@ -58,10 +58,10 @@ func (ah AlbumHandler) AlbumRename(c *gin.Context) {
 // @Summary		相册文件移动
 // @Description	相册文件移动到指定分类
 // @Tags			common_album-相册管理
-// @Param			token	header		string						true	"token"
-// @Param			ids		body		[]string					true	"文件ID列表"
-// @Param			cid		body		string						true	"目标分类ID"
-// @Success		200		{object}	response.Response			"成功"
+// @Param			token	header		string				true	"token"
+// @Param			ids		body		[]string			true	"文件ID列表"
+// @Param			cid		body		string				true	"目标分类ID"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/album/move [post]
 func (ah AlbumHandler) AlbumMove(c *gin.Context) {
 	var mvReq common_schema.CommonAlbumMoveReq
@@ -74,9 +74,9 @@ func (ah AlbumHandler) AlbumMove(c *gin.Context) {
 // @Summary		相册文件删除
 // @Description	删除相册文件
 // @Tags			common_album-相册管理
-// @Param			token	header		string						true	"token"
-// @Param			ids		body		[]string					true	"文件ID列表"
-// @Success		200		{object}	response.Response			"成功"
+// @Param			token	header		string				true	"token"
+// @Param			ids		body		[]string			true	"文件ID列表"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/album/del [post]
 func (ah AlbumHandler) AlbumDel(c *gin.Context) {
 	var delReq common_schema.CommonAlbumDelReq
@@ -86,11 +86,30 @@ func (ah AlbumHandler) AlbumDel(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, common_service.AlbumService.AlbumDel(delReq.Ids))
 }
 
+// @Summary		相册文件挂载（从已上传文件）
+// @Description	把上传后登记的文件（file_hash_id）挂载到相册分类：新建相册行并关联文件引用
+// @Tags			common_album-相册管理
+// @Param			token			header		string														true	"token"
+// @Param			file_hash_id	body		string														true	"文件哈希记录ID"
+// @Param			cid				body		string														true	"目标分类ID"
+// @Param			file_name		body		string														true	"文件展示名"
+// @Success		200				{object}	response.Response{data=common_schema.CommonAlbumListResp}	"成功"
+// @Router			/api/admin/common/album/albumAddFromFile [post]
+func (ah AlbumHandler) AlbumAddFromFile(c *gin.Context) {
+	var req common_schema.CommonAlbumAddFromFileReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+		return
+	}
+	adminId := config.AdminConfig.GetAdminId(c)
+	resp, err := common_service.AlbumService.AlbumAddFromFileRef(req.FileHashId, req.FileName, req.Cid, adminId, 0)
+	response.CheckAndRespWithData(c, resp, err)
+}
+
 // @Summary		类目列表
 // @Description	获取相册类目列表
 // @Tags			common_album-相册管理
-// @Param			token	header		string						true	"token"
-// @Param			name		query		string									false	"类目名称"
+// @Param			token	header		string														true	"token"
+// @Param			name	query		string														false	"类目名称"
 // @Success		200		{object}	response.Response{data=[]common_schema.CommonCateListResp}	"成功"
 // @Router			/api/admin/common/album/cateList [get]
 func (ah AlbumHandler) CateList(c *gin.Context) {
@@ -106,10 +125,10 @@ func (ah AlbumHandler) CateList(c *gin.Context) {
 // @Summary		类目新增
 // @Description	新增相册类目
 // @Tags			common_album-相册管理
-// @Param			token	header		string						true	"token"
-// @Param			pid	body		string						false	"父类目ID"
-// @Param			name	body		string						true	"类目名称"
-// @Success		200		{object}	response.Response			"成功"
+// @Param			token	header		string				true	"token"
+// @Param			pid		body		string				false	"父类目ID"
+// @Param			name	body		string				true	"类目名称"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/album/cateAdd [post]
 func (ah AlbumHandler) CateAdd(c *gin.Context) {
 	var addReq common_schema.CommonCateAddReq
@@ -123,10 +142,10 @@ func (ah AlbumHandler) CateAdd(c *gin.Context) {
 // @Summary		类目重命名
 // @Description	相册类目重命名
 // @Tags			common_album-相册管理
-// @Param			token	header		string						true	"token"
-// @Param			id		body		string						true	"类目ID"
-// @Param			name	body		string						true	"新类目名称"
-// @Success		200		{object}	response.Response			"成功"
+// @Param			token	header		string				true	"token"
+// @Param			id		body		string				true	"类目ID"
+// @Param			name	body		string				true	"新类目名称"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/album/cateRename [post]
 func (ah AlbumHandler) CateRename(c *gin.Context) {
 	var rnReq common_schema.CommonCateRenameReq
@@ -139,9 +158,9 @@ func (ah AlbumHandler) CateRename(c *gin.Context) {
 // @Summary		类目删除
 // @Description	删除相册类目
 // @Tags			common_album-相册管理
-// @Param			token	header		string						true	"token"
-// @Param			id		body		string						true	"类目ID"
-// @Success		200		{object}	response.Response			"成功"
+// @Param			token	header		string				true	"token"
+// @Param			id		body		string				true	"类目ID"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/album/cateDel [post]
 func (ah AlbumHandler) CateDel(c *gin.Context) {
 	var delReq common_schema.CommonCateDelReq

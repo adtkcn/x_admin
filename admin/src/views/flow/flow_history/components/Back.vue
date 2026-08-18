@@ -16,17 +16,18 @@
             label-width="110px"
             :rules="formRules"
         >
-            <el-form-item :label="`驳回到`" prop="templateId">
+            <el-form-item :label="`驳回到`" prop="history_id">
                 <el-select
                     style="width: 100%"
-                    v-model="formData.historyId"
+                    v-model="formData.history_id"
                     placeholder="请选择驳回节点"
+                    :empty-values="[null, undefined]"
                 >
                     <el-option label="发起人" value="" clearable />
                     <el-option
                         v-for="item in back_nodes"
                         :key="item.id"
-                        :label="item.nodeLabel"
+                        :label="`${item.node_label}`"
                         :value="item.id"
                         clearable
                     />
@@ -74,16 +75,16 @@ const dialogVisible = ref(false)
 //     }
 // })
 
-class formDataState {
-    applyId = '' // 申请id
-    historyId: string | number = '' //审批节点,空为发起人
-    remark = '' // 备注
-}
+    class formDataState {
+        apply_id = '' // 申请 id
+        history_id = '' //审批节点，空为发起人
+        remark = '' // 备注
+    }
 const formData = reactive(new formDataState())
 const back_nodes = ref<type_flow_history[]>([])
 
-const formRules = {
-    applyUserId: [
+    const formRules = {
+        history_id: [
         {
             required: true,
             message: '请选择',
@@ -91,16 +92,16 @@ const formRules = {
         }
     ]
 }
-function open(applyId) {
+function open(applyId: string) {
     console.log('open')
     Object.assign(formData, new formDataState())
-    formData.applyId = applyId
+    formData.apply_id = applyId
     dialogVisible.value = true
 
     flow_history_list_all({
-        applyId: applyId,
-        nodeType: 'bpmn:userTask',
-        passStatus: 2
+        apply_id: applyId,
+        node_type: 'bpmn:userTask',
+        pass_status: 2
     }).then((userNode) => {
         console.log('userNode', userNode)
         back_nodes.value = userNode

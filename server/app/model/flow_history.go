@@ -33,6 +33,7 @@ type FlowHistory struct {
 
 	PassRemark string `gorm:"comment:'通过备注'"` // 通过备注
 
+	IsShow     int                   `gorm:"not null;default:1;comment:'是否显示: 0=隐藏, 1=显示'"` // 是否显示
 	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
 	UpdateTime x_null.Time           `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
 	CreateTime x_null.Time           `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间

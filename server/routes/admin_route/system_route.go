@@ -13,6 +13,9 @@ func initLoginRoute(rg *gin.RouterGroup) {
 	loginRg := rg.Group("/system")
 	loginRg.POST("/login", handleLogin.Login)
 	loginRg.POST("/logout", handleLogin.Logout)
+	// 忘记密码（无需认证）
+	loginRg.POST("/forgot-pwd/send-code", handleLogin.ForgotPwdSendCode)
+	loginRg.POST("/forgot-pwd/reset", handleLogin.ForgotPwdReset)
 }
 
 // initAdminRoute 管理员路由（部分接口仅登录即可，其余需权限认证）
@@ -21,6 +24,7 @@ func initAdminRoute(rg *gin.RouterGroup) {
 
 	notAuthAdmin := rg.Group("/system", middleware.LoginAuth())
 	notAuthAdmin.GET("/admin/self", handleAdmin.Self)
+	notAuthAdmin.POST("/admin/sendEmailCode", middleware.LimitIP(2, 60), middleware.LimitEmail(2, 60), handleAdmin.SendEmailCode)
 	notAuthAdmin.POST("/admin/upInfo", middleware.RecordLog("管理员更新"), handleAdmin.UpInfo)
 
 	authAdmin := rg.Group("/system", middleware.PermAuth())

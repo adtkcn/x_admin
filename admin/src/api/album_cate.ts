@@ -10,20 +10,18 @@ export type type_album_cate = {
     id?: string
     pid?: string
     name?: string
-    isDelete?: number
-    createTime?: string
-    updateTime?: string
-    deleteTime?: string
+    create_time?: string
+    update_time?: string
 }
 
 // 相册分类查询参数
 export type type_album_cate_query = {
     pid?: string
     name?: string
-    createTimeStart?: string
-    createTimeEnd?: string
-    updateTimeStart?: string
-    updateTimeEnd?: string
+    create_time_start?: string
+    create_time_end?: string
+    update_time_start?: string
+    update_time_end?: string
 }
 
 // 相册分类添加编辑参数
@@ -44,7 +42,7 @@ export function album_cate_list_all(params?: type_album_cate_query) {
 }
 
 // 相册分类详情
-export function album_cate_detail(id: number | string) {
+export function album_cate_detail(id: string) {
     return request.get<type_album_cate>({ url: '/album_cate/detail', params: { id } })
 }
 
@@ -59,7 +57,7 @@ export function album_cate_edit(data: type_album_cate_edit) {
 }
 
 // 相册分类删除
-export function album_cate_delete(id: number | string) {
+export function album_cate_delete(id: string) {
     return request.post<null>({ url: '/album_cate/del', data: { id } })
 }
 

@@ -8,7 +8,7 @@
 
         <template #dropdown>
             <el-dropdown-menu>
-                <router-link to="/user/setting">
+                <router-link to="/system/admin/setting">
                     <el-dropdown-item>个人设置</el-dropdown-item>
                 </router-link>
                 <el-dropdown-item command="logout">退出登录</el-dropdown-item>
@@ -26,10 +26,14 @@ const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
 
 const handleCommand = async (command: string) => {
-    switch (command) {
-        case 'logout':
-            await feedback.confirm('确定退出登录吗？')
-            userStore.logout()
+    try {
+        switch (command) {
+            case 'logout':
+                await feedback.confirm('确定退出登录吗？')
+                userStore.logout()
+        }
+    } catch (error) {
+        console.error('用户操作失败:', error)
     }
 }
 </script>

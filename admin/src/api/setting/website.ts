@@ -15,8 +15,8 @@ export type type_setting_website_save = {
     logo?: string
     favicon?: string
     backdrop?: string
-    shopName?: string
-    shopLogo?: string
+    shop_name?: string
+    shop_logo?: string
 }
 
 // 网站设置返回信息
@@ -25,8 +25,8 @@ export type type_setting_website_resp = {
     logo: string
     favicon: string
     backdrop: string
-    shopName: string
-    shopLogo: string
+    shop_name: string
+    shop_logo: string
 }
 
 // 获取备案信息

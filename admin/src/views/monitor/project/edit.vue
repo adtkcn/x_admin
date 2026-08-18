@@ -10,16 +10,16 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
-                <el-form-item label="项目uuid" prop="ProjectKey" v-if="mode === 'edit'">
-                    {{ formData.ProjectKey }}
+                <el-form-item label="项目uuid" prop="project_key" v-if="mode === 'edit'">
+                    {{ formData.project_key }}
                 </el-form-item>
-                <el-form-item label="项目名称" prop="ProjectName">
-                    <el-input v-model="formData.ProjectName" placeholder="请输入项目名称" />
+                <el-form-item label="项目名称" prop="project_name">
+                    <el-input v-model="formData.project_name" placeholder="请输入项目名称" />
                 </el-form-item>
-                <el-form-item label="项目类型" prop="ProjectType">
+                <el-form-item label="项目类型" prop="project_type">
                     <el-select
                         class="flex-1"
-                        v-model="formData.ProjectType"
+                        v-model="formData.project_type"
                         placeholder="请选择项目类型"
                     >
                         <el-option
@@ -32,10 +32,10 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="是否启用" prop="Status">
+                <el-form-item label="是否启用" prop="status">
                     <el-select
                         class="flex-1"
-                        v-model="formData.Status"
+                        v-model="formData.status"
                         placeholder="请选择是否启用"
                     >
                         <el-option
@@ -50,7 +50,7 @@
                 </el-form-item>
                 <el-form-item
                     label="使用SDK"
-                    v-if="mode == 'edit' && formData.ProjectType == 'web'"
+                    v-if="mode == 'edit' && formData.project_type == 'web'"
                 >
                     <highlight-code :code="code" lang="javascript"></highlight-code>
                 </el-form-item>
@@ -67,8 +67,9 @@ import {
 } from '@/api/monitor/project'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
-import { computed, ref, reactive, shallowRef } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 import type { PropType } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 defineProps({
     dictData: {
         type: Object as PropType<Record<string, any[]>>,
@@ -88,54 +89,57 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑监控项目' : '新增监控项目'
 })
 
-const formData = reactive({
-    Id: null,
-    ProjectKey: null,
-    ProjectName: null,
-    ProjectType: null,
-    Status: null
+const {
+    state: formData,
+    setState
+} = useReactiveWithReset({
+    id: null,
+    project_key: null,
+    project_name: null,
+    project_type: null,
+    status: null
 })
 const code = computed(() => {
     return `import { Base, Web } from '../../x_err_sdk/web/index'
 new Base(
     {
         Dns: '${location.origin}/api',
-        Pid: '${formData.ProjectKey}',
+        Pid: '${formData.project_key}',
         Uid: ''
     },
     new Web()
 )`
 })
 const formRules = {
-    Id: [
+    id: [
         {
             required: true,
             message: '请输入项目id',
             trigger: ['blur']
         }
     ],
-    ProjectKey: [
+    project_key: [
         {
             required: true,
             message: '请输入项目uuid',
             trigger: ['blur']
         }
     ],
-    ProjectName: [
+    project_name: [
         {
             required: true,
             message: '请输入项目名称',
             trigger: ['blur']
         }
     ],
-    ProjectType: [
+    project_type: [
         {
             required: true,
             message: '请选择项目类型',
             trigger: ['blur']
         }
     ],
-    Status: [
+    status: [
         {
             required: true,
             message: '请选择是否启用',
@@ -152,7 +156,9 @@ const handleSubmit = async () => {
         popupRef.value?.close()
         feedback.msgSuccess('操作成功')
         emit('success')
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控项目保存失败:', error)
+    }
 }
 
 const open = (type = 'add') => {
@@ -171,9 +177,11 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
     try {
-        const data = await monitor_project_detail(row.Id)
+        const data = await monitor_project_detail(row.id)
         setFormData(data)
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控项目详情获取失败:', error)
+    }
 }
 
 const handleClose = () => {

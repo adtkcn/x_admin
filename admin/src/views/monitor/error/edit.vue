@@ -10,52 +10,52 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
-                <el-form-item label="项目key" prop="ProjectKey">
+                <el-form-item label="项目key" prop="project_key">
                     <el-select
                         class="flex-1"
-                        v-model="formData.ProjectKey"
+                        v-model="formData.project_key"
                         placeholder="请选择项目key"
                     >
                         <el-option
                             v-for="(item, index) in listAllData.monitor_project_listAll"
                             :key="index"
-                            :label="item.ProjectName"
-                            :value="String(item.ProjectKey)"
+                            :label="item.project_name"
+                            :value="String(item.project_key)"
                             clearable
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="客户端id" prop="ClientId">
-                    <el-input v-model="formData.ClientId" placeholder="请输入客户端id" />
+                <el-form-item label="客户端id" prop="client_id">
+                    <el-input v-model="formData.client_id" placeholder="请输入客户端id" />
                 </el-form-item>
 
-                <el-form-item label="事件类型" prop="EventType">
+                <el-form-item label="事件类型" prop="event_type">
                     <el-input
-                        v-model="formData.EventType"
+                        v-model="formData.event_type"
                         placeholder="请输入事件类型"
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
                     />
                 </el-form-item>
-                <el-form-item label="URL地址" prop="Path">
+                <el-form-item label="URL地址" prop="path">
                     <el-input
-                        v-model="formData.Path"
+                        v-model="formData.path"
                         placeholder="请输入URL地址"
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
                     />
                 </el-form-item>
-                <el-form-item label="错误消息" prop="Message">
+                <el-form-item label="错误消息" prop="message">
                     <el-input
-                        v-model="formData.Message"
+                        v-model="formData.message"
                         placeholder="请输入错误消息"
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
                     />
                 </el-form-item>
-                <el-form-item label="错误堆栈" prop="Stack">
+                <el-form-item label="错误堆栈" prop="stack">
                     <el-input
-                        v-model="formData.Stack"
+                        v-model="formData.stack"
                         placeholder="请输入错误堆栈"
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
@@ -70,8 +70,9 @@ import type { FormInstance } from 'element-plus'
 import { monitor_error_add, monitor_error_detail } from '@/api/monitor/error'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
-import { computed, ref, reactive, shallowRef } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 import type { PropType } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 defineProps({
     dictData: {
         type: Object as PropType<Record<string, any[]>>,
@@ -90,26 +91,29 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑监控-错误列' : '新增监控-错误列'
 })
 
-const formData = reactive({
-    Id: null,
-    ProjectKey: null,
-    ClientId: null,
-    EventType: null,
-    Path: null,
-    Message: null,
-    Stack: null,
-    Md5: null
+const {
+    state: formData,
+    setState
+} = useReactiveWithReset({
+    id: null,
+    project_key: null,
+    client_id: null,
+    event_type: null,
+    path: null,
+    message: null,
+    stack: null,
+    md5: null
 })
 
 const formRules = {
-    Id: [
+    id: [
         {
             required: true,
             message: '请输入错误id',
             trigger: ['blur']
         }
     ],
-    ProjectKey: [
+    project_key: [
         {
             required: true,
             message: '请选择项目key',
@@ -154,7 +158,9 @@ const handleSubmit = async () => {
         popupRef.value?.close()
         feedback.msgSuccess('操作成功')
         emit('success')
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控错误保存失败:', error)
+    }
 }
 
 const open = (type = 'add') => {
@@ -173,9 +179,11 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
     try {
-        const data = await monitor_error_detail(row.Id)
+        const data = await monitor_error_detail(row.id)
         setFormData(data)
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控错误详情获取失败:', error)
+    }
 }
 
 const handleClose = () => {

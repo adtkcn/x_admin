@@ -1,4 +1,4 @@
-import { v1 as uuid_v1 } from "uuid";
+import { v7 as uuid_v7 } from "uuid";
 import type { LogWithError, IErrorEvent, LogWithEnv } from "../types";
 
 type Uid = string | number;
@@ -78,7 +78,7 @@ class Base {
     if (client_id) {
       this.client_id = client_id;
     } else {
-      this.client_id = uuid_v1();
+      this.client_id = uuid_v7();
       this.platform?.setCache("x_err_client_id", this.client_id);
     }
   }
@@ -95,9 +95,9 @@ class Base {
   public Push = (data: LogWithError) => {
     this.MessageList.push({
       ...data,
-      ProjectKey: this.Pid,
-      ClientId: this.client_id,
-      UserId: this.Uid,
+      project_key: this.Pid,
+      client_id: this.client_id,
+      user_id: this.Uid,
     });
 
     if (this.MessageList.length > 5) {
@@ -112,11 +112,11 @@ class Base {
     try {
       this.platform
         ?.upload(this.Dns + `/admin/monitor_client/add`, {
-          ProjectKey: this.Pid,
-          ClientId: this.client_id,
-          UserId: this.Uid,
-          // Width: envInfo.ScreenWidth,
-          // Height: envInfo.ScreenHeight,
+          project_key: this.Pid,
+          client_id: this.client_id,
+          user_id: this.Uid,
+          // width: envInfo.ScreenWidth,
+          // height: envInfo.ScreenHeight,
         })
         .catch((err: any) => {
           // 上传失败

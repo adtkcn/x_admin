@@ -49,7 +49,7 @@ export function user_protocol_list_all(params?: type_user_protocol_query) {
 }
 
 // 用户协议详情
-export function user_protocol_detail(Id: number | string) {
+export function user_protocol_detail(Id: string) {
     return request<type_user_protocol>({
 		url: '/user_protocol/detail',
 		method: 'GET',
@@ -76,7 +76,7 @@ export function user_protocol_edit(data: type_user_protocol_edit) {
 }
 
 // 用户协议删除
-export function user_protocol_delete(Id: number | string) {
+export function user_protocol_delete(Id: string) {
     return request<null>({
         url: '/user_protocol/del',
         method: "POST",

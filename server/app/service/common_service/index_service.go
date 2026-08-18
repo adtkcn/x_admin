@@ -1,7 +1,8 @@
 package common_service
 
 import (
-	"time"
+	"strconv"
+	"strings"
 	"x_admin/app/service/setting_service"
 	"x_admin/app/service/system_service"
 	"x_admin/config"
@@ -49,18 +50,28 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 		"totalUsers":  adminCount.TotalUsers, // 总访用户
 	}
 
-	// 在线用户
-	onlineCount := util.RedisUtil.LRange("onlineCount", 0, -1)
+	// 在线用户数量
+	onlineRecords := util.RedisUtil.LRange("onlineCount", 0, -1)
 
-	// 访客图表
-	now := time.Now()
-	var date []string
-	for i := 14; i >= 0; i-- {
-		date = append(date, now.AddDate(0, 0, -i).Format(config.ConstantConfig.DateFormat))
+	// 从 Redis 数据中提取时间和在线数（格式: "15:04:05,count"）
+	var dateList []string
+	var countList []any
+	for _, record := range onlineRecords {
+		parts := strings.Split(record, ",")
+		if len(parts) != 2 {
+			continue
+		}
+		dateList = append(dateList, parts[0])
+		if c, err := strconv.Atoi(parts[1]); err == nil {
+			countList = append(countList, c)
+		} else {
+			countList = append(countList, 0)
+		}
 	}
+
 	visitor := map[string]any{
-		"date": date,
-		"list": onlineCount,
+		"date": dateList,
+		"list": countList,
 	}
 	return map[string]any{
 		"version": version,
@@ -71,29 +82,38 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 
 // Config 公共配置
 func (iSrv indexService) Config() (res map[string]any, e error) {
+	const cacheKey = "Index:Config"
+	// 先读缓存(10秒)
+	if cacheStr := util.RedisUtil.Get(cacheKey); cacheStr != "" {
+		if e = util.ToolsUtil.JsonToObj(cacheStr, &res); e != nil {
+			core.Logger.Errorf("Config cache JsonToObj err: %v", e)
+		} else {
+			return res, nil
+		}
+	}
 	website, err := setting_service.SystemConfigService.Get(iSrv.db, "website")
 	if e = response.CheckErr(err, "Config Get err"); e != nil {
 		return
 	}
-	copyrightStr, err := setting_service.SystemConfigService.GetVal(iSrv.db, "website", "copyright", "")
-	if e = response.CheckErr(err, "Config GetVal err"); e != nil {
-		return
-	}
 	var copyright []map[string]string
-	if copyrightStr != "" {
-		err = util.ToolsUtil.JsonToObj(copyrightStr, &copyright)
-		if e = response.CheckErr(err, "Config JsonToObj err"); e != nil {
+	if copyrightStr := website["copyright"]; copyrightStr != "" {
+		if e = response.CheckErr(util.ToolsUtil.JsonToObj(copyrightStr, &copyright), "Config JsonToObj err"); e != nil {
 			return
 		}
 	} else {
 		copyright = []map[string]string{}
 	}
-	return map[string]any{
+	res = map[string]any{
 		"webName":     website["name"],
 		"webLogo":     util.UrlUtil.ToAbsoluteUrl(website["logo"]),
 		"webFavicon":  util.UrlUtil.ToAbsoluteUrl(website["favicon"]),
 		"webBackdrop": util.UrlUtil.ToAbsoluteUrl(website["backdrop"]),
 		"ossDomain":   config.AppConfig.OssDomain,
 		"copyright":   copyright,
-	}, nil
+	}
+	// 写入缓存
+	if cacheStr, jErr := util.ToolsUtil.ObjToJson(res); jErr == nil {
+		util.RedisUtil.Set(cacheKey, cacheStr, 20)
+	}
+	return res, nil
 }

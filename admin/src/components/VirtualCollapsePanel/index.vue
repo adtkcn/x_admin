@@ -42,10 +42,14 @@ import type { PropType } from 'vue'
 import { ArrowRight } from '@element-plus/icons-vue'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-const emit = defineEmits(['scroll'])
+type ListItem = Record<string, any> & { __expanded?: boolean }
+
+const emit = defineEmits<{
+    scroll: [e: Event]
+}>()
 const props = defineProps({
     data: {
-        type: Array as PropType<Record<string, any>[]>,
+        type: Array as PropType<ListItem[]>,
         default: () => []
     },
     keyField: {
@@ -70,13 +74,13 @@ const props = defineProps({
 const itemHeight = computed(() => props.minItemSize + 'px')
 
 const activeItem = ref<Record<string, any> | null>(null)
-const list = computed(() => {
+const list = computed<ListItem[]>(() => {
     console.time('list')
     const activeItemId = activeItem.value ? activeItem.value[props.keyField] : null
-    const newList = props.data.map((listItem: Record<string, any>) => {
+    const newList = props.data.map((listItem) => {
         return {
             ...listItem,
-            __expanded: activeItemId && listItem[props.keyField] === activeItemId ? true : false
+            __expanded: !!(activeItemId && listItem[props.keyField] === activeItemId)
         }
     })
     console.timeEnd('list')
@@ -85,22 +89,22 @@ const list = computed(() => {
 
 const scrollbarRef = useTemplateRef('scrollbarRef')
 const scrollbarScrollTop = ref(0)
-function onScroll(e) {
-    scrollbarScrollTop.value = e.target.scrollTop
+function onScroll(e: Event) {
+    scrollbarScrollTop.value = (e.target as HTMLElement).scrollTop
     emit('scroll', e)
 }
 /**
  * 切换折叠面板展开状态
  * @param item 要切换展开状态的项
  */
-function toggleExpand(item) {
+function toggleExpand(item: ListItem) {
     activeItem.value = item.__expanded ? null : item
 }
 /**
  * 滚动到指定项
  * @param item 要滚动到的项
  */
-function scrollToItem(item) {
+function scrollToItem(item: ListItem) {
     if (!item) return
     activeItem.value = item
     const findIndex = list.value.findIndex((i) => i[props.keyField] === item[props.keyField])
@@ -116,7 +120,7 @@ function scrollToItem(item) {
  * 滚动到指定索引项
  * @param index 要滚动到的索引项
  */
-function scrollToIndex(index) {
+function scrollToIndex(index: number) {
     if (index < 0 || index >= list.value.length) return
 
     activeItem.value = list.value[index]
@@ -157,7 +161,7 @@ function scrollTo(from: number, to: number, current: number) {
     current = current + speed
 
     // DynamicScroller内部用的RecycleScroller组件，所以滚动到指定位置用RecycleScroller方法
-    scrollbarRef.value?.$refs?.scroller?.scrollToPosition(current)
+    ;(scrollbarRef.value as any)?.$refs?.scroller?.scrollToPosition(current)
     AnimationId.value = requestAnimationFrame(() => {
         scrollTo(from, to, current)
     })

@@ -1,59 +1,109 @@
 package monitor_schema
 
-import "github.com/adtkcn/x_null"
+import (
+	"mime/multipart"
+)
 
-// MonitorErrorListReq 监控-错误列列表参数
+// MonitorErrorListReq 监控错误列表
 type MonitorErrorListReq struct {
-	ProjectKey *string // 项目key
-	EventType  *string // 事件类型
-	Path       *string // URL地址
-	Message    *string // 错误消息
-	Stack      *string // 错误堆栈
-	Md5        *string // md5
-
-	CreateTimeStart *string // 开始创建时间
-	CreateTimeEnd   *string // 结束创建时间
-
+	PageNo          *int    `json:"page_no" form:"page_no"`
+	PageSize        *int    `json:"page_size" form:"page_size"`
+	ProjectKey      *string `json:"project_key" form:"project_key"`
+	EventType       *string `json:"event_type" form:"event_type"`
+	Path            *string `json:"path" form:"path"`
+	Message         *string `json:"message" form:"message"`
+	Stack           *string `json:"stack" form:"stack"`
+	Md5             *string `json:"md5" form:"md5"`
+	CreateTimeStart *string `json:"create_time_start" form:"create_time_start"`
+	CreateTimeEnd   *string `json:"create_time_end" form:"create_time_end"`
 }
 
-// MonitorErrorAddReq 监控-错误列新增参数
-type MonitorErrorAddReq struct {
-	ProjectKey string       // 项目key
-	ClientId   string       // sdk生成的客户端id
-	UserId     string       // 用户id
-	EventType  *string      // 事件类型
-	Path       *string      // URL地址
-	Message    *string      // 错误消息
-	Stack      *string      // 错误堆栈
-	Width      x_null.Int64 // 屏幕
-	Height     x_null.Int64 // 屏幕高度
+// MonitorErrorListResp 监控错误列表返回
+type MonitorErrorListResp struct {
+	PageNo   int                `json:"page_no"`
+	PageSize int                `json:"page_size"`
+	Count    int64              `json:"count"`
+	Lists    []MonitorErrorResp `json:"lists"`
 }
 
-// MonitorErrorDetailReq 监控-错误列详情参数
-type MonitorErrorDetailReq struct {
-	Id string // 错误id
+// MonitorErrorListAllResp 监控错误列表返回
+type MonitorErrorListAllResp struct {
+	Lists []MonitorErrorResp `json:"lists"`
 }
 
-// MonitorErrorDelReq 监控-错误列删除参数
-type MonitorErrorDelReq struct {
-	Id string // 错误id
-}
-
-// MonitorErrorDelReq 监控-错误列批量删除参数
-type MonitorErrorDelBatchReq struct {
-	Ids string
-}
-
-// MonitorErrorResp 监控-错误列返回信息
+// MonitorErrorResp 监控错误
 type MonitorErrorResp struct {
-	Id         string       // 错误id
-	ProjectKey string       // 项目key
-	EventType  string       // 事件类型
-	Path       string       // URL地址
-	Message    string       // 错误消息
-	Stack      string       // 错误堆栈
-	Width      x_null.Int64 `swaggertype:"integer"` // 屏幕
-	Height     x_null.Int64 `swaggertype:"integer"` // 屏幕高度
-	Md5        string       // md5
-	CreateTime x_null.Time  `swaggertype:"string"` // 创建时间
+	Id         string `json:"id"`          // 主键
+	ProjectKey string `json:"project_key"` // 项目key
+	EventType  string `json:"event_type"`  // 事件类型
+	Path       string `json:"path"`        // URL地址
+	Message    string `json:"message"`     // 错误消息
+	Stack      string `json:"stack"`       // 错误堆栈
+	Md5        string `json:"md5"`         // md5值
+	CreateTime string `json:"create_time"` // 创建时间
+	UpdateTime string `json:"update_time"` // 更新时间
+	UserId     string `json:"user_id"`     // 用户id
+	ClientId   string `json:"client_id"`   // 客户端id
+	IsDelete   int    `json:"is_delete"`   // 是否删除
+}
+
+// MonitorErrorDetailReq 监控错误详情
+type MonitorErrorDetailReq struct {
+	Id string `json:"id" form:"id" v:"required#错误id不能为空"`
+}
+
+// MonitorErrorAddReq 监控错误新增
+type MonitorErrorAddReq struct {
+	ProjectKey string `json:"project_key"`
+	EventType  string `json:"event_type"`
+	Path       string `json:"path"`
+	Message    string `json:"message"`
+	Stack      string `json:"stack"`
+	Md5        string `json:"md5"`
+	ClientId   string `json:"client_id"`
+	UserId     string `json:"user_id"`
+	Width      int    `json:"width"`
+	Height     int    `json:"height"`
+}
+
+// MonitorErrorEditReq 监控错误编辑
+type MonitorErrorEditReq struct {
+	Id         string `json:"id" v:"required#错误id不能为空"`
+	ProjectKey string `json:"project_key"`
+	EventType  string `json:"event_type"`
+	Path       string `json:"path"`
+	Message    string `json:"message"`
+	Stack      string `json:"stack"`
+	Md5        string `json:"md5"`
+	ClientId   string `json:"client_id"`
+	UserId     string `json:"user_id"`
+	Width      int    `json:"width"`
+	Height     int    `json:"height"`
+}
+
+// MonitorErrorDelReq 监控错误删除
+type MonitorErrorDelReq struct {
+	Id string `json:"id" form:"id" v:"required#错误id不能为空"`
+}
+
+// MonitorErrorDelBatchReq 监控错误删除
+type MonitorErrorDelBatchReq struct {
+	Ids string `json:"ids" form:"ids" v:"required#错误ids不能为空"`
+}
+
+// MonitorErrorExportReq 监控错误导出
+type MonitorErrorExportReq struct {
+	ProjectKey      *string `json:"project_key" form:"project_key"`
+	EventType       *string `json:"event_type" form:"event_type"`
+	Path            *string `json:"path" form:"path"`
+	Message         *string `json:"message" form:"message"`
+	Stack           *string `json:"stack" form:"stack"`
+	Md5             *string `json:"md5" form:"md5"`
+	CreateTimeStart *string `json:"create_time_start" form:"create_time_start"`
+	CreateTimeEnd   *string `json:"create_time_end" form:"create_time_end"`
+}
+
+// MonitorErrorImportReq 导入
+type MonitorErrorImportReq struct {
+	File *multipart.FileHeader `json:"file" form:"file"`
 }

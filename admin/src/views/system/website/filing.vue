@@ -67,9 +67,13 @@ const formData = ref([
 
 // 获取备案信息
 const getData = async () => {
-    const data = await getCopyright()
-    if (!data.length) return
-    formData.value = data
+    try {
+        const data = await getCopyright()
+        if (!data.length) return
+        formData.value = data
+    } catch (error) {
+        console.error('版权备案信息获取失败:', error)
+    }
 }
 
 const handleAdd = () => {
@@ -88,9 +92,13 @@ const handleDelete = (index: number) => {
 
 // 设置备案信息
 const handleSubmit = async () => {
-    await setCopyright(formData.value)
-    feedback.msgSuccess('操作成功')
-    getData()
+    try {
+        await setCopyright(formData.value)
+        feedback.msgSuccess('操作成功')
+        getData()
+    } catch (error) {
+        console.error('版权备案信息保存失败:', error)
+    }
 }
 
 getData()

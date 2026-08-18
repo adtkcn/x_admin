@@ -34,22 +34,22 @@
             >
                 <vxe-column type="seq" width="60"></vxe-column>
                 <vxe-column
-                    field="menuName"
+                    field="menu_name"
                     title="菜单名称"
                     min-width="200"
                     tree-node
                 ></vxe-column>
-                <vxe-column field="menuType" title="类型" width="60">
+                <vxe-column field="menu_type" title="类型" width="60">
                     <template #default="{ row }">
-                        <div v-if="row.menuType == MenuEnum.CATALOGUE">目录</div>
-                        <div v-else-if="row.menuType == MenuEnum.MENU">菜单</div>
-                        <div v-else-if="row.menuType == MenuEnum.BUTTON">按钮</div>
+                        <div v-if="row.menu_type == MenuEnum.CATALOGUE">目录</div>
+                        <div v-else-if="row.menu_type == MenuEnum.MENU">菜单</div>
+                        <div v-else-if="row.menu_type == MenuEnum.BUTTON">按钮</div>
                     </template>
                 </vxe-column>
-                <vxe-column field="menuIcon" title="图标" width="60">
+                <vxe-column field="menu_icon" title="图标" width="60">
                     <template #default="{ row }">
                         <div class="flex">
-                            <icon :name="row.menuIcon" :size="20" />
+                            <icon :name="row.menu_icon" :size="20" />
                         </div>
                     </template>
                 </vxe-column>
@@ -59,18 +59,18 @@
                         <span v-if="row.perms" type="info">{{ row.perms }}</span>
                     </template>
                 </vxe-column>
-                <vxe-column field="isDisable" title="状态" width="80">
+                <vxe-column field="is_disable" title="状态" width="80">
                     <template #default="{ row }">
-                        <el-tag v-if="row.isDisable == 0" type="primary">正常</el-tag>
+                        <el-tag v-if="row.is_disable == 0" type="primary">正常</el-tag>
                         <el-tag v-else type="danger">停用</el-tag>
                     </template>
                 </vxe-column>
-                <vxe-column field="menuSort" title="排序" width="60"></vxe-column>
+                <vxe-column field="menu_sort" title="排序" width="60"></vxe-column>
                 <vxe-column title="操作" width="160">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:system:menu:add']"
-                            v-show="row.menuType != MenuEnum.BUTTON"
+                            v-show="row.menu_type != MenuEnum.BUTTON"
                             type="primary"
                             link
                             @click="handleAdd(row.id)"
@@ -97,93 +97,23 @@
                 </vxe-column>
             </vxe-table>
         </div>
-        <!-- <el-table
-                v-loading="loading"
-                ref="tableRef"
-                class="mt-4"
-                size="large"
-                :data="lists"
-                :lazy="true"
-                row-key="id"
-                :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-                height="calc(100vh - 220px)"
-            >
-                <el-table-column
-                    label="菜单名称"
-                    prop="menuName"
-                    min-width="200"
-                    show-overflow-tooltip
-                ></el-table-column>
-                <el-table-column label="类型" prop="menuType" width="60">
-                    <template #default="{ row }">
-                        <div v-if="row.menuType == MenuEnum.CATALOGUE">目录</div>
-                        <div v-else-if="row.menuType == MenuEnum.MENU">菜单</div>
-                        <div v-else-if="row.menuType == MenuEnum.BUTTON">按钮</div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="图标" prop="menuIcon" width="60">
-                    <template #default="{ row }">
-                        <div class="flex">
-                            <icon :name="row.menuIcon" :size="20" />
-                        </div>
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="路径" prop="paths" width="200" />
-                <el-table-column label="权限标识" prop="permsArr" width="220">
-                    <template #default="{ row }">
-                        <el-tag v-if="row.perms" type="info">{{ row.perms }}</el-tag>
-                    </template>
-                </el-table-column>
-                <el-table-column label="状态" prop="isDisable" width="100">
-                    <template #default="{ row }">
-                        <el-tag v-if="row.isDisable == 0" type="primary">正常</el-tag>
-                        <el-tag v-else type="danger">停用</el-tag>
-                    </template>
-                </el-table-column>
-                <el-table-column label="排序" prop="menuSort" width="80" />
-
-                <el-table-column label="操作" width="160">
-                    <template #default="{ row }">
-                        <el-button
-                            v-perms="['admin:system:menu:add']"
-                            type="primary"
-                            link
-                            @click="handleAdd(row.id)"
-                        >
-                            新增
-                        </el-button>
-                        <el-button
-                            v-perms="['admin:system:menu:edit']"
-                            type="primary"
-                            link
-                            @click="handleEdit(row)"
-                        >
-                            编辑
-                        </el-button>
-                        <el-button
-                            v-perms="['admin:system:menu:del']"
-                            type="danger"
-                            link
-                            @click="handleDelete(row.id)"
-                        >
-                            删除
-                        </el-button>
-                    </template>
-                </el-table-column>
-            </el-table> -->
     </div>
     <EditPopup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
 </template>
 <script lang="ts" setup>
-import { ref, useTemplateRef, nextTick, computed, toRaw } from 'vue'
-import { menuDelete, menuLists, type type_system_menu_resp } from '@/api/perms/menu'
+import { ref, reactive, useTemplateRef, nextTick, computed, toRaw } from 'vue'
+import {
+    menuDelete,
+    menuLists,
+    type type_system_menu_resp,
+    type type_system_menu_edit
+} from '@/api/perms/menu'
 import { MenuEnum } from '@/enums/appEnums'
 import EditPopup from './edit.vue'
 import feedback from '@/utils/feedback'
 import { queryHierarchy } from '@/utils/flatTreeUtils'
 
-import { VxeTableInstance } from 'vxe-table'
+import { VxeUI, VxeTableInstance, VxeTableEvents, VxeTablePropTypes } from 'vxe-table'
 
 defineOptions({
     name: 'MenuView'
@@ -191,7 +121,7 @@ defineOptions({
 const rowConfig = {
     keyField: 'id'
 }
-const treeConfig = {
+const treeConfig = reactive<VxeTablePropTypes.TreeConfig>({
     rowField: 'id',
     childrenField: 'children',
     indent: 10,
@@ -200,8 +130,8 @@ const treeConfig = {
     transform: true,
 
     parentField: 'pid'
-}
-const tableRef = useTemplateRef<VxeTableInstance<any>>('tableRef')
+})
+const tableRef = useTemplateRef<VxeTableInstance<type_system_menu_resp>>('tableRef')
 const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 
 const loading = ref(false)
@@ -215,7 +145,7 @@ const filterList = computed(() => {
     const raw = toRaw(lists.value)
 
     const { all } = queryHierarchy(raw, menuName.value, {
-        fields: ['menuName'],
+        fields: ['menu_name'],
         exact: false
     })
     return all
@@ -227,6 +157,7 @@ const getLists = async () => {
         lists.value = data
         loading.value = false
     } catch (error) {
+        console.error('菜单列表获取失败:', error)
         loading.value = false
     }
 }
@@ -237,7 +168,7 @@ const handleAdd = async (id?: string) => {
     if (id) {
         editRef.value?.setFormData({
             pid: id
-        })
+        } as type_system_menu_edit)
     }
     editRef.value?.open('add')
 }
@@ -250,10 +181,14 @@ const handleEdit = async (data: type_system_menu_resp) => {
 }
 
 const handleDelete = async (id: string) => {
-    await feedback.confirm('确定要删除？')
-    await menuDelete({ id })
-    feedback.msgSuccess('删除成功')
-    getLists()
+    try {
+        await feedback.confirm('确定要删除？')
+        await menuDelete({ id })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {
+        console.error('菜单删除失败:', error)
+    }
 }
 
 let isExpand = false

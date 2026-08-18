@@ -35,144 +35,100 @@
     </div>
 </template>
 
-<script lang="ts">
-// import { Sketch } from 'vue-color'
-// import ColorFill from './icon/ColorFill.vue'
-// import ColorText from './icon/ColorText.vue'
-// import IconFont from './icon/Font.vue'
-// import IconBlod from './icon/Blod.vue'
-// import IconLine from './icon/Line.vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import ZoomIn from './icon/ZoomIn.vue'
 import ZoomOut from './icon/ZoomOut.vue'
 import StepBack from './icon/StepBack.vue'
 import StepFoward from './icon/StepFoward.vue'
 import AreaSelect from './icon/AreaSelect.vue'
 
-let fileHandle
+const props = defineProps<{
+    lf: any
+    activeEdges: any[]
+    fillColor?: string
+}>()
 
-async function getFile() {
-    ;[fileHandle] = await (window as any).showOpenFilePicker()
-    console.log('fileHandle', fileHandle)
+const emit = defineEmits<{
+    (e: 'importData', data: any): void
+    (e: 'saveGraph'): void
+}>()
+
+const selectionOpened = ref(false)
+const undoAble = ref(false)
+const redoAble = ref(false)
+const linetype = ref('pro-polyline')
+const lineOptions = [
+    { value: 'pro-polyline', label: '折线' },
+    { value: 'pro-line', label: '直线' },
+    { value: 'pro-bezier', label: '曲线' }
+]
+
+onMounted(() => {
+    props.lf.on('history:change', ({ data: { undoAble: u, redoAble: r } }: any) => {
+        undoAble.value = u
+        redoAble.value = r
+    })
+})
+
+async function $import() {
+    try {
+        const [handle] = await (window as any).showOpenFilePicker()
+        console.log('fileHandle', handle)
+        const file = await handle.getFile()
+        const text = await file.text()
+        const data = JSON.parse(text)
+        if (data) {
+            emit('importData', data)
+        }
+    } catch (error) {
+        ElMessage.error('文件读取错误')
+    }
 }
 
-async function getText() {
-    const file = await fileHandle.getFile()
-    const text = await file.text()
-    console.log(text)
-    return text
+function $_saveGraph() {
+    emit('saveGraph')
 }
 
-// async function writeFile() {
-//     const writable = await fileHandle.createWritable()
-//     await writable.write('测试一下')
-//     await writable.close()
-// }
+function $_zoomIn() {
+    props.lf.zoom(true)
+}
 
-export default {
-    props: {
-        lf: Object,
-        activeEdges: Array,
-        fillColor: {
-            type: String,
-            default: ''
-        }
-    },
-    data() {
-        return {
-            selectionOpened: false,
-            undoAble: false,
-            redoAble: false,
-            colors: '#345678',
-            linetype: 'pro-polyline',
-            lineOptions: [
-                {
-                    value: 'pro-polyline',
-                    label: '折线'
-                },
-                {
-                    value: 'pro-line',
-                    label: '直线'
-                },
-                {
-                    value: 'pro-bezier',
-                    label: '曲线'
-                }
-            ]
-        }
-    },
-    mounted() {
-        this.$props.lf.on('history:change', ({ data: { undoAble, redoAble } }) => {
-            this.$data.redoAble = redoAble
-            this.$data.undoAble = undoAble
+function $_zoomOut() {
+    props.lf.zoom(false)
+}
+
+function $_undo() {
+    if (undoAble.value) {
+        props.lf.undo()
+    }
+}
+
+function $_redo() {
+    if (redoAble.value) {
+        props.lf.redo()
+    }
+}
+
+function $_selectionSelect() {
+    selectionOpened.value = !selectionOpened.value
+    if (selectionOpened.value) {
+        props.lf.extension.selectionSelect.openSelectionSelect()
+    } else {
+        props.lf.extension.selectionSelect.closeSelectionSelect()
+    }
+}
+
+function $_changeLineType(value: any) {
+    console.log('value', value)
+    const { lf, activeEdges } = props
+    const { graphModel } = lf
+    lf.setDefaultEdgeType(value)
+    if (activeEdges && activeEdges.length > 0) {
+        activeEdges.forEach((edge: any) => {
+            graphModel.changeEdgeType(edge.id, value)
         })
-    },
-    methods: {
-        async $import() {
-            try {
-                await getFile()
-                const text = await getText()
-                if (JSON.parse(text)) {
-                    this.$emit('importData', JSON.parse(text))
-                }
-            } catch (error) {
-                this.$message.error('文件读取错误')
-            }
-        },
-        $_changeFillColor(val) {
-            this.$emit('changeNodeFillColor', val.hex)
-        },
-        $_saveGraph() {
-            this.$emit('saveGraph')
-        },
-        $_zoomIn() {
-            this.$props.lf.zoom(true)
-        },
-        $_zoomOut() {
-            this.$props.lf.zoom(false)
-        },
-        $_undo() {
-            if (this.$data.undoAble) {
-                this.$props.lf.undo()
-            }
-        },
-        $_redo() {
-            if (this.$data.redoAble) {
-                this.$props.lf.redo()
-            }
-        },
-        $_selectionSelect() {
-            this.selectionOpened = !this.selectionOpened
-            if (this.selectionOpened) {
-                this.lf.extension.selectionSelect.openSelectionSelect()
-            } else {
-                this.lf.extension.selectionSelect.closeSelectionSelect()
-            }
-        },
-        $_changeLineType(value) {
-            console.log('value', value)
-
-            const { lf, activeEdges } = this.$props
-            const { graphModel } = lf
-            lf.setDefaultEdgeType(value)
-            if (activeEdges && activeEdges.length > 0) {
-                activeEdges.forEach((edge) => {
-                    graphModel.changeEdgeType(edge.id, value)
-                })
-            }
-        }
-    },
-    components: {
-        // ColorFill,
-        // ColorText,
-        // IconFont,
-        // IconBlod,
-        // IconLine,
-        ZoomIn,
-        ZoomOut,
-        StepBack,
-        StepFoward,
-        AreaSelect
-        // SketchPicker: Sketch
     }
 }
 </script>

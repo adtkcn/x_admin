@@ -13,8 +13,8 @@ type GeTuiHandler struct{}
 // @Summary		推送消息
 // @Description	推送消息到客户端
 // @Tags			common_geTui-个推
-// @Param			token	header		string						true	"token"
-// @Success		200		{object}	response.Response			"成功"
+// @Param			token	header		string				true	"token"
+// @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/geTui/push [post]
 func (ih GeTuiHandler) Push(c *gin.Context) {
 	var req []common_service.PushMessage

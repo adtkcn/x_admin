@@ -13,11 +13,12 @@
                     <el-tree-select
                         class="flex-1"
                         v-model="formData.pid"
-                        :data="optionsData.dept"
+                        :data="deptTreeOptions"
                         clearable
                         node-key="id"
                         :props="{
-                            label: 'name'
+                            label: 'name',
+                            disabled: 'disabled'
                         }"
                         check-strictly
                         :default-expand-all="true"
@@ -35,7 +36,7 @@
                 <el-form-item label="负责人" prop="duty_id" v-if="formData.id">
                     <el-select
                         class="flex-1"
-                        v-model="formData.dutyId"
+                        v-model="formData.duty_id"
                         clearable
                         placeholder="请选择上级部门"
                         @change="dutyChange"
@@ -59,18 +60,18 @@
                         <div class="form-tips">默认为0， 数值越大越排前</div>
                     </div>
                 </el-form-item>
-                <el-form-item label="部门状态" prop="isStop">
-                    <el-switch v-model="formData.isStop" :active-value="0" :inactive-value="1" />
+                <el-form-item label="部门状态" prop="is_stop">
+                    <el-switch v-model="formData.is_stop" :active-value="0" :inactive-value="1" />
                 </el-form-item>
             </el-form>
         </popup>
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, shallowRef, reactive } from 'vue'
+import { ref, computed, shallowRef } from 'vue'
 import type { FormInstance } from 'element-plus'
 import {
-    deptLists,
+    deptAll,
     deptEdit,
     deptAdd,
     deptDetail,
@@ -83,6 +84,8 @@ import { adminListByDeptId, type type_system_admin_resp } from '@/api/perms/admi
 import Popup from '@/components/popup/index.vue'
 import { useDictOptions } from '@/hooks/useDictOptions'
 import feedback from '@/utils/feedback'
+import { arrayToTree } from '@/utils/util'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
@@ -91,20 +94,20 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑部门' : '新增部门'
 })
 
-const formData = reactive<type_system_dept_edit>({
+const { state: formData, setState } = useReactiveWithReset<type_system_dept_edit>({
     id: '',
     pid: '',
     name: '',
-    dutyId: '',
+    duty_id: '',
     duty: '',
     mobile: '',
     sort: 0,
-    isStop: 0
+    is_stop: 0
 })
 const DeptUsers = ref<type_system_admin_resp[]>([])
 // 部门下的管理员
 async function getDeptUsers(deptId: string) {
-    const users = await adminListByDeptId({ deptId: deptId })
+    const users = await adminListByDeptId({ dept_id: deptId })
     DeptUsers.value = users
 }
 function dutyChange(id: string) {
@@ -167,8 +170,57 @@ const { optionsData } = useDictOptions<{
     dept: type_system_dept_resp[]
 }>({
     dept: {
-        api: deptLists
+        api: deptAll
     }
+})
+
+// 树形部门选项：由 id/pid 构建树形（复用 @/utils/util 的 arrayToTree），编辑模式下禁用当前部门及其所有子级，避免选自己或自己的子孙作为上级形成环路
+// 基于树结构收集某节点自身及其所有后代的 ID
+const collectSelfAndDescendants = (list: any[], currentId: string): Set<string> => {
+    const ids = new Set<string>()
+    const findAndCollect = (nodes: any[]) => {
+        for (const n of nodes) {
+            if (n.id === currentId || ids.has(n.id)) {
+                const collectSub = (sub: any) => {
+                    ids.add(sub.id)
+                    ;(sub.children || []).forEach(collectSub)
+                }
+                collectSub(n)
+            } else if (n.children?.length) {
+                findAndCollect(n.children)
+            }
+        }
+    }
+    findAndCollect(list)
+    return ids
+}
+
+const markDisabled = (
+    list: type_system_dept_resp[],
+    disabledIds: Set<string>
+): type_system_dept_resp[] => {
+    return list.map((item) => {
+        const children = item.children?.length
+            ? markDisabled(item.children, disabledIds)
+            : item.children
+        return {
+            ...item,
+            disabled: disabledIds.has(item.id),
+            children
+        }
+    })
+}
+const deptTreeOptions = computed(() => {
+    const list = optionsData.dept
+    if (!list?.length) return []
+    // 深拷贝后再交给 arrayToTree，避免其直接修改原始 optionsData 中的元素
+    const tree = arrayToTree(
+        list.map((item) => ({ ...item })),
+        ''
+    )
+    if (!formData.id) return tree
+    const disabledIds = collectSelfAndDescendants(tree, formData.id)
+    return markDisabled(tree, disabledIds)
 })
 
 const handleSubmit = async () => {
@@ -185,11 +237,7 @@ const open = (type = 'add') => {
 }
 
 const setFormData = (data: Partial<type_system_dept_edit>) => {
-    for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            formData[key] = data[key]
-        }
-    }
+    setState(data)
 }
 
 const getDetail = async (row: type_system_dept_resp) => {

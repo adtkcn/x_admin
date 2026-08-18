@@ -16,11 +16,15 @@
             :rules="formRules"
         >
             <!-- {{ userTask }} -->
-            <el-form-item v-if="userTask" :label="`${userTask?.label}节点审批人`" prop="templateId">
+            <el-form-item
+                v-if="userTask"
+                :label="`${userTask?.label}节点审批人`"
+                prop="apply_user_id"
+            >
                 <el-select
                     style="width: 100%"
                     v-if="approverUserList.length"
-                    v-model="formData.applyUserId"
+                    v-model="formData.apply_user_id"
                     placeholder="请选择审批人"
                 >
                     <el-option
@@ -33,9 +37,9 @@
                 </el-select>
             </el-form-item>
 
-            <el-form-item label="审批意见" prop="passRemark" v-if="props.showRemark">
+            <el-form-item label="审批意见" prop="pass_remark" v-if="props.showRemark">
                 <el-input
-                    v-model="formData.passRemark"
+                    v-model="formData.pass_remark"
                     :rows="2"
                     type="textarea"
                     placeholder="请输入审批意见"
@@ -59,7 +63,9 @@ import feedback from '@/utils/feedback'
 import {
     flow_history_next_node,
     flow_history_get_approver,
-    flow_history_pass
+    flow_history_pass,
+    type type_flow_tree,
+    type type_flow_history_get_approver_resp
 } from '@/api/flow/flow_history'
 const props = defineProps({
     title: {
@@ -72,26 +78,20 @@ const props = defineProps({
     }
 })
 const dialogVisible = ref(false)
-// const props = defineProps({
-//     save: {
-//         type: Function,
-//         default: () => {}
-//     }
-// })
 
 class formDataState {
     id = ''
-    passRemark = ''
-    applyUserId = ''
+    pass_remark = ''
+    apply_user_id = ''
 }
 const formData = reactive(new formDataState())
-const next_nodes = ref([])
+const next_nodes = ref<type_flow_tree[]>([])
 const userTask = computed(() => {
     return next_nodes.value.find((item) => item.type == 'bpmn:userTask')
 })
-const approverUserList = ref([])
+const approverUserList = ref<type_flow_history_get_approver_resp[]>([])
 const formRules = {
-    applyUserId: [
+    apply_user_id: [
         {
             required: true,
             message: '请选择',
@@ -99,23 +99,23 @@ const formRules = {
         }
     ]
 }
-function open(applyId) {
+function open(applyId: string) {
     console.log('open')
     Object.assign(formData, new formDataState())
     formData.id = applyId
     dialogVisible.value = true
 
     flow_history_next_node({
-        applyId: applyId
+        apply_id: applyId
     }).then((res) => {
         console.log('res', res)
         next_nodes.value = res || []
     })
-    flow_history_get_approver({ applyId: applyId }).then((user) => {
+    flow_history_get_approver({ apply_id: applyId }).then((user) => {
         console.log('user', user)
         approverUserList.value = user
         if (user && user.length == 1) {
-            formData.applyUserId = user[0].id
+            formData.apply_user_id = user[0].id
         }
     })
 }
@@ -127,14 +127,14 @@ function BeforeClose() {
 function submit() {
     console.log('submit', next_nodes)
 
-    if (userTask.value && !formData.applyUserId) {
+    if (userTask.value && !formData.apply_user_id) {
         feedback.msgWarning('请选择审批人')
         return
     }
     flow_history_pass({
-        applyId: formData.id,
-        nextNodeAdminId: formData.applyUserId || '',
-        passRemark: formData.passRemark
+        apply_id: formData.id,
+        next_node_admin_id: formData.apply_user_id || '',
+        pass_remark: formData.pass_remark
     }).then(() => {
         BeforeClose()
     })

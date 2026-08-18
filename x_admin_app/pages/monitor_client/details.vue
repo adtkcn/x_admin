@@ -28,11 +28,11 @@
             <uv-form-item label="ua记录" prop="ua" borderBottom>
                     {{form.ua}}
             </uv-form-item>
-            <uv-form-item label="创建时间" prop="createTime" borderBottom>
-                    {{form.createTime}}
+            <uv-form-item label="创建时间" prop="CreateTime" borderBottom>
+                    {{form.CreateTime}}
             </uv-form-item>
-            <uv-form-item label="更新时间" prop="clientTime" borderBottom>
-                    {{form.clientTime}}
+            <uv-form-item label="更新时间" prop="ClientTime" borderBottom>
+                    {{form.ClientTime}}
             </uv-form-item>
 		</uv-form>
         <uv-button
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 	import {ref} from "vue";
-	import { onLoad,onShow } from "@dcloudio/uni-app";
+	import { onLoad,onShow,onPullDownRefresh } from "@dcloudio/uni-app";
 	import { useDictData } from "@/hooks/useDictOptions";
 	import { monitor_client_detail } from "@/api/monitor_client";
 
@@ -70,8 +70,8 @@
 		width: "",
 		height: "",
 		ua: "",
-		createTime: "",
-		clientTime: "",
+		CreateTime: "",
+		ClientTime: "",
 	});
 	onLoad((e) => {
 		console.log("onLoad", e);
@@ -85,7 +85,7 @@
 	onPullDownRefresh(() => {
 		getDetails(form.value.id);
 	});
-	function getDetails(id: number | string) {
+	function getDetails(id: string) {
 		monitor_client_detail(id).then((res) => {
 			uni.stopPullDownRefresh();
             if (res.code == 200) {

@@ -6,19 +6,19 @@ export type type_monitor_project = {
     projectName?: string;
     projectType?: string;
     isDelete?: number;
-    createTime?: string;
-    updateTime?: string;
-    deleteTime?: string;
+    CreateTime?: string;
+    UpdateTime?: string;
+    DeleteTime?: string;
 }
 // 查询
 export type type_monitor_project_query = {
     projectKey?: string;
     projectName?: string;
     projectType?: string;
-    createTimeStart?: string;
-    createTimeEnd?: string;
-    updateTimeStart?: string;
-    updateTimeEnd?: string;
+    CreateTimeStart?: string;
+    CreateTimeEnd?: string;
+    UpdateTimeStart?: string;
+    UpdateTimeEnd?: string;
 }
 // 添加编辑
 export type type_monitor_project_edit = {
@@ -47,7 +47,7 @@ export function monitor_project_list_all(params?: type_monitor_project_query) {
 }
 
 // 监控项目详情
-export function monitor_project_detail(id: number | string) {
+export function monitor_project_detail(id: string) {
     return request<type_monitor_project>({
 		url: '/monitor_project/detail',
 		method: 'GET',
@@ -74,7 +74,7 @@ export function monitor_project_edit(data: type_monitor_project_edit) {
 }
 
 // 监控项目删除
-export function monitor_project_delete(id: number | string) {
+export function monitor_project_delete(id: string) {
     return request<null>({
         url: '/monitor_project/del',
         method: "POST",

@@ -2,7 +2,7 @@
     <div class="del-wrap">
         <slot></slot>
         <div v-if="showClose" class="icon-close" @click.stop="handleClose">
-            <icon :size="12" name="el-icon-CloseBold" />
+            <icon :size="12" name="el-icon-CloseBold" color="#ffffff" />
         </div>
     </div>
 </template>

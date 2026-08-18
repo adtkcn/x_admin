@@ -11,7 +11,7 @@ import (
 var (
 	UrlUtil = urlUtil{}
 
-	publicPrefix = config.FileConfig.PublicPrefix //"/api/uploads"
+	uploadPrefix = config.FileConfig.UploadPrefix //"/api/uploads"
 )
 
 // urlUtil 文件路径处理工具
@@ -30,7 +30,7 @@ func (uu urlUtil) ToAbsoluteUrl(u string) string {
 	}
 	engine := "local"
 	if engine == "local" {
-		return path.Join(publicPrefix, u)
+		return path.Join(uploadPrefix, u)
 	}
 	// TODO: 其他engine
 	return u
@@ -50,7 +50,7 @@ func (uu urlUtil) ToRelativeUrl(u string) string {
 	engine := "local"
 	if engine == "local" {
 		lu := up.String()
-		return strings.Replace(lu, publicPrefix, "", 1)
+		return strings.Replace(lu, uploadPrefix, "", 1)
 	}
 	// TODO: 其他engine
 	return u

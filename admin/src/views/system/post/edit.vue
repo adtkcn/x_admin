@@ -36,8 +36,8 @@
                         show-word-limit
                     />
                 </el-form-item>
-                <el-form-item label="岗位状态" prop="isStop">
-                    <el-switch v-model="formData.isStop" :active-value="0" :inactive-value="1" />
+                <el-form-item label="岗位状态" prop="is_stop">
+                    <el-switch v-model="formData.is_stop" :active-value="0" :inactive-value="1" />
                 </el-form-item>
             </el-form>
         </popup>
@@ -55,6 +55,8 @@ import {
 } from '@/api/org/post'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
+
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
@@ -63,13 +65,17 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑岗位' : '新增岗位'
 })
 
-const formData = reactive<type_system_post_edit>({
+const {
+    state: formData,
+    reset,
+    setState
+} = useReactiveWithReset<type_system_post_edit>({
     id: '',
     name: '',
     code: '',
     sort: 0,
     remarks: '',
-    isStop: 0
+    is_stop: 0
 })
 
 const formRules = {
@@ -90,11 +96,15 @@ const formRules = {
 }
 
 const handleSubmit = async () => {
-    await formRef.value?.validate()
-    mode.value == 'edit' ? await postEdit(formData) : await postAdd(formData)
-    feedback.msgSuccess('操作成功')
-    popupRef.value?.close()
-    emit('success')
+    try {
+        await formRef.value?.validate()
+        mode.value == 'edit' ? await postEdit(formData) : await postAdd(formData)
+        feedback.msgSuccess('操作成功')
+        popupRef.value?.close()
+        emit('success')
+    } catch (error) {
+        console.error('岗位保存失败:', error)
+    }
 }
 
 const open = (type = 'add') => {
@@ -103,21 +113,18 @@ const open = (type = 'add') => {
 }
 
 const setFormData = (data: Partial<type_system_post_edit>) => {
-    for (const key in formData) {
-        if (
-            data[key as keyof type_system_post_edit] != null &&
-            data[key as keyof type_system_post_edit] != undefined
-        ) {
-            formData[key] = data[key as keyof type_system_post_edit]
-        }
-    }
+    setState(data)
 }
 
 const getDetail = async (row: type_system_post_resp) => {
-    const data = await postDetail({
-        id: row.id
-    })
-    setFormData(data)
+    try {
+        const data = await postDetail({
+            id: row.id
+        })
+        setFormData(data)
+    } catch (error) {
+        console.error('岗位详情获取失败:', error)
+    }
 }
 
 const handleClose = () => {

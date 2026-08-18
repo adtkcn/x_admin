@@ -1,7 +1,6 @@
 package corn_service
 
 import (
-	"errors"
 	"x_admin/app/model"
 	"x_admin/app/schema"
 	"x_admin/core"
@@ -154,22 +153,14 @@ func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId str
 
 // Edit 定时任务编辑
 func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error) {
-
 	result := service.db.Model(&model.SystemCorn{}).Where("id = ?", editReq.Id).Updates(editReq)
-
 	if result.Error != nil {
 		// 这里处理真正的数据库错误（如连接失败、SQL语法错误、约束冲突等）
 		core.Logger.Errorf("数据库错误: %v", result.Error)
-		return result.Error
+		return response.CheckMysqlErr(result.Error)
 	}
 
-	if result.RowsAffected == 0 {
-		// 这里处理“找不到数据”的情况
-		core.Logger.Errorf("未找到 ID 为 %v 的记录，更新失败", editReq.Id)
-		return errors.New("记录不存在")
-	}
 	service.CacheUtil.RemoveCache(editReq.Id)
-	// service.Detail(obj.Id)
 	return
 }
 
@@ -211,7 +202,7 @@ func (service systemCornService) GetExcelCol() []excel2.Col {
 		{Name: "任务名称", Key: "TaskName", Width: 15, Decode: x_null.DecodeString},
 		{Name: "任务编码", Key: "TaskCode", Width: 15, Decode: x_null.DecodeString},
 		{Name: "corn表达式", Key: "CornExpr", Width: 15, Decode: x_null.DecodeString},
-		{Name: "禁用", Key: "Status", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "状态", Key: "Status", Width: 15, Decode: x_null.DecodeInt64},
 		{Name: "创建人", Key: "CreatedBy", Width: 15, Decode: x_null.DecodeString},
 		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
 		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},
@@ -250,10 +241,9 @@ func (service systemCornService) GetTaskList() (list []map[string]any) {
 	// var list []map[string]any
 	for _, task := range TaskInfoList {
 		list = append(list, map[string]any{
-			"Lock":     task.Lock,
-			"LockTTL":  task.LockTTL.Seconds(),
-			"TaskCode": task.TaskCode,
-			"TaskDesc": task.TaskDesc,
+			"lock_ttl":  task.LockTTL,
+			"task_code": task.TaskCode,
+			"task_desc": task.TaskDesc,
 		})
 	}
 	return list

@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 	import {ref} from "vue";
-	import { onLoad,onShow } from "@dcloudio/uni-app";
+	import { onLoad,onShow,onPullDownRefresh } from "@dcloudio/uni-app";
 	import { useDictData,useListAllData } from "@/hooks/useDictOptions";
 	import { user_protocol_detail } from "@/api/user/protocol";
 
@@ -62,7 +62,7 @@
 	onPullDownRefresh(() => {
 		getDetails(form.value.id);
 	});
-	function getDetails(id: number | string) {
+	function getDetails(id:  string) {
 		user_protocol_detail(id).then((res) => {
 			uni.stopPullDownRefresh();
             if (res.code == 200) {

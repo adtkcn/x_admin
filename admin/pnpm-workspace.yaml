@@ -1,4 +1,5 @@
 allowBuilds:
+  '@logicflow/core': true
   '@parcel/watcher': true
   core-js-pure: true
   es5-ext: true

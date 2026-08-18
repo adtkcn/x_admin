@@ -3,20 +3,20 @@
         <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
                 <!-- <el-form-item label="模板" prop="templateId">
-                    <el-input v-model="queryParams.templateId" />
+                    <el-input v-model="queryParams.template_id" />
                 </el-form-item> -->
                 <!-- <el-form-item label="申请人id" prop="applyUserId">
-                    <el-input   v-model="queryParams.applyUserId" />
+                    <el-input   v-model="queryParams.apply_user_id" />
                 </el-form-item> -->
-                <el-form-item label="申请人" prop="applyUserNickname" class="w-[280px]">
-                    <el-input v-model="queryParams.applyUserNickname" />
+                <el-form-item label="申请人" prop="apply_user_nickname" class="w-[280px]">
+                    <el-input v-model="queryParams.apply_user_nickname" />
                 </el-form-item>
-                <el-form-item label="流程名称" prop="flowName" class="w-[280px]">
-                    <el-input v-model="queryParams.flowName" />
+                <el-form-item label="流程名称" prop="flow_name" class="w-[280px]">
+                    <el-input v-model="queryParams.flow_name" />
                 </el-form-item>
-                <el-form-item label="流程分类" prop="flowGroup" class="w-[280px]">
+                <el-form-item label="流程分类" prop="flow_group" class="w-[280px]">
                     <el-select
-                        v-model="queryParams.flowGroup"
+                        v-model="queryParams.flow_group"
                         clearable
                         :empty-values="[null, undefined]"
                     >
@@ -37,25 +37,31 @@
             </el-form>
         </el-card>
         <el-card class="border-none! mt-4" shadow="never">
-            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
-                <el-table-column label="申请人昵称" prop="applyUserNickname" min-width="100" />
-                <el-table-column label="流程名称" prop="flowName" min-width="100" />
-                <el-table-column label="流程分类" prop="flowGroup" min-width="100">
+            <vxe-table
+                class="mt-4"
+                v-loading="pager.loading"
+                :data="pager.lists"
+                :row-config="{ keyField: 'id' }"
+                :scroll-y="{ enabled: false }"
+                :border="'inner'"
+            >
+                <vxe-column title="申请人昵称" field="apply_user_nickname" min-width="100" />
+                <vxe-column title="流程名称" field="flow_name" min-width="100" />
+                <vxe-column title="流程分类" field="flow_group" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.flow_group" :value="row.flowGroup" />
+                        <dict-value :options="dictData.flow_group" :value="row.flow_group" />
                     </template>
-                </el-table-column>
-                <el-table-column label="流程描述" prop="flowRemark" min-width="100" />
-                <!-- <el-table-column label="formValue" prop="formValue" min-width="100" /> -->
+                </vxe-column>
+                <vxe-column title="流程描述" field="flow_remark" min-width="100" />
 
-                <el-table-column label="状态" prop="status" min-width="100">
+                <vxe-column title="状态" field="status" min-width="100">
                     <template #default="{ row }">
                         <dict-value :options="dictData.flow_apply_status" :value="row.status" />
                     </template>
-                </el-table-column>
-                <el-table-column label="更新时间" prop="updateTime" min-width="130" />
-                <el-table-column label="创建时间" prop="createTime" min-width="130" />
-                <el-table-column label="操作" width="180" fixed="right">
+                </vxe-column>
+                <vxe-column title="更新时间" field="update_time" min-width="130" />
+                <vxe-column title="创建时间" field="create_time" min-width="130" />
+                <vxe-column title="操作" width="140" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:flow:flow_apply:edit']"
@@ -75,8 +81,8 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -114,12 +120,12 @@ const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
 const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
 
 const queryParams = reactive({
-    applyUserNickname: '',
-    flowName: '',
-    flowGroup: '',
-    flowRemark: '',
-    flowFormData: '',
-    flowProcessData: '',
+    apply_user_nickname: '',
+    flow_name: '',
+    flow_group: '',
+    flow_remark: '',
+    flow_form_data: '',
+    flow_process_data: '',
     status: '3'
 })
 
@@ -143,13 +149,13 @@ const OpenViewForm = async (row: any) => {
     const detail = await flow_apply_detail({ id: row.id })
     let form_data = {}
     try {
-        form_data = JSON.parse(row.formValue)
+        form_data = JSON.parse(row.form_value)
     } catch (error) {
         // 解析失败
     }
     let form_json = {}
     try {
-        detail.flowFormData && (form_json = JSON.parse(detail.flowFormData))
+        detail.flow_form_data && (form_json = JSON.parse(detail.flow_form_data))
     } catch (error) {
         // 解析失败
     }
@@ -162,15 +168,16 @@ const SaveViewForm = (id: string, form_data: any) => {
     return new Promise((resolve, reject) => {
         flow_apply_edit({
             id: id,
-            formValue: JSON.stringify(form_data)
+            form_value: JSON.stringify(form_data)
         })
             .then(async () => {
                 feedback.msgSuccess('保存成功')
                 await getLists()
 
                 const row = pager.lists.find((item) => item.id === id)
-
-                ApplySubmitRef.value?.open(row?.id)
+                if (row) {
+                    ApplySubmitRef.value?.open(row.id)
+                }
 
                 resolve(true)
             })

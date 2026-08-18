@@ -2,50 +2,48 @@ import request from '@/utils/request'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_apply = {
-    id: string | null
-    templateId: string | null
-    applyUserId: string | null
-    applyUserNickname: string | null
-    flowName: string | null
-    flowGroup: number | null
-    flowRemark: string | null
-    flowFormData: string | null
-    flowProcessData: string | null
-    flowProcessDataList: string | null
-    formValue: string | null
+    id: string
+    template_id: string | null
+    apply_user_id: string | null
+    apply_user_nickname: string | null
+    flow_name: string | null
+    flow_group: number | null
+    flow_remark: string | null
+    flow_form_data: string | null
+    flow_process_data: string | null
+    flow_process_data_list: string | null
+    form_value: string | null
     status: number | null // 状态：1待提交，2审批中，3审批完成，4审批失败
-    isDelete: number | null
-    createTime: string | null
-    updateTime: string | null
-    deleteTime: string | null
+    create_time: string | null
+    update_time: string | null
 }
 // 查询
 export type type_flow_apply_query = {
-    templateId?: string
-    applyUserId?: string
-    applyUserNickname?: string
-    flowName?: string
-    flowGroup?: number
-    flowRemark?: string
-    flowFormData?: string
-    flowProcessData?: string
-    flowProcessDataList?: string
-    formValue?: string
+    template_id?: string
+    apply_user_id?: string
+    apply_user_nickname?: string
+    flow_name?: string
+    flow_group?: number
+    flow_remark?: string
+    flow_form_data?: string
+    flow_process_data?: string
+    flow_process_data_list?: string
+    form_value?: string
     status?: number
-    createTimeStart?: string
-    createTimeEnd?: string
-    updateTimeStart?: string
-    updateTimeEnd?: string
+    create_time_start?: string
+    create_time_end?: string
+    update_time_start?: string
+    update_time_end?: string
 }
 // 添加编辑
 export type type_flow_apply_edit = {
     id?: string
-    templateId?: string
-    applyUserId?: string
-    applyUserNickname?: string
-    flowName?: string
-    formValue?: string
-    status?: number
+    template_id?: string | null
+    apply_user_id?: string | null
+    apply_user_nickname?: string | null
+    flow_name?: string | null
+    form_value?: string | null
+    status?: number | null
 }
 
 // 申请流程列表
