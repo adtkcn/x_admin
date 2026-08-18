@@ -119,24 +119,3 @@ func (cfg *emailUtil) SendEmail(opts EmailOptions) error {
 
 	return nil
 }
-
-// func init() {
-
-// 	opts := EmailOptions{
-// 		To:       []string{"11675084@qq.com"},
-// 		Cc:       []string{},
-// 		Bcc:      []string{},
-// 		Subject:  "【系统通知】订单已发货",
-// 		HTMLBody: `<h2>您好！</h2><p>您的订单 <b>#222</b></p>`,
-// 		Attachments: []map[string]string{
-// 			{"path": "./uploads/f702cb14a76929b184e501db1fda72d3_9873.png", "filename": "发票.png"},
-// 			{"path": "./uploads/f702cb14a76929b184e501db1fda72d3_9873.png", "filename": "发货标签.png"},
-// 		},
-// 	}
-
-// 	if err := EmailUtil.SendEmail(opts); err != nil {
-// 		log.Fatalf("❌ 邮件发送失败: %v", err)
-// 	}
-
-// 	log.Println("✅ 邮件发送成功！")
-// }

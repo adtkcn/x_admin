@@ -1,13 +1,13 @@
 package corn
 
 import (
+	"strconv"
 	"time"
-	"x_admin/app/service/common_service"
 	"x_admin/app/service/corn_service"
 	"x_admin/app/service/monitor_service"
 	"x_admin/app/service/notice_service"
 	"x_admin/core"
-	"x_admin/plugin"
+	"x_admin/plugin/storage"
 	"x_admin/util"
 )
 
@@ -30,7 +30,7 @@ func init() {
 
 	FixedTasks.Start()
 
-	// 每10秒执行一次拉取定时任务"*/10 * * * * *"
+	// 定时执行一次拉取定时任务
 	FixedTasks.AddTask("loadTasks", "40 * * * * *", corn_service.Task{
 
 		LockTTL:  0,
@@ -45,7 +45,7 @@ func init() {
 		},
 	})
 
-	// 每5秒执行一次广播当前在线用户数
+	// 每5秒执行一次websocket广播当前在线用户数
 	FixedTasks.AddTask("onlineCount", "*/5 * * * * *", corn_service.Task{
 
 		LockTTL:  3,
@@ -55,10 +55,8 @@ func init() {
 			count := core.Ws.GetOnlineCount()
 
 			// 存入redis，保留最近1小时数据（3600/5=720条）
-			record, _ := util.ToolsUtil.ObjToJson(map[string]any{
-				"time":  time.Now().Format("15:04:05"),
-				"count": count,
-			})
+			// 字符串拼接格式: "15:04:05,count"，避免 JSON 序列化开销
+			record := time.Now().Format("15:04:05") + "," + strconv.Itoa(count)
 			util.RedisUtil.RPush("onlineCount", []any{record}, 720)
 
 			// 广播当前在线用户数
@@ -111,35 +109,18 @@ func init() {
 		TaskCode: "CleanChunkTmpDir",
 		TaskDesc: "清理过期的分片临时目录",
 		TaskFunc: func() {
-			plugin.CleanChunkTmpDir()
+			storage.CleanChunkTmpDir()
 		},
 	})
 
-	// 每天凌晨2点清理上传超过7天且无业务引用的文件
-	FixedTasks.AddTask("CleanOrphanFiles", "0 0 2 * * *", corn_service.Task{
-		LockTTL:  30,
-		TaskCode: "CleanOrphanFiles",
-		TaskDesc: "清理超过7天未使用的文件（无业务引用）",
-		TaskFunc: func() {
-			common_service.FileRefService.CleanOrphanFiles(7)
-		},
-	})
-
-	// FixedTasks.AddTask("WriteInfluxdb2", "*/10 * * * * *", func() {
-	// 	var alarm_event_list = []map[string]any{
-	// 		{
-	// 			"tid":   "284",
-	// 			"site":  "4c",
-	// 			"grade": "1",
-
-	// 			"channel":    strconv.Itoa(util.ToolsUtil.Random(1, 16)),
-	// 			"type":       util.ToolsUtil.Random(1, 7), // 告警类型1-7
-	// 			"start_time": time.Now().Unix() - int64(util.ToolsUtil.Random(1, 20)),
-	// 			"end_time":   time.Now().Unix(),
-	// 			"max":        util.ToolsUtil.Random(100, 200),
-	// 			"min":        util.ToolsUtil.Random(20, 100),
-	// 		},
-	// 	}
-	// 	core.WriteInfluxdb2(alarm_event_list)
+	// 每天凌晨2点清理上传超过x天且无业务引用的文件
+	// FixedTasks.AddTask("CleanOrphanFiles", "0 0 2 * * *", corn_service.Task{
+	// 	LockTTL:  30,
+	// 	TaskCode: "CleanOrphanFiles",
+	// 	TaskDesc: "清理超过x天未访问的冷文件",
+	// 	TaskFunc: func() {
+	// 		common_service.FileHashService.CleanOrphanFiles(365)
+	// 	},
 	// })
+
 }

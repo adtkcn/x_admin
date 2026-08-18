@@ -39,6 +39,20 @@ func checkPassword(hashedPassword, password string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
 }
 
+// existsActiveUser 判断是否存在「未删除」的用户（按自定义条件）。
+// 软删除（is_delete=1）的记录不计入，避免"已删除账号仍占用邮箱/手机号"，
+// 导致用户被软删除后无法用同一邮箱/手机号重新注册。
+func (s *userService) existsActiveUser(query string, args ...any) (bool, error) {
+	var count int64
+	if err := s.db.Model(&user_model.User{}).
+		Where(query, args...).
+		Where("is_delete = 0").
+		Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 // tokenVersionCacheKey 生成 token_version 缓存 key
 func tokenVersionCacheKey(userID string) string {
 	return "user:tv:" + userID
@@ -72,17 +86,17 @@ func (s *userService) InvalidateTokenVersionCache(userID string) {
 // Register 邮箱注册
 func (s *userService) Register(req *user_schema.RegisterReq) error {
 	// 校验验证码
-	if err := util.EmailCodeUtil.VerifyCode(req.Email, util.CodeSceneRegister, req.Code); err != nil {
+	if err := util.EmailCodeUtil.VerifyCode(req.Email, util.CodeSceneRegister, req.Code, ""); err != nil {
 		return response.Failed.SetMessage(err.Error())
 	}
 
-	// 检查邮箱是否已注册
-	var existUser user_model.User
-	err := s.db.Where("email = ?", req.Email).First(&existUser).Error
-	if err == nil {
-		return response.Failed.SetMessage("该邮箱已被注册")
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+	// 检查邮箱是否已注册（只统计未删除的账号，软删除后可重新注册）
+	exists, err := s.existsActiveUser("email = ?", req.Email)
+	if err != nil {
 		return response.CheckErr(err, "检查邮箱失败")
+	}
+	if exists {
+		return response.Failed.SetMessage("该邮箱已被注册")
 	}
 
 	// 加密密码
@@ -283,11 +297,13 @@ func (s *userService) UpdateUserInfo(userID string, req *user_schema.UpdateUserR
 
 // SendEmailCode 发送邮箱验证码（注册/重置密码/解绑手机场景）
 func (s *userService) SendEmailCode(req *user_schema.SendCodeReq) error {
-	// 注册场景：检查邮箱未注册
+	// 注册场景：检查邮箱未注册（只统计未删除的账号）
 	if req.Scene == util.CodeSceneRegister {
-		var existUser user_model.User
-		err := s.db.Where("email = ?", req.Email).First(&existUser).Error
-		if err == nil {
+		exists, err := s.existsActiveUser("email = ?", req.Email)
+		if err != nil {
+			return response.CheckErr(err, "检查邮箱失败")
+		}
+		if exists {
 			return response.Failed.SetMessage("该邮箱已被注册")
 		}
 	}
@@ -313,7 +329,7 @@ func (s *userService) SendEmailCode(req *user_schema.SendCodeReq) error {
 			return response.CheckErr(err, "检查邮箱失败")
 		}
 	}
-	return util.EmailCodeUtil.SendCode(req.Email, req.Scene)
+	return util.EmailCodeUtil.SendCode(req.Email, req.Scene, "")
 }
 
 // SendSmsCode 发送短信验证码（绑定手机/短信登录/手机重置密码场景）
@@ -343,7 +359,7 @@ func (s *userService) SendSmsCode(req *user_schema.SendSmsCodeReq) error {
 // ResetPassword 邮箱重置密码
 func (s *userService) ResetPassword(req *user_schema.ResetPasswordReq) error {
 	// 校验验证码
-	if err := util.EmailCodeUtil.VerifyCode(req.Email, util.CodeSceneReset, req.Code); err != nil {
+	if err := util.EmailCodeUtil.VerifyCode(req.Email, util.CodeSceneReset, req.Code, ""); err != nil {
 		return response.Failed.SetMessage(err.Error())
 	}
 
@@ -415,4 +431,28 @@ func (s *userService) GetUserTokenVersion(userID string) (int64, error) {
 		return 0, err
 	}
 	return user.TokenVersion, nil
+}
+
+// ChangePassword 修改密码（校验原密码 + bcrypt 更新 + 踢人下线）
+func (s *userService) ChangePassword(userID, oldPwd, newPwd string) error {
+	var user user_model.User
+	if err := s.db.Where("id = ?", userID).First(&user).Error; err != nil {
+		return response.CheckErr(err, "用户不存在")
+	}
+	if !checkPassword(user.Password, oldPwd) {
+		return response.Failed.SetMessage("原密码错误")
+	}
+	hashed, err := hashPassword(newPwd)
+	if err != nil {
+		return response.CheckErr(err, "密码加密失败")
+	}
+	if err := s.db.Model(&user).Updates(map[string]any{
+		"password":      hashed,
+		"token_version": gorm.Expr("token_version + 1"),
+	}).Error; err != nil {
+		return response.CheckErr(err, "修改密码失败")
+	}
+	// 立即清除 Redis 缓存，使旧 token 失效
+	s.InvalidateTokenVersionCache(userID)
+	return nil
 }

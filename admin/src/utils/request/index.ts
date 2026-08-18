@@ -4,6 +4,8 @@ import { merge } from 'lodash-es'
 import configs from '@/config'
 import { ContentTypeEnum, RequestCodeEnum } from '@/enums/requestEnums'
 import { clearAuthInfo, getToken } from '../auth'
+import cache from '../cache'
+import { TOKEN_KEY } from '@/enums/cacheEnums'
 import feedback from '../feedback'
 import NProgress from 'nprogress'
 import router from '@/router'
@@ -83,6 +85,12 @@ service.interceptors.response.use(
         // 转换响应数据
         const { code, data, message } = response.data
 
+        // JWT 续签：中间件在 access_token 临近过期时于响应头返回新 token
+        const newToken = response.headers['x-new-access-token']
+        if (newToken) {
+            cache.set(TOKEN_KEY, newToken)
+        }
+
         switch (code) {
             case RequestCodeEnum.SUCCESS:
                 return data
@@ -91,7 +99,8 @@ service.interceptors.response.use(
             case RequestCodeEnum.TOKEN_EMPTY:
                 clearAuthInfo()
                 router.push(PageEnum.LOGIN)
-                return Promise.reject(new Error(message || '登录已过期'))
+                feedback.msgError('登录已过期')
+                return
 
             case RequestCodeEnum.PARAMS_VALID_ERROR:
                 feedback.msgError(
@@ -126,7 +135,7 @@ function request<T = unknown>(config: AxiosRequestConfig, options?: RequestOptio
     const opts = merge({}, defaultOptions, options)
     const requestConfig: InternalConfig = { ...config, requestOptions: opts }
 
-    return service.request<unknown, T>(requestConfig)
+    return service.request<any, T>(requestConfig as AxiosRequestConfig) as unknown as Promise<T>
 }
 
 function get<T = unknown>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {

@@ -32,7 +32,7 @@ func (ph PostHandler) All(c *gin.Context) {
 // @Param			pageSize	query		int																					true	"每页数量"
 // @Param			name		query		string																				false	"岗位名称"
 // @Param			code		query		string																				false	"岗位编码"
-// @Param			isStop		query		int8																				false	"是否停用: [0=否, 1=是]"
+// @Param			is_stop		query		int8																				false	"是否停用: [0=否, 1=是]"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=system_schema.SystemAuthPostResp}}	"成功"
 // @Router			/api/admin/system/post/list [get]
 func (ph PostHandler) List(c *gin.Context) {
@@ -71,7 +71,7 @@ func (ph PostHandler) Detail(c *gin.Context) {
 // @Param			name	body		string				true	"岗位名称"
 // @Param			code	body		string				false	"岗位编码"
 // @Param			remarks	body		string				false	"岗位备注"
-// @Param			isStop	body		uint8				false	"是否停用: [0=否, 1=是]"
+// @Param			is_stop	body		uint8				false	"是否停用: [0=否, 1=是]"
 // @Param			sort	body		int					false	"排序"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/post/add [post]
@@ -91,7 +91,7 @@ func (ph PostHandler) Add(c *gin.Context) {
 // @Param			name	body		string				true	"岗位名称"
 // @Param			code	body		string				false	"岗位编码"
 // @Param			remarks	body		string				false	"岗位备注"
-// @Param			isStop	body		uint8				false	"是否停用: [0=否, 1=是]"
+// @Param			is_stop	body		uint8				false	"是否停用: [0=否, 1=是]"
 // @Param			sort	body		int					false	"排序"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/post/edit [post]

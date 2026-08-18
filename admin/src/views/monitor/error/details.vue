@@ -18,28 +18,28 @@
                                     >【
                                     <dict-value
                                         :options="listAllData.monitor_project_listAll"
-                                        :value="formData.ProjectKey"
-                                        labelKey="ProjectName"
-                                        valueKey="ProjectKey"
+                                        :value="formData.project_key"
+                                        labelKey="project_name"
+                                        valueKey="project_key"
                                     />】错误详情</span
                                 >
                             </div>
                         </template>
 
                         <el-form ref="formRef">
-                            <!-- <el-form-item label="项目key" prop="ProjectKey"> </el-form-item> -->
+                            <!-- <el-form-item label="项目key" prop="project_key"> </el-form-item> -->
 
-                            <el-form-item label="事件类型：" prop="EventType">
-                                {{ formData.EventType }}
+                            <el-form-item label="事件类型：" prop="event_type">
+                                {{ formData.event_type }}
                             </el-form-item>
-                            <el-form-item label="URL地址：" prop="Path">
-                                {{ formData.Path }}
+                            <el-form-item label="URL地址：" prop="path">
+                                {{ formData.path }}
                             </el-form-item>
-                            <el-form-item label="错误消息：" prop="Message">
-                                {{ formData.Message }}
+                            <el-form-item label="错误消息：" prop="message">
+                                {{ formData.message }}
                             </el-form-item>
-                            <el-form-item label="" prop="Stack">
-                                {{ formData.Stack }}
+                            <el-form-item label="" prop="stack">
+                                {{ formData.stack }}
                             </el-form-item>
                         </el-form>
                     </el-card>
@@ -55,43 +55,43 @@
                             <el-collapse v-model="activeNames">
                                 <el-collapse-item
                                     v-for="(user, index) in users"
-                                    :key="user.Id"
-                                    :title="user.CreateTime"
+                                    :key="user.id"
+                                    :title="user.create_time"
                                     :name="index"
                                 >
                                     <template #title>
                                         <div class="collapse-title">
                                             <span>
-                                                {{ user.City }} {{ user.Browser }}：{{ user.Ip }}
+                                                {{ user.city }} {{ user.browser }}：{{ user.ip }}
                                             </span>
 
                                             <span>
-                                                {{ user.CreateTime }}
+                                                {{ user.create_time }}
                                             </span>
                                         </div>
                                     </template>
                                     <el-descriptions border :column="2">
                                         <el-descriptions-item label="省市区">
-                                            {{ user.Country }}{{ user.Province }}{{ user.City }}
+                                            {{ user.country }}{{ user.province }}{{ user.city }}
                                         </el-descriptions-item>
                                         <el-descriptions-item label="浏览器">
-                                            {{ user.Os }}/{{ user.Browser }}
+                                            {{ user.os }}/{{ user.browser }}
                                         </el-descriptions-item>
                                         <el-descriptions-item label="网络">{{
-                                            user.Operator
+                                            user.operator
                                         }}</el-descriptions-item>
                                         <el-descriptions-item label="IP">{{
-                                            user.Ip
+                                            user.ip
                                         }}</el-descriptions-item>
 
                                         <el-descriptions-item label="业务ID">{{
-                                            user.UserId
+                                            user.user_id
                                         }}</el-descriptions-item>
                                         <el-descriptions-item label="屏幕">
-                                            {{ user.Width }}*{{ user.Height }}
+                                            {{ user.width }}*{{ user.height }}
                                         </el-descriptions-item>
                                         <el-descriptions-item label="userAgent">
-                                            {{ user.Ua }}
+                                            {{ user.ua }}
                                         </el-descriptions-item>
                                     </el-descriptions>
                                 </el-collapse-item>
@@ -134,15 +134,15 @@ const popupTitle = computed(() => {
 const activeNames = ref<string[]>(['1'])
 
 const formData = reactive({
-    Id: null,
-    ProjectKey: null,
-    ClientId: null,
-    EventType: null,
-    Path: null,
-    Message: null,
-    Stack: null,
-    Md5: null,
-    ClientTime: null
+    id: null,
+    project_key: null,
+    client_id: null,
+    event_type: null,
+    path: null,
+    message: null,
+    stack: null,
+    md5: null,
+    client_time: null
 })
 const users = ref<type_monitor_client[]>([])
 
@@ -154,7 +154,9 @@ const handleSubmit = async () => {
         popupRef.value?.close()
         feedback.msgSuccess('操作成功')
         emit('success')
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控错误保存失败:', error)
+    }
 }
 
 const open = (type = 'add') => {
@@ -173,13 +175,15 @@ const setFormData = async (data: Record<string, any>) => {
 
 const getDetail = async (row: Record<string, any>) => {
     try {
-        const data = await monitor_error_detail(row.Id)
+        const data = await monitor_error_detail(row.id)
 
-        users.value = await monitor_client_errorUsers(row.Id)
-        console.log('user', users.value)
+        users.value = await monitor_client_errorUsers(row.id)
+        console.error('监控错误用户', users.value)
 
         setFormData(data)
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控错误详情获取失败:', error)
+    }
 }
 
 const handleClose = () => {

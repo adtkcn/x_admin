@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { logout, getInfo } from "@/api/user";
+import { logout, getInfo } from "@/api/system/user";
 
 import { getLocalStorage, removeLocalStorage } from "@/utils/storage";
 

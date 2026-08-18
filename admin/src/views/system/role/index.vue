@@ -24,15 +24,15 @@
                         <vxe-column field="remark" title="备注" min-width="150" />
                         <vxe-column field="sort" title="排序" min-width="100" />
                         <vxe-column field="member" title="角色人数" min-width="100" />
-                        <vxe-column title="岗位状态" field="isDisable" min-width="80">
+                        <vxe-column title="岗位状态" field="is_disable" min-width="80">
                             <template #default="{ row }">
-                                <el-tag class="ml-2" :type="row.isDisable ? 'danger' : 'primary'">
-                                    {{ row.isDisable ? '停用' : '正常' }}
+                                <el-tag class="ml-2" :type="row.is_disable ? 'danger' : 'primary'">
+                                    {{ row.is_disable ? '停用' : '正常' }}
                                 </el-tag>
                             </template>
                         </vxe-column>
 
-                        <vxe-column field="createTime" title="创建时间" width="150" />
+                        <vxe-column field="create_time" title="创建时间" width="150" />
                         <vxe-column title="操作" width="190" fixed="right">
                             <template #default="{ row }">
                                 <el-button
@@ -113,10 +113,14 @@ const handleAuth = async (data: type_system_role_resp) => {
 
 // 删除角色
 const handleDelete = async (id: string) => {
-    await feedback.confirm('确定要删除？')
-    await roleDelete({ id })
-    feedback.msgSuccess('删除成功')
-    getLists()
+    try {
+        await feedback.confirm('确定要删除？')
+        await roleDelete({ id })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {
+        console.error('角色删除失败:', error)
+    }
 }
 
 getLists()

@@ -18,7 +18,6 @@ import (
 	"x_admin/util/excel2"
 
 	"github.com/adtkcn/x_null"
-	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -68,8 +67,8 @@ func (adminSrv systemAuthAdminService) Self(adminId string) (res system_schema.S
 }
 
 // 获取部门下用户列表
-func (adminSrv systemAuthAdminService) ListByDeptId(deptId string) (res []system_schema.SystemAuthAdminResp, e error) {
-	if deptId == "" {
+func (adminSrv systemAuthAdminService) ListByDeptId(dept_id string) (res []system_schema.SystemAuthAdminResp, e error) {
+	if dept_id == "" {
 		e = errors.New("部门ID不能为空")
 		return
 	}
@@ -81,7 +80,7 @@ func (adminSrv systemAuthAdminService) ListByDeptId(deptId string) (res []system
 		Table(adminTbName+" AS admin").
 		Joins(fmt.Sprintf("LEFT JOIN %s ON admin.dept_id = %s.id", deptTbName, deptTbName)).
 		Select(fmt.Sprintf("admin.*, %s.name as dept", deptTbName)).
-		Where("admin.dept_id = ?", deptId).
+		Where("admin.dept_id = ?", dept_id).
 		Find(&adminResp).Error
 
 	if e = response.CheckDBNotRecord(err, "获取部门下用户列表失败"); e != nil {
@@ -527,10 +526,15 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 		}
 	}
 
-	adminMap := structs.Map(editReq)
-	delete(adminMap, "ID")
-	delete(adminMap, "RoleIds")
-	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(editReq.Avatar)
+	adminMap := map[string]interface{}{
+		"DeptId":    editReq.DeptId,
+		"PostId":    editReq.PostId,
+		"Email":     editReq.Email,
+		"Nickname":  editReq.Nickname,
+		"Avatar":    util.UrlUtil.ToRelativeUrl(editReq.Avatar),
+		"Sort":      editReq.Sort,
+		"IsDisable": editReq.IsDisable,
+	}
 
 	if editReq.Password != "" {
 		passwdLen := len(editReq.Password)
@@ -540,8 +544,6 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt
 		adminMap["Password"] = util.ToolsUtil.MakeMd5(strings.Trim(editReq.Password, "") + salt)
-	} else {
-		delete(adminMap, "Password")
 	}
 	err = adminSrv.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&system_model.SystemAuthAdmin{}).Where("id = ?", editReq.ID).Updates(adminMap).Error; err != nil {
@@ -560,42 +562,41 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 	adminSrv.CacheAdminById(editReq.ID)
 	PermService.RemoveAdminPermsCache(editReq.ID)
 	adminId := config.AdminConfig.GetAdminId(c)
-	if editReq.Password != "" && editReq.ID == adminId {
-		token := c.Request.Header.Get("token")
-		adminSrv.ClearOtherTokens(adminId, token)
+	if editReq.Password != "" {
+		if editReq.ID == adminId {
+			// 改的是当前登录用户自己的密码：给当前设备重新签发 token 续签，其他设备失效
+			if e = LoginService.IssueNewTokenForAdmin(c, adminId); e != nil {
+				return
+			}
+		} else {
+			// 管理员重置他人密码：使对方所有设备 token 失效（全设备踢下线）
+			if e = adminSrv.ClearOtherTokens(editReq.ID); e != nil {
+				return
+			}
+		}
 	}
 	return
 }
 
 // SendBindEmailCode 发送邮箱绑定验证码
 func (adminSrv systemAuthAdminService) SendBindEmailCode(adminId string, email string) (e error) {
-	// 检查邮箱是否已被其他用户使用
+	// 检查邮箱占用情况：按邮箱查唯一记录，再判断归属
 	var existAdmin system_model.SystemAuthAdmin
-	err := adminSrv.db.Where("email = ? AND id != ?", email, adminId).First(&existAdmin).Error
+	err := adminSrv.db.Where("email = ?", email).First(&existAdmin).Error
 	if err == nil {
+		if existAdmin.ID == adminId {
+			return errors.New("该邮箱已绑定，无需重复绑定")
+		}
 		return errors.New("该邮箱已被其他账号使用")
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return response.CheckErr(err, "检查邮箱失败")
 	}
-
-	// 生成6位数字验证码
-	code := util.ToolsUtil.Random(100000, 999999)
-	codeKey := config.AdminConfig.BackstageAdminKey + ":email_code:" + adminId
-	util.RedisUtil.Set(codeKey, email+":"+convert_util.ToString(code), 300) // 5分钟有效
-
-	// 发送邮件
-	opts := util.EmailOptions{
-		To:      []string{email},
-		Subject: fmt.Sprintf(`【%s】邮箱绑定验证码`, config.AppConfig.AppName),
-		HTMLBody: fmt.Sprintf(`
-			<h3>邮箱绑定验证</h3>
-			<p>您的验证码是：<b style="font-size:24px;color:#409eff">%d</b></p>
-			<p>验证码 5 分钟内有效，请勿泄露给他人。</p>`, code),
+	// 2. 复用统一邮箱验证码逻辑（限流/每日上限/生成验证码/发邮件一体化）
+	// 传入 adminId，使验证码与具体账号绑定，防止跨账号滥用
+	if err := util.EmailCodeUtil.SendCode(email, util.CodeSceneBind, adminId); err != nil {
+		return err
 	}
-	if err := util.EmailUtil.SendEmail(opts); err != nil {
-		core.Logger.Error("发送邮箱验证码失败:", err)
-		return errors.New("验证码发送失败，请稍后重试")
-	}
+
 	return nil
 }
 
@@ -616,36 +617,43 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 		if updateReq.EmailCode == "" {
 			return response.Failed.SetMessage("修改邮箱需要输入验证码")
 		}
-		codeKey := config.AdminConfig.BackstageAdminKey + ":email_code:" + adminId
-		stored := util.RedisUtil.Get(codeKey)
-		if stored == "" {
-			return response.Failed.SetMessage("验证码已过期，请重新获取")
+		// 1. 校验邮箱验证码（统一逻辑：过期/错误/一次性删除）
+		// 传入 adminId，与 SendBindEmailCode 发送时保持一致，验证码与账号绑定
+		if err := util.EmailCodeUtil.VerifyCode(updateReq.Email, util.CodeSceneBind, updateReq.EmailCode, adminId); err != nil {
+			return err
 		}
-		expected := updateReq.Email + ":" + updateReq.EmailCode
-		if stored != expected {
-			return response.Failed.SetMessage("验证码错误")
-		}
+
+		// codeKey := config.AdminConfig.BackstageAdminKey + ":email_code:" + adminId
+		// stored := util.RedisUtil.Get(codeKey)
+		// if stored == "" {
+		// 	return response.Failed.SetMessage("验证码已过期，请重新获取")
+		// }
+		// expected := updateReq.Email + ":" + updateReq.EmailCode
+		// if stored != expected {
+		// 	return response.Failed.SetMessage("验证码错误")
+		// }
 		// 检查邮箱是否被占用
 		var existAdmin system_model.SystemAuthAdmin
 		err = adminSrv.db.Where("email = ? AND id != ?", updateReq.Email, adminId).First(&existAdmin).Error
 		if err == nil {
 			return response.Failed.SetMessage("该邮箱已被其他账号使用")
 		}
-		util.RedisUtil.Del(codeKey) // 验证通过，删除验证码
+		// util.RedisUtil.Del(codeKey) // 验证通过，删除验证码
 	}
 
 	// 更新管理员信息
-	adminMap := structs.Map(updateReq)
-	delete(adminMap, "CurrPassword")
-	delete(adminMap, "EmailCode")
-	if updateReq.Email == "" {
-		delete(adminMap, "Email") // 不传邮箱则不更新，避免覆盖为空
-	}
 	avatar := "/api/static/backend_avatar.png"
 	if updateReq.Avatar != "" {
 		avatar = updateReq.Avatar
 	}
-	adminMap["Avatar"] = util.UrlUtil.ToRelativeUrl(avatar)
+	adminMap := map[string]interface{}{
+		"Nickname": updateReq.Nickname,
+		"Avatar":   util.UrlUtil.ToRelativeUrl(avatar),
+	}
+	// 不传邮箱则不更新，避免覆盖为空
+	if updateReq.Email != "" {
+		adminMap["Email"] = updateReq.Email
+	}
 
 	if updateReq.Password != "" {
 		currPass := util.ToolsUtil.MakeMd5(updateReq.CurrPassword + admin.Salt)
@@ -659,18 +667,17 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt
 		adminMap["Password"] = util.ToolsUtil.MakeMd5(strings.Trim(updateReq.Password, " ") + salt)
-	} else {
-		delete(adminMap, "Password")
 	}
 	err = adminSrv.db.Model(&admin).Updates(adminMap).Error
 	if e = response.CheckErr(err, "Update Updates err"); e != nil {
 		return
 	}
 	adminSrv.CacheAdminById(adminId)
-	// 如果更改自己的密码,则删除其他登录缓存
+	// 如果更改自己的密码,给当前设备重新签发 token 续签（其他设备失效）
 	if updateReq.Password != "" {
-		token := c.Request.Header.Get("token")
-		adminSrv.ClearOtherTokens(adminId, token)
+		if e = LoginService.IssueNewTokenForAdmin(c, adminId); e != nil {
+			return
+		}
 	}
 	return
 }
@@ -697,18 +704,16 @@ func (adminSrv systemAuthAdminService) Del(c *gin.Context, id string) (e error) 
 		return response.CheckErr(err, "删除失败")
 	}
 
-	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminKey, id)
-	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminPermsKey, id)
-	adminSetKey := config.AdminConfig.BackstageTokenSet + id
-	ts := util.RedisUtil.SGet(adminSetKey)
-	if len(ts) > 0 {
-		var tokenKeys []string
-		for _, t := range ts {
-			tokenKeys = append(tokenKeys, config.AdminConfig.BackstageTokenKey+t)
-		}
-		util.RedisUtil.Del(tokenKeys...)
+	util.RedisUtil.Del(config.AdminConfig.BackstageAdminKey + ":" + id)
+	util.RedisUtil.Del(config.AdminConfig.BackstageAdminPermsKey + ":" + id)
+
+	// 自增 token_version 使其所有 token 失效（无需维护 token 集合）
+	if err := adminSrv.db.Model(&system_model.SystemAuthAdmin{}).
+		Where("id = ?", id).
+		Update("token_version", gorm.Expr("token_version + 1")).Error; err != nil {
+		core.Logger.Errorf("Del 更新 token_version 失败: id=%s err=%v", id, err)
 	}
-	util.RedisUtil.Del(adminSetKey)
+	LoginService.InvalidateTokenVersionCache(id)
 
 	return
 }
@@ -737,7 +742,15 @@ func (adminSrv systemAuthAdminService) Disable(c *gin.Context, id string) (e err
 	return
 }
 
-// CacheAdminById 缓存管理员
+// AdminCache 管理员信息缓存结构。
+// TokenVersion 单独声明（json:"token_version"）覆盖 SystemAuthAdmin 中 json:"-" 的 TokenVersion，
+// 使 auth 中间件只需读取 admin:users 缓存即可同时拿到管理员信息与 token_version。
+type AdminCache struct {
+	system_model.SystemAuthAdmin
+	TokenVersion int64 `json:"token_version"`
+}
+
+// CacheAdminById 缓存管理员（含 token_version）
 func (adminSrv systemAuthAdminService) CacheAdminById(id string) (user system_model.SystemAuthAdmin, err error) {
 	var admin system_model.SystemAuthAdmin
 	result := adminSrv.db.Where("id = ?", id).First(&admin)
@@ -750,36 +763,25 @@ func (adminSrv systemAuthAdminService) CacheAdminById(id string) (user system_mo
 		err = errors.New("管理员不存在")
 		return
 	}
-	// redis排除缓存
+	// 密码不进缓存
 	admin.Password = ""
-
-	str, err := util.ToolsUtil.ObjToJson(&admin)
+	cache := AdminCache{SystemAuthAdmin: admin, TokenVersion: admin.TokenVersion}
+	str, err := util.ToolsUtil.ObjToJson(&cache)
 	if err != nil {
 		return
 	}
-	util.RedisUtil.HSet(config.AdminConfig.BackstageAdminKey, admin.ID, str, 0)
+	util.RedisUtil.Set(config.AdminConfig.BackstageAdminKey+":"+admin.ID, str, 0)
 	return admin, nil
 }
 
-// 清理用户其他登陆token
-func (adminSrv systemAuthAdminService) ClearOtherTokens(id string, nowToken string) (err error) {
-	// 账号token集合key
-	adminSetKey := config.AdminConfig.BackstageTokenSet + id
-	// 获取账号所有token
-	tokens := util.RedisUtil.SGet(adminSetKey)
-	if len(tokens) > 0 {
-		var delTokens []string
-		for _, token := range tokens {
-			if token != nowToken {
-				delTokens = append(delTokens, config.AdminConfig.BackstageTokenKey+token)
-			}
-		}
-		// 清除其他token缓存
-		util.RedisUtil.Del(delTokens...)
+// ClearOtherTokens 改密/重置密码后使该管理员所有 token 失效（JWT 方案下为全设备踢下线）
+func (adminSrv systemAuthAdminService) ClearOtherTokens(id string) (err error) {
+	if err = adminSrv.db.Model(&system_model.SystemAuthAdmin{}).
+		Where("id = ?", id).
+		Update("token_version", gorm.Expr("token_version + 1")).Error; err != nil {
+		return response.CheckErr(err, "ClearOtherTokens Update token_version err")
 	}
-	util.RedisUtil.Del(adminSetKey)
-	// 添加当前token到集合
-	util.RedisUtil.SSet(adminSetKey, nowToken)
+	LoginService.InvalidateTokenVersionCache(id)
 	return nil
 }
 

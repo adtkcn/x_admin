@@ -7,43 +7,40 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_system_corn = {
-    Id: string
-    TaskName: string
-    TaskCode: string
-    CornExpr: string
-    Status: number
-    CreatedBy: string
-    IsDelete: number
-    CreateTime: string
-    UpdateTime: string
-    DeleteTime: string
+    id: string
+    task_name: string
+    task_code: string
+    corn_expr: string
+    status: number
+    created_by: string
+    create_time: string
+    update_time: string
 }
 // 查询
 export type type_system_corn_query = {
-    TaskName?: string
-    TaskCode?: string
-    CornExpr?: string
-    Status?: number
-    CreatedBy?: string
-    CreateTimeStart?: string
-    CreateTimeEnd?: string
-    UpdateTimeStart?: string
-    UpdateTimeEnd?: string
-    CreatedByNickname?: string
-    CreatedByEmail?: string
+    task_name?: string
+    task_code?: string
+    corn_expr?: string
+    status?: number
+    created_by?: string
+    create_time_start?: string
+    create_time_end?: string
+    update_time_start?: string
+    update_time_end?: string
+    nickname?: string
 }
 // 添加编辑
 export type type_system_corn_edit = {
-    Id?: string
-    TaskName?: string
-    TaskCode?: string
-    CornExpr?: string
-    Status?: number
+    id?: string
+    task_name?: string
+    task_code?: string
+    corn_expr?: string
+    status?: number
 }
 export type type_task = {
-    LockTTL: number
-    TaskCode: string
-    TaskDesc: string
+    lock_ttl: number
+    task_code: string
+    task_desc: string
 }
 // 定时任务列表
 export function system_corn_list(params?: type_system_corn_query) {
@@ -61,8 +58,8 @@ export function system_corn_list_all(params?: type_system_corn_query) {
 }
 
 // 定时任务详情
-export function system_corn_detail(Id: number | string) {
-    return request.get<type_system_corn>({ url: '/system_corn/detail', params: { Id } })
+export function system_corn_detail(id: string) {
+    return request.get<type_system_corn>({ url: '/system_corn/detail', params: { id } })
 }
 
 // 定时任务新增
@@ -76,11 +73,11 @@ export function system_corn_edit(data: type_system_corn_edit) {
 }
 
 // 定时任务删除
-export function system_corn_delete(Id: number | string) {
-    return request.post<null>({ url: '/system_corn/del', data: { Id } })
+export function system_corn_delete(id: string) {
+    return request.post<null>({ url: '/system_corn/del', data: { id } })
 }
 // 定时任务删除-批量
-export function system_corn_delete_batch(data: { Ids: string }) {
+export function system_corn_delete_batch(data: { ids: string }) {
     return request.post<null>({ url: '/system_corn/del_batch', data })
 }
 

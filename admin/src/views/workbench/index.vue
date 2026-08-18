@@ -136,7 +136,8 @@ const visitorChartRef = useTemplateRef('visitorChartRef')
 
 // 获取工作台主页数据
 const getData = async () => {
-    const res = await getWorkbench()
+    try {
+        const res = await getWorkbench()
     workbenchData.version = res.version
     workbenchData.today = res.today
     workbenchData.visitor = res.visitor
@@ -145,6 +146,9 @@ const getData = async () => {
     visitorOption.xAxis.data = res.visitor.date
     visitorOption.series[0].data = res.visitor.list
     visitorChartRef.value?.setOption(visitorOption as ECOption)
+    } catch (error) {
+        console.error('工作台数据获取失败:', error)
+    }
 }
 
 function updateChart(val: number) {

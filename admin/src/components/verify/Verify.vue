@@ -111,7 +111,7 @@ const show = () => {
 }
 
 const emit = defineEmits(['success', 'error'])
-const success = (info) => {
+const success = (info: any) => {
     // refresh()
     emit('success', info)
     closeBox()

@@ -9,6 +9,7 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
+	"x_admin/plugin"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,7 @@ type wechatService struct {
 
 // MiniLogin 小程序登录（code → openid → 查找/自动注册用户 → JWT）
 func (s *wechatService) MiniLogin(c *gin.Context, req *user_schema.WechatMiniLoginReq) (user_schema.LoginResp, error) {
-	app := util.GetMiniProgramApp()
+	app := plugin.GetMiniProgramApp()
 	if app == nil {
 		return user_schema.LoginResp{}, response.Failed.SetMessage("小程序未配置")
 	}
@@ -51,7 +52,7 @@ func (s *wechatService) MiniLogin(c *gin.Context, req *user_schema.WechatMiniLog
 
 // BindMini 绑定小程序到当前用户
 func (s *wechatService) BindMini(userID string, req *user_schema.WechatBindReq) error {
-	app := util.GetMiniProgramApp()
+	app := plugin.GetMiniProgramApp()
 	if app == nil {
 		return response.Failed.SetMessage("小程序未配置")
 	}
@@ -72,7 +73,7 @@ func (s *wechatService) BindMini(userID string, req *user_schema.WechatBindReq) 
 
 // MpLogin 公众号登录（OAuth code → openid → 查找/自动注册用户 → JWT）
 func (s *wechatService) MpLogin(c *gin.Context, req *user_schema.WechatMpLoginReq) (user_schema.LoginResp, error) {
-	app := util.GetOfficialAccountApp()
+	app := plugin.GetOfficialAccountApp()
 	if app == nil {
 		return user_schema.LoginResp{}, response.Failed.SetMessage("公众号未配置")
 	}
@@ -108,7 +109,7 @@ func (s *wechatService) MpLogin(c *gin.Context, req *user_schema.WechatMpLoginRe
 
 // BindMp 绑定公众号到当前用户
 func (s *wechatService) BindMp(userID string, req *user_schema.WechatBindReq) error {
-	app := util.GetOfficialAccountApp()
+	app := plugin.GetOfficialAccountApp()
 	if app == nil {
 		return response.Failed.SetMessage("公众号未配置")
 	}
@@ -252,6 +253,8 @@ func (s *wechatService) wechatLogin(c *gin.Context, identityType, openID, creden
 		RefreshToken: refreshToken,
 		ExpiresIn:    config.JWTConfig.AccessExpireSec,
 		IsNew:        isNew,
+		UserID:       user.ID,
+		Nickname:     user.Nickname,
 	}, nil
 }
 

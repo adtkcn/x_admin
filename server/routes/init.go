@@ -13,8 +13,7 @@ func InitRouter() *gin.Engine {
 	gin.SetMode(config.AppConfig.GinMode)
 
 	var RootRouter = gin.New()
-	RootRouter.MaxMultipartMemory = 8 << 20 // 8 MiB
-
+	RootRouter.MaxMultipartMemory = 50 << 20 // 50 MiB
 	// 404 路由
 	RootRouter.NoRoute(response.NoRoute)
 

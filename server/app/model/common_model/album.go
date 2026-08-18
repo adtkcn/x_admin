@@ -18,6 +18,7 @@ type Album struct {
 	Ext        string                `gorm:"not null;default:'';comment:'文件扩展'"`
 	Hash       string                `gorm:"not null;default:'';comment:'文件hash'"`
 	Size       int64                 `gorm:"not null;default:0;comment:文件大小"`
+	FileHashId string                `gorm:"not null;default:'';index:idx_file_hash_id;comment:'关联文件哈希ID(x_common_file_hash.id)'"`
 	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
 	CreateTime x_null.Time           `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 	UpdateTime x_null.Time           `gorm:"autoUpdateTime;not null;comment:'更新时间'"`

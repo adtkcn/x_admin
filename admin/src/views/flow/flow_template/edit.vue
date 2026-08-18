@@ -10,26 +10,26 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
-                <el-form-item label="流程名称" prop="flowName">
-                    <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
+                <el-form-item label="流程名称" prop="flow_name">
+                    <el-input v-model="formData.flow_name" placeholder="请输入流程名称" />
                 </el-form-item>
-                <el-form-item label="流程分类" prop="flowGroup">
-                    <el-input v-model="formData.flowGroup" placeholder="请输入流程分类" />
+                <el-form-item label="流程分类" prop="flow_group">
+                    <el-input v-model="formData.flow_group" placeholder="请输入流程分类" />
                 </el-form-item>
-                <el-form-item label="流程描述" prop="flowRemark">
-                    <el-input v-model="formData.flowRemark" placeholder="请输入流程描述" />
+                <el-form-item label="流程描述" prop="flow_remark">
+                    <el-input v-model="formData.flow_remark" placeholder="请输入流程描述" />
                 </el-form-item>
-                <el-form-item label="表单配置" prop="flowFormData">
+                <el-form-item label="表单配置" prop="flow_form_data">
                     <el-input
-                        v-model="formData.flowFormData"
+                        v-model="formData.flow_form_data"
                         placeholder="请输入表单配置"
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
                     />
                 </el-form-item>
-                <el-form-item label="流程配置" prop="flowProcessData">
+                <el-form-item label="流程配置" prop="flow_process_data">
                     <el-input
-                        v-model="formData.flowProcessData"
+                        v-model="formData.flow_process_data"
                         placeholder="请输入流程配置"
                         type="textarea"
                         :autosize="{ minRows: 4, maxRows: 6 }"
@@ -44,11 +44,13 @@ import type { FormInstance } from 'element-plus'
 import {
     flow_template_edit,
     flow_template_add,
-    flow_template_detail
+    flow_template_detail,
+    type type_flow_template_edit
 } from '@/api/flow/flow_template'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
-import { computed, ref, reactive, shallowRef } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 import type { PropType } from 'vue'
 defineProps({
     dictData: {
@@ -64,45 +66,45 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑流程模板' : '新增流程模板'
 })
 
-const formData = reactive({
+const { state: formData, setState } = useReactiveWithReset<type_flow_template_edit>({
     id: '',
-    flowName: '',
-    flowGroup: '',
-    flowRemark: '',
-    flowFormData: '',
-    flowProcessData: ''
+    flow_name: undefined,
+    flow_group: undefined,
+    flow_remark: undefined,
+    flow_form_data: undefined,
+    flow_process_data: undefined
 })
 
 const formRules = {
-    flowName: [
+    flow_name: [
         {
             required: true,
             message: '请输入流程名称',
             trigger: ['blur']
         }
     ],
-    flowGroup: [
+    flow_group: [
         {
             required: true,
             message: '请输入流程分类',
             trigger: ['blur']
         }
     ],
-    flowRemark: [
+    flow_remark: [
         {
             required: true,
             message: '请输入流程描述',
             trigger: ['blur']
         }
     ],
-    flowFormData: [
+    flow_form_data: [
         {
             required: true,
             message: '请输入表单配置',
             trigger: ['blur']
         }
     ],
-    flowProcessData: [
+    flow_process_data: [
         {
             required: true,
             message: '请输入流程配置',
@@ -125,13 +127,8 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = async (data: Record<string, any>) => {
-    for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            formData[key] = data[key]
-        }
-    }
+const setFormData = async (data: type_flow_template_edit) => {
+    setState(data)
 }
 
 const getDetail = async (row: Record<string, any>) => {

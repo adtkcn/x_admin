@@ -16,7 +16,7 @@ type DictDataHandler struct{}
 // @Description	获取字典数据列表(不分页)
 // @Tags			setting_dictData-字典数据
 // @Param			token		header		string															true	"token"
-// @Param			dictType	query		string															false	"字典类型"
+// @Param			dict_type	query		string															false	"字典类型"
 // @Param			name		query		string															false	"键"
 // @Param			value		query		string															false	"值"
 // @Param			status		query		int8															false	"状态: 0=停用,1=启用"
@@ -51,7 +51,7 @@ func (ddh DictDataHandler) Detail(c *gin.Context) {
 // @Description	新增字典数据
 // @Tags			setting_dictData-字典数据
 // @Param			token	header		string				true	"token"
-// @Param			typeId	body		string				true	"类型ID"
+// @Param			type_id	body		string				true	"类型ID"
 // @Param			name	body		string				true	"键"
 // @Param			value	body		string				true	"值"
 // @Param			color	body		string				false	"颜色"
@@ -73,7 +73,7 @@ func (ddh DictDataHandler) Add(c *gin.Context) {
 // @Tags			setting_dictData-字典数据
 // @Param			token	header		string				true	"token"
 // @Param			id		body		string				true	"主键"
-// @Param			typeId	body		string				true	"类型ID"
+// @Param			type_id	body		string				true	"类型ID"
 // @Param			name	body		string				true	"键"
 // @Param			value	body		string				true	"值"
 // @Param			color	body		string				false	"颜色"

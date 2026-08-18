@@ -9,8 +9,8 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="80px" :rules="formRules">
-                <el-form-item label="菜单类型" prop="menuType" required>
-                    <el-radio-group v-model="formData.menuType">
+                <el-form-item label="菜单类型" prop="menu_type" required>
+                    <el-radio-group v-model="formData.menu_type">
                         <el-radio :value="MenuEnum.CATALOGUE">目录</el-radio>
                         <el-radio :value="MenuEnum.MENU">菜单</el-radio>
                         <el-radio :value="MenuEnum.BUTTON">按钮</el-radio>
@@ -20,11 +20,12 @@
                     <el-tree-select
                         class="flex-1"
                         v-model="formData.pid"
-                        :data="menuOptions"
+                        :data="menuTreeOptions"
                         clearable
                         node-key="id"
                         :props="{
-                            label: 'menuName'
+                            label: 'menu_name',
+                            disabled: 'disabled'
                         }"
                         :default-expand-all="true"
                         placeholder="请选择父级菜单"
@@ -32,19 +33,19 @@
                         :empty-values="[undefined, null]"
                     />
                 </el-form-item>
-                <el-form-item label="菜单名称" prop="menuName">
-                    <el-input v-model="formData.menuName" placeholder="请输入菜单名称" clearable />
+                <el-form-item label="菜单名称" prop="menu_name">
+                    <el-input v-model="formData.menu_name" placeholder="请输入菜单名称" clearable />
                 </el-form-item>
                 <el-form-item
-                    v-if="formData.menuType != MenuEnum.BUTTON"
+                    v-if="formData.menu_type != MenuEnum.BUTTON"
                     label="菜单图标"
-                    prop="menuIcon"
+                    prop="menu_icon"
                 >
-                    <icon-picker class="flex-1" v-model="formData.menuIcon" />
+                    <icon-picker class="flex-1" v-model="formData.menu_icon" />
                 </el-form-item>
 
                 <el-form-item
-                    v-if="formData.menuType == MenuEnum.MENU"
+                    v-if="formData.menu_type == MenuEnum.MENU"
                     label="组件路径"
                     prop="component"
                 >
@@ -64,7 +65,7 @@
                 </el-form-item>
 
                 <el-form-item
-                    v-if="formData.menuType != MenuEnum.BUTTON"
+                    v-if="formData.menu_type != MenuEnum.BUTTON"
                     label="路由路径"
                     prop="paths"
                 >
@@ -76,7 +77,7 @@
                     </div>
                 </el-form-item>
                 <el-form-item
-                    v-if="formData.menuType == MenuEnum.MENU"
+                    v-if="formData.menu_type == MenuEnum.MENU"
                     label="路由参数"
                     prop="params"
                 >
@@ -97,7 +98,7 @@
                 <el-form-item
                     label="选中菜单"
                     prop="selected"
-                    v-if="formData.menuType == MenuEnum.MENU"
+                    v-if="formData.menu_type == MenuEnum.MENU"
                 >
                     <div class="flex-1">
                         <el-input
@@ -111,7 +112,7 @@
                     </div>
                 </el-form-item>
                 <el-form-item
-                    v-if="formData.menuType != MenuEnum.CATALOGUE"
+                    v-if="formData.menu_type != MenuEnum.CATALOGUE"
                     label="接口权限"
                     prop="perms"
                 >
@@ -140,13 +141,13 @@
                 </el-form-item>
 
                 <el-form-item
-                    v-if="formData.menuType == MenuEnum.MENU"
+                    v-if="formData.menu_type == MenuEnum.MENU"
                     label="是否缓存"
-                    prop="isCache"
+                    prop="is_cache"
                     required
                 >
                     <div>
-                        <el-radio-group v-model="formData.isCache">
+                        <el-radio-group v-model="formData.is_cache">
                             <el-radio :value="1">缓存</el-radio>
                             <el-radio :value="0">不缓存</el-radio>
                         </el-radio-group>
@@ -154,13 +155,13 @@
                     </div>
                 </el-form-item>
                 <el-form-item
-                    v-if="formData.menuType != MenuEnum.BUTTON"
+                    v-if="formData.menu_type != MenuEnum.BUTTON"
                     label="是否显示"
-                    prop="isShow"
+                    prop="is_show"
                     required
                 >
                     <div>
-                        <el-radio-group v-model="formData.isShow">
+                        <el-radio-group v-model="formData.is_show">
                             <el-radio :value="1">显示</el-radio>
                             <el-radio :value="0">隐藏</el-radio>
                         </el-radio-group>
@@ -170,22 +171,22 @@
                     </div>
                 </el-form-item>
                 <el-form-item
-                    v-if="formData.menuType != MenuEnum.BUTTON"
+                    v-if="formData.menu_type != MenuEnum.BUTTON"
                     label="菜单状态"
-                    prop="isDisable"
+                    prop="is_disable"
                     required
                 >
                     <div>
-                        <el-radio-group v-model="formData.isDisable">
+                        <el-radio-group v-model="formData.is_disable">
                             <el-radio :value="0">正常</el-radio>
                             <el-radio :value="1">停用</el-radio>
                         </el-radio-group>
                         <div class="form-tips">选择停用则路由将不会出现在侧边栏，也不能被访问</div>
                     </div>
                 </el-form-item>
-                <el-form-item label="菜单排序" prop="menuSort">
+                <el-form-item label="菜单排序" prop="menu_sort">
                     <div>
-                        <el-input-number v-model="formData.menuSort" :max="9999" />
+                        <el-input-number v-model="formData.menu_sort" :max="9999" />
                         <div class="form-tips">数值越大越排前</div>
                     </div>
                 </el-form-item>
@@ -194,7 +195,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, shallowRef, reactive } from 'vue'
+import { ref, computed, shallowRef } from 'vue'
 import type { FormInstance } from 'element-plus'
 import {
     menuLists,
@@ -210,6 +211,7 @@ import { MenuEnum } from '@/enums/appEnums'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
@@ -230,21 +232,24 @@ const querySearch = (queryString: string, cb: any) => {
     cb(results.map((item) => ({ value: item })))
 }
 
-const formData = reactive<type_system_menu_edit>({
+const {
+    state: formData,
+    setState
+} = useReactiveWithReset<type_system_menu_edit>({
     id: '',
     pid: '',
-    menuType: MenuEnum.CATALOGUE,
-    menuIcon: '',
-    menuName: '',
-    menuSort: 0,
+    menu_type: MenuEnum.CATALOGUE,
+    menu_icon: '',
+    menu_name: '',
+    menu_sort: 0,
     paths: '',
     perms: '',
     component: '',
     selected: '',
     params: '',
-    isCache: 1,
-    isShow: 1,
-    isDisable: 0
+    is_cache: 1,
+    is_show: 1,
+    is_disable: 0
 })
 
 const formRules = {
@@ -255,7 +260,7 @@ const formRules = {
     //         trigger: ['blur', 'change']
     //     }
     // ],
-    menuName: [
+    menu_name: [
         {
             required: true,
             message: '请输入菜单名称',
@@ -278,16 +283,61 @@ const formRules = {
     // ]
 }
 const menuOptions = ref<type_system_menu_resp[]>([])
+// 所有菜单的平铺数据，用于构建“当前菜单及其所有后代”的禁用集合
+const allMenuData = ref<type_system_menu_resp[]>([])
 
 const getMenu = async () => {
     const data = await menuLists()
-    const menu: type_system_menu_resp = { id: '', menuName: '顶级', children: [] } as any
-    menu.children = arrayToTree(
-        data.filter((item) => item.menuType != MenuEnum.BUTTON),
-        ''
-    )
-    menuOptions.value.push(menu)
+    allMenuData.value = data.filter((item) => item.menu_type != MenuEnum.BUTTON)
+    const menu: type_system_menu_resp = { id: '', menu_name: '顶级', children: [] } as any
+    menu.children = arrayToTree(allMenuData.value, '')
+    menuOptions.value = [menu]
 }
+
+// 收集自身及所有后代菜单 ID（基于 pid 关系，不依赖 children 字段名）
+const collectSelfAndDescendants = (list: type_system_menu_resp[], currentId: string) => {
+    const childrenMap = new Map<string, string[]>()
+    list.forEach((item) => {
+        if (!childrenMap.has(item.pid)) childrenMap.set(item.pid, [])
+        childrenMap.get(item.pid)!.push(item.id)
+    })
+    const ids = new Set<string>()
+    const queue = [currentId]
+    while (queue.length) {
+        const cur = queue.shift()!
+        ids.add(cur)
+        ;(childrenMap.get(cur) || []).forEach((childId) => {
+            if (!ids.has(childId)) {
+                ids.add(childId)
+                queue.push(childId)
+            }
+        })
+    }
+    return ids
+}
+
+// 编辑模式下禁用当前菜单及其所有子级，避免选自己或自己的子孙作为上级形成环路
+const markDisabled = (
+    list: type_system_menu_resp[],
+    disabledIds: Set<string>
+): type_system_menu_resp[] => {
+    return list.map((item) => {
+        const children = item.children?.length
+            ? markDisabled(item.children, disabledIds)
+            : item.children
+        return {
+            ...item,
+            disabled: disabledIds.has(item.id),
+            children
+        }
+    })
+}
+const menuTreeOptions = computed(() => {
+    const list = menuOptions.value
+    if (!list?.length || !formData.id) return list
+    const disabledIds = collectSelfAndDescendants(allMenuData.value, formData.id)
+    return markDisabled(list, disabledIds)
+})
 function getApiListFn() {
     getApiList().then((res: string[]) => {
         const arr: { value: string; label: string }[] = []
@@ -304,22 +354,27 @@ function getApiListFn() {
     })
 }
 const handleSubmit = async () => {
-    await formRef.value?.validate()
-    const data = { ...formData }
-    // if (data.permsArr) {
-    //     data.perms = data.permsArr.join(',')
-    // } else {
-    //     data.perms = ''
-    // }
-
-    if (mode.value == 'edit') {
-        await menuEdit(data)
-    } else {
-        await menuAdd(data)
+    try {
+        await formRef.value?.validate()
+    } catch (error) {
+        // 表单校验未通过，Element 已自动提示，直接中断提交
+        return
     }
-    popupRef.value?.close()
-    feedback.msgSuccess('操作成功')
-    emit('success')
+    const data = { ...formData }
+
+    try {
+        if (mode.value == 'edit') {
+            await menuEdit(data)
+        } else {
+            await menuAdd(data)
+        }
+        popupRef.value?.close()
+        feedback.msgSuccess('操作成功')
+        emit('success')
+    } catch (error) {
+        console.error('菜单提交失败:', error)
+        feedback.msgError((error as Error)?.message || '操作失败,请稍后重试')
+    }
 }
 
 const open = (type = 'add') => {
@@ -328,12 +383,7 @@ const open = (type = 'add') => {
 }
 
 const setFormData = (data: type_system_menu_edit) => {
-    // for (const key in formData) {
-    //     if (data[key] != null && data[key] != undefined) {
-    //         formData[key] = data[key]
-    //     }
-    // }
-    Object.assign(formData, data)
+    setState(data)
 }
 
 const getDetail = async (row: type_system_menu_resp) => {

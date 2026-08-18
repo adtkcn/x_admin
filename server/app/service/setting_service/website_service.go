@@ -35,12 +35,12 @@ func (wSrv settingWebsiteService) Detail() (res map[string]string, e error) {
 		return
 	}
 	return map[string]string{
-		"name":     data["name"],
-		"logo":     util.UrlUtil.ToAbsoluteUrl(data["logo"]),
-		"favicon":  util.UrlUtil.ToAbsoluteUrl(data["favicon"]),
-		"backdrop": util.UrlUtil.ToAbsoluteUrl(data["backdrop"]),
-		"shopName": data["shopName"],
-		"shopLogo": util.UrlUtil.ToAbsoluteUrl(data["shopLogo"]),
+		"name":      data["name"],
+		"logo":      util.UrlUtil.ToAbsoluteUrl(data["logo"]),
+		"favicon":   util.UrlUtil.ToAbsoluteUrl(data["favicon"]),
+		"backdrop":  util.UrlUtil.ToAbsoluteUrl(data["backdrop"]),
+		"shop_name": data["shop_name"],
+		"shop_logo": util.UrlUtil.ToAbsoluteUrl(data["shop_logo"]),
 	}, nil
 }
 
@@ -62,11 +62,11 @@ func (wSrv settingWebsiteService) Save(wsReq setting_schema.SettingWebsiteReq) (
 	if e = response.CheckErr(err, "Save Set backdrop err"); e != nil {
 		return
 	}
-	err = SystemConfigService.Set(wSrv.db, "website", "shopName", wsReq.ShopName)
-	if e = response.CheckErr(err, "Save Set shopName err"); e != nil {
+	err = SystemConfigService.Set(wSrv.db, "website", "shop_name", wsReq.ShopName)
+	if e = response.CheckErr(err, "Save Set shop_name err"); e != nil {
 		return
 	}
-	err = SystemConfigService.Set(wSrv.db, "website", "shopLogo", util.UrlUtil.ToRelativeUrl(wsReq.ShopLogo))
-	e = response.CheckErr(err, "Save Set shopLogo err")
+	err = SystemConfigService.Set(wSrv.db, "website", "shop_logo", util.UrlUtil.ToRelativeUrl(wsReq.ShopLogo))
+	e = response.CheckErr(err, "Save Set shop_logo err")
 	return
 }

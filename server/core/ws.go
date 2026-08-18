@@ -1,7 +1,10 @@
 package core
 
 import (
+	"log"
+
 	"x_admin/config"
+	"x_admin/core/pubsub"
 	"x_admin/core/ws"
 )
 
@@ -9,21 +12,22 @@ import (
 var Ws = ws.NewManager()
 
 func init() {
-	// 根据集群模式配置选择 PubSub 实现
-	// 房间管理两种模式共用本地内存实现，跨实例通信完全通过 PubSub 完成
-	var ps ws.PubSub
+	// 事件总线使用 Redis 后端（跨实例广播）；房间管理由 ws 内部本地内存维护
 	var rdb = Redis
 	var prefix = config.RedisConfig.RedisPrefix
-	if config.AppConfig.ClusterMode == true {
-		// 集群模式：Redis Pub/Sub
-		channel := prefix + "ws:broadcast"
-		ps = ws.NewRedisPubSub(Redis, channel)
-	} else {
-		// 单机模式：本地 channel
-		ps = ws.NewLocalPubSub()
+
+	em, err := pubsub.New(pubsub.Config{
+		Backend: pubsub.BackendRedis,
+		Prefix:  prefix + "ws:", // 事件频道前缀
+	}, Redis)
+	if err != nil {
+		log.Fatalf("[ws] init pubsub error: %v", err)
+	}
+
+	if !config.AppConfig.ClusterMode {
 		rdb = nil // 单机模式不使用 Redis 在线计数
 	}
 
-	Ws.Init(ps, rdb, prefix)
+	Ws.Init(em, rdb, prefix)
 	go Ws.Start()
 }

@@ -32,30 +32,33 @@
             </div>
             <div class="mt-4">
                 <div>
-                    <el-table :data="lists" size="large" @selection-change="handleSelectionChange">
-                        <el-table-column type="selection" width="55" />
-                        <!-- <el-table-column label="ID" prop="id" /> -->
-                        <el-table-column label="数据名称" prop="name" min-width="120">
+                    <vxe-table
+                        ref="tableRef"
+                        :data="lists"
+                        :row-config="{ keyField: 'id' }"
+                        :checkbox-config="{ checkRowKeys: [] }"
+                        @checkbox-change="selectData = getCheckedIds()"
+                        @checkbox-all="selectData = getCheckedIds()"
+                        :border="'inner'"
+                    >
+                        <vxe-column type="checkbox" width="55" />
+                        <!-- <vxe-column title="ID" field="id" /> -->
+                        <vxe-column title="数据名称" field="name" min-width="120">
                             <template v-slot="{ row }">
                                 <span :style="{ color: row.color }">{{ row.name }}</span>
                             </template>
-                        </el-table-column>
-                        <el-table-column label="数据值" prop="value" min-width="120" />
-                        <!-- <el-table-column label="颜色" prop="color" min-width="120" /> -->
-                        <el-table-column label="状态">
+                        </vxe-column>
+                        <vxe-column title="数据值" field="value" min-width="120" />
+                        <!-- <vxe-column title="颜色" field="color" min-width="120" /> -->
+                        <vxe-column title="状态">
                             <template v-slot="{ row }">
                                 <el-tag v-if="row.status == 1" type="primary">正常</el-tag>
                                 <el-tag v-else type="danger">停用</el-tag>
                             </template>
-                        </el-table-column>
-                        <el-table-column
-                            label="备注"
-                            prop="remark"
-                            min-width="120"
-                            show-tooltip-when-overflow
-                        />
-                        <el-table-column label="排序" prop="sort" />
-                        <el-table-column label="操作" width="120" fixed="right">
+                        </vxe-column>
+                        <vxe-column title="备注" field="remark" min-width="120" show-overflow />
+                        <vxe-column title="排序" field="sort" />
+                        <vxe-column title="操作" width="120" fixed="right">
                             <template #default="{ row }">
                                 <el-button
                                     v-perms="['admin:setting:dict:data:edit']"
@@ -74,8 +77,8 @@
                                     删除
                                 </el-button>
                             </template>
-                        </el-table-column>
-                    </el-table>
+                        </vxe-column>
+                    </vxe-table>
                 </div>
             </div>
         </popup>
@@ -101,17 +104,18 @@ defineOptions({
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
 const showEdit = ref(false)
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+const tableRef = ref<any>()
 
 const selectRow = ref<any>()
 const typeTitle = computed(() => {
-    return `${selectRow.value?.dictName} [ ${selectRow.value?.dictType} ]`
+    return `${selectRow.value?.dict_name} [ ${selectRow.value?.dict_type} ]`
 })
 
 const lists = ref<type_setting_dict_data_resp[]>([])
 function getLists() {
     lists.value = []
     dictDataAll({
-        dictType: selectRow.value?.dictType
+        dict_type: selectRow.value?.dict_type
     }).then((res) => {
         console.log(res)
         lists.value = res
@@ -127,16 +131,15 @@ const open = (row: any) => {
 
 const selectData = ref<string[]>([])
 
-const handleSelectionChange = (val: type_setting_dict_data_resp[]) => {
-    selectData.value = val.map(({ id }) => id)
+const getCheckedIds = () => {
+    return (tableRef.value?.getCheckboxRecords() ?? []).map((item: any) => item.id)
 }
 
 const handleAdd = async () => {
     showEdit.value = true
     await nextTick()
     editRef.value?.setFormData({
-        typeValue: selectRow.value?.dictType,
-        typeId: selectRow.value?.id
+        type_id: selectRow.value?.id
     })
     editRef.value?.open('add')
 }
@@ -145,7 +148,7 @@ const handleEdit = async (data: type_setting_dict_data_resp) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
-    editRef.value?.setFormData({ ...data, typeValue: selectRow.value?.dictType })
+    editRef.value?.setFormData({ ...data, type_id: selectRow.value?.id })
 }
 
 const handleDelete = async (ids: string[]) => {
@@ -155,7 +158,7 @@ const handleDelete = async (ids: string[]) => {
         feedback.msgSuccess('删除成功')
         getLists()
     } catch (error) {
-        console.log(error)
+        console.error('字典数据删除失败:', error)
     }
 }
 

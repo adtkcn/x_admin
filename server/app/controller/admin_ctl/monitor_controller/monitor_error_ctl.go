@@ -15,6 +15,8 @@ import (
 	"x_admin/util/excel2"
 	"x_admin/util/img_util"
 
+	"github.com/adtkcn/x_null"
+
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/singleflight"
 )
@@ -26,18 +28,18 @@ type MonitorErrorHandler struct {
 // @Summary	监控-错误列列表
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		token			header		string																	true	"token"
-// @Param		pageNo			query		int																		true	"页码"
-// @Param		pageSize		query		int																		true	"每页数量"
-// @Param		ProjectKey		query		string																	false	"项目key"
-// @Param		EventType		query		string																	false	"事件类型"
-// @Param		Path			query		string																	false	"URL地址"
-// @Param		Message			query		string																	false	"错误消息"
-// @Param		Stack			query		string																	false	"错误堆栈"
-// @Param		Md5				query		string																	false	"md5"
-// @Param		CreateTimeStart	query		string																	false	"开始创建时间"
-// @Param		CreateTimeEnd	query		string																	false	"结束创建时间"
-// @Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]MonitorErrorResp}}	"成功"
+// @Param		token				header		string																	true	"token"
+// @Param		page_no				query		int																		true	"页码"
+// @Param		page_size			query		int																		true	"每页数量"
+// @Param		project_key			query		string																	false	"项目key"
+// @Param		event_type			query		string																	false	"事件类型"
+// @Param		path				query		string																	false	"URL地址"
+// @Param		message				query		string																	false	"错误消息"
+// @Param		stack				query		string																	false	"错误堆栈"
+// @Param		md5					query		string																	false	"md5"
+// @Param		create_time_start	query		string																	false	"开始创建时间"
+// @Param		create_time_end		query		string																	false	"结束创建时间"
+// @Success	200					{object}	response.Response{ data=response.PageResp{ lists=[]MonitorErrorResp}}	"成功"
 // @Router		/api/admin/monitor_error/list [get]
 func (hd *MonitorErrorHandler) List(c *gin.Context) {
 	var page request.PageReq
@@ -55,15 +57,15 @@ func (hd *MonitorErrorHandler) List(c *gin.Context) {
 // @Summary	监控-错误列列表-所有
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		ProjectKey		query		string										false	"项目key"
-// @Param		EventType		query		string										false	"事件类型"
-// @Param		Path			query		string										false	"URL地址"
-// @Param		Message			query		string										false	"错误消息"
-// @Param		Stack			query		string										false	"错误堆栈"
-// @Param		Md5				query		string										false	"md5"
-// @Param		CreateTimeStart	query		string										false	"开始创建时间"
-// @Param		CreateTimeEnd	query		string										false	"结束创建时间"
-// @Success	200				{object}	response.Response{ data=[]MonitorErrorResp}	"成功"
+// @Param		project_key			query		string										false	"项目key"
+// @Param		event_type			query		string										false	"事件类型"
+// @Param		path				query		string										false	"URL地址"
+// @Param		message				query		string										false	"错误消息"
+// @Param		stack				query		string										false	"错误堆栈"
+// @Param		md5					query		string										false	"md5"
+// @Param		create_time_start	query		string										false	"开始创建时间"
+// @Param		create_time_end		query		string										false	"结束创建时间"
+// @Success	200					{object}	response.Response{ data=[]MonitorErrorResp}	"成功"
 // @Router		/api/admin/monitor_error/list_all [get]
 func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
 	var listReq MonitorErrorListReq
@@ -78,7 +80,7 @@ func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
 // @Param		token	header		string										true	"token"
-// @Param		Id		query		string										false	"错误id"
+// @Param		id		query		string										false	"错误id"
 // @Success	200		{object}	response.Response{ data=MonitorErrorResp}	"成功"
 // @Router		/api/admin/monitor_error/detail [get]
 func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
@@ -98,15 +100,15 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
 // @Param		token		header		string				true	"token"
-// @Param		ProjectKey	body		string				false	"项目key"
-// @Param		ClientId	body		string				false	"sdk生成的客户端id"
-// @Param		UserId		body		string				false	"用户id"
-// @Param		EventType	body		string				false	"事件类型"
-// @Param		Path		body		string				false	"URL地址"
-// @Param		Message		body		string				false	"错误消息"
-// @Param		Stack		body		string				false	"错误堆栈"
-// @Param		Width		body		int					false	"屏幕宽度"
-// @Param		Height		body		int					false	"屏幕高度"
+// @Param		project_key	body		string				false	"项目key"
+// @Param		client_id	body		string				false	"sdk生成的客户端id"
+// @Param		user_id		body		string				false	"用户id"
+// @Param		event_type	body		string				false	"事件类型"
+// @Param		path		body		string				false	"URL地址"
+// @Param		message		body		string				false	"错误消息"
+// @Param		stack		body		string				false	"错误堆栈"
+// @Param		width		body		int					false	"屏幕宽度"
+// @Param		height		body		int					false	"屏幕高度"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_error/add [post]
 func (hd *MonitorErrorHandler) Add(c *gin.Context) {
@@ -126,8 +128,8 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 		var ListAddReq = monitor_schema.MonitorErrorListAddReq{
 			ClientId: addReq[i].ClientId,
 			UserId:   addReq[i].UserId,
-			Width:    addReq[i].Width,
-			Height:   addReq[i].Height,
+			Width:    x_null.NewInt64(int64(addReq[i].Width)),
+			Height:   x_null.NewInt64(int64(addReq[i].Height)),
 		}
 		// if ip != "" && ip != "127.0.0.1" {
 		// regionInfo := util.IpUtil.Parse("118.24.157.190")
@@ -148,7 +150,7 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Id		body		string				false	"错误id"
+// @Param		id		body		string				false	"错误id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_error/del [post]
 func (hd *MonitorErrorHandler) Del(c *gin.Context) {
@@ -164,7 +166,7 @@ func (hd *MonitorErrorHandler) Del(c *gin.Context) {
 //
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Ids		body		string				false	"逗号分割的id"
+// @Param		ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_error/del_batch [post]
 func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
@@ -184,15 +186,15 @@ func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 // @Summary	监控-错误列导出
 // @Tags		monitor_error-监控-错误列
 // @Produce	json
-// @Param		token			header	string	true	"token"
-// @Param		ProjectKey		query	string	false	"项目key"
-// @Param		EventType		query	string	false	"事件类型"
-// @Param		Path			query	string	false	"URL地址"
-// @Param		Message			query	string	false	"错误消息"
-// @Param		Stack			query	string	false	"错误堆栈"
-// @Param		Md5				query	string	false	"md5"
-// @Param		CreateTimeStart	query	string	false	"开始创建时间"
-// @Param		CreateTimeEnd	query	string	false	"结束创建时间"
+// @Param		token				header	string	true	"token"
+// @Param		project_key			query	string	false	"项目key"
+// @Param		event_type			query	string	false	"事件类型"
+// @Param		path				query	string	false	"URL地址"
+// @Param		message				query	string	false	"错误消息"
+// @Param		stack				query	string	false	"错误堆栈"
+// @Param		md5					query	string	false	"md5"
+// @Param		create_time_start	query	string	false	"开始创建时间"
+// @Param		create_time_end		query	string	false	"结束创建时间"
 // @Router		/api/admin/monitor_error/export_file [get]
 func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorErrorListReq

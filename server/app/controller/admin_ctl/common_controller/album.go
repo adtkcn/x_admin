@@ -86,6 +86,25 @@ func (ah AlbumHandler) AlbumDel(c *gin.Context) {
 	response.CheckAndRespWithData(c, nil, common_service.AlbumService.AlbumDel(delReq.Ids))
 }
 
+// @Summary		相册文件挂载（从已上传文件）
+// @Description	把上传后登记的文件（file_hash_id）挂载到相册分类：新建相册行并关联文件引用
+// @Tags			common_album-相册管理
+// @Param			token			header		string														true	"token"
+// @Param			file_hash_id	body		string														true	"文件哈希记录ID"
+// @Param			cid				body		string														true	"目标分类ID"
+// @Param			file_name		body		string														true	"文件展示名"
+// @Success		200				{object}	response.Response{data=common_schema.CommonAlbumListResp}	"成功"
+// @Router			/api/admin/common/album/albumAddFromFile [post]
+func (ah AlbumHandler) AlbumAddFromFile(c *gin.Context) {
+	var req common_schema.CommonAlbumAddFromFileReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+		return
+	}
+	adminId := config.AdminConfig.GetAdminId(c)
+	resp, err := common_service.AlbumService.AlbumAddFromFileRef(req.FileHashId, req.FileName, req.Cid, adminId, 0)
+	response.CheckAndRespWithData(c, resp, err)
+}
+
 // @Summary		类目列表
 // @Description	获取相册类目列表
 // @Tags			common_album-相册管理

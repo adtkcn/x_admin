@@ -113,7 +113,7 @@ func (ah AdminHandler) List(c *gin.Context) {
 // @Param			token		header		string														true	"token"
 // @Param			email		query		string														false	"邮箱(账号)"
 // @Param			nickname	query		string														false	"昵称"
-// @Param			roleId		query		string														false	"角色ID"
+// @Param			role_id		query		string														false	"角色ID"
 // @Success		200			{object}	response.Response{data=[]system_schema.SystemAuthAdminResp}	"成功"
 // @Router			/api/admin/system/admin/list_all [get]
 func (ah AdminHandler) ListAll(c *gin.Context) {
@@ -147,15 +147,15 @@ func (ah AdminHandler) Detail(c *gin.Context) {
 // @Description	新增管理员
 // @Tags			system_admin-管理员
 // @Param			token		header		string				true	"token"
-// @Param			deptId		body		string				false	"部门ID"
-// @Param			postId		body		string				false	"岗位ID"
-// @Param			roleIds		body		[]string			false	"角色ID列表"
+// @Param			dept_id		body		string				false	"部门ID"
+// @Param			post_id		body		string				false	"岗位ID"
+// @Param			role_ids	body		[]string			false	"角色ID列表"
 // @Param			email		body		string				true	"邮箱(账号)"
 // @Param			nickname	body		string				true	"昵称"
 // @Param			password	body		string				true	"密码"
 // @Param			avatar		body		string				false	"头像"
 // @Param			sort		body		int					false	"排序"
-// @Param			isDisable	body		uint8				false	"是否禁用: [0=否, 1=是]"
+// @Param			is_disable	body		uint8				false	"是否禁用: [0=否, 1=是]"
 // @Success		200			{object}	response.Response	"成功"
 // @Router			/api/admin/system/admin/add [post]
 func (ah AdminHandler) Add(c *gin.Context) {
@@ -172,15 +172,15 @@ func (ah AdminHandler) Add(c *gin.Context) {
 // @Tags			system_admin-管理员
 // @Param			token		header		string				true	"token"
 // @Param			id			body		string				true	"主键"
-// @Param			deptId		body		string				false	"部门ID"
-// @Param			postId		body		string				false	"岗位ID"
-// @Param			roleIds		body		[]string			false	"角色ID列表"
+// @Param			dept_id		body		string				false	"部门ID"
+// @Param			post_id		body		string				false	"岗位ID"
+// @Param			role_ids	body		[]string			false	"角色ID列表"
 // @Param			email		body		string				true	"邮箱(账号)"
 // @Param			nickname	body		string				true	"昵称"
 // @Param			password	body		string				false	"密码"
 // @Param			avatar		body		string				false	"头像"
 // @Param			sort		body		int					false	"排序"
-// @Param			isDisable	body		uint8				false	"是否禁用: [0=否, 1=是]"
+// @Param			is_disable	body		uint8				false	"是否禁用: [0=否, 1=是]"
 // @Success		200			{object}	response.Response	"成功"
 // @Router			/api/admin/system/admin/edit [post]
 func (ah AdminHandler) Edit(c *gin.Context) {
@@ -215,9 +215,9 @@ func (ah AdminHandler) SendEmailCode(c *gin.Context) {
 // @Param			nickname		body		string				true	"昵称"
 // @Param			avatar			body		string				false	"头像"
 // @Param			email			body		string				false	"邮箱"
-// @Param			emailCode		body		string				false	"邮箱验证码"
+// @Param			email_code		body		string				false	"邮箱验证码"
 // @Param			password		body		string				false	"密码"
-// @Param			currPassword	body		string				false	"当前密码"
+// @Param			curr_password	body		string				false	"当前密码"
 // @Success		200				{object}	response.Response	"成功"
 // @Router			/api/admin/system/admin/upInfo [post]
 func (ah AdminHandler) UpInfo(c *gin.Context) {
@@ -266,16 +266,16 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 // @Description	获取部门的用户
 // @Tags			system_admin-管理员
 // @Param			token	header		string														true	"token"
-// @Param			deptId	query		string														true	"部门id"
+// @Param			dept_id	query		string														true	"部门id"
 // @Success		200		{object}	response.Response{data=[]system_schema.SystemAuthAdminResp}	"{"code": 200, "data": []}"
 // @Router			/api/admin/system/admin/ListByDeptId [get]
 func (ah AdminHandler) ListByDeptId(c *gin.Context) {
-	deptId, bool := c.GetQuery("deptId")
+	dept_id, bool := c.GetQuery("dept_id")
 	if !bool {
 		response.Fail(c, "deptId不能为空")
 		return
 	}
 
-	res, err := system_service.AdminService.ListByDeptId(deptId)
+	res, err := system_service.AdminService.ListByDeptId(dept_id)
 	response.CheckAndRespWithData(c, res, err)
 }

@@ -1,12 +1,10 @@
 package common_service
 
 import (
-	"fmt"
 	"mime/multipart"
-	"time"
 
 	"x_admin/app/schema/common_schema"
-	"x_admin/plugin"
+	"x_admin/plugin/storage"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 )
@@ -22,39 +20,25 @@ func NewUploadService() *uploadService {
 type uploadService struct{}
 
 // UploadFile 上传
-// cid 分类id
-// AdminId 用户id
-func (upSrv uploadService) UploadFile(file *multipart.FileHeader, cid string, adminId string) (res common_schema.CommonUploadFileResp, e error) {
-	var upRes *plugin.UploadFile
-	if upRes, e = plugin.StorageDriver.Upload(file); e != nil {
+// 仅负责落盘 + 登记文件哈希（x_common_file_hash）。
+func (upSrv uploadService) UploadFile(file *multipart.FileHeader) (res common_schema.CommonFileHashResp, e error) {
+	var upRes *storage.UploadFile
+	if upRes, e = storage.StorageDriver.Upload(file); e != nil {
 		return
 	}
-	var startTime = time.Now()
 
 	// 计算文件MD5
 	md5, e := util.ToolsUtil.GetFileMD5(file)
 	if e != nil {
 		return
 	}
-	var endTime = time.Now()
-	var costTime = endTime.UnixNano() - startTime.UnixNano()
-	// 毫秒
-	costTime = costTime / 1000000
 
-	fmt.Printf("\n文件大小%d , md5时间： %d毫秒\n", file.Size, costTime)
-
-	var addReq common_schema.CommonAlbumAddReq
-	convert_util.Copy(&addReq, upRes)
-	addReq.AdminId = adminId //管理员
-	addReq.Cid = cid         // 分类id
-	addReq.Hash = md5
-
-	var albumId string
-	if albumId, e = AlbumService.AlbumAdd(addReq); e != nil {
+	// 登记文件哈希（秒传去重），返回哈希记录
+	hash, e := FileHashService.CreateOrGet(md5, upRes.Size, upRes.Uri, upRes.Ext)
+	if e != nil {
 		return
 	}
-	convert_util.Copy(&res, addReq)
-	res.ID = albumId
-	res.Path = upRes.Path
+	res = common_schema.CommonFileHashResp{}
+	convert_util.Copy(&res, hash)
 	return res, nil
 }

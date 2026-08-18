@@ -28,7 +28,7 @@ func (dh DeptHandler) All(c *gin.Context) {
 // @Tags			system_dept-部门
 // @Param			token	header		string														true	"token"
 // @Param			name	query		string														false	"部门名称"
-// @Param			isStop	query		int8														false	"是否停用: [0=否, 1=是]"
+// @Param			is_stop	query		int8														false	"是否停用: [0=否, 1=是]"
 // @Success		200		{object}	response.Response{data=[]system_schema.SystemAuthDeptResp}	"成功"
 // @Router			/api/admin/system/dept/list [get]
 func (dh DeptHandler) List(c *gin.Context) {
@@ -62,10 +62,10 @@ func (dh DeptHandler) Detail(c *gin.Context) {
 // @Param			token	header		string				true	"token"
 // @Param			pid		body		string				false	"部门父级"
 // @Param			name	body		string				true	"部门名称"
-// @Param			dutyId	body		string				false	"负责人id"
+// @Param			duty_id	body		string				false	"负责人id"
 // @Param			duty	body		string				false	"负责人"
 // @Param			mobile	body		string				false	"联系电话"
-// @Param			isStop	body		uint8				false	"是否停用: [0=否, 1=是]"
+// @Param			is_stop	body		uint8				false	"是否停用: [0=否, 1=是]"
 // @Param			sort	body		int					false	"排序编号"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/dept/add [post]
@@ -85,10 +85,10 @@ func (dh DeptHandler) Add(c *gin.Context) {
 // @Param			id		body		string				true	"主键"
 // @Param			pid		body		string				false	"部门父级"
 // @Param			name	body		string				true	"部门名称"
-// @Param			dutyId	body		string				false	"负责人id"
+// @Param			duty_id	body		string				false	"负责人id"
 // @Param			duty	body		string				false	"负责人"
 // @Param			mobile	body		string				false	"联系电话"
-// @Param			isStop	body		uint8				false	"是否停用: [0=否, 1=是]"
+// @Param			is_stop	body		uint8				false	"是否停用: [0=否, 1=是]"
 // @Param			sort	body		int					false	"排序编号"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/dept/edit [post]

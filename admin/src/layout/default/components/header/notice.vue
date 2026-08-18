@@ -36,21 +36,14 @@
                         v-for="item in recentList"
                         :key="item.id"
                         class="notice-item"
-                        :class="{ 'is-unread': item.isRead === 0 }"
+                        :class="{ 'is-unread': item.is_read === 0 }"
                         @click="handleItemClick(item)"
                     >
-                        <div class="notice-header">
-                            <el-tag
-                                :type="getTypeColor(item.type)"
-                                size="small"
-                                effect="plain"
-                                round
-                            >
-                                {{ getTypeLabel(item.type) }}
-                            </el-tag>
-                            <span class="notice-time">{{ item.createTime }}</span>
+                        <div class="notice-title-text mt-1">
+                            <span> {{ item.title }}</span>
+                            <span class="notice-time">{{ item.create_time }}</span>
                         </div>
-                        <div class="notice-title mt-1">{{ item.title }}</div>
+
                         <div class="notice-content">{{ item.content }}</div>
                     </div>
 
@@ -71,6 +64,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { ElNotification } from 'element-plus'
 import { useRouter } from 'vue-router'
 import {
     noticeList,
@@ -91,9 +85,13 @@ const popoverRef = ref()
 const loading = ref(false)
 const unreadCount = ref(0)
 const recentList = ref<type_notice_resp[]>([])
+type NoticeType = 'success' | 'danger' | 'primary' | 'info' | 'warning'
 
 // 类型映射
-const typeMap: Record<string, { label: string; color: string }> = {
+const typeMap: Record<
+    string,
+    { label: string; color: 'success' | 'danger' | 'primary' | 'info' | 'warning' }
+> = {
     flow_pass: { label: '审批通过', color: 'success' },
     flow_back: { label: '审批驳回', color: 'danger' },
     flow_new: { label: '新审批', color: 'primary' },
@@ -105,8 +103,8 @@ function getTypeLabel(type: string) {
     return typeMap[type]?.label || type
 }
 
-function getTypeColor(type: string) {
-    return typeMap[type]?.color || ''
+function getTypeColor(type: string): 'success' | 'danger' | 'primary' | 'info' | 'warning' {
+    return typeMap[type]?.color || 'info'
 }
 
 // 获取未读数和最近通知
@@ -114,11 +112,13 @@ async function fetchNoticeData() {
     try {
         const [countRes, listRes] = await Promise.all([
             noticeUnreadCount(),
-            noticeList({ pageNo: 1, pageSize: 5, isRead: -1, type: '' })
+            noticeList({ pageNo: 1, pageSize: 5, is_read: -1, type: '' })
         ])
         unreadCount.value = countRes.count
         recentList.value = listRes.lists
-    } catch {}
+    } catch (error) {
+        console.error('通知数据获取失败:', error)
+    }
 }
 
 // 弹出时加载数据
@@ -131,24 +131,32 @@ function onPopoverShow() {
 
 // 点击通知项
 async function handleItemClick(item: type_notice_resp) {
-    popoverRef.value?.hide()
-    if (item.isRead === 0) {
-        await noticeRead({ id: item.id })
-        unreadCount.value = Math.max(0, unreadCount.value - 1)
-    }
-    if (item.url) {
-        router.push(item.url)
+    try {
+        popoverRef.value?.hide()
+        if (item.is_read === 0) {
+            await noticeRead({ id: item.id })
+            unreadCount.value = Math.max(0, unreadCount.value - 1)
+        }
+        if (item.url) {
+            router.push(item.url)
+        }
+    } catch (error) {
+        console.error('通知标记已读失败:', error)
     }
 }
 
 // 全部已读
 async function handleReadAll() {
-    await noticeReadAll()
-    unreadCount.value = 0
-    recentList.value.forEach((item) => {
-        item.isRead = 1
-    })
-    feedback.msgSuccess('已全部标为已读')
+    try {
+        await noticeReadAll()
+        unreadCount.value = 0
+        recentList.value.forEach((item) => {
+            item.is_read = 1
+        })
+        feedback.msgSuccess('已全部标为已读')
+    } catch (error) {
+        console.error('通知全部已读失败:', error)
+    }
 }
 
 // 跳转通知页
@@ -158,9 +166,23 @@ function goNoticePage() {
 }
 
 // 订阅 WS 通知消息（组件卸载自动取消订阅）
-onWsMessage('notice', () => {
+onWsMessage('notice', (msg) => {
     unreadCount.value++
     fetchNoticeData()
+    const data = msg.data || {}
+
+    ElNotification({
+        title: data.title || '新消息通知',
+        message: data.content || '',
+        type: data.type || 'info',
+
+        duration: 4500,
+        onClick: () => {
+            if (data.url) {
+                router.push(data.url)
+            }
+        }
+    })
 })
 
 onMounted(() => {
@@ -208,21 +230,18 @@ onMounted(() => {
                 background-color: var(--el-color-primary-light-9);
             }
 
-            .notice-header {
+            .notice-title-text {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                font-size: 13px;
+                color: var(--el-text-color-primary);
+                font-weight: 500;
             }
 
             .notice-time {
                 font-size: 11px;
                 color: var(--el-text-color-placeholder);
-            }
-
-            .notice-title {
-                font-size: 13px;
-                color: var(--el-text-color-primary);
-                font-weight: 500;
             }
 
             .notice-content {

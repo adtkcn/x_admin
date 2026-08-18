@@ -51,7 +51,7 @@ func (h UserController) Login(c *gin.Context) {
 // @Description	手机号+密码登录，返回JWT token对
 // @Tags			user-用户系统
 // @Param			phone		body		string											true	"手机号"
-// @Param			phoneCode	body		string											false	"区号(默认86)"
+// @Param			phone_code	body		string											false	"区号(默认86)"
 // @Param			password	body		string											true	"密码"
 // @Success		200			{object}	response.Response{data=user_schema.LoginResp}	"成功"
 // @Router			/api/user/phoneLogin [post]
@@ -68,7 +68,7 @@ func (h UserController) PhoneLogin(c *gin.Context) {
 // @Description	手机号+短信验证码登录
 // @Tags			user-用户系统
 // @Param			phone		body		string											true	"手机号"
-// @Param			phoneCode	body		string											false	"区号(默认86)"
+// @Param			phone_code	body		string											false	"区号(默认86)"
 // @Param			code		body		string											true	"6位验证码"
 // @Success		200			{object}	response.Response{data=user_schema.LoginResp}	"成功"
 // @Router			/api/user/phoneCodeLogin [post]
@@ -84,7 +84,7 @@ func (h UserController) PhoneCodeLogin(c *gin.Context) {
 // @Summary		刷新token
 // @Description	使用refresh_token换取新的token对
 // @Tags			user-用户系统
-// @Param			refreshToken	body		string											true	"refreshToken"
+// @Param			refresh_token	body		string											true	"refresh_token"
 // @Success		200				{object}	response.Response{data=user_schema.LoginResp}	"成功"
 // @Router			/api/user/refresh [post]
 func (h UserController) RefreshToken(c *gin.Context) {
@@ -202,4 +202,29 @@ func (h UserController) KickOffline(c *gin.Context) {
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.UserService.KickOffline(userID)
 	response.CheckAndRespWithData(c, nil, err)
+}
+
+// @Summary	修改密码
+// @Router		/api/user/changePassword [put]
+func (h UserController) ChangePassword(c *gin.Context) {
+	userId, ok := currentUserId(c)
+	if !ok {
+		return
+	}
+	var req user_schema.ChangePasswordReq
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+		return
+	}
+	err := user_service.UserService.ChangePassword(userId, req.OldPassword, req.NewPassword)
+	response.CheckAndRespWithData(c, nil, err)
+}
+
+// currentUserId 取当前登录用户ID；未登录时直接写回"未登录"并返 false
+func currentUserId(c *gin.Context) (string, bool) {
+	v, ok := c.Get(config.UserIDKey)
+	if !ok {
+		response.Fail(c, "未登录")
+		return "", false
+	}
+	return v.(string), true
 }

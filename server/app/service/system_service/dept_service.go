@@ -69,6 +69,29 @@ func (service systemAuthDeptService) Detail(id string) (res system_schema.System
 	return
 }
 
+// getDeptDescendantIds 获取某部门的所有后代部门ID（用于防止将上级设为自身或子孙）
+func (service systemAuthDeptService) getDeptDescendantIds(id string) (descendantIds []string, e error) {
+	var depts []system_model.SystemAuthDept
+	if e = service.db.Select("id, pid").Find(&depts).Error; e != nil {
+		return
+	}
+	childrenMap := make(map[string][]string)
+	for _, d := range depts {
+		childrenMap[d.Pid] = append(childrenMap[d.Pid], d.ID)
+	}
+	// 广度优先收集所有后代
+	queue := []string{id}
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+		for _, childId := range childrenMap[current] {
+			descendantIds = append(descendantIds, childId)
+			queue = append(queue, childId)
+		}
+	}
+	return
+}
+
 // Add 部门新增
 func (service systemAuthDeptService) Add(addReq system_schema.SystemAuthDeptAddReq) (e error) {
 	if addReq.Pid == "" {
@@ -78,6 +101,16 @@ func (service systemAuthDeptService) Add(addReq system_schema.SystemAuthDeptAddR
 		}
 		if r.RowsAffected > 0 {
 			return response.AssertArgumentError.SetMessage("顶级部门只允许有一个!")
+		}
+	} else {
+		// 校验上级部门是否存在
+		var parent system_model.SystemAuthDept
+		r := service.db.Where("id = ?", addReq.Pid).Limit(1).Find(&parent)
+		if e = response.CheckErr(r.Error, "上级部门查询失败"); e != nil {
+			return
+		}
+		if r.RowsAffected == 0 {
+			return response.AssertArgumentError.SetMessage("上级部门不存在!")
 		}
 	}
 	var dept system_model.SystemAuthDept
@@ -103,6 +136,18 @@ func (service systemAuthDeptService) Edit(editReq system_schema.SystemAuthDeptEd
 	}
 	if editReq.ID == editReq.Pid {
 		return response.AssertArgumentError.SetMessage("上级部门不能是自己!")
+	}
+	// 禁止将上级部门设为自身的子孙，避免形成环路
+	if editReq.Pid != "" {
+		descendantIds, dErr := service.getDeptDescendantIds(editReq.ID)
+		if dErr != nil {
+			return dErr
+		}
+		for _, dId := range descendantIds {
+			if dId == editReq.Pid {
+				return response.AssertArgumentError.SetMessage("上级部门不能是自己的子级!")
+			}
+		}
 	}
 	// 更新
 	convert_util.Copy(&dept, editReq)

@@ -20,11 +20,11 @@
   <uv-list>
     <uv-list-item
       v-for="item of pager.lists"
-      :key="item.{{{toUpperCamelCase .PrimaryKey}}}"
+      :key="item.{{{.PrimaryTsField}}}"
       clickable
       show-arrow
-      :title="item.{{{toUpperCamelCase .PrimaryKey}}}"
-      :right-text="item.{{{toUpperCamelCase .PrimaryKey}}}"
+      :title="item.{{{.PrimaryTsField}}}"
+      :right-text="item.{{{.PrimaryTsField}}}"
       @click="toDetails(item)"
     ></uv-list-item>
   </uv-list>
@@ -63,8 +63,8 @@ import {
   onReachBottom,
   onPageScroll,
 } from "@dcloudio/uni-app";
-import { {{{ .ModuleName }}}_list } from "@/api/{{{nameToPath .ModuleName }}}";
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
+import { {{{ .ModuleName }}}_list } from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 
 import { usePaging } from "@/hooks/usePaging";
 import { toPath } from "@/utils/utils";
@@ -72,8 +72,8 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ .TsField }}}Start: '',
-    {{{ .TsField }}}End: '',
+    {{{ .TsField }}}_start: '',
+    {{{ .TsField }}}_end: '',
     {{{- else }}}
     {{{ .TsField }}}: '',
     {{{- end }}}
@@ -110,13 +110,13 @@ onReachBottom(() => {
 });
 
 function toDetails(item) {
-  toPath("/pages/{{{nameToPath .ModuleName }}}/details", { {{{toUpperCamelCase .PrimaryKey}}}: item.{{{toUpperCamelCase .PrimaryKey}}} });
+  toPath("/pages/{{{.Domain}}}/{{{.ModuleName}}}/details", { {{{.PrimaryTsField}}}: item.{{{.PrimaryTsField}}} });
 }
 function moreSearch() {
-  toPath("/pages/{{{nameToPath .ModuleName }}}/search");
+  toPath("/pages/{{{.Domain}}}/{{{.ModuleName}}}/search");
 }
 function add() {
-  toPath("/pages/{{{nameToPath .ModuleName }}}/edit");
+  toPath("/pages/{{{.Domain}}}/{{{.ModuleName}}}/edit");
 }
 </script>
 

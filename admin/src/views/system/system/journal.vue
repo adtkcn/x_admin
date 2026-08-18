@@ -44,8 +44,8 @@
 
                 <el-form-item label="访问时间" class="w-[360px]">
                     <daterange-picker
-                        v-model:startTime="formData.startTime"
-                        v-model:endTime="formData.endTime"
+                        v-model:startTime="formData.start_time"
+                        v-model:endTime="formData.end_time"
                     />
                 </el-form-item>
 
@@ -66,25 +66,25 @@
         </el-card>
 
         <el-card class="border-none! mt-4" shadow="never" v-loading="pager.loading">
-            <div>
-                <el-table :data="pager.lists" size="large" max-height="calc(100vh - 200px)">
-                    <el-table-column
-                        label="序号"
-                        type="index"
-                        :index="handleIndex"
-                        min-width="60"
-                    />
-                    <el-table-column label="操作" prop="title" min-width="120" />
-                    <el-table-column label="管理员" prop="email" min-width="120" />
-                    <el-table-column label="访问链接" prop="url" min-width="240">
+            <div style="height: calc(100vh - 350px)">
+                <vxe-table
+                    :data="pager.lists"
+                    height="100%"
+                    :row-config="{ keyField: 'id' }"
+                    :border="'inner'"
+                >
+                    <vxe-column type="seq" title="序号" min-width="60" />
+                    <vxe-column title="操作" field="title" min-width="120" />
+                    <vxe-column title="管理员" field="email" min-width="120" />
+                    <vxe-column title="访问链接" field="url" min-width="240">
                         <template #default="{ row }"> {{ row.type }}：{{ row.url }} </template>
-                    </el-table-column>
-                    <!-- <el-table-column label="访问方式" prop="type" min-width="100" /> -->
-                    <el-table-column label="来源IP" prop="ip" min-width="160" />
-                    <el-table-column label="错误信息" prop="error" min-width="200" />
-                    <el-table-column label="耗时(毫秒)" prop="taskTime" min-width="100" />
-                    <el-table-column label="日志时间" prop="createTime" width="170" />
-                </el-table>
+                    </vxe-column>
+                    <!-- <vxe-column title="访问方式" field="type" min-width="100" /> -->
+                    <vxe-column title="来源IP" field="ip" min-width="160" />
+                    <vxe-column title="错误信息" field="error" min-width="200" />
+                    <vxe-column title="耗时(毫秒)" field="task_time" min-width="100" />
+                    <vxe-column title="日志时间" field="create_time" width="170" />
+                </vxe-table>
             </div>
             <div class="flex mt-4 justify-end">
                 <pagination v-model="pager" @change="getLists" />
@@ -106,8 +106,8 @@ const formData = ref({
     url: '',
     ip: '',
     type: '',
-    startTime: '',
-    endTime: ''
+    start_time: '',
+    end_time: ''
 })
 
 // 访问方式

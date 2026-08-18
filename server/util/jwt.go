@@ -10,15 +10,29 @@ import (
 
 // UserClaims JWT Claims（用户系统，仅存必要字段）
 type UserClaims struct {
-	UserID       string `json:"userId"`
-	TokenVersion int64  `json:"tokenVersion"`
-	TokenType    string `json:"tokenType"` // access 或 refresh
+	UserID       string `json:"user_id"`
+	TokenVersion int64  `json:"token_version"`
+	TokenType    string `json:"token_type"` // access 或 refresh
 	jwt.RegisteredClaims
 }
 
-var JWTUtil = &jwtUtil{}
+var (
+	// WebJWTUtil web 端用户 JWT 工具
+	WebJWTUtil = NewJWTUtil(&config.JWTConfig)
+	// AdminJWTUtil 后台管理 JWT 工具（独立密钥）
+	AdminJWTUtil = NewJWTUtil(&config.AdminJWTConfig)
+	// JWTUtil 兼容旧调用，默认指向 web 端
+	JWTUtil = WebJWTUtil
+)
 
-type jwtUtil struct{}
+// NewJWTUtil 基于指定 jwt 配置创建工具实例
+func NewJWTUtil(cfg *config.JwtConfig) *jwtUtil {
+	return &jwtUtil{cfg: cfg}
+}
+
+type jwtUtil struct {
+	cfg *config.JwtConfig
+}
 
 // GenerateAccessToken 生成 access_token
 func (j *jwtUtil) GenerateAccessToken(userID string, tokenVersion int64) (string, error) {
@@ -28,13 +42,13 @@ func (j *jwtUtil) GenerateAccessToken(userID string, tokenVersion int64) (string
 		TokenVersion: tokenVersion,
 		TokenType:    "access",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(config.JWTConfig.AccessExpireSec) * time.Second)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(j.cfg.AccessExpireSec) * time.Second)),
 			IssuedAt:  jwt.NewNumericDate(now),
 			Issuer:    config.AppConfig.AppName,
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(config.JWTConfig.AccessSecret))
+	return token.SignedString([]byte(j.cfg.AccessSecret))
 }
 
 // GenerateRefreshToken 生成 refresh_token
@@ -45,13 +59,13 @@ func (j *jwtUtil) GenerateRefreshToken(userID string, tokenVersion int64) (strin
 		TokenVersion: tokenVersion,
 		TokenType:    "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(config.JWTConfig.RefreshExpireSec) * time.Second)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(j.cfg.RefreshExpireSec) * time.Second)),
 			IssuedAt:  jwt.NewNumericDate(now),
 			Issuer:    config.AppConfig.AppName,
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(config.JWTConfig.RefreshSecret))
+	return token.SignedString([]byte(j.cfg.RefreshSecret))
 }
 
 // GenerateTokenPair 生成 access_token + refresh_token 对
@@ -69,12 +83,12 @@ func (j *jwtUtil) GenerateTokenPair(userID string, tokenVersion int64) (accessTo
 
 // ParseAccessToken 解析 access_token
 func (j *jwtUtil) ParseAccessToken(tokenStr string) (*UserClaims, error) {
-	return j.parseToken(tokenStr, config.JWTConfig.AccessSecret, "access")
+	return j.parseToken(tokenStr, j.cfg.AccessSecret, "access")
 }
 
 // ParseRefreshToken 解析 refresh_token
 func (j *jwtUtil) ParseRefreshToken(tokenStr string) (*UserClaims, error) {
-	return j.parseToken(tokenStr, config.JWTConfig.RefreshSecret, "refresh")
+	return j.parseToken(tokenStr, j.cfg.RefreshSecret, "refresh")
 }
 
 // parseToken 内部解析

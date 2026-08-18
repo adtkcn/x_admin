@@ -138,7 +138,6 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res monit
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		service.CacheUtil.SetCache(obj.Id, obj)
 		service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 
@@ -158,7 +157,7 @@ func (service monitorClientService) Detail(Id string) (res monitor_schema.Monito
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-		service.CacheUtil.SetCache(obj.Id, obj)
+
 		service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	}
 	convert_util.Copy(&res, obj)
@@ -192,7 +191,6 @@ func (service monitorClientService) Add(addReq monitor_schema.MonitorClientAddRe
 	if e != nil {
 		return "", e
 	}
-	service.CacheUtil.SetCache(obj.Id, obj)
 	service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
 	createId = obj.Id
 	return

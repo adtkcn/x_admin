@@ -13,13 +13,7 @@
                         忘记密码？请输入注册邮箱重置
                     </div>
 
-                    <el-form
-                        ref="formRef"
-                        :model="formData"
-                        :rules="rules"
-                        size="large"
-                        autoComplete="off"
-                    >
+                    <el-form ref="formRef" :model="formData" :rules="rules" autoComplete="off">
                         <!-- 步骤1：邮箱 -->
                         <div v-show="step === 1">
                             <el-form-item prop="email">
@@ -37,7 +31,6 @@
                             </el-form-item>
                             <el-button
                                 type="primary"
-                                size="large"
                                 tabindex="2"
                                 :loading="isLockSend"
                                 :disabled="countdown > 0"
@@ -90,7 +83,6 @@
                             </el-form-item>
                             <el-button
                                 type="primary"
-                                size="large"
                                 tabindex="4"
                                 :loading="isLockReset"
                                 class="w-full"
@@ -118,7 +110,7 @@ import { ElMessage } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
 import ImageContain from '@/components/image-contain/index.vue'
 import useAppStore from '@/stores/modules/app'
-import { forgotPwdSendCode, forgotPwdReset } from '@/api/user'
+import { forgotPwdSendCode, forgotPwdReset } from '@/api/system/user'
 import { encryptPassword } from '@/utils/util'
 import { PageEnum } from '@/enums/pageEnum'
 import { useRouter } from 'vue-router'

@@ -6,7 +6,7 @@
         :close-on-press-escape="false"
         :destroy-on-close="true"
         draggable
-        :title="applyDetail.flowName"
+        :title="applyDetail.flow_name"
     >
         <FormCreate
             v-if="dialogVisible"
@@ -18,10 +18,10 @@
 
         <template #footer>
             <el-button @click="dialogVisible = false">关闭</el-button>
-            <el-button v-if="historyDetail.passStatus == 1" type="warning" @click="onBack">
+            <el-button v-if="historyDetail.pass_status == 1" type="warning" @click="onBack">
                 驳回
             </el-button>
-            <el-button v-if="historyDetail.passStatus == 1" type="primary" @click="onSubmit">
+            <el-button v-if="historyDetail.pass_status == 1" type="primary" @click="onSubmit">
                 确定
             </el-button>
         </template>
@@ -48,12 +48,12 @@ const options = ref({
 
 const dialogVisible = ref(false)
 const applyDetail = ref({
-    flowName: ''
+    flow_name: ''
 })
 
-const historyDetail = ref({
+const historyDetail = ref<{ id: string | null; pass_status: number | null }>({
     id: null,
-    passStatus: null
+    pass_status: null
 })
 
 const props = defineProps({
@@ -66,8 +66,8 @@ const emit = defineEmits(['back'])
 
 function open(
     row: any,
-    history: { id: string | null; passStatus: number | null },
-    form_json: Record<string, any>,
+    history: { id: string | null; pass_status: number | null },
+    form_json: [],
     form_data: Record<string, any>
 ) {
     applyDetail.value = row
@@ -81,12 +81,12 @@ function open(
 
 function closeFn() {
     dialogVisible.value = false
-    applyDetail.value = { flowName: '' }
+    applyDetail.value = { flow_name: '' }
     formData.value = {}
     formJson.value = []
     historyDetail.value = {
         id: null,
-        passStatus: null
+        pass_status: null
     }
 }
 function onBack() {

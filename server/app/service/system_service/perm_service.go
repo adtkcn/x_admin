@@ -70,7 +70,7 @@ func (service systemAuthPermService) SelectMenuIdsByRoleIds(roleIds []string) (m
  */
 func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, roleIds []string) (string, error) {
 	if len(roleIds) == 0 {
-		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
+		util.RedisUtil.Del(config.AdminConfig.BackstageAdminPermsKey + ":" + adminId)
 		return "", nil
 	}
 	menuIds, err := service.SelectMenuIdsByRoleIds(roleIds)
@@ -78,7 +78,7 @@ func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, ro
 		return "", err
 	}
 	if len(menuIds) == 0 {
-		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
+		util.RedisUtil.Del(config.AdminConfig.BackstageAdminPermsKey + ":" + adminId)
 		return "", nil
 	}
 	return service.CacheAdminPermsByMenuIds(adminId, menuIds)
@@ -93,7 +93,7 @@ func (service systemAuthPermService) CacheAdminPermsByRoleIds(adminId string, ro
 func (service systemAuthPermService) CacheAdminPermsByMenuIds(adminId string, menuIds []string) (string, error) {
 
 	if len(menuIds) == 0 {
-		util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, "", 0)
+		util.RedisUtil.Del(config.AdminConfig.BackstageAdminPermsKey + ":" + adminId)
 		return "", nil
 	}
 	var menus []system_model.SystemAuthMenu
@@ -118,13 +118,13 @@ func (service systemAuthPermService) CacheAdminPermsByMenuIds(adminId string, me
 		}
 	}
 	permsStr := strings.Join(permArray, ",")
-	util.RedisUtil.HSet(config.AdminConfig.BackstageAdminPermsKey, adminId, permsStr, 0)
+	util.RedisUtil.Set(config.AdminConfig.BackstageAdminPermsKey+":"+adminId, permsStr, 0)
 	return permsStr, nil
 }
 
 // GetAdminPerms 获取用户缓存的权限列表
 func (service systemAuthPermService) GetAdminPerms(adminId string) ([]string, error) {
-	permsStr := util.RedisUtil.HGet(config.AdminConfig.BackstageAdminPermsKey, adminId)
+	permsStr := util.RedisUtil.Get(config.AdminConfig.BackstageAdminPermsKey + ":" + adminId)
 	if permsStr == "" {
 		// 根据用户ID获取角色ID列表
 		roleIds, err := AdminRoleService.GetRoleIdsByAdminId(adminId)
@@ -145,7 +145,7 @@ func (service systemAuthPermService) GetAdminPerms(adminId string) ([]string, er
 
 // RemoveAdminPermsCache 移除用户权限缓存
 func (service systemAuthPermService) RemoveAdminPermsCache(adminId string) {
-	util.RedisUtil.HDel(config.AdminConfig.BackstageAdminPermsKey, adminId)
+	util.RedisUtil.Del(config.AdminConfig.BackstageAdminPermsKey + ":" + adminId)
 }
 
 // BatchSaveByMenuIds 批量写入角色和菜单绑定

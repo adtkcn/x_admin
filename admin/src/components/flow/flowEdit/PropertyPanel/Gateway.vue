@@ -17,7 +17,7 @@
                 >
             </div>
 
-            <vxe-table size="small" :data="props.properties.gateway" auto-resize>
+            <vxe-table size="small" :data="model.gateway" auto-resize>
                 <vxe-column field="label" title="表单项">
                     <template #default="{ row }">
                         {{ getLabel(row.id) }}
@@ -53,17 +53,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Close } from '@element-plus/icons-vue'
-import type { NodeType, PropertiesType, FieldListType } from './property.type'
+import type { FieldListType, GatewayProps } from './property.type'
+// defineModel 直接暴露父层 v-model="nodeProps" 绑定的 exclusive_gateway 私有属性
+const model = defineModel<GatewayProps>({ required: true })
 const props = withDefaults(
     defineProps<{
-        node?: NodeType
         fieldList?: FieldListType[]
-        properties?: PropertiesType
     }>(),
     {
-        node: () => ({}),
-        fieldList: () => [],
-        properties: () => ({ gateway: [] })
+        fieldList: () => []
     }
 )
 
@@ -102,7 +100,7 @@ function addCondition() {
 
     props.fieldList.find((item) => {
         if (item.id === selectGateway.value) {
-            props.properties.gateway.push({
+            model.value.gateway.push({
                 id: item.id,
                 value: '',
                 condition: ''
@@ -110,8 +108,8 @@ function addCondition() {
         }
     })
 }
-function removeCondition(row, $index) {
-    props.properties.gateway.splice($index, 1)
+function removeCondition(_row: any, $index: number) {
+    model.value.gateway.splice($index, 1)
 }
 </script>
 

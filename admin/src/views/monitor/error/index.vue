@@ -9,9 +9,9 @@
                 label-width="90px"
                 label-position="right"
             >
-                <el-form-item label="项目" prop="ProjectKey" class="w-[280px]">
+                <el-form-item label="项目" prop="project_key" class="w-[280px]">
                     <el-select
-                        v-model="queryParams.ProjectKey"
+                        v-model="queryParams.project_key"
                         clearable
                         :empty-values="[null, undefined]"
                     >
@@ -19,18 +19,18 @@
                         <el-option
                             v-for="(item, index) in listAllData.monitor_project_listAll"
                             :key="index"
-                            :label="item.ProjectName"
-                            :value="item.ProjectKey"
+                            :label="item.project_name"
+                            :value="item.project_key"
                         />
                     </el-select>
                 </el-form-item>
-                <!-- <el-form-item label="md5" prop="Md5" class="w-[280px]">
-                    <el-input v-model="queryParams.Md5" />
+                <!-- <el-form-item label="md5" prop="md5" class="w-[280px]">
+                    <el-input v-model="queryParams.md5" />
                 </el-form-item> -->
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
+                <el-form-item label="创建时间" prop="create_time" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.CreateTimeStart"
-                        v-model:endTime="queryParams.CreateTimeEnd"
+                        v-model:startTime="queryParams.create_time_start"
+                        v-model:endTime="queryParams.create_time_end"
                     />
                 </el-form-item>
 
@@ -52,33 +52,37 @@
                 </el-button>
             </div>
 
-            <el-table
+            <vxe-table
+                ref="tableRef"
                 class="mt-4"
-                size="large"
                 v-loading="pager.loading"
                 :data="pager.lists"
-                @selection-change="handleSelectionChange"
+                :row-config="{ keyField: 'id' }"
+                :checkbox-config="{ checkRowKeys: [] }"
+                @checkbox-change="multipleSelection = $event.$table.getCheckboxRecords()"
+                @checkbox-all="multipleSelection = $event.$table.getCheckboxRecords()"
+                :border="'inner'"
             >
-                <el-table-column type="selection" width="55" />
-                <el-table-column label="序号" type="index" :index="handleIndex" width="80" />
-                <el-table-column label="项目" prop="ProjectKey">
+                <vxe-column type="checkbox" width="55" />
+                <vxe-column type="seq" title="序号" width="80" />
+                <vxe-column title="项目" field="project_key">
                     <template #default="{ row }">
                         <dict-value
                             :options="listAllData.monitor_project_listAll"
-                            :value="row.ProjectKey"
-                            labelKey="ProjectName"
-                            valueKey="ProjectKey"
+                            :value="row.project_key"
+                            labelKey="project_name"
+                            valueKey="project_key"
                         />
                     </template>
-                </el-table-column>
-                <el-table-column label="事件类型" prop="EventType" width="170" />
-                <!-- <el-table-column label="URL地址" prop="Path" min-width="130" /> -->
-                <el-table-column label="错误消息" prop="Message" min-width="150" />
+                </vxe-column>
+                <vxe-column title="事件类型" field="event_type" width="170" />
+                <!-- <vxe-column title="URL地址" field="path" min-width="130" /> -->
+                <vxe-column title="错误消息" field="message" min-width="150" show-overflow />
 
-                <!-- <el-table-column label="md5" prop="Md5" min-width="130" /> -->
-                <el-table-column label="创建时间" prop="CreateTime" width="170" />
+                <!-- <vxe-column title="md5" field="md5" min-width="130" /> -->
+                <vxe-column title="创建时间" field="create_time" width="170" />
 
-                <el-table-column label="操作" width="120" fixed="right">
+                <vxe-column title="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:monitor_error:detail']"
@@ -92,13 +96,13 @@
                             v-perms="['admin:monitor_error:del']"
                             type="danger"
                             link
-                            @click="handleDelete(row.Id)"
+                            @click="handleDelete(row.id)"
                         >
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -143,17 +147,17 @@ const showEdit = ref(false)
 const showDetails = ref(false)
 
 const queryParams = reactive<type_monitor_error_query>({
-    ProjectKey: undefined,
-    EventType: undefined,
-    Path: undefined,
-    Message: undefined,
-    Stack: undefined,
-    Md5: undefined,
-    CreateTimeStart: undefined,
-    CreateTimeEnd: undefined
+    project_key: undefined,
+    event_type: undefined,
+    path: undefined,
+    message: undefined,
+    stack: undefined,
+    md5: undefined,
+    create_time_start: undefined,
+    create_time_end: undefined
 })
 
-const { pager, getLists, resetPage, resetParams, handleIndex } = usePaging<type_monitor_error>({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_monitor_error>({
     fetchFun: monitor_error_list,
     params: queryParams
 })
@@ -164,12 +168,9 @@ const { listAllData } = useListAllData<{
 })
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+const tableRef = ref<any>()
 
 const multipleSelection = ref<type_monitor_error[]>([])
-const handleSelectionChange = (val: type_monitor_error[]) => {
-    console.log(val)
-    multipleSelection.value = val
-}
 
 const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
 const handleDetails = async (row: type_monitor_error) => {
@@ -178,13 +179,15 @@ const handleDetails = async (row: type_monitor_error) => {
     detailsRef.value?.open('details')
     detailsRef.value?.getDetail(row)
 }
-const handleDelete = async (Id: number) => {
+const handleDelete = async (id: string) => {
     try {
         await feedback.confirm('确定要删除？')
-        await monitor_error_delete(Id)
+        await monitor_error_delete(id)
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控错误删除失败:', error)
+    }
 }
 // 批量删除
 const deleteBatch = async () => {
@@ -195,11 +198,13 @@ const deleteBatch = async () => {
     try {
         await feedback.confirm('确定要删除？')
         await monitor_error_delete_batch({
-            Ids: multipleSelection.value.map((item) => item.Id).join(',')
+            ids: multipleSelection.value.map((item) => item.id).join(',')
         })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('监控错误批量删除失败:', error)
+    }
 }
 
 getLists()

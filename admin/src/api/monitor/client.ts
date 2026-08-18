@@ -7,40 +7,40 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_client = {
-    Id?: string
-    ProjectKey?: string
-    ClientId?: string
-    UserId?: string
-    Os?: string
-    Browser?: string
-    Country?: string
-    Province?: string
-    City?: string
-    Operator?: string
-    Ip?: string
+    id?: string
+    project_key?: string
+    client_id?: string
+    user_id?: string
+    os?: string
+    browser?: string
+    country?: string
+    province?: string
+    city?: string
+    operator?: string
+    ip?: string
 
-    Ua?: string
-    CreateTime?: string
+    ua?: string
+    create_time?: string
 
-    Width?: string
-    Height?: string
+    width?: string
+    height?: string
 }
 // 查询
 export type type_monitor_client_query = {
-    ProjectKey?: string
-    Os?: string
-    Browser?: string
-    Ua?: string
-    CreateTimeStart?: string
-    CreateTimeEnd?: string
+    project_key?: string
+    os?: string
+    browser?: string
+    ua?: string
+    create_time_start?: string
+    create_time_end?: string
 }
 // 添加编辑
 export type type_monitor_client_edit = {
-    Id?: string
-    ProjectKey?: string
-    Os?: string
-    Browser?: string
-    Ua?: string
+    id?: string
+    project_key?: string
+    os?: string
+    browser?: string
+    ua?: string
 }
 
 // 监控-客户端信息列表
@@ -59,12 +59,12 @@ export function monitor_client_list_all(params?: type_monitor_client_query) {
 }
 
 // 监控-客户端信息详情
-export function monitor_client_detail(Id: number | string) {
-    return request.get<type_monitor_client>({ url: '/monitor_client/detail', params: { Id } })
+export function monitor_client_detail(id: string) {
+    return request.get<type_monitor_client>({ url: '/monitor_client/detail', params: { id } })
 }
 
-export function monitor_client_errorUsers(Id: number | string) {
-    return request.get<type_monitor_client[]>({ url: '/monitor_client/errorUsers', params: { Id } })
+export function monitor_client_errorUsers(id: string) {
+    return request.get<type_monitor_client[]>({ url: '/monitor_client/errorUsers', params: { id } })
 }
 
 // 监控-客户端信息新增
@@ -78,11 +78,11 @@ export function monitor_client_edit(data: type_monitor_client_edit) {
 }
 
 // 监控-客户端信息删除
-export function monitor_client_delete(Id: number | string) {
-    return request.post<null>({ url: '/monitor_client/del', data: { Id } })
+export function monitor_client_delete(id: string) {
+    return request.post<null>({ url: '/monitor_client/del', data: { id } })
 }
 // 监控-客户端信息删除-批量
-export function monitor_client_delete_batch(data: { Ids: string }) {
+export function monitor_client_delete_batch(data: { ids: string }) {
     return request.post<null>({ url: '/monitor_client/del_batch', data })
 }
 

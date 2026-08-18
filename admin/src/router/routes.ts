@@ -51,17 +51,11 @@ export const constantRoutes: Array<RouteRecordRaw> = [
                 meta: {
                     title: '消息通知'
                 }
-            }
-        ]
-    },
-    {
-        path: '/user',
-        component: LAYOUT,
-        children: [
+            },
             {
-                path: 'setting',
-                name: 'user_setting',
-                component: () => import('@/views/user/setting.vue'),
+                path: 'admin/setting',
+                name: 'admin_setting',
+                component: () => import('@/views/system/admin/setting.vue'),
                 meta: {
                     title: '个人设置'
                 }

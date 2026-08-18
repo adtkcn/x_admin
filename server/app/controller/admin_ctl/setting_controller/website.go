@@ -31,8 +31,8 @@ func (wh WebsiteHandler) Detail(c *gin.Context) {
 // @Param			logo		body		string				false	"网站图标"
 // @Param			favicon		body		string				false	"网站LOGO"
 // @Param			backdrop	body		string				false	"登录页广告图"
-// @Param			shopName	body		string				false	"商城名称"
-// @Param			shopLogo	body		string				false	"商城Logo"
+// @Param			shop_name	body		string				false	"商城名称"
+// @Param			shop_logo	body		string				false	"商城Logo"
 // @Success		200			{object}	response.Response	"成功"
 // @Router			/api/admin/setting/website/save [post]
 func (wh WebsiteHandler) Save(c *gin.Context) {

@@ -6,11 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// NoRoute 无路由响应
-func NoRoute(c *gin.Context) {
-	Send(c, 404, "请求接口不存在", nil)
-}
-
 // HTTPError HTTP 错误响应
 func HTTPError(c *gin.Context, status int, msg string) {
 	c.JSON(status, Response{
@@ -33,6 +28,11 @@ func Unauthorized(c *gin.Context, msg string) {
 // Forbidden 403 错误
 func Forbidden(c *gin.Context, msg string) {
 	HTTPError(c, http.StatusForbidden, msg)
+}
+
+// NoRoute 无路由响应
+func NoRoute(c *gin.Context) {
+	HTTPError(c, 404, "请求接口不存在")
 }
 
 // NotFound 404 错误

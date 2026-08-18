@@ -13,8 +13,8 @@ export type type_monitor_client = {
     width?: number;
     height?: number;
     ua?: string;
-    createTime?: string;
-    clientTime?: string;
+    CreateTime?: string;
+    ClientTime?: string;
 }
 // 查询
 export type type_monitor_client_query = {
@@ -27,10 +27,10 @@ export type type_monitor_client_query = {
     width?: number;
     height?: number;
     ua?: string;
-    createTimeStart?: string;
-    createTimeEnd?: string;
-    clientTimeStart?: string;
-    clientTimeEnd?: string;
+    CreateTimeStart?: string;
+    CreateTimeEnd?: string;
+    ClientTimeStart?: string;
+    ClientTimeEnd?: string;
 }
 // 添加编辑
 export type type_monitor_client_edit = {
@@ -43,7 +43,7 @@ export type type_monitor_client_edit = {
     width?: number;
     height?: number;
     ua?: string;
-    clientTime?: string;
+    ClientTime?: string;
 }
 
 
@@ -65,7 +65,7 @@ export function monitor_client_list_all(params?: type_monitor_client_query) {
 }
 
 // 监控-客户端信息详情
-export function monitor_client_detail(id: number | string) {
+export function monitor_client_detail(id: string) {
     return request<type_monitor_client>({
 		url: '/monitor_client/detail',
 		method: 'GET',
@@ -92,7 +92,7 @@ export function monitor_client_edit(data: type_monitor_client_edit) {
 }
 
 // 监控-客户端信息删除
-export function monitor_client_delete(id: number | string) {
+export function monitor_client_delete(id: string) {
     return request<null>({
         url: '/monitor_client/del',
         method: "POST",

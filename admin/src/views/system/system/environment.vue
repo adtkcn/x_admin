@@ -74,44 +74,44 @@
         <el-card class="border-none!" shadow="never">
             <div>服务器信息</div>
             <div class="mt-4">
-                <el-table :data="[info.sys]" size="large">
-                    <el-table-column prop="computerName" label="服务器名称" min-width="150" />
-                    <el-table-column prop="computerIp" label="服务器IP" min-width="120" />
-                    <el-table-column prop="osName" label="操作系统" min-width="100" />
-                    <el-table-column prop="osArch" label="系统架构" min-width="100" />
-                    <el-table-column prop="userDir" label="项目路径" min-width="250" />
-                </el-table>
+                <vxe-table :data="[info.sys]" :row-config="{ keyField: 'computerName' }" border>
+                    <vxe-column field="computerName" title="服务器名称" min-width="150" />
+                    <vxe-column field="computerIp" title="服务器IP" min-width="120" />
+                    <vxe-column field="osName" title="操作系统" min-width="100" />
+                    <vxe-column field="osArch" title="系统架构" min-width="100" />
+                    <vxe-column field="userDir" title="项目路径" min-width="250" />
+                </vxe-table>
             </div>
         </el-card>
 
         <el-card shadow="never" class="border-none! mt-4">
             <div>go环境信息</div>
             <div class="mt-4">
-                <el-table :data="[info.go]" size="large">
-                    <el-table-column prop="name" label="go名称" min-width="120" />
-                    <el-table-column prop="startTime" label="启动时间" min-width="120" />
-                    <el-table-column prop="home" label="安装路径" min-width="120" />
-                    <el-table-column prop="inputArgs" label="运行参数" min-width="120" />
-                    <el-table-column prop="version" label="go版本" min-width="120" />
-                    <el-table-column prop="runTime" label="运行时长" min-width="120" />
-                </el-table>
+                <vxe-table :data="[info.go]" :row-config="{ keyField: 'name' }" border>
+                    <vxe-column field="name" title="go名称" min-width="120" />
+                    <vxe-column field="startTime" title="启动时间" min-width="120" />
+                    <vxe-column field="home" title="安装路径" min-width="120" />
+                    <vxe-column field="inputArgs" title="运行参数" min-width="120" />
+                    <vxe-column field="version" title="go版本" min-width="120" />
+                    <vxe-column field="runTime" title="运行时长" min-width="120" />
+                </vxe-table>
             </div>
         </el-card>
 
         <el-card shadow="never" class="border-none! mt-4">
             <div>硬盘状态</div>
             <div class="mt-4">
-                <el-table :data="info.disk" size="large">
-                    <el-table-column prop="dirName" label="盘符路径" min-width="100" />
-                    <el-table-column prop="sysTypeName" label="文件系统" min-width="100" />
-                    <el-table-column prop="typeName" label="盘符类型" min-width="100" />
-                    <el-table-column prop="total" label="总大小" min-width="100" />
-                    <el-table-column prop="free" label="可用大小" min-width="100" />
-                    <el-table-column prop="used" label="已用大小" min-width="100" />
-                    <el-table-column prop="usage" label="已用百分比" min-width="100">
+                <vxe-table :data="info.disk" :row-config="{ keyField: 'dirName' }" border>
+                    <vxe-column field="dirName" title="盘符路径" min-width="100" />
+                    <vxe-column field="sysTypeName" title="文件系统" min-width="100" />
+                    <vxe-column field="typeName" title="盘符类型" min-width="100" />
+                    <vxe-column field="total" title="总大小" min-width="100" />
+                    <vxe-column field="free" title="可用大小" min-width="100" />
+                    <vxe-column field="used" title="已用大小" min-width="100" />
+                    <vxe-column field="usage" title="已用百分比" min-width="100">
                         <template #default="{ row }"> {{ row.usage }}% </template>
-                    </el-table-column>
-                </el-table>
+                    </vxe-column>
+                </vxe-table>
             </div>
         </el-card>
     </div>
@@ -152,6 +152,7 @@ const getSystemInfo = async () => {
         }
         loading.value = false
     } catch (error) {
+        console.error('系统环境信息获取失败:', error)
         loading.value = false
     }
 }

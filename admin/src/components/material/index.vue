@@ -4,7 +4,7 @@
         <div class="material__left">
             <div class="flex-1 min-h-0">
                 <el-scrollbar>
-                    <div class="material-left__content pt-4 p-b-4">
+                    <div class="material-left__content pt-4 pb-4">
                         <el-tree
                             ref="treeRef"
                             node-key="id"
@@ -24,12 +24,26 @@
                                     <span class="flex-1 truncate mr-2">
                                         <overflow-tooltip :content="data.name" />
                                     </span>
+                                    <span v-if="data.id === ''">
+                                        <popover-input
+                                            v-perms="['admin:common:album:cateAdd']"
+                                            @confirm="handleAddCate"
+                                            size="default"
+                                            width="500px"
+                                            :limit="20"
+                                            show-limit
+                                            teleported
+                                            placeholder="新分组名称"
+                                        >
+                                            <span class="p-1 mr-[5px]">+</span>
+                                        </popover-input>
+                                    </span>
                                     <el-dropdown
                                         v-perms="[
                                             'admin:common:album:cateRename',
                                             'admin:common:album:cateDel'
                                         ]"
-                                        v-if="data.id > 0"
+                                        v-if="data.id != 0"
                                         :hide-on-click="false"
                                     >
                                         <span class="p-1 mr-[5px]">···</span>
@@ -66,20 +80,6 @@
                     </div>
                 </el-scrollbar>
             </div>
-
-            <div class="flex justify-center pt-2 border-t border-br">
-                <popover-input
-                    v-perms="['admin:common:album:cateAdd']"
-                    @confirm="handleAddCate"
-                    size="default"
-                    width="500px"
-                    :limit="20"
-                    show-limit
-                    teleported
-                >
-                    <el-button>添加分组</el-button>
-                </popover-input>
-            </div>
         </div>
         <div class="material__center flex flex-col">
             <el-tabs
@@ -98,65 +98,92 @@
             <div class="flex flex-col">
                 <div class="operate-btn flex">
                     <div class="flex-1"></div>
-                    <el-input
-                        class="w-[240px]!"
-                        placeholder="请输入名称"
-                        v-model="fileParams.name"
-                        @keyup.enter="refresh"
-                    >
-                        <template #append>
-                            <el-button @click="refresh">
-                                <template #icon>
-                                    <icon name="el-icon-Search" />
+                    <el-form ref="formRef" class="mb-[-20px]" :inline="true" label-position="right">
+                        <!-- <el-form-item class="w-[270px]">
+                            <el-select
+                                v-model="activeFileType"
+                                clearable
+                                :empty-values="[null, undefined]"
+                                @change="handleTabChange"
+                            >
+                                <el-option label="全部" value="" />
+                                <el-option
+                                    v-for="(item, index) in FileTabsMap"
+                                    :key="index"
+                                    :label="item.name"
+                                    :value="item.fileType"
+                                />
+                            </el-select>
+                        </el-form-item> -->
+                        <el-form-item>
+                            <el-input
+                                placeholder="请输入名称"
+                                v-model="fileParams.name"
+                                @keyup.enter="refresh"
+                            >
+                                <template #append>
+                                    <el-button @click="refresh">
+                                        <template #icon>
+                                            <icon name="el-icon-Search" />
+                                        </template>
+                                    </el-button>
                                 </template>
-                            </el-button>
-                        </template>
-                    </el-input>
-
-                    <Upload
-                        class="ml-3"
-                        :data="{ cid: cateId }"
-                        :ext="ext"
-                        :show-progress="true"
-                        @change="refresh"
-                    >
-                        <el-button type="primary">本地上传</el-button>
-                    </Upload>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <Upload :ext="ext" :show-progress="true" @change="handleUpload">
+                                <el-button type="primary">本地上传</el-button>
+                            </Upload>
+                        </el-form-item>
+                    </el-form>
                 </div>
             </div>
 
-            <div class="material-center__content flex flex-col flex-1 mb-1 min-h-0">
-                <el-table
+            <div class="material-center__content flex flex-col flex-1 mb-1 min-h-0 overflow-hidden">
+                <vxe-table
                     ref="tableRef"
                     class="mt-4"
                     :data="pager.lists"
-                    width="100%"
-                    height="100%"
-                    size="large"
-                    @selection-change="handleSelectionChange"
+                    height="auto"
+                    :row-config="{ keyField: 'id' }"
+                    :checkbox-config="{ checkRowKeys: [] }"
+                    @checkbox-change="selectItems($event.$table.getCheckboxRecords())"
+                    @checkbox-all="selectItems($event.$table.getCheckboxRecords())"
+                    :border="'inner'"
                 >
-                    <el-table-column type="selection" width="55" />
-                    <el-table-column label="图片" width="100">
+                    <vxe-column type="checkbox" width="55" />
+                    <vxe-column title="图片" width="100">
                         <template #default="{ row }">
-                            <file-item
+                            <FileItem
                                 :uri="row.uri"
                                 file-size="50px"
                                 @click.stop="handlePreview(row.uri)"
-                            ></file-item>
+                            ></FileItem>
                         </template>
-                    </el-table-column>
-                    <el-table-column label="名称" min-width="100" show-overflow-tooltip>
+                    </vxe-column>
+                    <vxe-column title="名称" min-width="100" show-overflow>
                         <template #default="{ row }">
                             <el-link @click.stop="handlePreview(row.uri)" underline="never">
                                 {{ row.name }}
                             </el-link>
                         </template>
-                    </el-table-column>
-                    <el-table-column label="大小" prop="size" min-width="100"> </el-table-column>
-                    <el-table-column label="格式" prop="ext" min-width="80"></el-table-column>
+                    </vxe-column>
+                    <vxe-column title="大小" field="size" width="120" v-if="mode == 'page'">
+                    </vxe-column>
+                    <!-- <vxe-column
+                        title="格式"
+                        field="ext"
+                        width="100"
+                        v-if="mode == 'page'"
+                    ></vxe-column> -->
 
-                    <el-table-column prop="createTime" label="上传时间" min-width="160" />
-                    <el-table-column label="操作" width="190" fixed="right">
+                    <vxe-column
+                        field="create_time"
+                        title="上传时间"
+                        width="170"
+                        v-if="mode == 'page'"
+                    />
+                    <vxe-column title="操作" width="150" fixed="right">
                         <template #default="{ row }">
                             <div
                                 class="inline-block mr-2"
@@ -174,11 +201,11 @@
                                     <el-link type="primary" link> 重命名 </el-link>
                                 </popover-input>
                             </div>
-                            <div class="inline-block mr-2">
+                            <!-- <div class="inline-block mr-2">
                                 <el-link type="primary" link @click.stop="handlePreview(row.uri)">
                                     查看
                                 </el-link>
-                            </div>
+                            </div> -->
 
                             <div
                                 class="inline-block mr-2"
@@ -192,12 +219,12 @@
                                     删除
                                 </el-link>
                             </div>
-                            <div class="inline-block mr-2">
+                            <div class="inline-block mr-2" v-if="mode == 'page'">
                                 <el-link type="primary" :href="row.uri" download>下载</el-link>
                             </div>
                         </template>
-                    </el-table-column>
-                </el-table>
+                    </vxe-column>
+                </vxe-table>
             </div>
             <div class="material-center__footer flex justify-between items-center mt-2">
                 <div class="flex">
@@ -239,28 +266,6 @@
                 />
             </div>
         </div>
-        <div class="material__right" v-if="mode == 'picker'">
-            <div class="flex justify-between p-2 flex-wrap">
-                <div class="sm flex items-center">
-                    已选择 {{ select.length }}
-                    <span v-if="limit">/{{ limit }}</span>
-                </div>
-                <el-button type="primary" link @click="clearSelect">清空</el-button>
-            </div>
-            <div class="flex-1 min-h-0">
-                <el-scrollbar class="ls-scrollbar">
-                    <ul class="select-lists flex flex-col p-t-3">
-                        <li class="mb-4" v-for="item in select" :key="item.id">
-                            <div class="select-item">
-                                <del-wrap @close="cancelSelect(item.id)">
-                                    <file-item :uri="item.uri" file-size="100px"></file-item>
-                                </del-wrap>
-                            </div>
-                        </li>
-                    </ul>
-                </el-scrollbar>
-            </div>
-        </div>
         <Preview v-model="showPreview" :url="previewUrl" />
     </div>
 </template>
@@ -271,6 +276,8 @@ import { onMounted, ref, watch, computed, defineAsyncComponent } from 'vue'
 import { FileExt } from '@/enums/fileEnums'
 
 import { useCate, useFile } from './hook'
+import { albumAddFromFile } from '@/api/file'
+import feedback from '@/utils/feedback'
 import FileItem from './file.vue'
 // import Preview from './preview.vue'
 const Preview = defineAsyncComponent(() => import('./preview.vue'))
@@ -308,7 +315,7 @@ const {
     handleCatSelect
 } = useCate()
 
-const activeFileType = ref<string>(props.defaultFileType)
+const activeFileType = ref<keyof typeof FileExt>(props.defaultFileType as keyof typeof FileExt)
 
 const ext = computed(() => {
     if (activeFileType.value) {
@@ -344,13 +351,6 @@ const {
     selectItems,
     handleFileRename
 } = useFile(cateId, listExt, props.limit, props.pageSize)
-function handleSelectionChange(val: any[]) {
-    // console.log('handleSelectionChange', val)
-    // if (props.limit && val.length > props.limit) {
-    //     return false
-    // }
-    selectItems(val)
-}
 const handleTabChange = () => {
     // activeFileType.value = tab
     console.log('handleTabChange', activeFileType.value)
@@ -358,14 +358,40 @@ const handleTabChange = () => {
     getFileList()
 }
 const getData = async () => {
-    await getCateLists()
-    treeRef.value?.setCurrentKey(cateId.value)
-    getFileList()
+    try {
+        await getCateLists()
+        treeRef.value?.setCurrentKey(cateId.value)
+        getFileList()
+    } catch (error) {
+        console.error('素材分类获取失败:', error)
+    }
 }
 
 const handlePreview = (url: string) => {
     previewUrl.value = url
     showPreview.value = true
+}
+
+// 上传成功后把文件以挂载方式写入相册（不耦合到通用上传组件）
+const handleUpload = async (fileLists: any[]) => {
+    if (fileLists?.length) {
+        const cid = cateId.value
+        const tasks = fileLists
+            .filter((item) => item.response?.data?.file_hash_id)
+            .map((item) =>
+                albumAddFromFile({
+                    file_hash_id: item.response.data.file_hash_id,
+                    cid: String(cid),
+                    file_name: item.name
+                })
+            )
+        try {
+            await Promise.all(tasks)
+        } catch (e: any) {
+            feedback.msgError(e?.message || '加入相册失败')
+        }
+    }
+    refresh()
 }
 
 watch(cateId, () => {
@@ -400,7 +426,8 @@ onMounted(() => {
 })
 
 defineExpose({
-    clearSelect
+    clearSelect,
+    cancelSelect
 })
 </script>
 
@@ -425,6 +452,7 @@ defineExpose({
         min-width: 0;
         min-height: 0;
         padding: 16px 16px 0;
+        width: 100%;
         .list-icon {
             border-radius: 3px;
             display: flex;
@@ -460,21 +488,6 @@ defineExpose({
                 &:hover .operation-btns {
                     visibility: visible;
                 }
-            }
-        }
-    }
-    &__right {
-        border-left-width: 1px;
-        border-color: var(--el-border-color);
-        display: flex;
-        flex-direction: column;
-        width: 130px;
-        .select-lists {
-            padding: 10px;
-
-            .select-item {
-                width: 100px;
-                height: 100px;
             }
         }
     }

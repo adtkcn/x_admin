@@ -17,5 +17,5 @@ type WechatBindReq struct {
 
 // WechatUnbindReq 微信解绑请求
 type WechatUnbindReq struct {
-	IdentityType string `json:"identityType" binding:"required,oneof=wechat_mini wechat_mp" label:"认证类型"`
+	IdentityType string `json:"identity_type" binding:"required,oneof=wechat_mini wechat_mp" label:"认证类型"`
 }

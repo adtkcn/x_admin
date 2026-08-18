@@ -25,7 +25,7 @@
                             <div class="flex flex-wrap">
                                 <div v-for="item in iconNamesFilter" :key="item" class="m-1">
                                     <el-button @click="handleSelect(item)">
-                                        <icon :name="item" :size="18" />
+                                        <icon :name="item" :size="24" />
                                     </el-button>
                                 </div>
                             </div>

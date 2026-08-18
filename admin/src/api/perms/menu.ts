@@ -8,36 +8,36 @@ export type type_system_menu_detail = {
 // 菜单添加参数
 export type type_system_menu_add = {
     pid?: string
-    menuType: string
-    menuName: string
-    menuIcon?: string
-    menuSort?: number
+    menu_type: string
+    menu_name: string
+    menu_icon?: string
+    menu_sort?: number
     perms?: string
     paths?: string
     component?: string
     selected?: string
     params?: string
-    isCache?: number
-    isShow?: number
-    isDisable?: number
+    is_cache?: number
+    is_show?: number
+    is_disable?: number
 }
 
 // 菜单编辑参数
 export type type_system_menu_edit = {
     id: string
     pid: string
-    menuType: string
-    menuName: string
-    menuIcon: string
-    menuSort: number
+    menu_type: string
+    menu_name: string
+    menu_icon: string
+    menu_sort: number
     perms: string
     paths: string
     component: string
     selected: string
     params: string
-    isCache: number
-    isShow: number
-    isDisable: number
+    is_cache: number
+    is_show: number
+    is_disable: number
 }
 
 // 菜单删除参数
@@ -49,20 +49,20 @@ export type type_system_menu_del = {
 export type type_system_menu_resp = {
     id: string
     pid: string
-    menuType: string
-    menuName: string
-    menuIcon: string
-    menuSort: number
+    menu_type: string
+    menu_name: string
+    menu_icon: string
+    menu_sort: number
     perms: string
     paths: string
     component: string
     selected: string
     params: string
-    isCache: number
-    isShow: number
-    isDisable: number
-    createTime: string
-    updateTime: string
+    is_cache: number
+    is_show: number
+    is_disable: number
+    create_time: string
+    update_time: string
     children?: type_system_menu_resp[]
 }
 

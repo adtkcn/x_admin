@@ -98,11 +98,14 @@
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_list_all,{{{ end }}} {{{ .ModuleName }}}_detail } from '@/api/{{{nameToPath .ModuleName }}}'
+import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_list_all,{{{ end }}} {{{ .ModuleName }}}_detail } from '@/api/{{{.Domain}}}/{{{.ModuleName}}}'
+import type { type_{{{ .ModuleName }}} } from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
+
 import Popup from '@/components/popup/index.vue'
- 
-import { ref, shallowRef, computed, reactive } from 'vue'
+
+import { ref, computed, useTemplateRef } from 'vue'
 import type { PropType } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 defineProps({
     dictData: {
         type: Object as PropType<Record<string, any[]>>,
@@ -114,8 +117,8 @@ defineProps({
     }
 })
 const emit = defineEmits(['close'])
-const formRef = shallowRef<FormInstance>()
-const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const formRef = useTemplateRef<FormInstance>('formRef')
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 {{{- if and .Table.TreePrimary .Table.TreeParent }}}
 const treeList = ref<any[]>([])
 {{{- end }}}
@@ -124,10 +127,10 @@ const popupTitle = computed(() => {
     return '预览{{{ .FunctionName }}}'
 })
 
-const formData = reactive({
+const { state: formData, setState } = useReactiveWithReset<type_{{{ .ModuleName }}}>({
     {{{- range .Columns }}}
     {{{- if eq .TsField $.PrimaryKey }}}
-    {{{ $.PrimaryKey }}}: '',
+    {{{ $.PrimaryKey }}}: undefined,
     {{{- else if .IsEdit }}}
     {{{- if eq .HtmlType "checkbox" }}}
     {{{ .TsField }}}: [],
@@ -161,25 +164,22 @@ const formRules = {
 const open = () => {
     popupRef.value?.open()
 }
-const getDetail = async (row: Record<string, any>) => {
+const getDetail = async (row: type_{{{ .ModuleName }}}) => {
      try {
-        const data = await {{{ .ModuleName }}}_detail(row.{{{toUpperCamelCase .PrimaryKey }}})
+        const data = await {{{ .ModuleName }}}_detail(row.{{{ .PrimaryTsField }}})
         setFormData(data)
-     } catch (error) {}
+     } catch (error) {
+        console.error('详情获取失败:', error)
+     }
 }
-const setFormData = async (data: Record<string, any>) => {
-    for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            formData[key] = data[key]
-            {{{- range .Columns }}}
-            {{{- if eq .HtmlType "checkbox" }}}
-            //@ts-ignore
-            formData.{{{ .TsField }}} = String(data.{{{ .TsField }}}).split(',')
-            {{{- end }}}
-            {{{- end }}}
-        }
-    }
+const setFormData = async (data: type_{{{ .ModuleName }}}) => {
+    const form = { ...data }
+    {{{- range .Columns }}}
+    {{{- if eq .HtmlType "checkbox" }}}
+    form.{{{ .TsField }}} = String(data.{{{ .TsField }}}).split(',')
+    {{{- end }}}
+    {{{- end }}}
+    setState(form)
 }
 
 const handleClose = () => {

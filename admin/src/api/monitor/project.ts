@@ -7,34 +7,34 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_project = {
-    Id: string
-    ProjectKey: string
-    ProjectName: string
-    ProjectType: string
-    Status: number
-    IsDelete: number
-    CreateTime: string
-    UpdateTime: string
-    DeleteTime: string
+    id: string
+    project_key: string
+    project_name: string
+    project_type: string
+    status: number
+    is_delete: number
+    create_time: string
+    update_time: string
+    delete_time: string
 }
 // 查询
 export type type_monitor_project_query = {
-    ProjectKey?: string
-    ProjectName?: string
-    ProjectType?: string
-    Status?: number
-    CreateTimeStart?: string
-    CreateTimeEnd?: string
-    UpdateTimeStart?: string
-    UpdateTimeEnd?: string
+    project_key?: string
+    project_name?: string
+    project_type?: string
+    status?: number
+    create_time_start?: string
+    create_time_end?: string
+    update_time_start?: string
+    update_time_end?: string
 }
 // 添加编辑
 export type type_monitor_project_edit = {
-    Id?: string
-    ProjectKey?: string
-    ProjectName?: string
-    ProjectType?: string
-    Status?: number
+    id?: string
+    project_key?: string
+    project_name?: string
+    project_type?: string
+    status?: number
 }
 
 // 监控项目列表
@@ -53,8 +53,8 @@ export function monitor_project_list_all(params?: type_monitor_project_query) {
 }
 
 // 监控项目详情
-export function monitor_project_detail(Id: number | string) {
-    return request.get<type_monitor_project>({ url: '/monitor_project/detail', params: { Id } })
+export function monitor_project_detail(id: string) {
+    return request.get<type_monitor_project>({ url: '/monitor_project/detail', params: { id } })
 }
 
 // 监控项目新增
@@ -68,11 +68,11 @@ export function monitor_project_edit(data: type_monitor_project_edit) {
 }
 
 // 监控项目删除
-export function monitor_project_delete(Id: number | string) {
-    return request.post<null>({ url: '/monitor_project/del', data: { Id } })
+export function monitor_project_delete(id: string) {
+    return request.post<null>({ url: '/monitor_project/del', data: { id } })
 }
 // 监控项目删除-批量
-export function monitor_project_delete_batch(data: { Ids: string }) {
+export function monitor_project_delete_batch(data: { ids: string }) {
     return request.post<null>({ url: '/monitor_project/del_batch', data })
 }
 

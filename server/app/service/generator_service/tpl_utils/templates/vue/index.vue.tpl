@@ -8,8 +8,8 @@
                 {{{- if eq .HtmlType "datetime" }}}
                 <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" class="w-[400px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ .TsField }}}Start"
-                        v-model:endTime="queryParams.{{{ .TsField }}}End"
+                        v-model:startTime="queryParams.{{{ .TsField }}}_start"
+                        v-model:endTime="queryParams.{{{ .TsField }}}_end"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
@@ -92,32 +92,36 @@
                     批量删除
                 </el-button>
             </div>
-            <el-table
+            <vxe-table
+                ref="tableRef"
                 class="mt-4"
-                size="large"
-                v-loading="pager.loading"
+                 
+                :loading="pager.loading"
                 :data="pager.lists"
-                @selection-change="handleSelectionChange"
+                :row-config="{ keyField: '{{{ .PrimaryTsField }}}' }"
+                :border="'inner'"
+                @checkbox-change="handleSelectionChange"
+                @checkbox-all="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" />
-                <el-table-column label="序号" type="index" :index="handleIndex" min-width="60" />
+                <vxe-column type="checkbox" width="55" />
+                <vxe-column type="seq" title="序号" min-width="60" />
             {{{- range .Columns }}}
             {{{- if and .IsList .IsListShow }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{.TableColumnProp}}}" width="100">
                     <template #default="{ row }">
                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{.TableColumnProp}}}" />
                     </template>
-                </el-table-column>
+                </vxe-column>
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{.TableColumnProp}}}" min-width="100">
                     <template #default="{ row }">
                         <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{.TableColumnProp}}}" labelKey='ID' valueKey='ID' />
                     </template>
-                </el-table-column>
+                </vxe-column>
 
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{.TableColumnProp}}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :height="100%"
@@ -127,13 +131,13 @@
                             hide-on-click-modal
                         />
                     </template>
-                </el-table-column>
+                </vxe-column>
                 {{{- else }}}
-                <el-table-column label="{{{ .ColumnComment }}}" prop="{{{.TableColumnProp}}}" min-width="130" />
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{.TableColumnProp}}}" min-width="130" show-overflow />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
-                <el-table-column label="操作" width="160" fixed="right">
+                <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:{{{ .ModuleName }}}:detail']"
@@ -153,13 +157,13 @@
                             v-perms="['admin:{{{ .ModuleName }}}:del']"
                             type="danger"
                             link
-                            @click="handleDelete(row.{{{toUpperCamelCase .PrimaryKey }}})"
+                            @click="handleDelete(row.{{{ .PrimaryTsField }}})"
                         >
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -191,10 +195,11 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref,reactive,shallowRef,nextTick  } from 'vue'
-import { {{{ .ModuleName }}}_delete,{{{ .ModuleName }}}_delete_batch, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{nameToPath .ModuleName }}}'
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
+import { ref,reactive,shallowRef,nextTick,useTemplateRef  } from 'vue'
+import { {{{ .ModuleName }}}_delete,{{{ .ModuleName }}}_delete_batch, {{{ .ModuleName }}}_list,{{{.ModuleName}}}_import_file, {{{.ModuleName}}}_export_file } from '@/api/{{{.Domain}}}/{{{.ModuleName}}}'
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 
+import { VxeTableInstance,VxeTablePropTypes } from 'vxe-table'
 
 import { useDictData,useListAllData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'
@@ -214,8 +219,8 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ .TsField }}}Start: undefined,
-    {{{ .TsField }}}End: undefined,
+    {{{ .TsField }}}_start: undefined,
+    {{{ .TsField }}}_end: undefined,
     {{{- else }}}
     {{{ .TsField }}}: undefined,
     {{{- end }}}
@@ -223,7 +228,7 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- end }}}
 })
 
-const { pager, getLists, resetPage, resetParams, handleIndex } = usePaging<type_{{{ .ModuleName }}}>({
+const { pager, getLists, resetPage, resetParams } = usePaging<type_{{{ .ModuleName }}}>({
     fetchFun: {{{ .ModuleName }}}_list,
     params: queryParams
 })
@@ -257,31 +262,33 @@ const handleAdd = async () => {
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_{{{ .ModuleName }}}) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
-const viewDetails = async (data: any) => {
+const viewDetails = async (data: type_{{{ .ModuleName }}}) => {
     showDetails.value = true
     await nextTick()
     detailsRef.value?.open()
     detailsRef.value?.getDetail(data)
 }
+const tableRef = useTemplateRef<VxeTableInstance<type_{{{ .ModuleName }}}>>('tableRef')
 const multipleSelection = ref<type_{{{ .ModuleName }}}[]>([])
-const handleSelectionChange = (val: type_{{{ .ModuleName }}}[]) => {
-    console.log(val)
-    multipleSelection.value = val
+const handleSelectionChange = () => {
+    multipleSelection.value = tableRef.value?.getCheckboxRecords() || []
 }
 
-const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: number) => {
+const handleDelete = async ({{{ .PrimaryTsField }}}: {{{.PrimaryTsType}}}) => {
     try {
         await feedback.confirm('确定要删除？')
-        await {{{ .ModuleName }}}_delete( {{{toUpperCamelCase .PrimaryKey }}} )
+        await {{{ .ModuleName }}}_delete( {{{ .PrimaryTsField }}} )
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('删除失败:', error)
+    }
 }
 // 批量删除
 const deleteBatch = async () => {
@@ -292,18 +299,22 @@ const deleteBatch = async () => {
     try {
         await feedback.confirm('确定要删除？')
         await {{{ .ModuleName }}}_delete_batch({
-            Ids: multipleSelection.value.map((item) => item.{{{toUpperCamelCase .PrimaryKey }}}).join(',')
+            Ids: multipleSelection.value.map((item) => item.{{{ .PrimaryTsField }}}).join(',')
         })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('批量删除失败:', error)
+    }
 }
 
 const export_file = async () => {
     try {
         await feedback.confirm('确定要导出？')
         await {{{.ModuleName}}}_export_file(queryParams)
-    } catch (error) {}
+    } catch (error) {
+        console.error('导出失败:', error)
+    }
 }
 getLists()
 </script>

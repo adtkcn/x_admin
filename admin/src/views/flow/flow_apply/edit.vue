@@ -6,13 +6,14 @@
             :async="true"
             width="550px"
             :clickModalClose="true"
+            confirmButtonText="发起申请"
             @confirm="handleSubmit"
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
-                <el-form-item label="审批流" prop="templateId">
+                <el-form-item label="审批流" prop="template_id">
                     <el-select
-                        v-model="formData.templateId"
+                        v-model="formData.template_id"
                         placeholder="请选择审批流"
                         style="width: 100%"
                         @change="handleTemplateChange"
@@ -20,15 +21,15 @@
                         <el-option
                             v-for="(item, index) in flow_template"
                             :key="index"
-                            :label="item.flowName"
+                            :label="item.flow_name"
                             :value="item.id"
                             clearable
                         />
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="流程名称" prop="flowName">
-                    <el-input v-model="formData.flowName" placeholder="请输入流程名称" />
+                <el-form-item label="流程名称" prop="flow_name">
+                    <el-input v-model="formData.flow_name" placeholder="请输入流程名称" />
                 </el-form-item>
             </el-form>
         </popup>
@@ -36,21 +37,29 @@
 </template>
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
-import { flow_apply_edit, flow_apply_add, flow_apply_detail } from '@/api/flow/flow_apply'
+import {
+    flow_apply_edit,
+    flow_apply_add,
+    flow_apply_detail,
+    type type_flow_apply_edit
+} from '@/api/flow/flow_apply'
 import { flow_template_lists_all } from '@/api/flow/flow_template'
 import type { type_flow_template } from '@/api/flow/flow_template'
 
+import useUserStore from '@/stores/modules/user'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
-import { shallowRef, ref, computed, reactive } from 'vue'
+import { shallowRef, ref, computed } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 import type { PropType } from 'vue'
-import dayjs from 'dayjs'
+
 defineProps({
     dictData: {
         type: Object as PropType<Record<string, any[]>>,
         default: () => ({})
     }
 })
+const userStore = useUserStore()
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
@@ -59,18 +68,11 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑申请流程' : '新增申请流程'
 })
 
-const formData = reactive({
+const { state: formData, setState } = useReactiveWithReset<type_flow_apply_edit>({
     id: '',
-    templateId: '',
-    // applyUserId: '',
-    // applyUserNickname: '',
-    flowName: '',
-    // flowGroup: '',
-    // flowRemark: '',
-    // flowFormData: '',
-    // flowProcessData: '',
+    template_id: '',
+    flow_name: '',
     status: 0
-    // formValue: ''
 })
 
 const formRules = {
@@ -81,56 +83,56 @@ const formRules = {
             trigger: ['blur']
         }
     ],
-    templateId: [
+    template_id: [
         {
             required: true,
             message: '请输入模板',
             trigger: ['blur']
         }
     ],
-    applyUserId: [
+    apply_user_id: [
         {
             required: true,
             message: '请输入申请人id',
             trigger: ['blur']
         }
     ],
-    applyUserNickname: [
+    apply_user_nickname: [
         {
             required: true,
             message: '请输入申请人昵称',
             trigger: ['blur']
         }
     ],
-    flowName: [
+    flow_name: [
         {
             required: true,
             message: '请输入流程名称',
             trigger: ['blur']
         }
     ],
-    flowGroup: [
+    flow_group: [
         {
             required: true,
             message: '请输入流程分类',
             trigger: ['blur']
         }
     ],
-    flowRemark: [
+    flow_remark: [
         {
             required: true,
             message: '请输入流程描述',
             trigger: ['blur']
         }
     ],
-    flowFormData: [
+    flow_form_data: [
         {
             required: true,
             message: '请输入表单配置',
             trigger: ['blur']
         }
     ],
-    flowProcessData: [
+    flow_process_data: [
         {
             required: true,
             message: '请输入流程配置',
@@ -150,14 +152,19 @@ const get_flow_template = async () => {
     flow_template.value = await flow_template_lists_all()
 }
 function handleTemplateChange(id: string) {
-    console.log(id)
     flow_template.value.find((item: any) => {
         if (item.id == id) {
-            formData.flowName = item.flowName + '_' + dayjs().format('YYYY-MM-DD-HHmm')
-            // formData.flowGroup = item.flowGroup
-            // formData.flowRemark = item.flowRemark
-            // formData.flowFormData = item.flowFormData
-            // formData.flowProcessData = item.flowProcessData
+            formData.flow_name = item.flow_name
+            // '【' +
+            // item.flow_name +
+            // '】' +
+            // userStore.userInfo.nickname +
+            // ' - ' +
+            // dayjs().format('YYYY-MM-DD')
+            // formData.flow_group = item.flow_group
+            // formData.flow_remark = item.flow_remark
+            // formData.flow_form_data = item.flow_form_data
+            // formData.flow_process_data = item.flow_process_data
             return true
         }
     })
@@ -181,13 +188,8 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = async (data: Record<string, any>) => {
-    for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            formData[key] = data[key]
-        }
-    }
+const setFormData = async (data: type_flow_apply_edit) => {
+    setState(data)
 }
 
 const getDetail = async (row: Record<string, any>) => {

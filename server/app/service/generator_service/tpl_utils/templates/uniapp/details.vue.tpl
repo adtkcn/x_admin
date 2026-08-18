@@ -32,7 +32,7 @@
 	import {ref} from "vue";
 	import { onLoad,onShow } from "@dcloudio/uni-app";
 	import { useDictData,useListAllData } from "@/hooks/useDictOptions";
-	import { {{{ .ModuleName }}}_detail } from "@/api/{{{nameToPath .ModuleName }}}";
+	import { {{{ .ModuleName }}}_detail } from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 
 
 	import {
@@ -84,7 +84,7 @@ const { listAllData } = useListAllData<{
 	onPullDownRefresh(() => {
 		getDetails(form.value.id);
 	});
-	function getDetails(id: number | string) {
+	function getDetails(id: string) {
 		{{{ .ModuleName }}}_detail(id).then((res) => {
 			uni.stopPullDownRefresh();
             if (res.code == 200) {
@@ -102,7 +102,7 @@ const { listAllData } = useListAllData<{
 	}
 
 	function edit() {
-		toPath("/pages/{{{nameToPath .ModuleName }}}/edit", { id: form.value.id });
+		toPath("/pages/{{{.Domain}}}/{{{.ModuleName}}}/edit", { id: form.value.id });
 	}
 </script>
 

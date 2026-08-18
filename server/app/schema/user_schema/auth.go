@@ -4,13 +4,13 @@ import "github.com/adtkcn/x_null"
 
 // RefreshTokenReq 刷新token请求
 type RefreshTokenReq struct {
-	RefreshToken string `json:"refreshToken" binding:"required" label:"refreshToken"`
+	RefreshToken string `json:"refresh_token" binding:"required" label:"refreshToken"`
 }
 
 // BindPhoneReq 绑定手机号请求（需要短信验证码）
 type BindPhoneReq struct {
 	Phone     string `json:"phone"     binding:"required,len=11"   label:"手机号"`
-	PhoneCode string `json:"phoneCode" binding:"omitempty"         label:"区号"`
+	PhoneCode string `json:"phone_code" binding:"omitempty"         label:"区号"`
 	Code      string `json:"code"      binding:"required,len=6"    label:"短信验证码"`
 }
 
@@ -22,7 +22,7 @@ type UnbindPhoneReq struct {
 
 // UserAuthItem 绑定项信息
 type UserAuthItem struct {
-	IdentityType string      `json:"identityType"`
+	IdentityType string      `json:"identity_type"`
 	Identifier   string      `json:"identifier"`
-	CreateTime   x_null.Time `json:"createTime"`
+	CreateTime   x_null.Time `json:"create_time"`
 }

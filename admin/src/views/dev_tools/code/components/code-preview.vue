@@ -19,8 +19,12 @@
                         @node-click="handleNodeClick"
                     />
                 </el-aside>
-                <el-main style="padding: 0; overflow: auto">
-                    <highlight-code :code="showItem.value" lang="javascript"></highlight-code>
+                <el-main style="padding: 0; overflow: hidden; height: 100%">
+                    <highlight-code
+                        :code="showItem.value"
+                        :lang="lang"
+                        class="code-body"
+                    ></highlight-code>
                 </el-main>
             </el-container>
             <template v-slot:footer>
@@ -65,6 +69,22 @@ const showItem = ref({
     label: '',
     value: ''
 })
+const lang = computed(() => {
+    const ext = showItem.value.label?.split('.')?.[1]
+    switch (ext) {
+        case 'js':
+            return 'javascript'
+        case 'ts':
+            return 'typescript'
+        case 'vue':
+            return 'xml'
+        case 'go':
+            return 'go'
+        default:
+            return 'javascript'
+    }
+    // return ext == 'js' ? 'javascript' : ext
+})
 const treeData = computed(() => {
     return Object.keys(props.code).map((key) => {
         return {
@@ -100,3 +120,14 @@ const show = computed<boolean>({
     }
 })
 </script>
+<style lang="scss" scoped>
+.code-preview {
+    :deep(.el-dialog__body) {
+        padding-top: 10px;
+    }
+    .code-body {
+        height: 100%;
+        width: 100%;
+    }
+}
+</style>

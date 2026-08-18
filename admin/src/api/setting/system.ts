@@ -9,8 +9,8 @@ export type type_system_log_operate = {
     type?: string
     status?: number
     url?: string
-    startTime?: string
-    endTime?: string
+    start_time?: string
+    end_time?: string
 }
 
 // 系统日志返回信息
@@ -26,10 +26,10 @@ export type type_system_log_resp = {
     args: string
     error: string
     status: number
-    taskTime: string
-    startTime: string
-    endTime: string
-    createTime: string
+    task_time: string
+    start_time: string
+    end_time: string
+    create_time: string
 }
 
 // 获取系统环境

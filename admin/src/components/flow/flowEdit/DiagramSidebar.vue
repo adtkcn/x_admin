@@ -4,9 +4,9 @@
             class="image-node"
             v-for="(item, index) of list"
             :key="index"
-            @mousedown.stop.prevent="dragInNode(item.type)"
+            @mousedown.stop.prevent="dragInNode(item.type, item.name || '')"
         >
-            <img :src="item.imgUrl" alt="" srcset="" />
+            <img :src="item.icon" alt="" srcset="" />
             <div>
                 {{ item.name }}
             </div>
@@ -19,12 +19,11 @@
             <div class="pattern-user"></div>
             <div>审批</div>
         </div>
-        <div
-            class="image-node"
-            @mousedown.stop.prevent="dragInNode('bpmn:serviceTask', '系统任务')"
-        >
-            <div class="pattern-user"></div>
-            <div>系统</div>
+        <div class="image-node" @mousedown.stop.prevent="dragInNode('bpmn:notifyTask', '通知')">
+            <div class="pattern-notify">
+                <img :src="NotifyTaskIcon" alt="" />
+            </div>
+            <div>通知</div>
         </div>
 
         <div
@@ -41,32 +40,24 @@
     </div>
 </template>
 
-<script>
-// import IconCircle from './icon/Circle.vue'
-import { List } from './node'
-
-console.log('List', List)
-export default {
-    name: 'DiagramSidebar',
-    data() {
-        return {
-            list: List.map((item) => {
-                return {
-                    type: item.type,
-                    ...item.info
-                }
-            })
-        }
-    },
-    methods: {
-        dragInNode(type, text) {
-            console.log('dragInNode', type)
-            this.$emit('dragInNode', type, text)
-        }
+<script setup lang="ts">
+import { List } from './node/index'
+import NotifyTask from './node/icon/NotifyTask'
+const NotifyTaskIcon = NotifyTask.icon
+defineOptions({
+    name: 'DiagramSidebar'
+})
+const emit = defineEmits(['dragInNode'])
+const list = List.map((item) => {
+    return {
+        type: item.type,
+        name: item.name,
+        icon: item.icon
     }
-    // components: {
-    //   // IconCircle,
-    // }
+})
+function dragInNode(type: string, text: string) {
+    console.log('dragInNode', type)
+    emit('dragInNode', type, text)
 }
 </script>
 
@@ -121,5 +112,7 @@ export default {
 .pattern-condition {
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAAHeEJUAAAAABGdBTUEAALGPC/xhBQAAAvVJREFUOBGNVEFrE0EU/mY3bQoiFlOkaUJrQUQoWMGePLX24EH0IIoHKQiCV0G8iE1covgLiqA/QTzVm1JPogc9tIJYFaQtlhQxqYjSpunu+L7JvmUTU3AgmTfvffPNN++9WSA1DO182f6xwILzD5btfAoQmwL5KJEwiQyVbSVZ0IgRyV6PTpIJ81E5ZvqfHQR0HUOBHW4L5Et2kQ6Zf7iAOhTFAA8s0pEP7AXO1uAA52SbqGk6h/6J45LaLhO64ByfcUzM39V7ZiAdS2yCePPEIQYvTUHqM/n7dgQNfBKWPjpF4ISk8q3J4nB11qw6X8l+FsF3EhlkEMfrjIer3wJTLwS2aCNcj4DbGxXTw00JmAuO+Ni6bBxVUCvS5d9aa04+so4pHW5jLTywuXAL7jJ+D06sl82Sgl2JuVBQn498zkc2bGKxULHjCnSMadBKYDYYHAtsby1EQ5lNGrQd4Y3v4Zo0XdGEmDno46yCM9Tk+RiJmUYHS/aXHPNTcjxcbTFna000PFJHIVZ5lFRqRpJWk9/+QtlOUYJj9HG5pVFEU7zqIYDVsw2s+AJaD8wTd2umgSCCyUxgGsS1Y6TBwXQQTFuZaHcd8gAGioE90hlsY+wMcs30RduYtxanjMGal8H5dMW67dmT1JFtYUEe8LiQLRsPZ6IIc7A4J5tqco3T0pnv/4u0kyzrYUq7gASuEyI8VXKvB9Odytv6jS/PNaZBln0nioJG/AVQRZvApOdhjj3Jt8QC8Im09SafwdBdvIpztpxWxpeKCC+EsFdS8DCyuCn2munFpL7ctHKp+Xc5cMybeIyMAN33SPL3ZR9QV1XVwLyzHm6Iv0/yeUuUb7PPlZC4D4HZkeu6dpF4v9j9MreGtMbxMMRLIcjJic9yHi7WQ3yVKzZVWUr5UrViJvn1FfUlwe/KYVfYyWRLSGNu16hR01U9IacajXPei0wx/5BqgInvJN+MMNtNme7ReU9SBbgntovn0kKHpFg7UogZvaZiOue/q1SBo9ktHzQAAAAASUVORK5CYII=)
         center center no-repeat;
+}
+.pattern-notify {
 }
 </style>

@@ -47,8 +47,8 @@ export type type_article_cate_resp = {
     name: string
     sort: number
     status: number
-    createTime: string
-    updateTime: string
+    create_time: string
+    update_time: string
 }
 
 // 文章列表参数
@@ -56,8 +56,8 @@ export type type_article_list = {
     title?: string
     cateId?: string
     status?: number
-    createTimeStart?: string
-    createTimeEnd?: string
+    create_time_start?: string
+    create_time_end?: string
 }
 
 // 文章详情参数
@@ -113,8 +113,8 @@ export type type_article_resp = {
     author: string
     status: number
     sort: number
-    createTime: string
-    updateTime: string
+    create_time: string
+    update_time: string
 }
 
 // 文章分类列表

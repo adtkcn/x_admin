@@ -16,16 +16,16 @@ type FlowTemplateHandler struct {
 // @Summary	流程模板列表
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		token				header		string																true	"token"
-// @Param		pageNo				query		int																	true	"页码"
-// @Param		pageSize			query		int																	true	"每页数量"
-// @Param		flowName			query		string																false	"流程名称"
-// @Param		flowGroup			query		int																	false	"流程分类"
-// @Param		flowRemark			query		string																false	"流程描述"
-// @Param		flowFormData		query		string																false	"表单配置"
-// @Param		flowProcessData		query		string																false	"流程配置"
-// @Param		flowProcessDataList	query		string																false	"流程配置list数据"
-// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]FlowTemplateResp}}	"成功"
+// @Param		token					header		string																true	"token"
+// @Param		pageNo					query		int																	true	"页码"
+// @Param		pageSize				query		int																	true	"每页数量"
+// @Param		flow_name				query		string																false	"流程名称"
+// @Param		flow_group				query		int																	false	"流程分类"
+// @Param		flow_remark				query		string																false	"流程描述"
+// @Param		flow_form_data			query		string																false	"表单配置"
+// @Param		flow_process_data		query		string																false	"流程配置"
+// @Param		flow_process_data_list	query		string																false	"流程配置list数据"
+// @Success	200						{object}	response.Response{data=response.PageResp{lists=[]FlowTemplateResp}}	"成功"
 // @Router		/api/admin/flow/flow_template/list [get]
 func (hd FlowTemplateHandler) List(c *gin.Context) {
 	var page request.PageReq
@@ -67,14 +67,14 @@ func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 // @Summary	流程模板新增
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		token				header		string				true	"token"
-// @Param		flowName			body		string				false	"流程名称"
-// @Param		flowGroup			body		int					false	"流程分类"
-// @Param		flowRemark			body		string				false	"流程描述"
-// @Param		flowFormData		body		string				false	"表单配置"
-// @Param		flowProcessData		body		string				false	"流程配置"
-// @Param		flowProcessDataList	body		string				false	"流程配置list数据"
-// @Success	200					{object}	response.Response	"成功"
+// @Param		token					header		string				true	"token"
+// @Param		flow_name				body		string				false	"流程名称"
+// @Param		flow_group				body		int					false	"流程分类"
+// @Param		flow_remark				body		string				false	"流程描述"
+// @Param		flow_form_data			body		string				false	"表单配置"
+// @Param		flow_process_data		body		string				false	"流程配置"
+// @Param		flow_process_data_list	body		string				false	"流程配置list数据"
+// @Success	200						{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_template/add [post]
 func (hd FlowTemplateHandler) Add(c *gin.Context) {
 	var addReq FlowTemplateAddReq
@@ -87,15 +87,15 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 // @Summary	流程模板编辑
 // @Tags		flow_template-流程模板
 // @Produce	json
-// @Param		token				header		string				true	"token"
-// @Param		id					body		string				false	"模板id"
-// @Param		flowName			body		string				false	"流程名称"
-// @Param		flowGroup			body		int					false	"流程分类"
-// @Param		flowRemark			body		string				false	"流程描述"
-// @Param		flowFormData		body		string				false	"表单配置"
-// @Param		flowProcessData		body		string				false	"流程配置"
-// @Param		flowProcessDataList	body		string				false	"流程配置list数据"
-// @Success	200					{object}	response.Response	"成功"
+// @Param		token					header		string				true	"token"
+// @Param		id						body		string				false	"模板id"
+// @Param		flow_name				body		string				false	"流程名称"
+// @Param		flow_group				body		int					false	"流程分类"
+// @Param		flow_remark				body		string				false	"流程描述"
+// @Param		flow_form_data			body		string				false	"表单配置"
+// @Param		flow_process_data		body		string				false	"流程配置"
+// @Param		flow_process_data_list	body		string				false	"流程配置list数据"
+// @Success	200						{object}	response.Response	"成功"
 // @Router		/api/admin/flow/flow_template/edit [post]
 func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 	var editReq FlowTemplateEditReq

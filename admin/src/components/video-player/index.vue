@@ -1,21 +1,15 @@
 <template>
-    <div>
-        <videoPlay
-            ref="playerRef"
-            v-bind="options"
-            :src="src"
-            @play="onPlay"
-            @pause="onPause"
-            @timeupdate="onTimeupdate"
-            @canplay="onCanplay"
-        />
+    <div :style="{ width: width, height: height }">
+        <video ref="videoRef" class="video-js vjs-bootstrap5"></video>
     </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, useTemplateRef } from 'vue'
-import 'vue3-video-play/dist/style.css'
-import { videoPlay } from 'vue3-video-play/dist/index.mjs'
+import { onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue'
+import videojs from 'video.js'
+import type Player from 'video.js/dist/types/player'
+import 'video.js/dist/video-js.css'
+
 const props = defineProps({
     src: {
         type: String,
@@ -26,43 +20,64 @@ const props = defineProps({
     poster: String
 })
 
-const playerRef = useTemplateRef('playerRef')
-const options = reactive({
-    color: 'var(--el-color-primary)', //主题色
-    muted: false, //静音
-    webFullScreen: false,
-    speedRate: ['0.75', '1.0', '1.25', '1.5', '2.0'], //播放倍速
-    autoPlay: false, //自动播放
-    loop: false, //循环播放
-    mirror: false, //镜像画面
-    ligthOff: false, //关灯模式
-    volume: 1, //默认音量大小
-    control: true, //是否显示控制器
-    title: '', //视频名称
-    poster: '', //封面
-    ...props
+const videoRef = useTemplateRef<HTMLVideoElement>('videoRef')
+let player: Player | null = null
+
+const initPlayer = () => {
+    if (!videoRef.value) return
+    player = videojs(videoRef.value, {
+        controls: true,
+        autoplay: false,
+        muted: false,
+        loop: false,
+        preload: 'auto',
+        fill: true,
+        playbackRates: [0.75, 1.0, 1.25, 1.5, 2.0],
+        poster: props.poster,
+        sources: [
+            {
+                src: props.src,
+                type: 'video/mp4'
+            }
+        ]
+    })
+
+    player.on('play', (event: any) => {
+        console.log(event, '播放')
+    })
+    player.on('pause', (event: any) => {
+        console.log(event, '暂停')
+    })
+    player.on('timeupdate', (event: any) => {
+        // console.log(event, '时间更新')
+    })
+    player.on('canplay', (event: any) => {
+        console.log(event, '可以播放')
+    })
+}
+
+watch(
+    () => props.src,
+    (src) => {
+        player?.src({ src, type: 'video/mp4' })
+    }
+)
+
+onMounted(() => {
+    initPlayer()
+})
+
+onBeforeUnmount(() => {
+    player?.dispose()
+    player = null
 })
 
 const play = () => {
-    playerRef.value.play()
+    player?.play()
 }
 
 const pause = () => {
-    playerRef.value.pause()
-}
-
-const onPlay = (event: any) => {
-    console.log(event, '播放')
-}
-const onPause = (event: any) => {
-    console.log(event, '暂停')
-}
-
-const onTimeupdate = (event: any) => {
-    // console.log(event, '时间更新')
-}
-const onCanplay = (event: any) => {
-    console.log(event, '可以播放')
+    player?.pause()
 }
 
 defineExpose({

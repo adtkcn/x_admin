@@ -23,6 +23,14 @@
             >
                 <icon name="el-icon-CaretRight" :size="16" color="#fff" />
             </div>
+            <div v-if="fileType == 'office' || fileType == 'file'" class="file-type-icon">
+                <!-- <icon
+                    :name="fileType == 'office' ? 'el-icon-Document' : 'el-icon-Files'"
+                    :size="28"
+                    color="#909399"
+                /> -->
+                .{{ ext }}
+            </div>
 
             <slot></slot>
         </div>
@@ -44,18 +52,20 @@ export default defineComponent({
         fileSize: {
             type: String,
             default: '100px'
-        },
-        // 文件类型
-        ext: {
-            type: String,
-            default: ''
         }
+        // // 文件类型
+        // ext: {
+        //     type: String,
+        //     default: ''
+        // }
     },
-    emits: ['close'],
     computed: {
         fileType() {
             const fileType = GetFileType(this.uri)
             return fileType
+        },
+        ext() {
+            return this.uri.split('.').pop()
         }
     }
 })
@@ -76,6 +86,14 @@ export default defineComponent({
     .video {
         display: block;
         box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+    }
+
+    .file-type-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         height: 100%;
     }

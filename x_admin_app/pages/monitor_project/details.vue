@@ -12,11 +12,11 @@
       <uv-form-item label="项目类型" prop="projectType" borderBottom>
         {{ form.projectType }}
       </uv-form-item>
-      <uv-form-item label="创建时间" prop="createTime" borderBottom>
-        {{ form.createTime }}
+      <uv-form-item label="创建时间" prop="CreateTime" borderBottom>
+        {{ form.CreateTime }}
       </uv-form-item>
-      <uv-form-item label="更新时间" prop="updateTime" borderBottom>
-        {{ form.updateTime }}
+      <uv-form-item label="更新时间" prop="UpdateTime" borderBottom>
+        {{ form.UpdateTime }}
       </uv-form-item>
     </uv-form>
     <uv-button
@@ -44,8 +44,8 @@ let form = ref<type_monitor_project>({
   projectKey: "",
   projectName: "",
   projectType: "",
-  createTime: "",
-  updateTime: "",
+  CreateTime: "",
+  UpdateTime: "",
 });
 onLoad((e) => {
   console.log("onLoad", e);

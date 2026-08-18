@@ -17,9 +17,20 @@ const (
 	CodeSceneUnbind   = "unbind"   // 解绑手机（邮箱验证码确认身份）
 )
 
+// 邮箱验证码发送队列名
+const QueueEmailCode = "email:code:send"
+
+// EmailCodeTask 邮箱验证码发送任务载荷（推入队列异步发送）
+type EmailCodeTask struct {
+	To        string `json:"to"`
+	Subject   string `json:"subject"`
+	HTMLBody  string `json:"html_body"`
+	CreatedAt int64  `json:"created_at"` // 入队时间戳（秒），用于过期判定
+}
+
 // Redis key 模板
 const (
-	codeKeyTpl   = "user:code:%s:%s"       // user:code:{scene}:{email}  验证码值
+	// codeKeyTpl   =       // user:code:{scene}:{email}  验证码值
 	codeLimitTpl = "user:code:limit:%s"    // user:code:limit:{email}    60s频率限制
 	codeDailyTpl = "user:code:daily:%s:%s" // user:code:daily:{email}:{date} 每日上限
 )
@@ -29,7 +40,9 @@ var EmailCodeUtil = &emailCodeUtil{}
 type emailCodeUtil struct{}
 
 // SendCode 发送邮箱验证码
-func (e *emailCodeUtil) SendCode(email, scene string) error {
+// uid 为可选参数，非空时验证码将与具体账号绑定（key 变为 user:code:{scene}:{uid}:{email}），
+// 防止跨账号滥用；为空则保持原有 key 格式，向后兼容。
+func (e *emailCodeUtil) SendCode(email, scene, uid string) error {
 	// 频率限制: 60s内不可重复发送
 	limitKey := fmt.Sprintf(codeLimitTpl, email)
 	if RedisUtil.Exists(limitKey) > 0 {
@@ -52,7 +65,7 @@ func (e *emailCodeUtil) SendCode(email, scene string) error {
 	codeStr := convert_util.ToString(code)
 
 	// 存储验证码到 Redis，5分钟有效
-	codeKey := fmt.Sprintf(codeKeyTpl, scene, email)
+	codeKey := e.buildCodeKey(scene, email, uid)
 	RedisUtil.Set(codeKey, codeStr, 300)
 
 	// 设置60s频率限制
@@ -65,7 +78,7 @@ func (e *emailCodeUtil) SendCode(email, scene string) error {
 		RedisUtil.Incr(dailyKey)
 	}
 
-	// 发送邮件
+	// 发送邮件：推入队列异步执行，避免阻塞请求
 	sceneMap := map[string]string{
 		CodeSceneRegister: "注册账号",
 		CodeSceneReset:    "重置密码",
@@ -77,8 +90,9 @@ func (e *emailCodeUtil) SendCode(email, scene string) error {
 		sceneName = "验证操作"
 	}
 
-	opts := EmailOptions{
-		To:      []string{email},
+	opts := EmailCodeTask{
+		To:        email,
+		CreatedAt: time.Now().Unix(),
 		Subject: fmt.Sprintf("【%s】%s验证码", config.AppConfig.AppName, sceneName),
 		HTMLBody: fmt.Sprintf(`
 			<h3>%s</h3>
@@ -86,17 +100,17 @@ func (e *emailCodeUtil) SendCode(email, scene string) error {
 			<p>验证码 5 分钟内有效，请勿泄露给他人。</p>
 			<p style="color:#999;font-size:12px">如非本人操作，请忽略此邮件。</p>`, sceneName, codeStr),
 	}
-	if err := EmailUtil.SendEmail(opts); err != nil {
-		core.Logger.Errorf("SendCode 邮件发送失败: email=%s scene=%s err=%v", email, scene, err)
-		// 发送失败不影响验证码有效性，但记录日志
+	if err := core.Queue.Enqueue(QueueEmailCode, opts); err != nil {
+		core.Logger.Errorf("SendCode 验证码入队失败: email=%s scene=%s err=%v", email, scene, err)
 		return fmt.Errorf("验证码发送失败，请稍后重试")
 	}
 	return nil
 }
 
 // VerifyCode 校验邮箱验证码（成功后删除）
-func (e *emailCodeUtil) VerifyCode(email, scene, code string) error {
-	codeKey := fmt.Sprintf(codeKeyTpl, scene, email)
+// uid 必须与 SendCode 调用时传入的一致，否则取不到对应验证码。
+func (e *emailCodeUtil) VerifyCode(email, scene, code, uid string) error {
+	codeKey := e.buildCodeKey(scene, email, uid)
 	stored := RedisUtil.Get(codeKey)
 	if stored == "" {
 		return fmt.Errorf("验证码已过期，请重新获取")
@@ -107,4 +121,14 @@ func (e *emailCodeUtil) VerifyCode(email, scene, code string) error {
 	// 验证成功，删除验证码（防止重复使用）
 	RedisUtil.Del(codeKey)
 	return nil
+}
+
+// buildCodeKey 构造验证码 Redis key
+// uid 为空：user:code:{scene}:{email}（向后兼容）
+// uid 非空：user:code:{scene}:{uid}:{email}（验证码与具体账号绑定）
+func (e *emailCodeUtil) buildCodeKey(scene, email, uid string) string {
+	if uid != "" {
+		return fmt.Sprintf("user:code:%s:%s:%s", scene, uid, email)
+	}
+	return fmt.Sprintf("user:code:%s:%s", scene, email)
 }

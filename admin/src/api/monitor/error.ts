@@ -7,35 +7,35 @@ import { getToken } from '@/utils/auth'
 import { clearEmpty } from '@/utils/util'
 
 export type type_monitor_error = {
-    Id?: string
-    ProjectKey?: string
-    EventType?: string
-    Path?: string
-    Message?: string
-    Stack?: string
-    Md5?: string
-    CreateTime?: string
+    id?: string
+    project_key?: string
+    event_type?: string
+    path?: string
+    message?: string
+    stack?: string
+    md5?: string
+    create_time?: string
 }
 // 查询
 export type type_monitor_error_query = {
-    ProjectKey?: string
-    EventType?: string
-    Path?: string
-    Message?: string
-    Stack?: string
-    Md5?: string
-    CreateTimeStart?: string
-    CreateTimeEnd?: string
+    project_key?: string
+    event_type?: string
+    path?: string
+    message?: string
+    stack?: string
+    md5?: string
+    create_time_start?: string
+    create_time_end?: string
 }
 // 添加编辑
 export type type_monitor_error_edit = {
-    Id?: string
-    ProjectKey?: string
-    EventType?: string
-    Path?: string
-    Message?: string
-    Stack?: string
-    Md5?: string
+    id?: string
+    project_key?: string
+    event_type?: string
+    path?: string
+    message?: string
+    stack?: string
+    md5?: string
 }
 
 // 监控-错误列列表
@@ -54,8 +54,8 @@ export function monitor_error_list_all(params?: type_monitor_error_query) {
 }
 
 // 监控-错误列详情
-export function monitor_error_detail(Id: number | string) {
-    return request.get<type_monitor_error>({ url: '/monitor_error/detail', params: { Id } })
+export function monitor_error_detail(id: string) {
+    return request.get<type_monitor_error>({ url: '/monitor_error/detail', params: { id } })
 }
 
 // 监控-错误列新增
@@ -64,11 +64,11 @@ export function monitor_error_add(data: type_monitor_error_edit) {
 }
 
 // 监控-错误列删除
-export function monitor_error_delete(Id: number | string) {
-    return request.post<null>({ url: '/monitor_error/del', data: { Id } })
+export function monitor_error_delete(id: string) {
+    return request.post<null>({ url: '/monitor_error/del', data: { id } })
 }
 // 监控-错误列删除-批量
-export function monitor_error_delete_batch(data: { Ids: string }) {
+export function monitor_error_delete_batch(data: { ids: string }) {
     return request.post<null>({ url: '/monitor_error/del_batch', data })
 }
 

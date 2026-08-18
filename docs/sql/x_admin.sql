@@ -625,8 +625,8 @@ INSERT INTO `x_system_config` (`id`, `type`, `name`, `value`, `create_time`, `up
 	('12', 'website', 'favicon', '/api/static/backend_favicon.ico', '2024-01-02 03:04:05', '2025-06-24 19:52:38'),
 	('13', 'website', 'backdrop', '/api/static/backend_backdrop.png', '2024-01-02 03:04:05', '2025-06-24 19:52:38'),
 	('14', 'website', 'copyright', '[{"name":"蜀ICP备15007060号-1","link":"http://www.beian.gov.cn"},{"name":"x_admin","link":"http://x.adtk.cn"}]', '2024-01-02 03:04:05', '2025-12-19 00:27:43'),
-	('15', 'website', 'shopName', 'x_admin开源管理系统', '2024-01-02 03:04:05', '2025-06-24 19:52:38'),
-	('16', 'website', 'shopLogo', '/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png', '2024-01-02 03:04:05', '2025-06-24 19:52:38');
+	('15', 'website', 'shop_name', 'x_admin开源管理系统', '2024-01-02 03:04:05', '2025-06-24 19:52:38'),
+	('16', 'website', 'shop_logo', '/image/20241705/f0eb36d508834bc2ac1b8c591c563efa.png', '2024-01-02 03:04:05', '2025-06-24 19:52:38');
 
 -- 导出  表 x_admin_2.x_system_corn 结构
 CREATE TABLE IF NOT EXISTS `x_system_corn` (

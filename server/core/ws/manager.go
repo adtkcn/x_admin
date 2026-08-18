@@ -9,6 +9,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
+
+	"x_admin/core/pubsub"
 )
 
 // 在线用户统计相关常量。
@@ -49,7 +51,7 @@ type Manager struct {
 
 	// 集群支持
 	nodeID          string             // 当前实例唯一标识（UUID）
-	pubsub          PubSub             // 消息总线接口
+	emitter         pubsub.Emitter     // 事件总线（mitt 风格，local / redis 多后端）
 	redisClient     *redis.Client      // 集群模式下的 Redis 客户端（nil 表示单机模式）
 	prefix          string             // Redis key 前缀
 	heartbeatCancel context.CancelFunc // 心跳 goroutine 取消函数
@@ -65,19 +67,15 @@ func NewManager() *Manager {
 	}
 }
 
-// Init 初始化消息总线和 Redis 客户端。
-func (m *Manager) Init(ps PubSub, rdb *redis.Client, prefix string) {
-	m.pubsub = ps
+// Init 初始化事件总线和 Redis 客户端。
+func (m *Manager) Init(em pubsub.Emitter, rdb *redis.Client, prefix string) {
+	m.emitter = em
 	m.redisClient = rdb
 	m.prefix = prefix
 	m.nodeID = uuid.NewString()
 
-	// 启动订阅监听
-	msgCh, err := ps.Subscribe(context.Background())
-	if err != nil {
-		log.Fatalf("[ws] pubsub subscribe error: %v", err)
-	}
-	go m.subscribeLoop(msgCh)
+	// 按业务消息类型订阅事件，收到后反序列化并分发到本地连接
+	m.subscribeEvents()
 
 	// 集群模式：启动在线心跳
 	if m.redisClient != nil {
@@ -125,23 +123,38 @@ func (m *Manager) refreshOnlineSet() {
 	}
 }
 
-// subscribeLoop 监听 PubSub 消息并分发到本地连接。
-func (m *Manager) subscribeLoop(ch <-chan PubSubMessage) {
-	for msg := range ch {
-		switch msg.Type {
-		case MsgTypeUser:
-			m.localSendToUser(msg.Target, []byte(msg.Data))
-		case MsgTypeRoom:
-			m.localSendToRoom(msg.Target, []byte(msg.Data))
-		case MsgTypeAll:
-			m.localSendToAll([]byte(msg.Data))
-		case MsgTypeCloseRoom:
-			m.localCloseRoom(msg.Target)
-		case MsgTypeCloseUser:
-			m.localCloseUser(msg.Target)
-		case MsgTypeCloseAll:
-			m.localCloseAll()
+// subscribeEvents 按业务消息类型订阅事件总线，收到后反序列化并分发到本地连接。
+// 每种类型对应一个 handler，替代原先单通道 + switch 的分发方式。
+func (m *Manager) subscribeEvents() {
+	m.emitter.On(string(MsgTypeUser), m.onEvent(func(msg WsMessage) {
+		m.localSendToUser(msg.Target, []byte(msg.Data))
+	}))
+	m.emitter.On(string(MsgTypeRoom), m.onEvent(func(msg WsMessage) {
+		m.localSendToRoom(msg.Target, []byte(msg.Data))
+	}))
+	m.emitter.On(string(MsgTypeAll), m.onEvent(func(msg WsMessage) {
+		m.localSendToAll([]byte(msg.Data))
+	}))
+	m.emitter.On(string(MsgTypeCloseRoom), m.onEvent(func(msg WsMessage) {
+		m.localCloseRoom(msg.Target)
+	}))
+	m.emitter.On(string(MsgTypeCloseUser), m.onEvent(func(msg WsMessage) {
+		m.localCloseUser(msg.Target)
+	}))
+	m.emitter.On(string(MsgTypeCloseAll), m.onEvent(func(msg WsMessage) {
+		m.localCloseAll()
+	}))
+}
+
+// onEvent 将「反序列化 WsMessage 载荷」的样板逻辑包装为 pubsub.Handler。
+func (m *Manager) onEvent(fn func(WsMessage)) pubsub.Handler {
+	return func(payload []byte) {
+		var msg WsMessage
+		if err := json.Unmarshal(payload, &msg); err != nil {
+			log.Printf("[ws] event payload unmarshal error: %v", err)
+			return
 		}
+		fn(msg)
 	}
 }
 
@@ -206,23 +219,26 @@ func (m *Manager) LeaveRoom(uuid, roomID string) {
 	m.roomManager.Leave(uuid, roomID)
 }
 
-// publish 发布消息到 PubSub 总线。
-func (m *Manager) publish(msgType PubSubMessageType, target string, message any) {
-	if m.pubsub == nil {
+// publish 以业务消息类型为事件名，将消息发布到事件总线。
+func (m *Manager) publish(msgType WsMessageType, target string, message any) {
+	if m.emitter == nil {
 		return
 	}
 	data, err := json.Marshal(message)
 	if err != nil {
 		return
 	}
-	msg := PubSubMessage{
+	payload, err := json.Marshal(WsMessage{
 		Type:   msgType,
 		Target: target,
 		Data:   data,
 		NodeID: m.nodeID,
+	})
+	if err != nil {
+		return
 	}
-	if err := m.pubsub.Publish(context.Background(), msg); err != nil {
-		log.Printf("[ws] pubsub publish error: %v", err)
+	if err := m.emitter.Emit(string(msgType), payload); err != nil {
+		log.Printf("[ws] emitter emit error: %v", err)
 	}
 }
 
@@ -410,7 +426,7 @@ func (m *Manager) Close() {
 	if m.redisClient != nil {
 		m.redisClient.Del(context.Background(), m.prefix+onlineKeyPrefix+m.nodeID)
 	}
-	if m.pubsub != nil {
-		m.pubsub.Close()
+	if m.emitter != nil {
+		m.emitter.Close()
 	}
 }

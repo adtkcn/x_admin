@@ -7,7 +7,7 @@ description: "x_admin 后台管理系统 - Go/Gin/GORM 项目完整技术文档"
 
 ## 项目概述
 
-x_admin 是一个基于 **Go 1.26** 的后台管理系统后端服务，采用前后端分离架构，同时提供 C 端用户系统（JWT 鉴权、邮箱/手机/微信登录）。
+x_admin 是一个基于 **Go 1.26** 的后台管理系统后端服务，采用前后端分离架构，同时提供 C 端(Web)用户系统（JWT 鉴权、邮箱/手机/微信登录），并包含基于消息队列（`core/queue`）的异步任务处理。
 
 **模块名**: `x_admin`  
 **入口文件**: `main.go`  
@@ -39,7 +39,10 @@ x_admin 是一个基于 **Go 1.26** 的后台管理系统后端服务，采用�
 server/
 ├── app/                              # 应用程序核心代码
 │   ├── controller/                   # 控制器层
-│   │   ├── admin_ctl/                # 后台管理控制器
+│   │   ├── ws.go                     # WebSocket 升级处理器
+│   │   ├── admin_ctl/                # 后台管理控制器 (/api/admin)
+│   │   │   ├── system_corn_ctl.go    #   定时任务管理
+│   │   │   ├── user_protocol_ctl.go  #   用户协议
 │   │   │   ├── common_controller/    # 通用功能
 │   │   │   │   ├── album.go          #   相册管理
 │   │   │   │   ├── captcha.go        #   验证码
@@ -63,29 +66,25 @@ server/
 │   │   │   │   ├── dict_data.go
 │   │   │   │   ├── dict_type.go
 │   │   │   │   └── website.go
-│   │   │   ├── system_controller/    # 系统管理
-│   │   │   │   ├── admin.go          #   管理员
-│   │   │   │   ├── dept.go           #   部门
-│   │   │   │   ├── log.go            #   操作日志
-│   │   │   │   ├── login.go          #   登录
-│   │   │   │   ├── menu.go           #   菜单
-│   │   │   │   ├── notice.go         #   通知
-│   │   │   │   ├── post.go           #   岗位
-│   │   │   │   └── role.go           #   角色
-│   │   │   ├── system_corn_ctl.go    # 定时任务管理
-│   │   │   └── user_protocol_ctl.go  # 用户协议
-│   │   ├── user_ctl/                 # C端用户控制器
-│   │   │   ├── auth_controller.go    #   绑定/解绑（手机、邮箱、微信）
-│   │   │   └── user_controller.go    #   注册/登录/手机验证码/密码重置
-│   │   └── ws.go                     # WebSocket 升级处理器
+│   │   │   └── system_controller/    # 系统管理
+│   │   │       ├── admin.go          #   管理员
+│   │   │       ├── dept.go           #   部门
+│   │   │       ├── log.go            #   操作日志
+│   │   │       ├── login.go          #   登录
+│   │   │       ├── menu.go           #   菜单
+│   │   │       ├── notice.go         #   通知
+│   │   │       ├── post.go           #   岗位
+│   │   │       └── role.go           #   角色
+│   │   └── web_ctl/                  # C端(Web)用户控制器 (/api/web)
+│   │       ├── auth_controller.go    #   绑定/解绑（手机、邮箱、微信）
+│   │       └── user_controller.go    #   注册/登录/手机验证码/密码重置
 │   │
 │   ├── service/                      # 服务层（业务逻辑）
+│   │   ├── user_protocol_service.go  # 用户协议服务
 │   │   ├── common_service/           # 通用服务
 │   │   │   ├── album_service.go      #   相册管理
 │   │   │   ├── captcha_service.go    #   验证码
 │   │   │   ├── file_hash_service.go  #   文件哈希（秒传）
-│   │   │   ├── file_ref_service.go   #   文件关联引用管理
-│   │   │   ├── file_cleanup_service.go#  文件定时清理（7天无引用）
 │   │   │   ├── ge_tui_service.go     #   个推推送（两级缓存）
 │   │   │   ├── index_service.go      #   首页统计
 │   │   │   └── upload_service.go     #   文件上传
@@ -101,11 +100,7 @@ server/
 │   │   │   └── tpl_utils/            #   模板工具
 │   │   │       ├── constants.go
 │   │   │       ├── tpl.go
-│   │   │       ├── utils.go
-│   │   │       └── templates/        #   代码模板
-│   │   │           ├── gocode/       #     Go 模板 (controller/model/route/schema/service/sql.tpl)
-│   │   │           ├── vue/          #     Vue 模板 (api/details/edit/index.tpl)
-│   │   │           └── uniapp/       #     UniApp 模板 (api/details/edit/index.tpl)
+│   │   │       └── utils.go
 │   │   ├── monitor_service/          # 监控服务
 │   │   │   ├── monitor_client_service.go
 │   │   │   ├── monitor_error_list_service.go
@@ -121,8 +116,8 @@ server/
 │   │   │   ├── system_config_service.go
 │   │   │   └── website_service.go
 │   │   ├── system_service/           # 系统管理服务
-│   │   │   ├── admin_service.go      #   管理员 CRUD
 │   │   │   ├── admin_role_service.go #   管理员-角色关联
+│   │   │   ├── admin_service.go      #   管理员 CRUD
 │   │   │   ├── dept_service.go       #   部门
 │   │   │   ├── forget_pwd_service.go #   忘记密码
 │   │   │   ├── log_service.go        #   操作日志
@@ -135,9 +130,12 @@ server/
 │   │   │   ├── auth_service.go       #   绑定/解绑手机、邮箱
 │   │   │   ├── user_service.go       #   注册/登录/手机验证码/密码重置
 │   │   │   └── wechat_service.go     #   微信小程序/公众号登录绑定
-│   │   └── user_protocol_service.go  # 用户协议
+│   │   └── task/                      # 异步任务（基于 core/queue）
+│   │       └── task.go                #   消费者注册（转写/AI/流程通知）
 │   │
 │   ├── schema/                       # 请求与响应结构体 (DTO)
+│   │   ├── system_corn_schema.go
+│   │   ├── user_protocol_schema.go
 │   │   ├── common_schema/
 │   │   │   ├── album_schema.go
 │   │   │   ├── captcha_schema.go
@@ -180,8 +178,7 @@ server/
 │   ├── model/                        # 数据库模型层
 │   │   ├── common_model/
 │   │   │   ├── album.go              #   相册
-│   │   │   ├── file_hash.go          #   文件哈希（秒传）
-│   │   │   └── file_ref.go           #   文件关联引用
+│   │   │   └── file_hash.go          #   文件哈希（秒传）
 │   │   ├── gen_model/
 │   │   │   └── gen.go                #   代码生成器元数据
 │   │   ├── setting_model/
@@ -215,10 +212,12 @@ server/
 │   │   ├── limit_ip.go               #   IP 限频
 │   │   └── limit_rate.go             #   通用限流
 │   │
-│   └── corn/                         # 定时任务注册
-│       ├── corn_manager.go           #   CronManager (基于 robfig/cron)
-│       ├── fixed_task.go             #   固定任务（清理分片/在线人数/监控/文件清理等）
-│       └── dynamic_task.go           #   动态任务（从数据库加载）
+│   ├── corn/                         # 定时任务注册 (package corn)
+│   │   ├── corn_manager.go           #   CronManager (基于 robfig/cron 秒级)
+│   │   ├── fixed_task.go             #   固定任务（在线人数/监控/清理/补推等）
+│   │   └── dynamic_task.go           #   动态任务（从数据库加载）
+│   └── task/                         # 异步任务启动入口 (package task)
+│       └── task.go                   #   基于 core/queue 的消费者注册与启动
 │
 ├── config/                           # 配置管理
 │   ├── init.go                       #   Viper 初始化入口
@@ -239,10 +238,22 @@ server/
 │   ├── db.go                         #   GORM 数据库初始化
 │   ├── redis.go                      #   Redis 连接初始化
 │   ├── logger.go                     #   Zap 日志初始化
+│   ├── queue.go                      #   全局消息队列实例 (core.Queue)
 │   ├── ws.go                         #   WebSocket 全局管理器入口
 │   ├── ws/                           #   WebSocket 实现
 │   │   ├── client.go                 #     客户端（sync.Once 安全关闭）
-│   │   └── manager.go               #     连接管理器（单推/群推/全推）
+│   │   ├── manager.go               #     连接管理器（单推/群推/全推）
+│   │   ├── interface.go              #     WS 接口定义
+│   │   └── room.go                   #     房间（分组）广播
+│   ├── pubsub/                       #   发布订阅 (基于 Redis)
+│   │   ├── config.go                 #     配置
+│   │   ├── interface.go              #     接口定义
+│   │   ├── redis.go                  #     Redis 实现
+│   │   └── registry.go              #     订阅注册
+│   ├── queue/                        #   消息队列 (基于 Redis)
+│   │   ├── config.go                 #     队列配置
+│   │   ├── interface.go              #     队列接口
+│   │   └── redis.go                  #     Redis 实现
 │   ├── request/
 │   │   └── common.go                 #   分页请求 PageReq
 │   └── response/                     #   统一响应封装
@@ -265,7 +276,8 @@ server/
 │   │   ├── system_route.go           #     系统管理
 │   │   ├── system_corn_route.go      #     定时任务
 │   │   └── user_protocol_route.go    #     用户协议
-│   └── user_route/                   #   /api/user C端用户路由
+│   └── web_route/                    #   /api/web C端(Web)用户路由
+│       ├── init.go                   #     Autoload 自动加载机制
 │       └── user_route.go             #     注册/登录/绑定/微信
 │
 ├── util/                             # 工具包
@@ -287,21 +299,23 @@ server/
 │   ├── uaparser.go                   #   UA 解析
 │   ├── null_time.go                  #   Null 时间类型工具
 │   ├── convert_util/                 #   类型转换 (struct copy)
+│   │   └── convert.go
 │   ├── excel2/                       #   Excel 导入导出
+│   │   ├── excel.go
+│   │   ├── excel_export.go
+│   │   └── excel_import.go
 │   ├── img_util/                     #   图片处理
+│   │   └── img_util.go
 │   └── aj-captcha-go/               #   行为验证码
 │       ├── captcha_config/           #     配置与常量
-│       ├── captcha_service/          #     滑块/点选验证码实现
+│       ├── captcha_service/          #     滑块/点选验证码实现 (含缓存/工厂)
 │       ├── model/vo/                 #     值对象
 │       └── util/                     #     AES/图片/字体/缓存工具
+│           └── image/                #     图片处理子工具
 │
 ├── plugin/                           # 插件
-│   ├── storage.go                    #   文件上传驱动
-│   ├── storage_interface.go          #   存储引擎接口 (含分片上传)
-│   ├── storage_local.go              #   本地文件存储实现
-│   ├── storage_factory.go            #   存储引擎工厂
-│   ├── presign.go                    #   S3 预签名 URL 生成
-│   ├── cron_cleanup.go              #   分片临时目录定时清理
+│   ├── asr588.go                     #   语音识别(ASR) 插件 (588 引擎对接)
+│   ├── wechat.go                     #   微信相关插件 (消息/支付等)
 │   └── validator_null.go            #   GORM Null 类型 Validator 插件
 │
 ├── public/                           # 公共资源
@@ -314,7 +328,6 @@ server/
 │   ├── swagger.json
 │   ├── swagger.yaml
 │   └── migration/                    #   数据库迁移 SQL
-│       └── add_common_file_ref_table.sql
 │
 ├── main.go                           # 程序入口
 ├── go.mod                            # Go 模块依赖
@@ -400,20 +413,22 @@ go run main.go -env=.env.prod.yaml  # 指定环境
 | 系统监控 | `monitor_controller/` | 项目/客户端/错误日志收集与分析 |
 | 审批流程 | `flow_controller/` | 流程模板/申请/审核/历史 |
 | 通用功能 | `common_controller/` | 文件上传(含S3直传)/相册/个推/首页统计 |
-| 定时任务 | `system_corn_ctl.go` | 动态定时任务管理 |
+| 定时任务 | `system_corn_ctl.go` | 动态定时任务管理 (corn 包注册) |
 | 用户协议 | `user_protocol_ctl.go` | 协议内容管理 |
 
-### C端用户系统
+### C端(Web)用户系统
+
+C端路由前缀为 **`/api/web`**（控制器在 `web_ctl/`，路由在 `web_route/`）。
 
 | 功能 | 路由 | 说明 |
 |------|------|------|
-| 邮箱注册/登录 | `/api/user/register`, `/api/user/login` | bcrypt + salt |
-| 手机号+密码登录 | `/api/user/phoneLogin` | 手机号非必填 |
-| 手机号+验证码登录 | `/api/user/phoneCodeLogin` | 短信验证码 (Redis 限频) |
-| 微信小程序登录 | `/api/user/wechatMiniLogin` | PowerWeChat SDK，自动注册 |
-| 微信公众号登录 | `/api/user/wechatMpLogin` | OAuth 网页授权 |
-| 绑定/解绑 | `/api/user/bind*`, `/api/user/unbind*` | 手机(需短信码)/邮箱(需验证码)/微信 |
-| 密码重置 | `/api/user/resetPassword`, `/api/user/resetPhonePassword` | 邮箱验证码/短信验证码 |
+| 邮箱注册/登录 | `/api/web/register`, `/api/web/login` | bcrypt + salt |
+| 手机号+密码登录 | `/api/web/phoneLogin` | 手机号非必填 |
+| 手机号+验证码登录 | `/api/web/phoneCodeLogin` | 短信验证码 (Redis 限频) |
+| 微信小程序登录 | `/api/web/wechatMiniLogin` | PowerWeChat SDK，自动注册 |
+| 微信公众号登录 | `/api/web/wechatMpLogin` | OAuth 网页授权 |
+| 绑定/解绑 | `/api/web/bind*`, `/api/web/unbind*` | 手机(需短信码)/邮箱(需验证码)/微信 |
+| 密码重置 | `/api/web/resetPassword`, `/api/web/resetPhonePassword` | 邮箱验证码/短信验证码 |
 | 踢人下线 | token_version 自增 | 使旧 JWT 失效 |
 
 ## 关键开发约定
@@ -426,5 +441,5 @@ go run main.go -env=.env.prod.yaml  # 指定环境
 6. **数据库**: 通过 `core.GetDB()` 获取 `*gorm.DB`
 7. **Redis**: 封装在 `util.RedisUtil`，分布式锁用 `util.NewRedisLock()`
 8. **参数校验**: Schema 结构体中使用 `binding` + `validator` 标签
-9. **文件关联**: 业务使用文件后调用 `FileRefService.AddRef()` 建立引用，定时清理无引用文件
+9. **异步任务**: 耗时操作（录音转写/AI处理/流程通知等）通过 `core/queue` 消息队列异步处理，消费者在 `app/task/task.go` 注册
 10. **主键**: UUID v7 (`char(36)`)，模型中通过 `BeforeCreate` 钩子自动生成

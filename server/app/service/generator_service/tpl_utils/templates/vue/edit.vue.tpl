@@ -157,18 +157,20 @@
                 {{{- end }}}
                  {{{- end }}}
             {{{- end }}}
-            
+
             </el-form>
         </popup>
     </div>
 </template>
 <script lang="ts" setup>
-import type { FormInstance } from 'element-plus'
-import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_list_all,{{{ end }}} {{{ .ModuleName }}}_edit, {{{ .ModuleName }}}_add, {{{ .ModuleName }}}_detail } from '@/api/{{{nameToPath .ModuleName }}}'
+import type { FormInstance, FormRules } from 'element-plus'
+import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_list_all,{{{ end }}} {{{ .ModuleName }}}_edit, {{{ .ModuleName }}}_add, {{{ .ModuleName }}}_detail } from '@/api/{{{.Domain}}}/{{{.ModuleName}}}'
+import type { type_{{{ .ModuleName }}} } from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
-import { ref, shallowRef, computed, reactive } from 'vue'
+import { ref, computed, useTemplateRef } from 'vue'
 import type { PropType } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 defineProps({
     dictData: {
         type: Object as PropType<Record<string, any[]>>,
@@ -180,8 +182,8 @@ defineProps({
     }
 })
 const emit = defineEmits(['success', 'close'])
-const formRef = shallowRef<FormInstance>()
-const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const formRef = useTemplateRef<FormInstance>('formRef')
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
 {{{- if and .Table.TreePrimary .Table.TreeParent }}}
 const treeList = ref<any[]>([])
 {{{- end }}}
@@ -190,15 +192,13 @@ const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑{{{ .FunctionName }}}' : '新增{{{ .FunctionName }}}'
 })
 
-const formData = reactive({
+const { state: formData, setState } = useReactiveWithReset<type_{{{ .ModuleName }}}_edit>({
     {{{- range .Columns }}}
     {{{- if .IsPk }}}
-    {{{ .TsField }}}: '',
+    {{{ .TsField }}}: undefined,
     {{{- else if .IsEdit }}}
     {{{- if eq .HtmlType "checkbox" }}}
-    {{{ .TsField }}}: [],
-    {{{- else if eq .HtmlType "number" }}}
-    {{{ .TsField }}}: undefined,
+    {{{ .TsField }}}: [] as any[],
     {{{- else }}}
     {{{ .TsField }}}: undefined,
     {{{- end }}}
@@ -206,7 +206,7 @@ const formData = reactive({
     {{{- end }}}
 })
 
-const formRules = {
+const formRules: FormRules = {
     {{{- range .Columns }}}
     {{{- if and .IsEdit }}}
     {{{ .TsField }}}: [
@@ -227,17 +227,19 @@ const formRules = {
 const handleSubmit = async () => {
      try {
         await formRef.value?.validate()
-        const data: any = { ...formData }
+        const data: type_{{{ .ModuleName }}}_edit = { ...formData } as type_{{{ .ModuleName }}}_edit
         {{{- range .Columns }}}
         {{{- if eq .HtmlType "checkbox" }}}
-        data.{{{ .TsField }}} = data.{{{ .TsField }}}.join(',')
+        data.{{{ .TsField }}} = (data.{{{ .TsField }}} as any).join(',')
         {{{- end }}}
         {{{- end }}}
         mode.value == 'edit' ? await {{{ .ModuleName }}}_edit(data) : await {{{ .ModuleName }}}_add(data)
         popupRef.value?.close()
         feedback.msgSuccess('操作成功')
         emit('success')
-     } catch (error) {}
+     } catch (error) {
+        console.error('提交失败:', error)
+     }
 }
 
 const open = (type = 'add') => {
@@ -245,26 +247,23 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = async (data: Record<string, any>) => {
-    for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            formData[key] = data[key]
-            {{{- range .Columns }}}
-            {{{- if eq .HtmlType "checkbox" }}}
-            //@ts-ignore
-            formData.{{{ .TsField }}} = String(data.{{{ .TsField }}}).split(',')
-            {{{- end }}}
-            {{{- end }}}
-        }
-    }
+const setFormData = async (data: type_{{{ .ModuleName }}}) => {
+    const form: any = { ...data }
+    {{{- range .Columns }}}
+    {{{- if eq .HtmlType "checkbox" }}}
+    form.{{{ .TsField }}} = String(data.{{{ .TsField }}}).split(',') as any
+    {{{- end }}}
+    {{{- end }}}
+    setState(form)
 }
 
-const getDetail = async (row: Record<string, any>) => {
+const getDetail = async (row: type_{{{ .ModuleName }}}) => {
      try {
-        const data = await {{{ .ModuleName }}}_detail(row.{{{toUpperCamelCase .PrimaryKey }}})
+        const data = await {{{ .ModuleName }}}_detail(row.{{{ .PrimaryTsField }}})
         setFormData(data)
-     } catch (error) {}
+     } catch (error) {
+        console.error('详情获取失败:', error)
+     }
 }
 
 const handleClose = () => {
@@ -273,10 +272,14 @@ const handleClose = () => {
 {{{- if and .Table.TreePrimary .Table.TreeParent }}}
 
 const getLists = async () => {
-    const data: any = await {{{ .ModuleName }}}_list_all()
-    const item = { {{{ .Table.TreePrimary }}}: 0, {{{ .Table.TreeName }}}: '顶级', children: [] }
-    item.children = data
-    treeList.value.push(item)
+    try {
+        const data: any = await {{{ .ModuleName }}}_list_all()
+        const item = { {{{ .Table.TreePrimary }}}: 0, {{{ .Table.TreeName }}}: '顶级', children: [] }
+        item.children = data
+        treeList.value.push(item)
+    } catch (error) {
+        console.error('获取失败:', error)
+    }
 }
 
 getLists()

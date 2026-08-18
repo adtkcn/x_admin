@@ -8,7 +8,7 @@ import {
     getMenu,
     type type_system_login,
     type type_system_admin_self
-} from '@/api/user'
+} from '@/api/system/user'
 import router, { filterAsyncRoutes } from '@/router'
 import { TOKEN_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'

@@ -10,33 +10,28 @@
                 </el-button>
                 <el-button @click="handleExpand"> 展开/折叠 </el-button>
             </div>
-            <el-table
+            <vxe-table
                 ref="tableRef"
                 class="mt-4"
-                size="large"
-                v-loading="loading"
+                :loading="loading"
                 :data="lists"
-                row-key="id"
-                :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+                :row-config="{ keyField: 'id' }"
+                :tree-config="{ childrenField: 'children', rowField: 'id' }"
+                :border="'inner'"
             >
-                <el-table-column
-                    label="部门名称"
-                    prop="name"
-                    min-width="150"
-                    show-overflow-tooltip
-                />
-                <el-table-column label="负责人" prop="duty" show-overflow-tooltip />
+                <vxe-column title="部门名称" field="name" min-width="150" show-overflow tree-node />
+                <vxe-column title="负责人" field="duty" show-overflow />
 
-                <el-table-column label="部门状态" prop="isStop" min-width="100">
+                <vxe-column title="部门状态" field="is_stop" min-width="100">
                     <template #default="{ row }">
-                        <el-tag class="ml-2" :type="row.isStop ? 'danger' : 'primary'">
-                            {{ row.isStop ? '停用' : '正常' }}
+                        <el-tag class="ml-2" :type="row.is_stop ? 'danger' : 'primary'">
+                            {{ row.is_stop ? '停用' : '正常' }}
                         </el-tag>
                     </template>
-                </el-table-column>
-                <el-table-column label="排序" prop="sort" min-width="100" />
-                <el-table-column label="更新时间" prop="updateTime" min-width="180" />
-                <el-table-column label="操作" width="160" fixed="right">
+                </vxe-column>
+                <vxe-column title="排序" field="sort" min-width="100" />
+                <vxe-column title="更新时间" field="update_time" min-width="180" />
+                <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:system:dept:add']"
@@ -64,15 +59,14 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
         </el-card>
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
     </div>
 </template>
 <script lang="ts" setup>
 import { ref, shallowRef, reactive, nextTick, onMounted } from 'vue'
-import type { ElTable } from 'element-plus'
 import EditPopup from './edit.vue'
 import { deptDelete, deptAll, type type_system_dept_resp } from '@/api/org/department'
 import feedback from '@/utils/feedback'
@@ -80,17 +74,20 @@ import { arrayToTree } from '@/utils/util'
 defineOptions({
     name: 'department'
 })
-const tableRef = shallowRef<InstanceType<typeof ElTable>>()
+const tableRef = ref<any>()
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-let isExpand = false
 const loading = ref(false)
 const lists = ref<type_system_dept_resp[]>([])
 
 const showEdit = ref(false)
 const getLists = async () => {
     loading.value = true
-    const list = await deptAll()
-    lists.value = arrayToTree(list, '')
+    try {
+        const list = await deptAll()
+        lists.value = arrayToTree(list, '')
+    } catch (error) {
+        console.error('部门列表获取失败:', error)
+    }
     loading.value = false
 }
 
@@ -113,30 +110,34 @@ const handleEdit = async (data: type_system_dept_resp) => {
 }
 
 const handleDelete = async (id: string) => {
-    await feedback.confirm('确定要删除？')
-    await deptDelete({ id })
-    feedback.msgSuccess('删除成功')
-    getLists()
+    try {
+        await feedback.confirm('确定要删除？')
+        await deptDelete({ id })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {
+        console.error('部门删除失败:', error)
+    }
 }
 
+let isExpand = false
 const handleExpand = () => {
+    const $table = tableRef.value
+    if (!$table) return
     isExpand = !isExpand
-    toggleExpand(lists.value, isExpand)
-}
-
-const toggleExpand = (children: type_system_dept_resp[], unfold = true) => {
-    for (const key in children) {
-        tableRef.value?.toggleRowExpansion(children[key], unfold)
-        if (children[key].children) {
-            toggleExpand(children[key].children!, unfold)
-        }
+    if (isExpand) {
+        $table.setAllTreeExpand(true)
+    } else {
+        $table.clearTreeExpand()
     }
 }
 
 onMounted(async () => {
     await getLists()
-    nextTick(() => {
+    // 等待 vxe-table 内部完成 tree 数据初始化后再展开，避免 setAllTreeExpand 被静默丢弃
+    await nextTick()
+    setTimeout(() => {
         handleExpand()
-    })
+    }, 0)
 })
 </script>

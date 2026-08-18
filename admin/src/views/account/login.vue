@@ -10,13 +10,7 @@
                 >
                     <div class="text-center text-3xl font-medium mb-8">{{ config.webName }}</div>
 
-                    <el-form
-                        ref="formRef"
-                        :model="formData"
-                        size="large"
-                        :rules="rules"
-                        autoComplete="off"
-                    >
+                    <el-form ref="formRef" :model="formData" :rules="rules" autoComplete="off">
                         <el-form-item prop="email">
                             <el-input
                                 v-model.trim="formData.email"
@@ -30,7 +24,12 @@
                                 </template>
                             </el-input>
                         </el-form-item>
-                        <input v-model.trim="formData.email" type="text" name="email-hide" class="hide-input" />
+                        <input
+                            v-model.trim="formData.email"
+                            type="text"
+                            name="email-hide"
+                            class="hide-input"
+                        />
                         <input v-model="formData.password" type="password" class="hide-input" />
                         <el-form-item prop="password">
                             <el-input
@@ -49,7 +48,6 @@
 
                     <el-button
                         type="primary"
-                        size="large"
                         tabindex="1"
                         :loading="isLock"
                         @click="handleLoginClick"
@@ -155,6 +153,7 @@ onMounted(() => {
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
+    background-image: url(./images/login_bg.png);
 
     .login-card {
         height: 400px;

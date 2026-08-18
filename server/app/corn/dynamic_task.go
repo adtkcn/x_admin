@@ -12,10 +12,9 @@ var DynamicTasks = NewCronManager()
 
 // 从数据库加载任务
 func loadTasks() []corn_service.RunTask {
-	var Status = x_null.Int64{}
-	Status.SetValue(1)
+
 	allList, err := corn_service.SystemCornService.ListAll(schema.SystemCornListReq{
-		Status: Status,
+		Status: x_null.NewInt64(1),
 	})
 	if err != nil {
 		core.Logger.Error("加载任务失败", err)

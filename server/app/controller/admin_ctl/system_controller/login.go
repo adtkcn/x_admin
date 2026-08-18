@@ -50,11 +50,7 @@ func (lh LoginHandler) Login(c *gin.Context) {
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/logout [post]
 func (lh LoginHandler) Logout(c *gin.Context) {
-	var logoutReq system_schema.SystemLogoutReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyHeader(c, &logoutReq)) {
-		return
-	}
-	response.CheckAndRespWithData(c, nil, system_service.LoginService.Logout(&logoutReq))
+	response.CheckAndRespWithData(c, nil, system_service.LoginService.Logout(c))
 }
 
 // @Summary		忘记密码-发送验证码

@@ -44,17 +44,17 @@ export function createRouteRecord(route: any, firstRoute: boolean): RouteRecordR
         path: isExternal(route.paths) ? route.paths : firstRoute ? `/${route.paths}` : route.paths,
         name: Symbol(route.paths),
         meta: {
-            hidden: !route.isShow,
-            keepAlive: !!route.isCache,
-            title: route.menuName,
+            hidden: !route.is_show,
+            keepAlive: !!route.is_cache,
+            title: route.menu_name,
             perms: route.perms, //
             query: query,
-            icon: route.menuIcon,
-            type: route.menuType,
+            icon: route.menu_icon,
+            type: route.menu_type,
             activeMenu: route.selected
         }
     }
-    switch (route.menuType) {
+    switch (route.menu_type) {
         case MenuEnum.CATALOGUE:
             routeRecord.component = firstRoute ? LAYOUT : Empty
             if (!route.children) {

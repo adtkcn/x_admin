@@ -24,12 +24,12 @@ var TemplateUtil = templateUtil{
 			"toCamelCase":      util.StringUtil.ToCamelCase,
 			"toUpperCamelCase": util.StringUtil.ToUpperCamelCase,
 			"contains":         util.ToolsUtil.Contains,
-			"goToTsType":       GenUtil.GoToTsType,
+			// "goToTsType":       GenUtil.GoToTsType,
 			// "goToParamType":     GenUtil.GoToParamType,
 
 			// "goWithRespType":   GenUtil.GoWithRespType,
-			"getPageResp":      GenUtil.GetPageResp,
-			"nameToPath":       GenUtil.NameToPath,
+			"getPageResp": GenUtil.GetPageResp,
+
 			"pathToName":       GenUtil.PathToName,
 			"deletePathPrefix": GenUtil.DeletePathPrefix,
 			"toSqlType":        GenUtil.ToSqlType,
@@ -90,31 +90,37 @@ type ExtentGenTableColumn struct {
 
 // TplVars 模板变量
 type TplVars struct {
-	GenTpl           string
-	TableName        string
-	AuthorName       string
-	PackageName      string
-	EntityName       string
-	EntitySnakeName  string
-	ModuleName       string
-	FunctionName     string
-	DateFields       []string
-	PrimaryKey       string
-	PrimaryField     string
-	PrimaryKeyGoType string
-	AllFields        []string
-	SubPriCol        ExtentGenTableColumn
-	SubPriField      string
-	SubTableFields   []string
-	ListFields       []string
-	DetailFields     []string
-	DictFields       []string
-	ListAllFields    []string
-	IsSearch         bool
-	ModelOprMap      map[string]string
-	Table            gen_model.GenTable
-	Columns          []ExtentGenTableColumn
-	SubColumns       []ExtentGenTableColumn
+	GenTpl          string
+	TableName       string
+	AuthorName      string
+	PackageName     string
+	EntityName      string
+	EntitySnakeName string
+	ModuleName      string
+	Domain          string
+	FunctionName    string
+	DateFields      []string
+	PrimaryKey      string
+
+	PrimaryGoField string
+	PrimaryGoType  string
+
+	PrimaryTsField string
+	PrimaryTsType  string
+
+	AllFields      []string
+	SubPriCol      ExtentGenTableColumn
+	SubPriField    string
+	SubTableFields []string
+	ListFields     []string
+	DetailFields   []string
+	DictFields     []string
+	ListAllFields  []string
+	IsSearch       bool
+	ModelOprMap    map[string]string
+	Table          gen_model.GenTable
+	Columns        []ExtentGenTableColumn
+	SubColumns     []ExtentGenTableColumn
 	//ModelTypeMap    map[string]string
 }
 
@@ -136,8 +142,11 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 	// subPriField := "id"
 	isSearch := false
 	primaryKey := "id"
-	primaryKeyGoType := "string"
-	primaryField := "id"
+	primaryGoField := "ID"
+	primaryGoType := "string"
+	primaryTsField := "id"
+	primaryTsType := "string"
+
 	functionName := "【请填写功能名称】"
 	var allFields []string
 	// var subTableFields []string
@@ -167,10 +176,11 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		newColumns[i].GoNullType = GenUtil.GoTypeToNullType(column.GoType)
 
 		newColumns[i].TsType = GenUtil.GoToTsType(column.GoType)
-		// newColumns[i].TsField = column.ColumnName
-		newColumns[i].TsField = column.GoField
+		newColumns[i].TsField = column.ColumnName
 		newColumns[i].TableColumnProp = newColumns[i].TsField
 		newColumns[i].SwagType = GenUtil.GoTypeToSwagType(column.GoType)
+		newColumns[i].ColumnComment = GenUtil.CleanColumnComment(column.ColumnComment)
+
 	}
 
 	if len(userFiled) > 0 {
@@ -189,7 +199,7 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 
 					GoField:         column.GoField + "Nickname",
 					TsType:          "string",
-					TsField:         column.GoField + "Nickname",
+					TsField:         column.ColumnName + "_nickname",
 					TableColumnProp: "",
 					SwagType:        SwagTypeConstants.String,
 
@@ -206,35 +216,37 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 					DictType:    "",
 					ListAllApi:  "",
 					Sort:        6,
-				}, {
-					// 查询用户邮箱
-					ColumnName:    column.ColumnName + "_email",
-					ColumnComment: column.ColumnComment + "邮箱",
-					ColumnLength:  32,
-					ColumnType:    "char",
-					GoType:        GoConstants.TypeString,
-					GoNullType:    GenUtil.GoTypeToNullType(column.GoType),
+				},
+				//  {
+				// 	// 查询用户邮箱
+				// 	ColumnName:    column.ColumnName + "_email",
+				// 	ColumnComment: column.ColumnComment + "邮箱",
+				// 	ColumnLength:  32,
+				// 	ColumnType:    "char",
+				// 	GoType:        GoConstants.TypeString,
+				// 	GoNullType:    GenUtil.GoTypeToNullType(column.GoType),
 
-					GoField: column.GoField + "Email",
+				// 	GoField: column.GoField + "Email",
 
-					TsType:   "string",
-					TsField:  column.GoField + "Email",
-					SwagType: SwagTypeConstants.String,
+				// 	TsType:   "string",
+				// 	TsField:  column.ColumnName + "_email",
+				// 	SwagType: SwagTypeConstants.String,
 
-					IsPk:        0,
-					IsIncrement: 0,
-					IsRequired:  0,
-					IsInsert:    0,
-					IsEdit:      0,
-					IsList:      0,
-					IsListShow:  0,
-					IsQuery:     1,
-					QueryType:   "=",
-					HtmlType:    "input",
-					DictType:    "",
-					ListAllApi:  "",
-					Sort:        6,
-				}, {
+				// 	IsPk:        0,
+				// 	IsIncrement: 0,
+				// 	IsRequired:  0,
+				// 	IsInsert:    0,
+				// 	IsEdit:      0,
+				// 	IsList:      0,
+				// 	IsListShow:  0,
+				// 	IsQuery:     1,
+				// 	QueryType:   "=",
+				// 	HtmlType:    "input",
+				// 	DictType:    "",
+				// 	ListAllApi:  "",
+				// 	Sort:        6,
+				// },
+				{
 					// 列表用户名称
 					ColumnName:    column.ColumnName + "_user",
 					ColumnComment: column.ColumnComment,
@@ -246,8 +258,8 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 					GoField:    column.GoField + "User",
 
 					TsType:          "object",
-					TsField:         column.GoField + "User",
-					TableColumnProp: column.GoField + "User" + ".nickname",
+					TsField:         column.ColumnName + "_user",
+					TableColumnProp: column.ColumnName + "_user" + ".nickname",
 					SwagType:        SwagTypeConstants.Object,
 					IsPk:            0,
 					IsIncrement:     0,
@@ -283,8 +295,12 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		}
 		if column.IsPk == 1 {
 			primaryKey = column.GoField
-			primaryField = column.ColumnName
-			primaryKeyGoType = column.GoType
+
+			primaryGoField = column.GoField
+			primaryGoType = column.GoType
+
+			primaryTsField = column.ColumnName
+			primaryTsType = column.TsType
 		}
 		if column.DictType != "" && !util.ToolsUtil.Contains(dictFields, column.DictType) {
 			dictFields = append(dictFields, column.DictType)
@@ -302,19 +318,26 @@ func (tu templateUtil) PrepareVars(table gen_model.GenTable, columns []gen_model
 		functionName = table.FunctionName
 	}
 	return TplVars{
-		GenTpl:           table.GenTpl,
-		TableName:        table.TableName,
-		AuthorName:       table.AuthorName,
-		PackageName:      table.ModuleName,
-		EntityName:       table.EntityName,
-		EntitySnakeName:  util.StringUtil.ToSnakeCase(table.EntityName),
-		ModuleName:       table.ModuleName,
-		FunctionName:     functionName,
-		DateFields:       SqlConstants.ColumnTimeName,
-		PrimaryKey:       primaryKey,
-		PrimaryField:     primaryField,
-		PrimaryKeyGoType: primaryKeyGoType,
-		AllFields:        allFields,
+		GenTpl:          table.GenTpl,
+		TableName:       table.TableName,
+		AuthorName:      table.AuthorName,
+		PackageName:     table.ModuleName,
+		EntityName:      table.EntityName,
+		EntitySnakeName: util.StringUtil.ToSnakeCase(table.EntityName),
+		ModuleName:      table.ModuleName,
+		Domain:          GenUtil.ToDomain(table.TableName),
+		FunctionName:    functionName,
+		DateFields:      SqlConstants.ColumnTimeName,
+
+		PrimaryKey: primaryKey,
+
+		PrimaryGoField: primaryGoField,
+		PrimaryGoType:  primaryGoType,
+
+		PrimaryTsField: primaryTsField,
+		PrimaryTsType:  primaryTsType,
+
+		AllFields: allFields,
 		// SubPriCol:        oriSubPriCol,
 		// SubPriField:      subPriField,
 		// SubTableFields:   subTableFields,
@@ -389,28 +412,29 @@ func (tu templateUtil) Render(tplPath string, tplVars TplVars) (res string, e er
 }
 
 // GetFilePaths 获取生成文件相对路径,返回 {文件路径:文件内容}
-func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName string) map[string]string {
+// ModuleName 用于路由文件名；Domain 用于按业务域聚合的 model/schema/service/controller 子目录
+func (tu templateUtil) GetFilePaths(tplCodeMap map[string]string, ModuleName, Domain string) map[string]string {
 	//模板文件对应的输出文件
 	fmtMap := map[string]string{
-		"gocode/model.go.tpl": fmt.Sprintf("server/app/model/%s.go", ModuleName),                //strings.Join([]string{"server/model/", ModuleName, ".go"}, ""),
-		"gocode/route.go.tpl": fmt.Sprintf("server/routes/admin_route/%s_route.go", ModuleName), //strings.Join([]string{"server/routes/admin_route/", ModuleName, "_route.go"}, ""),
+		"gocode/model.go.tpl": fmt.Sprintf("server/app/model/%s_model/%s.go", Domain, ModuleName), // 目录按业务域聚合，文件名用实体名(去前缀表名)
+		"gocode/route.go.tpl": fmt.Sprintf("server/routes/admin_route/%s_route.go", ModuleName),   // 路由保持 admin_route 包
 
-		"gocode/schema.go.tpl":     fmt.Sprintf("server/app/schema/%s_schema.go", ModuleName),            //"server/app/schema/%s_schema.go"
-		"gocode/service.go.tpl":    fmt.Sprintf("server/app/service/%s_service.go", ModuleName),          //"server/app/service/%s_service.go",
-		"gocode/controller.go.tpl": fmt.Sprintf("server/app/controller/admin_ctl/%s_ctl.go", ModuleName), //"server/app/controller/admin_ctl/%s_ctl.go",
+		"gocode/schema.go.tpl":     fmt.Sprintf("server/app/schema/%s_schema/%s.go", Domain, ModuleName),                   // 目录按业务域聚合，文件名用实体名(去前缀表名)
+		"gocode/service.go.tpl":    fmt.Sprintf("server/app/service/%s_service/%s.go", Domain, ModuleName),                 // 目录按业务域聚合，文件名用实体名(去前缀表名)
+		"gocode/controller.go.tpl": fmt.Sprintf("server/app/controller/admin_ctl/%s_controller/%s.go", Domain, ModuleName), // 目录按业务域聚合，文件名用实体名(去前缀表名)
 
-		"vue/api.ts.tpl":         fmt.Sprintf("admin/src/api/%s.ts", GenUtil.NameToPath(ModuleName)),            // "admin/src/api/%s.ts",
-		"vue/edit.vue.tpl":       fmt.Sprintf("admin/src/views/%s/edit.vue", GenUtil.NameToPath(ModuleName)),    // "admin/src/views/%s/edit.vue",
-		"vue/details.vue.tpl":    fmt.Sprintf("admin/src/views/%s/details.vue", GenUtil.NameToPath(ModuleName)), // "admin/src/views/%s/details.vue",
-		"vue/index.vue.tpl":      fmt.Sprintf("admin/src/views/%s/index.vue", GenUtil.NameToPath(ModuleName)),   // "admin/src/views/%s/index.vue",
-		"vue/index-tree.vue.tpl": fmt.Sprintf("admin/src/views/%s/index.vue", GenUtil.NameToPath(ModuleName)),   // "admin/src/views/%s/index-tree.vue",
+		"vue/api.ts.tpl":         fmt.Sprintf("admin/src/api/%s/%s.ts", Domain, ModuleName),            // 目录按业务域聚合
+		"vue/edit.vue.tpl":       fmt.Sprintf("admin/src/views/%s/%s/edit.vue", Domain, ModuleName),    // 目录按业务域聚合
+		"vue/details.vue.tpl":    fmt.Sprintf("admin/src/views/%s/%s/details.vue", Domain, ModuleName), // 目录按业务域聚合
+		"vue/index.vue.tpl":      fmt.Sprintf("admin/src/views/%s/%s/index.vue", Domain, ModuleName),   // 目录按业务域聚合
+		"vue/index-tree.vue.tpl": fmt.Sprintf("admin/src/views/%s/%s/index.vue", Domain, ModuleName),   // 目录按业务域聚合，文件名用实体名
 
-		"uniapp/api.ts.tpl":      fmt.Sprintf("x_admin_app/api/%s.ts", GenUtil.NameToPath(ModuleName)),          // "x_admin_app/api/%s.ts",
-		"uniapp/edit.vue.tpl":    fmt.Sprintf("x_admin_app/pages/%s/edit.vue", GenUtil.NameToPath(ModuleName)),  // "x_admin_app/pages/%s/edit.vue",
-		"uniapp/index.vue.tpl":   fmt.Sprintf("x_admin_app/pages/%s/index.vue", GenUtil.NameToPath(ModuleName)), // "x_admin_app/pages/%s/index.vue",
-		"uniapp/search.vue.tpl":  fmt.Sprintf("x_admin_app/pages/%s/search.vue", GenUtil.NameToPath(ModuleName)),
-		"uniapp/details.vue.tpl": fmt.Sprintf("x_admin_app/pages/%s/details.vue", GenUtil.NameToPath(ModuleName)),
-		"uniapp/pages.json.tpl":  fmt.Sprintf("x_admin_app/pages/%s/pages.json", GenUtil.NameToPath(ModuleName)),
+		"uniapp/api.ts.tpl":      fmt.Sprintf("x_admin_app/api/%s/%s.ts", Domain, ModuleName),          // 目录按业务域聚合
+		"uniapp/edit.vue.tpl":    fmt.Sprintf("x_admin_app/pages/%s/%s/edit.vue", Domain, ModuleName),  // 目录按业务域聚合
+		"uniapp/index.vue.tpl":   fmt.Sprintf("x_admin_app/pages/%s/%s/index.vue", Domain, ModuleName), // 目录按业务域聚合
+		"uniapp/search.vue.tpl":  fmt.Sprintf("x_admin_app/pages/%s/%s/search.vue", Domain, ModuleName),
+		"uniapp/details.vue.tpl": fmt.Sprintf("x_admin_app/pages/%s/%s/details.vue", Domain, ModuleName),
+		"uniapp/pages.json.tpl":  fmt.Sprintf("x_admin_app/pages/%s/%s/pages.json", Domain, ModuleName),
 	}
 	filePath := make(map[string]string)
 	for tplPath, tplCode := range tplCodeMap {
@@ -437,8 +461,8 @@ func addFileToZip(zipWriter *zip.Writer, file zFile) error {
 }
 
 // GenZip 生成代码压缩包
-func (tu templateUtil) GenZip(zipWriter *zip.Writer, tplCodeMap map[string]string, ModuleName string) error {
-	filePaths := tu.GetFilePaths(tplCodeMap, ModuleName)
+func (tu templateUtil) GenZip(zipWriter *zip.Writer, tplCodeMap map[string]string, ModuleName, Domain string) error {
+	filePaths := tu.GetFilePaths(tplCodeMap, ModuleName, Domain)
 	files := make([]zFile, 0)
 	for file, tplCode := range filePaths {
 		files = append(files, zFile{

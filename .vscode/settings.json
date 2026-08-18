@@ -1,5 +1,21 @@
 {
-    "cSpell.words": [
-        "goreleaser"
-    ]
+    "tailwindCSS.classAttributes": [
+        "class",
+        "className",
+        "ngClass"
+    ],
+    "tailwindCSS.lint": {
+        "cssConflict": "ignore",
+        "invalidApply": "ignore",
+        "invalidConfigPath": "ignore",
+        "invalidScreen": "ignore",
+        "invalidTailwindDirective": "ignore",
+        "invalidVariant": "ignore",
+        "recommendedVariantOrder": "ignore",
+        "canonicalClasses": "ignore"
+    },
+    "tailwindCSS.suggestCanonicalClasses": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.tailwindcss": "explicit"
+    }
 }

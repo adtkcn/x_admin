@@ -27,7 +27,7 @@ var FileConfig = FileConfigStruct{
 	// 资源访问前缀
 	UploadPrefix: "/api/uploads", // /api/uploads
 	// 上传文件路径
-	UploadDirectory: "/tmp/uploads/x_admin_go/",
+	UploadDirectory: "./uploads/",
 	UploadImageSize: 20 * 1024 * 1024,   // 20MB
 	UploadVideoSize: 2000 * 1024 * 1024, // 2000MB
 	UploadFileSize:  1024 * 1024 * 1024, //1GB

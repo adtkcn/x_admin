@@ -41,14 +41,14 @@ export function useDictOptions<T = any>(options: Options) {
 
 export type type_dict = {
   color?: string
-  createTime?: string
+  create_time?: string
   id?: number
   name?: string
   remark?: string
   sort?: number
   status?: number
-  typeId?: number
-  updateTime?: string
+  type_id?: number
+  update_time?: string
   value?: string
 }
 

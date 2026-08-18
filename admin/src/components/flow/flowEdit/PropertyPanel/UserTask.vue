@@ -6,16 +6,16 @@
             <!-- {{ adminUserList }} -->
             <el-form label-width="80px">
                 <el-form-item label="">
-                    <el-radio-group v-model="props.properties.userType">
+                    <el-radio-group v-model="model.user_type">
                         <el-radio :value="1">指定部门、岗位</el-radio>
                         <el-radio :value="2">用户部门负责人</el-radio>
                         <el-radio :value="3">指定审批人</el-radio>
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="指定部门" v-if="props.properties.userType == 1">
+                <el-form-item label="指定部门" v-if="model.user_type == 1">
                     <!-- <el-select
-                        v-model="props.properties.deptId"
+                        v-model="model.dept_id"
                         placeholder="请选择审批部门"
                         style="width: 100%"
                     >
@@ -27,7 +27,7 @@
                         />
                     </el-select> -->
                     <el-tree-select
-                        v-model="props.properties.deptId"
+                        v-model="model.dept_id"
                         :data="deptList"
                         :check-strictly="true"
                         default-expand-all
@@ -35,8 +35,8 @@
                         style="width: 100%"
                     />
                 </el-form-item>
-                <el-form-item label="岗位" v-if="[1].includes(props.properties.userType)">
-                    <el-select v-model="props.properties.postId" placeholder="请选择岗位">
+                <el-form-item label="岗位" v-if="model.user_type == 1">
+                    <el-select v-model="model.post_id" placeholder="请选择岗位">
                         <el-option
                             v-for="item in postList"
                             :key="item.value"
@@ -46,9 +46,9 @@
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="审批人" v-if="props.properties.userType == 3">
+                <el-form-item label="审批人" v-if="model.user_type == 3">
                     <el-select
-                        v-model="props.properties.userId"
+                        v-model="model.user_id"
                         placeholder="请选择审批人"
                         style="width: 100%"
                         clearable
@@ -73,17 +73,21 @@ import { adminListAll } from '@/api/perms/admin'
 import { deptAll } from '@/api/org/department'
 import { postAll } from '@/api/org/post'
 import { arrayToTree } from '@/utils/util'
-import type { NodeType, PropertiesType, FieldListType } from './property.type'
+import type { FieldListType, UserTaskProps } from './property.type'
+import { type type_system_dept_resp } from '@/api/org/department'
 
+// defineModel 直接暴露父层 v-model="nodeProps" 绑定的 user_task 私有属性，可读写
+const model = defineModel<UserTaskProps>({ required: true })
 const props = defineProps<{
-    node?: NodeType
     fieldList?: FieldListType[]
-    properties?: PropertiesType
 }>()
-
-const adminUserList = ref([])
-const deptList = ref([])
-const postList = ref([])
+type LabelValue = {
+    label: string
+    value: any
+}
+const adminUserList = ref<LabelValue[]>([])
+const deptList = ref<type_system_dept_resp[]>([])
+const postList = ref<LabelValue[]>([])
 
 function getAdminList() {
     adminListAll({}).then((res) => {
@@ -104,7 +108,7 @@ function getDeptList() {
                 ...item
             }
         })
-        deptList.value = arrayToTree(list, '')
+        deptList.value = arrayToTree<type_system_dept_resp>(list, '')
     })
 }
 function getPostList() {

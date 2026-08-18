@@ -37,7 +37,7 @@
                     <el-input-number v-model="formData.sort" />
                 </el-form-item>
                 <el-form-item label="状态" prop="sort">
-                    <el-radio-group v-model="formData.isDisable">
+                    <el-radio-group v-model="formData.is_disable">
                         <el-radio :value="0">正常</el-radio>
                         <el-radio :value="1">停用</el-radio>
                     </el-radio-group>
@@ -47,7 +47,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, useTemplateRef, reactive } from 'vue'
+import { ref, computed, useTemplateRef } from 'vue'
 import type { FormInstance } from 'element-plus'
 import {
     roleAdd,
@@ -59,6 +59,7 @@ import {
 } from '@/api/perms/role'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 const emit = defineEmits(['success', 'close'])
 const formRef = useTemplateRef<FormInstance>('formRef')
 const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
@@ -71,12 +72,16 @@ type type_role_form = type_system_role_edit & {
     menus: string[]
 }
 
-const formData = reactive<type_role_form>({
+const {
+    state: formData,
+    reset,
+    setState
+} = useReactiveWithReset<type_role_form>({
     id: '',
     name: '',
     remark: '',
     sort: 0,
-    isDisable: 0,
+    is_disable: 0,
     menus: []
 })
 
@@ -91,12 +96,16 @@ const rules = {
 }
 
 const handleSubmit = async () => {
-    await formRef.value?.validate()
-    const params = { ...formData, menuIds: formData.menus.join() }
-    mode.value == 'edit' ? await roleEdit(params) : await roleAdd(params)
-    popupRef.value?.close()
-    feedback.msgSuccess('操作成功')
-    emit('success')
+    try {
+        await formRef.value?.validate()
+        const params = { ...formData, menuIds: formData.menus.join() }
+        mode.value == 'edit' ? await roleEdit(params) : await roleAdd(params)
+        popupRef.value?.close()
+        feedback.msgSuccess('操作成功')
+        emit('success')
+    } catch (error) {
+        console.error('角色保存失败:', error)
+    }
 }
 
 const handleClose = () => {
@@ -109,16 +118,13 @@ const open = (type = 'add') => {
 }
 
 const setFormData = async (row: type_system_role_resp) => {
-    const data = await roleDetail({
-        id: row.id
-    })
-    for (const key in formData) {
-        if (
-            data[key as keyof type_system_role_resp] != null &&
-            data[key as keyof type_system_role_resp] != undefined
-        ) {
-            formData[key] = data[key as keyof type_system_role_resp]
-        }
+    try {
+        const data = await roleDetail({
+            id: row.id
+        })
+        setState(data)
+    } catch (error) {
+        console.error('角色详情获取失败:', error)
     }
 }
 

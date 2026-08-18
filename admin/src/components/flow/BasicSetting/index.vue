@@ -7,18 +7,18 @@
             label-width="100px"
             label-position="top"
         >
-            <el-form-item label="审批名称" prop="flowName">
+            <el-form-item label="审批名称" prop="flow_name">
                 <el-input
-                    v-model="formData.flowName"
+                    v-model="formData.flow_name"
                     placeholder="请输入审批名称"
                     clearable
                     :style="{ width: '100%' }"
                 >
                 </el-input>
             </el-form-item>
-            <el-form-item label="选择分组" prop="flowGroup">
+            <el-form-item label="选择分组" prop="flow_group">
                 <el-select
-                    v-model="formData.flowGroup"
+                    v-model="formData.flow_group"
                     placeholder="请选择选择分组"
                     clearable
                     :style="{ width: '100%' }"
@@ -35,9 +35,9 @@
         <span style="font-size: 12px; color: #aaa">默认所有人</span>
       </el-form-item> -->
 
-            <el-form-item label="流程描述" prop="flowRemark">
+            <el-form-item label="流程描述" prop="flow_remark">
                 <el-input
-                    v-model="formData.flowRemark"
+                    v-model="formData.flow_remark"
                     type="textarea"
                     placeholder="请输入流程描述"
                     :maxlength="100"
@@ -60,20 +60,20 @@ defineOptions({
 const { dictData } = useDictData(['flow_group'])
 const props = defineProps(['tabName', 'conf'])
 const formData = ref({
-    flowName: '',
+    flow_name: '',
     flowImg: '',
-    flowGroup: undefined,
-    flowRemark: undefined
+    flow_group: undefined,
+    flow_remark: undefined
 })
 const rules = {
-    flowName: [
+    flow_name: [
         {
             required: true,
             message: '请输入审批名称',
             trigger: 'blur'
         }
     ],
-    flowGroup: [
+    flow_group: [
         {
             required: true,
             message: '请选择选择分组',
@@ -92,7 +92,7 @@ function getData() {
         formData: any
         target: string
     }>((resolve, reject) => {
-        elFormRef.value.validate((valid) => {
+        elFormRef.value?.validate((valid) => {
             if (!valid) {
                 reject({ target: props.tabName })
                 return

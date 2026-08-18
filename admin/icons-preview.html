@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 图标预览 - assets/icons</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f6f8;
+            color: #1f2329;
+        }
+        header {
+            padding: 20px 24px;
+            background: #fff;
+            border-bottom: 1px solid #e5e6eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        header h1 { margin: 0 0 4px; font-size: 18px; }
+        header .meta { color: #86909c; font-size: 13px; }
+        .search {
+            margin-top: 12px;
+            width: 100%;
+            max-width: 420px;
+            padding: 8px 12px;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        .search:focus { border-color: #4080ff; }
+        main {
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #e5e6eb;
+            border-radius: 8px;
+            padding: 16px 8px 10px;
+            text-align: center;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .card:hover {
+            box-shadow: 0 6px 18px rgba(0,0,0,.08);
+            transform: translateY(-2px);
+        }
+        .card .icon-box {
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .card .icon-box svg { width: 32px; height: 32px; }
+        .card .name {
+            font-size: 12px;
+            color: #4e5969;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+        .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #86909c;
+            padding: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SVG 图标预览</h1>
+        <div class="meta" id="meta">加载中…</div>
+        <input class="search" id="search" type="text" placeholder="搜索文件名…" />
+    </header>
+    <main id="grid"></main>
+
+    <script type="module">
+        // 收集 assets/icons 下所有 svg 的原始内容（?raw 不受 svg-sprite 插件影响）
+        const modules = import.meta.glob('/src/assets/icons/*.svg', {
+            query: '?raw',
+            import: 'default',
+            eager: true
+        })
+
+        const entries = Object.entries(modules).map(([path, raw]) => {
+            const name = path.split('/').pop().replace(/\.svg$/, '')
+            return { name, raw }
+        }).sort((a, b) => a.name.localeCompare(b.name))
+
+        const grid = document.getElementById('grid')
+        const meta = document.getElementById('meta')
+        const search = document.getElementById('search')
+
+        function render(keyword = '') {
+            const kw = keyword.trim().toLowerCase()
+            const list = kw
+                ? entries.filter(e => e.name.toLowerCase().includes(kw))
+                : entries
+
+            meta.textContent = `共 ${entries.length} 个图标${kw ? `，匹配 ${list.length} 个` : ''}`
+            grid.innerHTML = ''
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="empty">没有匹配的图标</div>'
+                return
+            }
+
+            const frag = document.createDocumentFragment()
+            for (const item of list) {
+                const card = document.createElement('div')
+                card.className = 'card'
+                card.innerHTML = `
+                    <div class="icon-box">${item.raw}</div>
+                    <div class="name">${item.name}</div>
+                `
+                frag.appendChild(card)
+            }
+            grid.appendChild(frag)
+        }
+
+        render()
+        search.addEventListener('input', (e) => render(e.target.value))
+    </script>
+</body>
+</html>

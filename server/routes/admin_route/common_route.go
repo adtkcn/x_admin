@@ -14,8 +14,9 @@ import (
 func initUploadRoute(rg *gin.RouterGroup) {
 	handleUpload := common_controller.UploadHandler{}
 	uploadRg := rg.Group("/common", middleware.LoginAuth())
-	uploadRg.POST("/upload/preUploadFile", middleware.RecordLog("文件预上传", middleware.RequestFile), handleUpload.PreUploadFile)
+
 	uploadRg.POST("/upload/file", middleware.RecordLog("上传文件", middleware.RequestFile), handleUpload.UploadFile)
+	uploadRg.POST("/upload/checkInstant", middleware.RecordLog("文件秒传检查"), handleUpload.CheckInstant)
 }
 
 // initAlbumRoute 相册路由
@@ -23,6 +24,7 @@ func initAlbumRoute(rg *gin.RouterGroup) {
 	handleAlbum := common_controller.AlbumHandler{}
 	albumRg := rg.Group("/common", middleware.LoginAuth())
 	albumRg.GET("/album/albumList", handleAlbum.AlbumList)
+	albumRg.POST("/album/albumAddFromFile", middleware.RecordLog("相册文件挂载"), handleAlbum.AlbumAddFromFile)
 	albumRg.POST("/album/albumRename", middleware.RecordLog("相册文件重命名"), handleAlbum.AlbumRename)
 	albumRg.POST("/album/albumMove", middleware.RecordLog("相册文件移动"), handleAlbum.AlbumMove)
 	albumRg.POST("/album/albumDel", middleware.RecordLog("相册文件删除"), handleAlbum.AlbumDel)
@@ -49,7 +51,7 @@ func initGeTuiRoute(rg *gin.RouterGroup) {
 
 // @Summary	swagger文档数据
 // @Tags		公共接口
-// @Router		/api/swagger/doc.json [get]
+// @Router		/api/admin/swagger/doc.json [get]
 func swaggerDoc(rg *gin.RouterGroup) {
 	rg.GET("/swagger/doc.json", func(c *gin.Context) {
 		// 获取域名和端口号

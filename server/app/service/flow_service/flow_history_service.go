@@ -1,15 +1,20 @@
 package flow_service
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"x_admin/app/model"
 	"x_admin/app/model/system_model"
 	"x_admin/app/schema/flow_schema"
 	"x_admin/app/schema/system_schema"
+	"x_admin/app/service/notice_service"
 	"x_admin/app/service/system_service"
 	"x_admin/config"
 	"x_admin/core"
@@ -206,7 +211,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []system_sche
 	}
 	var userTask flow_schema.FlowTree
 	for n := 0; n < len(nextNodes); n++ {
-		if nextNodes[n].Type == "bpmn:userTask" {
+		if nextNodes[n].Type == flow_schema.NodeUserTask {
 			userTask = nextNodes[n]
 			break
 		}
@@ -216,22 +221,26 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []system_sche
 		return nil, nil
 	}
 
-	var userType = userTask.UserType //用户类型,1指定部门、岗位,2用户部门负责人,3指定审批人
-	var userId = userTask.UserId
-	var deptId = userTask.DeptId
-	var postId = userTask.PostId
-	if userType == 0 && userId == "" && deptId == "" && postId == "" {
-		// return nil, errors.New("未设置审批人")
-
+	// 审批人解析统一从节点私有属性 Props 读取
+	ut := userTask.Props.UserTask
+	if ut == nil {
+		// 未配置 user_task 命名空间时默认为2用户部门负责人
+		ut = &flow_schema.UserTaskProps{UserType: 2}
+	}
+	var user_type = ut.UserType //用户类型,1指定部门、岗位,2用户部门负责人,3指定审批人
+	var userId = ut.UserId
+	var deptId = ut.DeptId
+	var postId = ut.PostId
+	if user_type == 0 && userId == "" && deptId == "" && postId == "" {
 		// 未设置审批人时默认为2用户部门负责人
-		userType = 2
+		user_type = 2
 	}
 	adminTbName := core.DBTableName(&system_model.SystemAuthAdmin{})
 
 	adminModel := service.db.Model(&system_model.SystemAuthAdmin{}).Table(adminTbName + " AS admin")
 
 	where := map[string]any{}
-	if userType == 1 {
+	if user_type == 1 {
 		if deptId != "" {
 			where["admin.dept_id"] = deptId
 			// adminModel.Or("admin.dept_id =?", deptId)
@@ -240,7 +249,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []system_sche
 			where["admin.post_id"] = postId
 			// adminModel.Or("admin.post_id =?", postId)
 		}
-	} else if userType == 2 {
+	} else if user_type == 2 {
 		// 申请人所在的部门负责人
 
 		applyUser, err := system_service.AdminService.Detail(applyDetail.ApplyUserId)
@@ -259,7 +268,7 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []system_sche
 		}
 		where["admin.id"] = deptDetails.DutyId
 
-	} else if userType == 3 {
+	} else if user_type == 3 {
 		if userId != "" {
 			where["admin.id"] = userId
 			// adminModel.Or("admin.id =?", userId)
@@ -339,18 +348,21 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq, AdminId string)
 			ApproverNickname:  "",
 		}
 		switch v.Type {
-		case "bpmn:startEvent":
+		case flow_schema.NodeStartEvent:
 			flow.ApproverId = ""
 			flow.PassStatus = 2 //2通过
-		case "bpmn:exclusiveGateway":
+		case flow_schema.NodeExclusiveGateway:
 			flow.ApproverId = ""
 			flow.PassStatus = 2
 			// 发邮件之类的，待完善
-		case "bpmn:serviceTask":
+		case flow_schema.NodeNotifyTask:
 			flow.ApproverId = ""
-			flow.PassStatus = 1 //1待处理,异步任务可以失败
-			// 发邮件之类的，待完善
-		case "bpmn:userTask":
+			flow.PassStatus = 2 // 通知节点同步执行，直接通过
+			// 执行通知节点：发送站内消息 / 邮件
+			if err := service.executeNotifyTask(v, applyDetail); err != nil {
+				core.Logger.Error("通知节点执行失败:", err)
+			}
+		case flow_schema.NodeUserTask:
 			isUserTask = true
 			flow.PassStatus = 1 //1待处理
 			flow.ApproverId = pass.NextNodeAdminId
@@ -361,7 +373,7 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq, AdminId string)
 				flow.ApproverNickname = Approver.Nickname
 			}
 
-		case "bpmn:endEvent":
+		case flow_schema.NodeEndEvent:
 			isEndTask = true
 			flow.ApproverId = ""
 			flow.PassStatus = 2 //2通过
@@ -407,6 +419,145 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq, AdminId string)
 	return err
 }
 
+// replaceServiceContent 将消息内容中的变量占位符替换为真实值。
+// 支持的占位符：${apply_user}=申请人昵称 ${flow_name}=流程名称 ${apply_id}=申请单号 ${apply_time}=申请时间
+func replaceServiceContent(content string, apply flow_schema.FlowApplyResp) string {
+	applyTime := ""
+	if apply.CreateTime.Val != nil {
+		applyTime = apply.CreateTime.Val.Format("2006-01-02 15:04:05")
+	}
+	replacer := strings.NewReplacer(
+		"${apply_user}", apply.ApplyUserNickname,
+		"${flow_name}", apply.FlowName,
+		"${apply_id}", apply.Id,
+		"${apply_time}", applyTime,
+	)
+	return replacer.Replace(content)
+}
+
+// executeNotifyTask 执行通知节点：发送站内消息 / 邮件 / Webhook 回调
+// 一个通知节点只能配置一种类型（site=站内消息 / email=邮件 / webhook=回调）
+func (service flowHistoryService) executeNotifyTask(node flow_schema.FlowTree, apply flow_schema.FlowApplyResp) (e error) {
+	// 通知节点配置统一从节点私有属性 Props 读取
+	st := node.Props.NotifyTask
+	if st == nil || st.ServiceType == "" {
+		return nil // 未配置通知节点，跳过
+	}
+	content := st.ServiceContent
+	if content == "" {
+		content = "您有一条流程相关通知"
+	}
+	// 替换消息内容中的变量占位符（${apply_user} 等），编辑期插入、执行期填充
+	content = replaceServiceContent(content, apply)
+
+	switch st.ServiceType {
+	case "site":
+		// 站内消息：接收人为 admin_id 列表，为空默认通知申请人
+		receiverIDs := st.ReceiverId
+		if len(receiverIDs) == 0 && apply.ApplyUserId != "" {
+			receiverIDs = []string{apply.ApplyUserId}
+		}
+
+		for _, receiverID := range receiverIDs {
+			if receiverID == "" {
+				continue
+			}
+			err := notice_service.NoticeService.Send(notice_service.NoticePayload{
+				Type:       "info",
+				Title:      "流程通知",
+				Content:    content,
+				ReceiverID: receiverID,
+				SenderID:   apply.ApplyUserId,
+				URL:        "",
+			})
+			if err != nil {
+				return fmt.Errorf("发送站内消息失败: %w", err)
+			}
+		}
+	case "email":
+		// 邮件：收件邮箱来自 EmailTo（手填 + 用户邮箱），合并去重。
+		// 实际发送交由队列异步处理，避免外部 SMTP 阻塞审批事务。
+		toSet := make(map[string]struct{})
+		for _, addr := range st.EmailTo {
+			if a := strings.TrimSpace(addr); a != "" {
+				toSet[a] = struct{}{}
+			}
+		}
+		if len(toSet) == 0 {
+			// 为空时默认通知申请人
+			if apply.ApplyUserId != "" {
+				applicant, err := system_service.AdminService.Detail(apply.ApplyUserId)
+				if err == nil && applicant.Email != "" {
+					toSet[applicant.Email] = struct{}{}
+				}
+			}
+		}
+		if len(toSet) == 0 {
+			return errors.New("邮件接收人为空，请填写邮箱或选择用户")
+		}
+		to := make([]string, 0, len(toSet))
+		for addr := range toSet {
+			to = append(to, addr)
+		}
+		subject := "【流程通知】" + apply.FlowName
+		htmlBody := fmt.Sprintf("<h3>您好：</h3><p>%s</p><p>流程：%s</p>", content, apply.FlowName)
+		// 投递异步邮件任务
+		if err := core.Queue.Enqueue("flow_notify_email", util.EmailOptions{
+			To:       to,
+			Subject:  subject,
+			HTMLBody: htmlBody,
+		}); err != nil {
+			return fmt.Errorf("投递邮件通知任务失败: %w", err)
+		}
+	case "webhook":
+		// Webhook：POST 回调地址，携带流程与内容信息。
+		// 实际回调交由队列异步处理，避免外部 HTTP 阻塞审批事务。
+		if strings.TrimSpace(st.WebhookUrl) == "" {
+			return errors.New("Webhook 回调地址不能为空")
+		}
+		// 投递异步 Webhook 任务
+		if err := core.Queue.Enqueue("flow_notify_webhook", flow_schema.FlowNotifyWebhookPayload{
+			URL:     st.WebhookUrl,
+			Content: content,
+		}); err != nil {
+			return fmt.Errorf("投递 Webhook 通知任务失败: %w", err)
+		}
+	default:
+		return fmt.Errorf("不支持的通知节点类型: %s", st.ServiceType)
+	}
+	return nil
+}
+
+/**
+ * 处理流程 Webhook 回调任务（由队列 worker 调用，异步发送）
+ */
+func (service flowHistoryService) ProcessFlowWebhook(payload flow_schema.FlowNotifyWebhookPayload) error {
+	if strings.TrimSpace(payload.URL) == "" {
+		return errors.New("Webhook 回调地址不能为空")
+	}
+	body, err := json.Marshal(map[string]any{
+		"content": payload.Content,
+	})
+	if err != nil {
+		return fmt.Errorf("构造 Webhook 参数失败: %w", err)
+	}
+	req, err := http.NewRequest(http.MethodPost, payload.URL, bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("构造 Webhook 请求失败: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("调用 Webhook 失败: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("Webhook 返回异常状态码: %d", resp.StatusCode)
+	}
+	return nil
+}
+
 /**
  * 驳回审批
  * @Description: 驳回审批
@@ -440,7 +591,7 @@ func (service flowHistoryService) Back(back flow_schema.BackReq, AdminId string)
 		var FirstHistory model.FlowHistory
 		err = service.db.Where(model.FlowHistory{
 			ApplyId:  back.ApplyId,
-			NodeType: "bpmn:startEvent",
+			NodeType: flow_schema.NodeStartEvent,
 		}).First(&FirstHistory).Error
 		if err != nil {
 			return err
@@ -549,7 +700,7 @@ func (service flowHistoryService) GetNextNode(ApplyId string) (res []flow_schema
 	var next []flow_schema.FlowTree
 	if result.RowsAffected == 0 {
 		for _, v := range flowTree {
-			if v.Type == "bpmn:startEvent" {
+			if v.Type == flow_schema.NodeStartEvent {
 				next = []flow_schema.FlowTree{v}
 				break
 			}
@@ -573,7 +724,7 @@ func (service flowHistoryService) GetNextNode(ApplyId string) (res []flow_schema
 func DeepNextNode(flowTree *[]flow_schema.FlowTree, formValue map[string]any) []flow_schema.FlowTree {
 	var nextNodes []flow_schema.FlowTree
 	for _, v := range *flowTree {
-		if v.Type == "bpmn:startEvent" {
+		if v.Type == flow_schema.NodeStartEvent {
 			nextNodes = append(nextNodes, v)
 
 			// 开始节点
@@ -583,57 +734,18 @@ func DeepNextNode(flowTree *[]flow_schema.FlowTree, formValue map[string]any) []
 			child := DeepNextNode(v.Children, formValue)
 			nextNodes = append(nextNodes, child...)
 			break
-		} else if v.Type == "bpmn:exclusiveGateway" {
-			// 网关
-			// v.Gateway
+		} else if v.Type == flow_schema.NodeExclusiveGateway {
+			// 网关：根据表单值判断网关条件是否全部满足
+			var gateway []flow_schema.GatewayCondition
+			if v.Props.ExclusiveGateway != nil {
+				gateway = v.Props.ExclusiveGateway.Gateway
+			}
 			var haveFalse = false
-			var gateway = *v.Gateway
 			for i := 0; i < len(gateway); i++ {
-				var id = gateway[i].Id
-				var value = gateway[i].Value
-				var condition = gateway[i].Condition
-				if condition == "==" {
-					if formValue[id].(string) == value { // 等与
-
-					} else {
-						haveFalse = true
-					}
-				} else if condition == "!=" {
-					if formValue[id].(string) != value { // 不等与
-
-					} else {
-						haveFalse = true
-					}
-				} else if condition == ">=" {
-					var val, err = strconv.Atoi(value)
-					if err != nil {
-						fmt.Println(err)
-						continue
-					}
-					var formVal = formValue[id].(int64)
-					if formVal >= int64(val) { // 大于等于
-
-					} else {
-						haveFalse = true
-					}
-				} else if condition == "<=" {
-					var val, err = strconv.Atoi(value)
-					if err != nil {
-						fmt.Println(err)
-						continue
-					}
-					var formVal = formValue[id].(int64)
-
-					if formVal <= int64(val) { // 小于等于
-
-					} else {
-						haveFalse = true
-					}
-				} else {
+				if !matchCondition(formValue[gateway[i].Id], gateway[i].Condition, gateway[i].Value) {
 					haveFalse = true
-					fmt.Println("未知的条件")
+					break
 				}
-
 			}
 			// 不满足条件，继续循环
 			if haveFalse {
@@ -649,23 +761,95 @@ func DeepNextNode(flowTree *[]flow_schema.FlowTree, formValue map[string]any) []
 				nextNodes = append(nextNodes, child...)
 				break
 			}
-		} else if v.Type == "bpmn:serviceTask" {
+		} else if v.Type == flow_schema.NodeNotifyTask {
 			nextNodes = append(nextNodes, v)
 			if v.Children == nil {
 				break
 			}
-			// 系统服务
+			// 通知节点
 			child := DeepNextNode(v.Children, formValue)
 			nextNodes = append(nextNodes, child...)
-		} else if v.Type == "bpmn:userTask" {
+		} else if v.Type == flow_schema.NodeUserTask {
 			//用户节点
 			nextNodes = append(nextNodes, v)
 			break
-		} else if v.Type == "bpmn:endEvent" {
+		} else if v.Type == flow_schema.NodeEndEvent {
 			// 结束节点
 			nextNodes = append(nextNodes, v)
 			break
 		}
 	}
 	return nextNodes
+}
+
+// matchCondition 比较表单值与网关条件值。
+// 统一做安全转换，避免旧逻辑中 formValue[id].(string) / .(int64) 的裸类型断言在表单值为
+// 数字 / 布尔 / nil 时直接 panic。
+//   - condition == "==" / "!="：统一转为字符串比较
+//   - condition == ">=" / "<="：尝试转为 float64 数值比较，转换失败则按字符串比较
+//   - condition == "include"：判断字符串包含（values 以英文逗号分隔）
+//   - 其余未知条件符：视为不满足
+func matchCondition(formValue any, condition, value string) bool {
+	switch condition {
+	case "==":
+		return fmt.Sprintf("%v", formValue) == value
+	case "!=":
+		return fmt.Sprintf("%v", formValue) != value
+	case "include":
+		// 表单值可能是逗号分隔的多选，value 为待包含项
+		formStr := fmt.Sprintf("%v", formValue)
+		for _, item := range strings.Split(formStr, ",") {
+			if strings.TrimSpace(item) == value {
+				return true
+			}
+		}
+		return false
+	case ">=":
+		fv, vv, ok := toFloat64(formValue, value)
+		if !ok {
+			// 数值转换失败，回退字符串比较
+			return fmt.Sprintf("%v", formValue) >= value
+		}
+		return fv >= vv
+	case "<=":
+		fv, vv, ok := toFloat64(formValue, value)
+		if !ok {
+			return fmt.Sprintf("%v", formValue) <= value
+		}
+		return fv <= vv
+	default:
+		// 未知条件符，视为条件不满足
+		return false
+	}
+}
+
+// toFloat64 将表单值与条件值统一转换为 float64 进行比较。
+// 表单值可能为 json.Number / int64 / float64 / string 等多种类型，统一归一后比较。
+func toFloat64(formValue any, value string) (fv, vv float64, ok bool) {
+	vv, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return 0, 0, false
+	}
+	switch n := formValue.(type) {
+	case float64:
+		return n, vv, true
+	case int64:
+		return float64(n), vv, true
+	case int:
+		return float64(n), vv, true
+	case json.Number:
+		f, err := n.Float64()
+		if err != nil {
+			return 0, 0, false
+		}
+		return f, vv, true
+	case string:
+		f, err := strconv.ParseFloat(n, 64)
+		if err != nil {
+			return 0, 0, false
+		}
+		return f, vv, true
+	default:
+		return 0, 0, false
+	}
 }

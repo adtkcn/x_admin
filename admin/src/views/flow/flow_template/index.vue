@@ -2,12 +2,12 @@
     <div class="index-lists">
         <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
-                <el-form-item class="w-[280px]" label="流程名称" prop="flowName">
-                    <el-input v-model="queryParams.flowName" />
+                <el-form-item class="w-[280px]" label="流程名称" prop="flow_name">
+                    <el-input v-model="queryParams.flow_name" />
                 </el-form-item>
-                <el-form-item class="w-[280px]" label="流程分类" prop="flowGroup">
+                <el-form-item class="w-[280px]" label="流程分类" prop="flow_group">
                     <el-select
-                        v-model="queryParams.flowGroup"
+                        v-model="queryParams.flow_group"
                         clearable
                         :empty-values="[null, undefined]"
                     >
@@ -20,8 +20,8 @@
                         />
                     </el-select>
                 </el-form-item>
-                <el-form-item class="w-[280px]" label="流程描述" prop="flowRemark">
-                    <el-input v-model="queryParams.flowRemark" />
+                <el-form-item class="w-[280px]" label="流程描述" prop="flow_remark">
+                    <el-input v-model="queryParams.flow_remark" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
@@ -42,17 +42,24 @@
                     新增
                 </el-button>
             </div>
-            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
-                <el-table-column label="流程名称" prop="flowName" min-width="100" />
-                <el-table-column label="流程分类" prop="flowGroup" min-width="100">
+            <vxe-table
+                class="mt-4"
+                v-loading="pager.loading"
+                :data="pager.lists"
+                :row-config="{ keyField: 'id' }"
+                :scroll-y="{ enabled: false }"
+                :border="'inner'"
+            >
+                <vxe-column title="流程名称" field="flow_name" min-width="100" />
+                <vxe-column title="流程分类" field="flow_group" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.flow_group" :value="row.flowGroup" />
+                        <dict-value :options="dictData.flow_group" :value="row.flow_group" />
                     </template>
-                </el-table-column>
-                <el-table-column label="流程描述" prop="flowRemark" min-width="100" />
-                <!-- <el-table-column label="表单配置" prop="flowFormData" min-width="100" />
-                <el-table-column label="流程配置" prop="flowProcessData" min-width="100" /> -->
-                <el-table-column label="操作" fixed="right">
+                </vxe-column>
+                <vxe-column title="流程描述" field="flow_remark" min-width="100" />
+                <!-- <vxe-column title="表单配置" field="flow_form_data" min-width="100" />
+                <vxe-column title="流程配置" field="flow_process_data" min-width="100" /> -->
+                <vxe-column title="操作" fixed="right" width="140">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:flow_template:edit']"
@@ -79,50 +86,75 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
 
-        <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <!-- <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" /> -->
         <Approver ref="approverRef" :save="save"></Approver>
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive, defineAsyncComponent } from 'vue'
+import { shallowRef, reactive, defineAsyncComponent } from 'vue'
 import {
     flow_template_delete,
     flow_template_lists,
     flow_template_edit,
     flow_template_add
 } from '@/api/flow/flow_template'
+import type { type_flow_template } from '@/api/flow/flow_template'
+// 仅用于类型标注，运行时仍走下方的异步加载
+import type ApproverComponent from '@/components/flow/Approver.vue'
 import { useDictData } from '@/hooks/useDictOptions'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
-import EditPopup from './edit.vue'
 const Approver = defineAsyncComponent(() => import('@/components/flow/Approver.vue'))
 
 defineOptions({
     name: 'flow_template'
 })
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-const showEdit = ref(false)
+
+/** 字典项 */
+interface DictItem {
+    name: string
+    value: number
+}
+
+/** 流程模板列表项（复用 API 类型） */
+type FlowTemplateItem = type_flow_template
+
+/** Approver 发布回调传出的数据 */
+interface FlowSaveInfo {
+    id?: string
+    basicSetting: {
+        flow_name?: string
+        flow_group?: number
+        flow_remark?: string
+    }
+    /** 表单设计器字段列表 */
+    flow_form_data: any[]
+    /** 流程设计器节点树 */
+    flow_process_data: Record<string, any>
+    /** 流程节点拍平列表 */
+    flow_process_data_list?: any[]
+}
+// const editRef = shallowRef<InstanceType<typeof EditPopup>>()
+// const showEdit = ref(false)
 const queryParams = reactive({
-    flowName: '',
-    flowGroup: '',
-    flowRemark: '',
-    flowFormData: '',
-    flowProcessData: ''
+    flow_name: '',
+    flow_group: '',
+    flow_remark: ''
 })
 
-const { pager, getLists, resetPage, resetParams } = usePaging({
+const { pager, getLists, resetPage, resetParams } = usePaging<FlowTemplateItem>({
     fetchFun: flow_template_lists,
     params: queryParams
 })
 const { dictData } = useDictData<{
-    flow_group: any[]
+    flow_group: DictItem[]
 }>(['flow_group'])
 
 const handleAdd = async () => {
@@ -146,17 +178,17 @@ const handleDelete = async (id: string) => {
     feedback.msgSuccess('删除成功')
     getLists()
 }
-function save(info) {
-    return new Promise((resolve, reject) => {
+function save(info: FlowSaveInfo): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         if (info.id) {
             flow_template_edit({
                 id: info.id,
-                flowName: info.basicSetting.flowName,
-                flowGroup: info.basicSetting.flowGroup,
-                flowRemark: info.basicSetting.flowRemark,
-                flowFormData: JSON.stringify(info.flowFormData),
-                flowProcessData: JSON.stringify(info.flowProcessData),
-                flowProcessDataList: JSON.stringify(info.flowProcessDataList)
+                flow_name: info.basicSetting.flow_name,
+                flow_group: info.basicSetting.flow_group,
+                flow_remark: info.basicSetting.flow_remark,
+                flow_form_data: JSON.stringify(info.flow_form_data),
+                flow_process_data: JSON.stringify(info.flow_process_data),
+                flow_process_data_list: JSON.stringify(info.flow_process_data_list)
             })
                 .then(() => {
                     feedback.msgSuccess('修改成功')
@@ -169,12 +201,12 @@ function save(info) {
                 })
         } else {
             flow_template_add({
-                flowName: info.basicSetting.flowName,
-                flowGroup: info.basicSetting.flowGroup,
-                flowRemark: info.basicSetting.flowRemark,
-                flowFormData: JSON.stringify(info.flowFormData),
-                flowProcessData: JSON.stringify(info.flowProcessData),
-                flowProcessDataList: JSON.stringify(info.flowProcessDataList)
+                flow_name: info.basicSetting.flow_name,
+                flow_group: info.basicSetting.flow_group,
+                flow_remark: info.basicSetting.flow_remark,
+                flow_form_data: JSON.stringify(info.flow_form_data),
+                flow_process_data: JSON.stringify(info.flow_process_data),
+                flow_process_data_list: JSON.stringify(info.flow_process_data_list)
             })
                 .then(() => {
                     feedback.msgSuccess('新增成功')
@@ -188,19 +220,19 @@ function save(info) {
         }
     })
 }
-const approverRef = shallowRef<InstanceType<typeof EditPopup>>()
-const handleConfig = async (data: any) => {
+const approverRef = shallowRef<InstanceType<typeof ApproverComponent>>()
+const handleConfig = async (data: FlowTemplateItem) => {
     approverRef.value?.open({
         id: data.id,
         basicSetting: {
-            flowName: data.flowName,
-            flowGroup: data.flowGroup,
-            flowRemark: data.flowRemark
+            flow_name: data.flow_name,
+            flow_group: data.flow_group,
+            flow_remark: data.flow_remark
         },
 
-        flowFormData: JSON.parse(data.flowFormData),
-        flowProcessData: JSON.parse(data.flowProcessData)
-    } as any)
+        flow_form_data: JSON.parse(data.flow_form_data || '[]'),
+        flow_process_data: JSON.parse(data.flow_process_data || '{}')
+    })
 }
 getLists()
 </script>

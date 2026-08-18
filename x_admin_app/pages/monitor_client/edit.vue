@@ -30,8 +30,8 @@
       <uv-form-item label="ua记录" prop="ua" borderBottom>
         <uv-input v-model="form.ua" border="surround"></uv-input>
       </uv-form-item>
-      <uv-form-item label="更新时间" prop="clientTime" borderBottom>
-        <x-date v-model:time="form.clientTime"></x-date>
+      <uv-form-item label="更新时间" prop="ClientTime" borderBottom>
+        <x-date v-model:time="form.ClientTime"></x-date>
       </uv-form-item>
 
       <uv-button
@@ -68,7 +68,7 @@ let form = ref<type_monitor_client_edit>({
   width: null,
   height: null,
   ua: "",
-  clientTime: "",
+  ClientTime: "",
 });
 const formRules = {
   clientId: [
@@ -127,7 +127,7 @@ const formRules = {
       trigger: ["blur"],
     },
   ],
-  clientTime: [
+  ClientTime: [
     {
       required: true,
       message: "请选择更新时间",

@@ -74,10 +74,10 @@
       projectKey: '',
       projectName: '',
       projectType: '',
-      createTimeStart: '',
-      createTimeEnd: '',
-      updateTimeStart: '',
-      updateTimeEnd: '',
+      CreateTimeStart: '',
+      CreateTimeEnd: '',
+      UpdateTimeStart: '',
+      UpdateTimeEnd: '',
   });
   let activeFab = ref(false);
 

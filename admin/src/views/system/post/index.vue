@@ -24,25 +24,27 @@
                     新增
                 </el-button>
             </div>
-            <el-table class="mt-4" size="large" v-loading="pager.loading" :data="pager.lists">
-                <el-table-column label="岗位编码" prop="code" min-width="100" />
-                <el-table-column label="岗位名称" prop="name" min-width="100" />
-                <el-table-column label="排序" prop="sort" min-width="100" />
-                <el-table-column
-                    label="备注"
-                    prop="remarks"
-                    min-width="100"
-                    show-overflow-tooltip
-                />
-                <el-table-column label="添加时间" prop="createTime" min-width="180" />
-                <el-table-column label="岗位状态" prop="isStop" min-width="100">
+            <vxe-table
+                class="mt-4"
+                v-loading="pager.loading"
+                :data="pager.lists"
+                :row-config="{ keyField: 'id' }"
+                :scroll-y="{ enabled: false }"
+                :border="'inner'"
+            >
+                <vxe-column title="岗位编码" field="code" min-width="100" />
+                <vxe-column title="岗位名称" field="name" min-width="100" />
+                <vxe-column title="排序" field="sort" min-width="100" />
+                <vxe-column title="备注" field="remarks" min-width="100" show-overflow />
+                <vxe-column title="添加时间" field="create_time" min-width="180" />
+                <vxe-column title="岗位状态" field="is_stop" min-width="100">
                     <template #default="{ row }">
-                        <el-tag class="ml-2" :type="row.isStop ? 'danger' : 'primary'">
-                            {{ row.isStop ? '停用' : '正常' }}
+                        <el-tag class="ml-2" :type="row.is_stop ? 'danger' : 'primary'">
+                            {{ row.is_stop ? '停用' : '正常' }}
                         </el-tag>
                     </template>
-                </el-table-column>
-                <el-table-column label="操作" width="120" fixed="right">
+                </vxe-column>
+                <vxe-column title="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:system:post:edit']"
@@ -61,8 +63,8 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -91,7 +93,7 @@ const showEdit = ref(false)
 const queryParams = reactive<type_system_post_list>({
     code: '',
     name: '',
-    isStop: -1
+    is_stop: -1
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
@@ -113,10 +115,14 @@ const handleEdit = async (data: type_system_post_resp) => {
 }
 
 const handleDelete = async (id: string) => {
-    await feedback.confirm('确定要删除？')
-    await postDelete({ id })
-    feedback.msgSuccess('删除成功')
-    getLists()
+    try {
+        await feedback.confirm('确定要删除？')
+        await postDelete({ id })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {
+        console.error('岗位删除失败:', error)
+    }
 }
 
 getLists()

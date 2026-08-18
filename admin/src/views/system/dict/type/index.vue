@@ -3,13 +3,13 @@
         <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" inline>
                 <el-form-item class="w-[280px]" label="字典名称">
-                    <el-input v-model="queryParams.dictName" clearable @keyup.enter="resetPage" />
+                    <el-input v-model="queryParams.dict_name" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item class="w-[280px]" label="字典类型">
-                    <el-input v-model="queryParams.dictType" clearable @keyup.enter="resetPage" />
+                    <el-input v-model="queryParams.dict_type" clearable @keyup.enter="resetPage" />
                 </el-form-item>
                 <el-form-item class="w-[280px]" label="状态">
-                    <el-select v-model="queryParams.dictStatus">
+                    <el-select v-model="queryParams.dict_status">
                         <el-option label="正常" :value="1" />
                         <el-option label="停用" :value="0" />
                     </el-select>
@@ -47,28 +47,28 @@
             </div>
             <div class="mt-4" v-loading="pager.loading">
                 <div>
-                    <el-table
+                    <vxe-table
+                        ref="tableRef"
                         :data="pager.lists"
-                        size="large"
-                        @selection-change="handleSelectionChange"
+                        :row-config="{ keyField: 'id' }"
+                        :checkbox-config="{ checkRowKeys: [] }"
+                        @checkbox-change="selectData = getCheckedIds()"
+                        @checkbox-all="selectData = getCheckedIds()"
+                        :border="'inner'"
                     >
-                        <el-table-column type="selection" width="55" />
-                        <!-- <el-table-column label="ID" prop="id" width="100" /> -->
-                        <el-table-column label="字典名称" prop="dictName" />
-                        <el-table-column label="字典类型" prop="dictType" />
-                        <el-table-column label="状态">
+                        <vxe-column type="checkbox" width="55" />
+                        <!-- <vxe-column title="ID" field="id" width="100" /> -->
+                        <vxe-column title="字典名称" field="dict_name" />
+                        <vxe-column title="字典类型" field="dict_type" />
+                        <vxe-column title="状态">
                             <template v-slot="{ row }">
-                                <el-tag v-if="row.dictStatus == 1" type="primary">正常</el-tag>
+                                <el-tag v-if="row.dict_status == 1" type="primary">正常</el-tag>
                                 <el-tag v-else type="danger">停用</el-tag>
                             </template>
-                        </el-table-column>
-                        <el-table-column
-                            label="备注"
-                            prop="dictRemark"
-                            show-tooltip-when-overflow
-                        />
-                        <el-table-column label="创建时间" prop="createTime" />
-                        <el-table-column label="操作" width="190" fixed="right">
+                        </vxe-column>
+                        <vxe-column title="备注" field="dictRemark" show-overflow />
+                        <vxe-column title="创建时间" field="create_time" />
+                        <vxe-column title="操作" width="190" fixed="right">
                             <template #default="{ row }">
                                 <el-button
                                     v-perms="['admin:setting:dict:type:edit']"
@@ -95,8 +95,8 @@
                                     删除
                                 </el-button>
                             </template>
-                        </el-table-column>
-                    </el-table>
+                        </vxe-column>
+                    </vxe-table>
                 </div>
                 <div class="flex justify-end mt-4">
                     <pagination v-model="pager" @change="getLists" />
@@ -133,10 +133,11 @@ const showEdit = ref(false)
 
 const dataRef = shallowRef<InstanceType<typeof Data>>()
 const showDataEdit = ref(false)
+const tableRef = ref<any>()
 const queryParams = reactive<type_setting_dict_type_list>({
-    dictName: '',
-    dictType: '',
-    dictStatus: 1
+    dict_name: '',
+    dict_type: '',
+    dict_status: 1
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
@@ -148,8 +149,8 @@ const selectData = ref<string[]>([])
 function openDataEdit(row: type_setting_dict_type_resp) {
     dataRef.value?.open(row)
 }
-const handleSelectionChange = (val: type_setting_dict_type_resp[]) => {
-    selectData.value = val.map(({ id }) => id)
+const getCheckedIds = () => {
+    return (tableRef.value?.getCheckboxRecords() ?? []).map((item: any) => item.id)
 }
 
 const handleAdd = async () => {
@@ -167,10 +168,14 @@ const handleEdit = async (data: type_setting_dict_type_resp) => {
 
 // 删除角色
 const handleDelete = async (ids: string[]) => {
-    await feedback.confirm('确定要删除？')
-    await dictTypeDelete({ ids })
-    feedback.msgSuccess('删除成功')
-    getLists()
+    try {
+        await feedback.confirm('确定要删除？')
+        await dictTypeDelete({ ids })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {
+        console.error('字典类型删除失败:', error)
+    }
 }
 
 getLists()

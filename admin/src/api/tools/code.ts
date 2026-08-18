@@ -3,18 +3,18 @@ import type { Pages } from '@/utils/request'
 
 // 代码生成表列表参数
 export type type_gen_table_list = {
-    tableName?: string
-    tableComment?: string
+    table_name?: string
+    table_comment?: string
 }
 
 // 数据表列表参数
 export type type_gen_db_list = {
-    tableName?: string
+    table_name?: string
 }
 
 // 选择表参数
 export type type_gen_import_table = {
-    tables: string[]
+    tables: string
 }
 
 // 表详情参数
@@ -35,37 +35,37 @@ export type type_gen_del_table = {
 // 编辑表字段参数
 export type type_gen_edit_column = {
     id: string
-    tableId: string
-    columnName: string
-    columnLength: number
-    columnType: string
-    goField: string
-    goType: string
-    columnComment: string
-    isPk: number
-    isIncrement: number
-    isRequired: number
-    isInsert: number
-    isEdit: number
-    isList: number
-    isQuery: number
-    queryType: string
-    htmlType: string
-    dictType: string
-    listAllApi?: string
-    createTime?: string
-    updateTime?: string
+    table_id: string
+    column_name: string
+    column_length: number
+    column_type: string
+    go_field: string
+    go_type: string
+    column_comment: string
+    is_pk: number
+    is_increment: number
+    is_required: number
+    is_insert: number
+    is_edit: number
+    is_list: number
+    is_query: number
+    query_type: string
+    html_type: string
+    dict_type: string
+    list_all_api?: string
+    create_time?: string
+    update_time?: string
 }
 
 // 编辑表参数
 export type type_gen_edit_table = {
     id: string
-    tableName: string
-    tableComment: string
-    packageName?: string
-    moduleName?: string
-    businessName?: string
-    functionName?: string
+    table_name: string
+    table_comment: string
+    package_name?: string
+    module_name?: string
+    business_name?: string
+    function_name?: string
     author?: string
     remark?: string
     columns: type_gen_edit_column[]
@@ -84,16 +84,15 @@ export type type_gen_download_code = {
 // 表信息返回
 export type type_gen_table_resp = {
     id: string
-    tableName: string
-    tableComment: string
-    packageName: string
-    moduleName: string
-    businessName: string
-    functionName: string
-    author: string
-    remark: string
-    createTime: string
-    updateTime: string
+    table_name: string
+    table_comment: string
+    entity_name: string
+    module_name: string
+    function_name: string
+    author_name: string
+    remarks: string
+    create_time: string
+    update_time: string
 }
 
 // 代码生成已选数据表列表接口

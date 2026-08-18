@@ -64,7 +64,7 @@ func (s *authService) BindPhone(userID string, req *user_schema.BindPhoneReq) er
 // UnbindPhone 解绑手机号（需要邮箱验证码确认身份，因为手机号可能已注销）
 func (s *authService) UnbindPhone(userID string, req *user_schema.UnbindPhoneReq) error {
 	// 校验邮箱验证码
-	if err := util.EmailCodeUtil.VerifyCode(req.Email, util.CodeSceneUnbind, req.Code); err != nil {
+	if err := util.EmailCodeUtil.VerifyCode(req.Email, util.CodeSceneUnbind, req.Code, ""); err != nil {
 		return response.Failed.SetMessage(err.Error())
 	}
 

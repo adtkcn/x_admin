@@ -5,10 +5,14 @@ import (
 	"x_admin/core/response"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/singleflight"
 )
 
 // IndexHandler 首页控制器
-type IndexHandler struct{}
+type IndexHandler struct {
+	// 防止缓存击穿场景，将大量重复数据库查询合并为一次。
+	requestGroup singleflight.Group
+}
 
 // @Summary		控制台数据
 // @Description	获取控制台统计数据
@@ -16,8 +20,10 @@ type IndexHandler struct{}
 // @Param			token	header		string				true	"token"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/index/console [get]
-func (ih IndexHandler) Console(c *gin.Context) {
-	res, err := common_service.IndexService.Console()
+func (ih *IndexHandler) Console(c *gin.Context) {
+	res, err, _ := ih.requestGroup.Do("Index:Console", func() (any, error) {
+		return common_service.IndexService.Console()
+	})
 	response.CheckAndRespWithData(c, res, err)
 }
 
@@ -27,7 +33,9 @@ func (ih IndexHandler) Console(c *gin.Context) {
 // @Param			token	header		string				true	"token"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/common/index/config [get]
-func (ih IndexHandler) Config(c *gin.Context) {
-	res, err := common_service.IndexService.Config()
+func (ih *IndexHandler) Config(c *gin.Context) {
+	res, err, _ := ih.requestGroup.Do("Index:Config", func() (any, error) {
+		return common_service.IndexService.Config()
+	})
 	response.CheckAndRespWithData(c, res, err)
 }

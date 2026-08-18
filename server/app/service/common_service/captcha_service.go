@@ -4,8 +4,8 @@ import (
 	"image/color"
 	"x_admin/app/schema/common_schema"
 	"x_admin/core"
-	"x_admin/util/aj-captcha-go/captcha_config"
-	"x_admin/util/aj-captcha-go/captcha_service"
+	"x_admin/plugin/aj-captcha-go/captcha_config"
+	"x_admin/plugin/aj-captcha-go/captcha_service"
 )
 
 // var captcha_config = config.NewMemCacheConfig()// 默认配置，可以根据项目自行配置，将其他类型配置序列化上去

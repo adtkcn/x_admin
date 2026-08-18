@@ -22,18 +22,18 @@ type MonitorProjectHandler struct {
 // @Summary	监控项目列表
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		token			header		string																	true	"token"
-// @Param		pageNo			query		int																		true	"页码"
-// @Param		pageSize		query		int																		true	"每页数量"
-// @Param		ProjectKey		query		string																	false	"项目uuid"
-// @Param		ProjectName		query		string																	false	"项目名称"
-// @Param		ProjectType		query		string																	false	"项目类型go java web node php 等"
-// @Param		Status			query		number																	false	"是否启用: 0=否, 1=是"
-// @Param		CreateTimeStart	query		string																	false	"开始创建时间"
-// @Param		CreateTimeEnd	query		string																	false	"结束创建时间"
-// @Param		UpdateTimeStart	query		string																	false	"开始更新时间"
-// @Param		UpdateTimeEnd	query		string																	false	"结束更新时间"
-// @Success	200				{object}	response.Response{ data=response.PageResp{ lists=[]MonitorProjectResp}}	"成功"
+// @Param		token				header		string																	true	"token"
+// @Param		page_no				query		int																		true	"页码"
+// @Param		page_size			query		int																		true	"每页数量"
+// @Param		project_key			query		string																	false	"项目uuid"
+// @Param		project_name		query		string																	false	"项目名称"
+// @Param		project_type		query		string																	false	"项目类型go java web node php 等"
+// @Param		status				query		number																	false	"是否启用: 0=否, 1=是"
+// @Param		create_time_start	query		string																	false	"开始创建时间"
+// @Param		create_time_end		query		string																	false	"结束创建时间"
+// @Param		update_time_start	query		string																	false	"开始更新时间"
+// @Param		update_time_end		query		string																	false	"结束更新时间"
+// @Success	200					{object}	response.Response{ data=response.PageResp{ lists=[]MonitorProjectResp}}	"成功"
 // @Router		/api/admin/monitor_project/list [get]
 func (hd *MonitorProjectHandler) List(c *gin.Context) {
 	var page request.PageReq
@@ -51,15 +51,15 @@ func (hd *MonitorProjectHandler) List(c *gin.Context) {
 // @Summary	监控项目列表-所有
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		ProjectKey		query		string											false	"项目uuid"
-// @Param		ProjectName		query		string											false	"项目名称"
-// @Param		ProjectType		query		string											false	"项目类型go java web node php 等"
-// @Param		Status			query		number											false	"是否启用: 0=否, 1=是"
-// @Param		CreateTimeStart	query		string											false	"开始创建时间"
-// @Param		CreateTimeEnd	query		string											false	"结束创建时间"
-// @Param		UpdateTimeStart	query		string											false	"开始更新时间"
-// @Param		UpdateTimeEnd	query		string											false	"结束更新时间"
-// @Success	200				{object}	response.Response{ data=[]MonitorProjectResp}	"成功"
+// @Param		project_key			query		string											false	"项目uuid"
+// @Param		project_name		query		string											false	"项目名称"
+// @Param		project_type		query		string											false	"项目类型go java web node php 等"
+// @Param		status				query		number											false	"是否启用: 0=否, 1=是"
+// @Param		create_time_start	query		string											false	"开始创建时间"
+// @Param		create_time_end		query		string											false	"结束创建时间"
+// @Param		update_time_start	query		string											false	"开始更新时间"
+// @Param		update_time_end		query		string											false	"结束更新时间"
+// @Success	200					{object}	response.Response{ data=[]MonitorProjectResp}	"成功"
 // @Router		/api/admin/monitor_project/list_all [get]
 func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 	var listReq MonitorProjectListReq
@@ -74,7 +74,7 @@ func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 // @Tags		monitor_project-监控项目
 // @Produce	json
 // @Param		token	header		string										true	"token"
-// @Param		Id		query		string										false	"项目id"
+// @Param		id		query		string										false	"项目id"
 // @Success	200		{object}	response.Response{ data=MonitorProjectResp}	"成功"
 // @Router		/api/admin/monitor_project/detail [get]
 func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
@@ -93,12 +93,12 @@ func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 // @Summary	监控项目新增
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		token		header		string				true	"token"
-// @Param		ProjectKey	body		string				false	"项目uuid"
-// @Param		ProjectName	body		string				false	"项目名称"
-// @Param		ProjectType	body		string				false	"项目类型go java web node php 等"
-// @Param		Status		body		number				false	"是否启用: 0=否, 1=是"
-// @Success	200			{object}	response.Response	"成功"
+// @Param		token			header		string				true	"token"
+// @Param		project_key		body		string				false	"项目uuid"
+// @Param		project_name	body		string				false	"项目名称"
+// @Param		project_type	body		string				false	"项目类型go java web node php 等"
+// @Param		status			body		number				false	"是否启用: 0=否, 1=是"
+// @Success	200				{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/add [post]
 func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 	var addReq MonitorProjectAddReq
@@ -112,13 +112,13 @@ func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 // @Summary	监控项目编辑
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		token		header		string				true	"token"
-// @Param		Id			body		string				false	"项目id"
-// @Param		ProjectKey	body		string				false	"项目uuid"
-// @Param		ProjectName	body		string				false	"项目名称"
-// @Param		ProjectType	body		string				false	"项目类型go java web node php 等"
-// @Param		Status		body		number				false	"是否启用: 0=否, 1=是"
-// @Success	200			{object}	response.Response	"成功"
+// @Param		token			header		string				true	"token"
+// @Param		id				body		string				false	"项目id"
+// @Param		project_key		body		string				false	"项目uuid"
+// @Param		project_name	body		string				false	"项目名称"
+// @Param		project_type	body		string				false	"项目类型go java web node php 等"
+// @Param		status			body		number				false	"是否启用: 0=否, 1=是"
+// @Success	200				{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/edit [post]
 func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 	var editReq MonitorProjectEditReq
@@ -132,7 +132,7 @@ func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 // @Tags		monitor_project-监控项目
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Id		body		string				true	"项目id"
+// @Param		id		body		string				true	"项目id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/del [post]
 func (hd *MonitorProjectHandler) Del(c *gin.Context) {
@@ -148,7 +148,7 @@ func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 //
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Ids		body		string				false	"逗号分割的id"
+// @Param		ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/monitor_project/del_batch [post]
 func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
@@ -168,15 +168,15 @@ func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 // @Summary	监控项目导出
 // @Tags		monitor_project-监控项目
 // @Produce	json
-// @Param		token			header	string	true	"token"
-// @Param		ProjectKey		query	string	false	"项目uuid"
-// @Param		ProjectName		query	string	false	"项目名称"
-// @Param		ProjectType		query	string	false	"项目类型go java web node php 等"
-// @Param		Status			query	number	false	"是否启用: 0=否, 1=是"
-// @Param		CreateTimeStart	query	string	false	"开始创建时间"
-// @Param		CreateTimeEnd	query	string	false	"结束创建时间"
-// @Param		UpdateTimeStart	query	string	false	"开始更新时间"
-// @Param		UpdateTimeEnd	query	string	false	"结束更新时间"
+// @Param		token				header	string	true	"token"
+// @Param		project_key			query	string	false	"项目uuid"
+// @Param		project_name		query	string	false	"项目名称"
+// @Param		project_type		query	string	false	"项目类型go java web node php 等"
+// @Param		status				query	number	false	"是否启用: 0=否, 1=是"
+// @Param		create_time_start	query	string	false	"开始创建时间"
+// @Param		create_time_end		query	string	false	"结束创建时间"
+// @Param		update_time_start	query	string	false	"开始更新时间"
+// @Param		update_time_end		query	string	false	"结束更新时间"
 // @Router		/api/admin/monitor_project/export_file [get]
 func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorProjectListReq

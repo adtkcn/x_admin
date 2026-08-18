@@ -25,21 +25,21 @@ type SystemCornHandler struct {
 // @Summary	定时任务列表
 // @Tags		system_corn-定时任务
 // @Produce	json
-// @Param		token			header		string																		true	"token"
-// @Param		pageNo			query		int																			true	"页码"
-// @Param		pageSize		query		int																			true	"每页数量"
-// @Param		TaskName		query		string																		false	"任务名称"
-// @Param		TaskCode		query		string																		false	"任务编码"
-// @Param		CornExpr		query		string																		false	"corn表达式"
-// @Param		Status			query		number																		false	"状态"
-// @Param		CreatedBy		query		string																		false	"创建人"
-// @Param		Nickname		query		string																		false	"创建人名称"
-// @Param		CreateTimeStart	query		string																		false	"创建时间"
-// @Param		CreateTimeEnd	query		string																		false	"创建时间"
-// @Param		UpdateTimeStart	query		string																		false	"更新时间"
-// @Param		UpdateTimeEnd	query		string																		false	"更新时间"
+// @Param		token				header		string																		true	"token"
+// @Param		pageNo				query		int																			true	"页码"
+// @Param		pageSize			query		int																			true	"每页数量"
+// @Param		task_name			query		string																		false	"任务名称"
+// @Param		task_code			query		string																		false	"任务编码"
+// @Param		corn_expr			query		string																		false	"corn表达式"
+// @Param		status				query		number																		false	"状态"
+// @Param		created_by			query		string																		false	"创建人"
+// @Param		nickname			query		string																		false	"创建人名称"
+// @Param		create_time_start	query		string																		false	"创建时间"
+// @Param		create_time_end		query		string																		false	"创建时间"
+// @Param		update_time_start	query		string																		false	"更新时间"
+// @Param		update_time_end		query		string																		false	"更新时间"
 //
-// @Success	200				{object}	response.Response{data=response.PageResp{lists=[]schema.SystemCornResp}}	"成功"
+// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]schema.SystemCornResp}}	"成功"
 // @Router		/api/admin/system_corn/list [get]
 func (hd *SystemCornHandler) List(c *gin.Context) {
 	var page request.PageReq
@@ -57,18 +57,18 @@ func (hd *SystemCornHandler) List(c *gin.Context) {
 // @Summary	定时任务列表-所有
 // @Tags		system_corn-定时任务
 // @Produce	json
-// @Param		token			header		string											true	"token"
-// @Param		TaskName		query		string											false	"任务名称"
-// @Param		TaskCode		query		string											false	"任务编码"
-// @Param		CornExpr		query		string											false	"corn表达式"
-// @Param		Status			query		number											false	"状态"
-// @Param		CreatedBy		query		string											false	"创建人"
-// @Param		Nickname		query		string											false	"创建人名称"
-// @Param		CreateTimeStart	query		string											false	"创建时间"
-// @Param		CreateTimeEnd	query		string											false	"创建时间"
-// @Param		UpdateTimeStart	query		string											false	"更新时间"
-// @Param		UpdateTimeEnd	query		string											false	"更新时间"
-// @Success	200				{object}	response.Response{data=[]schema.SystemCornResp}	"成功"
+// @Param		token				header		string											true	"token"
+// @Param		task_name			query		string											false	"任务名称"
+// @Param		task_code			query		string											false	"任务编码"
+// @Param		corn_expr			query		string											false	"corn表达式"
+// @Param		status				query		number											false	"状态"
+// @Param		created_by			query		string											false	"创建人"
+// @Param		nickname			query		string											false	"创建人名称"
+// @Param		create_time_start	query		string											false	"创建时间"
+// @Param		create_time_end		query		string											false	"创建时间"
+// @Param		update_time_start	query		string											false	"更新时间"
+// @Param		update_time_end		query		string											false	"更新时间"
+// @Success	200					{object}	response.Response{data=[]schema.SystemCornResp}	"成功"
 // @Router		/api/admin/system_corn/list_all [get]
 func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 	var listReq schema.SystemCornListReq
@@ -83,7 +83,7 @@ func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 // @Tags		system_corn-定时任务
 // @Produce	json
 // @Param		token	header		string											true	"token"
-// @Param		Id		query		string											false	"taskid"
+// @Param		id		query		string											false	"taskid"
 // @Success	200		{object}	response.Response{data=schema.SystemCornResp}	"成功"
 // @Router		/api/admin/system_corn/detail [get]
 func (hd *SystemCornHandler) Detail(c *gin.Context) {
@@ -103,10 +103,10 @@ func (hd *SystemCornHandler) Detail(c *gin.Context) {
 // @Tags		system_corn-定时任务
 // @Produce	json
 // @Param		token		header		string				true	"token"
-// @Param		TaskName	body		string				false	"任务名称"
-// @Param		TaskCode	body		string				false	"任务编码"
-// @Param		CornExpr	body		string				false	"corn表达式"
-// @Param		Status		body		number				false	"状态"
+// @Param		task_name	body		string				false	"任务名称"
+// @Param		task_code	body		string				false	"任务编码"
+// @Param		corn_expr	body		string				false	"corn表达式"
+// @Param		status		body		number				false	"状态"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/add [post]
 func (hd *SystemCornHandler) Add(c *gin.Context) {
@@ -123,11 +123,11 @@ func (hd *SystemCornHandler) Add(c *gin.Context) {
 // @Tags		system_corn-定时任务
 // @Produce	json
 // @Param		token		header		string				true	"token"
-// @Param		Id			body		string				false	"taskid"
-// @Param		TaskName	body		string				false	"任务名称"
-// @Param		TaskCode	body		string				false	"任务编码"
-// @Param		CornExpr	body		string				false	"corn表达式"
-// @Param		Status		body		number				false	"状态"
+// @Param		id			body		string				false	"taskid"
+// @Param		task_name	body		string				false	"任务名称"
+// @Param		task_code	body		string				false	"任务编码"
+// @Param		corn_expr	body		string				false	"corn表达式"
+// @Param		status		body		number				false	"状态"
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/edit [post]
 func (hd *SystemCornHandler) Edit(c *gin.Context) {
@@ -142,7 +142,7 @@ func (hd *SystemCornHandler) Edit(c *gin.Context) {
 // @Tags		system_corn-定时任务
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Id		body		string				false	"taskid"
+// @Param		id		body		string				false	"taskid"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/del [post]
 func (hd *SystemCornHandler) Del(c *gin.Context) {
@@ -158,7 +158,7 @@ func (hd *SystemCornHandler) Del(c *gin.Context) {
 //
 // @Produce	json
 // @Param		token	header		string				true	"token"
-// @Param		Ids		body		string				false	"逗号分割的id"
+// @Param		ids		body		string				false	"逗号分割的id"
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/del_batch [post]
 func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
@@ -170,27 +170,27 @@ func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 		response.Fail(c, "请选择要删除的数据")
 		return
 	}
-	var Ids = strings.Split(delReq.Ids, ",")
+	var ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndRespWithData(c, nil, corn_service.SystemCornService.DelBatch(Ids))
+	response.CheckAndRespWithData(c, nil, corn_service.SystemCornService.DelBatch(ids))
 }
 
 // @Summary	定时任务导出
 // @Tags		system_corn-定时任务
 // @Produce	octet-stream,json
-// @Param		token			header		string				true	"token"
-// @Param		TaskName		query		string				false	"任务名称"
-// @Param		TaskCode		query		string				false	"任务编码"
-// @Param		CornExpr		query		string				false	"corn表达式"
-// @Param		Status			query		number				false	"状态"
-// @Param		CreatedBy		query		string				false	"创建人"
-// @Param		Nickname		query		string				false	"创建人名称"
-// @Param		CreateTimeStart	query		string				false	"创建时间"
-// @Param		CreateTimeEnd	query		string				false	"创建时间"
-// @Param		UpdateTimeStart	query		string				false	"更新时间"
-// @Param		UpdateTimeEnd	query		string				false	"更新时间"
-// @Success	200				{file}		string				"成功"
-// @Failure	500				{object}	response.Response	"失败"
+// @Param		token				header		string				true	"token"
+// @Param		task_name			query		string				false	"任务名称"
+// @Param		task_code			query		string				false	"任务编码"
+// @Param		corn_expr			query		string				false	"corn表达式"
+// @Param		status				query		number				false	"状态"
+// @Param		created_by			query		string				false	"创建人"
+// @Param		nickname			query		string				false	"创建人名称"
+// @Param		create_time_start	query		string				false	"创建时间"
+// @Param		create_time_end		query		string				false	"创建时间"
+// @Param		update_time_start	query		string				false	"更新时间"
+// @Param		update_time_end		query		string				false	"更新时间"
+// @Success	200					{file}		string				"成功"
+// @Failure	500					{object}	response.Response	"失败"
 // @Router		/api/admin/system_corn/export_file [get]
 func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 	var listReq schema.SystemCornListReq

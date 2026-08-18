@@ -33,6 +33,71 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/api/admin/common/album/albumAddFromFile": {
+            "post": {
+                "description": "把上传后登记的文件（file_hash_id）挂载到相册分类：新建相册行并关联文件引用",
+                "tags": [
+                    "common_album-相册管理"
+                ],
+                "summary": "相册文件挂载（从已上传文件）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "文件哈希记录ID",
+                        "name": "file_hash_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "目标分类ID",
+                        "name": "cid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "文件展示名",
+                        "name": "file_name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/common_schema.CommonAlbumListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/common/album/cateAdd": {
             "post": {
                 "description": "新增相册类目",
@@ -495,13 +560,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/common/upload/preUpload": {
+        "/api/admin/common/upload/checkInstant": {
             "post": {
-                "description": "文件预上传检查",
+                "description": "根据文件 MD5 查询是否已上传，命中则返回已有的文件哈希记录ID",
                 "tags": [
                     "common_upload-上传"
                 ],
-                "summary": "文件预上传",
+                "summary": "文件秒传检查",
                 "parameters": [
                     {
                         "type": "string",
@@ -512,7 +577,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "文件MD5",
-                        "name": "md5",
+                        "name": "file_md5",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -521,26 +586,9 @@ const docTemplate = `{
                     },
                     {
                         "description": "文件名",
-                        "name": "fileName",
+                        "name": "file_name",
                         "in": "body",
                         "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "文件大小",
-                        "name": "fileSize",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "分类ID",
-                        "name": "cid",
-                        "in": "body",
                         "schema": {
                             "type": "string"
                         }
@@ -556,7 +604,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/common/upload/upload": {
+        "/api/admin/common/upload/file": {
             "post": {
                 "description": "上传文件",
                 "tags": [
@@ -628,7 +676,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "模板",
-                        "name": "templateId",
+                        "name": "template_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -636,7 +684,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请人id",
-                        "name": "applyUserId",
+                        "name": "apply_user_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -644,7 +692,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请人昵称",
-                        "name": "applyUserNickname",
+                        "name": "apply_user_nickname",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -652,7 +700,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程名称",
-                        "name": "flowName",
+                        "name": "flow_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -660,7 +708,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表单值",
-                        "name": "formValue",
+                        "name": "form_value",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -795,7 +843,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程名称",
-                        "name": "flowName",
+                        "name": "flow_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -803,7 +851,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表单值",
-                        "name": "formValue",
+                        "name": "form_value",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -862,61 +910,61 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "模板",
-                        "name": "templateId",
+                        "name": "template_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "申请人id",
-                        "name": "applyUserId",
+                        "name": "apply_user_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "申请人昵称",
-                        "name": "applyUserNickname",
+                        "name": "apply_user_nickname",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "流程名称",
-                        "name": "flowName",
+                        "name": "flow_name",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "流程分类",
-                        "name": "flowGroup",
+                        "name": "flow_group",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "流程描述",
-                        "name": "flowRemark",
+                        "name": "flow_remark",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "表单配置",
-                        "name": "flowFormData",
+                        "name": "flow_form_data",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "流程配置",
-                        "name": "flowProcessData",
+                        "name": "flow_process_data",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "流程配置list数据",
-                        "name": "flowProcessDataList",
+                        "name": "flow_process_data_list",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "表单值",
-                        "name": "formValue",
+                        "name": "form_value",
                         "in": "query"
                     },
                     {
@@ -982,7 +1030,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请id",
-                        "name": "applyId",
+                        "name": "apply_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -990,7 +1038,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "模板id",
-                        "name": "templateId",
+                        "name": "template_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -998,7 +1046,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请人id",
-                        "name": "applyUserId",
+                        "name": "apply_user_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1006,7 +1054,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请人昵称",
-                        "name": "applyUserNickname",
+                        "name": "apply_user_nickname",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1014,7 +1062,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "审批人id",
-                        "name": "approverId",
+                        "name": "approver_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1022,7 +1070,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "审批用户昵称",
-                        "name": "approverNickname",
+                        "name": "approver_nickname",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1030,7 +1078,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "节点",
-                        "name": "nodeId",
+                        "name": "node_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1038,7 +1086,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "节点名称",
-                        "name": "nodeLabel",
+                        "name": "node_label",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1046,7 +1094,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "节点类型",
-                        "name": "nodeType",
+                        "name": "node_type",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1054,7 +1102,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表单值",
-                        "name": "formValue",
+                        "name": "form_value",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1062,7 +1110,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "通过状态：1待处理，2通过，3拒绝",
-                        "name": "passStatus",
+                        "name": "pass_status",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -1070,7 +1118,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "通过备注",
-                        "name": "passRemark",
+                        "name": "pass_remark",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1106,7 +1154,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请id",
-                        "name": "applyId",
+                        "name": "apply_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1115,7 +1163,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "审批节点id",
-                        "name": "historyId",
+                        "name": "history_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1287,7 +1335,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请id",
-                        "name": "applyId",
+                        "name": "apply_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1295,7 +1343,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "模板id",
-                        "name": "templateId",
+                        "name": "template_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1303,7 +1351,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请人id",
-                        "name": "applyUserId",
+                        "name": "apply_user_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1311,7 +1359,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请人昵称",
-                        "name": "applyUserNickname",
+                        "name": "apply_user_nickname",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1319,7 +1367,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "审批人id",
-                        "name": "approverId",
+                        "name": "approver_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1327,7 +1375,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "审批用户昵称",
-                        "name": "approverNickname",
+                        "name": "approver_nickname",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1335,7 +1383,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "节点",
-                        "name": "nodeId",
+                        "name": "node_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1343,7 +1391,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "节点名称",
-                        "name": "nodeLabel",
+                        "name": "node_label",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1351,7 +1399,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "节点类型",
-                        "name": "nodeType",
+                        "name": "node_type",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1359,7 +1407,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表单值",
-                        "name": "formValue",
+                        "name": "form_value",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1367,7 +1415,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "通过状态：1待处理，2通过，3拒绝",
-                        "name": "passStatus",
+                        "name": "pass_status",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -1375,7 +1423,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "通过备注",
-                        "name": "passRemark",
+                        "name": "pass_remark",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1411,7 +1459,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请id",
-                        "name": "applyId",
+                        "name": "apply_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1463,73 +1511,73 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "申请id",
-                        "name": "applyId",
+                        "name": "apply_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "模板id",
-                        "name": "templateId",
+                        "name": "template_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "申请人id",
-                        "name": "applyUserId",
+                        "name": "apply_user_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "申请人昵称",
-                        "name": "applyUserNickname",
+                        "name": "apply_user_nickname",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "审批人id",
-                        "name": "approverId",
+                        "name": "approver_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "审批用户昵称",
-                        "name": "approverNickname",
+                        "name": "approver_nickname",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "节点",
-                        "name": "nodeId",
+                        "name": "node_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "节点名称",
-                        "name": "nodeLabel",
+                        "name": "node_label",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "节点类型",
-                        "name": "nodeType",
+                        "name": "node_type",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "表单值",
-                        "name": "formValue",
+                        "name": "form_value",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "通过状态：1待处理，2通过，3拒绝",
-                        "name": "passStatus",
+                        "name": "pass_status",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "通过备注",
-                        "name": "passRemark",
+                        "name": "pass_remark",
                         "in": "query"
                     }
                 ],
@@ -1609,7 +1657,7 @@ const docTemplate = `{
                 "tags": [
                     "flow_history-流程历史"
                 ],
-                "summary": "获取下一个审批节点，中间可能存在系统任务节点和网关",
+                "summary": "获取下一个审批节点，中间可能存在通知节点和网关",
                 "parameters": [
                     {
                         "type": "string",
@@ -1620,7 +1668,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请id",
-                        "name": "applyId",
+                        "name": "apply_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1657,7 +1705,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "申请id",
-                        "name": "applyId",
+                        "name": "apply_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1666,7 +1714,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "下一个节点的审批用户id",
-                        "name": "nextNodeAdminId",
+                        "name": "next_node_admin_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1674,7 +1722,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "通过备注",
-                        "name": "passRemark",
+                        "name": "pass_remark",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1710,7 +1758,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程名称",
-                        "name": "flowName",
+                        "name": "flow_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1718,7 +1766,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程分类",
-                        "name": "flowGroup",
+                        "name": "flow_group",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -1726,7 +1774,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程描述",
-                        "name": "flowRemark",
+                        "name": "flow_remark",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1734,7 +1782,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表单配置",
-                        "name": "flowFormData",
+                        "name": "flow_form_data",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1742,7 +1790,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程配置",
-                        "name": "flowProcessData",
+                        "name": "flow_process_data",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1750,7 +1798,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程配置list数据",
-                        "name": "flowProcessDataList",
+                        "name": "flow_process_data_list",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1865,7 +1913,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程名称",
-                        "name": "flowName",
+                        "name": "flow_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1873,7 +1921,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程分类",
-                        "name": "flowGroup",
+                        "name": "flow_group",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -1881,7 +1929,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程描述",
-                        "name": "flowRemark",
+                        "name": "flow_remark",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1889,7 +1937,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表单配置",
-                        "name": "flowFormData",
+                        "name": "flow_form_data",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1897,7 +1945,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程配置",
-                        "name": "flowProcessData",
+                        "name": "flow_process_data",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1905,7 +1953,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "流程配置list数据",
-                        "name": "flowProcessDataList",
+                        "name": "flow_process_data_list",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -1956,37 +2004,37 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "流程名称",
-                        "name": "flowName",
+                        "name": "flow_name",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "流程分类",
-                        "name": "flowGroup",
+                        "name": "flow_group",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "流程描述",
-                        "name": "flowRemark",
+                        "name": "flow_remark",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "表单配置",
-                        "name": "flowFormData",
+                        "name": "flow_form_data",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "流程配置",
-                        "name": "flowProcessData",
+                        "name": "flow_process_data",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "流程配置list数据",
-                        "name": "flowProcessDataList",
+                        "name": "flow_process_data_list",
                         "in": "query"
                     }
                 ],
@@ -2068,13 +2116,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "表名",
-                        "name": "tableName",
+                        "name": "table_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "表描述",
-                        "name": "tableComment",
+                        "name": "table_comment",
                         "in": "query"
                     }
                 ],
@@ -2251,7 +2299,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表名",
-                        "name": "tableName",
+                        "name": "table_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2260,7 +2308,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "实体名称",
-                        "name": "entityName",
+                        "name": "entity_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2269,7 +2317,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "表描述",
-                        "name": "tableComment",
+                        "name": "table_comment",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2278,7 +2326,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "作者名称",
-                        "name": "authorName",
+                        "name": "author_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2294,7 +2342,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "生成模板方式: [crud=单表, tree=树表]",
-                        "name": "genTpl",
+                        "name": "gen_tpl",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2302,7 +2350,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "模块名",
-                        "name": "moduleName",
+                        "name": "module_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2311,7 +2359,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "功能名",
-                        "name": "functionName",
+                        "name": "function_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2320,7 +2368,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "树表主键",
-                        "name": "treePrimary",
+                        "name": "tree_primary",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2328,7 +2376,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "树表父键",
-                        "name": "treeParent",
+                        "name": "tree_parent",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2336,7 +2384,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "树表名称",
-                        "name": "treeName",
+                        "name": "tree_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2344,7 +2392,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "子表名称",
-                        "name": "subTableName",
+                        "name": "sub_table_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2352,7 +2400,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "子表外键",
-                        "name": "subTableFk",
+                        "name": "sub_table_fk",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2446,13 +2494,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "表名",
-                        "name": "tableName",
+                        "name": "table_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "表描述",
-                        "name": "tableComment",
+                        "name": "table_comment",
                         "in": "query"
                     }
                 ],
@@ -2642,7 +2690,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2650,7 +2698,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "sdk生成的客户端id",
-                        "name": "ClientId",
+                        "name": "client_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2658,7 +2706,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "系统",
-                        "name": "Os",
+                        "name": "os",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2666,7 +2714,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "浏览器",
-                        "name": "Browser",
+                        "name": "browser",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2674,7 +2722,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "ua记录",
-                        "name": "Ua",
+                        "name": "ua",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2710,7 +2758,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "uuid",
-                        "name": "Id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2746,7 +2794,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "逗号分割的id",
-                        "name": "Ids",
+                        "name": "ids",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -2783,7 +2831,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "uuid",
-                        "name": "Id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -2829,7 +2877,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "uuid",
-                        "name": "Id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -2863,43 +2911,43 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "sdk生成的客户端id",
-                        "name": "ClientId",
+                        "name": "client_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "系统",
-                        "name": "Os",
+                        "name": "os",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "浏览器",
-                        "name": "Browser",
+                        "name": "browser",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "ua记录",
-                        "name": "Ua",
+                        "name": "ua",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     }
                 ],
@@ -2938,57 +2986,57 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "pageNo",
+                        "name": "page_no",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "pageSize",
+                        "name": "page_size",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "sdk生成的客户端id",
-                        "name": "ClientId",
+                        "name": "client_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "系统",
-                        "name": "Os",
+                        "name": "os",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "浏览器",
-                        "name": "Browser",
+                        "name": "browser",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "ua记录",
-                        "name": "Ua",
+                        "name": "ua",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     }
                 ],
@@ -3042,43 +3090,43 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "sdk生成的客户端id",
-                        "name": "ClientId",
+                        "name": "client_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "系统",
-                        "name": "Os",
+                        "name": "os",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "浏览器",
-                        "name": "Browser",
+                        "name": "browser",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "ua记录",
-                        "name": "Ua",
+                        "name": "ua",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     }
                 ],
@@ -3126,7 +3174,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3134,7 +3182,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "sdk生成的客户端id",
-                        "name": "ClientId",
+                        "name": "client_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3142,7 +3190,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "用户id",
-                        "name": "UserId",
+                        "name": "user_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3150,7 +3198,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "事件类型",
-                        "name": "EventType",
+                        "name": "event_type",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3158,7 +3206,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "URL地址",
-                        "name": "Path",
+                        "name": "path",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3166,7 +3214,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "错误消息",
-                        "name": "Message",
+                        "name": "message",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3174,7 +3222,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "错误堆栈",
-                        "name": "Stack",
+                        "name": "stack",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3182,7 +3230,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "屏幕宽度",
-                        "name": "Width",
+                        "name": "width",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -3190,7 +3238,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "屏幕高度",
-                        "name": "Height",
+                        "name": "height",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -3226,7 +3274,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "错误id",
-                        "name": "Id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3262,7 +3310,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "逗号分割的id",
-                        "name": "Ids",
+                        "name": "ids",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3299,7 +3347,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "错误id",
-                        "name": "Id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -3345,49 +3393,49 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "事件类型",
-                        "name": "EventType",
+                        "name": "event_type",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "URL地址",
-                        "name": "Path",
+                        "name": "path",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "错误消息",
-                        "name": "Message",
+                        "name": "message",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "错误堆栈",
-                        "name": "Stack",
+                        "name": "stack",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "md5",
-                        "name": "Md5",
+                        "name": "md5",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     }
                 ],
@@ -3449,63 +3497,63 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "pageNo",
+                        "name": "page_no",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "pageSize",
+                        "name": "page_size",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "事件类型",
-                        "name": "EventType",
+                        "name": "event_type",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "URL地址",
-                        "name": "Path",
+                        "name": "path",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "错误消息",
-                        "name": "Message",
+                        "name": "message",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "错误堆栈",
-                        "name": "Stack",
+                        "name": "stack",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "md5",
-                        "name": "Md5",
+                        "name": "md5",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     }
                 ],
@@ -3559,49 +3607,49 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "项目key",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "事件类型",
-                        "name": "EventType",
+                        "name": "event_type",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "URL地址",
-                        "name": "Path",
+                        "name": "path",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "错误消息",
-                        "name": "Message",
+                        "name": "message",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "错误堆栈",
-                        "name": "Stack",
+                        "name": "stack",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "md5",
-                        "name": "Md5",
+                        "name": "md5",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     }
                 ],
@@ -3649,7 +3697,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目uuid",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3657,7 +3705,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目名称",
-                        "name": "ProjectName",
+                        "name": "project_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3665,7 +3713,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目类型go java web node php 等",
-                        "name": "ProjectType",
+                        "name": "project_type",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3673,7 +3721,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否启用: 0=否, 1=是",
-                        "name": "Status",
+                        "name": "status",
                         "in": "body",
                         "schema": {
                             "type": "number"
@@ -3709,7 +3757,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目id",
-                        "name": "Id",
+                        "name": "id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -3746,7 +3794,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "逗号分割的id",
-                        "name": "Ids",
+                        "name": "ids",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3783,7 +3831,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "项目id",
-                        "name": "Id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -3828,7 +3876,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目id",
-                        "name": "Id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3836,7 +3884,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目uuid",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3844,7 +3892,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目名称",
-                        "name": "ProjectName",
+                        "name": "project_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3852,7 +3900,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "项目类型go java web node php 等",
-                        "name": "ProjectType",
+                        "name": "project_type",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -3860,7 +3908,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否启用: 0=否, 1=是",
-                        "name": "Status",
+                        "name": "status",
                         "in": "body",
                         "schema": {
                             "type": "number"
@@ -3897,49 +3945,49 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "项目uuid",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "项目名称",
-                        "name": "ProjectName",
+                        "name": "project_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "项目类型go java web node php 等",
-                        "name": "ProjectType",
+                        "name": "project_type",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "是否启用: 0=否, 1=是",
-                        "name": "Status",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -3978,63 +4026,63 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "页码",
-                        "name": "pageNo",
+                        "name": "page_no",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "每页数量",
-                        "name": "pageSize",
+                        "name": "page_size",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "项目uuid",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "项目名称",
-                        "name": "ProjectName",
+                        "name": "project_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "项目类型go java web node php 等",
-                        "name": "ProjectType",
+                        "name": "project_type",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "是否启用: 0=否, 1=是",
-                        "name": "Status",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -4088,49 +4136,49 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "项目uuid",
-                        "name": "ProjectKey",
+                        "name": "project_key",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "项目名称",
-                        "name": "ProjectName",
+                        "name": "project_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "项目类型go java web node php 等",
-                        "name": "ProjectType",
+                        "name": "project_type",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "是否启用: 0=否, 1=是",
-                        "name": "Status",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "开始更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -4256,7 +4304,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "类型ID",
-                        "name": "typeId",
+                        "name": "type_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4342,7 +4390,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "字典类型",
-                        "name": "dictType",
+                        "name": "dict_type",
                         "in": "query"
                     },
                     {
@@ -4499,7 +4547,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "类型ID",
-                        "name": "typeId",
+                        "name": "type_id",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4567,11 +4615,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/setting/dictType/add": {
+        "/api/admin/setting/dict_type/add": {
             "post": {
                 "description": "新增字典类型",
                 "tags": [
-                    "setting_dictType-字典类型"
+                    "setting_dict_type-字典类型"
                 ],
                 "summary": "字典类型新增",
                 "parameters": [
@@ -4584,7 +4632,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典名称",
-                        "name": "dictName",
+                        "name": "dict_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4593,7 +4641,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典类型",
-                        "name": "dictType",
+                        "name": "dict_type",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4602,7 +4650,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典备注",
-                        "name": "dictRemark",
+                        "name": "dict_remark",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -4610,7 +4658,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典状态: 0/1",
-                        "name": "dictStatus",
+                        "name": "dict_status",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4628,11 +4676,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/setting/dictType/all": {
+        "/api/admin/setting/dict_type/all": {
             "get": {
                 "description": "获取所有字典类型列表(不分页)",
                 "tags": [
-                    "setting_dictType-字典类型"
+                    "setting_dict_type-字典类型"
                 ],
                 "summary": "字典类型所有",
                 "parameters": [
@@ -4669,11 +4717,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/setting/dictType/del": {
+        "/api/admin/setting/dict_type/del": {
             "post": {
                 "description": "删除字典类型",
                 "tags": [
-                    "setting_dictType-字典类型"
+                    "setting_dict_type-字典类型"
                 ],
                 "summary": "字典类型删除",
                 "parameters": [
@@ -4707,11 +4755,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/setting/dictType/detail": {
+        "/api/admin/setting/dict_type/detail": {
             "get": {
                 "description": "获取字典类型详情",
                 "tags": [
-                    "setting_dictType-字典类型"
+                    "setting_dict_type-字典类型"
                 ],
                 "summary": "字典类型详情",
                 "parameters": [
@@ -4752,11 +4800,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/setting/dictType/edit": {
+        "/api/admin/setting/dict_type/edit": {
             "post": {
                 "description": "编辑字典类型",
                 "tags": [
-                    "setting_dictType-字典类型"
+                    "setting_dict_type-字典类型"
                 ],
                 "summary": "字典类型编辑",
                 "parameters": [
@@ -4778,7 +4826,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典名称",
-                        "name": "dictName",
+                        "name": "dict_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4787,7 +4835,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典类型",
-                        "name": "dictType",
+                        "name": "dict_type",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4796,7 +4844,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典备注",
-                        "name": "dictRemark",
+                        "name": "dict_remark",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -4804,7 +4852,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "字典状态: 0/1",
-                        "name": "dictStatus",
+                        "name": "dict_status",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -4822,11 +4870,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/setting/dictType/list": {
+        "/api/admin/setting/dict_type/list": {
             "get": {
                 "description": "获取字典类型列表",
                 "tags": [
-                    "setting_dictType-字典类型"
+                    "setting_dict_type-字典类型"
                 ],
                 "summary": "字典类型列表",
                 "parameters": [
@@ -4854,20 +4902,20 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "字典名称",
-                        "name": "dictName",
+                        "name": "dict_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "字典类型",
-                        "name": "dictType",
+                        "name": "dict_type",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "format": "int32",
                         "description": "字典状态: 0/1",
-                        "name": "dictStatus",
+                        "name": "dict_status",
                         "in": "query"
                     }
                 ],
@@ -4995,7 +5043,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "商城名称",
-                        "name": "shopName",
+                        "name": "shop_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5003,7 +5051,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "商城Logo",
-                        "name": "shopLogo",
+                        "name": "shop_logo",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5018,6 +5066,15 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/api/admin/swagger/doc.json": {
+            "get": {
+                "tags": [
+                    "公共接口"
+                ],
+                "summary": "swagger文档数据",
+                "responses": {}
             }
         },
         "/api/admin/system/admin/ListByDeptId": {
@@ -5038,7 +5095,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "部门id",
-                        "name": "deptId",
+                        "name": "dept_id",
                         "in": "query",
                         "required": true
                     }
@@ -5085,7 +5142,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "部门ID",
-                        "name": "deptId",
+                        "name": "dept_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5093,7 +5150,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "岗位ID",
-                        "name": "postId",
+                        "name": "post_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5101,7 +5158,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "角色ID列表",
-                        "name": "roleIds",
+                        "name": "role_ids",
                         "in": "body",
                         "schema": {
                             "type": "array",
@@ -5155,7 +5212,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否禁用: [0=否, 1=是]",
-                        "name": "isDisable",
+                        "name": "is_disable",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -5313,7 +5370,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "部门ID",
-                        "name": "deptId",
+                        "name": "dept_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5321,7 +5378,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "岗位ID",
-                        "name": "postId",
+                        "name": "post_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5329,7 +5386,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "角色ID列表",
-                        "name": "roleIds",
+                        "name": "role_ids",
                         "in": "body",
                         "schema": {
                             "type": "array",
@@ -5382,7 +5439,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否禁用: [0=否, 1=是]",
-                        "name": "isDisable",
+                        "name": "is_disable",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -5585,7 +5642,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "角色ID",
-                        "name": "roleId",
+                        "name": "role_id",
                         "in": "query"
                     }
                 ],
@@ -5729,7 +5786,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "邮箱验证码",
-                        "name": "emailCode",
+                        "name": "email_code",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5745,7 +5802,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "当前密码",
-                        "name": "currPassword",
+                        "name": "curr_password",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5796,7 +5853,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "负责人id",
-                        "name": "dutyId",
+                        "name": "duty_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -5820,7 +5877,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否停用: [0=否, 1=是]",
-                        "name": "isStop",
+                        "name": "is_stop",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6009,7 +6066,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "负责人id",
-                        "name": "dutyId",
+                        "name": "duty_id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -6033,7 +6090,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否停用: [0=否, 1=是]",
-                        "name": "isStop",
+                        "name": "is_stop",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6083,7 +6140,7 @@ const docTemplate = `{
                         "type": "integer",
                         "format": "int32",
                         "description": "是否停用: [0=否, 1=是]",
-                        "name": "isStop",
+                        "name": "is_stop",
                         "in": "query"
                     }
                 ],
@@ -6230,13 +6287,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "开始时间",
-                        "name": "startTime",
+                        "name": "start_time",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束时间",
-                        "name": "endTime",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -6342,13 +6399,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "开始时间",
-                        "name": "startTime",
+                        "name": "start_time",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "结束时间",
-                        "name": "endTime",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -6512,7 +6569,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "权限类型: [M=目录, C=菜单, A=按钮]",
-                        "name": "menuType",
+                        "name": "menu_type",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -6521,7 +6578,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "菜单名称",
-                        "name": "menuName",
+                        "name": "menu_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -6530,7 +6587,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "菜单图标",
-                        "name": "menuIcon",
+                        "name": "menu_icon",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -6538,7 +6595,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "菜单排序",
-                        "name": "menuSort",
+                        "name": "menu_sort",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6586,7 +6643,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否缓存: [0=否, 1=是]",
-                        "name": "isCache",
+                        "name": "is_cache",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6594,7 +6651,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否显示: [0=否, 1=是]",
-                        "name": "isShow",
+                        "name": "is_show",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6602,7 +6659,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否禁用: [0=否, 1=是]",
-                        "name": "isDisable",
+                        "name": "is_disable",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6733,7 +6790,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "权限类型: [M=目录, C=菜单, A=按钮]",
-                        "name": "menuType",
+                        "name": "menu_type",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -6742,7 +6799,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "菜单名称",
-                        "name": "menuName",
+                        "name": "menu_name",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -6751,7 +6808,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "菜单图标",
-                        "name": "menuIcon",
+                        "name": "menu_icon",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -6759,7 +6816,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "菜单排序",
-                        "name": "menuSort",
+                        "name": "menu_sort",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6807,7 +6864,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否缓存: [0=否, 1=是]",
-                        "name": "isCache",
+                        "name": "is_cache",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6815,7 +6872,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否显示: [0=否, 1=是]",
-                        "name": "isShow",
+                        "name": "is_show",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6823,7 +6880,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否禁用: [0=否, 1=是]",
-                        "name": "isDisable",
+                        "name": "is_disable",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -6995,7 +7052,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "0未读 1已读 -1全部",
-                        "name": "isRead",
+                        "name": "is_read",
                         "in": "query"
                     }
                 ],
@@ -7134,7 +7191,7 @@ const docTemplate = `{
         },
         "/api/admin/system/notice/setting/save": {
             "post": {
-                "description": "保存当前管理员的渠道通知偏好",
+                "description": "保存当前管理员的渠道通知偏好（channel -\u003e is_enabled 映射）",
                 "tags": [
                     "system_notice-通知"
                 ],
@@ -7148,21 +7205,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "站内信: 0关闭 1开启",
-                        "name": "siteEnabled",
+                        "description": "渠道开关映射",
+                        "name": "settings",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "邮件: 0关闭 1开启",
-                        "name": "emailEnabled",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/system_schema.SystemNoticeSettingSaveReq"
                         }
                     }
                 ],
@@ -7256,7 +7304,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否停用: [0=否, 1=是]",
-                        "name": "isStop",
+                        "name": "is_stop",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -7453,7 +7501,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否停用: [0=否, 1=是]",
-                        "name": "isStop",
+                        "name": "is_stop",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -7523,7 +7571,7 @@ const docTemplate = `{
                         "type": "integer",
                         "format": "int32",
                         "description": "是否停用: [0=否, 1=是]",
-                        "name": "isStop",
+                        "name": "is_stop",
                         "in": "query"
                     }
                 ],
@@ -7595,7 +7643,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否禁用: [0=否, 1=是]",
-                        "name": "isDisable",
+                        "name": "is_disable",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -7792,7 +7840,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "是否禁用: [0=否, 1=是]",
-                        "name": "isDisable",
+                        "name": "is_disable",
                         "in": "body",
                         "schema": {
                             "type": "integer"
@@ -7908,7 +7956,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "任务名称",
-                        "name": "TaskName",
+                        "name": "task_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -7916,7 +7964,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "任务编码",
-                        "name": "TaskCode",
+                        "name": "task_code",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -7924,7 +7972,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "corn表达式",
-                        "name": "CornExpr",
+                        "name": "corn_expr",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -7932,7 +7980,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "状态",
-                        "name": "Status",
+                        "name": "status",
                         "in": "body",
                         "schema": {
                             "type": "number"
@@ -7968,7 +8016,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "taskid",
-                        "name": "Id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8004,7 +8052,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "逗号分割的id",
-                        "name": "Ids",
+                        "name": "ids",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8041,7 +8089,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "taskid",
-                        "name": "Id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -8086,7 +8134,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "taskid",
-                        "name": "Id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8094,7 +8142,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "任务名称",
-                        "name": "TaskName",
+                        "name": "task_name",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8102,7 +8150,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "任务编码",
-                        "name": "TaskCode",
+                        "name": "task_code",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8110,7 +8158,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "corn表达式",
-                        "name": "CornExpr",
+                        "name": "corn_expr",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8118,7 +8166,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "状态",
-                        "name": "Status",
+                        "name": "status",
                         "in": "body",
                         "schema": {
                             "type": "number"
@@ -8156,61 +8204,61 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "任务名称",
-                        "name": "TaskName",
+                        "name": "task_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "任务编码",
-                        "name": "TaskCode",
+                        "name": "task_code",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "corn表达式",
-                        "name": "CornExpr",
+                        "name": "corn_expr",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "状态",
-                        "name": "Status",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建人",
-                        "name": "CreatedBy",
+                        "name": "created_by",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建人名称",
-                        "name": "Nickname",
+                        "name": "nickname",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -8327,61 +8375,61 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "任务名称",
-                        "name": "TaskName",
+                        "name": "task_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "任务编码",
-                        "name": "TaskCode",
+                        "name": "task_code",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "corn表达式",
-                        "name": "CornExpr",
+                        "name": "corn_expr",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "状态",
-                        "name": "Status",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建人",
-                        "name": "CreatedBy",
+                        "name": "created_by",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建人名称",
-                        "name": "Nickname",
+                        "name": "nickname",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -8442,61 +8490,61 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "任务名称",
-                        "name": "TaskName",
+                        "name": "task_name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "任务编码",
-                        "name": "TaskCode",
+                        "name": "task_code",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "corn表达式",
-                        "name": "CornExpr",
+                        "name": "corn_expr",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "状态",
-                        "name": "Status",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建人",
-                        "name": "CreatedBy",
+                        "name": "created_by",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建人名称",
-                        "name": "Nickname",
+                        "name": "nickname",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -8525,6 +8573,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/user/detail": {
+            "get": {
+                "summary": "用户详情",
+                "responses": {}
+            }
+        },
+        "/api/admin/user/disable": {
+            "post": {
+                "summary": "用户禁用/启用",
+                "responses": {}
+            }
+        },
+        "/api/admin/user/edit": {
+            "post": {
+                "summary": "用户编辑",
+                "responses": {}
+            }
+        },
+        "/api/admin/user/kick": {
+            "post": {
+                "summary": "用户踢下线",
+                "responses": {}
+            }
+        },
+        "/api/admin/user/list": {
+            "get": {
+                "tags": [
+                    "user-用户"
+                ],
+                "summary": "用户列表",
+                "responses": {}
+            }
+        },
         "/api/admin/user_protocol/add": {
             "post": {
                 "produces": [
@@ -8544,7 +8625,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "标识",
-                        "name": "Tag",
+                        "name": "tag",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8552,7 +8633,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "版本",
-                        "name": "Version",
+                        "name": "version",
                         "in": "body",
                         "schema": {
                             "type": "number"
@@ -8560,7 +8641,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "标题",
-                        "name": "Title",
+                        "name": "title",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8568,7 +8649,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "协议内容",
-                        "name": "Content",
+                        "name": "content",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8603,8 +8684,8 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Id",
-                        "name": "Id",
+                        "description": "id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8640,7 +8721,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "逗号分割的id",
-                        "name": "Ids",
+                        "name": "ids",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8676,8 +8757,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Id",
-                        "name": "Id",
+                        "description": "id",
+                        "name": "id",
                         "in": "query"
                     }
                 ],
@@ -8721,8 +8802,8 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Id",
-                        "name": "Id",
+                        "description": "id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8730,7 +8811,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "标识",
-                        "name": "Tag",
+                        "name": "tag",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8738,7 +8819,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "版本",
-                        "name": "Version",
+                        "name": "version",
                         "in": "body",
                         "schema": {
                             "type": "number"
@@ -8746,7 +8827,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "标题",
-                        "name": "Title",
+                        "name": "title",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8754,7 +8835,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "协议内容",
-                        "name": "Content",
+                        "name": "content",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -8791,43 +8872,43 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "标题",
-                        "name": "Title",
+                        "name": "title",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "协议内容",
-                        "name": "Content",
+                        "name": "content",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "版本",
-                        "name": "Version",
+                        "name": "version",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -8916,43 +8997,43 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "标题",
-                        "name": "Title",
+                        "name": "title",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "协议内容",
-                        "name": "Content",
+                        "name": "content",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "版本",
-                        "name": "Version",
+                        "name": "version",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -9013,43 +9094,43 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "标题",
-                        "name": "Title",
+                        "name": "title",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "协议内容",
-                        "name": "Content",
+                        "name": "content",
                         "in": "query"
                     },
                     {
                         "type": "number",
                         "description": "版本",
-                        "name": "Version",
+                        "name": "version",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeStart",
+                        "name": "create_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "创建时间",
-                        "name": "CreateTimeEnd",
+                        "name": "create_time_end",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeStart",
+                        "name": "update_time_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "更新时间",
-                        "name": "UpdateTimeEnd",
+                        "name": "update_time_end",
                         "in": "query"
                     }
                 ],
@@ -9153,15 +9234,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/swagger/doc.json": {
-            "get": {
-                "tags": [
-                    "公共接口"
-                ],
-                "summary": "swagger文档数据",
-                "responses": {}
-            }
-        },
         "/api/user/authList": {
             "get": {
                 "description": "获取当前用户所有第三方绑定信息（不含手机号，手机号在用户信息中）",
@@ -9229,7 +9301,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "区号(默认86)",
-                        "name": "phoneCode",
+                        "name": "phone_code",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -9323,6 +9395,12 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/api/user/changePassword": {
+            "put": {
+                "summary": "修改密码",
+                "responses": {}
             }
         },
         "/api/user/info": {
@@ -9497,7 +9575,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "区号(默认86)",
-                        "name": "phoneCode",
+                        "name": "phone_code",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -9554,7 +9632,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "区号(默认86)",
-                        "name": "phoneCode",
+                        "name": "phone_code",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -9601,8 +9679,8 @@ const docTemplate = `{
                 "summary": "刷新token",
                 "parameters": [
                     {
-                        "description": "refreshToken",
-                        "name": "refreshToken",
+                        "description": "refresh_token",
+                        "name": "refresh_token",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -9898,7 +9976,7 @@ const docTemplate = `{
         },
         "/api/user/unbindWechat": {
             "post": {
-                "description": "解绑微信小程序或公众号（identityType: wechat_mini / wechat_mp）",
+                "description": "解绑微信小程序或公众号（identity_type: wechat_mini / wechat_mp）",
                 "tags": [
                     "user_wechat-微信登录"
                 ],
@@ -9913,7 +9991,7 @@ const docTemplate = `{
                     },
                     {
                         "description": "wechat_mini/wechat_mp",
-                        "name": "identityType",
+                        "name": "identity_type",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -10024,20 +10102,6 @@ const docTemplate = `{
                         "name": "token",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户ID",
-                        "name": "uid",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "房间ID",
-                        "name": "room",
-                        "in": "query",
-                        "required": true
                     }
                 ],
                 "responses": {}
@@ -10052,7 +10116,7 @@ const docTemplate = `{
                     "description": "所属类目",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10076,7 +10140,7 @@ const docTemplate = `{
                     "description": "文件大小",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 },
@@ -10089,7 +10153,7 @@ const docTemplate = `{
         "common_schema.CommonCateListResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10105,7 +10169,7 @@ const docTemplate = `{
                     "description": "父级ID",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10114,40 +10178,36 @@ const docTemplate = `{
         "common_schema.CommonUploadFileResp": {
             "type": "object",
             "properties": {
-                "admin_id": {
-                    "description": "管理ID",
-                    "type": "string"
-                },
-                "cid": {
-                    "description": "类目ID",
-                    "type": "string"
-                },
                 "ext": {
                     "description": "文件扩展",
                     "type": "string"
                 },
-                "id": {
-                    "description": "主键",
+                "file_hash_id": {
+                    "description": "文件哈希记录ID",
                     "type": "string"
+                },
+                "id": {
+                    "description": "主键（挂载相册后由 addFromFile 返回）",
+                    "type": "string"
+                },
+                "instant": {
+                    "description": "是否秒传命中（预上传专用）",
+                    "type": "boolean"
                 },
                 "name": {
                     "description": "文件名称",
                     "type": "string"
                 },
                 "path": {
-                    "description": "访问地址",
+                    "description": "相对路径",
                     "type": "string"
                 },
                 "size": {
                     "description": "文件大小",
                     "type": "integer"
                 },
-                "uid": {
-                    "description": "用户ID",
-                    "type": "integer"
-                },
                 "url": {
-                    "description": "文件路径",
+                    "description": "访问地址（完整可访问 URL）",
                     "type": "string"
                 }
             }
@@ -10155,43 +10215,43 @@ const docTemplate = `{
         "flow_schema.FlowApplyResp": {
             "type": "object",
             "properties": {
-                "applyUserId": {
+                "apply_user_id": {
                     "description": "申请人id",
                     "type": "string"
                 },
-                "applyUserNickname": {
+                "apply_user_nickname": {
                     "description": "申请人昵称",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "flowFormData": {
+                "flow_form_data": {
                     "description": "表单配置",
                     "type": "string"
                 },
-                "flowGroup": {
+                "flow_group": {
                     "description": "流程分类",
                     "type": "integer"
                 },
-                "flowName": {
+                "flow_name": {
                     "description": "流程名称",
                     "type": "string"
                 },
-                "flowProcessData": {
+                "flow_process_data": {
                     "description": "流程配置",
                     "type": "string"
                 },
-                "flowProcessDataList": {
+                "flow_process_data_list": {
                     "description": "流程配置list数据",
                     "type": "string"
                 },
-                "flowRemark": {
+                "flow_remark": {
                     "description": "流程描述",
                     "type": "string"
                 },
-                "formValue": {
+                "form_value": {
                     "description": "表单值",
                     "type": "string"
                 },
@@ -10202,11 +10262,11 @@ const docTemplate = `{
                     "description": "状态：1待提交，2审批中，3审批完成，4审批失败",
                     "type": "integer"
                 },
-                "templateId": {
+                "template_id": {
                     "description": "模板",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10215,31 +10275,31 @@ const docTemplate = `{
         "flow_schema.FlowHistoryResp": {
             "type": "object",
             "properties": {
-                "applyId": {
+                "apply_id": {
                     "description": "申请id",
                     "type": "string"
                 },
-                "applyUserId": {
+                "apply_user_id": {
                     "description": "申请人id",
                     "type": "string"
                 },
-                "applyUserNickname": {
+                "apply_user_nickname": {
                     "description": "申请人昵称",
                     "type": "string"
                 },
-                "approverId": {
+                "approver_id": {
                     "description": "审批人id",
                     "type": "string"
                 },
-                "approverNickname": {
+                "approver_nickname": {
                     "description": "审批用户昵称",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "formValue": {
+                "form_value": {
                     "description": "表单值",
                     "type": "string"
                 },
@@ -10247,35 +10307,35 @@ const docTemplate = `{
                     "description": "历史id",
                     "type": "string"
                 },
-                "isShow": {
+                "is_show": {
                     "description": "是否显示：0隐藏，1显示",
                     "type": "integer"
                 },
-                "nodeId": {
+                "node_id": {
                     "description": "节点",
                     "type": "string"
                 },
-                "nodeLabel": {
+                "node_label": {
                     "description": "节点名称",
                     "type": "string"
                 },
-                "nodeType": {
+                "node_type": {
                     "description": "节点类型",
                     "type": "string"
                 },
-                "passRemark": {
+                "pass_remark": {
                     "description": "通过备注",
                     "type": "string"
                 },
-                "passStatus": {
+                "pass_status": {
                     "description": "通过状态：1待处理，2通过，3拒绝",
                     "type": "integer"
                 },
-                "templateId": {
+                "template_id": {
                     "description": "模板id",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10284,27 +10344,27 @@ const docTemplate = `{
         "flow_schema.FlowTemplateResp": {
             "type": "object",
             "properties": {
-                "flowFormData": {
+                "flow_form_data": {
                     "description": "表单配置",
                     "type": "string"
                 },
-                "flowGroup": {
+                "flow_group": {
                     "description": "流程分类",
                     "type": "integer"
                 },
-                "flowName": {
+                "flow_name": {
                     "description": "流程名称",
                     "type": "string"
                 },
-                "flowProcessData": {
+                "flow_process_data": {
                     "description": "流程配置",
                     "type": "string"
                 },
-                "flowProcessDataList": {
+                "flow_process_data_list": {
                     "description": "流程配置list数据",
                     "type": "string"
                 },
-                "flowRemark": {
+                "flow_remark": {
                     "description": "流程描述",
                     "type": "string"
                 },
@@ -10316,19 +10376,19 @@ const docTemplate = `{
         "generator_schema.DbTableResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "tableComment": {
+                "table_comment": {
                     "description": "表的描述",
                     "type": "string"
                 },
-                "tableName": {
+                "table_name": {
                     "description": "表的名称",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10337,59 +10397,59 @@ const docTemplate = `{
         "generator_schema.EditColumn": {
             "type": "object",
             "required": [
-                "columnComment",
-                "columnLength",
-                "columnName",
-                "columnType",
-                "dictType",
-                "goField",
-                "goType",
-                "htmlType",
+                "column_comment",
+                "column_length",
+                "column_name",
+                "column_type",
+                "dict_type",
+                "go_field",
+                "go_type",
+                "html_type",
                 "id",
-                "queryType",
-                "tableId"
+                "query_type",
+                "table_id"
             ],
             "properties": {
-                "columnComment": {
+                "column_comment": {
                     "description": "列描述",
                     "type": "string",
                     "maxLength": 200
                 },
-                "columnLength": {
+                "column_length": {
                     "description": "列长度",
                     "type": "integer",
                     "maximum": 5
                 },
-                "columnName": {
+                "column_name": {
                     "description": "列名称",
                     "type": "string",
                     "maxLength": 200
                 },
-                "columnType": {
+                "column_type": {
                     "description": "列类型",
                     "type": "string",
                     "maxLength": 100
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "dictType": {
+                "dict_type": {
                     "description": "字典类型",
                     "type": "string",
                     "maxLength": 200
                 },
-                "goField": {
+                "go_field": {
                     "description": "字段",
                     "type": "string",
                     "maxLength": 100
                 },
-                "goType": {
+                "go_type": {
                     "description": "字段类型",
                     "type": "string",
                     "maxLength": 100
                 },
-                "htmlType": {
+                "html_type": {
                     "description": "表单类型",
                     "type": "string",
                     "maxLength": 30
@@ -10398,7 +10458,7 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isEdit": {
+                "is_edit": {
                     "description": "是否编辑字段: [0=否, 1=是]",
                     "type": "integer",
                     "enum": [
@@ -10406,7 +10466,7 @@ const docTemplate = `{
                         1
                     ]
                 },
-                "isIncrement": {
+                "is_increment": {
                     "description": "是否自增: [0=否, 1=是]",
                     "type": "integer",
                     "enum": [
@@ -10414,7 +10474,7 @@ const docTemplate = `{
                         1
                     ]
                 },
-                "isInsert": {
+                "is_insert": {
                     "description": "是否新增字段: [0=否, 1=是]",
                     "type": "integer",
                     "enum": [
@@ -10422,7 +10482,7 @@ const docTemplate = `{
                         1
                     ]
                 },
-                "isList": {
+                "is_list": {
                     "description": "是否列表字段: [0=否, 1=是]",
                     "type": "integer",
                     "enum": [
@@ -10430,7 +10490,7 @@ const docTemplate = `{
                         1
                     ]
                 },
-                "isPk": {
+                "is_pk": {
                     "description": "是否主键: [0=否, 1=是]",
                     "type": "integer",
                     "enum": [
@@ -10438,7 +10498,7 @@ const docTemplate = `{
                         1
                     ]
                 },
-                "isQuery": {
+                "is_query": {
                     "description": "是否查询字段: [0=否, 1=是]",
                     "type": "integer",
                     "enum": [
@@ -10446,7 +10506,7 @@ const docTemplate = `{
                         1
                     ]
                 },
-                "isStop": {
+                "is_required": {
                     "description": "是否必填: [0=否, 1=是]",
                     "type": "integer",
                     "enum": [
@@ -10454,21 +10514,21 @@ const docTemplate = `{
                         1
                     ]
                 },
-                "listAllApi": {
+                "list_all_api": {
                     "description": "下拉框数据来源listAll",
                     "type": "string",
                     "maxLength": 200
                 },
-                "queryType": {
+                "query_type": {
                     "description": "查询方式",
                     "type": "string",
                     "maxLength": 30
                 },
-                "tableId": {
+                "table_id": {
                     "description": "表ID",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10477,7 +10537,7 @@ const docTemplate = `{
         "generator_schema.GenTableResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10485,15 +10545,15 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "tableComment": {
+                "table_comment": {
                     "description": "表描述",
                     "type": "string"
                 },
-                "tableName": {
+                "table_name": {
                     "description": "表名称",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10510,15 +10570,15 @@ const docTemplate = `{
                     "description": "城市",
                     "type": "string"
                 },
-                "clientId": {
-                    "description": "sdk生成的客户端id",
+                "client_id": {
+                    "description": "客户端id",
                     "type": "string"
                 },
                 "country": {
                     "description": "国家",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10527,22 +10587,26 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "id": {
-                    "description": "uuid",
+                    "description": "主键",
                     "type": "string"
                 },
                 "ip": {
-                    "description": "ip",
+                    "description": "IP地址",
                     "type": "string"
                 },
+                "is_delete": {
+                    "description": "是否删除",
+                    "type": "integer"
+                },
                 "operator": {
-                    "description": "电信运营商",
+                    "description": "运营商",
                     "type": "string"
                 },
                 "os": {
-                    "description": "系统",
+                    "description": "操作系统",
                     "type": "string"
                 },
-                "projectKey": {
+                "project_key": {
                     "description": "项目key",
                     "type": "string"
                 },
@@ -10551,15 +10615,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "ua": {
-                    "description": "ua记录",
+                    "description": "用户代理",
                     "type": "string"
                 },
-                "userId": {
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "user_id": {
                     "description": "用户id",
                     "type": "string"
                 },
                 "width": {
-                    "description": "屏幕",
+                    "description": "屏幕宽度",
                     "type": "integer"
                 }
             }
@@ -10567,24 +10635,28 @@ const docTemplate = `{
         "monitor_schema.MonitorErrorResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "client_id": {
+                    "description": "客户端id",
+                    "type": "string"
+                },
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "eventType": {
+                "event_type": {
                     "description": "事件类型",
                     "type": "string"
                 },
-                "height": {
-                    "description": "屏幕高度",
-                    "type": "integer"
-                },
                 "id": {
-                    "description": "错误id",
+                    "description": "主键",
                     "type": "string"
                 },
+                "is_delete": {
+                    "description": "是否删除",
+                    "type": "integer"
+                },
                 "md5": {
-                    "description": "md5",
+                    "description": "md5值",
                     "type": "string"
                 },
                 "message": {
@@ -10595,7 +10667,7 @@ const docTemplate = `{
                     "description": "URL地址",
                     "type": "string"
                 },
-                "projectKey": {
+                "project_key": {
                     "description": "项目key",
                     "type": "string"
                 },
@@ -10603,40 +10675,48 @@ const docTemplate = `{
                     "description": "错误堆栈",
                     "type": "string"
                 },
-                "width": {
-                    "description": "屏幕",
-                    "type": "integer"
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户id",
+                    "type": "string"
                 }
             }
         },
         "monitor_schema.MonitorProjectResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
                 "id": {
-                    "description": "项目id",
+                    "description": "主键",
                     "type": "string"
                 },
-                "projectKey": {
-                    "description": "项目uuid",
+                "is_delete": {
+                    "description": "是否删除",
+                    "type": "integer"
+                },
+                "project_key": {
+                    "description": "项目key",
                     "type": "string"
                 },
-                "projectName": {
+                "project_name": {
                     "description": "项目名称",
                     "type": "string"
                 },
-                "projectType": {
-                    "description": "项目类型go java web node php 等",
+                "project_type": {
+                    "description": "项目类型",
                     "type": "string"
                 },
                 "status": {
-                    "description": "是否启用: 0=否, 1=是",
+                    "description": "状态",
                     "type": "integer"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10677,38 +10757,39 @@ const docTemplate = `{
         "schema.SystemCornResp": {
             "type": "object",
             "properties": {
-                "cornExpr": {
+                "corn_expr": {
                     "description": "corn表达式",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "createdBy": {
+                "created_by": {
                     "description": "创建人",
                     "type": "string"
                 },
-                "createdByUser": {
+                "created_by_user": {
                     "description": "创建人",
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID",
                     "type": "string"
                 },
                 "status": {
                     "description": "状态",
                     "type": "number"
                 },
-                "taskCode": {
+                "task_code": {
                     "description": "任务编码",
                     "type": "string"
                 },
-                "taskName": {
+                "task_name": {
                     "description": "任务名称",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10721,15 +10802,15 @@ const docTemplate = `{
                     "description": "协议内容",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "createdBy": {
+                "created_by": {
                     "description": "创建人id",
                     "type": "string"
                 },
-                "createdByUser": {
+                "created_by_user": {
                     "description": "创建人",
                     "type": "string"
                 },
@@ -10744,7 +10825,7 @@ const docTemplate = `{
                     "description": "标题",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 },
@@ -10774,7 +10855,7 @@ const docTemplate = `{
                     "description": "颜色",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10798,11 +10879,11 @@ const docTemplate = `{
                     "description": "状态: [0=停用, 1=禁用]",
                     "type": "integer"
                 },
-                "typeId": {
+                "type_id": {
                     "description": "类型",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 },
@@ -10815,23 +10896,23 @@ const docTemplate = `{
         "setting_schema.SettingDictTypeResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "dictName": {
+                "dict_name": {
                     "description": "字典名称",
                     "type": "string"
                 },
-                "dictRemark": {
+                "dict_remark": {
                     "description": "字典备注",
                     "type": "string"
                 },
-                "dictStatus": {
+                "dict_status": {
                     "description": "字典状态",
                     "type": "integer"
                 },
-                "dictType": {
+                "dict_type": {
                     "description": "字典类型",
                     "type": "string"
                 },
@@ -10839,8 +10920,25 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "system_schema.NoticeChannelSetting": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "当前开关：0关闭 1开启",
+                    "type": "integer"
+                },
+                "key": {
+                    "description": "渠道标识：site/email/app 等",
+                    "type": "string"
+                },
+                "label": {
+                    "description": "渠道展示名称",
                     "type": "string"
                 }
             }
@@ -10852,7 +10950,7 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10860,7 +10958,7 @@ const docTemplate = `{
                     "description": "部门",
                     "type": "string"
                 },
-                "deptId": {
+                "dept_id": {
                     "description": "部门ID",
                     "type": "string"
                 },
@@ -10872,15 +10970,15 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isDisable": {
+                "is_disable": {
                     "description": "是否禁用: [0=否, 1=是]",
                     "type": "integer"
                 },
-                "lastLoginIp": {
+                "last_login_ip": {
                     "description": "最后登录IP",
                     "type": "string"
                 },
-                "lastLoginTime": {
+                "last_login_time": {
                     "description": "最后登录时间",
                     "type": "string"
                 },
@@ -10892,7 +10990,7 @@ const docTemplate = `{
                     "description": "岗位名称",
                     "type": "string"
                 },
-                "postId": {
+                "post_id": {
                     "description": "岗位ID",
                     "type": "string"
                 },
@@ -10900,14 +10998,14 @@ const docTemplate = `{
                     "description": "角色名称(逗号分隔)",
                     "type": "string"
                 },
-                "roleIds": {
+                "role_ids": {
                     "description": "角色ID列表",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10920,7 +11018,7 @@ const docTemplate = `{
                     "description": "头像",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10936,15 +11034,15 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isDisable": {
+                "is_disable": {
                     "description": "是否禁用: [0=否, 1=是]",
                     "type": "integer"
                 },
-                "lastLoginIp": {
+                "last_login_ip": {
                     "description": "最后登录IP",
                     "type": "string"
                 },
-                "lastLoginTime": {
+                "last_login_time": {
                     "description": "最后登录时间",
                     "type": "string"
                 },
@@ -10956,7 +11054,7 @@ const docTemplate = `{
                     "description": "角色",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -10985,7 +11083,7 @@ const docTemplate = `{
         "system_schema.SystemAuthDeptResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -10993,7 +11091,7 @@ const docTemplate = `{
                     "description": "负责人",
                     "type": "string"
                 },
-                "dutyId": {
+                "duty_id": {
                     "description": "负责人id",
                     "type": "string"
                 },
@@ -11001,7 +11099,7 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isStop": {
+                "is_stop": {
                     "description": "是否停用: [0=否, 1=是]",
                     "type": "integer"
                 },
@@ -11021,7 +11119,7 @@ const docTemplate = `{
                     "description": "排序编号",
                     "type": "integer"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -11041,7 +11139,7 @@ const docTemplate = `{
                     "description": "前端组件",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -11049,31 +11147,31 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isCache": {
+                "is_cache": {
                     "description": "是否缓存: [0=否, 1=是]",
                     "type": "integer"
                 },
-                "isDisable": {
+                "is_disable": {
                     "description": "是否禁用: [0=否, 1=是]",
                     "type": "integer"
                 },
-                "isShow": {
+                "is_show": {
                     "description": "是否显示: [0=否, 1=是]",
                     "type": "integer"
                 },
-                "menuIcon": {
+                "menu_icon": {
                     "description": "菜单图标",
                     "type": "string"
                 },
-                "menuName": {
+                "menu_name": {
                     "description": "菜单名称",
                     "type": "string"
                 },
-                "menuSort": {
+                "menu_sort": {
                     "description": "菜单排序",
                     "type": "integer"
                 },
-                "menuType": {
+                "menu_type": {
                     "description": "权限类型: [M=目录, C=菜单, A=按钮]",
                     "type": "string"
                 },
@@ -11097,7 +11195,7 @@ const docTemplate = `{
                     "description": "选中路径",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -11110,7 +11208,7 @@ const docTemplate = `{
                     "description": "岗位编号",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -11118,7 +11216,7 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isStop": {
+                "is_stop": {
                     "description": "是否停用: [0=否, 1=是]",
                     "type": "integer"
                 },
@@ -11134,7 +11232,7 @@ const docTemplate = `{
                     "description": "岗位排序",
                     "type": "integer"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -11143,7 +11241,7 @@ const docTemplate = `{
         "system_schema.SystemAuthRoleResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -11151,7 +11249,7 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isDisable": {
+                "is_disable": {
                     "description": "是否禁用: [0=否, 1=是]",
                     "type": "integer"
                 },
@@ -11178,7 +11276,7 @@ const docTemplate = `{
                     "description": "角色排序",
                     "type": "integer"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -11187,7 +11285,7 @@ const docTemplate = `{
         "system_schema.SystemAuthRoleSimpleResp": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -11199,7 +11297,7 @@ const docTemplate = `{
                     "description": "角色名称",
                     "type": "string"
                 },
-                "updateTime": {
+                "update_time": {
                     "description": "更新时间",
                     "type": "string"
                 }
@@ -11212,7 +11310,7 @@ const docTemplate = `{
                     "description": "浏览器",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -11245,7 +11343,7 @@ const docTemplate = `{
                     "description": "请求参数",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -11253,7 +11351,7 @@ const docTemplate = `{
                     "description": "邮箱(账号)",
                     "type": "string"
                 },
-                "endTime": {
+                "end_time": {
                     "description": "结束时间",
                     "type": "string"
                 },
@@ -11277,7 +11375,7 @@ const docTemplate = `{
                     "description": "用户昵称",
                     "type": "string"
                 },
-                "startTime": {
+                "start_time": {
                     "description": "开始时间",
                     "type": "string"
                 },
@@ -11285,7 +11383,7 @@ const docTemplate = `{
                     "description": "执行状态: [1=成功, 2=失败]",
                     "type": "integer"
                 },
-                "taskTime": {
+                "task_time": {
                     "description": "执行耗时",
                     "type": "string"
                 },
@@ -11306,7 +11404,12 @@ const docTemplate = `{
         "system_schema.SystemLoginResp": {
             "type": "object",
             "properties": {
+                "refresh_token": {
+                    "description": "refresh_token (JWT)",
+                    "type": "string"
+                },
                 "token": {
+                    "description": "access_token (JWT)",
                     "type": "string"
                 }
             }
@@ -11318,7 +11421,7 @@ const docTemplate = `{
                     "description": "正文",
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "description": "创建时间",
                     "type": "string"
                 },
@@ -11326,19 +11429,19 @@ const docTemplate = `{
                     "description": "主键",
                     "type": "string"
                 },
-                "isRead": {
+                "is_read": {
                     "description": "0未读 1已读",
                     "type": "integer"
                 },
-                "readTime": {
+                "read_time": {
                     "description": "阅读时间",
                     "type": "string"
                 },
-                "receiverId": {
+                "receiver_id": {
                     "description": "接收人ID",
                     "type": "string"
                 },
-                "senderId": {
+                "sender_id": {
                     "description": "发送人ID",
                     "type": "string"
                 },
@@ -11359,13 +11462,27 @@ const docTemplate = `{
         "system_schema.SystemNoticeSettingResp": {
             "type": "object",
             "properties": {
-                "emailEnabled": {
-                    "description": "邮件开关",
-                    "type": "integer"
-                },
-                "siteEnabled": {
-                    "description": "站内信开关",
-                    "type": "integer"
+                "channels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system_schema.NoticeChannelSetting"
+                    }
+                }
+            }
+        },
+        "system_schema.SystemNoticeSettingSaveReq": {
+            "type": "object",
+            "required": [
+                "settings"
+            ],
+            "properties": {
+                "settings": {
+                    "description": "渠道开关映射",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
                 }
             }
         },
@@ -11381,18 +11498,26 @@ const docTemplate = `{
         "user_schema.LoginResp": {
             "type": "object",
             "properties": {
-                "accessToken": {
+                "access_token": {
                     "type": "string"
                 },
-                "expiresIn": {
+                "expires_in": {
                     "description": "access_token 有效期(秒)",
                     "type": "integer"
                 },
-                "isNew": {
+                "is_new": {
                     "description": "是否新注册用户（微信登录时自动注册）",
                     "type": "boolean"
                 },
-                "refreshToken": {
+                "nickname": {
+                    "description": "用户昵称",
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "用户ID（小程序登录后直接返回，避免二次请求）",
                     "type": "string"
                 }
             }
@@ -11400,13 +11525,13 @@ const docTemplate = `{
         "user_schema.UserAuthItem": {
             "type": "object",
             "properties": {
-                "createTime": {
+                "create_time": {
                     "type": "string"
                 },
                 "identifier": {
                     "type": "string"
                 },
-                "identityType": {
+                "identity_type": {
                     "type": "string"
                 }
             }
@@ -11417,7 +11542,7 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
-                "createTime": {
+                "create_time": {
                     "type": "string"
                 },
                 "email": {
@@ -11426,10 +11551,10 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "lastLoginIp": {
+                "last_login_ip": {
                     "type": "string"
                 },
-                "lastLoginTime": {
+                "last_login_time": {
                     "type": "string"
                 },
                 "nickname": {
@@ -11438,7 +11563,7 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "phoneCode": {
+                "phone_code": {
                     "type": "string"
                 },
                 "status": {

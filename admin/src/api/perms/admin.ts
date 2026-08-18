@@ -7,7 +7,7 @@ import type { Pages } from '@/utils/request'
 export type type_system_admin_list = {
     email?: string
     nickname?: string
-    roleId?: string
+    role_id?: string
 }
 
 export type type_system_admin_detail = {
@@ -15,28 +15,28 @@ export type type_system_admin_detail = {
 }
 
 export type type_system_admin_add = {
-    deptId: string
-    postId: string
-    roleIds: string[]
+    dept_id: string
+    post_id: string
+    role_ids: string[]
     email: string
     nickname: string
     password: string
     avatar: string
     sort: number
-    isDisable: number
+    is_disable: number
 }
 
 export type type_system_admin_edit = {
     id: string
-    deptId: string
-    postId: string
-    roleIds: string[]
+    dept_id: string
+    post_id: string
+    role_ids: string[]
     email: string
     nickname: string
     password: string
     avatar: string
     sort: number
-    isDisable: number
+    is_disable: number
 }
 
 export type type_system_admin_del = {
@@ -51,18 +51,20 @@ export type type_system_admin_resp = {
     id: string
     email: string
     nickname: string
+    password: string
+    sort: number
     avatar: string
     role: string
-    deptId: string
+    dept_id: string
     dept: string
-    postId: string
+    post_id: string
     post: string
-    roleIds: string[]
-    isDisable: number
-    lastLoginIp: string
-    lastLoginTime: string
-    createTime: string
-    updateTime: string
+    role_ids: string[]
+    is_disable: number
+    last_login_ip: string
+    last_login_time: string
+    create_time: string
+    update_time: string
 }
 
 // 管理员列表
@@ -101,7 +103,7 @@ export function adminStatus(data: type_system_admin_disable) {
 }
 
 // 部门下的管理员
-export function adminListByDeptId(params: { deptId: string }) {
+export function adminListByDeptId(params: { dept_id: string }) {
     return request.get<type_system_admin_resp[]>({ url: '/system/admin/ListByDeptId', params })
 }
 

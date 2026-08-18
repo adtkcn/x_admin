@@ -3,9 +3,9 @@ import type { Pages } from '@/utils/request'
 
 // 字典类型列表参数
 export type type_setting_dict_type_list = {
-    dictName?: string
-    dictType?: string
-    dictStatus?: number
+    dict_name?: string
+    dict_type?: string
+    dict_status?: number
 }
 
 // 字典类型详情参数
@@ -15,19 +15,19 @@ export type type_setting_dict_type_detail = {
 
 // 字典类型添加参数
 export type type_setting_dict_type_add = {
-    dictName: string
-    dictType: string
-    dictRemark?: string
-    dictStatus: number
+    dict_name: string
+    dict_type: string
+    dict_remark?: string
+    dict_status: number
 }
 
 // 字典类型编辑参数
 export type type_setting_dict_type_edit = {
     id: string
-    dictName: string
-    dictType: string
-    dictRemark: string
-    dictStatus: number
+    dict_name: string
+    dict_type: string
+    dict_remark: string
+    dict_status: number
 }
 
 // 字典类型删除参数
@@ -38,17 +38,17 @@ export type type_setting_dict_type_del = {
 // 字典类型返回信息
 export type type_setting_dict_type_resp = {
     id: string
-    dictName: string
-    dictType: string
-    dictRemark: string
-    dictStatus: number
-    createTime: string
-    updateTime: string
+    dict_name: string
+    dict_type: string
+    dict_remark: string
+    dict_status: number
+    create_time: string
+    update_time: string
 }
 
 // 字典数据列表参数
 export type type_setting_dict_data_list = {
-    dictType?: string
+    dict_type?: string
     name?: string
     value?: string
     status?: number
@@ -56,7 +56,7 @@ export type type_setting_dict_data_list = {
 
 // 字典数据添加参数
 export type type_setting_dict_data_add = {
-    typeId: string
+    type_id: string
     name: string
     value: string
     color?: string
@@ -68,7 +68,7 @@ export type type_setting_dict_data_add = {
 // 字典数据编辑参数
 export type type_setting_dict_data_edit = {
     id: string
-    typeId: string
+    type_id: string
     name: string
     value: string
     color?: string
@@ -85,15 +85,15 @@ export type type_setting_dict_data_del = {
 // 字典数据返回信息
 export type type_setting_dict_data_resp = {
     id: string
-    typeId: string
+    type_id: string
     name: string
     value: string
     color: string
     remark: string
     sort: number
     status: number
-    createTime: string
-    updateTime: string
+    create_time: string
+    update_time: string
 }
 
 // 字典类型列表

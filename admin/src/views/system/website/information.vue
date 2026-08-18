@@ -35,19 +35,19 @@
             </el-card>
             <el-card shadow="never" class="border-none! mt-4">
                 <div class="text-xl font-medium mb-[20px]">前台设置</div>
-                <el-form-item label="商城名称" prop="shopName">
+                <el-form-item label="商城名称" prop="shop_name">
                     <div class="w-80">
                         <el-input
-                            v-model="formData.shopName"
+                            v-model="formData.shop_name"
                             placeholder="请输入店铺/商城名称"
                             maxlength="30"
                             show-word-limit
                         ></el-input>
                     </div>
                 </el-form-item>
-                <el-form-item label="商城LOGO" prop="shopLogo">
+                <el-form-item label="商城LOGO" prop="shop_logo">
                     <div>
-                        <material-picker v-model="formData.shopLogo" :limit="1" />
+                        <material-picker v-model="formData.shop_logo" :limit="1" />
                         <div class="form-tips">建议尺寸：100*100px，支持jpg，jpeg，png格式</div>
                     </div>
                 </el-form-item>
@@ -77,8 +77,8 @@ const formData = reactive({
     favicon: '', // 网站图标
     logo: '', // 网站logo
     backdrop: '', // 登录页广告图
-    shopName: '',
-    shopLogo: ''
+    shop_name: '',
+    shop_logo: ''
 })
 
 // 表单验证
@@ -111,38 +111,46 @@ const rules = {
             trigger: ['change']
         }
     ],
-    shopName: [
-        {
-            required: true,
-            message: '请输入店铺/商城名称',
-            trigger: ['blur']
-        }
-    ],
-    shopLogo: [
-        {
-            required: true,
-            message: '请选择商城LOGO',
-            trigger: ['change']
-        }
-    ]
+    // shop_name: [
+    //     {
+    //         required: true,
+    //         message: '请输入店铺/商城名称',
+    //         trigger: ['blur']
+    //     }
+    // ],
+    // shop_logo: [
+    //     {
+    //         required: true,
+    //         message: '请选择商城LOGO',
+    //         trigger: ['change']
+    //     }
+    // ]
 }
 
 // 获取备案信息
 const getData = async () => {
-    const data = await getWebsite()
-    for (const key in formData) {
-        //@ts-ignore
-        formData[key] = data[key]
+    try {
+        const data = await getWebsite()
+        for (const key in formData) {
+            //@ts-ignore
+            formData[key] = data[key]
+        }
+    } catch (error) {
+        console.error('网站信息获取失败:', error)
     }
 }
 
 // 设置备案信息
 const handleSubmit = async () => {
-    await formRef.value?.validate()
-    await setWebsite(formData)
-    feedback.msgSuccess('操作成功')
-    getConfig()
-    getData()
+    try {
+        await formRef.value?.validate()
+        await setWebsite(formData)
+        feedback.msgSuccess('操作成功')
+        getConfig()
+        getData()
+    } catch (error) {
+        console.error('网站信息保存失败:', error)
+    }
 }
 
 getData()

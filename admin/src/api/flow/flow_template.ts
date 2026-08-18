@@ -2,40 +2,38 @@ import request from '@/utils/request'
 import type { Pages } from '@/utils/request'
 
 export type type_flow_template = {
-    id?: string
-    flowName?: string
-    flowGroup?: number
-    flowRemark?: string
-    flowFormData?: string
-    flowProcessData?: string
-    flowProcessDataList?: string
-    isDelete?: number
-    createTime?: string
-    updateTime?: string
-    deleteTime?: string
+    id: string
+    flow_name?: string
+    flow_group?: number
+    flow_remark?: string
+    flow_form_data?: string
+    flow_process_data?: string
+    flow_process_data_list?: string
+    create_time?: string
+    update_time?: string
 }
 
 export type type_flow_template_query = {
-    flowName?: string
-    flowGroup?: number
-    flowRemark?: string
-    flowFormData?: string
-    flowProcessData?: string
-    flowProcessDataList?: string
-    createTimeStart?: string
-    createTimeEnd?: string
-    updateTimeStart?: string
-    updateTimeEnd?: string
+    flow_name?: string
+    flow_group?: number
+    flow_remark?: string
+    flow_form_data?: string
+    flow_process_data?: string
+    flow_process_data_list?: string
+    create_time_start?: string
+    create_time_end?: string
+    update_time_start?: string
+    update_time_end?: string
 }
 
 export type type_flow_template_edit = {
     id?: string
-    flowName?: string
-    flowGroup?: number
-    flowRemark?: string
-    flowFormData?: string
-    flowProcessData?: string
-    flowProcessDataList?: string
+    flow_name?: string
+    flow_group?: number
+    flow_remark?: string
+    flow_form_data?: string
+    flow_process_data?: string
+    flow_process_data_list?: string
 }
 
 export function flow_template_lists(params?: type_flow_template_query) {

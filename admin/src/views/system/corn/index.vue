@@ -9,32 +9,32 @@
                 label-width="90px"
                 label-position="left"
             >
-                <el-form-item label="任务名称" prop="TaskName" class="w-[280px]">
-                    <el-input v-model="queryParams.TaskName" />
+                <el-form-item label="任务名称" prop="task_name" class="w-[280px]">
+                    <el-input v-model="queryParams.task_name" />
                 </el-form-item>
-                <el-form-item label="任务编码" prop="TaskCode" class="w-[280px]">
-                    <el-input v-model="queryParams.TaskCode" />
+                <el-form-item label="任务编码" prop="task_code" class="w-[280px]">
+                    <el-input v-model="queryParams.task_code" />
                 </el-form-item>
-                <el-form-item label="corn表达式" prop="CornExpr" class="w-[280px]">
-                    <el-input v-model="queryParams.CornExpr" />
+                <el-form-item label="corn表达式" prop="corn_expr" class="w-[280px]">
+                    <el-input v-model="queryParams.corn_expr" />
                 </el-form-item>
-                <el-form-item label="创建人" prop="CreatedBy" class="w-[280px]">
-                    <el-input v-model="queryParams.CreatedBy" />
+                <el-form-item label="创建人" prop="created_by" class="w-[280px]">
+                    <el-input v-model="queryParams.created_by" />
                 </el-form-item>
-                <el-form-item label="创建人名称" prop="CreatedByNickname" class="w-[280px]">
-                    <el-input v-model="queryParams.CreatedByNickname" />
+                <el-form-item label="创建人名称" prop="nickname" class="w-[280px]">
+                    <el-input v-model="queryParams.nickname" />
                 </el-form-item>
 
-                <el-form-item label="创建时间" prop="CreateTime" class="w-[280px]">
+                <el-form-item label="创建时间" prop="create_time" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.CreateTimeStart"
-                        v-model:endTime="queryParams.CreateTimeEnd"
+                        v-model:startTime="queryParams.create_time_start"
+                        v-model:endTime="queryParams.create_time_end"
                     />
                 </el-form-item>
-                <el-form-item label="更新时间" prop="UpdateTime" class="w-[280px]">
+                <el-form-item label="更新时间" prop="update_time" class="w-[280px]">
                     <daterange-picker
-                        v-model:startTime="queryParams.UpdateTimeStart"
-                        v-model:endTime="queryParams.UpdateTimeEnd"
+                        v-model:startTime="queryParams.update_time_start"
+                        v-model:endTime="queryParams.update_time_end"
                     />
                 </el-form-item>
                 <el-form-item>
@@ -85,26 +85,30 @@
                     批量删除
                 </el-button>
             </div>
-            <el-table
+            <vxe-table
+                ref="tableRef"
                 class="mt-4"
-                size="large"
                 v-loading="pager.loading"
                 :data="pager.lists"
-                @selection-change="handleSelectionChange"
+                :row-config="{ keyField: 'Id' }"
+                :checkbox-config="{ checkRowKeys: [] }"
+                @checkbox-change="multipleSelection = $event.$table.getCheckboxRecords()"
+                @checkbox-all="multipleSelection = $event.$table.getCheckboxRecords()"
+                :border="'inner'"
             >
-                <el-table-column type="selection" width="55" />
-                <el-table-column label="任务名称" prop="TaskName" min-width="130" />
-                <el-table-column label="任务编码" prop="TaskCode" min-width="130" />
-                <el-table-column label="corn表达式" prop="CornExpr" min-width="130" />
-                <el-table-column label="状态" prop="Status" min-width="130">
+                <vxe-column type="checkbox" width="55" />
+                <vxe-column title="任务名称" field="task_name" min-width="130" />
+                <vxe-column title="任务编码" field="task_code" min-width="130" />
+                <vxe-column title="corn表达式" field="corn_expr" min-width="130" />
+                <vxe-column title="状态" field="status" min-width="130">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.status" :value="row.Status" />
+                        <dict-value :options="dictData.status" :value="row.status" />
                     </template>
-                </el-table-column>
-                <el-table-column label="创建人" prop="CreatedByUser.nickname" min-width="130" />
-                <el-table-column label="创建时间" prop="CreateTime" min-width="130" />
-                <el-table-column label="更新时间" prop="UpdateTime" min-width="130" />
-                <el-table-column label="操作" width="160" fixed="right">
+                </vxe-column>
+                <vxe-column title="创建人" field="created_by_user.nickname" min-width="130" />
+                <vxe-column title="创建时间" field="create_time" min-width="130" />
+                <vxe-column title="更新时间" field="update_time" min-width="130" />
+                <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:system_corn:detail']"
@@ -130,8 +134,8 @@
                             删除
                         </el-button>
                     </template>
-                </el-table-column>
-            </el-table>
+                </vxe-column>
+            </vxe-table>
             <div class="flex justify-end mt-4">
                 <pagination v-model="pager" @change="getLists" />
             </div>
@@ -167,17 +171,18 @@ const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
 const showDetails = ref(false)
+const tableRef = ref<any>()
 const queryParams = reactive<type_system_corn_query>({
-    TaskName: undefined,
-    TaskCode: undefined,
-    CornExpr: undefined,
-    Status: undefined,
-    CreatedBy: undefined,
-    CreatedByNickname: undefined,
-    CreateTimeStart: undefined,
-    CreateTimeEnd: undefined,
-    UpdateTimeStart: undefined,
-    UpdateTimeEnd: undefined
+    task_name: undefined,
+    task_code: undefined,
+    corn_expr: undefined,
+    status: undefined,
+    created_by: undefined,
+    nickname: undefined,
+    create_time_start: undefined,
+    create_time_end: undefined,
+    update_time_start: undefined,
+    update_time_end: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_system_corn>({
@@ -204,9 +209,6 @@ const viewDetails = async (data: type_system_corn) => {
     detailsRef.value?.getDetail(data)
 }
 const multipleSelection = ref<type_system_corn[]>([])
-const handleSelectionChange = (val: type_system_corn[]) => {
-    multipleSelection.value = val
-}
 
 const handleDelete = async (Id: string) => {
     try {
@@ -214,7 +216,9 @@ const handleDelete = async (Id: string) => {
         await system_corn_delete(Id)
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('定时任务删除失败:', error)
+    }
 }
 // 批量删除
 const deleteBatch = async () => {
@@ -225,18 +229,22 @@ const deleteBatch = async () => {
     try {
         await feedback.confirm('确定要删除？')
         await system_corn_delete_batch({
-            Ids: multipleSelection.value.map((item) => item.Id).join(',')
+            ids: multipleSelection.value.map((item) => item.id).join(',')
         })
         feedback.msgSuccess('删除成功')
         getLists()
-    } catch (error) {}
+    } catch (error) {
+        console.error('定时任务批量删除失败:', error)
+    }
 }
 
 const export_file = async () => {
     try {
         await feedback.confirm('确定要导出？')
         await system_corn_export_file(queryParams)
-    } catch (error) {}
+    } catch (error) {
+        console.error('定时任务导出失败:', error)
+    }
 }
 getLists()
 </script>

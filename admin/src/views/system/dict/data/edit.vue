@@ -15,14 +15,6 @@
                 :model="formData"
                 label-width="110px"
             >
-                <el-form-item label="字典类型">
-                    <el-input
-                        :model-value="formData.typeValue"
-                        placeholder="请输入字典类型"
-                        disabled
-                        clearable
-                    />
-                </el-form-item>
                 <el-form-item label="数据名称" prop="name">
                     <el-input v-model="formData.name" placeholder="请输入数据名称" clearable />
                 </el-form-item>
@@ -61,9 +53,10 @@
 <script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
 import Popup from '@/components/popup/index.vue'
-import { dictDataAdd, dictDataEdit } from '@/api/setting/dict'
+import { dictDataAdd, dictDataEdit, type type_setting_dict_data_edit } from '@/api/setting/dict'
 import feedback from '@/utils/feedback'
-import { computed, ref, reactive, shallowRef } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
@@ -72,16 +65,15 @@ const mode = ref('add')
 const popupTitle = computed(() => {
     return mode.value == 'edit' ? '编辑字典数据' : '新增字典数据'
 })
-const formData = reactive({
+const { state: formData, setState } = useReactiveWithReset<type_setting_dict_data_edit>({
     id: '',
-    typeValue: '',
+    type_id: '',
     name: '',
     value: '',
     color: '',
     sort: 0,
     status: 1,
-    remark: '',
-    typeId: ''
+    remark: ''
 })
 
 const rules = {
@@ -102,11 +94,15 @@ const rules = {
 }
 
 const handleSubmit = async () => {
-    await formRef.value?.validate()
-    mode.value == 'edit' ? await dictDataEdit(formData) : await dictDataAdd(formData)
-    popupRef.value?.close()
-    feedback.msgSuccess('操作成功')
-    emit('success')
+    try {
+        await formRef.value?.validate()
+        mode.value == 'edit' ? await dictDataEdit(formData) : await dictDataAdd(formData)
+        popupRef.value?.close()
+        feedback.msgSuccess('操作成功')
+        emit('success')
+    } catch (error) {
+        console.error('字典数据保存失败:', error)
+    }
 }
 
 const handleClose = () => {
@@ -118,13 +114,8 @@ const open = (type = 'add') => {
     popupRef.value?.open()
 }
 
-const setFormData = (data: Record<any, any>) => {
-    for (const key in formData) {
-        if (data[key] != null && data[key] != undefined) {
-            //@ts-ignore
-            formData[key] = data[key]
-        }
-    }
+const setFormData = (data: Partial<type_setting_dict_data_edit>) => {
+    setState(data as type_setting_dict_data_edit)
 }
 
 defineExpose({

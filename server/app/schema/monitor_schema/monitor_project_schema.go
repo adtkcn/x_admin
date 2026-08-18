@@ -1,58 +1,93 @@
 package monitor_schema
 
-import "github.com/adtkcn/x_null"
+import (
+	"mime/multipart"
+)
 
-// MonitorProjectListReq 监控项目列表参数
+// MonitorProjectListReq 监控-项目列表
 type MonitorProjectListReq struct {
-	ProjectKey      *string // 项目uuid
-	ProjectName     *string // 项目名称
-	ProjectType     *string // 项目类型go java web node php 等
-	Status          *int    // 是否启用: 0=否, 1=是
-	CreateTimeStart *string // 开始创建时间
-	CreateTimeEnd   *string // 结束创建时间
-	UpdateTimeStart *string // 开始更新时间
-	UpdateTimeEnd   *string // 结束更新时间
+	PageNo          *int    `json:"page_no" form:"page_no"`
+	PageSize        *int    `json:"page_size" form:"page_size"`
+	ProjectKey      *string `json:"project_key" form:"project_key"`
+	ProjectName     *string `json:"project_name" form:"project_name"`
+	ProjectType     *string `json:"project_type" form:"project_type"`
+	Status          *int    `json:"status" form:"status"`
+	CreateTimeStart *string `json:"create_time_start" form:"create_time_start"`
+	CreateTimeEnd   *string `json:"create_time_end" form:"create_time_end"`
+	UpdateTimeStart *string `json:"update_time_start" form:"update_time_start"`
+	UpdateTimeEnd   *string `json:"update_time_end" form:"update_time_end"`
 }
 
-// MonitorProjectAddReq 监控项目新增参数
-type MonitorProjectAddReq struct {
-	ProjectKey  *string      // 项目uuid
-	ProjectName *string      // 项目名称
-	ProjectType *string      // 项目类型go java web node php 等
-	Status      x_null.Int64 // 是否启用: 0=否, 1=是
+// MonitorProjectListResp 监控-项目列表返回
+type MonitorProjectListResp struct {
+	PageNo   int                  `json:"page_no"`
+	PageSize int                  `json:"page_size"`
+	Count    int64                `json:"count"`
+	Lists    []MonitorProjectResp `json:"lists"`
 }
 
-// MonitorProjectEditReq 监控项目编辑参数
-type MonitorProjectEditReq struct {
-	Id          string       // 项目id
-	ProjectKey  *string      // 项目uuid
-	ProjectName *string      // 项目名称
-	ProjectType *string      // 项目类型go java web node php 等
-	Status      x_null.Int64 // 是否启用: 0=否, 1=是
+// MonitorProjectListAllResp 监控-项目列表全部返回
+type MonitorProjectListAllResp struct {
+	Lists []MonitorProjectResp `json:"lists"`
 }
 
-// MonitorProjectDetailReq 监控项目详情参数
-type MonitorProjectDetailReq struct {
-	Id string // 项目id
-}
-
-// MonitorProjectDelReq 监控项目删除参数
-type MonitorProjectDelReq struct {
-	Id string // 项目id
-}
-
-// MonitorProjectDelReq 监控项目批量删除参数
-type MonitorProjectDelBatchReq struct {
-	Ids string
-}
-
-// MonitorProjectResp 监控项目返回信息
+// MonitorProjectResp 监控-项目
 type MonitorProjectResp struct {
-	Id          string       // 项目id
-	ProjectKey  string       // 项目uuid
-	ProjectName string       // 项目名称
-	ProjectType string       // 项目类型go java web node php 等
-	Status      x_null.Int64 `swaggertype:"integer"` // 是否启用: 0=否, 1=是
-	CreateTime  x_null.Time  `swaggertype:"string"`  // 创建时间
-	UpdateTime  x_null.Time  `swaggertype:"string"`  // 更新时间
+	Id          string `json:"id"`           // 主键
+	ProjectKey  string `json:"project_key"`  // 项目key
+	ProjectName string `json:"project_name"` // 项目名称
+	ProjectType string `json:"project_type"` // 项目类型
+	Status      int    `json:"status"`       // 状态
+	CreateTime  string `json:"create_time"`  // 创建时间
+	UpdateTime  string `json:"update_time"`  // 更新时间
+	IsDelete    int    `json:"is_delete"`    // 是否删除
+}
+
+// MonitorProjectDetailReq 监控-项目详情
+type MonitorProjectDetailReq struct {
+	Id string `json:"id" form:"id" v:"required#项目id不能为空"`
+}
+
+// MonitorProjectAddReq 监控-项目新增
+type MonitorProjectAddReq struct {
+	ProjectKey  string `json:"project_key"`
+	ProjectName string `json:"project_name"`
+	ProjectType string `json:"project_type"`
+	Status      int    `json:"status"`
+}
+
+// MonitorProjectEditReq 监控-项目编辑
+type MonitorProjectEditReq struct {
+	Id          string `json:"id" v:"required#项目id不能为空"`
+	ProjectKey  string `json:"project_key"`
+	ProjectName string `json:"project_name"`
+	ProjectType string `json:"project_type"`
+	Status      int    `json:"status"`
+}
+
+// MonitorProjectDelReq 监控-项目删除
+type MonitorProjectDelReq struct {
+	Id string `json:"id" form:"id" v:"required#项目id不能为空"`
+}
+
+// MonitorProjectDelBatchReq 监控-项目删除
+type MonitorProjectDelBatchReq struct {
+	Ids string `json:"ids" form:"ids" v:"required#项目ids不能为空"`
+}
+
+// MonitorProjectExportReq 监控-项目导出
+type MonitorProjectExportReq struct {
+	ProjectKey      *string `json:"project_key" form:"project_key"`
+	ProjectName     *string `json:"project_name" form:"project_name"`
+	ProjectType     *string `json:"project_type" form:"project_type"`
+	Status          *int    `json:"status" form:"status"`
+	CreateTimeStart *string `json:"create_time_start" form:"create_time_start"`
+	CreateTimeEnd   *string `json:"create_time_end" form:"create_time_end"`
+	UpdateTimeStart *string `json:"update_time_start" form:"update_time_start"`
+	UpdateTimeEnd   *string `json:"update_time_end" form:"update_time_end"`
+}
+
+// MonitorProjectImportReq 导入
+type MonitorProjectImportReq struct {
+	File *multipart.FileHeader `json:"file" form:"file"`
 }

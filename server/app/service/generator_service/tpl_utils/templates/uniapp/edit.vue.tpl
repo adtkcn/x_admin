@@ -16,7 +16,7 @@
 					{{{- if ne .DictType "" }}}
 						<x-picker v-model="form.{{{ .TsField }}}" valueKey="value" labelKey="name" :columns="dictData.{{{ .DictType }}}"></x-picker>
 					{{{- else if ne .ListAllApi "" }}}
-						<x-picker v-model="form.{{{ .TsField }}}" valueKey="{{{toUpperCamelCase .PrimaryKey }}}" labelKey="{{{toUpperCamelCase .PrimaryKey }}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
+						<x-picker v-model="form.{{{ .TsField }}}" valueKey="{{{.PrimaryTsField }}}" labelKey="{{{.PrimaryTsField }}}" :columns="listAllData.{{{pathToName .ListAllApi}}}"></x-picker>
 					{{{- else }}}
 						请选择字典生成代码
 					{{{- end }}}
@@ -41,7 +41,7 @@
 		{{{ .ModuleName }}}_edit,
 		{{{ .ModuleName }}}_add
 	} from "@/api/{{{ .ModuleName }}}";
-	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{nameToPath .ModuleName }}}";
+	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 
 	import {
 		toast,
@@ -87,8 +87,8 @@
 	}
 	onLoad((e) => {
 		console.log("onLoad", e);
-		if (e.{{{toUpperCamelCase .PrimaryKey}}}) {
-			getDetails(e.{{{toUpperCamelCase .PrimaryKey}}});
+		if (e.{{{.PrimaryTsField}}}) {
+			getDetails(e.{{{.PrimaryTsField}}});
 		}
 	});
 
@@ -115,8 +115,8 @@ const { listAllData } = useListAllData<{
 })
 {{{- end }}}
 
-	function getDetails({{{toUpperCamelCase .PrimaryKey}}}) {
-		{{{ .ModuleName }}}_detail({{{toUpperCamelCase .PrimaryKey}}}).then((res) => {
+	function getDetails({{{.PrimaryTsField}}}) {
+		{{{ .ModuleName }}}_detail({{{.PrimaryTsField}}}).then((res) => {
             if (res.code == 200) {
                 if (res?.data) {
                     form.value = res?.data
@@ -133,11 +133,11 @@ const { listAllData } = useListAllData<{
 	function submit() {
 		console.log("submit", form.value);
 		formRef.value.validate().then(() => {
-			if (form.value.{{{toUpperCamelCase .PrimaryKey}}}) {
+			if (form.value.{{{.PrimaryTsField}}}) {
 				{{{ .ModuleName }}}_edit(form.value).then((res) => {
 					if (res.code == 200) {
 						toast("编辑成功");				
-						getDetails(form.value?.{{{toUpperCamelCase .PrimaryKey}}});
+						getDetails(form.value?.{{{.PrimaryTsField}}});
 					} else {
 						toast(res.message);
 					}

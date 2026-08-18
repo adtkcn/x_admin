@@ -145,14 +145,9 @@ func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e e
 	if result.Error != nil {
 		// 这里处理真正的数据库错误（如连接失败、SQL语法错误、约束冲突等）
 		core.Logger.Errorf("数据库错误: %v", result.Error)
-		return result.Error
+		return response.CheckMysqlErr(result.Error)
 	}
 
-	if result.RowsAffected == 0 {
-		// 这里处理“找不到数据”的情况
-		core.Logger.Errorf("未找到 ID 为 %v 的记录，更新失败", editReq.Id)
-		return errors.New("记录不存在")
-	}
 	service.CacheUtil.RemoveCache(editReq.Id)
 	// service.Detail(editReq.Id)
 	return

@@ -16,7 +16,7 @@ interface ResponseData {
     error?: boolean
 }
 //获取验证图片  以及token
-export function reqGet(data) {
+export function reqGet(data: { captchaType?: string }) {
     return request<any, ResponseData>({
         url: '/common/captcha/get',
         method: 'post',
@@ -25,7 +25,11 @@ export function reqGet(data) {
 }
 
 //滑动或者点选验证
-export function reqCheck(data) {
+export function reqCheck(data: {
+    captchaType: string | undefined
+    pointJson: string
+    token: string
+}) {
     return request<any, ResponseData>({
         url: '/common/captcha/check',
         method: 'post',

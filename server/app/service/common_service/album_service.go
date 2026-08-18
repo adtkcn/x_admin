@@ -27,51 +27,37 @@ type albumService struct {
 	db *gorm.DB
 }
 
-// AlbumList 相册文件列表
+// AlbumList 相册文件列表（文件信息直接取自 Album 表，不再依赖 file_ref）
 func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listReq common_schema.CommonAlbumListReq) (res response.PageResp, e error) {
-
-	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
-	// 查询
-	albumModel := albSrv.db.Model(&common_model.Album{})
-
-	albumModel = albumModel.Where("admin_id = ?", adminId)
-
-	if listReq.Cid != "" && listReq.Cid != "0" {
-		albumModel = albumModel.Where("cid = ?", listReq.Cid)
+	query := albSrv.db.Model(&common_model.Album{}).
+		Where("x_album.admin_id = ?", adminId)
+	if listReq.Cid != "" {
+		query = query.Where("x_album.cid = ?", listReq.Cid)
 	}
 	if listReq.Name != "" {
-		albumModel = albumModel.Where("name like ?", "%"+listReq.Name+"%")
+		query = query.Where("x_album.name like ?", "%"+listReq.Name+"%")
 	}
 	if len(listReq.Ext) > 0 {
-		albumModel = albumModel.Where("ext in ?", listReq.Ext)
+		query = query.Where("x_album.ext in ?", listReq.Ext)
 	}
 
 	// 总数
 	var count int64
-	err := albumModel.Count(&count).Error
+	err := query.Count(&count).Error
 	if e = response.CheckErr(err, "Album列表总数获取失败"); e != nil {
 		return
 	}
 	// 数据
 	var albums []common_model.Album
-	err = albumModel.Limit(limit).Offset(offset).Order("id desc").Find(&albums).Error
+	err = query.Limit(limit).Offset(offset).Order("x_album.id desc").Find(&albums).Error
 	if e = response.CheckErr(err, "Album列表获取失败"); e != nil {
 		return
 	}
-	albumResps := []common_schema.CommonAlbumListResp{}
-	convert_util.Copy(&albumResps, albums)
-	// TODO: engine默认local
-	engine := "local"
-	for i := 0; i < len(albumResps); i++ {
-		if engine == "local" {
-			albumResps[i].Path = path.Join(config.FileConfig.UploadPrefix, albums[i].Uri)
-		} else {
-			// TODO: 其他engine
-		}
-		albumResps[i].Uri = util.UrlUtil.ToAbsoluteUrl(albums[i].Uri)
-		albumResps[i].Size = util.ServerUtil.GetFmtSize(uint64(albums[i].Size))
+	albumResps := make([]common_schema.CommonAlbumListResp, 0, len(albums))
+	for _, alb := range albums {
+		albumResps = append(albumResps, buildAlbumListResp(alb))
 	}
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -81,19 +67,32 @@ func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listR
 	}, nil
 }
 
-// AlbumRename 相册文件重命名
+// buildAlbumListResp 由相册行组装列表返回（文件信息来自 Album 自身字段）
+func buildAlbumListResp(alb common_model.Album) common_schema.CommonAlbumListResp {
+	return common_schema.CommonAlbumListResp{
+		ID:         alb.ID,
+		Cid:        alb.Cid,
+		Name:       alb.Name,
+		Path:       alb.Uri,
+		Uri:        path.Join(config.FileConfig.UploadPrefix, alb.Uri),
+		Ext:        alb.Ext,
+		Size:       util.ServerUtil.GetFmtSize(uint64(alb.Size)),
+		CreateTime: alb.CreateTime,
+		UpdateTime: alb.UpdateTime,
+	}
+}
+
+// AlbumRename 相册文件重命名（更新 Album 表的 name）
 func (albSrv albumService) AlbumRename(id string, name string) (e error) {
 	var album common_model.Album
 	err := albSrv.db.Where("id = ?", id).First(&album).Error
 	if e = response.CheckDBNotRecord(err, "文件丢失！"); e != nil {
 		return
 	}
-	if e = response.CheckErr(err, "AlbumRename First err"); e != nil {
-		return
-	}
-	album.Name = name
-	err = albSrv.db.Save(&album).Error
-	e = response.CheckErr(err, "AlbumRename Save err")
+	err = albSrv.db.Model(&common_model.Album{}).
+		Where("id = ?", id).
+		UpdateColumn("name", name).Error
+	e = response.CheckErr(err, "AlbumRename err")
 	return
 }
 
@@ -121,19 +120,43 @@ func (albSrv albumService) AlbumMove(ids []string, cid string) (e error) {
 	return
 }
 
-// AlbumAdd 相册文件新增
-func (albSrv albumService) AlbumAdd(addReq common_schema.CommonAlbumAddReq) (res string, e error) {
+// AlbumAddFromFileRef 把已登记的文件（x_common_file_hash）挂载到相册分类：
+func (albSrv albumService) AlbumAddFromFileRef(fileHashId, fileName, cid, adminId string, uid uint) (resp common_schema.CommonAlbumListResp, e error) {
+	// 校验分类存在（cid 为空 表示未归类，跳过校验）
+	var err error
+	if cid != "" {
+		var category common_model.AlbumCate
+		err = albSrv.db.Where("id = ?", cid).First(&category).Error
+		if e = response.CheckDBNotRecord(err, "相册分类不存在"); e != nil {
+			return
+		}
+	}
+	// 取文件哈希记录（上传时登记）
+	var hash common_model.CommonFileHash
+	err = albSrv.db.Where("id = ?", fileHashId).First(&hash).Error
+	if e = response.CheckDBNotRecord(err, "文件不存在或已过期"); e != nil {
+		return
+	}
+	// 新建相册行（自带文件信息）
 	var alb common_model.Album
-
-	convert_util.Copy(&alb, addReq)
-	err := albSrv.db.Create(&alb).Error
+	alb.Cid = cid
+	alb.AdminId = adminId
+	alb.Uid = uid
+	alb.FileHashId = hash.ID
+	alb.Name = fileName
+	alb.Uri = hash.FilePath
+	alb.Ext = hash.Ext
+	alb.Hash = hash.FileMd5
+	alb.Size = hash.FileSize
+	err = albSrv.db.Create(&alb).Error
 	if e = response.CheckErr(err, "相册添加失败"); e != nil {
 		return
 	}
-	return alb.ID, nil
+	resp = buildAlbumListResp(alb)
+	return
 }
 
-// AlbumDel 相册文件删除
+// AlbumDel 相册文件删除（软删相册行；物理文件由 CleanOrphanFiles 基于访问时间/冷热清理）
 func (albSrv albumService) AlbumDel(ids []string) (e error) {
 	var albums []common_model.Album
 	err := albSrv.db.Where("id in ?", ids).Find(&albums).Error
@@ -225,9 +248,7 @@ func (albSrv albumService) CateDel(id string) (e error) {
 	if r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("当前分类正被使用中,不能删除！")
 	}
-	cate.IsDelete = 1
-	cate.DeleteTime = util.NullTimeUtil.Now()
-	err = albSrv.db.Save(&cate).Error
-	e = response.CheckErr(err, "CateDel Save err")
+	err = albSrv.db.Delete(&cate).Error
+	e = response.CheckErr(err, "分类删除失败")
 	return
 }

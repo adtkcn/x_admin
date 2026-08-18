@@ -41,7 +41,10 @@ func (service *monitorServerService) CollectAndPushServerInfo() error {
 	}
 
 	service.CacheUtil.SetCache(computerIp, serverInfo)
-	util.RedisUtil.SSet(service.CacheUtil.Name+":ips", computerIp)
+	// 注意：此处不要对 :ips 集合设置过期。定时任务每次刷新都会重新 SAdd/Expire，
+	// 只要服务在跑，TTL 会持续被续期而永不过期，等同未设置；
+	// 且 SAdd 相同 ip 成员会被 set 去重，集合成员数恒定（=机器数），不会无限增长。
+	util.RedisUtil.SAdd(service.CacheUtil.Name+":ips", computerIp)
 	return nil
 }
 

@@ -12,9 +12,11 @@ import (
 	"strings"
 	"time"
 
+	"x_admin/app/schema/common_schema"
 	"x_admin/app/service/common_service"
 	"x_admin/core"
-	"x_admin/plugin"
+	"x_admin/core/response"
+	"x_admin/plugin/storage"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
@@ -56,7 +58,7 @@ func (h S3UploadHandler) S3Handler(c *gin.Context) {
 	hasUploads := q.Has("uploads")
 	uploadId := q.Get("uploadId")
 	partNumberStr := q.Get("partNumber")
-	engine := plugin.GetStorageEngine()
+	engine := storage.GetStorageEngine()
 
 	switch {
 	case method == "POST" && hasUploads:
@@ -83,11 +85,10 @@ func (h S3UploadHandler) S3Handler(c *gin.Context) {
 // CheckInstant 秒传：根据文件 MD5 查询是否已上传
 func (h S3UploadHandler) CheckInstant(c *gin.Context) {
 	var req struct {
-		FileMd5  string `json:"fileMd5" binding:"required"`
-		FileName string `json:"fileName" binding:"required"`
+		FileMd5  string `json:"file_md5" binding:"required"`
+		FileName string `json:"file_name" binding:"required"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"code": 400, "message": "参数错误: " + err.Error()})
+	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	record, err := common_service.FileHashService.FindByMd5(req.FileMd5)
@@ -95,20 +96,32 @@ func (h S3UploadHandler) CheckInstant(c *gin.Context) {
 		core.Logger.Errorf("CheckInstant err: %v", err)
 	}
 	if record != nil {
-		engine := plugin.GetStorageEngine()
+		engine := storage.GetStorageEngine()
 		url, _ := engine.GetObjectURL(record.FilePath)
-		c.JSON(200, gin.H{"instant": true, "filePath": record.FilePath, "url": url})
+		resp := common_schema.CommonUploadFileResp{
+			ID:         record.ID,
+			FileHashId: record.ID,
+			Name:       req.FileName,
+			Uri:        url,             // 访问地址（完整可访问 URL）
+			Path:       record.FilePath, // 相对路径
+			Ext:        record.Ext,
+			Size:       record.FileSize,
+			Instant:    true,
+		}
+		response.CheckAndRespWithData(c, resp, nil)
 		return
 	}
-	c.JSON(200, gin.H{"instant": false})
+
+	// 秒传未命中：返回统一结构（instant=false），上传流程继续
+	response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{Instant: false}, nil)
 }
 
 // ---- 密钥生成 ----
 
-// GenerateKey 根据文件名生成存储 key: {ext}/{date}/{uuid}.{ext}（始终用 / 分隔符）
+// GenerateKey 根据文件名生成存储 key: /{年月日}/{时}/{分}/{uuid}.{ext}（始终用 / 分隔符）
 func (h S3UploadHandler) GenerateKey(c *gin.Context) {
 	var req struct {
-		FileName string `json:"fileName" binding:"required"`
+		FileName string `json:"file_name" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		s3Error(c, 400, "InvalidArgument", "参数错误: "+err.Error())
@@ -119,8 +132,9 @@ func (h S3UploadHandler) GenerateKey(c *gin.Context) {
 		s3Error(c, 400, "InvalidArgument", "无法识别文件类型")
 		return
 	}
-	date := time.Now().Format("20060102")
-	key := path.Join(ext, date, util.ToolsUtil.MakeUuidV7()+"."+ext)
+	now := time.Now()
+	datePath := path.Join(now.Format("20060102"), now.Format("15"), now.Format("04"))
+	key := path.Join(datePath, util.ToolsUtil.MakeUuidV7()+"."+ext)
 	c.JSON(200, gin.H{"key": key})
 }
 
@@ -129,27 +143,40 @@ func (h S3UploadHandler) GenerateKey(c *gin.Context) {
 // RegisterHash 上传完成后由前端调用，将 MD5 与 fileKey 关联存入哈希表
 func (h S3UploadHandler) RegisterHash(c *gin.Context) {
 	var req struct {
-		FileMd5  string `json:"fileMd5" binding:"required"`
-		FileSize int64  `json:"fileSize"`
-		FileKey  string `json:"fileKey" binding:"required"`
-		FileName string `json:"fileName"`
+		FileMd5  string `json:"file_md5" binding:"required"`
+		FileSize int64  `json:"file_size"`
+		FileKey  string `json:"file_key" binding:"required"`
+		FileName string `json:"file_name"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"code": 400, "message": "参数错误: " + err.Error()})
+		s3Error(c, 400, "InvalidArgument", "参数错误: "+err.Error())
 		return
 	}
 	ext := strings.TrimPrefix(strings.ToLower(filepath.Ext(req.FileName)), ".")
-	if err := common_service.FileHashService.Create(req.FileMd5, req.FileSize, req.FileKey, ext); err != nil {
+	hash, err := common_service.FileHashService.CreateOrGet(req.FileMd5, req.FileSize, req.FileKey, ext)
+	if err != nil {
 		core.Logger.Errorf("RegisterHash err: %v", err)
-		c.JSON(500, gin.H{"code": 500, "message": "存储文件哈希失败"})
+		response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{}, err)
 		return
 	}
-	c.JSON(200, gin.H{"ok": true})
+	engine := storage.GetStorageEngine()
+	url, _ := engine.GetObjectURL(hash.FilePath)
+	resp := common_schema.CommonUploadFileResp{
+		ID:         hash.ID,
+		FileHashId: hash.ID,
+		Name:       req.FileName,
+		Uri:        url,           // 访问地址（完整可访问 URL）
+		Path:       hash.FilePath, // 相对路径
+		Ext:        ext,
+		Size:       req.FileSize,
+		Instant:    false,
+	}
+	response.CheckAndRespWithData(c, resp, nil)
 }
 
 // ---- CreateMultipartUpload ----
 
-func (h S3UploadHandler) createMultipartUpload(c *gin.Context, engine plugin.StorageEngine, fileKey string) {
+func (h S3UploadHandler) createMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey string) {
 	uploadId, err := engine.InitMultipartUpload(fileKey)
 	if err != nil {
 		core.Logger.Errorf("createMultipartUpload err: %v", err)
@@ -162,7 +189,7 @@ func (h S3UploadHandler) createMultipartUpload(c *gin.Context, engine plugin.Sto
 
 // ---- UploadPart ----
 
-func (h S3UploadHandler) uploadPart(c *gin.Context, engine plugin.StorageEngine, fileKey, uploadId, partNumberStr string) {
+func (h S3UploadHandler) uploadPart(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId, partNumberStr string) {
 	partNumber, err := strconv.Atoi(partNumberStr)
 	if err != nil || partNumber < 1 {
 		s3Error(c, 400, "InvalidArgument", "分片序号错误")
@@ -193,7 +220,7 @@ type completeMultipartUploadXML struct {
 	} `xml:"Part"`
 }
 
-func (h S3UploadHandler) completeMultipartUpload(c *gin.Context, engine plugin.StorageEngine, fileKey, uploadId string) {
+func (h S3UploadHandler) completeMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
 	bodyBytes, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		s3Error(c, 400, "InvalidRequest", "读取请求体失败")
@@ -205,10 +232,10 @@ func (h S3UploadHandler) completeMultipartUpload(c *gin.Context, engine plugin.S
 		s3Error(c, 400, "MalformedXML", "XML 格式错误")
 		return
 	}
-	parts := make([]plugin.MultipartPart, 0, len(req.Parts))
+	parts := make([]storage.MultipartPart, 0, len(req.Parts))
 	for _, p := range req.Parts {
 		etag := strings.Trim(p.ETag, `"`)
-		parts = append(parts, plugin.MultipartPart{PartNumber: p.PartNumber, ETag: etag})
+		parts = append(parts, storage.MultipartPart{PartNumber: p.PartNumber, ETag: etag})
 	}
 
 	filePath, err := engine.CompleteMultipartUpload(fileKey, uploadId, parts)
@@ -225,7 +252,7 @@ func (h S3UploadHandler) completeMultipartUpload(c *gin.Context, engine plugin.S
 
 // ---- AbortMultipartUpload ----
 
-func (h S3UploadHandler) abortMultipartUpload(c *gin.Context, engine plugin.StorageEngine, fileKey, uploadId string) {
+func (h S3UploadHandler) abortMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
 	if err := engine.AbortMultipartUpload(fileKey, uploadId); err != nil {
 		core.Logger.Errorf("abortMultipartUpload err: %v", err)
 	}
@@ -234,7 +261,7 @@ func (h S3UploadHandler) abortMultipartUpload(c *gin.Context, engine plugin.Stor
 
 // ---- ListParts ----
 
-func (h S3UploadHandler) listParts(c *gin.Context, engine plugin.StorageEngine, fileKey, uploadId string) {
+func (h S3UploadHandler) listParts(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
 	parts, err := engine.ListParts(fileKey, uploadId)
 	if err != nil {
 		core.Logger.Errorf("listParts err: %v", err)
@@ -247,7 +274,7 @@ func (h S3UploadHandler) listParts(c *gin.Context, engine plugin.StorageEngine, 
 
 // ---- PutObject ----
 
-func (h S3UploadHandler) putObject(c *gin.Context, engine plugin.StorageEngine, fileKey string) {
+func (h S3UploadHandler) putObject(c *gin.Context, engine storage.StorageEngine, fileKey string) {
 	bodyData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		s3Error(c, 400, "InvalidRequest", "读取文件数据失败")
@@ -265,7 +292,7 @@ func (h S3UploadHandler) putObject(c *gin.Context, engine plugin.StorageEngine, 
 
 // ---- HeadObject ----
 
-func (h S3UploadHandler) headObject(c *gin.Context, engine plugin.StorageEngine, fileKey string) {
+func (h S3UploadHandler) headObject(c *gin.Context, engine storage.StorageEngine, fileKey string) {
 	exists, err := engine.ObjectExists(fileKey)
 	if err != nil {
 		core.Logger.Errorf("headObject err: %v", err)
@@ -300,7 +327,7 @@ func xmlCompleteResult(key, filePath, url string) string {
 </CompleteMultipartUploadResult>`, xmlEscape(url), xmlEscape(key), xmlEscape(filePath))
 }
 
-func xmlListPartsResult(key, uploadId string, parts []plugin.MultipartPart) string {
+func xmlListPartsResult(key, uploadId string, parts []storage.MultipartPart) string {
 	partsXML := ""
 	for _, p := range parts {
 		partsXML += fmt.Sprintf("  <Part><PartNumber>%d</PartNumber><ETag>\"%s\"</ETag></Part>\n",

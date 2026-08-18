@@ -5,16 +5,16 @@
             {{{- range .Columns }}}
             {{{- if eq .IsQuery 1 }}}
                 {{{- if eq .HtmlType "datetime" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsType }}}">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
                     <daterange-picker
-                        v-model:startTime="queryParams.{{{ .TsType }}}Start"
-                        v-model:endTime="queryParams.{{{ .TsType }}}End"
+                        v-model:startTime="queryParams.{{{ .TsField }}}_start"
+                        v-model:endTime="queryParams.{{{ .TsField }}}_end"
                     />
                 </el-form-item>
                 {{{- else if or (eq .HtmlType "select") (eq .HtmlType "radio") }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsType }}}" class="w-[280px]">
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" class="w-[280px]">
                     <el-select
-                        v-model="queryParams.{{{ .TsType }}}"
+                        v-model="queryParams.{{{ .TsField }}}"
                         :empty-values="[null, undefined]"
                         clearable
                     >
@@ -31,8 +31,8 @@
                         <el-option
                             v-for="(item, index) in listAllData.{{{pathToName .ListAllApi}}}"
                             :key="index"
-                            :label="item.{{{toUpperCamelCase .PrimaryKey }}}"
-                            :value="item.{{{toUpperCamelCase .PrimaryKey }}}"
+                            :label="item.{{{ .PrimaryTsField }}}"
+                            :value="item.{{{ .PrimaryTsField }}}"
                         />
                         {{{- else }}}
                         <el-option label="请选择字典生成" value="" />
@@ -40,8 +40,8 @@
                     </el-select>
                 </el-form-item>
                 {{{- else if eq .HtmlType "input" }}}
-                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsType }}}" class="w-[280px]">
-                    <el-input v-model="queryParams.{{{ .TsType }}}" />
+                <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}" class="w-[280px]">
+                    <el-input v-model="queryParams.{{{ .TsField }}}" />
                 </el-form-item>
                 {{{- end }}}
             {{{- end }}}
@@ -66,7 +66,7 @@
                 v-loading="loading"
                 ref="tableRef"
                 class="mt-4"
-                size="large"
+                 :border="'inner'"
                 :data="lists"
                 row-key="{{{ .Table.TreePrimary }}}"
                 :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -74,32 +74,32 @@
             {{{- range .Columns }}}
             {{{- if .IsList }}}
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TableColumnProp }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ .TsType }}}" />
+                        <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ .TableColumnProp }}}" />
                     </template>
                 </vxe-column>
                 {{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TableColumnProp }}}" min-width="100">
                     <template #default="{ row }">
-                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ .TsType }}}" labelKey='{{{toUpperCamelCase .PrimaryKey }}}' valueKey='{{{toUpperCamelCase .PrimaryKey }}}' />
+                        <dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ .TableColumnProp }}}" labelKey='{{{ .PrimaryTsField }}}' valueKey='{{{ .PrimaryTsField }}}' />
                     </template>
                 </vxe-column>
                 {{{- else if eq .HtmlType "imageUpload" }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100">
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TableColumnProp }}}" min-width="100">
                     <template #default="{ row }">
                         <image-contain
                             :width="40"
                             :height="40"
-                            :src="row.{{{ .TsType }}}"
-                            :preview-src-list="[row.{{{ .TsType }}}]"
+                            :src="row.{{{ .TableColumnProp }}}"
+                            :preview-src-list="[row.{{{ .TableColumnProp }}}]"
                             preview-teleported
                             hide-on-click-modal
                         />
                     </template>
                 </vxe-column>
                 {{{- else }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TsType }}}" min-width="100" />
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{ .TableColumnProp }}}" min-width="100" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}
@@ -166,30 +166,27 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref,shallowRef,reactive,onMounted,watch } from 'vue'
-import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{nameToPath .ModuleName }}}'
-import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{nameToPath .ModuleName }}}";
+import { ref, reactive, useTemplateRef, nextTick } from 'vue'
+import { {{{ .ModuleName }}}_delete, {{{ .ModuleName }}}_list } from '@/api/{{{.Domain}}}/{{{.ModuleName}}}'
+import type { type_{{{ .ModuleName }}},type_{{{.ModuleName}}}_query	} from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 
 import EditPopup from './edit.vue'
 import DetailsPopup from './details.vue'
 import feedback from '@/utils/feedback'
 
-import { VxeTableInstance } from 'vxe-table'
+import { VxeTableInstance, VxeTablePropTypes } from 'vxe-table'
 
-import { useDictData,useListAllData } from '@/hooks/useDictOptions'
+import { useDictData, useListAllData } from '@/hooks/useDictOptions'
 import type { type_dict } from '@/hooks/useDictOptions'
 
-//import type { ElTable } from 'element-plus'
 defineOptions({
-    name:"{{{ .ModuleName }}}"
+    name: "{{{ .ModuleName }}}"
 })
-//const tableRef = shallowRef<InstanceType<typeof ElTable>>()
-//const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 
 const rowConfig = {
     keyField: '{{{ .Table.TreePrimary }}}'
 }
-const treeConfig = {
+const treeConfig = reactive<VxeTablePropTypes.TreeConfig>({
     rowField: '{{{ .Table.TreePrimary }}}',
     childrenField: 'children',
     indent: 10,
@@ -198,14 +195,14 @@ const treeConfig = {
     transform: true,
 
     parentField: '{{{ .Table.TreeParent }}}'
-}
+})
 
-const tableRef = useTemplateRef<VxeTableInstance<any>>('tableRef')
+const tableRef = useTemplateRef<VxeTableInstance<type_{{{ .ModuleName }}}}('tableRef')
 const editRef = useTemplateRef<InstanceType<typeof EditPopup>>('editRef')
 
 const showEdit = ref(false)
 
-const detailsRef = shallowRef<InstanceType<typeof DetailsPopup>>()
+const detailsRef = useTemplateRef<InstanceType<typeof DetailsPopup>>('detailsRef')
 const showDetails = ref(false)
 
 const loading = ref(false)
@@ -215,10 +212,10 @@ const queryParams = reactive<type_{{{.ModuleName}}}_query>({
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ .TsType }}}Start: undefined,
-    {{{ .TsType }}}End: undefined,
+    {{{ .TsField }}}_start: undefined,
+    {{{ .TsField }}}_end: undefined,
     {{{- else }}}
-    {{{ .TsType }}}: undefined,
+    {{{ .TsField }}}: undefined,
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}
@@ -231,6 +228,7 @@ const getLists = async () => {
         lists.value = data
         loading.value = false
     } catch (error) {
+        console.error('获取列表失败:', error)
         loading.value = false
     }
 }
@@ -263,28 +261,32 @@ const handleAdd = async ({{{ .Table.TreePrimary }}}?: number) => {
     if ({{{ .Table.TreePrimary }}}) {
         editRef.value?.setFormData({
             {{{ .Table.TreeParent }}}: {{{ .Table.TreePrimary }}}
-        })
+        } as type_{{{ .ModuleName }}}_edit)
     }
     editRef.value?.open('add')
 }
 
-const handleEdit = async (data: any) => {
+const handleEdit = async (data: type_{{{ .ModuleName }}}) => {
     showEdit.value = true
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
 }
-const viewDetails = async (data: any) => {
+const viewDetails = async (data: type_{{{ .ModuleName }}}) => {
     showDetails.value = true
     await nextTick()
     detailsRef.value?.open()
     detailsRef.value?.getDetail(data)
 }
-const handleDelete = async ({{{toUpperCamelCase .PrimaryKey }}}: {{{goToTsType .PrimaryKeyGoType}}}) => {
-    await feedback.confirm('确定要删除？')
-    await {{{ .ModuleName }}}_delete({ {{{toUpperCamelCase .PrimaryKey }}} })
-    feedback.msgSuccess('删除成功')
-    getLists()
+const handleDelete = async ({{{ .PrimaryTsField }}}: {{{.PrimaryTsType}}}) => {
+    try {
+        await feedback.confirm('确定要删除？')
+        await {{{ .ModuleName }}}_delete({ {{{ .PrimaryTsField }}} })
+        feedback.msgSuccess('删除成功')
+        getLists()
+    } catch (error) {
+        console.error('删除失败:', error)
+    }
 }
 
 let isExpand = false

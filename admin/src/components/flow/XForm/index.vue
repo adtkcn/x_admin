@@ -42,10 +42,14 @@ function getFieldWidgets() {
 }
 function getData() {
     return new Promise<{
-        formData: any
+        formData: any[]
     }>((resolve, reject) => {
         try {
-            const jsonData = designerRef.value?.getRule()
+            if (!designerRef.value) {
+                resolve({ formData: [] })
+                return
+            }
+            const jsonData = designerRef.value.getRule()
             const getOption = designerRef.value?.getOption()
             const getDescription = designerRef.value?.getDescription()
             // 表单组件的层级结构数据

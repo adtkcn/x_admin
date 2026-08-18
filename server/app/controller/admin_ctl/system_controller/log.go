@@ -25,8 +25,8 @@ type LogHandler struct{}
 // @Param			ip			query		string																				false	"请求IP"
 // @Param			status		query		int																					false	"执行状态: [1=成功, 2=失败]"
 // @Param			url			query		string																				false	"请求地址"
-// @Param			startTime	query		string																				false	"开始时间"
-// @Param			endTime		query		string																				false	"结束时间"
+// @Param			start_time	query		string																				false	"开始时间"
+// @Param			end_time	query		string																				false	"结束时间"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=system_schema.SystemLogOperateResp}}	"成功"
 // @Router			/api/admin/system/log/operate [get]
 func (lh LogHandler) Operate(c *gin.Context) {
@@ -50,8 +50,8 @@ func (lh LogHandler) Operate(c *gin.Context) {
 // @Param			pageSize	query		int																					true	"每页数量"
 // @Param			email		query		string																				false	"邮箱(账号)"
 // @Param			status		query		int																					false	"执行状态: [1=成功, 2=失败]"
-// @Param			startTime	query		string																				false	"开始时间"
-// @Param			endTime		query		string																				false	"结束时间"
+// @Param			start_time	query		string																				false	"开始时间"
+// @Param			end_time	query		string																				false	"结束时间"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=system_schema.SystemLogLoginResp}}	"成功"
 // @Router			/api/admin/system/log/login [get]
 func (lh LogHandler) Login(c *gin.Context) {

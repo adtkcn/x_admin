@@ -21,7 +21,7 @@ type NoticeHandler struct{}
 // @Param			pageNo		query		int																				true	"页码"
 // @Param			pageSize	query		int																				true	"每页数量"
 // @Param			type		query		string																			false	"通知类型"
-// @Param			isRead		query		int																				false	"0未读 1已读 -1全部"
+// @Param			is_read		query		int																				false	"0未读 1已读 -1全部"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=system_schema.SystemNoticeResp}}	"成功"
 // @Router			/api/admin/system/notice/list [get]
 func (h NoticeHandler) List(c *gin.Context) {
@@ -33,8 +33,8 @@ func (h NoticeHandler) List(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
-	adminID := config.AdminConfig.GetAdminId(c)
-	list, count, err := notice_service.NoticeService.List(adminID, page.PageNo, page.PageSize, &listReq)
+	adminId := config.AdminConfig.GetAdminId(c)
+	list, count, err := notice_service.NoticeService.List(adminId, page.PageNo, page.PageSize, &listReq)
 	if err != nil {
 		response.Fail(c, "获取通知列表失败")
 		return
@@ -54,8 +54,8 @@ func (h NoticeHandler) List(c *gin.Context) {
 // @Success		200		{object}	response.Response{data=system_schema.SystemNoticeUnreadCountResp}	"成功"
 // @Router			/api/admin/system/notice/unread_count [get]
 func (h NoticeHandler) UnreadCount(c *gin.Context) {
-	adminID := config.AdminConfig.GetAdminId(c)
-	count, err := notice_service.NoticeService.UnreadCount(adminID)
+	adminId := config.AdminConfig.GetAdminId(c)
+	count, err := notice_service.NoticeService.UnreadCount(adminId)
 	response.CheckAndRespWithData(c, system_schema.SystemNoticeUnreadCountResp{Count: count}, err)
 }
 
@@ -71,8 +71,8 @@ func (h NoticeHandler) Read(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
-	adminID := config.AdminConfig.GetAdminId(c)
-	err := notice_service.NoticeService.Read(req.ID, adminID)
+	adminId := config.AdminConfig.GetAdminId(c)
+	err := notice_service.NoticeService.Read(req.ID, adminId)
 	response.CheckAndRespWithData(c, nil, err)
 }
 
@@ -83,8 +83,8 @@ func (h NoticeHandler) Read(c *gin.Context) {
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/notice/read_all [post]
 func (h NoticeHandler) ReadAll(c *gin.Context) {
-	adminID := config.AdminConfig.GetAdminId(c)
-	err := notice_service.NoticeService.ReadAll(adminID)
+	adminId := config.AdminConfig.GetAdminId(c)
+	err := notice_service.NoticeService.ReadAll(adminId)
 	response.CheckAndRespWithData(c, nil, err)
 }
 
@@ -100,8 +100,8 @@ func (h NoticeHandler) Del(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
-	adminID := config.AdminConfig.GetAdminId(c)
-	err := notice_service.NoticeService.Del(req.ID, adminID)
+	adminId := config.AdminConfig.GetAdminId(c)
+	err := notice_service.NoticeService.Del(req.ID, adminId)
 	response.CheckAndRespWithData(c, nil, err)
 }
 
@@ -112,25 +112,24 @@ func (h NoticeHandler) Del(c *gin.Context) {
 // @Success		200		{object}	response.Response{data=system_schema.SystemNoticeSettingResp}	"成功"
 // @Router			/api/admin/system/notice/setting [get]
 func (h NoticeHandler) GetSetting(c *gin.Context) {
-	adminID := config.AdminConfig.GetAdminId(c)
-	res, err := notice_service.NoticeService.GetSetting(adminID)
+	adminId := config.AdminConfig.GetAdminId(c)
+	res, err := notice_service.NoticeService.GetSetting(adminId)
 	response.CheckAndRespWithData(c, res, err)
 }
 
 // @Summary		保存通知偏好
-// @Description	保存当前管理员的渠道通知偏好
+// @Description	保存当前管理员的渠道通知偏好（channel -> is_enabled 映射）
 // @Tags			system_notice-通知
-// @Param			token			header		string				true	"token"
-// @Param			siteEnabled		body		uint8				true	"站内信: 0关闭 1开启"
-// @Param			emailEnabled	body		uint8				true	"邮件: 0关闭 1开启"
-// @Success		200				{object}	response.Response	"成功"
+// @Param			token				header		string															true	"token"
+// @Param			settings				body		system_schema.SystemNoticeSettingSaveReq						true	"渠道开关映射"
+// @Success		200					{object}	response.Response												"成功"
 // @Router			/api/admin/system/notice/setting/save [post]
 func (h NoticeHandler) SaveSetting(c *gin.Context) {
 	var req system_schema.SystemNoticeSettingSaveReq
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
-	adminID := config.AdminConfig.GetAdminId(c)
-	err := notice_service.NoticeService.SaveSetting(adminID, &req)
+	adminId := config.AdminConfig.GetAdminId(c)
+	err := notice_service.NoticeService.SaveSetting(adminId, &req)
 	response.CheckAndRespWithData(c, nil, err)
 }

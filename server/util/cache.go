@@ -17,13 +17,13 @@ func (c CacheUtil) SetCache(field string, obj any) bool {
 		return false
 	}
 
-	return RedisUtil.HSet(c.Name, field, str, 3600)
+	return RedisUtil.Set(c.Name+":"+field, str, 3600)
 }
 
 // 获取缓存
 func (c CacheUtil) GetCache(field string, obj any) error {
 
-	str := RedisUtil.HGet(c.Name, field)
+	str := RedisUtil.Get(c.Name + ":" + field)
 	if str == "" {
 		return errors.New("获取缓存失败")
 	}
@@ -37,6 +37,13 @@ func (c CacheUtil) GetCache(field string, obj any) error {
 
 // 删除缓存-支持批量删除
 func (c CacheUtil) RemoveCache(fields ...string) bool {
+	if len(fields) == 0 {
+		return true
+	}
+	var keys []string
+	for _, field := range fields {
+		keys = append(keys, c.Name+":"+field)
+	}
 
-	return RedisUtil.HDel(c.Name, fields...)
+	return RedisUtil.Del(keys...)
 }

@@ -80,5 +80,8 @@ func (cu systemConfigService) Set(db *gorm.DB, cnfType string, name string, val 
 	if err = db.Model(&config).Update("value", val).Error; err != nil {
 		return err
 	}
+	// 更新成功后清空相关 Redis 缓存
+	util.RedisUtil.Del("Index:Config")
+
 	return nil
 }

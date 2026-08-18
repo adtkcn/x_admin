@@ -18,7 +18,7 @@ type AuthController struct{}
 // @Tags			user_auth-用户绑定
 // @Param			Authorization	header		string				true	"Bearer token"
 // @Param			phone			body		string				true	"手机号"
-// @Param			phoneCode		body		string				false	"区号(默认86)"
+// @Param			phone_code		body		string				false	"区号(默认86)"
 // @Param			code			body		string				true	"短信验证码"
 // @Success		200				{object}	response.Response	"成功"
 // @Router			/api/user/bindPhone [post]
@@ -133,10 +133,10 @@ func (h AuthController) BindWechatMp(c *gin.Context) {
 // ---- 通用解绑 ----
 
 // @Summary		解绑微信
-// @Description	解绑微信小程序或公众号（identityType: wechat_mini / wechat_mp）
+// @Description	解绑微信小程序或公众号（identity_type: wechat_mini / wechat_mp）
 // @Tags			user_wechat-微信登录
 // @Param			Authorization	header		string				true	"Bearer token"
-// @Param			identityType	body		string				true	"wechat_mini/wechat_mp"
+// @Param			identity_type	body		string				true	"wechat_mini/wechat_mp"
 // @Success		200				{object}	response.Response	"成功"
 // @Router			/api/user/unbindWechat [post]
 func (h AuthController) UnbindWechat(c *gin.Context) {

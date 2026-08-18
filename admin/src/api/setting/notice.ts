@@ -4,7 +4,7 @@ import type { Pages } from '@/utils/request'
 // 通知列表查询
 export type type_notice_list = {
     type?: string
-    isRead?: number // 0未读 1已读 -1全部
+    is_read?: number // 0未读 1已读 -1全部
 }
 
 // 通知返回
@@ -13,12 +13,12 @@ export type type_notice_resp = {
     type: string
     title: string
     content: string
-    receiverId: string
-    senderId: string
+    receiver_id: string
+    sender_id: string
     url: string
-    isRead: number
-    readTime: string
-    createTime: string
+    is_read: number
+    read_time: string
+    create_time: string
 }
 
 // 未读数量
@@ -26,10 +26,18 @@ export type type_notice_unread = {
     count: number
 }
 
-// 偏好设置
+// 偏好设置：渠道清单（由后端定义，含当前开关状态）
+export type type_notice_setting_channel = {
+    key: string
+    label: string
+    enabled: number
+}
 export type type_notice_setting = {
-    siteEnabled: number
-    emailEnabled: number
+    channels: type_notice_setting_channel[]
+}
+// 保存偏好请求：channel(渠道) -> is_enabled(开关)
+export type type_notice_setting_save = {
+    settings: Record<string, number>
 }
 
 // 通知列表
@@ -63,6 +71,6 @@ export function noticeGetSetting() {
 }
 
 // 保存偏好
-export function noticeSaveSetting(data: type_notice_setting) {
+export function noticeSaveSetting(data: type_notice_setting_save) {
     return request.post({ url: '/system/notice/setting/save', data })
 }
