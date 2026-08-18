@@ -102,8 +102,8 @@ const router = useRouter()
 const config = computed(() => appStore.config)
 
 const formData = reactive({
-    email: '',
-    password: ''
+    email: 'x@qq.com',
+    password: '123456'
 })
 
 const rules = {

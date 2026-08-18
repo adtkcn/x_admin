@@ -18,9 +18,9 @@ type SettingDictDataResp struct {
 
 // SettingDictDataListReq 字典数据列表参数
 type SettingDictDataListReq struct {
-	DictType string `json:"dict_type" form:"dict_type" binding:"max=200"`              // 字典类型
-	Name     string `json:"name" form:"name" binding:"max=100"`                   // 键
-	Value    string `json:"value" form:"value" binding:"max=200"`                  // 值
+	DictType string `json:"dict_type" form:"dict_type" binding:"max=200"`           // 字典类型
+	Name     string `json:"name" form:"name" binding:"max=100"`                     // 键
+	Value    string `json:"value" form:"value" binding:"max=200"`                   // 值
 	Status   int8   `json:"status" form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }
 
@@ -31,24 +31,24 @@ type SettingDictDataDetailReq struct {
 
 // SettingDictDataAddReq 字典数据新增参数
 type SettingDictDataAddReq struct {
-	TypeId string `json:"type_id" form:"type_id" binding:"required"`               // 类型
-	Name   string `json:"name" form:"name" binding:"required,max=100"`          // 键
-	Value  string `json:"value" form:"value" binding:"required,max=200"`         // 值
-	Color  string `json:"color" form:"color"`                                    // 颜色
+	TypeId string `json:"type_id" form:"type_id" binding:"required"`              // 类型
+	Name   string `json:"name" form:"name" binding:"required,max=100"`            // 键
+	Value  string `json:"value" form:"value" binding:"required,max=200"`          // 值
+	Color  string `json:"color" form:"color"`                                     // 颜色
 	Remark string `json:"remark" form:"remark" binding:"max=200"`                 // 备注
-	Sort   int    `json:"sort" form:"sort" binding:"gte=0"`                     // 排序
+	Sort   int    `json:"sort" form:"sort" binding:"gte=0"`                       // 排序
 	Status int8   `json:"status" form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }
 
 // SettingDictDataEditReq 字典数据编辑参数
 type SettingDictDataEditReq struct {
-	ID     string `json:"id" form:"id" binding:"required"`                    // 主键
-	TypeId string `json:"type_id" form:"type_id" binding:"required"`               // 类型
-	Name   string `json:"name" form:"name" binding:"required,max=100"`          // 键
-	Value  string `json:"value" form:"value" binding:"required,max=200"`         // 值
-	Color  string `json:"color" form:"color"`                                    // 颜色
+	ID     string `json:"id" form:"id" binding:"required"`                        // 主键
+	TypeId string `json:"type_id" form:"type_id" binding:"required"`              // 类型
+	Name   string `json:"name" form:"name" binding:"required,max=100"`            // 键
+	Value  string `json:"value" form:"value" binding:"required,max=200"`          // 值
+	Color  string `json:"color" form:"color"`                                     // 颜色
 	Remark string `json:"remark" form:"remark" binding:"max=200"`                 // 备注
-	Sort   int    `json:"sort" form:"sort" binding:"gte=0"`                     // 排序
+	Sort   int    `json:"sort" form:"sort" binding:"gte=0"`                       // 排序
 	Status int8   `json:"status" form:"status,default=-1" binding:"oneof=-1 0 1"` // 状态: 0=停用,1=启用
 }
 

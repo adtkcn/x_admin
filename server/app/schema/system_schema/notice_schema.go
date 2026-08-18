@@ -4,7 +4,7 @@ import "github.com/adtkcn/x_null"
 
 // SystemNoticeListReq 通知列表参数
 type SystemNoticeListReq struct {
-	Type   string `json:"type" form:"type"`    // 通知类型筛选
+	Type   string `json:"type" form:"type"`       // 通知类型筛选
 	IsRead int    `json:"is_read" form:"is_read"` // 0=未读 1=已读 -1=全部
 }
 

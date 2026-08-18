@@ -93,7 +93,7 @@ func (e *emailCodeUtil) SendCode(email, scene, uid string) error {
 	opts := EmailCodeTask{
 		To:        email,
 		CreatedAt: time.Now().Unix(),
-		Subject: fmt.Sprintf("【%s】%s验证码", config.AppConfig.AppName, sceneName),
+		Subject:   fmt.Sprintf("【%s】%s验证码", config.AppConfig.AppName, sceneName),
 		HTMLBody: fmt.Sprintf(`
 			<h3>%s</h3>
 			<p>您的验证码是：<b style="font-size:28px;color:#409eff;letter-spacing:4px">%s</b></p>

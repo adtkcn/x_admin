@@ -6,8 +6,8 @@ import (
 
 // MonitorClientListReq 监控-客户端信息列表
 type MonitorClientListReq struct {
-	PageNo          *int    `json:"page_no" form:"page_no"`         // 页码
-	PageSize        *int    `json:"page_size" form:"page_size"`     // 每页数量
+	PageNo          *int    `json:"page_no" form:"page_no"`     // 页码
+	PageSize        *int    `json:"page_size" form:"page_size"` // 每页数量
 	ProjectKey      *string `json:"project_key" form:"project_key"`
 	ClientId        *string `json:"client_id" form:"client_id"`
 	UserId          *string `json:"user_id" form:"user_id"`
@@ -119,4 +119,3 @@ type MonitorClientExportReq struct {
 type MonitorClientImportReq struct {
 	File *multipart.FileHeader `json:"file" form:"file"`
 }
-

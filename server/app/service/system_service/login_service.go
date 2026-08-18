@@ -160,6 +160,6 @@ func (loginSrv systemLoginService) RecordLoginLog(c *gin.Context, adminId string
 		Status:     status,
 		CreateTime: util.NullTimeUtil.Now(),
 	}).Error
-	e = response.CheckErr(err, "创建记录失败")
+	e = response.CheckErr(err, "日志记录失败")
 	return
 }

@@ -66,11 +66,11 @@ const QueueNoticeEmail = "notice:email"
 
 // 邮件推送状态
 const (
-	EmailStatusNotSend  int8 = -1 // 不发送
-	EmailStatusPending  int8 = 0  // 待发送
-	EmailStatusSending  int8 = 1  // 发送中（已进入队列）
-	EmailStatusSuccess  int8 = 2  // 发送成功
-	EmailStatusFailed   int8 = 3  // 发送失败
+	EmailStatusNotSend int8 = -1 // 不发送
+	EmailStatusPending int8 = 0  // 待发送
+	EmailStatusSending int8 = 1  // 发送中（已进入队列）
+	EmailStatusSuccess int8 = 2  // 发送成功
+	EmailStatusFailed  int8 = 3  // 发送失败
 )
 
 // NoticeEmailTask 通知邮件补推任务载荷（推入队列异步发送）

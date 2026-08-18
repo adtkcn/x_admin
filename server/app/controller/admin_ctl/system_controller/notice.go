@@ -120,9 +120,9 @@ func (h NoticeHandler) GetSetting(c *gin.Context) {
 // @Summary		保存通知偏好
 // @Description	保存当前管理员的渠道通知偏好（channel -> is_enabled 映射）
 // @Tags			system_notice-通知
-// @Param			token				header		string															true	"token"
-// @Param			settings				body		system_schema.SystemNoticeSettingSaveReq						true	"渠道开关映射"
-// @Success		200					{object}	response.Response												"成功"
+// @Param			token		header		string										true	"token"
+// @Param			settings	body		system_schema.SystemNoticeSettingSaveReq	true	"渠道开关映射"
+// @Success		200			{object}	response.Response							"成功"
 // @Router			/api/admin/system/notice/setting/save [post]
 func (h NoticeHandler) SaveSetting(c *gin.Context) {
 	var req system_schema.SystemNoticeSettingSaveReq

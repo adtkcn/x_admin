@@ -4,8 +4,8 @@ import "github.com/adtkcn/x_null"
 
 // SettingDictTypeListReq 字典类型新增参数
 type SettingDictTypeListReq struct {
-	DictName   string `json:"dict_name" form:"dict_name" binding:"max=200"`                   // 字典名称
-	DictType   string `json:"dict_type" form:"dict_type" binding:"max=200"`                   // 字典类型
+	DictName   string `json:"dict_name" form:"dict_name" binding:"max=200"`                     // 字典名称
+	DictType   string `json:"dict_type" form:"dict_type" binding:"max=200"`                     // 字典类型
 	DictStatus int8   `json:"dict_status" form:"dict_status,default=-1" binding:"oneof=-1 0 1"` // 字典状态: 0/1
 }
 
@@ -16,17 +16,17 @@ type SettingDictTypeDetailReq struct {
 
 // SettingDictTypeAddReq 字典类型新增参数
 type SettingDictTypeAddReq struct {
-	DictName   string `json:"dict_name" form:"dict_name" binding:"required,max=200"`     // 字典名称
-	DictType   string `json:"dict_type" form:"dict_type" binding:"required,max=200"`     // 字典类型
+	DictName   string `json:"dict_name" form:"dict_name" binding:"required,max=200"`       // 字典名称
+	DictType   string `json:"dict_type" form:"dict_type" binding:"required,max=200"`       // 字典类型
 	DictRemark string `json:"dict_remark" form:"dict_remark" binding:"max=200"`            // 字典备注
 	DictStatus int8   `json:"dict_status" form:"dict_status" binding:"required,oneof=0 1"` // 字典状态: 0/1
 }
 
 // SettingDictTypeEditReq 字典类型编辑参数
 type SettingDictTypeEditReq struct {
-	ID         string `json:"id" form:"id" binding:"required"`                    // 主键
-	DictName   string `json:"dict_name" form:"dict_name" binding:"required,max=200"`     // 字典名称
-	DictType   string `json:"dict_type" form:"dict_type" binding:"required,max=200"`     // 字典类型
+	ID         string `json:"id" form:"id" binding:"required"`                             // 主键
+	DictName   string `json:"dict_name" form:"dict_name" binding:"required,max=200"`       // 字典名称
+	DictType   string `json:"dict_type" form:"dict_type" binding:"required,max=200"`       // 字典类型
 	DictRemark string `json:"dict_remark" form:"dict_remark" binding:"max=200"`            // 字典备注
 	DictStatus int8   `json:"dict_status" form:"dict_status" binding:"required,oneof=0 1"` // 字典状态: 0/1
 }

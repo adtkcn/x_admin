@@ -3,10 +3,10 @@ package system_schema
 import "github.com/adtkcn/x_null"
 
 type SystemLogLoginReq struct {
-	Email     string `json:"email" form:"email"`                                // 登录邮箱
-	Status    int    `json:"status" form:"status" binding:"omitempty,oneof=1 2"` // 执行状态: [1=成功, 2=失败]
-	StartTime string `json:"start_time" form:"start_time" time_format:"2006-01-02"`  // 开始时间
-	EndTime   string `json:"end_time" form:"end_time" time_format:"2006-01-02"`    // 结束时间
+	Email     string `json:"email" form:"email"`                                    // 登录邮箱
+	Status    int    `json:"status" form:"status" binding:"omitempty,oneof=1 2"`    // 执行状态: [1=成功, 2=失败]
+	StartTime string `json:"start_time" form:"start_time" time_format:"2006-01-02"` // 开始时间
+	EndTime   string `json:"end_time" form:"end_time" time_format:"2006-01-02"`     // 结束时间
 }
 
 type SystemLoginResp struct {

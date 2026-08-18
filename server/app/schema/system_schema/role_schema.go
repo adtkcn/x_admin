@@ -34,19 +34,19 @@ type SystemAuthRoleDetailReq struct {
 type SystemAuthRoleAddReq struct {
 	Name      string `json:"name" form:"name" binding:"required,min=1,max=30"` // 角色名称
 	Sort      int    `json:"sort" form:"sort" binding:"gte=0"`                 // 角色排序
-	IsDisable uint8  `json:"is_disable" form:"is_disable" binding:"oneof=0 1"`       // 是否禁用: [0=否, 1=是]
-	Remark    string `json:"remark" form:"remark" binding:"max=200"`             // 角色备注
-	MenuIds   string `json:"menuIds" form:"menuIds"`                              // 关联菜单
+	IsDisable uint8  `json:"is_disable" form:"is_disable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
+	Remark    string `json:"remark" form:"remark" binding:"max=200"`           // 角色备注
+	MenuIds   string `json:"menuIds" form:"menuIds"`                           // 关联菜单
 }
 
 // SystemAuthRoleEditReq 编辑角色参数
 type SystemAuthRoleEditReq struct {
-	ID        string `json:"id" form:"id" binding:"required,gt=0"`           // 主键
+	ID        string `json:"id" form:"id" binding:"required,gt=0"`             // 主键
 	Name      string `json:"name" form:"name" binding:"required,min=1,max=30"` // 角色名称
 	Sort      int    `json:"sort" form:"sort" binding:"gte=0"`                 // 角色排序
-	IsDisable uint8  `json:"is_disable" form:"is_disable" binding:"oneof=0 1"`       // 是否禁用: [0=否, 1=是]
-	Remark    string `json:"remark" form:"remark" binding:"max=200"`             // 角色备注
-	MenuIds   string `json:"menuIds" form:"menuIds"`                              // 关联菜单
+	IsDisable uint8  `json:"is_disable" form:"is_disable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
+	Remark    string `json:"remark" form:"remark" binding:"max=200"`           // 角色备注
+	MenuIds   string `json:"menuIds" form:"menuIds"`                           // 关联菜单
 }
 
 // SystemAuthRoleDelReq 删除角色参数

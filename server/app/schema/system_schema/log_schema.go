@@ -4,14 +4,14 @@ import "github.com/adtkcn/x_null"
 
 // //SystemLogOperateReq 操作日志列表参数
 type SystemLogOperateReq struct {
-	Title     string `json:"title" form:"title"`                                       // 操作标题
-	Email     string `json:"email" form:"email"`                                       // 邮箱(账号)
-	Ip        string `json:"ip" form:"ip"`                                          // 请求IP
+	Title     string `json:"title" form:"title"`                                      // 操作标题
+	Email     string `json:"email" form:"email"`                                      // 邮箱(账号)
+	Ip        string `json:"ip" form:"ip"`                                            // 请求IP
 	Type      string `json:"type" form:"type" binding:"omitempty,oneof=GET POST PUT"` // 请求类型: GET/POST/PUT
-	Status    int    `json:"status" form:"status" binding:"omitempty,oneof=1 2"`        // 执行状态: [1=成功, 2=失败]
-	Url       string `json:"url" form:"url"`                                         // 请求地址
-	StartTime string `json:"start_time" form:"start_time" time_format:"2006-01-02"`         // 开始时间
-	EndTime   string `json:"end_time" form:"end_time" time_format:"2006-01-02"`           // 结束时间
+	Status    int    `json:"status" form:"status" binding:"omitempty,oneof=1 2"`      // 执行状态: [1=成功, 2=失败]
+	Url       string `json:"url" form:"url"`                                          // 请求地址
+	StartTime string `json:"start_time" form:"start_time" time_format:"2006-01-02"`   // 开始时间
+	EndTime   string `json:"end_time" form:"end_time" time_format:"2006-01-02"`       // 结束时间
 }
 
 // type SystemLogLoginReq struct {

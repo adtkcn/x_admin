@@ -8,7 +8,7 @@ type UserPrimarykey struct {
 
 type UserListReq struct {
 	Keyword         x_null.String `json:"keyword" form:"keyword"` // 邮箱/昵称/手机号模糊匹配
-	Status          x_null.String `json:"status" form:"status"`  // 0正常 1禁用
+	Status          x_null.String `json:"status" form:"status"`   // 0正常 1禁用
 	CreateTimeStart x_null.String `json:"create_time_start" form:"create_time_start"`
 	CreateTimeEnd   x_null.String `json:"create_time_end" form:"create_time_end"`
 }

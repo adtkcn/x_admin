@@ -48,7 +48,7 @@ func (gh GenHandler) DbTables(c *gin.Context) {
 // @Param			table_name		query		string																			false	"表名"
 // @Param			table_comment	query		string																			false	"表描述"
 // @Param			start_time		query		time.Time																		false	"开始时间"
-// @Param			end_time			query		time.Time																		false	"结束时间"
+// @Param			end_time		query		time.Time																		false	"结束时间"
 // @Success		200				{object}	response.Response{data=response.PageResp{lists=generator_schema.GenTableResp}}	"成功"
 // @Router			/api/admin/generator/list [get]
 func (gh GenHandler) List(c *gin.Context) {

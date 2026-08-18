@@ -9,14 +9,14 @@ type CommonUploadImageReq struct {
 // CommonAlbumListReq 相册文件列表参数
 type CommonAlbumListReq struct {
 	Cid  string   `json:"cid" form:"cid"`   // 类目ID
-	Name string   `json:"name" form:"name"`  // 文件名称
+	Name string   `json:"name" form:"name"` // 文件名称
 	Ext  []string `json:"ext" form:"ext[]"` // 文件扩展
 
 }
 
 // CommonAlbumRenameReq 相册文件重命名参数
 type CommonAlbumRenameReq struct {
-	ID   string `json:"id" form:"id"`                                   // 主键
+	ID   string `json:"id" form:"id"`                                     // 主键
 	Name string `json:"name" form:"name" binding:"required,min=1,max=30"` // 文件名称
 }
 
@@ -45,13 +45,13 @@ type CommonCateListReq struct {
 
 // CommonCateAddReq 相册分类新增参数
 type CommonCateAddReq struct {
-	Pid  string `json:"pid" form:"pid" binding:"gte=0"`                  // 父级ID
+	Pid  string `json:"pid" form:"pid" binding:"gte=0"`                   // 父级ID
 	Name string `json:"name" form:"name" binding:"required,min=1,max=30"` // 分类名称
 }
 
 // CommonCateRenameReq 相册分类重命名参数
 type CommonCateRenameReq struct {
-	ID   string `json:"id" form:"id" binding:"required,gt=0"`           // 主键
+	ID   string `json:"id" form:"id" binding:"required,gt=0"`             // 主键
 	Name string `json:"name" form:"name" binding:"required,min=1,max=30"` // 分类名称
 }
 

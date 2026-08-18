@@ -4,9 +4,9 @@ import "github.com/adtkcn/x_null"
 
 // SystemAuthAdminListReq 管理员列表参数
 type SystemAuthAdminListReq struct {
-	Email    string `json:"email" form:"email"`    // 邮箱(账号)
+	Email    string `json:"email" form:"email"`       // 邮箱(账号)
 	Nickname string `json:"nickname" form:"nickname"` // 昵称
-	RoleId   string `json:"role_id" form:"role_id"`  // 角色ID(用于筛选)
+	RoleId   string `json:"role_id" form:"role_id"`   // 角色ID(用于筛选)
 }
 
 // SystemAuthAdminDetailReq 管理员详情参数
@@ -16,16 +16,16 @@ type SystemAuthAdminDetailReq struct {
 
 // SystemAuthAdminAddReq 管理员新增参数
 type SystemAuthAdminAddReq struct {
-	DeptId  string   `json:"dept_id" form:"dept_id" binding:""`  // 部门ID
-	PostId  string   `json:"post_id" form:"post_id" binding:""`  // 岗位ID
+	DeptId  string   `json:"dept_id" form:"dept_id" binding:""`   // 部门ID
+	PostId  string   `json:"post_id" form:"post_id" binding:""`   // 岗位ID
 	RoleIds []string `json:"role_ids" form:"role_ids" binding:""` // 角色ID列表
 
-	Email    string `json:"email" form:"email" binding:"required,min=5,max=200"`   // 邮箱(账号)
+	Email    string `json:"email" form:"email" binding:"required,min=5,max=200"`      // 邮箱(账号)
 	Nickname string `json:"nickname" form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Password string `json:"password" form:"password" binding:"required"`              // 密码
-	Avatar   string `json:"avatar" form:"avatar" binding:""`                        // 头像
+	Avatar   string `json:"avatar" form:"avatar" binding:""`                          // 头像
 
-	Sort      int   `json:"sort" form:"sort" binding:"gte=0"`           // 排序
+	Sort      int   `json:"sort" form:"sort" binding:"gte=0"`                 // 排序
 	IsDisable uint8 `json:"is_disable" form:"is_disable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
 
 }
@@ -38,16 +38,16 @@ type SystemAuthAdminTodayCountResp struct {
 
 // SystemAuthAdminEditReq 管理员编辑参数
 type SystemAuthAdminEditReq struct {
-	ID       string   `json:"id" form:"id" binding:"required"`                    // 主键
-	DeptId   string   `json:"dept_id" form:"dept_id" binding:""`                       // 部门ID
-	PostId   string   `json:"post_id" form:"post_id" binding:""`                       // 岗位ID
+	ID       string   `json:"id" form:"id" binding:"required"`                          // 主键
+	DeptId   string   `json:"dept_id" form:"dept_id" binding:""`                        // 部门ID
+	PostId   string   `json:"post_id" form:"post_id" binding:""`                        // 岗位ID
 	RoleIds  []string `json:"role_ids" form:"role_ids" binding:""`                      // 角色ID列表
-	Email    string   `json:"email" form:"email" binding:"required,min=5,max=200"`   // 邮箱(账号)
+	Email    string   `json:"email" form:"email" binding:"required,min=5,max=200"`      // 邮箱(账号)
 	Nickname string   `json:"nickname" form:"nickname" binding:"required,min=2,max=32"` // 昵称
 	Password string   `json:"password" form:"password"`                                 // 密码
-	Avatar   string   `json:"avatar" form:"avatar"`                                   // 头像
+	Avatar   string   `json:"avatar" form:"avatar"`                                     // 头像
 
-	Sort      int   `json:"sort" form:"sort" binding:"gte=0"`           // 排序
+	Sort      int   `json:"sort" form:"sort" binding:"gte=0"`                 // 排序
 	IsDisable uint8 `json:"is_disable" form:"is_disable" binding:"oneof=0 1"` // 是否禁用: [0=否, 1=是]
 }
 
@@ -59,11 +59,11 @@ type SystemAuthAdminSendEmailCodeReq struct {
 // SystemAuthAdminUpdateReq 管理员更新参数
 type SystemAuthAdminUpdateReq struct {
 	Nickname     string `json:"nickname" form:"nickname" binding:"required,min=2,max=32"` // 昵称
-	Avatar       string `json:"avatar" form:"avatar"`                                   // 头像
-	Email        string `json:"email" form:"email" binding:""`                         // 邮箱
-	EmailCode    string `json:"email_code" form:"email_code" binding:""`                    // 邮箱验证码（改邮箱时必填）
+	Avatar       string `json:"avatar" form:"avatar"`                                     // 头像
+	Email        string `json:"email" form:"email" binding:""`                            // 邮箱
+	EmailCode    string `json:"email_code" form:"email_code" binding:""`                  // 邮箱验证码（改邮箱时必填）
 	Password     string `json:"password" form:"password" binding:""`                      // 密码
-	CurrPassword string `json:"curr_password" form:"curr_password" binding:""`                 // 密码
+	CurrPassword string `json:"curr_password" form:"curr_password" binding:""`            // 密码
 }
 
 // SystemAuthAdminDelReq 管理员删除参数
