@@ -15,7 +15,7 @@
 账号：admin 密码：123456
     
 ## 文档
-- 开发部署文档：https://adtkcn.github.io/x_admin/
+- 开发部署文档：https://x.adtk.cn/x_admin/
 - 文档源码 : /docs
 
 
