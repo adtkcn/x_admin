@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"x_admin/app/middleware"
+	"x_admin/app/model/system_model"
 	"x_admin/app/schema/flow_schema"
 	"x_admin/app/service/flow_service"
 	"x_admin/app/service/notice_service"
@@ -83,6 +85,33 @@ func Start(ctx context.Context) {
 			core.Logger.Errorf("回写通知邮件状态失败: to=%s err=%v", task.To, err)
 		}
 		// 不返回 sendErr：避免队列无限重试，最终状态已落库
+		return nil
+	}, 3)
+
+	// 操作日志落库：由中间件投递，消费者在此写库，解耦请求与 DB 写入
+	core.Queue.Consume(ctx, middleware.QueueOperateLog, func(ctx context.Context, body []byte) error {
+		var payload middleware.OperateLogPayload
+		if err := json.Unmarshal(body, &payload); err != nil {
+			return err
+		}
+		log := system_model.SystemLogOperate{
+			AdminId:   payload.AdminId,
+			Type:      payload.Type,
+			Title:     payload.Title,
+			Ip:        payload.Ip,
+			Url:       payload.Url,
+			Method:    payload.Method,
+			Args:      payload.Args,
+			Error:     payload.Error,
+			Status:    payload.Status,
+			StartTime: util.NullTimeUtil.ParseTime(payload.StartTime),
+			EndTime:   util.NullTimeUtil.ParseTime(payload.EndTime),
+			TaskTime:  payload.TaskTime,
+		}
+		if err := core.GetDB().Create(&log).Error; err != nil {
+			core.Logger.Errorf("写入操作日志失败: %v", err)
+			return err
+		}
 		return nil
 	}, 3)
 }

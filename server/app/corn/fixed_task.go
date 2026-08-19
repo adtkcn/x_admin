@@ -11,18 +11,6 @@ import (
 	"x_admin/util"
 )
 
-// robfig/cron 基础使用示例
-//
-//	func init() {
-//		c := cron.New(cron.WithSeconds())
-//		c.AddFunc("*/5 * * * * *", func() {
-//			fmt.Println("定时任务：每5秒执行一次")
-//			core.Ws.SendToRoom("room1", []byte("hello room1"))
-//			core.Ws.SendToAll([]byte("hello all"))
-//		})
-//		// 启动定时任务
-//		c.Start()
-//	}
 var FixedTasks = NewCronManager()
 
 func init() {
@@ -32,16 +20,11 @@ func init() {
 
 	// 定时执行一次拉取定时任务
 	FixedTasks.AddTask("loadTasks", "40 * * * * *", corn_service.Task{
-
 		LockTTL:  0,
 		TaskCode: "loadTasks",
 		TaskDesc: "拉取定时任务",
 		TaskFunc: func() {
-			RunTaskList := loadTasks()
-			core.Logger.Debug("拉取到的任务数量: ", len(RunTaskList))
-			if err := DynamicTasks.AddTasksBeforeRemoveAll(RunTaskList); err != nil {
-				core.Logger.Error("添加任务失败", err)
-			}
+			loadTasks()
 		},
 	})
 

@@ -74,14 +74,14 @@
                     :border="'inner'"
                 >
                     <vxe-column type="seq" title="序号" min-width="60" />
-                    <vxe-column title="操作" field="title" min-width="120" />
+                    <vxe-column title="操作" field="title" width="160" />
                     <vxe-column title="管理员" field="email" min-width="120" />
                     <vxe-column title="访问链接" field="url" min-width="240">
                         <template #default="{ row }"> {{ row.type }}：{{ row.url }} </template>
                     </vxe-column>
                     <!-- <vxe-column title="访问方式" field="type" min-width="100" /> -->
                     <vxe-column title="来源IP" field="ip" min-width="160" />
-                    <vxe-column title="错误信息" field="error" min-width="200" />
+                    <vxe-column title="错误信息" field="error" width="100" />
                     <vxe-column title="耗时(毫秒)" field="task_time" min-width="100" />
                     <vxe-column title="日志时间" field="create_time" width="170" />
                 </vxe-table>

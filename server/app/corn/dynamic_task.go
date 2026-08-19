@@ -8,17 +8,18 @@ import (
 	"github.com/adtkcn/x_null"
 )
 
+// 动态任务管理器
 var DynamicTasks = NewCronManager()
 
 // 从数据库加载任务
-func loadTasks() []corn_service.RunTask {
+func loadTasks() {
 
 	allList, err := corn_service.SystemCornService.ListAll(schema.SystemCornListReq{
 		Status: x_null.NewInt64(1),
 	})
 	if err != nil {
 		core.Logger.Error("加载任务失败", err)
-		return nil
+		return
 	}
 
 	var RunTaskList = []corn_service.RunTask{} // 运行中的任务列表
@@ -40,7 +41,9 @@ func loadTasks() []corn_service.RunTask {
 			}
 		}
 	}
-	return RunTaskList
+	if err := DynamicTasks.AddTasksBeforeRemoveAll(RunTaskList); err != nil {
+		core.Logger.Error("添加任务失败", err)
+	}
 }
 
 func init() {

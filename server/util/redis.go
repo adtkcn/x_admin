@@ -150,6 +150,26 @@ func (ru redisUtil) Get(key string) string {
 	return res
 }
 
+// MGet 批量获取多个key的值,key 不存在时对应位置返回空串(不报错)。
+func (ru redisUtil) MGet(keys ...string) []string {
+	if len(keys) == 0 {
+		return []string{}
+	}
+	fullKeys := ru.toFullKeys(keys)
+	res, err := ru.redis.MGet(context.Background(), fullKeys...).Result()
+	if err != nil {
+		core.Logger.Errorf("redisUtil.MGet err: err=[%+v]", err)
+		return make([]string, len(keys))
+	}
+	vals := make([]string, len(res))
+	for i, v := range res {
+		if s, ok := v.(string); ok {
+			vals[i] = s
+		}
+	}
+	return vals
+}
+
 // SAdd 将数据放入set缓存
 func (ru redisUtil) SAdd(key string, values ...any) bool {
 	err := ru.redis.SAdd(context.Background(), config.RedisConfig.RedisPrefix+key, values...).Err()
@@ -183,6 +203,44 @@ func (ru redisUtil) HMSet(key string, value any, timeSec int) bool {
 		}
 	}
 	return true
+}
+
+// ValuesByPrefix 按前缀扫描并返回所有匹配的 key-value(使用 SCAN 游标遍历, 避免 KEYS 阻塞)。
+// 注意: prefix 为业务侧传入的 key(不含 RedisPrefix), 方法内部会自动拼接前缀后匹配。
+// 返回的 map 的 key 为去掉业务前缀后的剩余部分(便于调用方提取业务标识, 如 ip), value 为字符串值。
+func (ru redisUtil) ValuesByPrefix(prefix string) map[string]string {
+	ctx := context.Background()
+	fullPrefix := config.RedisConfig.RedisPrefix + prefix + ":"
+	result := map[string]string{}
+
+	// SCAN 游标
+	var cursor uint64
+	for {
+		keys, next, err := ru.redis.Scan(ctx, cursor, fullPrefix+"*", 100).Result()
+		if err != nil {
+			core.Logger.Errorf("redisUtil.ValuesByPrefix Scan err: err=[%+v]", err)
+			return result
+		}
+		// 本批 key 一次性批量获取(MGet),减少 Redis 往返次数
+		vals := ru.MGet(keys...)
+		for i, fullKey := range keys {
+			// MGet 中不存在的 key 返回空串(如已过期),跳过
+			if vals[i] == "" {
+				continue
+			}
+			// 去掉业务前缀
+			rest := fullKey
+			if len(rest) > len(prefix) {
+				rest = rest[len(fullPrefix):]
+			}
+			result[rest] = vals[i]
+		}
+		cursor = next
+		if cursor == 0 {
+			break
+		}
+	}
+	return result
 }
 
 // HGet 获取key中field域的值
@@ -279,10 +337,15 @@ func (ru redisUtil) DelByPrefix(match string) int64 {
 	return deleted
 }
 
-// toFullKeys 为keys批量增加前缀
+// toFullKeys 为keys批量增加前缀(若key已包含前缀则不再重复添加)
 func (ru redisUtil) toFullKeys(keys []string) (fullKeys []string) {
+	prefix := config.RedisConfig.RedisPrefix
 	for _, k := range keys {
-		fullKeys = append(fullKeys, config.RedisConfig.RedisPrefix+k)
+		if prefix != "" && strings.HasPrefix(k, prefix) {
+			fullKeys = append(fullKeys, k)
+			continue
+		}
+		fullKeys = append(fullKeys, prefix+k)
 	}
 	return
 }

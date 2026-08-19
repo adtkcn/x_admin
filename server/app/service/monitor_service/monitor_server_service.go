@@ -1,6 +1,8 @@
 package monitor_service
 
 import (
+	"encoding/json"
+	"errors"
 	"time"
 	"x_admin/core"
 	"x_admin/util"
@@ -15,7 +17,7 @@ func NewMonitorServerService() *monitorServerService {
 	return &monitorServerService{
 		db: core.GetDB(),
 		CacheUtil: util.CacheUtil{
-			Name: "monitorServer",
+			Name: "{monitorServer}",
 		},
 	}
 }
@@ -40,41 +42,40 @@ func (service *monitorServerService) CollectAndPushServerInfo() error {
 		"timestamp": time.Now().Unix(),
 	}
 
-	service.CacheUtil.SetCache(computerIp, serverInfo)
-	// 注意：此处不要对 :ips 集合设置过期。定时任务每次刷新都会重新 SAdd/Expire，
-	// 只要服务在跑，TTL 会持续被续期而永不过期，等同未设置；
-	// 且 SAdd 相同 ip 成员会被 set 去重，集合成员数恒定（=机器数），不会无限增长。
-	util.RedisUtil.SAdd(service.CacheUtil.Name+":ips", computerIp)
+	// 通过 CacheUtil 写入单台机器的监控信息,移除旧的独立 :ips 集合。
+	if !service.CacheUtil.SetCache(computerIp, serverInfo) {
+		return errors.New("写入服务器监控信息失败")
+	}
 	return nil
 }
 
 // GetServerInfoFromRedis 从Redis获取服务器信息
-func (service *monitorServerService) GetServerInfoFromRedis(computerIp string) (map[string]any, error) {
-	data := map[string]any{}
-	err := service.CacheUtil.GetCache(computerIp, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
+// func (service *monitorServerService) GetServerInfoFromRedis(computerIp string) (map[string]any, error) {
+// 	data := map[string]any{}
+// 	if err := service.CacheUtil.GetCache(computerIp, &data); err != nil {
+// 		return nil, err
+// 	}
+// 	return data, nil
+// }
 
 // GetAllServerLatestInfo 获取所有服务器最新信息
 func (service *monitorServerService) GetAllServerLatestInfo() (map[string]map[string]any, error) {
 
-	ips := util.RedisUtil.SGet(service.CacheUtil.Name + ":ips")
+	// 通过 Hash Tag 前缀扫描得到所有机器的监控数据,不再依赖独立 :ips 集合。
+	all := util.RedisUtil.ValuesByPrefix(service.CacheUtil.Name)
 
 	serverInfos := make(map[string]map[string]any)
 
-	for _, computerIp := range ips {
+	for computerIp, raw := range all {
 
-		// 获取最新的服务器信息
-		info, err := service.GetServerInfoFromRedis(computerIp)
-		if err != nil {
-			core.Logger.Errorf("获取服务器 %s 的监控信息失败: %v", computerIp, err)
+		// 直接解析 ValuesByPrefix 已返回的 JSON,避免重复查询 Redis
+		data := map[string]any{}
+		if err := json.Unmarshal([]byte(raw), &data); err != nil {
+			core.Logger.Errorf("解析服务器 %s 的监控信息失败: %v", computerIp, err)
 			continue
 		}
 
-		serverInfos[computerIp] = info
+		serverInfos[computerIp] = data
 	}
 
 	return serverInfos, nil

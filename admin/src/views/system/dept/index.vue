@@ -13,7 +13,7 @@
             <vxe-table
                 ref="tableRef"
                 class="mt-4"
-                :loading="loading"
+                v-loading="loading"
                 :data="lists"
                 :row-config="{ keyField: 'id' }"
                 :tree-config="{ childrenField: 'children', rowField: 'id' }"
@@ -22,15 +22,15 @@
                 <vxe-column title="部门名称" field="name" min-width="150" show-overflow tree-node />
                 <vxe-column title="负责人" field="duty" show-overflow />
 
-                <vxe-column title="部门状态" field="is_stop" min-width="100">
+                <vxe-column title="部门状态" field="is_stop" width="100">
                     <template #default="{ row }">
                         <el-tag class="ml-2" :type="row.is_stop ? 'danger' : 'primary'">
                             {{ row.is_stop ? '停用' : '正常' }}
                         </el-tag>
                     </template>
                 </vxe-column>
-                <vxe-column title="排序" field="sort" min-width="100" />
-                <vxe-column title="更新时间" field="update_time" min-width="180" />
+                <vxe-column title="排序" field="sort" width="100" />
+                <vxe-column title="更新时间" field="update_time" width="180" />
                 <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
                         <el-button

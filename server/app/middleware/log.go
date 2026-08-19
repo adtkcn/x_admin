@@ -1,18 +1,17 @@
 package middleware
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/url"
 	"strings"
 	"time"
-	"x_admin/app/model/system_model"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
-	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"go.uber.org/zap"
 )
 
@@ -23,6 +22,9 @@ const (
 	RequestFile    requestType = "file"    // 文件类型
 	RequestDefault requestType = "default" // 默认数据类型
 )
+
+// QueueOperateLog 操作日志队列名，消费者见 app/task
+const QueueOperateLog = "operate_log"
 
 // RecordLog 记录系统日志信息中间件
 func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
@@ -61,17 +63,9 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				args = strings.Join(filenames, ",")
 			} else {
 				//默认类型
-				var formParams map[string]any
-				err := c.ShouldBindBodyWith(&formParams, binding.JSON)
-				if err == nil {
-					val, err := util.ToolsUtil.ObjToJson(&formParams)
-					// 校验错误
-					if response.IsFailWithResp(c, response.CheckErr(err, "RecordLog POST Marshal err")) {
-						c.Abort()
-						return
-					}
-					args = val
-				}
+				body, _ := io.ReadAll(c.Request.Body)
+				c.Request.Body = io.NopCloser(bytes.NewReader(body))
+				args = string(body)
 			}
 		case "GET":
 			// GET请求
@@ -80,35 +74,44 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				args, _ = url.QueryUnescape(query)
 			}
 		}
+
+		// 写入操作日志（投递到 Redis 队列，由后台消费者落库，避免阻塞主请求）
+		writeLog := func() {
+			// 结束时间
+			endTime := time.Now()
+			// 执行时间(毫秒)
+			taskTime := endTime.UnixMilli() - startTime.UnixMilli()
+			// 获取当前的用户
+			adminId := config.AdminConfig.GetAdminId(c)
+			urlPath := c.Request.URL.Path
+			ip := c.ClientIP()
+			method := c.HandlerName()
+			payload := OperateLogPayload{
+				AdminId:   adminId,
+				Type:      reqMethod,
+				Title:     title,
+				Ip:        ip,
+				Url:       urlPath,
+				Method:    method,
+				Args:      args,
+				Error:     errStr,
+				Status:    status,
+				StartTime: startTime,
+				EndTime:   endTime,
+				TaskTime:  taskTime,
+			}
+			if err := core.Queue.Enqueue(QueueOperateLog, payload); err != nil {
+				core.Logger.Errorf("RecordLog Enqueue err: %v", err)
+			}
+		}
+
 		// 处理异常
 		defer func() {
 			if r := recover(); r != nil {
 				errStr = fmt.Sprintf("%+v", r)
 				status = 2
-				// 结束时间
-				endTime := time.Now()
-				// 执行时间(毫秒)
-				taskTime := endTime.UnixMilli() - startTime.UnixMilli()
-				// 获取当前的用户
-				adminId := config.AdminConfig.GetAdminId(c)
-				urlPath := c.Request.URL.Path
-				ip := c.ClientIP()
-				method := c.HandlerName()
-				err := core.GetDB().Create(&system_model.SystemLogOperate{
-					AdminId:   adminId,
-					Type:      reqMethod,
-					Title:     title,
-					Ip:        ip,
-					Url:       urlPath,
-					Method:    method,
-					Args:      args,
-					Error:     errStr,
-					Status:    status,
-					StartTime: util.NullTimeUtil.ParseTime(startTime),
-					EndTime:   util.NullTimeUtil.ParseTime(endTime),
-					TaskTime:  taskTime,
-				}).Error
-				response.CheckErr(err, "RecordLog recover Create err")
+				// 记录失败日志后继续抛出
+				writeLog()
 				core.Logger.WithOptions(zap.AddCallerSkip(2)).Infof(
 					"RecordLog recover: err=[%+v]", r)
 				panic(r)
@@ -116,36 +119,28 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		}()
 		// 执行方法
 		c.Next()
-		// if config.AppConfig.GinMode == "debug" {
-		// 	return
-		// }
 		if len(c.Errors) > 0 {
 			errStr = c.Errors.String()
 			status = 2
 		}
-		// 结束时间
-		endTime := time.Now()
-		// 执行时间(毫秒)
-		taskTime := endTime.UnixMilli() - startTime.UnixMilli()
-		// 获取当前的用户
-		adminId := config.AdminConfig.GetAdminId(c)
-		urlPath := c.Request.URL.Path
-		ip := c.ClientIP()
-		method := c.HandlerName()
-		err := core.GetDB().Create(&system_model.SystemLogOperate{
-			AdminId:   adminId,
-			Type:      reqMethod,
-			Title:     title,
-			Ip:        ip,
-			Url:       urlPath,
-			Method:    method,
-			Args:      args,
-			Error:     errStr,
-			Status:    status,
-			StartTime: util.NullTimeUtil.ParseTime(startTime),
-			EndTime:   util.NullTimeUtil.ParseTime(endTime),
-			TaskTime:  taskTime,
-		}).Error
-		response.CheckErr(err, "RecordLog Create err")
+		// 写入操作日志
+		writeLog()
 	}
+}
+
+// OperateLogPayload 操作日志队列载荷，仅承载可 JSON 序列化的基础字段，
+// 消费者侧再转换为 system_model.SystemLogOperate 落库。
+type OperateLogPayload struct {
+	AdminId   string
+	Type      string
+	Title     string
+	Ip        string
+	Url       string
+	Method    string
+	Args      string
+	Error     string
+	Status    uint8
+	StartTime time.Time
+	EndTime   time.Time
+	TaskTime  int64
 }

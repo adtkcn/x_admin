@@ -43,7 +43,7 @@ func {{{ toUpperCamelCase .ModuleName }}}Route(rg *gin.RouterGroup) {
 	r.POST("/{{{ .ModuleName }}}/del_batch", middleware.RecordLog("{{{ .FunctionName }}}删除-批量"), handle.DelBatch)
 
 	r.GET("/{{{ .ModuleName }}}/export_file", middleware.RecordLog("{{{ .FunctionName }}}导出"), handle.ExportFile)
-	r.POST("/{{{ .ModuleName }}}/import_file",  handle.ImportFile)
+	r.POST("/{{{ .ModuleName }}}/import_file", middleware.RecordLog("{{{ .FunctionName }}}导入"),  handle.ImportFile)
 }
 func init() {
 	routeHandlers = append(routeHandlers, {{{ toUpperCamelCase .ModuleName }}}Route)

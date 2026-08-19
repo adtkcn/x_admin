@@ -11,15 +11,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// initCaptchaRoute 验证码路由
-func initCaptchaRoute(api *gin.RouterGroup) {
+// captchaRoute 验证码路由
+func captchaRoute(api *gin.RouterGroup) {
 	handleCaptcha := common_controller.CaptchaHandler{}
-	captchaRg := api.Group("/common/captcha")
-	captchaRg.POST("/get", handleCaptcha.Get)
-	captchaRg.POST("/check", handleCaptcha.Check)
+
+	api.POST("/common/captcha/get", handleCaptcha.Get)
+	api.POST("/common/captcha/check", handleCaptcha.Check)
 }
 
-func wsHandler(api *gin.RouterGroup) {
+func wsRoute(api *gin.RouterGroup) {
 	api.GET("/ws", middleware.LoginAuth(), controller.WsHandler)
 }
 
@@ -31,8 +31,8 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	// 设置中间件
 	rootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
 
-	initCaptchaRoute(api)
-	wsHandler(api)
+	captchaRoute(api)
+	wsRoute(api)
 	adminGroup := api.Group("/admin")
 	{
 		// /api/admin
