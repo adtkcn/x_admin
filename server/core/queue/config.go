@@ -43,7 +43,7 @@ func New(cfg Config, redisClient *redis.Client) (Queue, error) {
 			prefix = DefaultPrefix
 		}
 
-		return newRedisBackend(redisClient, cfg.Prefix), nil
+		return newRedisBackend(redisClient, prefix), nil // 已应用 default 后的 prefix，避免传空
 	default:
 		return nil, fmt.Errorf("queue: unknown backend %q", cfg.Backend)
 	}

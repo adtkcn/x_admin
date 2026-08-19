@@ -127,6 +127,11 @@ func shutdown(server *http.Server) {
 			core.Logger.Errorf("队列关闭失败: %v", err)
 		}
 	}
+	if core.QueueDelay != nil {
+		if err := core.QueueDelay.Close(); err != nil {
+			core.Logger.Errorf("延迟队列关闭失败: %v", err)
+		}
+	}
 
 	// 4) 关闭 Redis 连接。
 	if core.Redis != nil {

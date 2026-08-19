@@ -4,87 +4,114 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 )
 
-// redisBackend 基于 Redis List 的跨实例工作队列（RPUSH 投递 / BRPOP 阻塞消费）。
-// 适合多实例部署：任意实例投递的任务可被任一实例的 worker 取到。
+// redisBackend 基于 Redis List 的跨实例工作队列（RPUSH/BRPOP）。
 type redisBackend struct {
 	client *redis.Client
 	prefix string
+
+	// stopCh：关闭后停止取新消息（已在途的仍处理完）。由 Close() 关闭。
+	stopCh chan struct{}
+	// wg：统计已取出未处理完的消息数，Close() 等待其归零。
+	wg sync.WaitGroup
+	// closeOnce：保证 stopCh 只关闭一次。
+	closeOnce sync.Once
 }
 
 func newRedisBackend(client *redis.Client, prefix string) *redisBackend {
-	return &redisBackend{client: client, prefix: prefix}
+	return &redisBackend{
+		client: client,
+		prefix: prefix,
+		stopCh: make(chan struct{}),
+	}
 }
 
 func (b *redisBackend) key(name string) string {
 	return b.prefix + name
 }
 
-// Enqueue 使用 RPUSH 将消息追加到队列尾部。
+// Enqueue 将消息追加到队列尾部。入队动作本身计入 wg（推前 Add，写成功后 Done），保证入队正常完成。
 func (b *redisBackend) Enqueue(name string, payload any) error {
 	byte, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
+	b.wg.Add(1)
+	defer b.wg.Done()
 	return b.client.RPush(context.Background(), b.key(name), byte).Err()
 }
 
-// Consume 单连接 BRPOP 取消息，投入有界 channel（cap=concurrency），
-// 再由 concurrency 个 worker 并发处理。
-//
-// 对比原生多连接方案：取与处理解耦，仅占用 1 条 Redis 连接（而非 concurrency 条），
-// 在保持相同并发能力与背压语义（channel 满即阻塞取消息协程）的前提下大幅减少连接数；
-// Redis 保证同一消息只被一个 worker 取到。ctx 取消后先停止取消息，再 drain 在途任务优雅退出。
+// Consume 单连接 BRPOP 取消息 → 有界 channel(cap=concurrency) → worker 池并发处理。
+// 仅占用 1 条 Redis 连接；ctx 取消或 Close() 只停止取新，已在途消息必处理完（wg.Wait）。
 func (b *redisBackend) Consume(ctx context.Context, name string, handler Handler, concurrency int) error {
 	if concurrency <= 0 {
 		concurrency = 1
 	}
 	key := b.key(name)
 
-	// 有界 channel：容量=并发数，满了则阻塞取消息协程，天然提供背压，避免内存无限堆积。
+	// 有界 channel 提供背压：满则阻塞取消息协程。
 	ch := make(chan []byte, concurrency)
 
-	// worker 池：从 channel 取消息并发处理
+	// worker 池：并发处理；handler panic 不影响其他 worker；处理完才 wg.Done（不受 ctx 打断）。
 	for i := 0; i < concurrency; i++ {
 		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Printf("[queue:redis] worker of %q panicked: %v", name, r)
+				}
+			}()
 			for body := range ch {
 				if err := handler(ctx, body); err != nil {
 					log.Printf("[queue:redis] handle message from %q failed: %v", name, err)
 				}
+				b.wg.Done()
 			}
 		}()
 	}
 
-	// 单连接取消息协程：BRPOP 阻塞拉取，取到即投入有界 channel
+	// 取消息协程：BRPOP 阻塞拉取；ctx 取消或 stopCh 关闭即停取（仅停取，不丢在途）。
 	go func() {
 		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-b.stopCh:
+				return
+			default:
+			}
 			res, err := b.client.BRPop(ctx, 0, key).Result()
 			if err != nil {
-				if ctx.Err() != nil {
-					// ctx 取消：关闭 channel，通知 worker 退出（drain 在途任务）
-					close(ch)
+				select {
+				case <-ctx.Done():
 					return
+				case <-b.stopCh:
+					return
+				default:
+					time.Sleep(100 * time.Millisecond) // 网络抖动退避
+					continue
 				}
-				// 网络抖动：短暂退避后重试，避免 CPU 空转
-				time.Sleep(100 * time.Millisecond)
-				continue
 			}
 			if len(res) < 2 {
 				continue
 			}
-			// channel 满时此处阻塞，自动背压；ctx 取消后 range 结束，worker 退出
-			ch <- []byte(res[1])
+			b.wg.Add(1)
+			ch <- []byte(res[1]) // 取出即计入在途，保证被处理
 		}
 	}()
 
 	return nil
 }
 
-// Close Redis 客户端由 core 统一管理，这里不主动关闭共享连接。
+// Close 优雅关闭：停取新消息，并阻塞等待已在途消息全部处理完（wg.Wait）。客户端由 core 管理，不在此关闭。
 func (b *redisBackend) Close() error {
+	b.closeOnce.Do(func() {
+		close(b.stopCh)
+	})
+	b.wg.Wait()
 	return nil
 }
