@@ -1,51 +1,48 @@
 module x_admin
 
-go 1.26.0
-
-require (
-	github.com/gin-contrib/cors v1.7.7
-	github.com/gin-gonic/gin v1.12.0
-	github.com/go-playground/locales v0.14.1
-	github.com/go-playground/universal-translator v0.18.1
-	github.com/go-playground/validator/v10 v10.30.1
-	github.com/go-sql-driver/mysql v1.9.3
-	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/google/uuid v1.6.0
-	github.com/jinzhu/copier v0.4.0
-	github.com/shirou/gopsutil v3.21.11+incompatible
-	github.com/spf13/viper v1.21.0
-	github.com/swaggo/swag v1.16.6
-	github.com/ua-parser/uap-go v0.0.0-20250917011043-9c86a9b0f8f0
-	github.com/xuri/excelize/v2 v2.10.1
-	go.uber.org/zap v1.28.0
-	golang.org/x/image v0.38.0
-	gorm.io/driver/mysql v1.6.0
-	gorm.io/gorm v1.31.1
-	gorm.io/plugin/soft_delete v1.2.1
-)
+go 1.27.0
 
 // replace github.com/adtkcn/x_null => ../../x_null
 
 require (
 	github.com/ArtisanCloud/PowerWeChat/v3 v3.4.41
+	github.com/SeriousBug/webp-go-pure v1.2.0
 	github.com/adtkcn/x_null v0.0.2
 	github.com/aws/aws-sdk-go-v2 v1.42.1
 	github.com/aws/aws-sdk-go-v2/config v1.32.29
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.28
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.105.0
 	github.com/duke-git/lancet/v2 v2.3.9
+	github.com/gin-contrib/cors v1.7.7
+	github.com/gin-gonic/gin v1.12.0
+	github.com/go-playground/locales v0.14.1
+	github.com/go-playground/universal-translator v0.18.1
+	github.com/go-playground/validator/v10 v10.30.1
+	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gorilla/websocket v1.5.3
 	github.com/influxdata/influxdb1-client v0.0.0-20220302092344-a9ab5670611c
+	github.com/jinzhu/copier v0.4.0
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20251113013923-bd30b77d5468
 	github.com/redis/go-redis/v9 v9.20.1
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/shirou/gopsutil v3.21.11+incompatible
+	github.com/spf13/viper v1.21.0
+	github.com/swaggo/swag v1.16.6
+	github.com/ua-parser/uap-go v0.0.0-20250917011043-9c86a9b0f8f0
 	github.com/wneessen/go-mail v0.7.2
+	github.com/xuri/excelize/v2 v2.10.1
 	go.uber.org/ratelimit v0.3.1
+	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.53.0
+	golang.org/x/image v0.38.0
 	golang.org/x/sync v0.21.0
 	golang.org/x/text v0.38.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	gorm.io/driver/mysql v1.6.0
+	gorm.io/gorm v1.31.1
+	gorm.io/plugin/soft_delete v1.2.1
 )
 
 require (
@@ -53,7 +50,6 @@ require (
 	github.com/ArtisanCloud/PowerLibs/v3 v3.3.2 // indirect
 	github.com/ArtisanCloud/PowerSocialite/v3 v3.0.10 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/SeriousBug/webp-go-pure v1.2.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30 // indirect

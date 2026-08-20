@@ -12,7 +12,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/google/uuid"
+	"uuid"
 )
 
 var (
@@ -40,10 +40,7 @@ func (tu toolsUtil) RandomString(length int) string {
 
 // MakeUuidV7 制作UUID v7
 func (tu toolsUtil) MakeUuidV7() string {
-	v7, err := uuid.NewV7()
-	if err != nil {
-		return ""
-	}
+	v7 := uuid.NewV7()
 	return v7.String()
 }
 

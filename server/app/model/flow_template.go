@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/adtkcn/x_null"
-	"github.com/google/uuid"
+	"uuid"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
 )
@@ -25,10 +25,7 @@ type FlowTemplate struct {
 
 // 自动在创建时设置 UUIDv7
 func (u *FlowTemplate) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	u.Id = id.String()
 	return nil
 }

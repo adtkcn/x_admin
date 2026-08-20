@@ -2,7 +2,7 @@ package common_model
 
 import (
 	"github.com/adtkcn/x_null"
-	"github.com/google/uuid"
+	"uuid"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
 )
@@ -23,10 +23,7 @@ type Album struct {
 
 // 自动在创建时设置 UUIDv7
 func (u *Album) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	u.ID = id.String()
 	return nil
 }
@@ -45,10 +42,7 @@ type AlbumCate struct {
 
 // 自动在创建时设置 UUIDv7
 func (u *AlbumCate) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	u.ID = id.String()
 	return nil
 }

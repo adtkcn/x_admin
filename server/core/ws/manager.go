@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
+	"uuid"
 	"github.com/redis/go-redis/v9"
 
 	"x_admin/core/pubsub"
@@ -72,7 +72,7 @@ func (m *Manager) Init(em pubsub.Emitter, rdb *redis.Client, prefix string) {
 	m.emitter = em
 	m.redisClient = rdb
 	m.prefix = prefix
-	m.nodeID = uuid.NewString()
+	m.nodeID = uuid.New().String()
 
 	// 按业务消息类型订阅事件，收到后反序列化并分发到本地连接
 	m.subscribeEvents()

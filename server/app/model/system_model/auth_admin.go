@@ -2,7 +2,7 @@ package system_model
 
 import (
 	"github.com/adtkcn/x_null"
-	"github.com/google/uuid"
+	"uuid"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
 )
@@ -31,10 +31,7 @@ type SystemAuthAdmin struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemAuthAdmin) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }

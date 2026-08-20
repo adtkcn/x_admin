@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/adtkcn/x_null"
-	"github.com/google/uuid"
+	"uuid"
 	"gorm.io/gorm"
 )
 
@@ -28,10 +28,7 @@ func (m *SystemNotice) TableName() string {
 }
 
 func (m *SystemNotice) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -51,10 +48,7 @@ func (m *SystemNoticeSetting) TableName() string {
 }
 
 func (m *SystemNoticeSetting) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }

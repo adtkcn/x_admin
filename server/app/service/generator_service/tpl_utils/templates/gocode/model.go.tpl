@@ -3,7 +3,7 @@ import (
     "x_admin/app/model/system_model"
     "github.com/adtkcn/x_null"
     
-    "github.com/google/uuid"
+    "uuid"
     "gorm.io/gorm"
 	
 	"gorm.io/plugin/soft_delete"
@@ -32,10 +32,7 @@ type {{{ toUpperCamelCase .EntityName }}} struct {
 // 自动在创建时设置 UUIDv7
 func (u *{{{ toUpperCamelCase .EntityName }}}) BeforeCreate(tx *gorm.DB) error {
     if u.{{{.PrimaryGoField }}} == "" {
-        id, err := uuid.NewV7()
-        if err != nil {
-            return err
-        }
+        id := uuid.NewV7()
         u.{{{.PrimaryGoField }}} = id.String()
     }
 	return nil

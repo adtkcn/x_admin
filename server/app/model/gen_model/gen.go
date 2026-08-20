@@ -2,7 +2,7 @@ package gen_model
 
 import (
 	"github.com/adtkcn/x_null"
-	"github.com/google/uuid"
+	"uuid"
 	"gorm.io/gorm"
 )
 
@@ -29,10 +29,7 @@ type GenTable struct {
 
 // 自动在创建时设置 UUIDv7
 func (m *GenTable) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -65,10 +62,7 @@ type GenTableColumn struct {
 
 // 自动在创建时设置 UUIDv7
 func (m *GenTableColumn) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }

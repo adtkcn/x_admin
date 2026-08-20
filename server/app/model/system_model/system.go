@@ -2,7 +2,7 @@ package system_model
 
 import (
 	"github.com/adtkcn/x_null"
-	"github.com/google/uuid"
+	"uuid"
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
 )
@@ -19,10 +19,7 @@ type SystemConfig struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemConfig) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -49,10 +46,7 @@ type SystemAuthMenu struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemAuthMenu) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -66,10 +60,7 @@ type SystemAuthPerm struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemAuthPerm) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -87,10 +78,7 @@ type SystemAuthRole struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemAuthRole) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -113,10 +101,7 @@ type SystemAuthDept struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemAuthDept) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -137,10 +122,7 @@ type SystemAuthPost struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemAuthPost) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -159,10 +141,7 @@ type SystemLogLogin struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemLogLogin) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
@@ -187,10 +166,7 @@ type SystemLogOperate struct {
 
 // BeforeCreate 在创建前生成UUIDv7
 func (m *SystemLogOperate) BeforeCreate(tx *gorm.DB) (err error) {
-	id, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
+	id := uuid.NewV7()
 	m.ID = id.String()
 	return nil
 }
