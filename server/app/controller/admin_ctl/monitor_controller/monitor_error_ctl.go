@@ -1,7 +1,7 @@
 package monitor_controller
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"net/http"
 	"net/url"
 	"strings"

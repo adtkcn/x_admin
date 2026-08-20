@@ -2,7 +2,7 @@ package user_service
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"x_admin/app/model/user_model"
 	"x_admin/app/schema/user_schema"

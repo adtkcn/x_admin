@@ -6,7 +6,7 @@
 // 订阅时按类型 On 并反序列化载荷。
 package ws
 
-import "encoding/json"
+import "encoding/json/jsontext"
 
 // WsMessageType WebSocket 业务消息类型，决定接收端的分发逻辑。
 // 属于 ws 业务语义，故定义在 ws 包而非 pubsub 包。
@@ -34,8 +34,8 @@ type WsMessage struct {
 	Type WsMessageType `json:"type"`
 	// Target 推送目标标识：uid（user 类型）或 roomID（room 类型），all 类型时为空字符串
 	Target string `json:"target"`
-	// Data 序列化后的消息体
-	Data json.RawMessage `json:"data"`
+	// Data 序列化后的消息体（保留原始 JSON 文本，v2 下用 jsontext.Value 等价 RawMessage）
+	Data jsontext.Value `json:"data"`
 	// NodeID 发送节点的唯一标识，用于调试和追踪
 	NodeID string `json:"node_id"`
 }

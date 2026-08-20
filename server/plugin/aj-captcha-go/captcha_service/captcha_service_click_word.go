@@ -1,7 +1,7 @@
 package captcha_service
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"image/color"

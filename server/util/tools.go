@@ -3,7 +3,7 @@ package util
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"math"
 	"math/rand"

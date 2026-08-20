@@ -1,7 +1,7 @@
 package monitor_service
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"time"
 	"x_admin/core"

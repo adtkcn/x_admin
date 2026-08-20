@@ -1,7 +1,7 @@
 package convert_util
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"strconv"
 

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"log"
 	"net/http"
 	"x_admin/config"

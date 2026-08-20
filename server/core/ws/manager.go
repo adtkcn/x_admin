@@ -2,12 +2,13 @@ package ws
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"log"
 	"sync"
 	"time"
 
 	"uuid"
+
 	"github.com/redis/go-redis/v9"
 
 	"x_admin/core/pubsub"

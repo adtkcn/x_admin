@@ -3,7 +3,7 @@ package common_service
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -199,7 +199,7 @@ func (gt *geTuiService) doAuthRequest() (string, error) {
 			Token      string `json:"token"`
 		} `json:"data"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.UnmarshalRead(resp.Body, &result); err != nil {
 		return "", fmt.Errorf("解析响应失败: %v", err)
 	}
 	if result.Code != 0 {
@@ -374,7 +374,7 @@ func (gt *geTuiService) PushToSingleBatchCID(messages []PushMessage) ([]PushResp
 				Data any    `json:"data"`
 			}
 
-			if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+			if err := json.UnmarshalRead(resp.Body, &result); err != nil {
 				results[index] = PushResponse{
 					Success: false,
 					Message: fmt.Sprintf("解析响应失败: %v", err),

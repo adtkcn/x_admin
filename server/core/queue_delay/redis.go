@@ -2,7 +2,7 @@ package queue_delay
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"log"
 	"sync"
 	"time"

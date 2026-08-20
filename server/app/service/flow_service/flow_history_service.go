@@ -2,7 +2,7 @@ package flow_service
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"net/http"
@@ -837,12 +837,6 @@ func toFloat64(formValue any, value string) (fv, vv float64, ok bool) {
 		return float64(n), vv, true
 	case int:
 		return float64(n), vv, true
-	case json.Number:
-		f, err := n.Float64()
-		if err != nil {
-			return 0, 0, false
-		}
-		return f, vv, true
 	case string:
 		f, err := strconv.ParseFloat(n, 64)
 		if err != nil {

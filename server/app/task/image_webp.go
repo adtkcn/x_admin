@@ -3,7 +3,7 @@ package task
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"path"
 	"strings"
