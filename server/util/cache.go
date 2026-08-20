@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -27,9 +28,7 @@ func (c CacheUtil) GetCache(field string, obj any) error {
 	if str == "" {
 		return errors.New("获取缓存失败")
 	}
-	err := ToolsUtil.JsonToObj(str, &obj)
-
-	if err != nil {
+	if err := json.Unmarshal([]byte(str), obj); err != nil {
 		return errors.New("解析缓存失败")
 	}
 	return nil

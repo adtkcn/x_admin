@@ -42,8 +42,8 @@ func auth(c *gin.Context) response.RespType {
 		adminUser = user
 		tokenVersion = user.TokenVersion
 	} else {
-		var cached system_service.AdminCache
-		if err := util.ToolsUtil.JsonToObj(userStr, &cached); err != nil {
+		cached, err := util.ToolsUtil.JsonToObj[system_service.AdminCache](userStr)
+		if err != nil {
 			core.Logger.Errorf("auth Unmarshal err: err=[%+v]", err)
 			return response.SystemError
 		}

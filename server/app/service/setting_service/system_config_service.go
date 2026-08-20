@@ -54,7 +54,7 @@ func (cu systemConfigService) GetMap(db *gorm.DB, cnfType string, name string) (
 	if val == "" {
 		return map[string]string{}, nil
 	}
-	err = util.ToolsUtil.JsonToObj(val, &data)
+	data, err = util.ToolsUtil.JsonToObj[map[string]string](val)
 	return data, err
 }
 

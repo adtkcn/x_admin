@@ -23,7 +23,7 @@ var TemplateUtil = templateUtil{
 			"toSnakeCase":      util.StringUtil.ToSnakeCase,
 			"toCamelCase":      util.StringUtil.ToCamelCase,
 			"toUpperCamelCase": util.StringUtil.ToUpperCamelCase,
-			"contains":         util.ToolsUtil.Contains,
+			"contains":         util.ToolsUtil.Contains[string],
 			// "goToTsType":       GenUtil.GoToTsType,
 			// "goToParamType":     GenUtil.GoToParamType,
 

@@ -85,7 +85,7 @@ func (iSrv indexService) Config() (res map[string]any, e error) {
 	const cacheKey = "Index:Config"
 	// 先读缓存(10秒)
 	if cacheStr := util.RedisUtil.Get(cacheKey); cacheStr != "" {
-		if e = util.ToolsUtil.JsonToObj(cacheStr, &res); e != nil {
+		if res, e = util.ToolsUtil.JsonToObj[map[string]any](cacheStr); e != nil {
 			core.Logger.Errorf("Config cache JsonToObj err: %v", e)
 		} else {
 			return res, nil
@@ -97,7 +97,8 @@ func (iSrv indexService) Config() (res map[string]any, e error) {
 	}
 	var copyright []map[string]string
 	if copyrightStr := website["copyright"]; copyrightStr != "" {
-		if e = response.CheckErr(util.ToolsUtil.JsonToObj(copyrightStr, &copyright), "Config JsonToObj err"); e != nil {
+		if copyright, e = util.ToolsUtil.JsonToObj[[]map[string]string](copyrightStr); e != nil {
+			e = response.CheckErr(e, "Config JsonToObj err")
 			return
 		}
 	} else {

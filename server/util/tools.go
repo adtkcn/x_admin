@@ -64,13 +64,9 @@ func (tu toolsUtil) GetFileMD5(file *multipart.FileHeader) (string, error) {
 	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
-// Contains 判断src是否包含elem元素
-func (tu toolsUtil) Contains(list []string, elem string) bool {
-	if slices.Contains(list, elem) {
-		return true
-	} else {
-		return false
-	}
+// Contains 判断list是否包含elem元素（支持任意可比较类型）
+func (tu toolsUtil) Contains[T comparable](list []T, elem T) bool {
+	return slices.Contains(list, elem)
 }
 
 // Round float四舍五入
@@ -80,8 +76,9 @@ func (tu toolsUtil) Round(val float64, n int) float64 {
 }
 
 // JsonToObj JSON转Obj
-func (tu toolsUtil) JsonToObj(jsonStr string, toVal any) (err error) {
-	return json.Unmarshal([]byte(jsonStr), &toVal)
+func (tu toolsUtil) JsonToObj[T any](jsonStr string) (t T, err error) {
+	err = json.Unmarshal([]byte(jsonStr), &t)
+	return t, err
 }
 
 // ObjToJson Obj转JSON

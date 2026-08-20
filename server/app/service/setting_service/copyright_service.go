@@ -34,7 +34,8 @@ func (cSrv settingCopyrightService) Detail() (res []map[string]any, e error) {
 	if e = response.CheckErr(err, "Detail GetVal err"); e != nil {
 		return
 	}
-	e = response.CheckErr(util.ToolsUtil.JsonToObj(data, &res), "Detail JsonToObj err")
+	res, e = util.ToolsUtil.JsonToObj[[]map[string]any](data)
+	e = response.CheckErr(e, "Detail JsonToObj err")
 	return
 }
 
