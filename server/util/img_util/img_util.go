@@ -1,5 +1,17 @@
 package img_util
 
+import (
+	"bytes"
+	"fmt"
+	"image"
+	"io"
+
+	_ "image/jpeg" // 注册 jpeg 解码器，供 image.Decode 使用
+	_ "image/png"  // 注册 png 解码器，供 image.Decode 使用
+
+	webp "github.com/SeriousBug/webp-go-pure/std"
+)
+
 func EmptyGif() []byte {
 
 	return []byte{
@@ -18,4 +30,25 @@ func EmptyGif() []byte {
 		0x3b, // trailer
 	}
 
+}
+
+// ConvertToWebp 将 jpg/png 等图片转换为 webp（有损压缩）。
+// quality: 有损质量 0-100，越大越清晰、体积越大；越界返回错误。
+// 实现即官方示例：解码 jpg/png 得到 image.Image，再 webp.Encode 直接编码，中间无需额外转换。
+func ConvertToWebp(src io.Reader, quality int) ([]byte, error) {
+	if quality > 100 {
+		return nil, fmt.Errorf("img_util: webp quality %d out of range 0-100", quality)
+	}
+
+	// 解码 jpg/png（image/jpeg、image/png 已在本文件 import 注册解码器）。
+	img, _, err := image.Decode(src)
+	if err != nil {
+		return nil, fmt.Errorf("img_util: decode source image: %w", err)
+	}
+
+	var buf bytes.Buffer
+	if err := webp.Encode(&buf, img, &webp.Options{Quality: quality}); err != nil {
+		return nil, fmt.Errorf("img_util: encode webp: %w", err)
+	}
+	return buf.Bytes(), nil
 }

@@ -46,6 +46,23 @@ func (s *fileHashService) Create(fileMd5 string, fileSize int64, filePath string
 	return err
 }
 
+// UpdateWebp 异步转 webp 完成后回写文件哈希记录：仅更新路径、扩展名与大小，
+// 文件 MD5 保持不变（原图未变，webp 为派生文件）。
+func (s *fileHashService) UpdateWebp(id string, filePath string, ext string, fileSize int64) error {
+	db := core.GetDB()
+	err := db.Model(&common_model.CommonFileHash{}).
+		Where("id = ?", id).
+		Updates(map[string]any{
+			"file_path":  filePath,
+			"ext":        ext,
+			"file_size":  fileSize,
+		}).Error
+	if err != nil {
+		core.Logger.Errorf("FileHashService.UpdateWebp err: id=%s, err=%+v", id, err)
+	}
+	return err
+}
+
 // CreateOrGet 按 MD5 查重：存在则返回已有记录，否则新建并返回记录（含 ID）
 func (s *fileHashService) CreateOrGet(fileMd5 string, fileSize int64, filePath string, ext string) (hash common_model.CommonFileHash, e error) {
 	db := core.GetDB()

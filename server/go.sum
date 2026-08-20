@@ -8,6 +8,8 @@ github.com/ArtisanCloud/PowerWeChat/v3 v3.4.41 h1:QOg0XQPreb2qStbzCukuJeNbYPJqTn
 github.com/ArtisanCloud/PowerWeChat/v3 v3.4.41/go.mod h1:RGddY/9vNh2P9lKnjJAl0FBgjFlvP942p6s8GQDUm5Q=
 github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc=
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
+github.com/SeriousBug/webp-go-pure v1.2.0 h1:vNfaUavQ2pPoOL/JHhEn83g/6ln9TyIzIc2oYFN8/nM=
+github.com/SeriousBug/webp-go-pure v1.2.0/go.mod h1:fqCT8wRyNoJx+CQxMvzFpjZq2Vv7ztOdXYqbmK+xRmU=
 github.com/adtkcn/x_null v0.0.2 h1:Qfhh0NPlykOw57ZtxA0f4kDAIO96ZYa6vC5Z1kmu+cI=
 github.com/adtkcn/x_null v0.0.2/go.mod h1:mg55s4iEnvKj2NxDC5EIEsyNdQ01SLyA/A0Y1iYw7Qs=
 github.com/aws/aws-sdk-go-v2 v1.42.1 h1:9eOTgu1z/dVtYpNZ3/8/XbbaX0x/BqE3HUzAzs6K0ek=

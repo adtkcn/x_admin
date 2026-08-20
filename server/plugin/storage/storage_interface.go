@@ -16,6 +16,9 @@ type StorageEngine interface {
 	// ObjectExists 检查对象是否存在（用于秒传）
 	ObjectExists(key string) (bool, error)
 
+	// GetObject 读取对象内容，返回可读流（调用方需关闭）。用于异步任务读取原文件（如转 webp）。
+	GetObject(key string) (io.ReadCloser, error)
+
 	// GetObjectURL 获取对象访问 URL
 	GetObjectURL(key string) (string, error)
 

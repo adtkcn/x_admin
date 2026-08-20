@@ -84,6 +84,20 @@ func (e *ossStorageEngine) GetObjectURL(key string) (string, error) {
 	return fmt.Sprintf("https://%s.%s/%s", e.bucket, strings.TrimSuffix(oss.Endpoint, "/"), key), nil
 }
 
+// GetObject 读取 OSS 对象内容
+func (e *ossStorageEngine) GetObject(key string) (io.ReadCloser, error) {
+	ctx, cancel := withTimeout()
+	defer cancel()
+	out, err := e.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(e.bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("读取对象失败: %w", err)
+	}
+	return out.Body, nil
+}
+
 // ObjectExists 通过 HEAD 判断对象是否存在（用于秒传）
 func (e *ossStorageEngine) ObjectExists(key string) (bool, error) {
 	ctx, cancel := withTimeout()

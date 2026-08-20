@@ -88,6 +88,9 @@ func Start(ctx context.Context) {
 		return nil
 	}, 3)
 
+	// 图片异步转 webp：上传 jpg/png 后投递，worker 读取原图转 webp 并回写记录
+	core.Queue.Consume(ctx, "image_webp", ProcessImageWebp, 3)
+
 	// 操作日志落库：由中间件投递，消费者在此写库，解耦请求与 DB 写入
 	core.Queue.Consume(ctx, middleware.QueueOperateLog, func(ctx context.Context, body []byte) error {
 		var payload middleware.OperateLogPayload

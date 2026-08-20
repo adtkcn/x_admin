@@ -8,17 +8,13 @@ import (
 )
 
 // Album 相册实体
+// 文件信息（uri/ext/hash/size）不冗余存储，统一通过 FileHashId 关联 x_common_file_hash 查询获得。
 type Album struct {
 	ID         string                `gorm:"primarykey;type:char(36);comment:'主键id'"`
 	Cid        string                `gorm:"not null;comment:'类目ID'"`
 	AdminId    string                `gorm:"not null;default:'';comment:'管理员ID'"`
-	Uid        uint                  `gorm:"not null;default:0;comment:'用户ID'"`
 	Name       string                `gorm:"not null;default:'';comment:'文件名称''"`
-	Uri        string                `gorm:"not null;comment:'文件路径'"`
-	Ext        string                `gorm:"not null;default:'';comment:'文件扩展'"`
-	Hash       string                `gorm:"not null;default:'';comment:'文件hash'"`
-	Size       int64                 `gorm:"not null;default:0;comment:文件大小"`
-	FileHashId string                `gorm:"not null;default:'';index:idx_file_hash_id;comment:'关联文件哈希ID(x_common_file_hash.id)'"`
+	FileHashId string                `gorm:"not null;default:'';index:idx_file_hash_id;comment:'关联文件哈希ID(x_common_file_hash.id)，uri/ext/hash/size 经此关联查询'"`
 	IsDelete   soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除: 0=否, 1=是'"`
 	CreateTime x_null.Time           `gorm:"autoCreateTime;not null;comment:'创建时间'"`
 	UpdateTime x_null.Time           `gorm:"autoUpdateTime;not null;comment:'更新时间'"`

@@ -127,9 +127,10 @@ func CheckMysqlErr(err error) error {
 			return SystemError.SetMessage("外键约束失败")
 		case 1451:
 			return SystemError.SetMessage("关联数据存在，不能删除")
-
 		default:
-			return err
+			// return err
+			core.Logger.Error("未知数据库错误: " + err.Error())
+			return SystemError.SetMessage("数据库错误")
 		}
 	}
 	return err

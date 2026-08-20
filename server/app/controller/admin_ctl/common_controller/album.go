@@ -101,7 +101,7 @@ func (ah AlbumHandler) AlbumAddFromFile(c *gin.Context) {
 		return
 	}
 	adminId := config.AdminConfig.GetAdminId(c)
-	resp, err := common_service.AlbumService.AlbumAddFromFileRef(req.FileHashId, req.FileName, req.Cid, adminId, 0)
+	resp, err := common_service.AlbumService.AlbumAddFromFileRef(req.FileHashId, req.FileName, req.Cid, adminId)
 	response.CheckAndRespWithData(c, resp, err)
 }
 

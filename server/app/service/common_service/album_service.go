@@ -27,20 +27,24 @@ type albumService struct {
 	db *gorm.DB
 }
 
-// AlbumList 相册文件列表（文件信息直接取自 Album 表，不再依赖 file_ref）
+// AlbumList 相册文件列表。
+// 文件信息（uri/ext/size）不存于 Album 表，统一经 file_hash_id 关联 x_common_file_hash 取得。
+// 采用「先查 album 分页 + 再批量查 file_hash」两段式，避免 JOIN 列映射、COUNT 干扰等坑。
 func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listReq common_schema.CommonAlbumListReq) (res response.PageResp, e error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
-	query := albSrv.db.Model(&common_model.Album{}).
-		Where("x_album.admin_id = ?", adminId)
+
+	query := albSrv.db.Model(&common_model.Album{}).Where("admin_id = ?", adminId)
 	if listReq.Cid != "" {
-		query = query.Where("x_album.cid = ?", listReq.Cid)
+		query = query.Where("cid = ?", listReq.Cid)
 	}
 	if listReq.Name != "" {
-		query = query.Where("x_album.name like ?", "%"+listReq.Name+"%")
+		query = query.Where("name like ?", "%"+listReq.Name+"%")
 	}
+	// 扩展名过滤走 file_hash 子查询（album 表不存 ext）
 	if len(listReq.Ext) > 0 {
-		query = query.Where("x_album.ext in ?", listReq.Ext)
+		query = query.Where("file_hash_id IN (?)",
+			albSrv.db.Model(&common_model.CommonFileHash{}).Select("id").Where("ext IN ?", listReq.Ext))
 	}
 
 	// 总数
@@ -49,15 +53,34 @@ func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listR
 	if e = response.CheckErr(err, "Album列表总数获取失败"); e != nil {
 		return
 	}
-	// 数据
+
+	// 分页数据
 	var albums []common_model.Album
-	err = query.Limit(limit).Offset(offset).Order("x_album.id desc").Find(&albums).Error
+	err = query.Limit(limit).Offset(offset).Order("id desc").Find(&albums).Error
 	if e = response.CheckErr(err, "Album列表获取失败"); e != nil {
 		return
 	}
+
+	// 批量取关联的文件哈希，内存组装 uri/ext/size
+	hashMap := map[string]common_model.CommonFileHash{}
+	if len(albums) > 0 {
+		ids := make([]string, 0, len(albums))
+		for _, a := range albums {
+			ids = append(ids, a.FileHashId)
+		}
+		var hashes []common_model.CommonFileHash
+		if err = albSrv.db.Where("id IN ?", ids).Find(&hashes).Error; err != nil {
+			e = response.CheckErr(err, "文件信息查询失败")
+			return
+		}
+		for _, h := range hashes {
+			hashMap[h.ID] = h
+		}
+	}
+
 	albumResps := make([]common_schema.CommonAlbumListResp, 0, len(albums))
 	for _, alb := range albums {
-		albumResps = append(albumResps, buildAlbumListResp(alb))
+		albumResps = append(albumResps, buildAlbumListResp(alb, hashMap[alb.FileHashId]))
 	}
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -67,16 +90,17 @@ func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listR
 	}, nil
 }
 
-// buildAlbumListResp 由相册行组装列表返回（文件信息来自 Album 自身字段）
-func buildAlbumListResp(alb common_model.Album) common_schema.CommonAlbumListResp {
+// buildAlbumListResp 由相册行 + 关联文件哈希组装列表返回。
+// uri/ext/size 来自 x_common_file_hash（经 file_hash_id），Album 自身不再冗余存储。
+func buildAlbumListResp(alb common_model.Album, hash common_model.CommonFileHash) common_schema.CommonAlbumListResp {
 	return common_schema.CommonAlbumListResp{
 		ID:         alb.ID,
 		Cid:        alb.Cid,
 		Name:       alb.Name,
-		Path:       alb.Uri,
-		Uri:        path.Join(config.FileConfig.UploadPrefix, alb.Uri),
-		Ext:        alb.Ext,
-		Size:       util.ServerUtil.GetFmtSize(uint64(alb.Size)),
+		Path:       hash.FilePath,
+		Uri:        path.Join(config.FileConfig.UploadPrefix, hash.FilePath),
+		Ext:        hash.Ext,
+		Size:       util.ServerUtil.GetFmtSize(uint64(hash.FileSize)),
 		CreateTime: alb.CreateTime,
 		UpdateTime: alb.UpdateTime,
 	}
@@ -121,7 +145,8 @@ func (albSrv albumService) AlbumMove(ids []string, cid string) (e error) {
 }
 
 // AlbumAddFromFileRef 把已登记的文件（x_common_file_hash）挂载到相册分类：
-func (albSrv albumService) AlbumAddFromFileRef(fileHashId, fileName, cid, adminId string, uid uint) (resp common_schema.CommonAlbumListResp, e error) {
+// 相册行只记录 file_hash_id 关联，文件信息（uri/ext/hash/size）经关联查询获得，不冗余存储。
+func (albSrv albumService) AlbumAddFromFileRef(fileHashId, fileName, cid, adminId string) (resp common_schema.CommonAlbumListResp, e error) {
 	// 校验分类存在（cid 为空 表示未归类，跳过校验）
 	var err error
 	if cid != "" {
@@ -131,28 +156,24 @@ func (albSrv albumService) AlbumAddFromFileRef(fileHashId, fileName, cid, adminI
 			return
 		}
 	}
-	// 取文件哈希记录（上传时登记）
+	// 取文件哈希记录（上传时登记），仅用于校验存在性
 	var hash common_model.CommonFileHash
 	err = albSrv.db.Where("id = ?", fileHashId).First(&hash).Error
 	if e = response.CheckDBNotRecord(err, "文件不存在或已过期"); e != nil {
 		return
 	}
-	// 新建相册行（自带文件信息）
+	// 新建相册行：仅挂载关联与元信息，不冗余复制文件字段
 	var alb common_model.Album
 	alb.Cid = cid
 	alb.AdminId = adminId
-	alb.Uid = uid
 	alb.FileHashId = hash.ID
 	alb.Name = fileName
-	alb.Uri = hash.FilePath
-	alb.Ext = hash.Ext
-	alb.Hash = hash.FileMd5
-	alb.Size = hash.FileSize
 	err = albSrv.db.Create(&alb).Error
 	if e = response.CheckErr(err, "相册添加失败"); e != nil {
 		return
 	}
-	resp = buildAlbumListResp(alb)
+	// 返回时填充文件信息（来自关联的 file_hash）
+	resp = buildAlbumListResp(alb, hash)
 	return
 }
 

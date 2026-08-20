@@ -12,6 +12,9 @@ type FileConfigStruct struct {
 	UploadVideoExt []string `mapstructure:"UploadVideoExt"` // 上传视频扩展
 	UploadFileExt  []string `mapstructure:"UploadFileExt"`  // 上传文件扩展
 
+	// WebpQuality jpg/png 上传后异步转 webp 的有损质量 0-100，默认 80（越大越清晰、体积越大）
+	WebpQuality int `mapstructure:"WebpQuality"`
+
 	// 分片上传配置
 	ChunkSize       int64  `mapstructure:"ChunkSize"`       // 分片大小（字节），默认 5MB
 	ChunkTmpDir     string `mapstructure:"ChunkTmpDir"`     // 本地分片临时目录，默认 "./uploads/.tmp"
@@ -33,6 +36,9 @@ var FileConfig = FileConfigStruct{
 	UploadFileSize:  1024 * 1024 * 1024, //1GB
 	// 上传图片扩展
 	UploadImageExt: []string{"png", "jpg", "jpeg", "gif", "ico", "bmp", "webp", "avif"},
+
+	// webp 转换质量
+	WebpQuality: 80,
 	// 上传音视频扩展
 	UploadVideoExt: []string{"mp4", "avi", "flv", "wmv", "rmvb", "mov", "mp3", "wav", "flac", "m4a"},
 

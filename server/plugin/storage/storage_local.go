@@ -59,6 +59,16 @@ func (e *localStorageEngine) GetObjectURL(key string) (string, error) {
 	return publicURL, nil
 }
 
+// GetObject 读取本地对象内容
+func (e *localStorageEngine) GetObject(key string) (io.ReadCloser, error) {
+	absPath := filepath.Join(config.FileConfig.UploadDirectory, key)
+	f, err := os.Open(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("打开文件失败: %w", err)
+	}
+	return f, nil
+}
+
 // ---- 分片上传相关 ----
 
 // InitMultipartUpload 初始化分片上传（本地：创建临时目录，返回临时目录路径作为 uploadId）

@@ -53,6 +53,7 @@ require (
 	github.com/ArtisanCloud/PowerLibs/v3 v3.3.2 // indirect
 	github.com/ArtisanCloud/PowerSocialite/v3 v3.0.10 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
+	github.com/SeriousBug/webp-go-pure v1.2.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30 // indirect

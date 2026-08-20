@@ -11,6 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ImageWebpPayload struct {
+	FilePath   string `json:"file_path"`    // 原图存储 key（如 png/20260820/12/34/uuid.png）
+	Ext        string `json:"ext"`          // 原图扩展名（不含点）
+	FileHashId string `json:"file_hash_id"` // x_common_file_hash.id，转换完成后回写新路径
+}
+
 // UploadHandler 上传控制器
 type UploadHandler struct{}
 
@@ -47,6 +53,19 @@ func (uh UploadHandler) UploadFile(c *gin.Context) {
 		Instant:    false,
 	}
 	response.CheckAndRespWithData(c, resp, err)
+
+	// 上传成功后异步转 webp（jpg/png 位图；gif 动画编码暂不支持，保持原样）。
+	// 入队失败仅记日志，不影响本次上传响应。
+	// 上传成功后异步转 webp（jpg/png 位图；gif 动画编码暂不支持，保持原样）。
+	// 入队失败仅记日志，不影响本次上传响应。小于 10KB 的图片压缩收益低，跳过转换。
+	if util.ToolsUtil.Contains([]string{"jpg", "jpeg", "png"}, res.Ext) && res.FileSize >= 10*1024 {
+
+		core.Queue.Enqueue("image_webp", ImageWebpPayload{
+			FilePath:   res.FilePath,
+			Ext:        res.Ext,
+			FileHashId: res.ID,
+		})
+	}
 }
 
 // @Summary		文件秒传检查
