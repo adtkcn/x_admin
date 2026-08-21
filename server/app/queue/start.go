@@ -21,6 +21,9 @@ func Start(ctx context.Context) {
 	// 通知邮件补推
 	core.Queue.Consume(ctx, queue_schema.QueueNoticeEmail, ProcessNoticeEmail, 3)
 
+	// 通知邮件延迟补推：Send 时投递，延迟 EmailDelaySeconds 后到期，再合成邮件入 notice:email
+	core.QueueDelay.ConsumeDelayed(ctx, queue_schema.QueueNoticeEmailDelay, ProcessNoticeEmailDelay, 3)
+
 	// 图片异步转 webp：上传 jpg/png 后投递，worker 读取原图转 webp 并回写记录
 	core.Queue.Consume(ctx, queue_schema.QueueImageWebp, ProcessImageWebp, 3)
 

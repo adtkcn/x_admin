@@ -10,8 +10,9 @@ import (
 	"x_admin/util"
 )
 
-// ProcessNoticeEmail 消费通知邮件补推任务。
-// 无论发送成功失败都回写最终状态（2成功/3失败），避免队列无限重试。
+// ProcessNoticeEmail 消费通知邮件补推任务（notice:email）。
+// 将 PushUserEmail 标记的「发送中」(1) 回写为最终状态：2 发送成功 / 3 发送失败，
+// 状态 1 -> 2/3；无论成败都不返回 error，避免队列无限重试。
 func ProcessNoticeEmail(ctx context.Context, body []byte) error {
 	var task queue_schema.NoticeEmailTask
 	if err := json.Unmarshal(body, &task); err != nil {

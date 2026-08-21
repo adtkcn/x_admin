@@ -462,7 +462,7 @@ func (service flowHistoryService) executeNotifyTask(node flow_schema.FlowTree, a
 			if receiverID == "" {
 				continue
 			}
-			err := notice_service.NoticeService.Send(notice_service.NoticePayload{
+			err := notice_service.NoticeService.Send(true, notice_service.NoticePayload{
 				Type:       "info",
 				Title:      "流程通知",
 				Content:    content,

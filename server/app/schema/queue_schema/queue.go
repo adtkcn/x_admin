@@ -7,6 +7,7 @@ const (
 	QueueFlowNotifyWebhook = "flow_notify_webhook"
 	QueueEmailCode         = "email:code:send"
 	QueueNoticeEmail       = "notice:email"
+	QueueNoticeEmailDelay  = "notice:email:delay" // 通知邮件延迟补推（到达延迟时间后才投递到 notice:email）
 	QueueImageWebp         = "image_webp"
 	QueueOperateLog        = "operate_log"
 )

@@ -30,8 +30,16 @@ type NoticePayload struct {
 	Extra      string // 扩展数据JSON
 }
 
-// Send 发送通知：写DB + WebSocket推送
-func (s *noticeService) Send(payload NoticePayload) error {
+// Send 发送通知：写DB + WebSocket推送。
+// send=true 时还会向延迟队列投递「邮件补推」任务（延迟 EmailDelaySeconds 后触发）；
+// 因此 IsEmailed 初值即决定该通知是否参与邮件推送：
+//   - send=false -> EmailStatusNotSend(-1)：本次不推送邮件；
+//   - send=true  -> EmailStatusPending(0)：待推送，延迟队列到期由 PushUserEmail 接管。
+func (s *noticeService) Send(needSend bool, payload NoticePayload) error {
+	IsEmailed := EmailStatusNotSend
+	if needSend {
+		IsEmailed = EmailStatusPending
+	}
 	notice := model.SystemNotice{
 		Type:       payload.Type,
 		Title:      payload.Title,
@@ -41,7 +49,7 @@ func (s *noticeService) Send(payload NoticePayload) error {
 		URL:        payload.URL,
 		Extra:      payload.Extra,
 		IsRead:     0,
-		IsEmailed:  EmailStatusPending, // 新通知默认待发送（延迟补推任务会扫描）
+		IsEmailed:  IsEmailed, // 邮件推送状态：send=false 为 -1(不发送)，send=true 为 0(待发送，延迟队列将接管)
 	}
 
 	db := core.GetDB()
@@ -58,11 +66,31 @@ func (s *noticeService) Send(payload NoticePayload) error {
 		"url":         payload.URL,
 		"create_time": notice.CreateTime,
 	})
+	if needSend == true {
+		// 投递到延迟队列：延迟 EmailDelaySeconds 后才补推邮件（WebSocket 即时送达，邮件延迟兜底）
+		delayTask := queue_schema.NoticeEmailDelayTask{
+			ReceiverID:   payload.ReceiverID,
+			PreviewCount: emailPushPreviewCount,
+		}
+		if err := core.QueueDelay.EnqueueDelay(
+			queue_schema.QueueNoticeEmailDelay,
+			delayTask,
+			time.Duration(config.NoticeConfig.EmailDelaySeconds)*time.Second,
+		); err != nil {
+			core.Logger.Errorf("通知邮件延迟入队失败: receiverID=%s err=%v", payload.ReceiverID, err)
+		}
+	}
 
 	return nil
 }
 
-// 邮件推送状态
+// 邮件推送状态（model.SystemNotice.IsEmailed 字段取值）
+// 流转：-1 不发送 → 0 待发送 → 1 发送中（已入 notice:email 队列）→ 2 成功 / 3 失败
+//
+//	-1 EmailStatusNotSend：Send(send=false)，本次不参与邮件推送
+//	 0 EmailStatusPending：Send(send=true) 初值，等待延迟队列到期
+//	 1 EmailStatusSending：PushUserEmail 入队后立即标记（防重复推送）
+//	 2/3 EmailStatusSuccess/Failed：ProcessNoticeEmail 发送后回写最终状态
 const (
 	EmailStatusNotSend int8 = -1 // 不发送
 	EmailStatusPending int8 = 0  // 待发送
@@ -73,16 +101,8 @@ const (
 
 // 邮件补推参数（不依赖外部配置，使用常量控制）
 const (
-	emailPushBatchSize    = 200 // 每轮处理的用户数（distinct 用户分页大小）
-	emailPushPreviewCount = 10  // 邮件正文展示的最新未读条数
-	emailPushMaxRounds    = 50  // 单轮任务最多处理的用户批次数，防止极端情况无限扫描
+	emailPushPreviewCount = 10 // 邮件正文展示的最新未读条数
 )
-
-// emailPushUser 待补推用户（含邮箱）
-type emailPushUser struct {
-	ReceiverID string
-	Email      string
-}
 
 // emailPushNotice 用户待补推的未读通知
 type emailPushNotice struct {
@@ -91,67 +111,15 @@ type emailPushNotice struct {
 	Content  string `gorm:"column:content"`
 }
 
-// ProcessEmailDelayPush 邮件延迟补推 — 由定时任务调用
-// 口径：扫描创建超过 EmailDelaySeconds 秒且未读、未邮件推送、且开启邮件渠道的用户，
-// 每个用户每轮只发送【一封】邮件，正文展示其最新的 emailPushPreviewCount 条未读，
-// 并附“未发送总数”；入队即把该用户全部待补推通知标记为 is_emailed=1（防重复）。
-// 采用“先查 distinct 用户列表 + 游标分页，再逐用户取全量未读”的方式，避免 LIMIT 截断导致漏推。
-func (s *noticeService) ProcessEmailDelayPush() {
-	db := core.GetDB()
-	delaySeconds := config.NoticeConfig.EmailDelaySeconds
-	threshold := time.Now().Add(-time.Duration(delaySeconds) * time.Second)
-	batchSize := emailPushBatchSize
-	previewCount := emailPushPreviewCount
-
-	lastReceiver := ""
-
-	for round := 0; round < emailPushMaxRounds; round++ {
-		// 1. 取一批待补推用户（去重），按 receiver_id 游标分页
-		var users []emailPushUser
-		userSQL := `
-			SELECT DISTINCT n.receiver_id AS receiver_id, a.email AS email
-			FROM x_system_notice n
-			INNER JOIN x_system_auth_admin a ON n.receiver_id = a.id
-			LEFT JOIN x_system_notice_setting ns ON ns.admin_id = a.id AND ns.channel = 'email'
-			WHERE n.is_read = 0
-			  AND n.is_emailed = 0
-			  AND n.create_time <= ?
-			  AND a.email != ''
-			  AND (ns.id IS NULL OR ns.is_enabled = 1)`
-		userArgs := []any{threshold}
-		if round > 0 {
-			// 游标：receiver_id 字典序大于上一页最后一条，避免漏用户
-			userSQL += ` AND n.receiver_id > ?`
-			userArgs = append(userArgs, lastReceiver)
-		}
-		userSQL += ` ORDER BY n.receiver_id ASC LIMIT ?`
-		userArgs = append(userArgs, batchSize)
-
-		if err := db.Raw(userSQL, userArgs...).Scan(&users).Error; err != nil {
-			core.Logger.Error("ProcessEmailDelayPush 查询用户失败:", err)
-			return
-		}
-		if len(users) == 0 {
-			break
-		}
-		lastReceiver = users[len(users)-1].ReceiverID
-
-		// 2. 逐用户取全部未读，合成一封邮件并入队
-		for _, u := range users {
-			if u.Email == "" {
-				continue
-			}
-			s.pushUserEmail(db, u.ReceiverID, u.Email, previewCount)
-		}
-
-		if len(users) < batchSize {
-			break // 不足一页，已是最后一批
-		}
-	}
-}
-
-// pushUserEmail 取 receiverID 的全部待补推未读，合成一封邮件入队，并立即标记全部 is_emailed=1
-func (s *noticeService) pushUserEmail(db *gorm.DB, receiverID, email string, previewCount int) {
+// PushUserEmail 取 receiverID 的「未读且未邮件推送」通知，合成一封邮件入队，并立即标记全部 is_emailed=1。
+// 拦截规则：
+//  1. 查询条件含 is_read = 0 —— 已读通知不补推（查询为空直接跳过，状态不变）；
+//  2. 查询条件含 is_emailed = 0 —— 已推送过的不重复；
+//  3. 校验 x_system_notice_setting（channel='email'）：用户需显式开启才补推；
+//     未配置或 is_enabled=0 时，将这批通知标记为 EmailStatusNotSend(-1)，避免永远停在「待发送」被误触发。
+//
+// 因此延迟队列到期被消费时，已读的直接跳过，关闭邮件渠道的明确标记为不发送。
+func (s *noticeService) PushUserEmail(db *gorm.DB, receiverID, email string, previewCount int) {
 	var notices []emailPushNotice
 	if err := db.Model(&model.SystemNotice{}).
 		Where("receiver_id = ? AND is_read = 0 AND is_emailed = 0", receiverID).
@@ -170,6 +138,21 @@ func (s *noticeService) pushUserEmail(db *gorm.DB, receiverID, email string, pre
 		noticeIDs = append(noticeIDs, n.NoticeID)
 	}
 	if len(noticeIDs) == 0 {
+		return
+	}
+
+	// 校验用户是否允许 email 渠道推送：未配置 setting 或 is_enabled=0 则明确标记为「不发送」(-1)，
+	// 避免这批通知永远停留在 is_emailed=0（待发送）却永不发送，也防止其他路径误触发补推。
+	var setting model.SystemNoticeSetting
+	hasSetting := db.Model(&model.SystemNoticeSetting{}).
+		Where("admin_id = ? AND channel = 'email'", receiverID).
+		First(&setting).Error == nil
+	if !hasSetting || setting.IsEnabled != 1 {
+		if err := db.Model(&model.SystemNotice{}).
+			Where("id IN ?", noticeIDs).
+			Update("is_emailed", EmailStatusNotSend).Error; err != nil {
+			core.Logger.Error(fmt.Sprintf("标记通知不发送失败, receiverID=%s, err=%v", receiverID, err))
+		}
 		return
 	}
 
@@ -203,7 +186,8 @@ func (s *noticeService) pushUserEmail(db *gorm.DB, receiverID, email string, pre
 		return
 	}
 
-	// 入队即标记该用户全部待补推通知为“发送中”，防止重复推送
+	// 入队即标记该批通知为「发送中」(EmailStatusSending)，状态 -1/0 -> 1，
+	// 既防止延迟队列/重试重复推送，也确保最终由 ProcessNoticeEmail 回写为 2/3。
 	if err := db.Model(&model.SystemNotice{}).
 		Where("id IN ?", noticeIDs).
 		Update("is_emailed", EmailStatusSending).Error; err != nil {

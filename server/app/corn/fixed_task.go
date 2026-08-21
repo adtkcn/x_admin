@@ -5,7 +5,6 @@ import (
 	"time"
 	"x_admin/app/service/corn_service"
 	"x_admin/app/service/monitor_service"
-	"x_admin/app/service/notice_service"
 	"x_admin/core"
 	"x_admin/plugin/storage"
 	"x_admin/util"
@@ -72,17 +71,6 @@ func init() {
 			if err := monitor_service.MonitorErrorListService.DelThreeMonthAgo(); err != nil {
 				core.Logger.Error("删除三个月前的错误监控数据失败", err)
 			}
-		},
-	})
-
-	// 每60秒执行一次邮件延迟补推
-	FixedTasks.AddTask("EmailDelayPush", "*/60 * * * * *", corn_service.Task{
-
-		LockTTL:  55,
-		TaskCode: "EmailDelayPush",
-		TaskDesc: "邮件延迟补推：扫描未读通知，对配置了邮箱的用户发送邮件提醒",
-		TaskFunc: func() {
-			notice_service.NoticeService.ProcessEmailDelayPush()
 		},
 	})
 
