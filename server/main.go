@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 	"x_admin/app/model/user_model"
-	"x_admin/app/task"
+	"x_admin/app/queue"
 
 	"x_admin/config"
 	"x_admin/core"
@@ -63,7 +63,7 @@ func main() {
 
 	// 基础全局队列实例由 core 包创建（见 core.Queue）
 	// 此处仅作为启动钩子拉起消费者，ctx 取消后所有 worker 优雅退出。
-	task.Start(ctx)
+	queue.Start(ctx)
 
 	// 初始化router
 	router := routes.InitRouter()

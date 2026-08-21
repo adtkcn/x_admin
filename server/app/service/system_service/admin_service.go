@@ -62,7 +62,7 @@ func (adminSrv systemAuthAdminService) Self(adminId string) (res system_schema.S
 	var admin system_schema.SystemAuthAdminSelfOneResp
 	convert_util.Copy(&admin, sysAdmin)
 	admin.Dept = sysAdmin.DeptId
-	admin.Avatar = util.UrlUtil.ToAbsoluteUrl(sysAdmin.Avatar)
+	// Avatar 字段已是完整访问地址（/api/uploads/<id> 或 /api/static/...），由前端拼 ossDomain
 	return system_schema.SystemAuthAdminSelfResp{User: admin, Permissions: auths}, nil
 }
 
@@ -363,7 +363,6 @@ func (adminSrv systemAuthAdminService) List(page request.PageReq, listReq system
 
 	// 组装数据
 	for i := 0; i < len(adminResp); i++ {
-		adminResp[i].Avatar = util.UrlUtil.ToAbsoluteUrl(adminResp[i].Avatar)
 		if adminResp[i].ID == config.AdminConfig.SuperAdminId {
 			adminResp[i].Role = "超管"
 			adminResp[i].RoleIds = []string{}
@@ -426,7 +425,6 @@ func (adminSrv systemAuthAdminService) Detail(id string) (res system_schema.Syst
 		return
 	}
 	convert_util.Copy(&res, sysAdmin)
-	res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
 	if res.Dept == "" {
 		// res.Dept = res.DeptId
 	}
@@ -482,7 +480,7 @@ func (adminSrv systemAuthAdminService) Add(addReq system_schema.SystemAuthAdminA
 	if addReq.Avatar == "" {
 		addReq.Avatar = "/api/static/backend_avatar.png"
 	}
-	sysAdmin.Avatar = util.UrlUtil.ToRelativeUrl(addReq.Avatar)
+	sysAdmin.Avatar = addReq.Avatar // 直接保存完整访问地址（/api/uploads/<id> 或内置默认头像路径）
 	err = adminSrv.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&sysAdmin).Error; err != nil {
 			return err
@@ -531,7 +529,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 		"PostId":    editReq.PostId,
 		"Email":     editReq.Email,
 		"Nickname":  editReq.Nickname,
-		"Avatar":    util.UrlUtil.ToRelativeUrl(editReq.Avatar),
+		"Avatar":    editReq.Avatar, // 直接保存完整访问地址（/api/uploads/<id> 或内置默认头像路径）
 		"Sort":      editReq.Sort,
 		"IsDisable": editReq.IsDisable,
 	}
@@ -648,7 +646,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 	}
 	adminMap := map[string]interface{}{
 		"Nickname": updateReq.Nickname,
-		"Avatar":   util.UrlUtil.ToRelativeUrl(avatar),
+		"Avatar":   avatar, // 直接保存完整访问地址（/api/uploads/<id> 或内置默认头像路径）
 	}
 	// 不传邮箱则不更新，避免覆盖为空
 	if updateReq.Email != "" {

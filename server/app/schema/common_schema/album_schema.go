@@ -63,23 +63,24 @@ type CommonCateDelReq struct {
 // CommonUploadFileResp 上传文件返回信息
 // 单文件上传、分片上传、秒传检查（预上传）统一返回此结构
 type CommonUploadFileResp struct {
-	ID         string `json:"id"`           // 主键（挂载相册后由 addFromFile 返回）
+	// ID         string `json:"id"`           // 主键（挂载相册后由 addFromFile 返回）
 	FileHashId string `json:"file_hash_id"` // 文件哈希记录ID
 	Name       string `json:"name"`         // 文件名称
 	Uri        string `json:"url"`          // 访问地址（完整可访问 URL）
-	Path       string `json:"path"`         // 相对路径
-	Ext        string `json:"ext"`          // 文件扩展
-	Size       int64  `json:"size"`         // 文件大小
-	Instant    bool   `json:"instant"`      // 是否秒传命中（预上传专用）
+	// Path       string `json:"path"`         // 相对路径
+	Ext     string `json:"ext"`     // 文件扩展
+	Size    int64  `json:"size"`    // 文件大小
+	Instant bool   `json:"instant"` // 是否秒传命中（预上传专用）
 }
 
 // CommonAlbumListResp 相册文件列表返回信息
 type CommonAlbumListResp struct {
-	ID         string      `json:"id"`          // 主键
-	Cid        string      `json:"cid"`         // 所属类目
-	Name       string      `json:"name"`        // 文件名称
-	Path       string      `json:"path"`        // 相对路径
-	Uri        string      `json:"uri"`         // 文件路径
+	ID         string `json:"id"`           // 主键
+	Cid        string `json:"cid"`          // 所属类目
+	Name       string `json:"name"`         // 文件名称
+	FileHashId string `json:"file_hash_id"` // 文件哈希ID（访问 key 主体）
+	// Path       string      `json:"path"`         // 访问地址（GET /api/uploads/:id）
+	Uri        string      `json:"uri"`         // 访问地址（GET /api/uploads/:id），与 path 一致
 	Ext        string      `json:"ext"`         // 文件扩展
 	Size       string      `json:"size"`        // 文件大小
 	CreateTime x_null.Time `json:"create_time"` // 创建时间

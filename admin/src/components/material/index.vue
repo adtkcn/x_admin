@@ -156,14 +156,15 @@
                         <template #default="{ row }">
                             <FileItem
                                 :uri="row.uri"
+                                :ext="row.ext"
                                 file-size="50px"
-                                @click.stop="handlePreview(row.uri)"
+                                @click.stop="handlePreview(row)"
                             ></FileItem>
                         </template>
                     </vxe-column>
                     <vxe-column title="名称" min-width="100" show-overflow>
                         <template #default="{ row }">
-                            <el-link @click.stop="handlePreview(row.uri)" underline="never">
+                            <el-link @click.stop="handlePreview(row)" underline="never">
                                 {{ row.name }}
                             </el-link>
                         </template>
@@ -202,7 +203,7 @@
                                 </popover-input>
                             </div>
                             <!-- <div class="inline-block mr-2">
-                                <el-link type="primary" link @click.stop="handlePreview(row.uri)">
+                                <el-link type="primary" link @click.stop="handlePreview(row)">
                                     查看
                                 </el-link>
                             </div> -->
@@ -266,7 +267,7 @@
                 />
             </div>
         </div>
-        <Preview v-model="showPreview" :url="previewUrl" />
+        <Preview v-model="showPreview" :url="previewUrl" :ext="previewExt" />
     </div>
 </template>
 
@@ -303,6 +304,7 @@ const emit = defineEmits(['change'])
 // const { limit } = toRefs(props)
 
 const previewUrl = ref('')
+const previewExt = ref('')
 const showPreview = ref(false)
 const {
     treeRef,
@@ -367,8 +369,9 @@ const getData = async () => {
     }
 }
 
-const handlePreview = (url: string) => {
-    previewUrl.value = url
+const handlePreview = (row: any) => {
+    previewUrl.value = row.uri
+    previewExt.value = row.ext || ''
     showPreview.value = true
 }
 

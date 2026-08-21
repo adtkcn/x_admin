@@ -11,7 +11,12 @@
         >
             <template v-if="!hiddenUpload" #trigger>
                 <div class="material-select__trigger clearfix" @click.stop>
-                    <draggable class="draggable" v-model="fileList" animation="300" item-key="id">
+                    <draggable
+                        class="draggable"
+                        v-model="fileList"
+                        animation="300"
+                        :item-key="(el: any) => el.url || el"
+                    >
                         <template v-slot:item="{ element, index }">
                             <div
                                 class="material-preview"
@@ -20,8 +25,9 @@
                             >
                                 <del-wrap @close="deleteImg(index)">
                                     <FileItem
-                                        :uri="excludeDomain ? getImageUrl(element) : element"
+                                        :uri="getImageUrl(element.url || element)"
                                         :file-size="size"
+                                        :ext="element.ext"
                                     ></FileItem>
                                 </del-wrap>
                                 <div class="operation-btns text-xs text-center">
@@ -88,9 +94,17 @@
                     </div>
                     <el-scrollbar class="picker-selected__scroll">
                         <ul v-if="select.length" class="picker-selected__list">
-                            <li v-for="item in select" :key="item.id" class="picker-selected__item">
+                            <li
+                                v-for="item in select"
+                                :key="item.id || item.url"
+                                class="picker-selected__item"
+                            >
                                 <del-wrap @close="removeSelect(item)">
-                                    <FileItem :uri="item.uri" :file-size="'80px'" />
+                                    <FileItem
+                                        :uri="getImageUrl(item.url)"
+                                        :file-size="'80px'"
+                                        :ext="item.ext"
+                                    />
                                 </del-wrap>
                             </li>
                         </ul>
@@ -100,7 +114,7 @@
             </div>
         </popup>
 
-        <preview v-model="showPreview" :url="previewUrl" />
+        <preview v-model="showPreview" :url="previewUrl" :ext="previewExt" />
     </div>
 </template>
 
@@ -143,19 +157,21 @@ export default defineComponent({
         const popupRef = ref<InstanceType<typeof Popup>>()
         const materialRef = ref<InstanceType<typeof Material>>()
         const previewUrl = ref('')
+        const previewExt = ref('')
         const showPreview = ref(false)
+        // fileList 元素为 { url, ext }：对外（emit/modelValue）只暴露 url
         const fileList = ref<any[]>([])
         const isAdd = ref(true)
         const currentIndex = ref(-1)
         const activeTab = ref('upload')
-        // 本地上传（文件上传 Tab）与素材库选择分别记录，避免切换 Tab 互相覆盖
+        // 本地上传与素材库选择分别记录。localFiles 元素 { url, ext }；
+        // materialFiles 元素 { url, ext, id }（id 留作 cancelSelect 对齐键）
         const localFiles = ref<any[]>([])
         const materialFiles = ref<any[]>([])
         const { disabled, limit, modelValue } = toRefs(props)
         const { getImageUrl } = useAppStore()
 
         const ext = computed(() => FileExt[props.type as keyof typeof FileExt])
-        // 文件上传 Tab 仅支持图片
         const uploadExt = computed(() => FileExt.image)
         const tipsText = computed(() => {
             switch (props.type) {
@@ -183,12 +199,10 @@ export default defineComponent({
         })
         const handleConfirm = useThrottleFn(
             () => {
-                // 数量拦截：未选择任何文件时一律阻止关闭
                 if (select.value.length === 0) {
                     feedback.msgError('请先选择文件')
                     return
                 }
-                // 数量限制：配置了上限时，选择数不足或超出都阻止关闭弹窗
                 if (props.limit > 0) {
                     if (select.value.length < props.limit) {
                         feedback.msgError(
@@ -203,9 +217,11 @@ export default defineComponent({
                         return
                     }
                 }
-                const selectUri = select.value.map((item) =>
-                    props.excludeDomain ? item.path : item.uri
-                )
+                // 业务表存完整访问地址（/api/uploads/<id>），元素 { url, ext }
+                const selectUri = select.value.map((item) => ({
+                    url: item.url,
+                    ext: item.ext
+                }))
                 if (!isAdd.value) {
                     fileList.value.splice(currentIndex.value, 1, selectUri.shift())
                 } else {
@@ -228,41 +244,46 @@ export default defineComponent({
             popupRef.value?.open()
         }
         const selectChange = (val: any[]) => {
-            // 父组件持有素材库已选的权威数据，避免子组件翻页/刷新导致
-            // selection-change 传入当前页或空数组时覆盖(清空)父已选。
-            // 策略：仅将子组件主动勾选的新项增量合并(按 id 去重)；
-            // 移除统一由右侧栏 removeSelect 主动触发。
+            // 仅将新勾选项按 id 增量合并；移除由右侧栏 removeSelect 主动触发。
+            // 内部仅保留 { url, ext, id }（id 用于 cancelSelect 对齐）
             if (props.limit === 1) {
-                materialFiles.value = val.length ? [val[val.length - 1]] : []
+                const last = val[val.length - 1]
+                materialFiles.value = last
+                    ? [{ url: last.uri, ext: last.ext, id: last.id }]
+                    : []
                 return
             }
             val.forEach((item: any) => {
                 if (!materialFiles.value.some((it: any) => it.id === item.id)) {
-                    materialFiles.value.push(item)
+                    materialFiles.value.push({
+                        url: item.uri,
+                        ext: item.ext,
+                        id: item.id
+                    })
                 }
             })
         }
-        // 本地上传完成：归一为 { uri, path } 累加进选择，不自动关闭以便继续添加
+        // 本地上传完成：归一为 { url, ext }
         const handleLocalUpload = (fileLists: any[]) => {
             const mapped = (fileLists || []).map((item) => ({
-                uri: item.response?.data?.url,
-                path: item.response?.data?.file_path
+                url: item.response?.data?.url,
+                ext: item.response?.data?.ext
             }))
             localFiles.value = [...localFiles.value, ...mapped]
             activeTab.value = 'upload'
         }
-        // 从已选择列表中移除某一项（本地上传与素材库分别处理）
         const removeSelect = (item: any) => {
-            localFiles.value = localFiles.value.filter((it: any) => it.path !== item.path)
-            materialRef.value?.cancelSelect(item.id)
+            localFiles.value = localFiles.value.filter((it: any) => it.url !== item.url)
+            if (item.id != null) materialRef.value?.cancelSelect(item.id)
         }
-        // 清空所有已选择
         const clearSelect = () => {
             localFiles.value = []
             materialRef.value?.clearSelect()
         }
         const handleChange = () => {
-            const valueImg = limit.value != 1 ? fileList.value : fileList.value[0] || ''
+            // fileList 元素为 { url, ext }，对外 emit 仅暴露 url
+            const urls = fileList.value.map((x: any) => x.url || '')
+            const valueImg = limit.value != 1 ? urls : urls[0] || ''
             emit('update:modelValue', valueImg)
             emit('change', valueImg)
             handleClose()
@@ -271,8 +292,9 @@ export default defineComponent({
             fileList.value.splice(index, 1)
             handleChange()
         }
-        const handlePreview = (url: string) => {
-            previewUrl.value = url
+        const handlePreview = (item: any) => {
+            previewUrl.value = getImageUrl(item.url || item)
+            previewExt.value = item.ext || ''
             showPreview.value = true
         }
         const handleClose = () => {
@@ -286,7 +308,16 @@ export default defineComponent({
         watch(
             modelValue,
             (val: any[] | string) => {
-                fileList.value = Array.isArray(val) ? val : val == '' ? [] : [val]
+                // modelValue 是 url 字符串数组（业务表存的完整访问地址），
+                // 反推成内部元素 { url, ext }。ext 缺失时 FileItem 走 image 兜底
+                const wrap = (s: string) => ({ url: s, ext: '' })
+                if (Array.isArray(val)) {
+                    fileList.value = val.filter(Boolean).map(wrap)
+                } else if (val === '' || val == null) {
+                    fileList.value = []
+                } else {
+                    fileList.value = [wrap(val as string)]
+                }
             },
             { immediate: true }
         )
@@ -312,6 +343,7 @@ export default defineComponent({
             selectChange,
             deleteImg,
             previewUrl,
+            previewExt,
             showPreview,
             handlePreview,
             handleClose,

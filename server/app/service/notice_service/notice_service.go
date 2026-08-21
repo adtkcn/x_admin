@@ -6,6 +6,7 @@ import (
 	"time"
 	"x_admin/app/model"
 	"x_admin/app/model/system_model"
+	"x_admin/app/schema/queue_schema"
 	"x_admin/app/schema/system_schema"
 	"x_admin/config"
 	"x_admin/core"
@@ -61,9 +62,6 @@ func (s *noticeService) Send(payload NoticePayload) error {
 	return nil
 }
 
-// 通知邮件补推队列名
-const QueueNoticeEmail = "notice:email"
-
 // 邮件推送状态
 const (
 	EmailStatusNotSend int8 = -1 // 不发送
@@ -72,15 +70,6 @@ const (
 	EmailStatusSuccess int8 = 2  // 发送成功
 	EmailStatusFailed  int8 = 3  // 发送失败
 )
-
-// NoticeEmailTask 通知邮件补推任务载荷（推入队列异步发送）
-type NoticeEmailTask struct {
-	To        string   `json:"to"`
-	Subject   string   `json:"subject"`
-	HTMLBody  string   `json:"html_body"`
-	NoticeIDs []string `json:"notice_ids"` // 发送成功后标记 is_emailed 的通知ID
-	CreatedAt int64    `json:"created_at"` // 入队时间戳（秒），用于过期判定
-}
 
 // 邮件补推参数（不依赖外部配置，使用常量控制）
 const (
@@ -202,14 +191,14 @@ func (s *noticeService) pushUserEmail(db *gorm.DB, receiverID, email string, pre
 	sb.WriteString("</ul><p>请登录系统查看全部详情。</p>")
 
 	subject := fmt.Sprintf("【系统通知】您有 %d 条未读通知", len(notices))
-	task := NoticeEmailTask{
+	task := queue_schema.NoticeEmailTask{
 		To:        email,
 		Subject:   subject,
 		HTMLBody:  sb.String(),
 		NoticeIDs: noticeIDs,
 		CreatedAt: time.Now().Unix(),
 	}
-	if err := core.Queue.Enqueue(QueueNoticeEmail, task); err != nil {
+	if err := core.Queue.Enqueue(queue_schema.QueueNoticeEmail, task); err != nil {
 		core.Logger.Error(fmt.Sprintf("通知邮件入队失败, receiverID=%s, email=%s, err=%v", receiverID, email, err))
 		return
 	}

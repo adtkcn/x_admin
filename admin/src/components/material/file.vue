@@ -29,7 +29,9 @@
                     :size="28"
                     color="#909399"
                 /> -->
-                .{{ ext }}
+                .{{ extName }}
+                <!-- {{ ext }} -->
+                <!-- {{ fileType }} -->
             </div>
 
             <slot></slot>
@@ -43,7 +45,7 @@ import { GetFileType } from '@/enums/fileEnums'
 
 export default defineComponent({
     props: {
-        // 图片地址
+        // 访问 URL（推荐：ossDomain + /api/uploads/<id>，由路由返回文件流）
         uri: {
             type: String,
             default: ''
@@ -52,20 +54,34 @@ export default defineComponent({
         fileSize: {
             type: String,
             default: '100px'
+        },
+        // 文件扩展名（不含点）。id 形式的 uri 无法从后缀推断类型，需显式传入。
+        ext: {
+            type: String,
+            default: ''
         }
-        // // 文件类型
-        // ext: {
-        //     type: String,
-        //     default: ''
-        // }
     },
     computed: {
         fileType() {
-            const fileType = GetFileType(this.uri)
-            return fileType
+            // 优先用 ext prop 推断；空时回退到 uri 后缀（兼容旧 url 形式）
+            const key = this.ext || (this.uri ? this.uri.split('.').pop() : '')
+            const type = GetFileType(key || '')
+            // 兜底：id 形式 uri（无后缀，GetFileType 走 default 返回 'file'）
+            // 按 image 渲染，因为绝大多数上传场景是图片，且后端 ServeContent 会下发
+            // 正确 Content-Type，浏览器能正确解码图片；非图片（视频/音频）场景仍按 ext 优先
+            // 走对应分支，不会被这里覆盖。
+            if (
+                type === 'file' &&
+                this.uri &&
+                !this.uri.includes('.') &&
+                !this.uri.includes(':')
+            ) {
+                return 'image'
+            }
+            return type
         },
-        ext() {
-            return this.uri.split('.').pop()
+        extName() {
+            return this.ext || (this.uri ? this.uri.split('.').pop() : '')
         }
     }
 })

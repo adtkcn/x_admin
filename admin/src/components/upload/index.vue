@@ -168,14 +168,20 @@ function calcMD5(file: File): Promise<string> {
 // 秒传检查
 async function checkInstant(
     md5: string,
-    fileName: string
-): Promise<{ instant: boolean; file_hash_id?: string; path?: string; size?: number; url?: string }> {
+    file_name: string
+): Promise<{
+    instant: boolean
+    file_hash_id?: string
+    // path?: string
+    size?: number
+    url?: string
+}> {
     try {
         const res = await axios.post(
             checkInstantUrl.value,
             {
-                fileMd5: md5,
-                fileName
+                file_md5: md5,
+                file_name
             },
             {
                 headers: { token: getToken(), version: config.version }
@@ -237,8 +243,8 @@ async function startUpload(files: File[]) {
                             name: file.name,
                             ext: getExt(file.name),
                             size: instant.size,
-                            url: instant.url,
-                            path: instant.path
+                            url: instant.url
+                            // path: instant.path
                         }
                     }
                 })

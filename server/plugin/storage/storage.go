@@ -7,8 +7,6 @@ import (
 	"os"
 	"path"
 	"strconv"
-	"strings"
-	"time"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
@@ -32,9 +30,8 @@ type storageDriver struct{}
 
 // Upload 根据引擎类型上传文件
 func (sd storageDriver) Upload(file *multipart.FileHeader) (uf *UploadFile, e error) {
-	// TODO: engine默认local
+	fileExt := util.UrlUtil.GetFileExt(file.Filename)
 
-	fileExt := sd.getFileExt(file.Filename)
 	if fileExt == "" {
 		return nil, response.AssertArgumentError.SetMessage("文件类型错误！")
 	}
@@ -44,10 +41,10 @@ func (sd storageDriver) Upload(file *multipart.FileHeader) (uf *UploadFile, e er
 	}
 	// var folder string = fileExt
 
-	saveName := sd.buildSaveName(file)
+	savePash := util.UrlUtil.BuildFileSavePath(file.Filename)
 	engine := "local"
 	if engine == "local" {
-		if e = sd.localUpload(file, saveName); e != nil {
+		if e = sd.localSaveFile(file, savePash); e != nil {
 			return
 		}
 	} else {
@@ -59,21 +56,21 @@ func (sd storageDriver) Upload(file *multipart.FileHeader) (uf *UploadFile, e er
 		Name: file.Filename,
 		// Type: int(fileType),
 		Size: file.Size,
-		Ext:  strings.ToLower(strings.Replace(path.Ext(file.Filename), ".", "", 1)),
-		Uri:  saveName,
-		Path: util.UrlUtil.ToAbsoluteUrl(saveName),
+		Ext:  fileExt,
+		Uri:  util.UrlUtil.ToAbsoluteUrl(savePash),
+		Path: savePash,
 	}, nil
 }
 
-// localUpload 本地上传 (临时方法)
-func (sd storageDriver) localUpload(file *multipart.FileHeader, saveName string) (e error) {
+// localSaveFile 本地上传 (临时方法)
+func (sd storageDriver) localSaveFile(file *multipart.FileHeader, saveName string) (e error) {
 	// TODO: 临时方法，后续调整
 	// 映射目录
 	directory := config.FileConfig.UploadDirectory
 	// 打开源文件
 	src, err := file.Open()
 	if err != nil {
-		core.Logger.Errorf("storageDriver.localUpload Open err: err=[%+v]", err)
+		core.Logger.Errorf("storageDriver.localSaveFile Open err: err=[%+v]", err)
 		return response.Failed.SetMessage("打开文件失败!")
 	}
 	defer src.Close()
@@ -84,14 +81,14 @@ func (sd storageDriver) localUpload(file *multipart.FileHeader, saveName string)
 	err = os.MkdirAll(saveDir, 0755)
 	if err != nil && !os.IsExist(err) {
 		core.Logger.Errorf(
-			"storageDriver.localUpload MkdirAll err: path=[%s], err=[%+v]", saveDir, err)
+			"storageDriver.localSaveFile MkdirAll err: path=[%s], err=[%+v]", saveDir, err)
 		return response.Failed.SetMessage("创建上传目录失败!")
 	}
 	// 创建目标文件
 	out, err := os.Create(saveFilePath)
 	if err != nil {
 		core.Logger.Errorf(
-			"storageDriver.localUpload Create err: file=[%s], err=[%+v]", saveFilePath, err)
+			"storageDriver.localSaveFile Create err: file=[%s], err=[%+v]", saveFilePath, err)
 		return response.Failed.SetMessage("创建文件失败!")
 	}
 	defer out.Close()
@@ -99,32 +96,17 @@ func (sd storageDriver) localUpload(file *multipart.FileHeader, saveName string)
 	_, err = io.Copy(out, src)
 	if err != nil {
 		core.Logger.Errorf(
-			"storageDriver.localUpload Copy err: file=[%s], err=[%+v]", saveFilePath, err)
+			"storageDriver.localSaveFile Copy err: file=[%s], err=[%+v]", saveFilePath, err)
 		return response.Failed.SetMessage("上传文件失败: " + err.Error())
 	}
 
 	return nil
 }
 
-// buildSaveName 生成保存路径与文件名（年月日/时/分/文件名）
-func (sd storageDriver) buildSaveName(file *multipart.FileHeader) string {
-	ext := strings.ToLower(path.Ext(file.Filename))
-	now := time.Now()
-	// 年月日/时/分
-	datePath := path.Join(now.Format("20060102"), now.Format("15"), now.Format("04"))
-	return path.Join(datePath, util.ToolsUtil.MakeUuidV7()+ext)
-}
-
-// getFileExt 获取文件扩展名
-func (sd storageDriver) getFileExt(fileName string) string {
-	fileExt := strings.ToLower(strings.Replace(path.Ext(fileName), ".", "", 1))
-	return fileExt
-}
-
 // checkFile 文件验证
 func (sd storageDriver) checkFile(fileName string, fileSize int64) (e error) {
 
-	fileExt := sd.getFileExt(fileName)
+	fileExt := util.UrlUtil.GetFileExt(fileName)
 
 	if util.ToolsUtil.Contains(config.FileConfig.UploadImageExt, fileExt) {
 		// 图片文件

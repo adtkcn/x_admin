@@ -146,12 +146,6 @@ func (service {{{ .EntityName }}}Service) Detail({{{ .PrimaryGoField }}} {{{.Pri
 		if e = response.CheckErr(err, "获取详情失败"); e != nil {
 			return
 		}
-	
-		{{{- range .Columns }}}
-		{{{- if and .IsEdit (contains (strSlice "image" "avatar" "logo" "img") .GoField) }}}
-		res.Avatar = util.UrlUtil.ToAbsoluteUrl(res.Avatar)
-		{{{- end }}}
-		{{{- end }}}
 		service.CacheUtil.SetCache(obj.{{{ .PrimaryGoField }}}, obj)
 	}
 

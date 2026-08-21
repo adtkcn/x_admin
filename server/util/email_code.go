@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+	"x_admin/app/schema/queue_schema"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/util/convert_util"
@@ -16,9 +17,6 @@ const (
 	CodeSceneBind     = "bind"     // 绑定邮箱
 	CodeSceneUnbind   = "unbind"   // 解绑手机（邮箱验证码确认身份）
 )
-
-// 邮箱验证码发送队列名
-const QueueEmailCode = "email:code:send"
 
 // EmailCodeTask 邮箱验证码发送任务载荷（推入队列异步发送）
 type EmailCodeTask struct {
@@ -100,7 +98,7 @@ func (e *emailCodeUtil) SendCode(email, scene, uid string) error {
 			<p>验证码 5 分钟内有效，请勿泄露给他人。</p>
 			<p style="color:#999;font-size:12px">如非本人操作，请忽略此邮件。</p>`, sceneName, codeStr),
 	}
-	if err := core.Queue.Enqueue(QueueEmailCode, opts); err != nil {
+	if err := core.Queue.Enqueue(queue_schema.QueueEmailCode, opts); err != nil {
 		core.Logger.Errorf("SendCode 验证码入队失败: email=%s scene=%s err=%v", email, scene, err)
 		return fmt.Errorf("验证码发送失败，请稍后重试")
 	}

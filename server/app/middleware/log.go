@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"x_admin/app/schema/queue_schema"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
@@ -23,8 +24,7 @@ const (
 	RequestDefault requestType = "default" // 默认数据类型
 )
 
-// QueueOperateLog 操作日志队列名，消费者见 app/task
-const QueueOperateLog = "operate_log"
+// 操作日志投递到 queue_schema.QueueOperateLog，消费者见 app/task
 
 // RecordLog 记录系统日志信息中间件
 func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
@@ -100,7 +100,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				EndTime:   endTime,
 				TaskTime:  taskTime,
 			}
-			if err := core.Queue.Enqueue(QueueOperateLog, payload); err != nil {
+			if err := core.Queue.Enqueue(queue_schema.QueueOperateLog, payload); err != nil {
 				core.Logger.Errorf("RecordLog Enqueue err: %v", err)
 			}
 		}

@@ -1,10 +1,8 @@
 package common_service
 
 import (
-	"path"
 	"x_admin/app/model/common_model"
 	"x_admin/app/schema/common_schema"
-	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -92,13 +90,15 @@ func (albSrv albumService) AlbumList(adminId string, page request.PageReq, listR
 
 // buildAlbumListResp 由相册行 + 关联文件哈希组装列表返回。
 // uri/ext/size 来自 x_common_file_hash（经 file_hash_id），Album 自身不再冗余存储。
+// Path 与 Uri 均返回完整访问地址（/api/uploads/<id>），由文件流路由按 id 查 FilePath 返回物理文件。
 func buildAlbumListResp(alb common_model.Album, hash common_model.CommonFileHash) common_schema.CommonAlbumListResp {
 	return common_schema.CommonAlbumListResp{
 		ID:         alb.ID,
 		Cid:        alb.Cid,
 		Name:       alb.Name,
-		Path:       hash.FilePath,
-		Uri:        path.Join(config.FileConfig.UploadPrefix, hash.FilePath),
+		FileHashId: alb.FileHashId,
+		// Path:       util.UrlUtil.HashUrl(alb.FileHashId), // 访问地址（GET /api/uploads/:id）
+		Uri:        util.UrlUtil.HashUrl(hash.ID), // 访问地址（GET /api/uploads/:id）
 		Ext:        hash.Ext,
 		Size:       util.ServerUtil.GetFmtSize(uint64(hash.FileSize)),
 		CreateTime: alb.CreateTime,

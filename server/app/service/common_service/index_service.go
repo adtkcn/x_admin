@@ -105,10 +105,11 @@ func (iSrv indexService) Config() (res map[string]any, e error) {
 		copyright = []map[string]string{}
 	}
 	res = map[string]any{
-		"webName":     website["name"],
-		"webLogo":     util.UrlUtil.ToAbsoluteUrl(website["logo"]),
-		"webFavicon":  util.UrlUtil.ToAbsoluteUrl(website["favicon"]),
-		"webBackdrop": util.UrlUtil.ToAbsoluteUrl(website["backdrop"]),
+		"webName": website["name"],
+		// 业务表存完整访问地址（/api/uploads/<id>），无需再转换
+		"webLogo":     website["logo"],
+		"webFavicon":  website["favicon"],
+		"webBackdrop": website["backdrop"],
 		"ossDomain":   config.AppConfig.OssDomain,
 		"copyright":   copyright,
 	}

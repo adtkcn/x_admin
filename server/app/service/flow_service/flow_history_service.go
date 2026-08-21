@@ -13,6 +13,7 @@ import (
 	"x_admin/app/model"
 	"x_admin/app/model/system_model"
 	"x_admin/app/schema/flow_schema"
+	"x_admin/app/schema/queue_schema"
 	"x_admin/app/schema/system_schema"
 	"x_admin/app/service/notice_service"
 	"x_admin/app/service/system_service"
@@ -284,7 +285,6 @@ func (service flowHistoryService) GetApprover(ApplyId string) (res []system_sche
 	convert_util.Copy(&res, &adminResp)
 
 	for i := 0; i < len(res); i++ {
-		res[i].Avatar = util.UrlUtil.ToAbsoluteUrl(res[i].Avatar)
 		if res[i].ID == config.AdminConfig.SuperAdminId {
 			res[i].Role = "系统管理员"
 		}
@@ -502,7 +502,7 @@ func (service flowHistoryService) executeNotifyTask(node flow_schema.FlowTree, a
 		subject := "【流程通知】" + apply.FlowName
 		htmlBody := fmt.Sprintf("<h3>您好：</h3><p>%s</p><p>流程：%s</p>", content, apply.FlowName)
 		// 投递异步邮件任务
-		if err := core.Queue.Enqueue("flow_notify_email", util.EmailOptions{
+		if err := core.Queue.Enqueue(queue_schema.QueueFlowNotifyEmail, util.EmailOptions{
 			To:       to,
 			Subject:  subject,
 			HTMLBody: htmlBody,
@@ -516,7 +516,7 @@ func (service flowHistoryService) executeNotifyTask(node flow_schema.FlowTree, a
 			return errors.New("Webhook 回调地址不能为空")
 		}
 		// 投递异步 Webhook 任务
-		if err := core.Queue.Enqueue("flow_notify_webhook", flow_schema.FlowNotifyWebhookPayload{
+		if err := core.Queue.Enqueue(queue_schema.QueueFlowNotifyWebhook, queue_schema.FlowNotifyWebhookPayload{
 			URL:     st.WebhookUrl,
 			Content: content,
 		}); err != nil {
@@ -531,7 +531,7 @@ func (service flowHistoryService) executeNotifyTask(node flow_schema.FlowTree, a
 /**
  * 处理流程 Webhook 回调任务（由队列 worker 调用，异步发送）
  */
-func (service flowHistoryService) ProcessFlowWebhook(payload flow_schema.FlowNotifyWebhookPayload) error {
+func (service flowHistoryService) ProcessFlowWebhook(payload queue_schema.FlowNotifyWebhookPayload) error {
 	if strings.TrimSpace(payload.URL) == "" {
 		return errors.New("Webhook 回调地址不能为空")
 	}

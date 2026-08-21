@@ -6,11 +6,8 @@ import (
 	"fmt"
 	"html"
 	"io"
-	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"x_admin/app/schema/common_schema"
 	"x_admin/app/service/common_service"
@@ -99,14 +96,14 @@ func (h S3UploadHandler) CheckInstant(c *gin.Context) {
 		engine := storage.GetStorageEngine()
 		url, _ := engine.GetObjectURL(record.FilePath)
 		resp := common_schema.CommonUploadFileResp{
-			ID:         record.ID,
+			// ID:         record.ID,
 			FileHashId: record.ID,
 			Name:       req.FileName,
-			Uri:        url,             // 访问地址（完整可访问 URL）
-			Path:       record.FilePath, // 相对路径
-			Ext:        record.Ext,
-			Size:       record.FileSize,
-			Instant:    true,
+			Uri:        url, // 访问地址（完整可访问 URL）
+			// Path:       record.FilePath, // 相对路径
+			Ext:     record.Ext,
+			Size:    record.FileSize,
+			Instant: true,
 		}
 		response.CheckAndRespWithData(c, resp, nil)
 		return
@@ -118,7 +115,8 @@ func (h S3UploadHandler) CheckInstant(c *gin.Context) {
 
 // ---- 密钥生成 ----
 
-// GenerateKey 根据文件名生成存储 key: /{年月日}/{时}/{分}/{uuid}.{ext}（始终用 / 分隔符）
+// GenerateKey 生成存储 key，路径结构对齐直传：年月日/时/分/{uuid}.ext
+// 与 storage.buildSaveName 保持一致，使直传与 S3 分片落盘到同一目录层级。
 func (h S3UploadHandler) GenerateKey(c *gin.Context) {
 	var req struct {
 		FileName string `json:"file_name" binding:"required"`
@@ -127,20 +125,14 @@ func (h S3UploadHandler) GenerateKey(c *gin.Context) {
 		s3Error(c, 400, "InvalidArgument", "参数错误: "+err.Error())
 		return
 	}
-	ext := strings.TrimPrefix(strings.ToLower(filepath.Ext(req.FileName)), ".")
-	if ext == "" {
-		s3Error(c, 400, "InvalidArgument", "无法识别文件类型")
-		return
-	}
-	now := time.Now()
-	datePath := path.Join(now.Format("20060102"), now.Format("15"), now.Format("04"))
-	key := path.Join(datePath, util.ToolsUtil.MakeUuidV7()+"."+ext)
+	key := util.UrlUtil.BuildFileSavePath(req.FileName)
 	c.JSON(200, gin.H{"key": key})
 }
 
 // ---- 后置：注册文件哈希（秒传数据源） ----
 
-// RegisterHash 上传完成后由前端调用，将 MD5 与 fileKey 关联存入哈希表
+// RegisterHash 上传完成后由前端调用，将 MD5 与 fileKey 关联存入哈希表。
+// id 为哈希表主键，FilePath 存真实存储 key（fileKey），文件名无需与 id 一致。
 func (h S3UploadHandler) RegisterHash(c *gin.Context) {
 	var req struct {
 		FileMd5  string `json:"file_md5" binding:"required"`
@@ -152,26 +144,27 @@ func (h S3UploadHandler) RegisterHash(c *gin.Context) {
 		s3Error(c, 400, "InvalidArgument", "参数错误: "+err.Error())
 		return
 	}
-	ext := strings.TrimPrefix(strings.ToLower(filepath.Ext(req.FileName)), ".")
-	hash, err := common_service.FileHashService.CreateOrGet(req.FileMd5, req.FileSize, req.FileKey, ext)
+	ext := util.UrlUtil.GetFileExt(req.FileName)
+	// FilePath 存真实存储 key（fileKey），文件名无需与 id 一致；id 由 Create 内部生成
+	id, err := common_service.FileHashService.Create(req.FileMd5, req.FileSize, req.FileKey, ext)
 	if err != nil {
 		core.Logger.Errorf("RegisterHash err: %v", err)
 		response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{}, err)
 		return
 	}
-	engine := storage.GetStorageEngine()
-	url, _ := engine.GetObjectURL(hash.FilePath)
 	resp := common_schema.CommonUploadFileResp{
-		ID:         hash.ID,
-		FileHashId: hash.ID,
+		// ID:         id,
+		FileHashId: id,
 		Name:       req.FileName,
-		Uri:        url,           // 访问地址（完整可访问 URL）
-		Path:       hash.FilePath, // 相对路径
+		Uri:        util.UrlUtil.HashUrl(id), // 访问地址（完整可访问 URL）
 		Ext:        ext,
 		Size:       req.FileSize,
 		Instant:    false,
 	}
 	response.CheckAndRespWithData(c, resp, nil)
+
+	// 上传成功后异步转 webp（条件判断在 MaybeConvertWebp 内）
+	common_service.UploadService.MaybeConvertWebp(id, req.FileKey, ext, req.FileSize)
 }
 
 // ---- CreateMultipartUpload ----

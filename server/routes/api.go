@@ -4,7 +4,6 @@ import (
 	"x_admin/app/controller"
 	"x_admin/app/controller/admin_ctl/common_controller"
 	"x_admin/app/middleware"
-	"x_admin/config"
 	"x_admin/routes/admin_route"
 	"x_admin/routes/web_route"
 
@@ -26,7 +25,10 @@ func wsRoute(api *gin.RouterGroup) {
 func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	// 静态文件路由
 	api.Static("/static", "./public/static")
-	rootRouter.Static(config.FileConfig.UploadPrefix, config.FileConfig.UploadDirectory)
+
+	// 文件流路由：按 file_hash_id 返回物理文件（取代原静态目录映射）
+	handleFile := common_controller.FileHandler{}
+	api.GET("/uploads/:id", handleFile.Serve)
 
 	// 设置中间件
 	rootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())

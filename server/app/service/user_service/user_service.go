@@ -274,6 +274,7 @@ func (s *userService) GetUserInfo(userID string) (user_schema.UserInfoResp, erro
 	}
 	var resp user_schema.UserInfoResp
 	convert_util.Copy(&resp, user)
+	// Avatar 字段已是完整访问地址（/api/uploads/<id>），无需再转换
 	return resp, nil
 }
 

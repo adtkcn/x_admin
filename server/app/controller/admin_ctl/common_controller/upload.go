@@ -5,17 +5,10 @@ import (
 	"x_admin/app/service/common_service"
 	"x_admin/core"
 	"x_admin/core/response"
-	"x_admin/plugin/storage"
 	"x_admin/util"
 
 	"github.com/gin-gonic/gin"
 )
-
-type ImageWebpPayload struct {
-	FilePath   string `json:"file_path"`    // 原图存储 key（如 png/20260820/12/34/uuid.png）
-	Ext        string `json:"ext"`          // 原图扩展名（不含点）
-	FileHashId string `json:"file_hash_id"` // x_common_file_hash.id，转换完成后回写新路径
-}
 
 // UploadHandler 上传控制器
 type UploadHandler struct{}
@@ -38,34 +31,21 @@ func (uh UploadHandler) UploadFile(c *gin.Context) {
 		return
 	}
 	res, err := common_service.UploadService.UploadFile(file)
-	// 组装与相册列表一致的 url/path 字段，便于前端直接展示已上传文件
-	// 本地引擎下 GetObjectURL(filePath) = /api/uploads/<filePath>，与相册 row.uri 完全对齐
-	engine := storage.GetStorageEngine()
-	url, _ := engine.GetObjectURL(res.FilePath)
+	// 访问地址 = GET /api/uploads/:id，由文件流路由按 id 查 x_common_file_hash.FilePath 返回
 	resp := common_schema.CommonUploadFileResp{
-		ID:         res.ID,
+		// ID:         res.ID,
 		FileHashId: res.ID,
 		Name:       file.Filename,
-		Uri:        url,          // 访问地址（完整可访问 URL）
-		Path:       res.FilePath, // 相对路径
-		Ext:        res.Ext,
-		Size:       res.FileSize,
-		Instant:    false,
+		Uri:        util.UrlUtil.HashUrl(res.ID), // 访问地址（完整可访问 URL）
+		// Path:       res.FilePath,                 // 磁盘存储 key = <id>.<ext>
+		Ext:     res.Ext,
+		Size:    res.FileSize,
+		Instant: false,
 	}
 	response.CheckAndRespWithData(c, resp, err)
 
-	// 上传成功后异步转 webp（jpg/png 位图；gif 动画编码暂不支持，保持原样）。
-	// 入队失败仅记日志，不影响本次上传响应。
-	// 上传成功后异步转 webp（jpg/png 位图；gif 动画编码暂不支持，保持原样）。
-	// 入队失败仅记日志，不影响本次上传响应。小于 10KB 的图片压缩收益低，跳过转换。
-	if util.ToolsUtil.Contains([]string{"jpg", "jpeg", "png"}, res.Ext) && res.FileSize >= 10*1024 {
-
-		core.Queue.Enqueue("image_webp", ImageWebpPayload{
-			FilePath:   res.FilePath,
-			Ext:        res.Ext,
-			FileHashId: res.ID,
-		})
-	}
+	// 上传成功后异步转 webp（条件判断在 MaybeConvertWebp 内）
+	common_service.UploadService.MaybeConvertWebp(res.ID, res.FilePath, res.Ext, res.FileSize)
 }
 
 // @Summary		文件秒传检查
@@ -89,17 +69,15 @@ func (uh UploadHandler) CheckInstant(c *gin.Context) {
 		core.Logger.Errorf("CheckInstant err: %v", err)
 	}
 	if record != nil {
-		engine := storage.GetStorageEngine()
-		url, _ := engine.GetObjectURL(record.FilePath)
 		resp := common_schema.CommonUploadFileResp{
-			ID:         record.ID,
+			// ID:         record.ID,
 			FileHashId: record.ID,
 			Name:       req.FileName,
-			Uri:        url,             // 访问地址（完整可访问 URL）
-			Path:       record.FilePath, // 相对路径
-			Ext:        record.Ext,
-			Size:       record.FileSize,
-			Instant:    true,
+			Uri:        util.UrlUtil.HashUrl(record.ID), // 访问地址（完整可访问 URL）
+			// Path:       record.FilePath,                 // 磁盘存储 key
+			Ext:     record.Ext,
+			Size:    record.FileSize,
+			Instant: true,
 		}
 		response.CheckAndRespWithData(c, resp, nil)
 		return

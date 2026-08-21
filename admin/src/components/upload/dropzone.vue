@@ -31,7 +31,9 @@
         <div v-if="uploading && !instantHit" class="upload-dropzone__progress">
             <span class="upload-dropzone__label">上传进度：</span>
             <el-progress :percentage="uploadPercent" :stroke-width="10" />
-            <span class="upload-dropzone__detail">{{ formatSize(uploadedSize) }} / {{ formatSize(totalSize) }}</span>
+            <span class="upload-dropzone__detail"
+                >{{ formatSize(uploadedSize) }} / {{ formatSize(totalSize) }}</span
+            >
         </div>
     </div>
 </template>
@@ -156,11 +158,11 @@ function calcMD5(file: File): Promise<string> {
     })
 }
 
-async function checkInstant(md5: string, fileName: string) {
+async function checkInstant(md5: string, file_name: string) {
     try {
         const res = await axios.post(
             checkInstantUrl,
-            { fileMd5: md5, fileName },
+            { file_md5: md5, file_name },
             { headers: { token: getToken(), version: config.version } }
         )
         // 后端统一返回 { code, msg, show, data: CommonUploadFileResp }

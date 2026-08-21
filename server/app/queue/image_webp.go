@@ -1,4 +1,4 @@
-package task
+package queue
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"path"
 	"strings"
 
-	"x_admin/app/controller/admin_ctl/common_controller"
+	"x_admin/app/schema/queue_schema"
 	"x_admin/app/service/common_service"
 	"x_admin/config"
 	"x_admin/core"
@@ -20,7 +20,7 @@ import (
 // 1) 读取原图字节；2) img_util.ConvertToWebp 转 webp（jpg/png 有损压缩）；
 // 3) 另存为同名 .webp 文件（保留原图）；4) 回写 x_common_file_hash 的路径/扩展/大小。
 func ProcessImageWebp(ctx context.Context, body []byte) error {
-	var p common_controller.ImageWebpPayload
+	var p queue_schema.ImageWebpPayload
 	if err := json.Unmarshal(body, &p); err != nil {
 		core.Logger.Errorf("解析 image_webp 任务失败: %v", err)
 		return nil
