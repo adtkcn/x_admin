@@ -46,6 +46,7 @@ server/
 │   │   │   ├── common_controller/    # 通用功能
 │   │   │   │   ├── album.go          #   相册管理
 │   │   │   │   ├── captcha.go        #   验证码
+│   │   │   │   ├── file_controller.go #   文件管理（列表/删除/重命名等）
 │   │   │   │   ├── ge_tui.go         #   个推推送
 │   │   │   │   ├── index.go          #   后台首页统计
 │   │   │   │   ├── s3_upload.go      #   S3 风格直传
@@ -130,8 +131,15 @@ server/
 │   │   │   ├── auth_service.go       #   绑定/解绑手机、邮箱
 │   │   │   ├── user_service.go       #   注册/登录/手机验证码/密码重置
 │   │   │   └── wechat_service.go     #   微信小程序/公众号登录绑定
-│   │   └── task/                      # 异步任务（基于 core/queue）
-│   │       └── task.go                #   消费者注册（转写/AI/流程通知）
+│   │
+│   ├── queue/                        # 异步队列消费者（基于 core/queue，package queue）
+│   │   ├── start.go                  #   统一注册并启动所有消费者（由 main.go 调用）
+│   │   ├── email_code.go             #   邮箱验证码发送
+│   │   ├── flow_notify_email.go      #   流程邮件通知
+│   │   ├── flow_notify_webhook.go    #   流程 Webhook 通知
+│   │   ├── image_webp.go             #   图片异步转 webp（上传后投递，转码回写记录）
+│   │   ├── notice_email.go           #   通知邮件补推
+│   │   └── operate_log.go            #   操作日志落库（由中间件投递，解耦写库）
 │   │
 │   ├── schema/                       # 请求与响应结构体 (DTO)
 │   │   ├── system_corn_schema.go
@@ -140,6 +148,11 @@ server/
 │   │   │   ├── album_schema.go
 │   │   │   ├── captcha_schema.go
 │   │   │   └── file_hash_schema.go
+│   │   ├── queue_schema/              # 异步队列 payload + 队列名常量
+│   │   │   ├── queue.go               #     队列名常量 (flow_notify_email/flow_notify_webhook/email:code:send/notice:email/image_webp/operate_log)
+│   │   │   ├── flow_notify_schema.go  #     流程通知 payload
+│   │   │   ├── image_webp_schema.go   #     图片转 webp payload
+│   │   │   └── notice_email_schema.go #     通知邮件 payload
 │   │   ├── flow_schema/
 │   │   │   ├── flow_apply_schema.go
 │   │   │   ├── flow_history_schema.go
@@ -216,8 +229,6 @@ server/
 │   │   ├── corn_manager.go           #   CronManager (基于 robfig/cron 秒级)
 │   │   ├── fixed_task.go             #   固定任务（在线人数/监控/清理/补推等）
 │   │   └── dynamic_task.go           #   动态任务（从数据库加载）
-│   └── task/                         # 异步任务启动入口 (package task)
-│       └── task.go                   #   基于 core/queue 的消费者注册与启动
 │
 ├── config/                           # 配置管理
 │   ├── init.go                       #   Viper 初始化入口
@@ -441,5 +452,33 @@ C端路由前缀为 **`/api/web`**（控制器在 `web_ctl/`，路由在 `web_ro
 6. **数据库**: 通过 `core.GetDB()` 获取 `*gorm.DB`
 7. **Redis**: 封装在 `util.RedisUtil`，分布式锁用 `util.NewRedisLock()`
 8. **参数校验**: Schema 结构体中使用 `binding` + `validator` 标签
-9. **异步任务**: 耗时操作（录音转写/AI处理/流程通知等）通过 `core/queue` 消息队列异步处理，消费者在 `app/task/task.go` 注册
+9. **异步任务**: 耗时操作（录音转写/AI处理/流程通知/图片转webp/操作日志等）通过 `core/queue` 消息队列异步处理，消费者在 `app/queue/start.go` 统一注册与启动
 10. **主键**: UUID v7 (`char(36)`)，模型中通过 `BeforeCreate` 钩子自动生成
+
+## 相关文档导航
+
+> 以下文档位于仓库 `docs/` 目录（VitePress 文档站），本 SKILL 已为其补充 `name` + `description` 格式的 frontmatter，可作为子 skill 直接检索。相对路径从本文件 `server/.agents/skills/project/` 出发。
+
+### 后端基础
+
+- [前期准备](../../../../docs/server/准备.md) — Go/MySQL/Redis 安装与项目初始化
+- [项目结构说明](../../../../docs/server/结构说明.md) — 目录结构与模块划分
+- [环境变量](../../../../docs/server/环境变量.md) — Viper 配置与 `.env.yaml`
+- [权限验证](../../../../docs/server/权限验证.md) — `LoginAuth`/`PermAuth` 中间件与菜单权限标识
+- [开发注意事项](../../../../docs/server/注意事项.md) — 循环依赖/零值/软删除等坑
+- [数据库 Null 值](../../../../docs/server/数据库null值.md) — GORM Null 类型自定义
+- [Swaggo 接口文档](../../../../docs/server/swaggo.md) — 接口文档生成
+- [打包部署](../../../../docs/server/部署Go.md) — Go 跨平台打包
+- [Nginx 配置](../../../../docs/server/nginx配置.md) — 反向代理与静态资源
+- [Excel 导入导出](../../../../docs/server/导入导出excel.md) — 基于 excelize
+
+### 后端功能说明
+
+- [系统功能模块概述](../../../../docs/server/功能说明/模块概述.md) — 模块总览
+- [工具函数与核心组件](../../../../docs/server/功能说明/工具函数与核心组件.md) — `util` 与 `core` 基础设施
+- [异步队列](../../../../docs/server/功能说明/异步队列.md) — `core/queue` 消费者注册
+- [定时任务](../../../../docs/server/功能说明/定时任务.md) — `robfig/cron` 固定/动态任务
+- [事件总线 PubSub](../../../../docs/server/功能说明/事件总线pubsub.md) — `core/pubsub` 跨实例广播
+- [存储引擎](../../../../docs/server/功能说明/存储引擎.md) — 本地/OSS 与预签名直传
+- [邮件发送](../../../../docs/server/功能说明/邮件发送.md) — 多账号与异步补推
+- [WebSocket 实时通信](../../../../docs/server/功能说明/WebSocket.md) — `core/ws` 连接管理

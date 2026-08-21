@@ -1,3 +1,8 @@
+---
+name: "后端-事件总线PubSub"
+description: "x_admin 后端 core/pubsub 发布订阅与 Redis 跨实例广播"
+---
+
 # 事件总线 pubsub
 
 `core/pubsub` 提供 mitt 风格的事件发布/订阅（Emitter），统一 API、可插拔后端。当前内置 **Redis 后端**（基于 Redis Pub/Sub 实现跨实例广播），新增后端（NATS/Kafka 等）只需实现 `Emitter` 接口并在 `New` 中注册分支。

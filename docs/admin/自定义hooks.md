@@ -57,3 +57,65 @@ const { optionsData,refresh } = useDictOptions<{
 // optionsData.articleCate: any[] 数据列表
 // refresh 刷新数据
 ```
+
+4. 函数防重锁 useLockFn
+```ts
+import { useLockFn } from '@/hooks/useLockFn'
+const { lockFn, isLock } = useLockFn(asyncFn)
+
+// asyncFn: 需要防止并发执行的异步函数
+// lockFn: 包装后的函数，执行中再次调用会被忽略（避免重复提交）
+// isLock: 当前是否处于锁定（执行中）状态，可用于禁用按钮
+```
+
+5. 带重置的响应式对象 useReactiveWithReset
+```ts
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
+const { state, reset, setState } = useReactiveWithReset<{ name: string; age: number }>({
+    name: '',
+    age: 0
+})
+
+// state: reactive 响应式对象，直接读写
+// reset(): 重置回初始值（深拷贝，避免引用污染）
+// setState(info): 先 reset 再合并新数据
+```
+
+6. 监听路由变化 useWatchRoute
+```ts
+import { useWatchRoute } from '@/hooks/useWatchRoute'
+const { route } = useWatchRoute((route) => {
+    // route 变化（含首次 immediate）时触发
+})
+
+// route: 当前路由对象（RouteLocationNormalizedLoaded）
+// callback 在路由变化时立即调用（immediate: true）
+```
+
+7. 全局 WebSocket useGlobalWs
+```ts
+import {
+    useGlobalWs,
+    onWsMessage,
+    initGlobalWs,
+    destroyGlobalWs
+} from '@/hooks/useGlobalWs'
+
+// 在 layout 中初始化唯一连接（单例）
+initGlobalWs()
+
+// 组件内订阅指定类型消息，卸载时自动取消订阅
+onWsMessage('notice', (msg) => {
+    // msg.type / msg.data，与后端 WsResponse { type, data } 对应
+})
+// 传 '*' 可订阅所有消息
+
+// 获取连接状态与发送能力
+const { status, send, close } = useGlobalWs()
+// status: 'connecting' | 'open' | 'closed'（readonly）
+// send(data): 发送文本/二进制消息
+// close(): 关闭连接
+
+// 销毁全局连接
+destroyGlobalWs()
+```

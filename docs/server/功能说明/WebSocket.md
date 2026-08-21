@@ -1,3 +1,8 @@
+---
+name: "后端-WebSocket实时通信"
+description: "x_admin 后端 core/ws 连接管理与集群跨实例广播"
+---
+
 # WebSocket 实时通信
 
 后端 WebSocket 由 `core/ws` 包实现，提供连接管理、按用户/房间/全局推送、集群跨实例广播、全局在线人数统计与连接强制关闭能力。

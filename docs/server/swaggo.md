@@ -1,3 +1,8 @@
+---
+name: "后端-Swaggo接口文档"
+description: "x_admin 后端 Swaggo 接口文档生成与使用方法"
+---
+
 # swag 2025-11-30
  
 [swag Go Doc](https://godoc.org/github.com/swaggo/swag)

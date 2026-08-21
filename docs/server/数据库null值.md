@@ -1,3 +1,8 @@
+---
+name: "后端-数据库Null值"
+description: "x_admin 后端 GORM Null 类型自定义实现，解决数据库 nullable 字段"
+---
+
 ## 数据库null值
 
 问题点：数据库在int,string等类型时，同时可能允许null值，但是go中int,string等类型不允许null值，数据类型不一致就会报错。
