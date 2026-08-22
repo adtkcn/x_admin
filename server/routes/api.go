@@ -27,8 +27,8 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	api.Static("/static", "./public/static")
 
 	// 文件流路由：按 file_hash_id 返回物理文件（取代原静态目录映射）
-	handleFile := common_controller.FileHandler{}
-	api.GET("/uploads/:id", handleFile.Serve)
+	handleFile := common_controller.UploadHandler{}
+	api.GET("/uploads/:id/:file_name", handleFile.Serve)
 
 	// 设置中间件
 	rootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())

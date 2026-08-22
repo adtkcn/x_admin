@@ -42,7 +42,7 @@ var FileConfig = FileConfigStruct{
 	// 上传音视频扩展
 	UploadVideoExt: []string{"mp4", "avi", "flv", "wmv", "rmvb", "mov", "mp3", "wav", "flac", "m4a"},
 
-	UploadFileExt: []string{"pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip", "rar", "7z", "txt"},
+	UploadFileExt: []string{"pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip", "rar", "7z", "txt", "msi", "exe", "apk", "ipa"},
 
 	// 分片上传配置
 	ChunkSize:       5 * 1024 * 1024, // 5MB

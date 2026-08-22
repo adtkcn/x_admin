@@ -97,8 +97,7 @@ func buildAlbumListResp(alb common_model.Album, hash common_model.CommonFileHash
 		Cid:        alb.Cid,
 		Name:       alb.Name,
 		FileHashId: alb.FileHashId,
-		// Path:       util.UrlUtil.HashUrl(alb.FileHashId), // 访问地址（GET /api/uploads/:id）
-		Uri:        util.UrlUtil.HashUrl(hash.ID), // 访问地址（GET /api/uploads/:id）
+		Uri:        util.UrlUtil.HashUrl(hash.ID, alb.Name), // 访问地址（GET /api/uploads/:id）
 		Ext:        hash.Ext,
 		Size:       util.ServerUtil.GetFmtSize(uint64(hash.FileSize)),
 		CreateTime: alb.CreateTime,

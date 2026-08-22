@@ -32,9 +32,9 @@ func newFileHashService() *fileHashService {
 // Create 创建文件哈希记录，主键 id 内部生成（UUID）。
 // filePath 为磁盘存储 key（含扩展名），ext 为扩展名。返回生成的 id。
 func (s *fileHashService) Create(fileMd5 string, fileSize int64, filePath, ext string) (string, error) {
-	id := util.ToolsUtil.MakeUuidV7()
+
 	record := common_model.CommonFileHash{
-		ID:       id,
+		// ID:       id,
 		FileMd5:  fileMd5,
 		FileSize: fileSize,
 		FilePath: filePath,
@@ -46,8 +46,8 @@ func (s *fileHashService) Create(fileMd5 string, fileSize int64, filePath, ext s
 		return "", response.CheckErr(err, "创建文件哈希记录失败")
 	}
 	// 预热缓存：避免首次访问穿透到 DB
-	s.cacheFilePath(id, filePath)
-	return id, nil
+	s.cacheFilePath(record.ID, filePath)
+	return record.ID, nil
 }
 
 // GetFilePath 根据文件哈希ID获取磁盘存储相对路径（存储 key）。

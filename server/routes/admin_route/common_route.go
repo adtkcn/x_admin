@@ -15,8 +15,25 @@ func initUploadRoute(rg *gin.RouterGroup) {
 	handleUpload := common_controller.UploadHandler{}
 	uploadRg := rg.Group("/common", middleware.LoginAuth())
 
-	uploadRg.POST("/upload/file", middleware.RecordLog("上传文件", middleware.RequestFile), handleUpload.UploadFile)
-	uploadRg.POST("/upload/checkInstant", middleware.RecordLog("文件秒传检查"), handleUpload.CheckInstant)
+	uploadRg.POST("/upload/file", handleUpload.UploadFile)
+	uploadRg.POST("/upload/checkInstant", handleUpload.CheckInstant)
+}
+
+// initUploadChunkRoute S3 标准协议路由（与 AWS SDK 兼容）
+func initUploadChunkRoute(rg *gin.RouterGroup) {
+	h := common_controller.UploadChunkHandler{}
+	upload_chunk := rg.Group("/upload_chunk")
+
+	// 核心路由: 统一入口，按 HTTP 方法 + query 参数分发
+	// - POST /upload_chunk/{key}?uploads            → CreateMultipartUpload
+	// - PUT  /upload_chunk/{key}?partNumber=&uploadId= → UploadPart
+	// - POST /upload_chunk/{key}?uploadId=          → CompleteMultipartUpload
+	// - DELETE /upload_chunk/{key}?uploadId=        → AbortMultipartUpload
+	// - GET  /upload_chunk/{key}?uploadId=          → ListParts
+	// - PUT  /upload_chunk/{key}                    → PutObject
+	// - HEAD /upload_chunk/{key}                    → HeadObject
+	// - POST /upload_chunk/generateKey              → 生成文件 Key（扩展）
+	upload_chunk.Any("/*fileKey", h.S3Handler)
 }
 
 // initAlbumRoute 相册路由
@@ -65,5 +82,13 @@ func swaggerDoc(rg *gin.RouterGroup) {
 
 // 通用模块路由入口（上传、分片上传、相册、首页、个推、验证码）
 func init() {
-	routeHandlers = append(routeHandlers, initUploadRoute, initAlbumRoute, initIndexRoute, initGeTuiRoute, swaggerDoc)
+	routeHandlers = append(
+		routeHandlers,
+		initUploadRoute,
+		initUploadChunkRoute,
+		initAlbumRoute,
+		initIndexRoute,
+		initGeTuiRoute,
+		swaggerDoc,
+	)
 }

@@ -100,11 +100,7 @@
                                 class="picker-selected__item"
                             >
                                 <del-wrap @close="removeSelect(item)">
-                                    <FileItem
-                                        :uri="getImageUrl(item.url)"
-                                        :file-size="'80px'"
-                                        :ext="item.ext"
-                                    />
+                                    <FileItem :uri="getImageUrl(item.url)" :file-size="'80px'" />
                                 </del-wrap>
                             </li>
                         </ul>
@@ -114,7 +110,7 @@
             </div>
         </popup>
 
-        <preview v-model="showPreview" :url="previewUrl" :ext="previewExt" />
+        <preview v-model="showPreview" :url="previewUrl" />
     </div>
 </template>
 
@@ -157,7 +153,7 @@ export default defineComponent({
         const popupRef = ref<InstanceType<typeof Popup>>()
         const materialRef = ref<InstanceType<typeof Material>>()
         const previewUrl = ref('')
-        const previewExt = ref('')
+
         const showPreview = ref(false)
         // fileList 元素为 { url, ext }：对外（emit/modelValue）只暴露 url
         const fileList = ref<any[]>([])
@@ -217,7 +213,7 @@ export default defineComponent({
                         return
                     }
                 }
-                // 业务表存完整访问地址（/api/uploads/<id>），元素 { url, ext }
+                // 业务表存完整访问地址（/api/uploads/<id>/file_name），元素 { url, ext }
                 const selectUri = select.value.map((item) => ({
                     url: item.url,
                     ext: item.ext
@@ -248,9 +244,7 @@ export default defineComponent({
             // 内部仅保留 { url, ext, id }（id 用于 cancelSelect 对齐）
             if (props.limit === 1) {
                 const last = val[val.length - 1]
-                materialFiles.value = last
-                    ? [{ url: last.uri, ext: last.ext, id: last.id }]
-                    : []
+                materialFiles.value = last ? [{ url: last.uri, ext: last.ext, id: last.id }] : []
                 return
             }
             val.forEach((item: any) => {
@@ -294,7 +288,7 @@ export default defineComponent({
         }
         const handlePreview = (item: any) => {
             previewUrl.value = getImageUrl(item.url || item)
-            previewExt.value = item.ext || ''
+
             showPreview.value = true
         }
         const handleClose = () => {
@@ -343,7 +337,7 @@ export default defineComponent({
             selectChange,
             deleteImg,
             previewUrl,
-            previewExt,
+
             showPreview,
             handlePreview,
             handleClose,

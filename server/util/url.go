@@ -18,11 +18,11 @@ type urlUtil struct{}
 
 // HashUrl 由文件哈希ID拼访问URL：/api/uploads/<id>
 // 实际文件流由路由 GET /api/uploads/:id 按 id 查 x_common_file_hash.FilePath 返回，无需扩展名。
-func (uu urlUtil) HashUrl(id string) string {
+func (uu urlUtil) HashUrl(id string, file_name string) string {
 	if id == "" {
 		return ""
 	}
-	return path.Join(uploadPrefix, id)
+	return path.Join(uploadPrefix, id, file_name)
 }
 
 // ToAbsoluteUrl 转绝对路径
@@ -50,11 +50,13 @@ func (uu urlUtil) GetFileExt(fileName string) string {
 	return fileExt
 }
 
-// 生成文件存储路径
+// 生成文件存储路径 年月日/时/uuid.ext
 func (uu urlUtil) BuildFileSavePath(fileName string) string {
 	ext := strings.ToLower(path.Ext(fileName))
 	now := time.Now()
-	// 年月日/时/分
-	datePath := path.Join(now.Format("20060102"), now.Format("15"), now.Format("04"))
-	return path.Join(datePath, ToolsUtil.MakeUuidV7()+ext)
+	id := ToolsUtil.MakeUuidV7()
+	// 取id后两位作为目录，分散目录锁争抢
+	idHash := id[len(id)-2:]
+	datePath := path.Join(now.Format("20060102"), now.Format("15"), idHash)
+	return path.Join(datePath, id+ext)
 }

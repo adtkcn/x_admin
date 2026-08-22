@@ -19,12 +19,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// S3UploadHandler S3 标准协议控制器（文件存本地，API 对齐 S3 REST）
-type S3UploadHandler struct{}
+// UploadChunkHandler S3 标准协议控制器（文件存本地，API 对齐 S3 REST）
+type UploadChunkHandler struct{}
 
 // S3Handler S3 统一入口：根据 HTTP 方法 + query 参数分发到具体操作
 // 路由: ANY /api/admin/s3/*fileKey
-func (h S3UploadHandler) S3Handler(c *gin.Context) {
+func (h UploadChunkHandler) S3Handler(c *gin.Context) {
 	method := c.Request.Method
 	rawKey := strings.TrimPrefix(c.Param("fileKey"), "/")
 
@@ -80,7 +80,7 @@ func (h S3UploadHandler) S3Handler(c *gin.Context) {
 // ---- 秒传检查 ----
 
 // CheckInstant 秒传：根据文件 MD5 查询是否已上传
-func (h S3UploadHandler) CheckInstant(c *gin.Context) {
+func (h UploadChunkHandler) CheckInstant(c *gin.Context) {
 	var req struct {
 		FileMd5  string `json:"file_md5" binding:"required"`
 		FileName string `json:"file_name" binding:"required"`
@@ -117,7 +117,7 @@ func (h S3UploadHandler) CheckInstant(c *gin.Context) {
 
 // GenerateKey 生成存储 key，路径结构对齐直传：年月日/时/分/{uuid}.ext
 // 与 storage.buildSaveName 保持一致，使直传与 S3 分片落盘到同一目录层级。
-func (h S3UploadHandler) GenerateKey(c *gin.Context) {
+func (h UploadChunkHandler) GenerateKey(c *gin.Context) {
 	var req struct {
 		FileName string `json:"file_name" binding:"required"`
 	}
@@ -133,7 +133,7 @@ func (h S3UploadHandler) GenerateKey(c *gin.Context) {
 
 // RegisterHash 上传完成后由前端调用，将 MD5 与 fileKey 关联存入哈希表。
 // id 为哈希表主键，FilePath 存真实存储 key（fileKey），文件名无需与 id 一致。
-func (h S3UploadHandler) RegisterHash(c *gin.Context) {
+func (h UploadChunkHandler) RegisterHash(c *gin.Context) {
 	var req struct {
 		FileMd5  string `json:"file_md5" binding:"required"`
 		FileSize int64  `json:"file_size"`
@@ -156,7 +156,7 @@ func (h S3UploadHandler) RegisterHash(c *gin.Context) {
 		// ID:         id,
 		FileHashId: id,
 		Name:       req.FileName,
-		Uri:        util.UrlUtil.HashUrl(id), // 访问地址（完整可访问 URL）
+		Uri:        util.UrlUtil.HashUrl(id, req.FileName), // 访问地址（完整可访问 URL）
 		Ext:        ext,
 		Size:       req.FileSize,
 		Instant:    false,
@@ -169,7 +169,7 @@ func (h S3UploadHandler) RegisterHash(c *gin.Context) {
 
 // ---- CreateMultipartUpload ----
 
-func (h S3UploadHandler) createMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey string) {
+func (h UploadChunkHandler) createMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey string) {
 	uploadId, err := engine.InitMultipartUpload(fileKey)
 	if err != nil {
 		core.Logger.Errorf("createMultipartUpload err: %v", err)
@@ -182,7 +182,7 @@ func (h S3UploadHandler) createMultipartUpload(c *gin.Context, engine storage.St
 
 // ---- UploadPart ----
 
-func (h S3UploadHandler) uploadPart(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId, partNumberStr string) {
+func (h UploadChunkHandler) uploadPart(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId, partNumberStr string) {
 	partNumber, err := strconv.Atoi(partNumberStr)
 	if err != nil || partNumber < 1 {
 		s3Error(c, 400, "InvalidArgument", "分片序号错误")
@@ -213,7 +213,7 @@ type completeMultipartUploadXML struct {
 	} `xml:"Part"`
 }
 
-func (h S3UploadHandler) completeMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
+func (h UploadChunkHandler) completeMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
 	bodyBytes, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		s3Error(c, 400, "InvalidRequest", "读取请求体失败")
@@ -245,7 +245,7 @@ func (h S3UploadHandler) completeMultipartUpload(c *gin.Context, engine storage.
 
 // ---- AbortMultipartUpload ----
 
-func (h S3UploadHandler) abortMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
+func (h UploadChunkHandler) abortMultipartUpload(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
 	if err := engine.AbortMultipartUpload(fileKey, uploadId); err != nil {
 		core.Logger.Errorf("abortMultipartUpload err: %v", err)
 	}
@@ -254,7 +254,7 @@ func (h S3UploadHandler) abortMultipartUpload(c *gin.Context, engine storage.Sto
 
 // ---- ListParts ----
 
-func (h S3UploadHandler) listParts(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
+func (h UploadChunkHandler) listParts(c *gin.Context, engine storage.StorageEngine, fileKey, uploadId string) {
 	parts, err := engine.ListParts(fileKey, uploadId)
 	if err != nil {
 		core.Logger.Errorf("listParts err: %v", err)
@@ -267,7 +267,7 @@ func (h S3UploadHandler) listParts(c *gin.Context, engine storage.StorageEngine,
 
 // ---- PutObject ----
 
-func (h S3UploadHandler) putObject(c *gin.Context, engine storage.StorageEngine, fileKey string) {
+func (h UploadChunkHandler) putObject(c *gin.Context, engine storage.StorageEngine, fileKey string) {
 	bodyData, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		s3Error(c, 400, "InvalidRequest", "读取文件数据失败")
@@ -285,7 +285,7 @@ func (h S3UploadHandler) putObject(c *gin.Context, engine storage.StorageEngine,
 
 // ---- HeadObject ----
 
-func (h S3UploadHandler) headObject(c *gin.Context, engine storage.StorageEngine, fileKey string) {
+func (h UploadChunkHandler) headObject(c *gin.Context, engine storage.StorageEngine, fileKey string) {
 	exists, err := engine.ObjectExists(fileKey)
 	if err != nil {
 		core.Logger.Errorf("headObject err: %v", err)

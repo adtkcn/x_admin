@@ -39,10 +39,8 @@ func (upSrv uploadService) UploadFile(file *multipart.FileHeader) (res common_sc
 		return
 	}
 
-	ext := util.UrlUtil.GetFileExt(file.Filename)
-
 	// id 由 Create 内部生成（UUID），FilePath 存磁盘存储 key
-	id, e := FileHashService.Create(md5, file.Size, uploadFile.Path, ext)
+	id, e := FileHashService.Create(md5, file.Size, uploadFile.Path, uploadFile.Ext)
 	if e != nil {
 		return
 	}
@@ -52,7 +50,7 @@ func (upSrv uploadService) UploadFile(file *multipart.FileHeader) (res common_sc
 		FileMd5:  md5,
 		FileSize: file.Size,
 		FilePath: uploadFile.Path,
-		Ext:      ext,
+		Ext:      uploadFile.Ext,
 	}
 	return res, nil
 }

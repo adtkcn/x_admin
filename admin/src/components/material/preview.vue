@@ -41,18 +41,15 @@ const props = defineProps({
     url: {
         type: String,
         default: ''
-    },
-    // 文件扩展名（不含点）。id 形式的 url 无法从后缀推断类型，需显式传入。
-    ext: {
-        type: String,
-        default: ''
     }
+    // type: {
+    //     type: String,
+    //     default: 'image'
+    // }
 })
 
 const fileType = computed(() => {
-    // 优先用 ext prop 推断；空时回退到 url 后缀（兼容旧 url 形式）
-    const key = props.ext || (props.url ? props.url.split('.').pop() : '')
-    return GetFileType(key || '')
+    return GetFileType(props.url)
 })
 
 const playerRef = useTemplateRef('playerRef')
