@@ -184,7 +184,7 @@ func (service systemCornService) Del(Id string) (e error) {
 	return
 }
 
-// DelBatch 用户协议-批量删除
+// DelBatch 批量删除
 func (service systemCornService) DelBatch(Ids []string) (e error) {
 	var obj model.SystemCorn
 	err := service.db.Where("id in (?)", Ids).Delete(&obj).Error

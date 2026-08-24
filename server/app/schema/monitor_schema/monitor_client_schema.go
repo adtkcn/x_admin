@@ -59,13 +59,13 @@ type MonitorClientResp struct {
 
 // MonitorClientDetailReq 监控-客户端信息详情
 type MonitorClientDetailReq struct {
-	Id string `json:"id" form:"id" v:"required#客户端id不能为空"`
+	Id string `json:"id" form:"id" binding:"required"`
 }
 
 // MonitorClientAddReq 监控-客户端信息新增
 type MonitorClientAddReq struct {
-	ProjectKey string `json:"project_key"`
-	ClientId   string `json:"client_id"`
+	ProjectKey string `json:"project_key" binding:"required"`
+	ClientId   string `json:"client_id" binding:"required"`
 	UserId     string `json:"user_id"`
 	Os         string `json:"os"`
 	Browser    string `json:"browser"`
@@ -77,7 +77,7 @@ type MonitorClientAddReq struct {
 
 // MonitorClientEditReq 监控-客户端信息编辑
 type MonitorClientEditReq struct {
-	Id         string `json:"id" v:"required#客户端id不能为空"`
+	Id         string `json:"id" binding:"required"`
 	ProjectKey string `json:"project_key"`
 	ClientId   string `json:"client_id"`
 	UserId     string `json:"user_id"`
@@ -91,17 +91,17 @@ type MonitorClientEditReq struct {
 
 // MonitorClientDelReq 监控-客户端信息删除
 type MonitorClientDelReq struct {
-	Id string `json:"id" form:"id" v:"required#客户端id不能为空"`
+	Id string `json:"id" form:"id" binding:"required"`
 }
 
 // MonitorClientDelBatchReq 监控-客户端信息删除
 type MonitorClientDelBatchReq struct {
-	Ids string `json:"ids" form:"ids" v:"required#客户端ids不能为空"`
+	Ids string `json:"ids" form:"ids" binding:"required"`
 }
 
 // MonitorClientErrorUsersReq 监控-客户端信息错误用户列表
 type MonitorClientErrorUsersReq struct {
-	Id string `json:"id" form:"id" v:"required#客户端id不能为空"`
+	Id string `json:"id" form:"id" binding:"required"`
 }
 
 // MonitorClientExportReq 监控-客户端信息导出

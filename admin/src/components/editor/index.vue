@@ -45,7 +45,7 @@ const props = withDefaults(
     {
         modelValue: '',
         mode: 'default',
-        height: '100%',
+        // height: '90%',
         width: 'auto',
         toolbarConfig: () => ({})
     }
@@ -82,7 +82,7 @@ const editorConfig: Partial<IEditorConfig> = {
 }
 
 const styles = computed<CSSProperties>(() => ({
-    height: addUnit(props.height),
+    // height: addUnit(props.height),
     width: addUnit(props.width)
 }))
 const valueHtml = defineModel({

@@ -169,18 +169,13 @@ func (service flowHistoryService) Edit(editReq flow_schema.FlowHistoryEditReq) (
 
 // Del 流程历史删除
 func (service flowHistoryService) Del(id string) (e error) {
-	var obj model.FlowHistory
-	err := service.db.Where("id = ?", id).First(&obj).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
+	result := service.db.Where("id = ?", id).Delete(&model.FlowHistory{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
 	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
-		return
+	if result.RowsAffected == 0 {
+		return errors.New("数据不存在")
 	}
-	// 删除
-	err = service.db.Delete(&obj).Error
-	e = response.CheckErr(err, "删除失败")
 	return
 }
 

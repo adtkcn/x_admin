@@ -52,3 +52,6 @@
 .rich-text-style input[type='checkbox'] {
     margin-right: 5px;
 }
+.rich-text-style img {
+    max-width: 100%;
+}

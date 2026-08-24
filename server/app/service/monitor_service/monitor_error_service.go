@@ -193,28 +193,24 @@ func (service monitorErrorService) Del(Id string) (e error) {
 	return
 }
 
-// DelBatch 用户协议-批量删除
+// DelBatch 批量删除
 func (service monitorErrorService) DelBatch(Ids []string) (e error) {
-	var obj []model.MonitorError
-	// 查询Ids对应的数据
-	err := service.db.Where("id in (?)", Ids).Find(&obj).Error
-	if err != nil {
-		return err
-	}
-	if len(obj) == 0 {
-		return errors.New("数据不存在")
-	}
-	err = service.db.Where("id in (?)", Ids).Delete(model.MonitorError{}).Error
-	if err != nil {
-		return err
-	}
-	// md5集合
+	// 删除前取出缓存键（md5），用于删除后清理缓存
+	var objs []model.MonitorError
+	service.db.Select("md5").Where("id in (?)", Ids).Find(&objs)
 	var md5s []string
-	for _, v := range obj {
+	for _, v := range objs {
 		md5s = append(md5s, "md5:"+v.Md5)
 	}
+	// 直接删除 + 影响行数判断数据不存在
+	result := service.db.Where("id in (?)", Ids).Delete(&model.MonitorError{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("数据不存在")
+	}
 	// 删除缓存
-
 	service.CacheUtil.RemoveCache(md5s...)
 	return nil
 }

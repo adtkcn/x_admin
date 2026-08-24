@@ -215,7 +215,7 @@ func (service {{{ .EntityName }}}Service) Del({{{ .PrimaryGoField }}} {{{.Primar
 	return
 }
 
-// DelBatch 用户协议-批量删除
+// DelBatch {{{ .FunctionName }}}-批量删除
 func (service {{{ .EntityName }}}Service) DelBatch(Ids []string) (e error) {
 	var obj {{{.Domain}}}_model.{{{ toUpperCamelCase .EntityName }}}
 	err := service.db.Where("{{{ $.PrimaryKey }}} in (?)", Ids).Delete(&obj).Error
@@ -263,7 +263,7 @@ func (service {{{ .EntityName }}}Service) ExportFile(listReq {{{.Domain}}}_schem
 	return result, nil
 }
 
-// 导入
+// {{{ .FunctionName }}}导入
 func (service {{{ .EntityName }}}Service) ImportFile(importReq []{{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}Resp) (e error) {
 	var importData []{{{.Domain}}}_model.{{{ toUpperCamelCase .EntityName }}}
 	convert_util.Copy(&importData, importReq)

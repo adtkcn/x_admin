@@ -49,7 +49,7 @@ type MonitorErrorResp struct {
 
 // MonitorErrorDetailReq 监控错误详情
 type MonitorErrorDetailReq struct {
-	Id string `json:"id" form:"id" v:"required#错误id不能为空"`
+	Id string `json:"id" form:"id" binding:"required"`
 }
 
 // MonitorErrorAddReq 监控错误新增
@@ -68,7 +68,7 @@ type MonitorErrorAddReq struct {
 
 // MonitorErrorEditReq 监控错误编辑
 type MonitorErrorEditReq struct {
-	Id         string `json:"id" v:"required#错误id不能为空"`
+	Id         string `json:"id" binding:"required"`
 	ProjectKey string `json:"project_key"`
 	EventType  string `json:"event_type"`
 	Path       string `json:"path"`
@@ -83,12 +83,12 @@ type MonitorErrorEditReq struct {
 
 // MonitorErrorDelReq 监控错误删除
 type MonitorErrorDelReq struct {
-	Id string `json:"id" form:"id" v:"required#错误id不能为空"`
+	Id string `json:"id" form:"id" binding:"required"`
 }
 
 // MonitorErrorDelBatchReq 监控错误删除
 type MonitorErrorDelBatchReq struct {
-	Ids string `json:"ids" form:"ids" v:"required#错误ids不能为空"`
+	Ids string `json:"ids" form:"ids" binding:"required"`
 }
 
 // MonitorErrorExportReq 监控错误导出

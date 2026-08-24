@@ -1,6 +1,8 @@
 package flow_service
 
 import (
+	"errors"
+
 	"x_admin/app/model"
 	"x_admin/app/schema/flow_schema"
 	"x_admin/core"
@@ -122,17 +124,12 @@ func (service flowTemplateService) Edit(editReq flow_schema.FlowTemplateEditReq)
 
 // Del 流程模板删除
 func (service flowTemplateService) Del(id string) (e error) {
-	var obj model.FlowTemplate
-	err := service.db.Where("id = ?", id).First(&obj).Error
-	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
+	result := service.db.Where("id = ?", id).Delete(&model.FlowTemplate{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
 	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
-		return
+	if result.RowsAffected == 0 {
+		return errors.New("数据不存在")
 	}
-	// 删除
-	err = service.db.Delete(&obj).Error
-	e = response.CheckErr(err, "删除失败")
 	return
 }

@@ -177,21 +177,35 @@ func (service monitorClientService) ErrorUsers(error_id string) (res []monitor_s
 func (service monitorClientService) Add(addReq monitor_schema.MonitorClientAddReq) (createId string, e error) {
 	var obj model.MonitorClient
 	convert_util.Copy(&obj, addReq)
+
+	// 基于 Redis 去重短路：client_id 近期已上报过则直接命中缓存返回，
+	// 避免高频重复上报每次都打 DB 写（缓存 TTL 1h，过期后回源 DB 重新校验）
+	cacheKey := "ClientId:" + obj.ClientId
+	var cached model.MonitorClient
+	if err := service.CacheUtil.GetCache(cacheKey, &cached); err == nil && cached.Id != "" {
+		return cached.Id, nil
+	}
+
+	// 缓存未命中：回源 DB，依赖 client_id 唯一索引保证幂等（冲突不更新任何字段）
 	err := service.db.Clauses(clause.OnConflict{
 		Columns: []clause.Column{
-			{Name: "client_id"}, // 指定以 client_id 作为冲突判断字段（可选，GORM 会自动推断唯一索引）
+			{Name: "client_id"}, // 指定以 client_id 作为冲突判断字段（唯一索引）
 		},
-		DoUpdates: clause.Assignments(map[string]any{
-			"os":      addReq.Os,
-			"browser": addReq.Browser,
-			"ua":      addReq.Ua,
-		}),
+		DoNothing: true, // client_id 已存在时不更新任何字段
 	}).Create(&obj).Error
-	e = response.CheckMysqlErr(err)
-	if e != nil {
+	if e = response.CheckMysqlErr(err); e != nil {
 		return "", e
 	}
-	service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
+
+	// DoNothing 命中冲突时 obj.Id 为 BeforeCreate 生成的临时 uuid（未落库），
+	// 需按 client_id 回查真实记录，避免返回不存在的假 id
+	err = service.db.Where("client_id = ?", obj.ClientId).Order("id DESC").First(&obj).Error
+	if e = response.CheckErr(err, "写入后回查失败"); e != nil {
+		return "", e
+	}
+
+	// 写入/刷新缓存（TTL 由 CacheUtil.SetCache 控制，过期后下次回源 DB 校验）
+	service.CacheUtil.SetCache(cacheKey, obj)
 	createId = obj.Id
 	return
 }
@@ -215,30 +229,26 @@ func (service monitorClientService) Del(Id string) (e error) {
 	return
 }
 
-// DelBatch 用户协议-批量删除
+// DelBatch 批量删除
 func (service monitorClientService) DelBatch(Ids []string) (e error) {
-	var obj []model.MonitorClient
-	// 查询Ids对应的数据
-	err := service.db.Where("id in (?)", Ids).Find(&obj).Error
-	if err != nil {
-		return err
+	// 删除前取出缓存键（client_id），用于删除后清理缓存
+	var objs []model.MonitorClient
+	service.db.Select("client_id").Where("id in (?)", Ids).Find(&objs)
+	var clients []string
+	for _, v := range objs {
+		clients = append(clients, "ClientId:"+v.ClientId)
 	}
-	if len(obj) == 0 {
+	// 直接删除 + 影响行数判断数据不存在
+	result := service.db.Where("id in (?)", Ids).Delete(&model.MonitorClient{})
+	if result.Error != nil {
+		return response.CheckErr(result.Error, "删除失败")
+	}
+	if result.RowsAffected == 0 {
 		return errors.New("数据不存在")
 	}
-	err = service.db.Where("id in (?)", Ids).Delete(model.MonitorClient{}).Error
-	if err != nil {
-		return err
-	}
-	// md5集合
-	var Clients []string
-	for _, v := range obj {
-		Clients = append(Clients, "ClientId:"+v.ClientId)
-	}
-
 	// 删除缓存
 	service.CacheUtil.RemoveCache(Ids...)
-	service.CacheUtil.RemoveCache(Clients...)
+	service.CacheUtil.RemoveCache(clients...)
 	return nil
 }
 

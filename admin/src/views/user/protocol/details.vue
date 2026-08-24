@@ -14,7 +14,7 @@
                     <span v-text="formData.title"></span>
                 </el-form-item>
                 <el-form-item label="协议内容" prop="content">
-                    <div v-html="formData.content"></div>
+                    <div class="rich-text-style" v-html="formData.content"></div>
                 </el-form-item>
                 <el-form-item label="排序" prop="Sort">
                     <span v-text="formData.Sort"></span>
@@ -27,6 +27,7 @@
 import type { FormInstance } from 'element-plus'
 import { user_protocol_detail } from '@/api/user/protocol'
 import Popup from '@/components/popup/index.vue'
+import '@/components/editor/rich-text-style.css'
 
 import { useTemplateRef, computed, reactive } from 'vue'
 import type { PropType } from 'vue'

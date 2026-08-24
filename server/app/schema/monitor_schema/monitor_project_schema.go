@@ -45,7 +45,7 @@ type MonitorProjectResp struct {
 
 // MonitorProjectDetailReq 监控-项目详情
 type MonitorProjectDetailReq struct {
-	Id string `json:"id" form:"id" v:"required#项目id不能为空"`
+	Id string `json:"id" form:"id" binding:"required"`
 }
 
 // MonitorProjectAddReq 监控-项目新增
@@ -58,7 +58,7 @@ type MonitorProjectAddReq struct {
 
 // MonitorProjectEditReq 监控-项目编辑
 type MonitorProjectEditReq struct {
-	Id          string `json:"id" v:"required#项目id不能为空"`
+	Id          string `json:"id" binding:"required"`
 	ProjectKey  string `json:"project_key"`
 	ProjectName string `json:"project_name"`
 	ProjectType string `json:"project_type"`
@@ -67,12 +67,12 @@ type MonitorProjectEditReq struct {
 
 // MonitorProjectDelReq 监控-项目删除
 type MonitorProjectDelReq struct {
-	Id string `json:"id" form:"id" v:"required#项目id不能为空"`
+	Id string `json:"id" form:"id" binding:"required"`
 }
 
 // MonitorProjectDelBatchReq 监控-项目删除
 type MonitorProjectDelBatchReq struct {
-	Ids string `json:"ids" form:"ids" v:"required#项目ids不能为空"`
+	Ids string `json:"ids" form:"ids" binding:"required"`
 }
 
 // MonitorProjectExportReq 监控-项目导出
