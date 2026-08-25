@@ -10,6 +10,7 @@ import (
 	_ "image/png"  // 注册 png 解码器，供 image.Decode 使用
 
 	webp "github.com/SeriousBug/webp-go-pure/std"
+	"github.com/kovidgoyal/imaging"
 )
 
 func EmptyGif() []byte {
@@ -45,10 +46,35 @@ func ConvertToWebp(src io.Reader, quality int) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("img_util: decode source image: %w", err)
 	}
+	// img = ResizeToMaxDimensionIfNeeded(img, 400)
 
 	var buf bytes.Buffer
 	if err := webp.Encode(&buf, img, &webp.Options{Quality: quality}); err != nil {
 		return nil, fmt.Errorf("img_util: encode webp: %w", err)
 	}
 	return buf.Bytes(), nil
+}
+
+// 固定最长边为 maxDim（适合生成缩略图）
+func ResizeToMaxDimensionIfNeeded(img image.Image, maxDim int) image.Image {
+	bounds := img.Bounds()
+	srcW := bounds.Dx()
+	srcH := bounds.Dy()
+
+	// 如果宽和高都小于等于目标，直接返回原图
+	if srcW <= maxDim && srcH <= maxDim {
+		return img
+	}
+
+	// 计算新的宽高，保持比例
+	var newW, newH int
+	if srcW > srcH {
+		newW = maxDim
+		newH = int(float64(srcH) * float64(maxDim) / float64(srcW))
+	} else {
+		newH = maxDim
+		newW = int(float64(srcW) * float64(maxDim) / float64(srcH))
+	}
+
+	return imaging.Resize(img, newW, newH, imaging.Lanczos)
 }

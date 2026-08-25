@@ -62,7 +62,7 @@ func (sd storageDriver) Upload(file *multipart.FileHeader) (uf *UploadFile, e er
 	}, nil
 }
 
-// localSaveFile 本地上传 (临时方法)
+// localSaveFile 本地存储
 func (sd storageDriver) localSaveFile(file *multipart.FileHeader, saveName string) (e error) {
 	// TODO: 临时方法，后续调整
 	// 映射目录

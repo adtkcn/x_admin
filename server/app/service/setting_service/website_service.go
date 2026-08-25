@@ -33,7 +33,7 @@ func (wSrv settingWebsiteService) Detail() (res map[string]string, e error) {
 		return
 	}
 	return map[string]string{
-		"name":      data["name"],
+		"name": data["name"],
 		// 业务表存完整访问地址（/api/uploads/<id>），无需再转换
 		"logo":      data["logo"],
 		"favicon":   data["favicon"],

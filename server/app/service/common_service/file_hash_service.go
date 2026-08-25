@@ -81,6 +81,10 @@ func (s *fileHashService) FindById(id string) (*common_model.CommonFileHash, err
 		core.Logger.Errorf("FileHashService.FindById err: id=%s, err=%+v", id, err)
 		return nil, err
 	}
+	// 读取即更新 LastAccessTime，利用 redis限流不需要频繁更新
+	db.Model(&common_model.CommonFileHash{}).
+		Where("id = ?", id).
+		Update("last_access_time", time.Now())
 	return &record, nil
 }
 

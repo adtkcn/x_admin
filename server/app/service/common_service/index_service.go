@@ -55,7 +55,7 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 
 	// 从 Redis 数据中提取时间和在线数（格式: "15:04:05,count"）
 	var dateList []string
-	var countList []any
+	var countList []int
 	for _, record := range onlineRecords {
 		parts := strings.Split(record, ",")
 		if len(parts) != 2 {
@@ -83,7 +83,7 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 // Config 公共配置
 func (iSrv indexService) Config() (res map[string]any, e error) {
 	const cacheKey = "Index:Config"
-	// 先读缓存(10秒)
+	// 先读缓存
 	if cacheStr := util.RedisUtil.Get(cacheKey); cacheStr != "" {
 		if res, e = util.ToolsUtil.JsonToObj[map[string]any](cacheStr); e != nil {
 			core.Logger.Errorf("Config cache JsonToObj err: %v", e)

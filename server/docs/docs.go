@@ -9234,6 +9234,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/uploads/{id}": {
+            "get": {
+                "description": "通过 id 查询 x_common_file_hash.FilePath，读取物理文件并以流形式返回",
+                "tags": [
+                    "common_file-文件"
+                ],
+                "summary": "按文件哈希ID获取文件流",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "文件哈希ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "文件流",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/authList": {
             "get": {
                 "description": "获取当前用户所有第三方绑定信息（不含手机号，手机号在用户信息中）",
@@ -10124,16 +10150,16 @@ const docTemplate = `{
                     "description": "文件扩展",
                     "type": "string"
                 },
+                "file_hash_id": {
+                    "description": "文件哈希ID（访问 key 主体）",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键",
                     "type": "string"
                 },
                 "name": {
                     "description": "文件名称",
-                    "type": "string"
-                },
-                "path": {
-                    "description": "相对路径",
                     "type": "string"
                 },
                 "size": {
@@ -10145,7 +10171,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "uri": {
-                    "description": "文件路径",
+                    "description": "Path       string      ` + "`" + `json:\"path\"` + "`" + `         // 访问地址（GET /api/uploads/:id）",
                     "type": "string"
                 }
             }
@@ -10179,15 +10205,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "ext": {
-                    "description": "文件扩展",
+                    "description": "Path       string ` + "`" + `json:\"path\"` + "`" + `         // 相对路径",
                     "type": "string"
                 },
                 "file_hash_id": {
-                    "description": "文件哈希记录ID",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "主键（挂载相册后由 addFromFile 返回）",
+                    "description": "ID         string ` + "`" + `json:\"id\"` + "`" + `           // 主键（挂载相册后由 addFromFile 返回）",
                     "type": "string"
                 },
                 "instant": {
@@ -10196,10 +10218,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "文件名称",
-                    "type": "string"
-                },
-                "path": {
-                    "description": "相对路径",
                     "type": "string"
                 },
                 "size": {
