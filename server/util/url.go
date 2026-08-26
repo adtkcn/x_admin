@@ -60,3 +60,13 @@ func (uu urlUtil) BuildFileSavePath(fileName string) string {
 	datePath := path.Join(now.Format("20060102"), now.Format("15"), idHash)
 	return path.Join(datePath, id+ext)
 }
+
+// ReplaceExt 将 path 的扩展名替换为 newExt（保留目录与文件名主体）。
+func (uu urlUtil) ReplaceExt(filePath, newExt string) string {
+	ext := path.Ext(filePath)
+	base := filePath
+	if ext != "" {
+		base = strings.TrimSuffix(filePath, ext)
+	}
+	return base + "." + newExt
+}

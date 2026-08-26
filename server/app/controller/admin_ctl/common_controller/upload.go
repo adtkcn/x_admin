@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
+	"strconv"
 	"time"
 	"x_admin/app/schema/common_schema"
 	"x_admin/app/service/common_service"
@@ -38,26 +38,28 @@ func (uh *UploadHandler) UploadFile(c *gin.Context) {
 	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &uReq)) {
 		return
 	}
-	file, ve := util.VerifyUtil.VerifyFile(c, "file")
-	if response.IsFailWithResp(c, ve) {
+	file, err := util.VerifyUtil.VerifyFile(c, "file")
+	if response.IsFailWithResp(c, err) {
 		return
 	}
-	res, err := common_service.UploadService.UploadFile(file)
+	fileHash, err := common_service.UploadService.UploadFile(file)
 	// 访问地址 = GET /api/uploads/:id，由文件流路由按 id 查 x_common_file_hash.FilePath 返回
 	resp := common_schema.CommonUploadFileResp{
-		// ID:         res.ID,
-		FileHashId: res.ID,
+		// ID:         fileHash.ID,
+		FileHashId: fileHash.ID,
 		Name:       file.Filename,
-		Uri:        util.UrlUtil.HashUrl(res.ID, file.Filename), // 访问地址（完整可访问 URL）
-		// Path:       res.FilePath,                 // 磁盘存储 key = <id>.<ext>
-		Ext:     res.Ext,
-		Size:    res.FileSize,
+		Uri:        util.UrlUtil.HashUrl(fileHash.ID, file.Filename), // 访问地址（完整可访问 URL）
+		// Path:       fileHash.FilePath,                 // 磁盘存储 key = <id>.<ext>
+		Ext:     fileHash.Ext,
+		Size:    fileHash.FileSize,
 		Instant: false,
 	}
 	response.CheckAndRespWithData(c, resp, err)
 
-	// 上传成功后异步转 webp（条件判断在 MaybeConvertWebp 内）
-	common_service.UploadService.MaybeConvertWebp(res.ID, res.FilePath, res.Ext, res.FileSize)
+	// 压缩80%转webp
+	common_service.UploadService.ConvertImage(fileHash.ID, fileHash.FilePath, 80, 0, 0)
+	// 缩略图
+	common_service.UploadService.ConvertImage(fileHash.ID, fileHash.FilePath, 80, 200, 200)
 }
 
 // @Summary		文件秒传检查
@@ -80,7 +82,7 @@ func (uh *UploadHandler) CheckInstant(c *gin.Context) {
 	if err != nil {
 		core.Logger.Errorf("CheckInstant err: %v", err)
 	}
-	if record != nil {
+	if record.ID != "" {
 		resp := common_schema.CommonUploadFileResp{
 			// ID:         record.ID,
 			FileHashId: record.ID,
@@ -99,28 +101,54 @@ func (uh *UploadHandler) CheckInstant(c *gin.Context) {
 	response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{Instant: false}, nil)
 }
 
-// Serve 按文件哈希ID返回文件流
+// Serve 按文件哈希ID返回文件流,如果是图片，则返回压缩后的图片，否则返回原文件
 //
-//	@Summary		按文件哈希ID获取文件流
-//	@Description	通过 id 查询 x_common_file_hash.FilePath，读取物理文件并以流形式返回
-//	@Tags			common_file-文件
-//	@Param			id	path	string	true	"文件哈希ID"
-//	@Success		200	{file}	binary	"文件流"
-//	@Router			/api/uploads/{id} [get]
+// @Summary		按文件哈希ID获取文件流
+// @Description	通过 id 查询 x_common_file_hash.FilePath，读取物理文件并以流形式返回
+// @Tags			common_file-文件
+// @Param			id	path	string	true	"文件哈希ID"
+// @Param			file_name	path	string	true	"文件名"
+// @Param			quality	query	int	false	"图片质量"
+// @Param			scale_width	query	int	false	"图片缩放宽度"
+// @Param			scale_height	query	int	false	"图片缩放高度"
+// @Success		200	{file}	binary	"文件流"
+// @Router			/api/uploads/{id} [get]
 func (fh *UploadHandler) Serve(c *gin.Context) {
 	id := c.Param("id")
 	file_name := c.Param("file_name")
+	file_name_ext := util.UrlUtil.GetFileExt(file_name)
 	if id == "" {
 		c.Status(http.StatusBadRequest)
 		return
 	}
 
-	// 通过 id 查询磁盘存储 key（含扩展名）
-	// 使用 singleflight 合并同一 id 的并发请求，避免缓存击穿重复打 DB
+	// 解析派生参数：quality / scale_width / scale_height
+	// 任一非零则视为请求派生版本，按 pid 查询对应派生记录；否则查询主文件。
+	quality, _ := strconv.Atoi(c.Query("quality"))
+	if quality == 0 {
+		quality = 80
+	}
+	scaleWidth, _ := strconv.Atoi(c.Query("scale_width"))
+	scaleHeight, _ := strconv.Atoi(c.Query("scale_height"))
+	needDerived := (quality != 0 || scaleWidth != 0 || scaleHeight != 0) && util.ToolsUtil.Contains([]string{"jpg", "jpeg", "png", "webp"}, file_name_ext)
 
-	// filePath := common_service.FileHashService.GetFilePath(id)
-
-	res, _, _ := fh.requestGroup.Do("file:serve:"+id, func() (any, error) {
+	// 使用 singleflight 合并同一 key 的并发请求，避免缓存击穿重复打 DB
+	// key 纳入派生参数维度，保证不同 quality/缩放请求互不干扰
+	sfKey := "file:serve:" + id
+	if needDerived {
+		sfKey += ":" + strconv.Itoa(quality) + ":" + strconv.Itoa(scaleWidth) + ":" + strconv.Itoa(scaleHeight)
+	}
+	res, _, _ := fh.requestGroup.Do(sfKey, func() (any, error) {
+		if needDerived {
+			filePath := common_service.FileHashService.GetDerivedPath(id, quality, scaleWidth, scaleHeight)
+			// 派生文件存在，则返回
+			if filePath != "" {
+				return filePath, nil
+			}
+			// 推入异步队列，下一次请求时大概率获取到压缩文件
+			common_service.UploadService.ConvertImage(id, file_name, quality, scaleWidth, scaleHeight)
+		}
+		//派生文件不存在，则返回主文件
 		return common_service.FileHashService.GetFilePath(id), nil
 	})
 	filePath, _ := res.(string)
@@ -129,6 +157,7 @@ func (fh *UploadHandler) Serve(c *gin.Context) {
 		return
 	}
 
+	// 读取文件路径
 	absPath := filepath.Join(config.FileConfig.UploadDirectory, filePath)
 	f, err := os.Open(absPath)
 	if err != nil {
@@ -138,13 +167,16 @@ func (fh *UploadHandler) Serve(c *gin.Context) {
 	}
 	defer f.Close()
 
-	ext := strings.ToLower(filepath.Ext(filePath))
-	ctype := mime.TypeByExtension(ext)
+	ext := util.UrlUtil.GetFileExt(filePath)
+	ctype := mime.TypeByExtension("." + ext)
 	if ctype == "" {
 		ctype = "application/octet-stream"
 	}
+	// 替换拼接真实后缀
+	file_name = util.UrlUtil.ReplaceExt(file_name, "."+ext)
+
 	// c.Header("Content-Disposition", `inline; filename="`+file_name+`"`)
-	c.Header("Content-Disposition", `inline; filename="`+file_name+`"; filename*=UTF-8''`+url.PathEscape(file_name))
+	c.Header("Content-Disposition", `inline;filename*=UTF-8''`+url.PathEscape(file_name))
 	c.Header("Content-Type", ctype)
 	c.Header("Cache-Control", "public, max-age=31536000, immutable")
 	http.ServeContent(c.Writer, c.Request, filepath.Base(absPath), time.Time{}, f)

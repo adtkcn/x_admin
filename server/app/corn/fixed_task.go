@@ -18,7 +18,7 @@ func init() {
 	FixedTasks.Start()
 
 	// 定时执行一次拉取定时任务
-	FixedTasks.AddTask("loadTasks", "40 * * * * *", corn_service.Task{
+	FixedTasks.AddTask("loadTasks", "40 */10 * * * *", corn_service.Task{
 		LockTTL:  0,
 		TaskCode: "loadTasks",
 		TaskDesc: "拉取定时任务",
@@ -48,8 +48,8 @@ func init() {
 		},
 	})
 
-	// 每2秒执行一次收集服务器信息并推送到Redis
-	FixedTasks.AddTask("CollectAndPushServerInfo", "*/5 * * * * *", corn_service.Task{
+	// 每3秒执行一次收集服务器信息并推送到Redis
+	FixedTasks.AddTask("CollectAndPushServerInfo", "*/3 * * * * *", corn_service.Task{
 
 		LockTTL:  0,
 		TaskCode: "CollectAndPushServerInfo",
@@ -62,7 +62,7 @@ func init() {
 	})
 
 	// 每天凌晨1点删除三个月前的错误监控数据
-	FixedTasks.AddTask("DelMonitorErrorListThreeMonthAgo", "0 1 * * * *", corn_service.Task{
+	FixedTasks.AddTask("DelMonitorErrorListThreeMonthAgo", "0 0 1 * * *", corn_service.Task{
 
 		LockTTL:  10,
 		TaskCode: "DelMonitorErrorListThreeMonthAgo",
@@ -83,15 +83,5 @@ func init() {
 			storage.CleanChunkTmpDir()
 		},
 	})
-
-	// 每天凌晨2点清理上传超过x天且无业务引用的文件
-	// FixedTasks.AddTask("CleanOrphanFiles", "0 0 2 * * *", corn_service.Task{
-	// 	LockTTL:  30,
-	// 	TaskCode: "CleanOrphanFiles",
-	// 	TaskDesc: "清理超过x天未访问的冷文件",
-	// 	TaskFunc: func() {
-	// 		common_service.FileHashService.CleanOrphanFiles(365)
-	// 	},
-	// })
 
 }

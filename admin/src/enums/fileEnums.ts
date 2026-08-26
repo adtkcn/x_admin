@@ -7,6 +7,8 @@ export const All_EXT = [...imageExt, ...videoExt, ...audioExt, ...fileExt]
 
 // 获取文件类型
 export function GetFileType(url: string) {
+    // 移除query
+    url = url.split('?')[0]
     const ext = url.split('.').pop()?.toLowerCase()
     if (!ext) {
         return 'file'

@@ -2,6 +2,7 @@ package common_service
 
 import (
 	"mime/multipart"
+	"strconv"
 
 	"x_admin/app/schema/common_schema"
 	"x_admin/app/schema/queue_schema"
@@ -29,7 +30,7 @@ func (upSrv uploadService) UploadFile(file *multipart.FileHeader) (res common_sc
 	}
 
 	// 秒传命中：已存在相同 MD5 的文件，直接返回已有记录
-	if hit, _ := FileHashService.FindByMd5(md5); hit != nil {
+	if hit, _ := FileHashService.FindByMd5(md5); hit.ID != "" {
 		res = common_schema.CommonFileHashResp{}
 		convert_util.Copy(&res, hit)
 		return res, nil
@@ -55,20 +56,29 @@ func (upSrv uploadService) UploadFile(file *multipart.FileHeader) (res common_sc
 	return res, nil
 }
 
-// MaybeConvertWebp 上传成功后（直传或 S3 分片注册）按需异步转 webp。
-// 仅对 jpg/jpeg/png 位图生效（gif 动画编码暂不支持，保持原样）；小于 10KB 压缩收益低，跳过。
-// filePath 为真实存储 key，fileHashId 为 x_common_file_hash 主键，ext 为原图扩展名（不含点）。
-// 入队失败仅记日志，不影响主流程。payload 字段名对齐 image_webp worker 的 ImageWebpPayload。
-func (upSrv uploadService) MaybeConvertWebp(fileHashId, filePath, ext string, fileSize int64) {
-	if !util.ToolsUtil.Contains([]string{"jpg", "jpeg", "png"}, ext) || fileSize < 10*1024 {
+// 仅对 jpg/jpeg/png 位图生效（gif 动画编码暂不支持，保持原样）
+// filePath 为真实存储 key，
+// fileHashId 为 x_common_file_hash 主键，
+func (upSrv uploadService) ConvertImage(fileHashId, fileName string, quality, ScaleWidth, ScaleHeight int) {
+	ext := util.UrlUtil.GetFileExt(fileName)
+	if !util.ToolsUtil.Contains([]string{"jpg", "jpeg", "png", "webp"}, ext) {
 		return
 	}
+	// 去重：同一派生参数在转码进行中（标记未过期）只入队一次，避免重复转码任务
+	dedupKey := "converting:" + fileHashId + ":" +
+		strconv.Itoa(quality) + ":" + strconv.Itoa(ScaleWidth) + ":" + strconv.Itoa(ScaleHeight)
+	if !util.RedisUtil.SetNX(dedupKey, 1, 600) {
+		return // 已有相同转码任务在进行，跳过重复入队
+	}
 	payload := queue_schema.ImageWebpPayload{
-		FilePath:   filePath,
-		Ext:        ext,
+		// FilePath:   filePath,
 		FileHashId: fileHashId,
+		// Ext:          ext,
+		Quality:     quality,
+		ScaleWidth:  ScaleWidth,
+		ScaleHeight: ScaleHeight,
 	}
 	if err := core.Queue.Enqueue(queue_schema.QueueImageWebp, payload); err != nil {
-		core.Logger.Errorf("MaybeConvertWebp 入队失败 file_hash_id=%s: %v", fileHashId, err)
+		core.Logger.Errorf("ConvertImage 入队失败 file_hash_id=%s: %v", fileHashId, err)
 	}
 }

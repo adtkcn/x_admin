@@ -176,7 +176,7 @@ func (albSrv albumService) AlbumAddFromFileRef(fileHashId, fileName, cid, adminI
 	return
 }
 
-// AlbumDel 相册文件删除（软删相册行；物理文件由 CleanOrphanFiles 基于访问时间/冷热清理）
+// AlbumDel 相册文件删除
 func (albSrv albumService) AlbumDel(ids []string) (e error) {
 	var albums []common_model.Album
 	err := albSrv.db.Where("id in ?", ids).Find(&albums).Error

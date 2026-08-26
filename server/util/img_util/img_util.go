@@ -36,8 +36,8 @@ func EmptyGif() []byte {
 // ConvertToWebp 将 jpg/png 等图片转换为 webp（有损压缩）。
 // quality: 有损质量 0-100，越大越清晰、体积越大；越界返回错误。
 // 实现即官方示例：解码 jpg/png 得到 image.Image，再 webp.Encode 直接编码，中间无需额外转换。
-func ConvertToWebp(src io.Reader, quality int) ([]byte, error) {
-	if quality > 100 {
+func ConvertToWebp(src io.Reader, quality int, targetW, targetH int) ([]byte, error) {
+	if quality > 100 || quality < 0 {
 		return nil, fmt.Errorf("img_util: webp quality %d out of range 0-100", quality)
 	}
 
@@ -46,7 +46,9 @@ func ConvertToWebp(src io.Reader, quality int) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("img_util: decode source image: %w", err)
 	}
-	// img = ResizeToMaxDimensionIfNeeded(img, 400)
+	if targetW > 0 || targetH > 0 {
+		img = ScaleImage(img, targetW, targetH)
+	}
 
 	var buf bytes.Buffer
 	if err := webp.Encode(&buf, img, &webp.Options{Quality: quality}); err != nil {
@@ -77,4 +79,22 @@ func ResizeToMaxDimensionIfNeeded(img image.Image, maxDim int) image.Image {
 	}
 
 	return imaging.Resize(img, newW, newH, imaging.Lanczos)
+}
+
+func ScaleImage(img image.Image, targetW, targetH int) image.Image {
+	bounds := img.Bounds()
+	srcW, srcH := bounds.Dx(), bounds.Dy()
+
+	if targetW > 0 && srcW > targetW || targetH > 0 && srcH > targetH {
+		// 限制最大宽高缩放
+		if targetW > 0 && targetH > 0 {
+			return imaging.Fit(img, targetW, targetH, imaging.Lanczos)
+
+		}
+		// 执行缩放，imaging.Resize 会正确处理 targetW 或 targetH 为0的情况
+		return imaging.Resize(img, targetW, targetH, imaging.Lanczos)
+	} else {
+		return img
+	}
+
 }

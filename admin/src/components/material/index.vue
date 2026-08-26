@@ -155,7 +155,7 @@
                     <vxe-column title="图片" width="100">
                         <template #default="{ row }">
                             <FileItem
-                                :uri="row.uri"
+                                :uri="row.uri + '?quality=80&scale_width=200&scale_height=200'"
                                 file-size="50px"
                                 @click.stop="handlePreview(row.uri)"
                             ></FileItem>

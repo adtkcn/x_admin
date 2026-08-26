@@ -65,7 +65,9 @@ export default defineComponent({
             return fileType
         },
         ext() {
-            return this.uri.split('.').pop()
+            // 移除query
+            const uri = this.uri.split('?')[0]
+            return uri.split('.').pop()
         }
     }
 })

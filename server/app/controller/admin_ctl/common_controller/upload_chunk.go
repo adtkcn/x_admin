@@ -92,7 +92,7 @@ func (h UploadChunkHandler) CheckInstant(c *gin.Context) {
 	if err != nil {
 		core.Logger.Errorf("CheckInstant err: %v", err)
 	}
-	if record != nil {
+	if record.ID != "" {
 		engine := storage.GetStorageEngine()
 		url, _ := engine.GetObjectURL(record.FilePath)
 		resp := common_schema.CommonUploadFileResp{
@@ -163,8 +163,8 @@ func (h UploadChunkHandler) RegisterHash(c *gin.Context) {
 	}
 	response.CheckAndRespWithData(c, resp, nil)
 
-	// 上传成功后异步转 webp（条件判断在 MaybeConvertWebp 内）
-	common_service.UploadService.MaybeConvertWebp(id, req.FileKey, ext, req.FileSize)
+	// 上传成功后异步转 webp
+	common_service.UploadService.ConvertImage(id, req.FileKey, 80, 0, 0)
 }
 
 // ---- CreateMultipartUpload ----

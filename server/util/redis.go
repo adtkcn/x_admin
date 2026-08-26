@@ -140,11 +140,22 @@ func (ru redisUtil) Set(key string, value any, timeSec int) bool {
 	return true
 }
 
+// SetNX 仅当 key 不存在时设置（原子操作），常用于去重。设置成功返回 true。
+func (ru redisUtil) SetNX(key string, value any, timeSec int) bool {
+	ok, err := ru.redis.SetNX(context.Background(),
+		config.RedisConfig.RedisPrefix+key, value, time.Duration(timeSec)*time.Second).Result()
+	if err != nil {
+		core.Logger.Errorf("redisUtil.SetNX err: err=[%+v]", err)
+		return false
+	}
+	return ok
+}
+
 // Get 获取key的值
 func (ru redisUtil) Get(key string) string {
 	res, err := ru.redis.Get(context.Background(), config.RedisConfig.RedisPrefix+key).Result()
 	if err != nil {
-		core.Logger.Errorf("redisUtil.Get err: err=[%+v]", err)
+		core.Logger.Errorf("redisUtil.Get key=%s err: err=[%+v]", key, err)
 		return ""
 	}
 	return res
