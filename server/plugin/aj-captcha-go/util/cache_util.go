@@ -2,39 +2,39 @@ package util
 
 import (
 	"log"
-	"strconv"
 	"sync"
 	"time"
 )
 
+type cacheEntry struct {
+	value    string
+	expireAt int64 // 0 表示永不过期
+}
+
 type CacheUtil struct {
-	Data                  map[string]string
+	Data                  map[string]cacheEntry
 	DataRWLock            sync.RWMutex
 	CaptchaCacheMaxNumber int
 }
 
 func NewCacheUtil(captchaCacheMaxNumber int) *CacheUtil {
 	return &CacheUtil{
-		Data:                  make(map[string]string),
+		Data:                  make(map[string]cacheEntry),
 		CaptchaCacheMaxNumber: captchaCacheMaxNumber,
 	}
 }
 
 func (l *CacheUtil) Exists(key string) bool {
 	l.DataRWLock.RLock()
-	timeVal := l.Data[key+"_HoldTime"]
-	cacheHoldTime, err := strconv.ParseInt(timeVal, 10, 64)
+	e, ok := l.Data[key]
 	l.DataRWLock.RUnlock()
-
-	if err != nil {
+	if !ok {
 		return false
 	}
-
-	if cacheHoldTime == 0 {
+	if e.expireAt == 0 {
 		return true
 	}
-
-	if cacheHoldTime < time.Now().Unix() {
+	if e.expireAt < time.Now().Unix() {
 		l.Delete(key)
 		return false
 	}
@@ -42,36 +42,33 @@ func (l *CacheUtil) Exists(key string) bool {
 }
 
 func (l *CacheUtil) Get(key string) string {
-
-	if l.Exists(key) {
-		l.DataRWLock.RLock()
-		val := l.Data[key]
-		l.DataRWLock.RUnlock()
-
-		return val
+	l.DataRWLock.RLock()
+	e, ok := l.Data[key]
+	l.DataRWLock.RUnlock()
+	if !ok {
+		return ""
 	}
-
-	return ""
+	if e.expireAt != 0 && e.expireAt < time.Now().Unix() {
+		l.Delete(key)
+		return ""
+	}
+	return e.value
 }
 
 func (l *CacheUtil) Set(key string, val string, expiresInSeconds int) {
-
-	//设置阈值，达到即clear缓存
-	if len(l.Data) >= l.CaptchaCacheMaxNumber*2 {
+	// 设置阈值，达到即 clear 缓存
+	if len(l.Data) >= l.CaptchaCacheMaxNumber {
 		log.Println("CACHE_MAP达到阈值，clear map")
 		l.Clear()
 	}
 
-	l.DataRWLock.Lock()
-	l.Data[key] = val
+	var expireAt int64
 	if expiresInSeconds > 0 {
-		// 缓存失效时间
-		nowTime := time.Now().Unix() + int64(expiresInSeconds)
-		l.Data[key+"_HoldTime"] = strconv.FormatInt(nowTime, 10)
-	} else {
-		l.Data[key+"_HoldTime"] = strconv.FormatInt(0, 10)
+		expireAt = time.Now().Unix() + int64(expiresInSeconds)
 	}
 
+	l.DataRWLock.Lock()
+	l.Data[key] = cacheEntry{value: val, expireAt: expireAt}
 	l.DataRWLock.Unlock()
 }
 
@@ -79,11 +76,10 @@ func (l *CacheUtil) Delete(key string) {
 	l.DataRWLock.Lock()
 	defer l.DataRWLock.Unlock()
 	delete(l.Data, key)
-	delete(l.Data, key+"_HoldTime")
 }
 
 func (l *CacheUtil) Clear() {
 	l.DataRWLock.Lock()
 	defer l.DataRWLock.Unlock()
-	l.Data = make(map[string]string)
+	l.Data = make(map[string]cacheEntry)
 }

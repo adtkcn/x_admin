@@ -1,7 +1,6 @@
 package util
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/binary"
 	"math/big"
@@ -19,30 +18,27 @@ func RandomInt(min, max int) int {
 	return int(n.Int64()) + min
 }
 
-// RandString 生成指定长度的随机字符串（并发安全）
+// RandString 生成指定长度的随机字符串（并发安全，单次批量读取随机源）
 func RandString(codeLen int) string {
-	rawStr := "jkwangagDGFHGSERKILMJHSNOPQR546413890_"
-	rawStrLen := big.NewInt(int64(len(rawStr)))
-
-	buf := make([]byte, 0, codeLen)
-	b := bytes.NewBuffer(buf)
-	for codeLen > 0 {
-		n, err := rand.Int(rand.Reader, rawStrLen)
-		if err != nil {
-			codeLen--
-			continue
-		}
-		b.WriteByte(rawStr[n.Int64()])
-		codeLen--
+	if codeLen <= 0 {
+		return ""
 	}
-	return b.String()
+	const rawStr = "jkwangagDGFHGSERKILMJHSNOPQR546413890_"
+	n := len(rawStr)
+	buf := make([]byte, codeLen)
+	if _, err := rand.Read(buf); err != nil {
+		return ""
+	}
+	for i := range buf {
+		buf[i] = rawStr[int(buf[i])%n]
+	}
+	return string(buf)
 }
 
 // RandUint64 生成随机 uint64（并发安全）
 func RandUint64() uint64 {
 	b := make([]byte, 8)
-	_, err := rand.Read(b)
-	if err != nil {
+	if _, err := rand.Read(b); err != nil {
 		return 0
 	}
 	return binary.BigEndian.Uint64(b)

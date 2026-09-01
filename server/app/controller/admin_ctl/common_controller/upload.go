@@ -4,7 +4,6 @@ import (
 	"mime"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/util"
+	"x_admin/util/file_util"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/singleflight"
@@ -159,7 +159,7 @@ func (fh *UploadHandler) Serve(c *gin.Context) {
 
 	// 读取文件路径
 	absPath := filepath.Join(config.FileConfig.UploadDirectory, filePath)
-	f, err := os.Open(absPath)
+	f, err := file_util.Open(absPath)
 	if err != nil {
 		core.Logger.Errorf("FileHandler.Serve open err: id=%s path=%s err=%+v", id, absPath, err)
 		response.NotFound(c, "文件不存在")

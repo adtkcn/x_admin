@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"x_admin/config"
+	"x_admin/util/file_util"
 )
 
 // 本地存储引擎，实现 StorageEngine 接口
@@ -25,10 +26,10 @@ func newLocalStorageEngine() StorageEngine {
 func (e *localStorageEngine) PutObject(key string, data io.Reader, size int64) (string, error) {
 	absPath := filepath.Join(config.FileConfig.UploadDirectory, key)
 	dir := filepath.Dir(absPath)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := file_util.MkdirAll(dir); err != nil {
 		return "", fmt.Errorf("创建目录失败: %w", err)
 	}
-	out, err := os.Create(absPath)
+	out, err := file_util.Create(absPath)
 	if err != nil {
 		return "", fmt.Errorf("创建文件失败: %w", err)
 	}
@@ -42,7 +43,7 @@ func (e *localStorageEngine) PutObject(key string, data io.Reader, size int64) (
 // ObjectExists 检查对象是否存在
 func (e *localStorageEngine) ObjectExists(key string) (bool, error) {
 	absPath := filepath.Join(config.FileConfig.UploadDirectory, key)
-	_, err := os.Stat(absPath)
+	_, err := file_util.Stat(absPath)
 	if err == nil {
 		return true, nil
 	}
@@ -62,7 +63,7 @@ func (e *localStorageEngine) GetObjectURL(key string) (string, error) {
 // GetObject 读取本地对象内容
 func (e *localStorageEngine) GetObject(key string) (io.ReadCloser, error) {
 	absPath := filepath.Join(config.FileConfig.UploadDirectory, key)
-	f, err := os.Open(absPath)
+	f, err := file_util.Open(absPath)
 	if err != nil {
 		return nil, fmt.Errorf("打开文件失败: %w", err)
 	}
@@ -75,7 +76,7 @@ func (e *localStorageEngine) GetObject(key string) (io.ReadCloser, error) {
 func (e *localStorageEngine) InitMultipartUpload(key string) (string, error) {
 	// uploadId 用临时分片目录路径表示
 	uploadId := filepath.Join(config.FileConfig.ChunkTmpDir, strings.TrimSuffix(key, filepath.Ext(key)))
-	if err := os.MkdirAll(uploadId, 0755); err != nil {
+	if err := file_util.MkdirAll(uploadId); err != nil {
 		return "", fmt.Errorf("创建分片临时目录失败: %w", err)
 	}
 	return uploadId, nil
@@ -88,7 +89,7 @@ func (e *localStorageEngine) UploadPart(key string, uploadId string, partNumber 
 	if err != nil {
 		return "", fmt.Errorf("读取分片数据失败: %w", err)
 	}
-	if err = os.WriteFile(partPath, partData, 0644); err != nil {
+	if err = file_util.WriteFile(partPath, partData); err != nil {
 		return "", fmt.Errorf("写入分片失败: %w", err)
 	}
 	// 本地存储用文件名（分片序号）作为 ETag
@@ -102,11 +103,11 @@ func (e *localStorageEngine) CompleteMultipartUpload(key string, uploadId string
 
 	absPath := filepath.Join(config.FileConfig.UploadDirectory, key)
 	dir := filepath.Dir(absPath)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := file_util.MkdirAll(dir); err != nil {
 		return "", fmt.Errorf("创建目录失败: %w", err)
 	}
 
-	mergedFile, err := os.Create(absPath)
+	mergedFile, err := file_util.Create(absPath)
 	if err != nil {
 		return "", fmt.Errorf("创建目标文件失败: %w", err)
 	}
@@ -119,7 +120,7 @@ func (e *localStorageEngine) CompleteMultipartUpload(key string, uploadId string
 
 	for _, part := range parts {
 		partPath := filepath.Join(uploadId, strconv.Itoa(part.PartNumber))
-		partData, err := os.ReadFile(partPath)
+		partData, err := file_util.ReadFile(partPath)
 		if err != nil {
 			return "", fmt.Errorf("读取分片 %d 失败: %w", part.PartNumber, err)
 		}
@@ -129,18 +130,27 @@ func (e *localStorageEngine) CompleteMultipartUpload(key string, uploadId string
 	}
 
 	// 清理临时分片目录
-	_ = os.RemoveAll(uploadId)
+	_ = file_util.RemoveAll(uploadId)
 	return key, nil
 }
 
 // AbortMultipartUpload 中止分片上传，清理临时目录
 func (e *localStorageEngine) AbortMultipartUpload(key string, uploadId string) error {
-	return os.RemoveAll(uploadId)
+	return file_util.RemoveAll(uploadId)
 }
 
 // ListParts 列出已上传的分片
 func (e *localStorageEngine) ListParts(key string, uploadId string) ([]MultipartPart, error) {
-	entries, err := os.ReadDir(uploadId)
+	dir, err := file_util.Open(uploadId)
+	if err != nil {
+		// 目录不存在说明没有已上传分片
+		if os.IsNotExist(err) {
+			return []MultipartPart{}, nil
+		}
+		return nil, err
+	}
+	defer dir.Close()
+	entries, err := dir.ReadDir(-1)
 	if err != nil {
 		// 目录不存在说明没有已上传分片
 		if os.IsNotExist(err) {

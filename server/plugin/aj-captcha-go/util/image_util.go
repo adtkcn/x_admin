@@ -8,12 +8,8 @@ import (
 	"image/draw"
 	"image/png"
 	"log"
-	"os"
-	"path"
-	"path/filepath"
-	"runtime"
-	"strings"
 	"x_admin/plugin/aj-captcha-go/model/vo"
+	"x_admin/util/file_util"
 
 	"github.com/golang/freetype"
 )
@@ -27,7 +23,7 @@ type ImageUtil struct {
 	Height    int
 }
 
-// NewImageUtil src为绝对路径
+// NewImageUtil src 为图片相对路径，fontPath 为字体相对路径
 func NewImageUtil(src string, fontPath string) *ImageUtil {
 	srcImage := OpenPngImage(src)
 	if srcImage == nil {
@@ -52,48 +48,21 @@ func (i *ImageUtil) IsOpacity(x, y int) bool {
 	return float32(A) <= 125
 }
 
-// DecodeImageToFile 将图片转换为新的文件 调试使用
-func (i *ImageUtil) DecodeImageToFile() {
-	filename := "drawImg.png"
-	file, err := os.Create(filename)
-	if err != nil {
-		log.Printf("创建 %s 失败 %v", filename, err)
-		return
-	}
-	defer file.Close()
-
-	err = png.Encode(file, i.RgbaImage)
-	if err != nil {
-		log.Printf("png %s Encode 失败 %v", filename, err)
-	}
-}
-
-// SetText 为图片设置文字
+// SetText 为图片设置右下角水印文字
 func (i *ImageUtil) SetText(text string, fontsize int, color color.RGBA) {
-
 	x := float64(i.Width) - float64(GetEnOrChLength(text))
-	y := float64(i.Height) - (25 / 2) + 7
+	y := float64(i.Height) - 5
 
 	font := NewFontUtil(i.FontPath)
 
 	fc := freetype.NewContext()
-	// 设置屏幕每英寸的分辨率
-	//fc.SetDPI(72)
-	// 设置用于绘制文本的字体
 	fc.SetFont(font.GetFont())
-	// 以磅为单位设置字体大小
 	fc.SetFontSize(float64(fontsize))
-	// 设置剪裁矩形以进行绘制
 	fc.SetClip(i.RgbaImage.Bounds())
-	// 设置目标图像
 	fc.SetDst(i.RgbaImage)
-	// 设置绘制操作的源图像，通常为 image.Uniform
 	fc.SetSrc(image.NewUniform(color))
-	// 设置水印地址
 	pt := freetype.Pt(int(x), int(y))
-	// 根据 Pt 的坐标值绘制给定的文本内容
-	_, err := fc.DrawString(text, pt)
-	if err != nil {
+	if _, err := fc.DrawString(text, pt); err != nil {
 		log.Println("构造水印失败:", err)
 	}
 }
@@ -132,7 +101,7 @@ func (i *ImageUtil) SetPixel(rgba color.RGBA, x, y int) {
 	i.RgbaImage.SetRGBA(x, y, rgba)
 }
 
-// Base64 为像素设置颜色
+// Base64 将图片编码为 base64 字符串
 func (i *ImageUtil) Base64() (string, error) {
 	// 开辟一个新的空buff
 	var buf bytes.Buffer
@@ -148,42 +117,38 @@ func (i *ImageUtil) Base64() (string, error) {
 	return dist, nil
 }
 
-// VagueImage 模糊区域
+// VagueImage 用周围 8 邻域像素的平均值模糊当前像素
 func (i *ImageUtil) VagueImage(x int, y int) {
-	var red uint32
-	var green uint32
-	var blue uint32
-	var alpha uint32
-
 	points := [8][2]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
 
-	for _, point := range points {
-		pointX := x + point[0]
-		pointY := y + point[1]
-
-		if pointX < 0 || pointX >= i.Width || pointY < 0 || pointY >= i.Height {
+	var red, green, blue, alpha uint32
+	var count uint32
+	for _, p := range points {
+		px, py := x+p[0], y+p[1]
+		if px < 0 || px >= i.Width || py < 0 || py >= i.Height {
 			continue
 		}
-
-		r, g, b, a := i.RgbaImage.RGBAAt(pointX, pointY).RGBA()
+		r, g, b, a := i.RgbaImage.RGBAAt(px, py).RGBA()
 		red += r >> 8
 		green += g >> 8
 		blue += b >> 8
 		alpha += a >> 8
-
+		count++
 	}
-
-	var avg uint32 = 8
-	// avg = 8
-
-	rgba := color.RGBA{R: uint8(red / avg), G: uint8(green / avg), B: uint8(blue / avg), A: uint8(alpha / avg)}
-
-	i.RgbaImage.SetRGBA(x, y, rgba)
+	if count == 0 {
+		return
+	}
+	i.RgbaImage.SetRGBA(x, y, color.RGBA{
+		R: uint8(red / count),
+		G: uint8(green / count),
+		B: uint8(blue / count),
+		A: uint8(alpha / count),
+	})
 }
 
 // OpenPngImage 打开png图片
 func OpenPngImage(src string) image.Image {
-	ff, err := os.Open(src)
+	ff, err := file_util.Open(src)
 	if err != nil {
 		log.Printf("打开 %s 图片失败: %v", src, err)
 		return nil
@@ -211,55 +176,4 @@ func ImageToRGBA(img image.Image) *image.RGBA {
 	dst := image.NewRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
 	draw.Draw(dst, dst.Bounds(), img, b.Min, draw.Src)
 	return dst
-}
-
-// CurrentAbPath 获取项目根目录
-func CurrentAbPath() (dir string) {
-
-	// 如果是go run则返回temp目录 go build 则返回当前目录
-	dir = getCurrentAbPathByExecutable()
-
-	tempDir := getTmpDir()
-
-	// 如果是临时目录执行 从Caller中获取
-	if strings.Contains(dir, tempDir) || tempDir == "." {
-		dir = getCurrentAbPathByCaller()
-	}
-
-	// 执行目录非util目录
-	if !strings.HasSuffix(dir, "util") {
-		dir += "/util"
-	}
-
-	return filepath.Dir(dir)
-}
-
-// 获取当前执行文件绝对路径
-func getCurrentAbPathByExecutable() string {
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Fatal(err)
-	}
-	res, _ := filepath.EvalSymlinks(filepath.Dir(exePath))
-	return res
-}
-
-// 获取当前执行文件绝对路径（go run）
-func getCurrentAbPathByCaller() string {
-	var abPath string
-	_, filename, _, ok := runtime.Caller(0)
-	if ok {
-		abPath = path.Dir(filename)
-	}
-	return abPath
-}
-
-// 获取系统临时目录，兼容go run
-func getTmpDir() string {
-	dir := os.Getenv("TEMP")
-	if dir == "" {
-		dir = os.Getenv("TMP")
-	}
-	res, _ := filepath.EvalSymlinks(dir)
-	return res
 }

@@ -11,6 +11,7 @@ import (
 	"x_admin/core"
 	"x_admin/core/response"
 	"x_admin/util"
+	"x_admin/util/file_util"
 )
 
 var StorageDriver = storageDriver{}
@@ -78,14 +79,14 @@ func (sd storageDriver) localSaveFile(file *multipart.FileHeader, saveName strin
 	saveDir := path.Join(directory, path.Dir(saveName))
 	saveFilePath := path.Join(directory, saveName)
 	// 创建目录
-	err = os.MkdirAll(saveDir, 0755)
+	err = file_util.MkdirAll(saveDir)
 	if err != nil && !os.IsExist(err) {
 		core.Logger.Errorf(
 			"storageDriver.localSaveFile MkdirAll err: path=[%s], err=[%+v]", saveDir, err)
 		return response.Failed.SetMessage("创建上传目录失败!")
 	}
 	// 创建目标文件
-	out, err := os.Create(saveFilePath)
+	out, err := file_util.Create(saveFilePath)
 	if err != nil {
 		core.Logger.Errorf(
 			"storageDriver.localSaveFile Create err: file=[%s], err=[%+v]", saveFilePath, err)

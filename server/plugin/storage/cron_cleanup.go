@@ -7,6 +7,7 @@ import (
 
 	"x_admin/config"
 	"x_admin/core"
+	"x_admin/util/file_util"
 )
 
 // CleanChunkTmpDir 清理过期临时分片目录
@@ -25,12 +26,18 @@ func cleanupChunkTmpDir(expireHour int) {
 	tmpDir := config.FileConfig.ChunkTmpDir
 
 	// 检查目录是否存在
-	if _, err := os.Stat(tmpDir); os.IsNotExist(err) {
+	if _, err := file_util.Stat(tmpDir); os.IsNotExist(err) {
 		core.Logger.Debugf("临时分片目录不存在: %s", tmpDir)
 		return
 	}
 
-	entries, err := os.ReadDir(tmpDir)
+	dir, err := file_util.Open(tmpDir)
+	if err != nil {
+		core.Logger.Errorf("读取临时分片目录失败: %v", err)
+		return
+	}
+	defer dir.Close()
+	entries, err := dir.ReadDir(-1)
 	if err != nil {
 		core.Logger.Errorf("读取临时分片目录失败: %v", err)
 		return
@@ -50,7 +57,7 @@ func cleanupChunkTmpDir(expireHour int) {
 		}
 		// 如果目录超过 expire 小时未修改，删除
 		if info.ModTime().Before(expire) {
-			if err := os.RemoveAll(dirPath); err == nil {
+			if err := file_util.RemoveAll(dirPath); err == nil {
 				cleaned++
 				core.Logger.Infof("清理过期分片目录: %s", dirPath)
 			} else {
