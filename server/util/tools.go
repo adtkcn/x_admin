@@ -8,7 +8,6 @@ import (
 	"math"
 	"math/rand"
 	"mime/multipart"
-	"os"
 	"slices"
 	"time"
 
@@ -89,28 +88,4 @@ func (tu toolsUtil) ObjToJson(data any) (res string, err error) {
 	}
 	res = string(b)
 	return res, nil
-}
-
-// IsFileExist 判断文件或目录是否存在
-func (tu toolsUtil) IsFileExist(path string) bool {
-	var root, err = os.OpenRoot(".")
-	if err != nil {
-		return false
-	}
-	defer root.Close()
-	_, err = root.Stat(path)
-	return err == nil || os.IsExist(err)
-}
-
-// 创建文件夹
-func (tu toolsUtil) CreateDir(path string) error {
-	var root, err = os.OpenRoot(".")
-	if err != nil {
-		return err
-	}
-	defer root.Close()
-	return root.Mkdir(path, 0755)
-}
-func (tu toolsUtil) WriteFile(path string, data []byte) error {
-	return os.WriteFile(path, data, 0644)
 }

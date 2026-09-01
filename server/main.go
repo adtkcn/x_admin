@@ -16,6 +16,7 @@ import (
 	"x_admin/core"
 	"x_admin/plugin"
 	"x_admin/routes"
+	"x_admin/util/file_util"
 
 	app_corn "x_admin/app/corn"
 
@@ -51,6 +52,12 @@ func main() {
 	plugin.RegisterNullValidator()
 	// 刷新日志缓冲
 	defer core.Logger.Sync()
+
+	// 打开安全文件根目录（file_util 所有文件操作都被限制在其中）
+	if err := file_util.Init(); err != nil {
+		core.Logger.Errorf("安全文件根目录打开失败: %v", err)
+		return
+	}
 
 	// 自动迁移用户表
 	core.AutoMigrate(
@@ -147,5 +154,10 @@ func shutdown(server *http.Server) {
 				core.Logger.Errorf("数据库连接关闭失败: %v", closeErr)
 			}
 		}
+	}
+
+	// 6) 关闭安全文件根目录。
+	if err := file_util.Close(); err != nil {
+		core.Logger.Errorf("安全文件根目录关闭失败: %v", err)
 	}
 }

@@ -30,6 +30,8 @@
                 :row-config="{ keyField: 'id' }"
                 :scroll-y="{ enabled: false }"
                 :border="'inner'"
+                :tooltip-config="tooltipConfig"
+                show-overflow
             >
                 <vxe-column title="用户ID" field="id" min-width="200" show-overflow />
                 <vxe-column title="昵称" field="nickname" min-width="140" />
@@ -92,9 +94,12 @@ import {
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import EditPopup from './edit.vue'
+import type { VxeTablePropTypes } from 'vxe-table'
 
 defineOptions({ name: 'user' })
-
+const tooltipConfig = reactive<VxeTablePropTypes.TooltipConfig<type_user_resp>>({
+    enterable: true
+})
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_user_list>({ keyword: '', status: '' })

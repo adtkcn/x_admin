@@ -103,16 +103,16 @@ func (uh *UploadHandler) CheckInstant(c *gin.Context) {
 
 // Serve 按文件哈希ID返回文件流,如果是图片，则返回压缩后的图片，否则返回原文件
 //
-// @Summary		按文件哈希ID获取文件流
-// @Description	通过 id 查询 x_common_file_hash.FilePath，读取物理文件并以流形式返回
-// @Tags			common_file-文件
-// @Param			id	path	string	true	"文件哈希ID"
-// @Param			file_name	path	string	true	"文件名"
-// @Param			quality	query	int	false	"图片质量"
-// @Param			scale_width	query	int	false	"图片缩放宽度"
-// @Param			scale_height	query	int	false	"图片缩放高度"
-// @Success		200	{file}	binary	"文件流"
-// @Router			/api/uploads/{id} [get]
+//	@Summary		按文件哈希ID获取文件流
+//	@Description	通过 id 查询 x_common_file_hash.FilePath，读取物理文件并以流形式返回
+//	@Tags			common_file-文件
+//	@Param			id				path	string	true	"文件哈希ID"
+//	@Param			file_name		path	string	true	"文件名"
+//	@Param			quality			query	int		false	"图片质量"
+//	@Param			scale_width		query	int		false	"图片缩放宽度"
+//	@Param			scale_height	query	int		false	"图片缩放高度"
+//	@Success		200				{file}	binary	"文件流"
+//	@Router			/api/uploads/{id} [get]
 func (fh *UploadHandler) Serve(c *gin.Context) {
 	id := c.Param("id")
 	file_name := c.Param("file_name")
@@ -179,5 +179,5 @@ func (fh *UploadHandler) Serve(c *gin.Context) {
 	c.Header("Content-Disposition", `inline;filename*=UTF-8''`+url.PathEscape(file_name))
 	c.Header("Content-Type", ctype)
 	c.Header("Cache-Control", "public, max-age=31536000, immutable")
-	http.ServeContent(c.Writer, c.Request, filepath.Base(absPath), time.Time{}, f)
+	http.ServeContent(c.Writer, c.Request, filepath.Base(absPath), time.Now(), f)
 }

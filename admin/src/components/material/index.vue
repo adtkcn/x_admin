@@ -83,7 +83,7 @@
         </div>
         <div class="material__center flex flex-col">
             <el-tabs
-                v-if="mode == 'page' && defaultFileType == 'all'"
+                v-if="defaultFileType == 'all'"
                 v-model="activeFileType"
                 @tab-change="handleTabChange"
             >

@@ -6869,6 +6869,23 @@ paths:
         name: id
         required: true
         type: string
+      - description: 文件名
+        in: path
+        name: file_name
+        required: true
+        type: string
+      - description: 图片质量
+        in: query
+        name: quality
+        type: integer
+      - description: 图片缩放宽度
+        in: query
+        name: scale_width
+        type: integer
+      - description: 图片缩放高度
+        in: query
+        name: scale_height
+        type: integer
       responses:
         "200":
           description: 文件流

@@ -13,7 +13,8 @@
                     <el-input v-model="formData.nickname" placeholder="请输入昵称" clearable />
                 </el-form-item>
                 <el-form-item label="头像" prop="avatar">
-                    <el-input v-model="formData.avatar" placeholder="头像URL" clearable />
+                    <!-- <el-input v-model="formData.avatar" placeholder="头像URL" clearable /> -->
+                    <material-picker v-model="formData.avatar" :limit="1" />
                 </el-form-item>
 
                 <el-form-item label="手机号" prop="phone">

@@ -9248,6 +9248,31 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "文件名",
+                        "name": "file_name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "图片质量",
+                        "name": "quality",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "图片缩放宽度",
+                        "name": "scale_width",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "图片缩放高度",
+                        "name": "scale_height",
+                        "in": "query"
                     }
                 ],
                 "responses": {

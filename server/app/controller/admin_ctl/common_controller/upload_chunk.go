@@ -134,19 +134,19 @@ func (h UploadChunkHandler) GenerateKey(c *gin.Context) {
 // RegisterHash 上传完成后由前端调用，将 MD5 与 fileKey 关联存入哈希表。
 // id 为哈希表主键，FilePath 存真实存储 key（fileKey），文件名无需与 id 一致。
 func (h UploadChunkHandler) RegisterHash(c *gin.Context) {
-	var req struct {
+	var fileHash struct {
 		FileMd5  string `json:"file_md5" binding:"required"`
 		FileSize int64  `json:"file_size"`
 		FileKey  string `json:"file_key" binding:"required"`
 		FileName string `json:"file_name"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&fileHash); err != nil {
 		s3Error(c, 400, "InvalidArgument", "参数错误: "+err.Error())
 		return
 	}
-	ext := util.UrlUtil.GetFileExt(req.FileName)
+	ext := util.UrlUtil.GetFileExt(fileHash.FileName)
 	// FilePath 存真实存储 key（fileKey），文件名无需与 id 一致；id 由 Create 内部生成
-	id, err := common_service.FileHashService.Create(req.FileMd5, req.FileSize, req.FileKey, ext)
+	id, err := common_service.FileHashService.Create(fileHash.FileMd5, fileHash.FileSize, fileHash.FileKey, ext)
 	if err != nil {
 		core.Logger.Errorf("RegisterHash err: %v", err)
 		response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{}, err)
@@ -155,16 +155,18 @@ func (h UploadChunkHandler) RegisterHash(c *gin.Context) {
 	resp := common_schema.CommonUploadFileResp{
 		// ID:         id,
 		FileHashId: id,
-		Name:       req.FileName,
-		Uri:        util.UrlUtil.HashUrl(id, req.FileName), // 访问地址（完整可访问 URL）
+		Name:       fileHash.FileName,
+		Uri:        util.UrlUtil.HashUrl(id, fileHash.FileName), // 访问地址（完整可访问 URL）
 		Ext:        ext,
-		Size:       req.FileSize,
+		Size:       fileHash.FileSize,
 		Instant:    false,
 	}
 	response.CheckAndRespWithData(c, resp, nil)
 
 	// 上传成功后异步转 webp
-	common_service.UploadService.ConvertImage(id, req.FileKey, 80, 0, 0)
+	common_service.UploadService.ConvertImage(id, fileHash.FileKey, 80, 0, 0)
+	// 上传成功后异步转 jpg
+	common_service.UploadService.ConvertImage(id, fileHash.FileKey, 80, 200, 200)
 }
 
 // ---- CreateMultipartUpload ----
