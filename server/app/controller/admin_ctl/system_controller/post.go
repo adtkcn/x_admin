@@ -21,7 +21,7 @@ type PostHandler struct{}
 // @Router			/api/admin/system/post/all [get]
 func (ph PostHandler) All(c *gin.Context) {
 	res, err := system_service.PostService.All()
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		岗位列表
@@ -38,14 +38,14 @@ func (ph PostHandler) All(c *gin.Context) {
 func (ph PostHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq system_schema.SystemAuthPostListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := system_service.PostService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		岗位详情
@@ -57,11 +57,11 @@ func (ph PostHandler) List(c *gin.Context) {
 // @Router			/api/admin/system/post/detail [get]
 func (ph PostHandler) Detail(c *gin.Context) {
 	var detailReq system_schema.SystemAuthPostDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := system_service.PostService.Detail(detailReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		岗位新增
@@ -77,10 +77,10 @@ func (ph PostHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/system/post/add [post]
 func (ph PostHandler) Add(c *gin.Context) {
 	var addReq system_schema.SystemAuthPostAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, system_service.PostService.Add(addReq))
+	response.JSON(c, nil, system_service.PostService.Add(addReq))
 }
 
 // @Summary		岗位编辑
@@ -97,10 +97,10 @@ func (ph PostHandler) Add(c *gin.Context) {
 // @Router			/api/admin/system/post/edit [post]
 func (ph PostHandler) Edit(c *gin.Context) {
 	var editReq system_schema.SystemAuthPostEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, system_service.PostService.Edit(editReq))
+	response.JSON(c, nil, system_service.PostService.Edit(editReq))
 }
 
 // @Summary		岗位删除
@@ -112,8 +112,8 @@ func (ph PostHandler) Edit(c *gin.Context) {
 // @Router			/api/admin/system/post/del [post]
 func (ph PostHandler) Del(c *gin.Context) {
 	var delReq system_schema.SystemAuthPostDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, system_service.PostService.Del(delReq.ID))
+	response.JSON(c, nil, system_service.PostService.Del(delReq.ID))
 }

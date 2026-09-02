@@ -1,8 +1,19 @@
 <template>
     <div class="upload-chunk">
         <!-- 文件选择 -->
-        <div class="upload-chunk__area" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleDrop">
-            <input ref="fileInputRef" type="file" class="upload-chunk__input" :accept="acceptValue" @change="handleFileChange" />
+        <div
+            class="upload-chunk__area"
+            @click="triggerFileInput"
+            @dragover.prevent
+            @drop.prevent="handleDrop"
+        >
+            <input
+                ref="fileInputRef"
+                type="file"
+                class="upload-chunk__input"
+                :accept="acceptValue"
+                @change="handleFileChange"
+            />
             <div class="upload-chunk__content">
                 <el-icon :size="40" color="#909399"><UploadFilled /></el-icon>
                 <div class="upload-chunk__text">点击或拖拽文件到此处上传</div>
@@ -22,13 +33,20 @@
         <div v-if="uploading && !instantHit" class="upload-chunk__progress">
             <span class="upload-chunk__label">上传进度：</span>
             <el-progress :percentage="uploadPercent" :stroke-width="12" />
-            <span class="upload-chunk__detail">{{ formatSize(uploadedSize) }} / {{ formatSize(totalSize) }}</span>
+            <span class="upload-chunk__detail"
+                >{{ formatSize(uploadedSize) }} / {{ formatSize(totalSize) }}</span
+            >
         </div>
 
         <!-- 操作按钮 -->
         <div class="upload-chunk__actions">
             <slot name="actions" :file="selectedFile" :uploading="uploading"></slot>
-            <el-button type="primary" :loading="uploading" :disabled="!selectedFile" @click="startUpload">
+            <el-button
+                type="primary"
+                :loading="uploading"
+                :disabled="!selectedFile"
+                @click="startUpload"
+            >
                 {{ uploading ? '上传中...' : '开始上传' }}
             </el-button>
             <el-button type="danger" :disabled="!uploading" @click="cancelUpload">
@@ -68,7 +86,7 @@ const props = defineProps({
     // S3 管理接口前缀（秒传检查 / 生成 Key / 注册哈希）
     endpoint: {
         type: String,
-        default: '/api/admin/s3'
+        default: '/api/admin/upload_chunk'
     },
     // 分片大小
     partSize: {
@@ -99,9 +117,7 @@ let currentUpload: Upload | null = null
 
 const acceptValue = computed(() => {
     if (props.ext.length) {
-        return props.ext
-            .map((item) => `.${item.replace(/^\./, '')}`)
-            .join(',')
+        return props.ext.map((item) => `.${item.replace(/^\./, '')}`).join(',')
     }
     return props.accept
 })
@@ -113,7 +129,9 @@ function formatSize(bytes: number): string {
     return (bytes / 1024 / 1024 / 1024).toFixed(1) + ' GB'
 }
 
-function triggerFileInput() { fileInputRef.value?.click() }
+function triggerFileInput() {
+    fileInputRef.value?.click()
+}
 function handleFileChange(e: Event) {
     const files = (e.target as HTMLInputElement).files
     if (files?.[0]) selectedFile.value = files[0]
@@ -148,13 +166,19 @@ function calcMD5(file: File): Promise<string> {
 }
 
 /** 前置：秒传检查（返回统一 CommonUploadFileResp 的解包结构） */
-async function checkInstant(md5: string, fileName: string): Promise<{ filePath: string; url: string; fileHashId: string | null } | null> {
+async function checkInstant(
+    md5: string,
+    fileName: string
+): Promise<{ fileHashId: string | null; url: string } | null> {
     try {
-        const res = await axios.post(`${props.endpoint}/checkInstant`, { file_md5: md5, file_name: fileName })
+        const res = await axios.post(`${props.endpoint}/checkInstant`, {
+            file_md5: md5,
+            file_name: fileName
+        })
         const data = res.data?.data
+        console.log('checkInstant res:', res)
         if (data?.instant) {
             return {
-                filePath: data.path, // 相对路径
                 url: data.url, // 完整访问地址
                 fileHashId: data.file_hash_id ?? null
             }
@@ -179,6 +203,7 @@ async function registerHash(
             file_name: fileName,
             file_size: fileSize
         })
+        console.log('registerHash res:', res)
         const data = res.data?.data
         return { fileHashId: data?.file_hash_id ?? null, url: data?.url ?? '' }
     } catch (error) {
@@ -221,7 +246,7 @@ async function startUpload() {
             instantHit.value = true
             uploading.value = false
             md5Percent.value = 100
-            ElMessage.success(`秒传命中！${instant.filePath}`)
+            ElMessage.success(`秒传命中！${instant.url}`)
             emit('change', {
                 md5,
                 key: '',
@@ -261,7 +286,7 @@ async function startUpload() {
 
         uploading.value = false
         uploadPercent.value = 100
-        ElMessage.success(`上传成功！${hashRes.url || result.Location || key}`)
+        ElMessage.success(`上传成功！${hashRes.url}`)
         emit('change', {
             md5,
             key,
@@ -269,7 +294,7 @@ async function startUpload() {
             fileSize: file.size,
             fileHashId: hashRes.fileHashId,
             instant: false,
-            location: hashRes.url || result.Location || key
+            location: hashRes.url
         })
     } catch (error: any) {
         uploading.value = false

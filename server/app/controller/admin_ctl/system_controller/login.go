@@ -26,21 +26,21 @@ type LoginHandler struct{}
 // @Router			/api/admin/system/login [post]
 func (lh LoginHandler) Login(c *gin.Context) {
 	var params common_schema.ClientParams
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &params)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &params)) {
 		return
 	}
 	err := common_service.CaptchaVerify(params)
 	if err != nil {
-		response.Fail(c, err.Error())
+		response.Fail(c, err)
 		return
 	}
 
 	var loginReq system_schema.SystemLoginReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &loginReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &loginReq)) {
 		return
 	}
 	res, err := system_service.LoginService.Login(c, &loginReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		登录退出
@@ -50,7 +50,7 @@ func (lh LoginHandler) Login(c *gin.Context) {
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/logout [post]
 func (lh LoginHandler) Logout(c *gin.Context) {
-	response.CheckAndRespWithData(c, nil, system_service.LoginService.Logout(c))
+	response.JSON(c, nil, system_service.LoginService.Logout(c))
 }
 
 // @Summary		忘记密码-发送验证码
@@ -61,11 +61,11 @@ func (lh LoginHandler) Logout(c *gin.Context) {
 // @Router			/api/admin/system/forgot-pwd/send-code [post]
 func (lh LoginHandler) ForgotPwdSendCode(c *gin.Context) {
 	var req system_schema.SystemForgotPwdSendCodeReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := system_service.ForgetPwdService.SendResetCode(&req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		忘记密码-重置密码
@@ -78,9 +78,9 @@ func (lh LoginHandler) ForgotPwdSendCode(c *gin.Context) {
 // @Router			/api/admin/system/forgot-pwd/reset [post]
 func (lh LoginHandler) ForgotPwdReset(c *gin.Context) {
 	var req system_schema.SystemForgotPwdResetReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := system_service.ForgetPwdService.ResetPassword(&req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

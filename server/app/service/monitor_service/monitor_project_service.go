@@ -111,10 +111,7 @@ func (service monitorProjectService) Detail(Id string) (res monitor_schema.Monit
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).First(&obj).Error
-		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 			return
 		}
 		service.CacheUtil.SetCache(obj.Id, obj)
@@ -144,10 +141,7 @@ func (service monitorProjectService) Edit(editReq monitor_schema.MonitorProjectE
 	var obj model.MonitorProject
 	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "查询失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&obj, editReq)
@@ -166,10 +160,7 @@ func (service monitorProjectService) Del(Id string) (e error) {
 	var obj model.MonitorProject
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询数据失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
 		return
 	}
 	// 删除

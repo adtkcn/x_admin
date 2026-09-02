@@ -59,10 +59,7 @@ func (service systemAuthDeptService) List(listReq system_schema.SystemAuthDeptLi
 func (service systemAuthDeptService) Detail(id string) (res system_schema.SystemAuthDeptResp, e error) {
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ?", id).First(&dept).Error
-	if e = response.CheckDBNotRecord(err, "部门已不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "部门已不存在!", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, dept)
@@ -125,10 +122,7 @@ func (service systemAuthDeptService) Edit(editReq system_schema.SystemAuthDeptEd
 	var dept system_model.SystemAuthDept
 	err := service.db.Where("id = ?", editReq.ID).First(&dept).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "部门不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
+	if e = response.CheckDBErr(err, "部门不存在!", "待编辑数据查找失败"); e != nil {
 		return
 	}
 	if dept.Pid == "" && editReq.Pid != "" {

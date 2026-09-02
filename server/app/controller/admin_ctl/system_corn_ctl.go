@@ -2,7 +2,6 @@ package admin_ctl
 
 import (
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 	"x_admin/app/schema"
@@ -44,14 +43,14 @@ type SystemCornHandler struct {
 func (hd *SystemCornHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq schema.SystemCornListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := corn_service.SystemCornService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	定时任务列表-所有
@@ -72,11 +71,11 @@ func (hd *SystemCornHandler) List(c *gin.Context) {
 // @Router		/api/admin/system_corn/list_all [get]
 func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 	var listReq schema.SystemCornListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := corn_service.SystemCornService.ListAll(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	定时任务详情
@@ -88,7 +87,7 @@ func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 // @Router		/api/admin/system_corn/detail [get]
 func (hd *SystemCornHandler) Detail(c *gin.Context) {
 	var detailReq schema.SystemCornPrimarykey
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("SystemCorn:Detail:%v", detailReq.Id), func() (any, error) {
@@ -96,7 +95,7 @@ func (hd *SystemCornHandler) Detail(c *gin.Context) {
 		return v, err
 	})
 
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	定时任务新增
@@ -111,12 +110,12 @@ func (hd *SystemCornHandler) Detail(c *gin.Context) {
 // @Router		/api/admin/system_corn/add [post]
 func (hd *SystemCornHandler) Add(c *gin.Context) {
 	var addReq schema.SystemCornAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
 	createId, e := corn_service.SystemCornService.Add(addReq, adminId)
-	response.CheckAndRespWithData(c, createId, e)
+	response.JSON(c, createId, e)
 }
 
 // @Summary	定时任务编辑
@@ -132,10 +131,10 @@ func (hd *SystemCornHandler) Add(c *gin.Context) {
 // @Router		/api/admin/system_corn/edit [post]
 func (hd *SystemCornHandler) Edit(c *gin.Context) {
 	var editReq schema.SystemCornEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, editReq.Id, corn_service.SystemCornService.Edit(editReq))
+	response.JSON(c, editReq.Id, corn_service.SystemCornService.Edit(editReq))
 }
 
 // @Summary	定时任务删除
@@ -147,10 +146,10 @@ func (hd *SystemCornHandler) Edit(c *gin.Context) {
 // @Router		/api/admin/system_corn/del [post]
 func (hd *SystemCornHandler) Del(c *gin.Context) {
 	var delReq schema.SystemCornPrimarykey
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, corn_service.SystemCornService.Del(delReq.Id))
+	response.JSON(c, nil, corn_service.SystemCornService.Del(delReq.Id))
 }
 
 // @Summary	定时任务删除-批量
@@ -163,16 +162,16 @@ func (hd *SystemCornHandler) Del(c *gin.Context) {
 // @Router		/api/admin/system_corn/del_batch [post]
 func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 	var delReq schema.SystemCornDelBatchReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.Fail(c, "请选择要删除的数据")
+		response.FailMsg(c, "请选择要删除的数据")
 		return
 	}
 	var ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndRespWithData(c, nil, corn_service.SystemCornService.DelBatch(ids))
+	response.JSON(c, nil, corn_service.SystemCornService.DelBatch(ids))
 }
 
 // @Summary	定时任务导出
@@ -194,17 +193,17 @@ func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 // @Router		/api/admin/system_corn/export_file [get]
 func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 	var listReq schema.SystemCornListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := corn_service.SystemCornService.ExportFile(listReq)
 	if err != nil {
-		response.Fail(c, "查询信息失败")
+		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
 	f, err := excel2.Export(res, corn_service.SystemCornService.GetExcelCol(), "Sheet1", "定时任务")
 	if err != nil {
-		response.Fail(c, "导出失败")
+		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
 	excel2.DownLoadExcel("定时任务"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -220,19 +219,19 @@ func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.String(http.StatusInternalServerError, "文件不存在")
+		response.Fail(c, response.CheckErr(err, "文件不存在"))
 		return
 	}
 	defer file.Close()
 	importList := []schema.SystemCornResp{}
 	err = excel2.GetExcelData(file, &importList, corn_service.SystemCornService.GetExcelCol())
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return
 	}
 
 	err = corn_service.SystemCornService.ImportFile(importList)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary	获取任务列表
@@ -243,5 +242,5 @@ func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 // @Router		/api/admin/system_corn/getTaskList [get]
 func (hd *SystemCornHandler) GetTaskList(c *gin.Context) {
 	var taskList = corn_service.SystemCornService.GetTaskList()
-	response.CheckAndRespWithData(c, taskList, nil)
+	response.JSON(c, taskList, nil)
 }

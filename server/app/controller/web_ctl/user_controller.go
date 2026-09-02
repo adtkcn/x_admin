@@ -24,11 +24,11 @@ type UserController struct{}
 // @Router			/api/user/register [post]
 func (h UserController) Register(c *gin.Context) {
 	var req user_schema.RegisterReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := user_service.UserService.Register(&req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		邮箱登录
@@ -40,11 +40,11 @@ func (h UserController) Register(c *gin.Context) {
 // @Router			/api/user/login [post]
 func (h UserController) Login(c *gin.Context) {
 	var req user_schema.LoginReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	resp, err := user_service.UserService.Login(c, &req)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		手机号+密码登录
@@ -57,11 +57,11 @@ func (h UserController) Login(c *gin.Context) {
 // @Router			/api/user/phoneLogin [post]
 func (h UserController) PhoneLogin(c *gin.Context) {
 	var req user_schema.PhoneLoginReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	resp, err := user_service.UserService.PhoneLogin(c, &req)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		手机号+短信验证码登录
@@ -74,11 +74,11 @@ func (h UserController) PhoneLogin(c *gin.Context) {
 // @Router			/api/user/phoneCodeLogin [post]
 func (h UserController) PhoneCodeLogin(c *gin.Context) {
 	var req user_schema.PhoneCodeLoginReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	resp, err := user_service.UserService.PhoneCodeLogin(c, &req)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		刷新token
@@ -89,11 +89,11 @@ func (h UserController) PhoneCodeLogin(c *gin.Context) {
 // @Router			/api/user/refresh [post]
 func (h UserController) RefreshToken(c *gin.Context) {
 	var req user_schema.RefreshTokenReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	resp, err := user_service.UserService.RefreshToken(&req)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		获取用户信息
@@ -105,7 +105,7 @@ func (h UserController) RefreshToken(c *gin.Context) {
 func (h UserController) GetUserInfo(c *gin.Context) {
 	userID := config.JWTConfig.GetUserID(c)
 	resp, err := user_service.UserService.GetUserInfo(userID)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		更新用户信息
@@ -118,12 +118,12 @@ func (h UserController) GetUserInfo(c *gin.Context) {
 // @Router			/api/user/info [post]
 func (h UserController) UpdateUserInfo(c *gin.Context) {
 	var req user_schema.UpdateUserReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.UserService.UpdateUserInfo(userID, &req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		发送邮箱验证码
@@ -135,11 +135,11 @@ func (h UserController) UpdateUserInfo(c *gin.Context) {
 // @Router			/api/user/sendCode [post]
 func (h UserController) SendEmailCode(c *gin.Context) {
 	var req user_schema.SendCodeReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := user_service.UserService.SendEmailCode(&req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		发送短信验证码
@@ -151,11 +151,11 @@ func (h UserController) SendEmailCode(c *gin.Context) {
 // @Router			/api/user/sendSmsCode [post]
 func (h UserController) SendSmsCode(c *gin.Context) {
 	var req user_schema.SendSmsCodeReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := user_service.UserService.SendSmsCode(&req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		邮箱重置密码
@@ -168,11 +168,11 @@ func (h UserController) SendSmsCode(c *gin.Context) {
 // @Router			/api/user/resetPassword [post]
 func (h UserController) ResetPassword(c *gin.Context) {
 	var req user_schema.ResetPasswordReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := user_service.UserService.ResetPassword(&req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		手机号重置密码
@@ -185,11 +185,11 @@ func (h UserController) ResetPassword(c *gin.Context) {
 // @Router			/api/user/resetPhonePassword [post]
 func (h UserController) ResetPhonePassword(c *gin.Context) {
 	var req user_schema.ResetPhonePasswordReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := user_service.UserService.ResetPhonePassword(&req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		踢人下线
@@ -201,7 +201,7 @@ func (h UserController) ResetPhonePassword(c *gin.Context) {
 func (h UserController) KickOffline(c *gin.Context) {
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.UserService.KickOffline(userID)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary	修改密码
@@ -212,18 +212,18 @@ func (h UserController) ChangePassword(c *gin.Context) {
 		return
 	}
 	var req user_schema.ChangePasswordReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := user_service.UserService.ChangePassword(userId, req.OldPassword, req.NewPassword)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // currentUserId 取当前登录用户ID；未登录时直接写回"未登录"并返 false
 func currentUserId(c *gin.Context) (string, bool) {
 	v, ok := c.Get(config.UserIDKey)
 	if !ok {
-		response.Fail(c, "未登录")
+		response.FailMsg(c, "未登录")
 		return "", false
 	}
 	return v.(string), true

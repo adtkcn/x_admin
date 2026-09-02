@@ -80,8 +80,8 @@ func auth(c *gin.Context) response.RespType {
 func LoginAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		resp := auth(c)
-		if resp != response.Success {
-			response.FailWithResp(c, resp)
+		if resp.Code() != response.Success.Code() {
+			response.Fail(c, resp)
 			c.Abort()
 			return
 		}
@@ -101,8 +101,8 @@ func PermAuth() gin.HandlerFunc {
 			return
 		}
 		resp := auth(c)
-		if resp != response.Success {
-			response.FailWithResp(c, resp)
+		if resp.Code() != response.Success.Code() {
+			response.Fail(c, resp)
 			c.Abort()
 			return
 		}
@@ -120,12 +120,12 @@ func PermAuth() gin.HandlerFunc {
 		perms, err := system_service.PermService.GetAdminPerms(adminId)
 		if err != nil {
 			core.Logger.Errorf("获取用户权限失败: err=[%+v]", err)
-			response.FailWithResp(c, response.SystemError)
+			response.Fail(c, response.SystemError)
 			c.Abort()
 			return
 		}
 		if !(len(perms) > 0 && util.ToolsUtil.Contains(perms, ApiAuth)) {
-			response.FailWithResp(c, response.NoPermission)
+			response.Fail(c, response.NoPermission)
 			c.Abort()
 			return
 		}

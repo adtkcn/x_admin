@@ -79,10 +79,7 @@ func (service systemAuthPostService) List(page request.PageReq, listReq system_s
 func (service systemAuthPostService) Detail(id string) (res system_schema.SystemAuthPostResp, e error) {
 	var post system_model.SystemAuthPost
 	err := service.db.Where("id = ?", id).First(&post).Error
-	if e = response.CheckDBNotRecord(err, "岗位不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "岗位不存在!", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, post)

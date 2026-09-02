@@ -113,10 +113,7 @@ func (service monitorErrorService) Detail(Id string) (res monitor_schema.Monitor
 	var obj = model.MonitorError{}
 
 	err := service.db.Where("id = ?", Id).First(&obj).Error
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "获取详情失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 		return
 	}
 
@@ -130,10 +127,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res monitor_schema.M
 	err := service.CacheUtil.GetCache("md5:"+md5, &obj)
 	if err != nil {
 		err := service.db.Where("md5 = ?", md5).Order("id DESC").First(&obj).Error
-		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 			return
 		}
 		service.CacheUtil.SetCache("md5:"+md5, obj)
@@ -179,10 +173,7 @@ func (service monitorErrorService) Del(Id string) (e error) {
 	var obj model.MonitorError
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询数据失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
 		return
 	}
 	// 删除

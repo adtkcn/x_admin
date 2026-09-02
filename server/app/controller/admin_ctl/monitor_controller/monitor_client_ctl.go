@@ -2,7 +2,6 @@ package monitor_controller
 
 import (
 	"encoding/json/v2"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -41,14 +40,14 @@ type MonitorClientHandler struct {
 func (hd *MonitorClientHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq monitor_schema.MonitorClientListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorClientService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控-客户端信息列表-所有
@@ -65,11 +64,11 @@ func (hd *MonitorClientHandler) List(c *gin.Context) {
 // @Router		/api/admin/monitor_client/list_all [get]
 func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 	var listReq monitor_schema.MonitorClientListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorClientService.ListAll(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控-客户端信息错误用户列表
@@ -81,11 +80,11 @@ func (hd *MonitorClientHandler) ListAll(c *gin.Context) {
 // @Router		/api/admin/monitor_client/error_users [get]
 func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
 	var Req monitor_schema.MonitorClientDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &Req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &Req)) {
 		return
 	}
 	res, err := monitor_service.MonitorClientService.ErrorUsers(Req.Id)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控-客户端信息详情
@@ -97,7 +96,7 @@ func (hd *MonitorClientHandler) ErrorUsers(c *gin.Context) {
 // @Router		/api/admin/monitor_client/detail [get]
 func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 	var detailReq monitor_schema.MonitorClientDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do("MonitorClient:Detail:"+detailReq.Id, func() (any, error) {
@@ -105,7 +104,7 @@ func (hd *MonitorClientHandler) Detail(c *gin.Context) {
 		return v, err
 	})
 
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控-客户端信息新增
@@ -150,10 +149,10 @@ func (hd *MonitorClientHandler) Add(c *gin.Context) {
 // @Router		/api/admin/monitor_client/del [post]
 func (hd *MonitorClientHandler) Del(c *gin.Context) {
 	var delReq monitor_schema.MonitorClientDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, monitor_service.MonitorClientService.Del(delReq.Id))
+	response.JSON(c, nil, monitor_service.MonitorClientService.Del(delReq.Id))
 }
 
 // @Summary	监控-客户端信息删除-批量
@@ -166,16 +165,16 @@ func (hd *MonitorClientHandler) Del(c *gin.Context) {
 // @Router		/api/admin/monitor_client/del_batch [post]
 func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 	var delReq monitor_schema.MonitorClientDelBatchReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.Fail(c, "请选择要删除的数据")
+		response.FailMsg(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndRespWithData(c, nil, monitor_service.MonitorClientService.DelBatch(Ids))
+	response.JSON(c, nil, monitor_service.MonitorClientService.DelBatch(Ids))
 }
 
 // @Summary	监控-客户端信息导出
@@ -192,17 +191,17 @@ func (hd *MonitorClientHandler) DelBatch(c *gin.Context) {
 // @Router		/api/admin/monitor_client/export_file [get]
 func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 	var listReq monitor_schema.MonitorClientListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorClientService.ExportFile(listReq)
 	if err != nil {
-		response.Fail(c, "查询信息失败")
+		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
 	f, err := excel2.Export(res, monitor_service.MonitorClientService.GetExcelCol(), "Sheet1", "监控-客户端信息")
 	if err != nil {
-		response.Fail(c, "导出失败")
+		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
 	excel2.DownLoadExcel("监控-客户端信息"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -215,17 +214,17 @@ func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 func (hd *MonitorClientHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.String(http.StatusInternalServerError, "文件不存在")
+		response.Fail(c, response.CheckErr(err, "文件不存在"))
 		return
 	}
 	defer file.Close()
 	importList := []monitor_schema.MonitorClientResp{}
 	err = excel2.GetExcelData(file, &importList, monitor_service.MonitorClientService.GetExcelCol())
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return
 	}
 
 	err = monitor_service.MonitorClientService.ImportFile(importList)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

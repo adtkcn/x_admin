@@ -30,14 +30,14 @@ type FlowTemplateHandler struct {
 func (hd FlowTemplateHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq FlowTemplateListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := flow_service.TemplateService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	流程模板列表-所有
@@ -45,7 +45,7 @@ func (hd FlowTemplateHandler) List(c *gin.Context) {
 // @Router		/api/admin/flow/flow_template/list_all [get]
 func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 	res, err := flow_service.TemplateService.ListAll()
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	流程模板详情
@@ -57,11 +57,11 @@ func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
 // @Router		/api/admin/flow/flow_template/detail [get]
 func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 	var detailReq FlowTemplateDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := flow_service.TemplateService.Detail(detailReq.Id)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	流程模板新增
@@ -78,10 +78,10 @@ func (hd FlowTemplateHandler) Detail(c *gin.Context) {
 // @Router		/api/admin/flow/flow_template/add [post]
 func (hd FlowTemplateHandler) Add(c *gin.Context) {
 	var addReq FlowTemplateAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.TemplateService.Add(addReq))
+	response.JSON(c, nil, flow_service.TemplateService.Add(addReq))
 }
 
 // @Summary	流程模板编辑
@@ -99,10 +99,10 @@ func (hd FlowTemplateHandler) Add(c *gin.Context) {
 // @Router		/api/admin/flow/flow_template/edit [post]
 func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 	var editReq FlowTemplateEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.TemplateService.Edit(editReq))
+	response.JSON(c, nil, flow_service.TemplateService.Edit(editReq))
 }
 
 // @Summary	流程模板删除
@@ -114,8 +114,8 @@ func (hd FlowTemplateHandler) Edit(c *gin.Context) {
 // @Router		/api/admin/flow/flow_template/del [post]
 func (hd FlowTemplateHandler) Del(c *gin.Context) {
 	var delReq FlowTemplateDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.TemplateService.Del(delReq.Id))
+	response.JSON(c, nil, flow_service.TemplateService.Del(delReq.Id))
 }

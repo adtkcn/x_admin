@@ -111,10 +111,7 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).Preload("CreatedByUser").First(&obj).Error
-		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 			return
 		}
 		service.CacheUtil.SetCache(obj.Id, obj)

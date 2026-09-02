@@ -123,10 +123,7 @@ func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).Preload("CreatedByUser").First(&obj).Error
-		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 			return
 		}
 		service.CacheUtil.SetCache(obj.Id, obj)
@@ -169,10 +166,7 @@ func (service systemCornService) Del(Id string) (e error) {
 	var obj model.SystemCorn
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询数据失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
 		return
 	}
 	// 删除

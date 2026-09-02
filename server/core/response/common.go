@@ -14,15 +14,9 @@ type PageResp struct {
 	Lists    any   `json:"lists"`    // 数据列表
 }
 
-// ========== 快捷响应函数 ==========
-// Send 发送响应的内部函数
+// Send 底层发送函数（HTTP 状态恒为 200，成败由 body.code 表达）
 func Send(c *gin.Context, code int, msg string, data any) {
-	status := http.StatusOK
-	// if code >= 500 {
-	// 	status = http.StatusInternalServerError
-	// }
-
-	c.JSON(status, Response{
+	c.JSON(http.StatusOK, Response{
 		Code:    code,
 		Message: msg,
 		Data:    data,
@@ -35,15 +29,5 @@ func Ok(c *gin.Context, data ...any) {
 	if len(data) > 0 {
 		respData = data[0]
 	}
-	Send(c, 200, "成功", respData)
-}
-
-// Fail 失败响应快捷函数（支持字符串消息）
-func Fail(c *gin.Context, msg string) {
-	Send(c, 300, msg, nil)
-}
-
-// FailWithResp 失败响应快捷函数（支持 RespType - 兼容旧代码）
-func FailWithResp(c *gin.Context, resp RespType) {
-	Send(c, resp.Code(), resp.Msg(), resp.Data())
+	Send(c, Success.Code(), Success.Msg(), respData)
 }

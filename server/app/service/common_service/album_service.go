@@ -131,10 +131,7 @@ func (albSrv albumService) AlbumMove(ids []string, cid string) (e error) {
 	}
 	if cid != "" {
 		err = albSrv.db.Where("id = ?", cid).First(&common_model.AlbumCate{}).Error
-		if e = response.CheckDBNotRecord(err, "类目已不存在！"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "AlbumMove First err"); e != nil {
+		if e = response.CheckDBErr(err, "类目已不存在！", "AlbumMove First err"); e != nil {
 			return
 		}
 	}
@@ -233,10 +230,7 @@ func (albSrv albumService) CateAdd(adminId string, addReq common_schema.CommonCa
 func (albSrv albumService) CateRename(id string, name string) (e error) {
 	var cate common_model.AlbumCate
 	err := albSrv.db.Where("id = ?", id).First(&cate).Error
-	if e = response.CheckDBNotRecord(err, "分类已不存在！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "重命名失败"); e != nil {
+	if e = response.CheckDBErr(err, "分类已不存在！", "重命名失败"); e != nil {
 		return
 	}
 	var cate2 common_model.AlbumCate
@@ -255,10 +249,7 @@ func (albSrv albumService) CateRename(id string, name string) (e error) {
 func (albSrv albumService) CateDel(id string) (e error) {
 	var cate common_model.AlbumCate
 	err := albSrv.db.Where("id = ?", id).First(&cate).Error
-	if e = response.CheckDBNotRecord(err, "分类已不存在！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待删除数据查找失败"); e != nil {
+	if e = response.CheckDBErr(err, "分类已不存在！", "待删除数据查找失败"); e != nil {
 		return
 	}
 	r := albSrv.db.Where("cid = ?", id).Limit(1).Find(&common_model.Album{})

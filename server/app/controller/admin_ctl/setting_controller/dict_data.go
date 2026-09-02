@@ -24,11 +24,11 @@ type DictDataHandler struct{}
 // @Router			/api/admin/setting/dictData/all [get]
 func (ddh DictDataHandler) All(c *gin.Context) {
 	var allReq setting_schema.SettingDictDataListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &allReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &allReq)) {
 		return
 	}
 	res, err := setting_service.DictDataService.All(allReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		字典数据详情
@@ -40,11 +40,11 @@ func (ddh DictDataHandler) All(c *gin.Context) {
 // @Router			/api/admin/setting/dictData/detail [get]
 func (ddh DictDataHandler) Detail(c *gin.Context) {
 	var detailReq setting_schema.SettingDictDataDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := setting_service.DictDataService.Detail(detailReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		字典数据新增
@@ -62,10 +62,10 @@ func (ddh DictDataHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/setting/dictData/add [post]
 func (ddh DictDataHandler) Add(c *gin.Context) {
 	var addReq setting_schema.SettingDictDataAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.DictDataService.Add(addReq))
+	response.JSON(c, nil, setting_service.DictDataService.Add(addReq))
 }
 
 // @Summary		字典数据编辑
@@ -84,10 +84,10 @@ func (ddh DictDataHandler) Add(c *gin.Context) {
 // @Router			/api/admin/setting/dictData/edit [post]
 func (ddh DictDataHandler) Edit(c *gin.Context) {
 	var editReq setting_schema.SettingDictDataEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.DictDataService.Edit(editReq))
+	response.JSON(c, nil, setting_service.DictDataService.Edit(editReq))
 }
 
 // @Summary		字典数据删除
@@ -99,8 +99,8 @@ func (ddh DictDataHandler) Edit(c *gin.Context) {
 // @Router			/api/admin/setting/dictData/del [post]
 func (ddh DictDataHandler) Del(c *gin.Context) {
 	var delReq setting_schema.SettingDictDataDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.DictDataService.Del(delReq))
+	response.JSON(c, nil, setting_service.DictDataService.Del(delReq))
 }

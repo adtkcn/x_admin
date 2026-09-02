@@ -35,14 +35,14 @@ type FlowApplyHandler struct{}
 func (hd FlowApplyHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq FlowApplyListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := flow_service.ApplyService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	申请流程详情
@@ -54,11 +54,11 @@ func (hd FlowApplyHandler) List(c *gin.Context) {
 // @Router		/api/admin/flow/flow_apply/detail [get]
 func (hd FlowApplyHandler) Detail(c *gin.Context) {
 	var detailReq FlowApplyDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := flow_service.ApplyService.Detail(detailReq.Id)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	申请流程新增
@@ -75,7 +75,7 @@ func (hd FlowApplyHandler) Detail(c *gin.Context) {
 // @Router		/api/admin/flow/flow_apply/add [post]
 func (hd FlowApplyHandler) Add(c *gin.Context) {
 	var addReq FlowApplyAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
 
@@ -85,7 +85,7 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 	addReq.ApplyUserId = adminId
 	addReq.Status = 1
 
-	response.CheckAndRespWithData(c, nil, flow_service.ApplyService.Add(addReq))
+	response.JSON(c, nil, flow_service.ApplyService.Add(addReq))
 }
 
 // @Summary	申请流程编辑
@@ -100,10 +100,10 @@ func (hd FlowApplyHandler) Add(c *gin.Context) {
 // @Router		/api/admin/flow/flow_apply/edit [post]
 func (hd FlowApplyHandler) Edit(c *gin.Context) {
 	var editReq FlowApplyEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.ApplyService.Edit(editReq))
+	response.JSON(c, nil, flow_service.ApplyService.Edit(editReq))
 }
 
 // @Summary	申请流程删除
@@ -115,8 +115,8 @@ func (hd FlowApplyHandler) Edit(c *gin.Context) {
 // @Router		/api/admin/flow/flow_apply/del [post]
 func (hd FlowApplyHandler) Del(c *gin.Context) {
 	var delReq FlowApplyDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.ApplyService.Del(delReq.Id))
+	response.JSON(c, nil, flow_service.ApplyService.Del(delReq.Id))
 }

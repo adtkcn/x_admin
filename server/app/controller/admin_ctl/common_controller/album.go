@@ -28,15 +28,15 @@ type AlbumHandler struct{}
 func (ah AlbumHandler) AlbumList(c *gin.Context) {
 	var page request.PageReq
 	var listReq common_schema.CommonAlbumListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
 	res, err := common_service.AlbumService.AlbumList(adminId, page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		相册文件重命名
@@ -49,10 +49,10 @@ func (ah AlbumHandler) AlbumList(c *gin.Context) {
 // @Router			/api/admin/common/album/rename [post]
 func (ah AlbumHandler) AlbumRename(c *gin.Context) {
 	var rnReq common_schema.CommonAlbumRenameReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, common_service.AlbumService.AlbumRename(rnReq.ID, rnReq.Name))
+	response.JSON(c, nil, common_service.AlbumService.AlbumRename(rnReq.ID, rnReq.Name))
 }
 
 // @Summary		相册文件移动
@@ -65,10 +65,10 @@ func (ah AlbumHandler) AlbumRename(c *gin.Context) {
 // @Router			/api/admin/common/album/move [post]
 func (ah AlbumHandler) AlbumMove(c *gin.Context) {
 	var mvReq common_schema.CommonAlbumMoveReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &mvReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &mvReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, common_service.AlbumService.AlbumMove(mvReq.Ids, mvReq.Cid))
+	response.JSON(c, nil, common_service.AlbumService.AlbumMove(mvReq.Ids, mvReq.Cid))
 }
 
 // @Summary		相册文件删除
@@ -80,10 +80,10 @@ func (ah AlbumHandler) AlbumMove(c *gin.Context) {
 // @Router			/api/admin/common/album/del [post]
 func (ah AlbumHandler) AlbumDel(c *gin.Context) {
 	var delReq common_schema.CommonAlbumDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, common_service.AlbumService.AlbumDel(delReq.Ids))
+	response.JSON(c, nil, common_service.AlbumService.AlbumDel(delReq.Ids))
 }
 
 // @Summary		相册文件挂载（从已上传文件）
@@ -97,12 +97,12 @@ func (ah AlbumHandler) AlbumDel(c *gin.Context) {
 // @Router			/api/admin/common/album/albumAddFromFile [post]
 func (ah AlbumHandler) AlbumAddFromFile(c *gin.Context) {
 	var req common_schema.CommonAlbumAddFromFileReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	adminId := config.AdminConfig.GetAdminId(c)
 	resp, err := common_service.AlbumService.AlbumAddFromFileRef(req.FileHashId, req.FileName, req.Cid, adminId)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		类目列表
@@ -114,12 +114,12 @@ func (ah AlbumHandler) AlbumAddFromFile(c *gin.Context) {
 // @Router			/api/admin/common/album/cateList [get]
 func (ah AlbumHandler) CateList(c *gin.Context) {
 	var listReq common_schema.CommonCateListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
 	res, err := common_service.AlbumService.CateList(adminId, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		类目新增
@@ -132,11 +132,11 @@ func (ah AlbumHandler) CateList(c *gin.Context) {
 // @Router			/api/admin/common/album/cateAdd [post]
 func (ah AlbumHandler) CateAdd(c *gin.Context) {
 	var addReq common_schema.CommonCateAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
-	response.CheckAndRespWithData(c, nil, common_service.AlbumService.CateAdd(adminId, addReq))
+	response.JSON(c, nil, common_service.AlbumService.CateAdd(adminId, addReq))
 }
 
 // @Summary		类目重命名
@@ -149,10 +149,10 @@ func (ah AlbumHandler) CateAdd(c *gin.Context) {
 // @Router			/api/admin/common/album/cateRename [post]
 func (ah AlbumHandler) CateRename(c *gin.Context) {
 	var rnReq common_schema.CommonCateRenameReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &rnReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, common_service.AlbumService.CateRename(rnReq.ID, rnReq.Name))
+	response.JSON(c, nil, common_service.AlbumService.CateRename(rnReq.ID, rnReq.Name))
 }
 
 // @Summary		类目删除
@@ -164,8 +164,8 @@ func (ah AlbumHandler) CateRename(c *gin.Context) {
 // @Router			/api/admin/common/album/cateDel [post]
 func (ah AlbumHandler) CateDel(c *gin.Context) {
 	var delReq common_schema.CommonCateDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, common_service.AlbumService.CateDel(delReq.ID))
+	response.JSON(c, nil, common_service.AlbumService.CateDel(delReq.ID))
 }

@@ -28,5 +28,5 @@ func (ih GeTuiHandler) Push(c *gin.Context) {
 	})
 
 	res, err := common_service.GeTuiService.PushToSingleBatchCID(req)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }

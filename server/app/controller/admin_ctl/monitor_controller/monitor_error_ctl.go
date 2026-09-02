@@ -2,7 +2,6 @@ package monitor_controller
 
 import (
 	"encoding/json/v2"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -44,14 +43,14 @@ type MonitorErrorHandler struct {
 func (hd *MonitorErrorHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq MonitorErrorListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorErrorService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控-错误列列表-所有
@@ -69,11 +68,11 @@ func (hd *MonitorErrorHandler) List(c *gin.Context) {
 // @Router		/api/admin/monitor_error/list_all [get]
 func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
 	var listReq MonitorErrorListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorErrorService.ListAll(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控-错误列详情
@@ -85,7 +84,7 @@ func (hd *MonitorErrorHandler) ListAll(c *gin.Context) {
 // @Router		/api/admin/monitor_error/detail [get]
 func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 	var detailReq MonitorErrorDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do("MonitorError:Detail:"+detailReq.Id, func() (any, error) {
@@ -93,7 +92,7 @@ func (hd *MonitorErrorHandler) Detail(c *gin.Context) {
 		return v, err
 	})
 
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控-错误列新增
@@ -155,10 +154,10 @@ func (hd *MonitorErrorHandler) Add(c *gin.Context) {
 // @Router		/api/admin/monitor_error/del [post]
 func (hd *MonitorErrorHandler) Del(c *gin.Context) {
 	var delReq MonitorErrorDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, monitor_service.MonitorErrorService.Del(delReq.Id))
+	response.JSON(c, nil, monitor_service.MonitorErrorService.Del(delReq.Id))
 }
 
 // @Summary	监控-错误列删除-批量
@@ -171,16 +170,16 @@ func (hd *MonitorErrorHandler) Del(c *gin.Context) {
 // @Router		/api/admin/monitor_error/del_batch [post]
 func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 	var delReq MonitorErrorDelBatchReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.Fail(c, "请选择要删除的数据")
+		response.FailMsg(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndRespWithData(c, nil, monitor_service.MonitorErrorService.DelBatch(Ids))
+	response.JSON(c, nil, monitor_service.MonitorErrorService.DelBatch(Ids))
 }
 
 // @Summary	监控-错误列导出
@@ -198,17 +197,17 @@ func (hd *MonitorErrorHandler) DelBatch(c *gin.Context) {
 // @Router		/api/admin/monitor_error/export_file [get]
 func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorErrorListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorErrorService.ExportFile(listReq)
 	if err != nil {
-		response.Fail(c, "查询信息失败")
+		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
 	f, err := excel2.Export(res, monitor_service.MonitorErrorService.GetExcelCol(), "Sheet1", "监控-错误列")
 	if err != nil {
-		response.Fail(c, "导出失败")
+		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
 	excel2.DownLoadExcel("监控-错误列"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -224,17 +223,17 @@ func (hd *MonitorErrorHandler) ExportFile(c *gin.Context) {
 func (hd *MonitorErrorHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.String(http.StatusInternalServerError, "文件不存在")
+		response.Fail(c, response.CheckErr(err, "文件不存在"))
 		return
 	}
 	defer file.Close()
 	importList := []MonitorErrorResp{}
 	err = excel2.GetExcelData(file, &importList, monitor_service.MonitorErrorService.GetExcelCol())
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return
 	}
 
 	err = monitor_service.MonitorErrorService.ImportFile(importList)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

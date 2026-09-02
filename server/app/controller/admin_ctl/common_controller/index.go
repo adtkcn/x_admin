@@ -24,7 +24,7 @@ func (ih *IndexHandler) Console(c *gin.Context) {
 	res, err, _ := ih.requestGroup.Do("Index:Console", func() (any, error) {
 		return common_service.IndexService.Console()
 	})
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		公共配置
@@ -37,5 +37,5 @@ func (ih *IndexHandler) Config(c *gin.Context) {
 	res, err, _ := ih.requestGroup.Do("Index:Config", func() (any, error) {
 		return common_service.IndexService.Config()
 	})
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }

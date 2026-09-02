@@ -85,10 +85,7 @@ func (service flowTemplateService) ListAll() (res []flow_schema.FlowTemplateResp
 func (service flowTemplateService) Detail(id string) (res flow_schema.FlowTemplateResp, e error) {
 	var obj model.FlowTemplate
 	err := service.db.Where("id = ?", id).First(&obj).Error
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, obj)
@@ -109,10 +106,7 @@ func (service flowTemplateService) Edit(editReq flow_schema.FlowTemplateEditReq)
 	var obj model.FlowTemplate
 	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "待编辑数据查找失败"); e != nil {
 		return
 	}
 	// 更新

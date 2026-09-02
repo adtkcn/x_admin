@@ -95,10 +95,7 @@ func (roleSrv systemAuthRoleService) List(page request.PageReq) (res response.Pa
 func (roleSrv systemAuthRoleService) Detail(id string) (res system_schema.SystemAuthRoleResp, e error) {
 	var role system_model.SystemAuthRole
 	err := roleSrv.db.Where("id = ?", id).First(&role).Error
-	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "角色已不存在!", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, role)
@@ -139,10 +136,7 @@ func (roleSrv systemAuthRoleService) Add(addReq system_schema.SystemAuthRoleAddR
 // Edit 编辑角色
 func (roleSrv systemAuthRoleService) Edit(editReq system_schema.SystemAuthRoleEditReq) (e error) {
 	err := roleSrv.db.Where("id = ?", editReq.ID).First(&system_model.SystemAuthRole{}).Error
-	if e = response.CheckDBNotRecord(err, "角色已不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
+	if e = response.CheckDBErr(err, "角色已不存在!", "待编辑数据查找失败"); e != nil {
 		return
 	}
 	var role system_model.SystemAuthRole

@@ -2,6 +2,7 @@ package response
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"x_admin/core"
 
@@ -17,7 +18,10 @@ type Response struct {
 	Data    any    `json:"data"`
 }
 
-// RespType 响应类型
+// RespType 业务响应类型
+//
+// 该类型同时实现 error 接口，service 层可通过 return 直接上抛业务错误，
+// 由 controller 层的统一出口（JSON / IsFail）翻译成 {code, message}。
 type RespType struct {
 	code    int
 	message string
@@ -41,8 +45,6 @@ var (
 	Request405Error     = RespType{code: 405, message: "请求方法不允许"}
 	SystemError         = RespType{code: 500, message: "系统错误"}
 )
-
-// ========== 兼容旧代码的方法 ==========
 
 // Error 实现 error 接口
 func (rt RespType) Error() string {
@@ -76,70 +78,153 @@ func (rt RespType) Data() any {
 	return rt.data
 }
 
-// IsFailWithResp 判断是否错误并响应
-func IsFailWithResp(c *gin.Context, err error) bool {
+// ========== 统一出口 ==========
+//
+// 约定一：业务响应的 HTTP 状态码恒为 200，成败一律以 body.code 表达。
+// 约定二：失败响应不携带 data，避免把中间数据混入错误结果。
+// 约定三：未识别的错误只落日志，对外统一返回系统错误文案，不暴露内部细节。
+
+// JSON 统一出口：err == nil 时返回 data，否则把 err 翻译成业务响应。
+//
+//	data, err := XxxService.List(req)
+//	response.JSON(c, data, err)
+func JSON(c *gin.Context, data any, err error) {
+	if err == nil {
+		Send(c, Success.Code(), Success.Msg(), data)
+		return
+	}
+	// 挂到 gin 的错误链上，供操作日志等中间件感知本次请求的失败原因
+	_ = c.Error(err)
+	code, msg, respData, needLog := Resolve(err)
+	if needLog {
+		core.Logger.Error("Response Error: " + err.Error())
+	}
+	Send(c, code, msg, respData)
+}
+
+// IsFail 守卫式出口：err != nil 时直接响应失败并返回 true。
+//
+//	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &req)) {
+//		return
+//	}
+func IsFail(c *gin.Context, err error) bool {
 	if err == nil {
 		return false
 	}
-
-	switch v := err.(type) {
-	case RespType:
-		Send(c, v.Code(), v.Msg(), v.Data())
-	default:
-		Send(c, 500, err.Error(), nil)
-	}
+	JSON(c, nil, err)
 	return true
 }
 
-// CheckAndRespWithData 检查错误并响应带数据
-func CheckAndRespWithData(c *gin.Context, data any, err error) {
-	if err != nil {
-		switch v := err.(type) {
-		case RespType:
-			Send(c, v.Code(), v.Msg(), data)
-		default:
-			Send(c, 500, err.Error(), data)
-		}
-		return
-	}
-	Send(c, 200, "success", data)
+// Fail 直接发送失败响应，接受 RespType 或普通 error，用于中间件等非 service 场景
+func Fail(c *gin.Context, err error) {
+	JSON(c, nil, err)
 }
 
-// CheckErr 检查错误
+// FailMsg 以指定文案发送失败响应，使用默认业务失败码 300
+func FailMsg(c *gin.Context, msg string) {
+	fail := Failed.SetMessage(msg)
+	_ = c.Error(fail)
+	Send(c, Failed.Code(), msg, nil)
+}
+
+// Resolve 把 error 翻译成业务响应三元组。
+// needLog 为 true 表示未识别的错误（需要记录日志、对外隐藏细节）。
+//
+// 翻译优先级：业务错误 RespType > MySQL 错误 > 记录不存在 > 其它
+func Resolve(err error) (code int, msg string, data any, needLog bool) {
+	// 业务错误：使用 errors.As 以支持 fmt.Errorf("xxx: %w", err) 的多层包裹
+	var rt RespType
+	if errors.As(err, &rt) {
+		return rt.Code(), rt.Msg(), rt.Data(), false
+	}
+	// 数据库错误
+	var mysqlErr *mysql.MySQLError
+	if errors.As(err, &mysqlErr) {
+		resp, known := mysqlResp(mysqlErr)
+		return resp.Code(), resp.Msg(), nil, !known
+	}
+	// 记录不存在
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return Failed.Code(), "数据不存在", nil, false
+	}
+	// 未知错误：对外统一文案，细节只进日志
+	return SystemError.Code(), SystemError.Msg(), nil, true
+}
+
+// mysqlResp MySQL 错误码映射，known 表示是否为已识别的错误码
+func mysqlResp(mysqlErr *mysql.MySQLError) (resp RespType, known bool) {
+	switch mysqlErr.Number {
+	case 1062:
+		// 主键或唯一索引冲突
+		return SystemError.SetMessage("数据已存在"), true
+	case 1048:
+		return SystemError.SetMessage("不能为空"), true
+	case 1452:
+		return SystemError.SetMessage("外键约束失败"), true
+	case 1451:
+		return SystemError.SetMessage("关联数据存在，不能删除"), true
+	default:
+		return SystemError.SetMessage("数据库错误"), false
+	}
+}
+
+// ========== service 层错误构造辅助 ==========
+
+// CheckErr 把内部错误转成业务错误上抛，template 支持 fmt 格式化参数
 func CheckErr(err error, template string, args ...any) error {
-	if err != nil {
-		core.Logger.Error("CheckErr:", err)
-		return SystemError.SetMessage(template)
+	if err == nil {
+		return nil
 	}
-	return nil
+	core.Logger.Error("CheckErr:", err)
+	message := template
+	if len(args) > 0 {
+		message = fmt.Sprintf(template, args...)
+	}
+	return SystemError.SetMessage(message)
 }
 
-// CheckMysqlErr 检查 MySQL 错误
+// CheckMysqlErr 在 service 层把 MySQL 错误翻译成业务错误上抛
 func CheckMysqlErr(err error) error {
-	if mysqlErr, ok := err.(*mysql.MySQLError); ok {
-		switch mysqlErr.Number {
-		case 1062:
-			// 主键或唯一索引冲突
-			return SystemError.SetMessage("数据已存在")
-		case 1048:
-			return SystemError.SetMessage("不能为空")
-		case 1452:
-			return SystemError.SetMessage("外键约束失败")
-		case 1451:
-			return SystemError.SetMessage("关联数据存在，不能删除")
-		default:
-			// return err
+	var mysqlErr *mysql.MySQLError
+	if errors.As(err, &mysqlErr) {
+		resp, known := mysqlResp(mysqlErr)
+		if !known {
 			core.Logger.Error("未知数据库错误: " + err.Error())
-			return SystemError.SetMessage("数据库错误")
 		}
+		return resp
 	}
 	return err
 }
 
-// CheckDBNotRecord 检查记录不存在，返回错误
+// CheckDBErr 数据库查询错误统一处理，取代「CheckDBNotRecord + CheckErr」的双段式写法：
+//
+//   - 记录不存在 -> notFoundMsg
+//
+//   - 其它错误   -> 记日志 + failMsg
+//
+//     if e = response.CheckDBErr(err, "岗位不存在!", "详情获取失败"); e != nil {
+//     return
+//     }
+func CheckDBErr(err error, notFoundMsg, failMsg string) error {
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return SystemError.SetMessage(notFoundMsg)
+	}
+	core.Logger.Error("CheckDBErr: " + failMsg + ", err: " + err.Error())
+	return SystemError.SetMessage(failMsg)
+}
+
+// CheckDBNotRecord 把「记录不存在」翻译成业务错误，其余错误记日志后原样透传。
+// 若还需要对其它错误给出独立文案，请改用 CheckDBErr。
 func CheckDBNotRecord(err error, message string) error {
-	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return SystemError.SetMessage(message)
 	}
-	return nil
+	core.Logger.Error("CheckDBNotRecord: " + err.Error())
+	return err
 }

@@ -140,10 +140,7 @@ func (service {{{ .EntityName }}}Service) Detail({{{ .PrimaryGoField }}} {{{.Pri
 	err := service.CacheUtil.GetCache({{{ .PrimaryGoField }}}, &obj)
 	if err != nil {
 		err := service.db.Where("{{{ $.PrimaryKey }}} = ?", {{{ .PrimaryGoField }}}).Preload("CreatedByUser").First(&obj).Error
-		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 			return
 		}
 		service.CacheUtil.SetCache(obj.{{{ .PrimaryGoField }}}, obj)
@@ -180,10 +177,7 @@ func (service {{{ .EntityName }}}Service) Edit(editReq {{{.Domain}}}_schema.{{{ 
 	var obj {{{.Domain}}}_model.{{{ toUpperCamelCase .EntityName }}}
 	err := service.db.Where("{{{ $.PrimaryKey }}} = ?", editReq.{{{ .PrimaryGoField }}}).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "查询失败"); e != nil {
 		return
 	}
 

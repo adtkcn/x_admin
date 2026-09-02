@@ -20,7 +20,7 @@ type DeptHandler struct{}
 // @Router			/api/admin/system/dept/all [get]
 func (dh DeptHandler) All(c *gin.Context) {
 	res, err := system_service.DeptService.All()
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		部门列表
@@ -33,11 +33,11 @@ func (dh DeptHandler) All(c *gin.Context) {
 // @Router			/api/admin/system/dept/list [get]
 func (dh DeptHandler) List(c *gin.Context) {
 	var listReq system_schema.SystemAuthDeptListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := system_service.DeptService.List(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		部门详情
@@ -49,11 +49,11 @@ func (dh DeptHandler) List(c *gin.Context) {
 // @Router			/api/admin/system/dept/detail [get]
 func (dh DeptHandler) Detail(c *gin.Context) {
 	var detailReq system_schema.SystemAuthDeptDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := system_service.DeptService.Detail(detailReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		部门新增
@@ -71,11 +71,11 @@ func (dh DeptHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/system/dept/add [post]
 func (dh DeptHandler) Add(c *gin.Context) {
 	var addReq system_schema.SystemAuthDeptAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
 	err := system_service.DeptService.Add(addReq)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		部门编辑
@@ -94,11 +94,11 @@ func (dh DeptHandler) Add(c *gin.Context) {
 // @Router			/api/admin/system/dept/edit [post]
 func (dh DeptHandler) Edit(c *gin.Context) {
 	var editReq system_schema.SystemAuthDeptEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
 	err := system_service.DeptService.Edit(editReq)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		部门删除
@@ -110,9 +110,9 @@ func (dh DeptHandler) Edit(c *gin.Context) {
 // @Router			/api/admin/system/dept/del [post]
 func (dh DeptHandler) Del(c *gin.Context) {
 	var delReq system_schema.SystemAuthDeptDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
 	err := system_service.DeptService.Del(delReq.ID)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

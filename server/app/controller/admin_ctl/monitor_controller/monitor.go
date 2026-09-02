@@ -43,7 +43,7 @@ func (mh MonitorHandler) Cache(c *gin.Context) {
 func (mh MonitorHandler) Server(c *gin.Context) {
 	data, err := monitor_service.MonitorServerService.GetAllServerLatestInfo()
 	if err != nil {
-		response.Fail(c, "获取服务器信息失败:"+err.Error())
+		response.Fail(c, response.CheckErr(err, "获取服务器信息失败"))
 		return
 	}
 	response.Ok(c, data)

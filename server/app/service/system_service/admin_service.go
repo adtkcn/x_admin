@@ -83,11 +83,7 @@ func (adminSrv systemAuthAdminService) ListByDeptId(dept_id string) (res []syste
 		Where("admin.dept_id = ?", dept_id).
 		Find(&adminResp).Error
 
-	if e = response.CheckDBNotRecord(err, "获取部门下用户列表失败"); e != nil {
-		return
-	}
-	if err != nil {
-		e = err
+	if e = response.CheckErr(err, "获取部门下用户列表失败"); e != nil {
 		return
 	}
 
@@ -256,7 +252,7 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []system_schema.Syst
 		})
 
 		if err != nil {
-			e = response.CheckErr(err, "添加用户失败: "+importItem.Email)
+			e = response.CheckErr(err, "添加用户失败: %s", importItem.Email)
 			return
 		}
 	}
@@ -418,10 +414,7 @@ func (adminSrv systemAuthAdminService) ListAll(listReq system_schema.SystemAuthA
 func (adminSrv systemAuthAdminService) Detail(id string) (res system_schema.SystemAuthAdminResp, e error) {
 	var sysAdmin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ?", id).First(&sysAdmin).Error
-	if e = response.CheckDBNotRecord(err, "账号已不存在！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "账号已不存在！", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, sysAdmin)
@@ -499,10 +492,7 @@ func (adminSrv systemAuthAdminService) Add(addReq system_schema.SystemAuthAdminA
 // Edit 管理员编辑
 func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schema.SystemAuthAdminEditReq) (e error) {
 	err := adminSrv.db.Where("id = ?", editReq.ID).First(&system_model.SystemAuthAdmin{}).Error
-	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
+	if e = response.CheckDBErr(err, "账号不存在了!", "待编辑数据查找失败"); e != nil {
 		return
 	}
 
@@ -603,10 +593,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 	// 检查id
 	var admin system_model.SystemAuthAdmin
 	err := adminSrv.db.Where("id = ?", adminId).First(&admin).Error
-	if e = response.CheckDBNotRecord(err, "账号不存在了!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "Update First err"); e != nil {
+	if e = response.CheckDBErr(err, "账号不存在了!", "Update First err"); e != nil {
 		return
 	}
 

@@ -85,10 +85,7 @@ func (dtSrv settingDictTypeService) List(page request.PageReq, listReq setting_s
 func (dtSrv settingDictTypeService) Detail(id string) (res setting_schema.SettingDictTypeResp, e error) {
 	var dt setting_model.DictType
 	err := dtSrv.db.Where("id = ?", id).First(&dt).Error
-	if e = response.CheckDBNotRecord(err, "字典类型不存在！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "字典类型不存在！", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, dt)

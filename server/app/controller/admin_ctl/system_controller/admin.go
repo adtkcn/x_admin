@@ -1,7 +1,6 @@
 package system_controller
 
 import (
-	"net/http"
 	"time"
 	"x_admin/app/schema/system_schema"
 	"x_admin/app/service/system_service"
@@ -28,7 +27,7 @@ type AdminHandler struct{}
 func (ah AdminHandler) Self(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
 	res, err := system_service.AdminService.Self(adminId)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		导出管理员文件
@@ -42,18 +41,18 @@ func (ah AdminHandler) Self(c *gin.Context) {
 // @Router			/api/admin/system/admin/export [get]
 func (ah AdminHandler) ExportFile(c *gin.Context) {
 	var listReq system_schema.SystemAuthAdminListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := system_service.AdminService.ExportFile(listReq)
 
 	if err != nil {
-		response.Fail(c, "查询导出失败")
+		response.Fail(c, response.CheckErr(err, "查询导出失败"))
 		return
 	}
 	f, err := excel2.Export(res, system_service.AdminService.GetExcelCol(), "Sheet1", "用户信息")
 	if err != nil {
-		response.Fail(c, "导出失败")
+		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
 	excel2.DownLoadExcel("用户信息"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -69,18 +68,18 @@ func (ah AdminHandler) ExportFile(c *gin.Context) {
 func (ah AdminHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.String(http.StatusInternalServerError, "文件不存在")
+		response.Fail(c, response.CheckErr(err, "文件不存在"))
 		return
 	}
 	defer file.Close()
 	importList := []system_schema.SystemAuthAdminResp{}
 	err = excel2.GetExcelData(file, &importList, system_service.AdminService.GetExcelCol())
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return
 	}
 	err = system_service.AdminService.ImportFile(importList)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		管理员列表
@@ -97,14 +96,14 @@ func (ah AdminHandler) ImportFile(c *gin.Context) {
 func (ah AdminHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq system_schema.SystemAuthAdminListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := system_service.AdminService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		所有管理员列表
@@ -120,11 +119,11 @@ func (ah AdminHandler) ListAll(c *gin.Context) {
 
 	var listReq system_schema.SystemAuthAdminListReq
 
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := system_service.AdminService.ListAll(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		管理员详情
@@ -136,11 +135,11 @@ func (ah AdminHandler) ListAll(c *gin.Context) {
 // @Router			/api/admin/system/admin/detail [get]
 func (ah AdminHandler) Detail(c *gin.Context) {
 	var detailReq system_schema.SystemAuthAdminDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := system_service.AdminService.Detail(detailReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		管理员新增
@@ -160,11 +159,11 @@ func (ah AdminHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/system/admin/add [post]
 func (ah AdminHandler) Add(c *gin.Context) {
 	var addReq system_schema.SystemAuthAdminAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
 	err := system_service.AdminService.Add(addReq)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		管理员编辑
@@ -185,11 +184,11 @@ func (ah AdminHandler) Add(c *gin.Context) {
 // @Router			/api/admin/system/admin/edit [post]
 func (ah AdminHandler) Edit(c *gin.Context) {
 	var editReq system_schema.SystemAuthAdminEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
 	err := system_service.AdminService.Edit(c, editReq)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		发送邮箱验证码
@@ -201,11 +200,11 @@ func (ah AdminHandler) Edit(c *gin.Context) {
 // @Router			/api/admin/system/admin/sendEmailCode [post]
 func (ah AdminHandler) SendEmailCode(c *gin.Context) {
 	var req system_schema.SystemAuthAdminSendEmailCodeReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	err := system_service.AdminService.SendBindEmailCode(config.AdminConfig.GetAdminId(c), req.Email)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		管理员更新信息
@@ -222,12 +221,12 @@ func (ah AdminHandler) SendEmailCode(c *gin.Context) {
 // @Router			/api/admin/system/admin/upInfo [post]
 func (ah AdminHandler) UpInfo(c *gin.Context) {
 	var updateReq system_schema.SystemAuthAdminUpdateReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &updateReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &updateReq)) {
 		return
 	}
 	err := system_service.AdminService.Update(
 		c, updateReq, config.AdminConfig.GetAdminId(c))
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		管理员删除
@@ -239,11 +238,11 @@ func (ah AdminHandler) UpInfo(c *gin.Context) {
 // @Router			/api/admin/system/admin/del [post]
 func (ah AdminHandler) Del(c *gin.Context) {
 	var delReq system_schema.SystemAuthAdminDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	err := system_service.AdminService.Del(c, delReq.ID)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		管理员状态切换
@@ -255,11 +254,11 @@ func (ah AdminHandler) Del(c *gin.Context) {
 // @Router			/api/admin/system/admin/disable [post]
 func (ah AdminHandler) Disable(c *gin.Context) {
 	var disableReq system_schema.SystemAuthAdminDisableReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &disableReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &disableReq)) {
 		return
 	}
 	err := system_service.AdminService.Disable(c, disableReq.ID)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		获取部门的用户
@@ -272,10 +271,10 @@ func (ah AdminHandler) Disable(c *gin.Context) {
 func (ah AdminHandler) ListByDeptId(c *gin.Context) {
 	dept_id, bool := c.GetQuery("dept_id")
 	if !bool {
-		response.Fail(c, "deptId不能为空")
+		response.FailMsg(c, "deptId不能为空")
 		return
 	}
 
 	res, err := system_service.AdminService.ListByDeptId(dept_id)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }

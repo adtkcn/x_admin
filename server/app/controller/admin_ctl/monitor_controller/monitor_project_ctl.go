@@ -1,7 +1,6 @@
 package monitor_controller
 
 import (
-	"net/http"
 	"strings"
 	"time"
 	. "x_admin/app/schema/monitor_schema"
@@ -38,14 +37,14 @@ type MonitorProjectHandler struct {
 func (hd *MonitorProjectHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq MonitorProjectListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorProjectService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控项目列表-所有
@@ -63,11 +62,11 @@ func (hd *MonitorProjectHandler) List(c *gin.Context) {
 // @Router		/api/admin/monitor_project/list_all [get]
 func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 	var listReq MonitorProjectListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorProjectService.ListAll(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控项目详情
@@ -79,7 +78,7 @@ func (hd *MonitorProjectHandler) ListAll(c *gin.Context) {
 // @Router		/api/admin/monitor_project/detail [get]
 func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 	var detailReq MonitorProjectDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do("MonitorProject:Detail:"+detailReq.Id, func() (any, error) {
@@ -87,7 +86,7 @@ func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 		return v, err
 	})
 
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	监控项目新增
@@ -102,11 +101,11 @@ func (hd *MonitorProjectHandler) Detail(c *gin.Context) {
 // @Router		/api/admin/monitor_project/add [post]
 func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 	var addReq MonitorProjectAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
 	createId, e := monitor_service.MonitorProjectService.Add(addReq)
-	response.CheckAndRespWithData(c, createId, e)
+	response.JSON(c, createId, e)
 }
 
 // @Summary	监控项目编辑
@@ -122,10 +121,10 @@ func (hd *MonitorProjectHandler) Add(c *gin.Context) {
 // @Router		/api/admin/monitor_project/edit [post]
 func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 	var editReq MonitorProjectEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, editReq.Id, monitor_service.MonitorProjectService.Edit(editReq))
+	response.JSON(c, editReq.Id, monitor_service.MonitorProjectService.Edit(editReq))
 }
 
 // @Summary	监控项目删除
@@ -137,10 +136,10 @@ func (hd *MonitorProjectHandler) Edit(c *gin.Context) {
 // @Router		/api/admin/monitor_project/del [post]
 func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 	var delReq MonitorProjectDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, monitor_service.MonitorProjectService.Del(delReq.Id))
+	response.JSON(c, nil, monitor_service.MonitorProjectService.Del(delReq.Id))
 }
 
 // @Summary	监控项目删除-批量
@@ -153,16 +152,16 @@ func (hd *MonitorProjectHandler) Del(c *gin.Context) {
 // @Router		/api/admin/monitor_project/del_batch [post]
 func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 	var delReq MonitorProjectDelBatchReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.Fail(c, "请选择要删除的数据")
+		response.FailMsg(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
-	response.CheckAndRespWithData(c, nil, monitor_service.MonitorProjectService.DelBatch(Ids))
+	response.JSON(c, nil, monitor_service.MonitorProjectService.DelBatch(Ids))
 }
 
 // @Summary	监控项目导出
@@ -180,17 +179,17 @@ func (hd *MonitorProjectHandler) DelBatch(c *gin.Context) {
 // @Router		/api/admin/monitor_project/export_file [get]
 func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 	var listReq MonitorProjectListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := monitor_service.MonitorProjectService.ExportFile(listReq)
 	if err != nil {
-		response.Fail(c, "查询信息失败")
+		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
 	f, err := excel2.Export(res, monitor_service.MonitorProjectService.GetExcelCol(), "Sheet1", "监控项目")
 	if err != nil {
-		response.Fail(c, "导出失败")
+		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
 	excel2.DownLoadExcel("监控项目"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -203,17 +202,17 @@ func (hd *MonitorProjectHandler) ExportFile(c *gin.Context) {
 func (hd *MonitorProjectHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.String(http.StatusInternalServerError, "文件不存在")
+		response.Fail(c, response.CheckErr(err, "文件不存在"))
 		return
 	}
 	defer file.Close()
 	importList := []MonitorProjectResp{}
 	err = excel2.GetExcelData(file, &importList, monitor_service.MonitorProjectService.GetExcelCol())
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return
 	}
 
 	err = monitor_service.MonitorProjectService.ImportFile(importList)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

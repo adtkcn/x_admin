@@ -35,14 +35,17 @@ type UploadHandler struct {
 // @Router			/api/admin/common/upload/file [post]
 func (uh *UploadHandler) UploadFile(c *gin.Context) {
 	var uReq common_schema.CommonUploadImageReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &uReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &uReq)) {
 		return
 	}
 	file, err := util.VerifyUtil.VerifyFile(c, "file")
-	if response.IsFailWithResp(c, err) {
+	if response.IsFail(c, err) {
 		return
 	}
 	fileHash, err := common_service.UploadService.UploadFile(file)
+	if response.IsFail(c, err) {
+		return
+	}
 	// 访问地址 = GET /api/uploads/:id，由文件流路由按 id 查 x_common_file_hash.FilePath 返回
 	resp := common_schema.CommonUploadFileResp{
 		// ID:         fileHash.ID,
@@ -54,7 +57,7 @@ func (uh *UploadHandler) UploadFile(c *gin.Context) {
 		Size:    fileHash.FileSize,
 		Instant: false,
 	}
-	response.CheckAndRespWithData(c, resp, err)
+	response.Ok(c, resp)
 
 	// 压缩80%转webp
 	common_service.UploadService.ConvertImage(fileHash.ID, fileHash.FilePath, 80, 0, 0)
@@ -75,7 +78,7 @@ func (uh *UploadHandler) CheckInstant(c *gin.Context) {
 		FileMd5  string `json:"file_md5" binding:"required"`
 		FileName string `json:"file_name" binding:"required"`
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	record, err := common_service.FileHashService.FindByMd5(req.FileMd5)
@@ -93,12 +96,12 @@ func (uh *UploadHandler) CheckInstant(c *gin.Context) {
 			Size:    record.FileSize,
 			Instant: true,
 		}
-		response.CheckAndRespWithData(c, resp, nil)
+		response.JSON(c, resp, nil)
 		return
 	}
 
 	// 秒传未命中：返回统一结构（instant=false），上传流程继续
-	response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{Instant: false}, nil)
+	response.JSON(c, common_schema.CommonUploadFileResp{Instant: false}, nil)
 }
 
 // Serve 按文件哈希ID返回文件流,如果是图片，则返回压缩后的图片，否则返回原文件

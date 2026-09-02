@@ -32,14 +32,14 @@ type LogHandler struct{}
 func (lh LogHandler) Operate(c *gin.Context) {
 	var page request.PageReq
 	var logReq system_schema.SystemLogOperateReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &logReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &logReq)) {
 		return
 	}
 	res, err := system_service.LogsService.OperateLog(page, logReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		登录日志
@@ -57,12 +57,12 @@ func (lh LogHandler) Operate(c *gin.Context) {
 func (lh LogHandler) Login(c *gin.Context) {
 	var page request.PageReq
 	var logReq system_schema.SystemLogLoginReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &logReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &logReq)) {
 		return
 	}
 	res, err := system_service.LogsService.LoginLog(page, logReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }

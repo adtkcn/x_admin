@@ -21,7 +21,7 @@ type DictTypeHandler struct{}
 // @Router			/api/admin/setting/dict_type/all [get]
 func (dth DictTypeHandler) All(c *gin.Context) {
 	res, err := setting_service.DictTypeService.All()
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		字典类型列表
@@ -38,14 +38,14 @@ func (dth DictTypeHandler) All(c *gin.Context) {
 func (dth DictTypeHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq setting_schema.SettingDictTypeListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := setting_service.DictTypeService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		字典类型详情
@@ -57,11 +57,11 @@ func (dth DictTypeHandler) List(c *gin.Context) {
 // @Router			/api/admin/setting/dict_type/detail [get]
 func (dth DictTypeHandler) Detail(c *gin.Context) {
 	var detailReq setting_schema.SettingDictTypeDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := setting_service.DictTypeService.Detail(detailReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		字典类型新增
@@ -76,10 +76,10 @@ func (dth DictTypeHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/setting/dict_type/add [post]
 func (dth DictTypeHandler) Add(c *gin.Context) {
 	var addReq setting_schema.SettingDictTypeAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.DictTypeService.Add(addReq))
+	response.JSON(c, nil, setting_service.DictTypeService.Add(addReq))
 }
 
 // @Summary		字典类型编辑
@@ -95,10 +95,10 @@ func (dth DictTypeHandler) Add(c *gin.Context) {
 // @Router			/api/admin/setting/dict_type/edit [post]
 func (dth DictTypeHandler) Edit(c *gin.Context) {
 	var editReq setting_schema.SettingDictTypeEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.DictTypeService.Edit(editReq))
+	response.JSON(c, nil, setting_service.DictTypeService.Edit(editReq))
 }
 
 // @Summary		字典类型删除
@@ -110,8 +110,8 @@ func (dth DictTypeHandler) Edit(c *gin.Context) {
 // @Router			/api/admin/setting/dict_type/del [post]
 func (dth DictTypeHandler) Del(c *gin.Context) {
 	var delReq setting_schema.SettingDictTypeDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.DictTypeService.Del(delReq))
+	response.JSON(c, nil, setting_service.DictTypeService.Del(delReq))
 }

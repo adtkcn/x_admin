@@ -56,6 +56,8 @@ func (ch CaptchaHandler) Check(c *gin.Context) {
 	c.JSON(200, successRes(nil))
 }
 
+// 以下两个结构是行为验证码插件（aj-captcha）的固定契约，
+// 前端插件依赖 repCode/repData/repMsg 字段，不参与统一响应体系，请勿改动。
 func successRes(data any) map[string]any {
 	ret := make(map[string]any)
 	ret["error"] = false

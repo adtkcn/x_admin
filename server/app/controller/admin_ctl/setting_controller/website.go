@@ -20,7 +20,7 @@ type WebsiteHandler struct{}
 // @Router			/api/admin/setting/website/detail [get]
 func (wh WebsiteHandler) Detail(c *gin.Context) {
 	res, err := setting_service.WebsiteService.Detail()
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		保存网站信息
@@ -37,8 +37,8 @@ func (wh WebsiteHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/setting/website/save [post]
 func (wh WebsiteHandler) Save(c *gin.Context) {
 	var wsReq setting_schema.SettingWebsiteReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &wsReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &wsReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.WebsiteService.Save(wsReq))
+	response.JSON(c, nil, setting_service.WebsiteService.Save(wsReq))
 }

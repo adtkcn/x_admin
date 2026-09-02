@@ -50,7 +50,7 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 				var filenames []string
 				form, err := c.MultipartForm()
 				// 校验错误
-				if response.IsFailWithResp(c, response.CheckErr(err, "RecordLog MultipartForm err")) {
+				if response.IsFail(c, response.CheckErr(err, "RecordLog MultipartForm err")) {
 					c.Abort()
 					return
 				}
@@ -119,8 +119,10 @@ func RecordLog(title string, reqTypes ...requestType) gin.HandlerFunc {
 		}()
 		// 执行方法
 		c.Next()
-		if len(c.Errors) > 0 {
-			errStr = c.Errors.String()
+		// 失败原因由响应出口通过 c.Error 挂载，此处统一解析为「[业务码] 文案」
+		if last := c.Errors.Last(); last != nil {
+			code, msg, _, _ := response.Resolve(last.Err)
+			errStr = fmt.Sprintf("[%d] %s", code, msg)
 			status = 2
 		}
 		// 写入操作日志

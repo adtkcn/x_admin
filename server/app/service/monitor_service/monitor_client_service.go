@@ -132,10 +132,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res monit
 	err := service.CacheUtil.GetCache("ClientId:"+ClientId, &obj)
 	if err != nil {
 		err := service.db.Where("client_id = ?", ClientId).Order("id DESC").First(&obj).Error
-		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 			return
 		}
 		service.CacheUtil.SetCache("ClientId:"+obj.ClientId, obj)
@@ -151,10 +148,7 @@ func (service monitorClientService) Detail(Id string) (res monitor_schema.Monito
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).First(&obj).Error
-		if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-			return
-		}
-		if e = response.CheckErr(err, "获取详情失败"); e != nil {
+		if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 			return
 		}
 
@@ -215,10 +209,7 @@ func (service monitorClientService) Del(Id string) (e error) {
 	var obj model.MonitorClient
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查询数据失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
 		return
 	}
 	// 删除

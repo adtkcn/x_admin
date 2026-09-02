@@ -2,7 +2,6 @@ package admin_ctl
 
 import (
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 	"x_admin/app/schema"
@@ -41,15 +40,15 @@ type UserProtocolHandler struct {
 func (hd *UserProtocolHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq schema.UserProtocolListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 
 	res, err := service.UserProtocolService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	用户协议列表-所有
@@ -67,11 +66,11 @@ func (hd *UserProtocolHandler) List(c *gin.Context) {
 // @Router		/api/admin/user_protocol/list_all [get]
 func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
 	var listReq schema.UserProtocolListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := service.UserProtocolService.ListAll(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	用户协议详情
@@ -83,7 +82,7 @@ func (hd *UserProtocolHandler) ListAll(c *gin.Context) {
 // @Router		/api/admin/user_protocol/detail [get]
 func (hd *UserProtocolHandler) Detail(c *gin.Context) {
 	var detailReq schema.UserProtocolPrimarykey
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("UserProtocol:Detail:%v", detailReq.Id), func() (any, error) {
@@ -91,7 +90,7 @@ func (hd *UserProtocolHandler) Detail(c *gin.Context) {
 		return v, err
 	})
 
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	用户协议新增
@@ -106,14 +105,14 @@ func (hd *UserProtocolHandler) Detail(c *gin.Context) {
 // @Router		/api/admin/user_protocol/add [post]
 func (hd *UserProtocolHandler) Add(c *gin.Context) {
 	var addReq schema.UserProtocolAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
 	// 添加创建人
 	var adminId = config.AdminConfig.GetAdminId(c)
 
 	createId, err := service.UserProtocolService.Add(addReq, adminId)
-	response.CheckAndRespWithData(c, createId, err)
+	response.JSON(c, createId, err)
 }
 
 // @Summary	用户协议编辑
@@ -129,11 +128,11 @@ func (hd *UserProtocolHandler) Add(c *gin.Context) {
 // @Router		/api/admin/user_protocol/edit [post]
 func (hd *UserProtocolHandler) Edit(c *gin.Context) {
 	var editReq schema.UserProtocolEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
 	err := service.UserProtocolService.Edit(editReq)
-	response.CheckAndRespWithData(c, editReq.Id, err)
+	response.JSON(c, editReq.Id, err)
 }
 
 // @Summary	用户协议删除
@@ -145,11 +144,11 @@ func (hd *UserProtocolHandler) Edit(c *gin.Context) {
 // @Router		/api/admin/user_protocol/del [post]
 func (hd *UserProtocolHandler) Del(c *gin.Context) {
 	var delReq schema.UserProtocolPrimarykey
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	err := service.UserProtocolService.Del(delReq.Id)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary	用户协议删除-批量
@@ -162,17 +161,17 @@ func (hd *UserProtocolHandler) Del(c *gin.Context) {
 // @Router		/api/admin/user_protocol/del_batch [post]
 func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 	var delReq schema.UserProtocolDelBatchReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	if delReq.Ids == "" {
-		response.Fail(c, "请选择要删除的数据")
+		response.FailMsg(c, "请选择要删除的数据")
 		return
 	}
 	var Ids = strings.Split(delReq.Ids, ",")
 
 	err := service.UserProtocolService.DelBatch(Ids)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary	用户协议导出
@@ -191,17 +190,17 @@ func (hd *UserProtocolHandler) DelBatch(c *gin.Context) {
 // @Router		/api/admin/user_protocol/export_file [get]
 func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 	var listReq schema.UserProtocolListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := service.UserProtocolService.ExportFile(listReq)
 	if err != nil {
-		response.Fail(c, "查询信息失败")
+		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
 	f, err := excel2.Export(res, service.UserProtocolService.GetExcelCol(), "Sheet1", "用户协议")
 	if err != nil {
-		response.Fail(c, "导出失败")
+		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
 	excel2.DownLoadExcel("用户协议"+time.Now().Format("20060102-150405"), c.Writer, f)
@@ -217,17 +216,17 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.String(http.StatusInternalServerError, "文件不存在")
+		response.Fail(c, response.CheckErr(err, "文件不存在"))
 		return
 	}
 	defer file.Close()
 	importList := []schema.UserProtocolResp{}
 	err = excel2.GetExcelData(file, &importList, service.UserProtocolService.GetExcelCol())
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return
 	}
 
 	err = service.UserProtocolService.ImportFile(importList)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

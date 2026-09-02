@@ -78,10 +78,7 @@ func (menuSrv systemAuthMenuService) List() (res []system_schema.SystemAuthMenuR
 func (menuSrv systemAuthMenuService) Detail(id string) (res system_schema.SystemAuthMenuResp, e error) {
 	var menu system_model.SystemAuthMenu
 	err := menuSrv.db.Where("id = ?", id).First(&menu).Error
-	if e = response.CheckDBNotRecord(err, "菜单已不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "菜单已不存在!", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, menu)

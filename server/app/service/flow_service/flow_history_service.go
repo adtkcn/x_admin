@@ -130,10 +130,7 @@ func (service flowHistoryService) ListAll(listReq flow_schema.FlowHistoryListReq
 func (service flowHistoryService) Detail(id string) (res flow_schema.FlowHistoryResp, e error) {
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", id).First(&obj).Error
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "详情获取失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "详情获取失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, obj)
@@ -154,10 +151,7 @@ func (service flowHistoryService) Edit(editReq flow_schema.FlowHistoryEditReq) (
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待编辑数据查找失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "待编辑数据查找失败"); e != nil {
 		return
 	}
 	// 更新
@@ -184,10 +178,7 @@ func (service flowHistoryService) DoneHidden(id string) (e error) {
 	var obj model.FlowHistory
 	err := service.db.Where("id = ?", id).First(&obj).Error
 	// 校验
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "待操作数据查找失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "待操作数据查找失败"); e != nil {
 		return
 	}
 	// 软删除：设置 is_show 为 0

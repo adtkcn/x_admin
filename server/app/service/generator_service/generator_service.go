@@ -101,10 +101,7 @@ func (genSrv generateService) List(page request.PageReq, listReq generator_schem
 func (genSrv generateService) Detail(id string) (res generator_schema.GenTableDetailResp, e error) {
 	var genTb gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).First(&genTb).Error
-	if e = response.CheckDBNotRecord(err, "查询的数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "Detail Find err"); e != nil {
+	if e = response.CheckDBErr(err, "查询的数据不存在!", "Detail Find err"); e != nil {
 		return
 	}
 	var columns []gen_model.GenTableColumn
@@ -171,10 +168,7 @@ func (genSrv generateService) SyncTable(id string) (e error) {
 	//旧数据
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).First(&genTable).Error
-	if e = response.CheckDBNotRecord(err, "生成数据不存在！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "SyncTable First err"); e != nil {
+	if e = response.CheckDBErr(err, "生成数据不存在！", "SyncTable First err"); e != nil {
 		return
 	}
 	var genTableCols []gen_model.GenTableColumn
@@ -267,10 +261,7 @@ func (genSrv generateService) EditTable(editReq generator_schema.EditTableReq) (
 	}
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", editReq.ID).First(&genTable).Error
-	if e = response.CheckDBNotRecord(err, "数据已丢失！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "查找数据失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据已丢失！", "查找数据失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&genTable, editReq)
@@ -318,10 +309,7 @@ func (genSrv generateService) getSubTableInfo(genTable gen_model.GenTable) (pkCo
 	}
 	var table gen_model.GenTable
 	err := genSrv.db.Where("table_name = ?", genTable.SubTableName).First(&table).Error
-	if e = response.CheckDBNotRecord(err, "子表记录丢失！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "getSubTableInfo First err"); e != nil {
+	if e = response.CheckDBErr(err, "子表记录丢失！", "getSubTableInfo First err"); e != nil {
 		return
 	}
 	err = tpl_utils.GenUtil.GetDbTableColumnsQueryByName(genSrv.db, genTable.SubTableName).Find(&cols).Error
@@ -352,7 +340,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (re
 	tplPaths := tpl_utils.TemplateUtil.GetTemplatePaths(genTable.GenTpl)
 	for _, tplPath := range tplPaths {
 		res[tplPath], err = tpl_utils.TemplateUtil.Render(tplPath, vars)
-		if e = response.CheckErr(err, "渲染模板失败:"+tplPath); e != nil {
+		if e = response.CheckErr(err, "渲染模板失败:%s", tplPath); e != nil {
 			return
 		}
 	}
@@ -363,10 +351,7 @@ func (genSrv generateService) renderCodeByTable(genTable gen_model.GenTable) (re
 func (genSrv generateService) PreviewCode(id string) (res map[string]string, e error) {
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("id = ?", id).First(&genTable).Error
-	if e = response.CheckDBNotRecord(err, "记录丢失！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "PreviewCode First err"); e != nil {
+	if e = response.CheckDBErr(err, "记录丢失！", "PreviewCode First err"); e != nil {
 		return
 	}
 	//获取模板内容
@@ -386,10 +371,7 @@ func (genSrv generateService) PreviewCode(id string) (res map[string]string, e e
 func (genSrv generateService) genZipCode(zipWriter *zip.Writer, tableName string) (e error) {
 	var genTable gen_model.GenTable
 	err := genSrv.db.Where("table_name = ?", tableName).Order("id desc").First(&genTable).Error
-	if e = response.CheckDBNotRecord(err, "记录丢失！"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "genZipCode First err"); e != nil {
+	if e = response.CheckDBErr(err, "记录丢失！", "genZipCode First err"); e != nil {
 		return
 	}
 	//获取模板内容

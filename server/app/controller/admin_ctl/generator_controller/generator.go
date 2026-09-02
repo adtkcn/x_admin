@@ -29,14 +29,14 @@ type GenHandler struct{}
 func (gh GenHandler) DbTables(c *gin.Context) {
 	var page request.PageReq
 	var tbReq generator_schema.DbTablesReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &tbReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &tbReq)) {
 		return
 	}
 	res, err := generator_service.GenerateService.DbTables(page, tbReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		生成列表
@@ -54,14 +54,14 @@ func (gh GenHandler) DbTables(c *gin.Context) {
 func (gh GenHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq generator_schema.ListTableReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := generator_service.GenerateService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		生成详情
@@ -73,11 +73,11 @@ func (gh GenHandler) List(c *gin.Context) {
 // @Router			/api/admin/generator/detail [get]
 func (gh GenHandler) Detail(c *gin.Context) {
 	var detailReq generator_schema.DetailTableReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := generator_service.GenerateService.Detail(detailReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		导入表结构
@@ -89,11 +89,11 @@ func (gh GenHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/generator/importTable [get]
 func (gh GenHandler) ImportTable(c *gin.Context) {
 	var importReq generator_schema.ImportTableReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &importReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &importReq)) {
 		return
 	}
 	err := generator_service.GenerateService.ImportTable(strings.Split(importReq.Tables, ","))
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		同步表结构
@@ -105,11 +105,11 @@ func (gh GenHandler) ImportTable(c *gin.Context) {
 // @Router			/api/admin/generator/syncTable [get]
 func (gh GenHandler) SyncTable(c *gin.Context) {
 	var syncReq generator_schema.SyncTableReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &syncReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &syncReq)) {
 		return
 	}
 	err := generator_service.GenerateService.SyncTable(syncReq.ID)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		编辑表结构
@@ -135,11 +135,11 @@ func (gh GenHandler) SyncTable(c *gin.Context) {
 // @Router			/api/admin/generator/editTable [post]
 func (gh GenHandler) EditTable(c *gin.Context) {
 	var editReq generator_schema.EditTableReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
 	err := generator_service.GenerateService.EditTable(editReq)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		删除表结构
@@ -151,11 +151,11 @@ func (gh GenHandler) EditTable(c *gin.Context) {
 // @Router			/api/admin/generator/delTable [post]
 func (gh GenHandler) DelTable(c *gin.Context) {
 	var delReq generator_schema.DelTableReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
 	err := generator_service.GenerateService.DelTable(delReq.Ids)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		预览代码
@@ -167,11 +167,11 @@ func (gh GenHandler) DelTable(c *gin.Context) {
 // @Router			/api/admin/generator/previewCode [get]
 func (gh GenHandler) PreviewCode(c *gin.Context) {
 	var previewReq generator_schema.PreviewCodeReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &previewReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &previewReq)) {
 		return
 	}
 	res, err := generator_service.GenerateService.PreviewCode(previewReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		下载代码
@@ -183,11 +183,11 @@ func (gh GenHandler) PreviewCode(c *gin.Context) {
 // @Router			/api/admin/generator/downloadCode [get]
 func (gh GenHandler) DownloadCode(c *gin.Context) {
 	var downloadReq generator_schema.DownloadReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &downloadReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &downloadReq)) {
 		return
 	}
 	zipBytes, err := generator_service.GenerateService.DownloadCode(strings.Split(downloadReq.Tables, ","))
-	if response.IsFailWithResp(c, err) {
+	if response.IsFail(c, err) {
 		return
 	}
 	contentType := "application/zip"

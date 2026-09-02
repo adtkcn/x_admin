@@ -24,12 +24,12 @@ type AuthController struct{}
 // @Router			/api/user/bindPhone [post]
 func (h AuthController) BindPhone(c *gin.Context) {
 	var req user_schema.BindPhoneReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.AuthService.BindPhone(userID, &req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		解绑手机号
@@ -42,12 +42,12 @@ func (h AuthController) BindPhone(c *gin.Context) {
 // @Router			/api/user/unbindPhone [post]
 func (h AuthController) UnbindPhone(c *gin.Context) {
 	var req user_schema.UnbindPhoneReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.AuthService.UnbindPhone(userID, &req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		获取绑定列表
@@ -59,7 +59,7 @@ func (h AuthController) UnbindPhone(c *gin.Context) {
 func (h AuthController) GetUserAuthList(c *gin.Context) {
 	userID := config.JWTConfig.GetUserID(c)
 	resp, err := user_service.AuthService.GetUserAuthList(userID)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // ---- 微信小程序 ----
@@ -72,11 +72,11 @@ func (h AuthController) GetUserAuthList(c *gin.Context) {
 // @Router			/api/user/wechatMiniLogin [post]
 func (h AuthController) WechatMiniLogin(c *gin.Context) {
 	var req user_schema.WechatMiniLoginReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	resp, err := user_service.WechatService.MiniLogin(c, &req)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		绑定小程序
@@ -88,12 +88,12 @@ func (h AuthController) WechatMiniLogin(c *gin.Context) {
 // @Router			/api/user/bindWechatMini [post]
 func (h AuthController) BindWechatMini(c *gin.Context) {
 	var req user_schema.WechatBindReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.WechatService.BindMini(userID, &req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // ---- 公众号 ----
@@ -106,11 +106,11 @@ func (h AuthController) BindWechatMini(c *gin.Context) {
 // @Router			/api/user/wechatMpLogin [post]
 func (h AuthController) WechatMpLogin(c *gin.Context) {
 	var req user_schema.WechatMpLoginReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	resp, err := user_service.WechatService.MpLogin(c, &req)
-	response.CheckAndRespWithData(c, resp, err)
+	response.JSON(c, resp, err)
 }
 
 // @Summary		绑定公众号
@@ -122,12 +122,12 @@ func (h AuthController) WechatMpLogin(c *gin.Context) {
 // @Router			/api/user/bindWechatMp [post]
 func (h AuthController) BindWechatMp(c *gin.Context) {
 	var req user_schema.WechatBindReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.WechatService.BindMp(userID, &req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // ---- 通用解绑 ----
@@ -141,10 +141,10 @@ func (h AuthController) BindWechatMp(c *gin.Context) {
 // @Router			/api/user/unbindWechat [post]
 func (h AuthController) UnbindWechat(c *gin.Context) {
 	var req user_schema.WechatUnbindReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	userID := config.JWTConfig.GetUserID(c)
 	err := user_service.WechatService.UnbindWechat(userID, &req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

@@ -41,14 +41,14 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 		PassStatus: -9999,
 		IsShow:     -9999,
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := flow_service.HistoryService.List(page, listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	流程历史列表-所有
@@ -58,11 +58,11 @@ func (hd FlowHistoryHandler) List(c *gin.Context) {
 // @Router		/api/admin/flow/flow_history/list_all [get]
 func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 	var listReq flow_schema.FlowHistoryListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	res, err := flow_service.HistoryService.ListAll(listReq)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	流程历史详情
@@ -74,11 +74,11 @@ func (hd FlowHistoryHandler) ListAll(c *gin.Context) {
 // @Router		/api/admin/flow/flow_history/detail [get]
 func (hd FlowHistoryHandler) Detail(c *gin.Context) {
 	var detailReq flow_schema.FlowHistoryDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := flow_service.HistoryService.Detail(detailReq.Id)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary	流程历史新增
@@ -101,10 +101,10 @@ func (hd FlowHistoryHandler) Detail(c *gin.Context) {
 // @Router		/api/admin/flow/flow_history/add [post]
 func (hd FlowHistoryHandler) Add(c *gin.Context) {
 	var addReq flow_schema.FlowHistoryAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.HistoryService.Add(addReq))
+	response.JSON(c, nil, flow_service.HistoryService.Add(addReq))
 }
 
 // @Summary	流程历史编辑
@@ -128,10 +128,10 @@ func (hd FlowHistoryHandler) Add(c *gin.Context) {
 // @Router		/api/admin/flow/flow_history/edit [post]
 func (hd FlowHistoryHandler) Edit(c *gin.Context) {
 	var editReq flow_schema.FlowHistoryEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.HistoryService.Edit(editReq))
+	response.JSON(c, nil, flow_service.HistoryService.Edit(editReq))
 }
 
 // @Summary	流程历史删除
@@ -143,10 +143,10 @@ func (hd FlowHistoryHandler) Edit(c *gin.Context) {
 // @Router		/api/admin/flow/flow_history/del [post]
 func (hd FlowHistoryHandler) Del(c *gin.Context) {
 	var delReq flow_schema.FlowHistoryDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.HistoryService.Del(delReq.Id))
+	response.JSON(c, nil, flow_service.HistoryService.Del(delReq.Id))
 }
 
 // @Summary	已处理页面隐藏（软删除）
@@ -158,10 +158,10 @@ func (hd FlowHistoryHandler) Del(c *gin.Context) {
 // @Router		/api/admin/flow/flow_history/done_hidden [post]
 func (hd FlowHistoryHandler) DoneHidden(c *gin.Context) {
 	var delReq flow_schema.FlowHistoryDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, flow_service.HistoryService.DoneHidden(delReq.Id))
+	response.JSON(c, nil, flow_service.HistoryService.DoneHidden(delReq.Id))
 }
 
 // 提交申请,通过审批
@@ -177,13 +177,13 @@ func (hd FlowHistoryHandler) DoneHidden(c *gin.Context) {
 //	@Router		/api/admin/flow/flow_history/pass [post]
 func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 	var pass flow_schema.PassReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &pass)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &pass)) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
 	err := flow_service.HistoryService.Pass(pass, adminId)
 
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // 拒绝审批
@@ -199,13 +199,13 @@ func (hd FlowHistoryHandler) Pass(c *gin.Context) {
 //	@Router		/api/admin/flow/flow_history/back [post]
 func (hd FlowHistoryHandler) Back(c *gin.Context) {
 	var back flow_schema.BackReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &back)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &back)) {
 		return
 	}
 	var adminId = config.AdminConfig.GetAdminId(c)
 	err := flow_service.HistoryService.Back(back, adminId)
 	fmt.Println(err)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary	获取下一个审批节点，中间可能存在通知节点和网关
@@ -217,11 +217,11 @@ func (hd FlowHistoryHandler) Back(c *gin.Context) {
 // @Router		/api/admin/flow/flow_history/next_node [post]
 func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 	var nextNode flow_schema.NextNodeReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
 		return
 	}
 	res, _, _, err := flow_service.HistoryService.GetNextNode(nextNode.ApplyId)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // 获取节点的可审批用户
@@ -236,12 +236,12 @@ func (hd FlowHistoryHandler) NextNode(c *gin.Context) {
 func (hd FlowHistoryHandler) GetApprover(c *gin.Context) {
 	var nextNode flow_schema.NextNodeReq
 	// var node FlowTree
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &nextNode)) {
 		return
 	}
 	res, err := flow_service.HistoryService.GetApprover(nextNode.ApplyId)
 	if err != nil {
-		response.Fail(c, err.Error())
+		response.Fail(c, err)
 		return
 	}
 	response.Ok(c, res)

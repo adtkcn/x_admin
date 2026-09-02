@@ -85,7 +85,7 @@ func (h UploadChunkHandler) CheckInstant(c *gin.Context) {
 		FileMd5  string `json:"file_md5" binding:"required"`
 		FileName string `json:"file_name" binding:"required"`
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	record, err := common_service.FileHashService.FindByMd5(req.FileMd5)
@@ -105,12 +105,12 @@ func (h UploadChunkHandler) CheckInstant(c *gin.Context) {
 			Size:    record.FileSize,
 			Instant: true,
 		}
-		response.CheckAndRespWithData(c, resp, nil)
+		response.JSON(c, resp, nil)
 		return
 	}
 
 	// 秒传未命中：返回统一结构（instant=false），上传流程继续
-	response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{Instant: false}, nil)
+	response.JSON(c, common_schema.CommonUploadFileResp{Instant: false}, nil)
 }
 
 // ---- 密钥生成 ----
@@ -149,7 +149,7 @@ func (h UploadChunkHandler) RegisterHash(c *gin.Context) {
 	id, err := common_service.FileHashService.Create(fileHash.FileMd5, fileHash.FileSize, fileHash.FileKey, ext)
 	if err != nil {
 		core.Logger.Errorf("RegisterHash err: %v", err)
-		response.CheckAndRespWithData(c, common_schema.CommonUploadFileResp{}, err)
+		response.JSON(c, common_schema.CommonUploadFileResp{}, err)
 		return
 	}
 	resp := common_schema.CommonUploadFileResp{
@@ -161,7 +161,7 @@ func (h UploadChunkHandler) RegisterHash(c *gin.Context) {
 		Size:       fileHash.FileSize,
 		Instant:    false,
 	}
-	response.CheckAndRespWithData(c, resp, nil)
+	response.JSON(c, resp, nil)
 
 	// 上传成功后异步转 webp
 	common_service.UploadService.ConvertImage(id, fileHash.FileKey, 80, 0, 0)

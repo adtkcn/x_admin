@@ -20,7 +20,7 @@ type CopyrightHandler struct{}
 // @Router			/api/admin/setting/copyright/detail [get]
 func (ch CopyrightHandler) Detail(c *gin.Context) {
 	res, err := setting_service.CopyrightService.Detail()
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		保存备案信息
@@ -32,8 +32,8 @@ func (ch CopyrightHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/setting/copyright/save [post]
 func (ch CopyrightHandler) Save(c *gin.Context) {
 	var cReqs []setting_schema.SettingCopyrightItemReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSONArray(c, &cReqs)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSONArray(c, &cReqs)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, setting_service.CopyrightService.Save(cReqs))
+	response.JSON(c, nil, setting_service.CopyrightService.Save(cReqs))
 }

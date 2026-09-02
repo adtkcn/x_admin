@@ -57,10 +57,7 @@ func (s userService) List(page request.PageReq, listReq schema.UserListReq) (res
 func (s userService) Detail(Id string) (res schema.UserResp, e error) {
 	var obj user_model.User
 	err := s.db.Where("id = ?", Id).First(&obj).Error
-	if e = response.CheckDBNotRecord(err, "数据不存在!"); e != nil {
-		return
-	}
-	if e = response.CheckErr(err, "获取详情失败"); e != nil {
+	if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
 		return
 	}
 	convert_util.Copy(&res, obj)

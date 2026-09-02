@@ -27,16 +27,16 @@ type NoticeHandler struct{}
 func (h NoticeHandler) List(c *gin.Context) {
 	var page request.PageReq
 	var listReq system_schema.SystemNoticeListReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
 	adminId := config.AdminConfig.GetAdminId(c)
 	list, count, err := notice_service.NoticeService.List(adminId, page.PageNo, page.PageSize, &listReq)
 	if err != nil {
-		response.Fail(c, "获取通知列表失败")
+		response.Fail(c, response.CheckErr(err, "获取通知列表失败"))
 		return
 	}
 	response.Ok(c, response.PageResp{
@@ -56,7 +56,7 @@ func (h NoticeHandler) List(c *gin.Context) {
 func (h NoticeHandler) UnreadCount(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
 	count, err := notice_service.NoticeService.UnreadCount(adminId)
-	response.CheckAndRespWithData(c, system_schema.SystemNoticeUnreadCountResp{Count: count}, err)
+	response.JSON(c, system_schema.SystemNoticeUnreadCountResp{Count: count}, err)
 }
 
 // @Summary		标记已读
@@ -68,12 +68,12 @@ func (h NoticeHandler) UnreadCount(c *gin.Context) {
 // @Router			/api/admin/system/notice/read [post]
 func (h NoticeHandler) Read(c *gin.Context) {
 	var req system_schema.SystemNoticeReadReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	adminId := config.AdminConfig.GetAdminId(c)
 	err := notice_service.NoticeService.Read(req.ID, adminId)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		全部已读
@@ -85,7 +85,7 @@ func (h NoticeHandler) Read(c *gin.Context) {
 func (h NoticeHandler) ReadAll(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
 	err := notice_service.NoticeService.ReadAll(adminId)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		删除通知
@@ -97,12 +97,12 @@ func (h NoticeHandler) ReadAll(c *gin.Context) {
 // @Router			/api/admin/system/notice/del [post]
 func (h NoticeHandler) Del(c *gin.Context) {
 	var req system_schema.SystemNoticeDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	adminId := config.AdminConfig.GetAdminId(c)
 	err := notice_service.NoticeService.Del(req.ID, adminId)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }
 
 // @Summary		获取通知偏好
@@ -114,7 +114,7 @@ func (h NoticeHandler) Del(c *gin.Context) {
 func (h NoticeHandler) GetSetting(c *gin.Context) {
 	adminId := config.AdminConfig.GetAdminId(c)
 	res, err := notice_service.NoticeService.GetSetting(adminId)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		保存通知偏好
@@ -126,10 +126,10 @@ func (h NoticeHandler) GetSetting(c *gin.Context) {
 // @Router			/api/admin/system/notice/setting/save [post]
 func (h NoticeHandler) SaveSetting(c *gin.Context) {
 	var req system_schema.SystemNoticeSettingSaveReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &req)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &req)) {
 		return
 	}
 	adminId := config.AdminConfig.GetAdminId(c)
 	err := notice_service.NoticeService.SaveSetting(adminId, &req)
-	response.CheckAndRespWithData(c, nil, err)
+	response.JSON(c, nil, err)
 }

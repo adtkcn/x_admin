@@ -21,7 +21,7 @@ type RoleHandler struct{}
 // @Router			/api/admin/system/role/all [get]
 func (rh RoleHandler) All(c *gin.Context) {
 	res, err := system_service.RoleService.All()
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		角色列表
@@ -34,11 +34,11 @@ func (rh RoleHandler) All(c *gin.Context) {
 // @Router			/api/admin/system/role/list [get]
 func (rh RoleHandler) List(c *gin.Context) {
 	var page request.PageReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
 	res, err := system_service.RoleService.List(page)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		角色详情
@@ -50,11 +50,11 @@ func (rh RoleHandler) List(c *gin.Context) {
 // @Router			/api/admin/system/role/detail [get]
 func (rh RoleHandler) Detail(c *gin.Context) {
 	var detailReq system_schema.SystemAuthRoleDetailReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
 	res, err := system_service.RoleService.Detail(detailReq.ID)
-	response.CheckAndRespWithData(c, res, err)
+	response.JSON(c, res, err)
 }
 
 // @Summary		新增角色
@@ -70,10 +70,10 @@ func (rh RoleHandler) Detail(c *gin.Context) {
 // @Router			/api/admin/system/role/add [post]
 func (rh RoleHandler) Add(c *gin.Context) {
 	var addReq system_schema.SystemAuthRoleAddReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, system_service.RoleService.Add(addReq))
+	response.JSON(c, nil, system_service.RoleService.Add(addReq))
 }
 
 // @Summary		编辑角色
@@ -90,10 +90,10 @@ func (rh RoleHandler) Add(c *gin.Context) {
 // @Router			/api/admin/system/role/edit [post]
 func (rh RoleHandler) Edit(c *gin.Context) {
 	var editReq system_schema.SystemAuthRoleEditReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, system_service.RoleService.Edit(editReq))
+	response.JSON(c, nil, system_service.RoleService.Edit(editReq))
 }
 
 // @Summary		删除角色
@@ -105,8 +105,8 @@ func (rh RoleHandler) Edit(c *gin.Context) {
 // @Router			/api/admin/system/role/del [post]
 func (rh RoleHandler) Del(c *gin.Context) {
 	var delReq system_schema.SystemAuthRoleDelReq
-	if response.IsFailWithResp(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
-	response.CheckAndRespWithData(c, nil, system_service.RoleService.Del(delReq.ID))
+	response.JSON(c, nil, system_service.RoleService.Del(delReq.ID))
 }
