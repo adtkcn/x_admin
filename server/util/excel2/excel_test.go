@@ -8,25 +8,25 @@ import (
 )
 
 type Test struct {
-	Id       string
-	Name     string
-	Email    string
-	Com      string
-	Dept     string
-	RoleKey  string
-	RoleName string
-	Remark   string
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Com      string `json:"com"`
+	Dept     string `json:"dept"`
+	RoleKey  string `json:"role_key"`
+	RoleName string `json:"role_name"`
+	Remark   string `json:"remark"`
 }
 
 var cols = []Col{
-	{Name: "用户账号", Key: "Id", Width: 15},
-	{Name: "用户姓名", Key: "Name", Width: 15},
-	{Name: "用户邮箱", Key: "Email", Width: 15},
-	{Name: "所属公司", Key: "Com", Width: 20},
-	{Name: "所在部门", Key: "Dept", Width: 21},
-	{Name: "角色代码", Key: "RoleKey", Width: 20},
-	{Name: "角色名称", Key: "RoleName", Width: 25, Replace: map[string]any{"1": "1_超级管理员", "2": "2_普通用户"}},
-	{Name: "备注", Key: "Remark", Width: 30},
+	{Name: "用户账号", JsonTag: "id", Width: 15},
+	{Name: "用户姓名", JsonTag: "name", Width: 15},
+	{Name: "用户邮箱", JsonTag: "email", Width: 15},
+	{Name: "所属公司", JsonTag: "com", Width: 20},
+	{Name: "所在部门", JsonTag: "dept", Width: 21},
+	{Name: "角色代码", JsonTag: "role_key", Width: 20},
+	{Name: "角色名称", JsonTag: "role_name", Width: 25, Replace: map[string]any{"1": "1_超级管理员", "2": "2_普通用户"}},
+	{Name: "备注", JsonTag: "remark", Width: 30},
 }
 
 // 导出

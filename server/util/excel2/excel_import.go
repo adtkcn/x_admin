@@ -70,10 +70,14 @@ func importData[T any](f *excelize.File, dst T, sheetName string, startRow int, 
 
 		for j := 0; j < len(cols); j++ {
 			col := cols[j]
-			key := col.Key
+			key := col.JsonTag
 			replace := col.Replace
 
-			colVal := rows[i][j]
+			// excelize 会裁剪行尾的空单元格，行长度可能小于列数，需做边界保护
+			colVal := ""
+			if j < len(rows[i]) {
+				colVal = rows[i][j]
+			}
 			// 先替换，将val替换为key
 			for replaceKey, replaceVal := range replace {
 				if fmt.Sprintf("%v", replaceVal) == colVal {
@@ -94,6 +98,6 @@ func importData[T any](f *excelize.File, dst T, sheetName string, startRow int, 
 		data = append(data, rowMap)
 
 	}
-	convert_util.MapToStruct(data, dst)
+	convert_util.AnyToAny(data, dst)
 	return
 }

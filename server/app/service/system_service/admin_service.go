@@ -263,25 +263,25 @@ func (adminSrv systemAuthAdminService) ImportFile(importReq []system_schema.Syst
 // 获取Excel的列
 func (adminSrv systemAuthAdminService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "账号", Key: "Email", Width: 15, Decode: x_null.DecodeString},
-		{Name: "名称", Key: "Nickname", Width: 15, Decode: x_null.DecodeString},
-		{Name: "头像", Key: "Avatar", Width: 15, Decode: x_null.DecodeString},
+		{Name: "账号", JsonTag: "email", Width: 15, Decode: x_null.DecodeString},
+		{Name: "名称", JsonTag: "nickname", Width: 15, Decode: x_null.DecodeString},
+		{Name: "头像", JsonTag: "avatar", Width: 15, Decode: x_null.DecodeString},
 
-		{Name: "角色ID", Key: "RoleIds", Width: 15, Decode: func(value any) (any, error) {
+		{Name: "角色ID", JsonTag: "role_ids", Width: 15, Decode: func(value any) (any, error) {
 			return strings.Split(value.(string), ","), nil
 		}},
-		{Name: "角色", Key: "Role", Width: 15, Decode: x_null.DecodeString},
-		{Name: "部门ID", Key: "DeptId", Width: 15, Decode: x_null.DecodeString},
-		{Name: "部门", Key: "Dept", Width: 15, Decode: x_null.DecodeString},
+		{Name: "角色", JsonTag: "role", Width: 15, Decode: x_null.DecodeString},
+		{Name: "部门ID", JsonTag: "dept_id", Width: 15, Decode: x_null.DecodeString},
+		{Name: "部门", JsonTag: "dept", Width: 15, Decode: x_null.DecodeString},
 
-		{Name: "岗位ID", Key: "PostId", Width: 15, Decode: x_null.DecodeString},
-		{Name: "岗位", Key: "Post", Width: 15, Decode: x_null.DecodeString},
+		{Name: "岗位ID", JsonTag: "post_id", Width: 15, Decode: x_null.DecodeString},
+		{Name: "岗位", JsonTag: "post", Width: 15, Decode: x_null.DecodeString},
 
-		{Name: "是否禁用", Key: "IsDisable", Width: 15, Decode: x_null.DecodeInt64},
-		{Name: "最后登录IP", Key: "LastLoginIp", Width: 15, Decode: x_null.DecodeString},
-		{Name: "最后登录时间", Key: "LastLoginTime", Width: 15, Decode: x_null.DecodeTime},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
-		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "是否禁用", JsonTag: "is_disable", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "最后登录IP", JsonTag: "last_login_ip", Width: 15, Decode: x_null.DecodeString},
+		{Name: "最后登录时间", JsonTag: "last_login_time", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "创建时间", JsonTag: "create_time", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", JsonTag: "update_time", Width: 15, Decode: x_null.DecodeTime},
 	}
 	return cols
 }

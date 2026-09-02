@@ -75,12 +75,10 @@
                     </template>
                     新增
                 </el-button>
-                <Upload
+                <ImportExcel
                     v-perms="['admin:monitor_project:import_file']"
                     class="ml-3 mr-3"
                     :url="monitor_project_import_file"
-                    :ext="['xlsx']"
-                    :show-progress="true"
                     @change="resetPage"
                 >
                     <el-button type="primary">
@@ -89,7 +87,7 @@
                         </template>
                         导入
                     </el-button>
-                </Upload>
+                </ImportExcel>
                 <el-button
                     v-perms="['admin:monitor_project:export_file']"
                     type="primary"

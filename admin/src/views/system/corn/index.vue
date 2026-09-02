@@ -51,12 +51,10 @@
                     </template>
                     新增
                 </el-button>
-                <Upload
+                <ImportExcel
                     v-perms="['admin:system_corn:import_file']"
                     class="ml-3 mr-3"
                     :url="system_corn_import_file"
-                    :ext="['xlsx']"
-                    :show-progress="true"
                     @change="resetPage"
                 >
                     <el-button type="primary">
@@ -65,7 +63,7 @@
                         </template>
                         导入
                     </el-button>
-                </Upload>
+                </ImportExcel>
                 <el-button
                     v-perms="['admin:system_corn:export_file']"
                     type="primary"

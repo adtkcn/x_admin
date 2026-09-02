@@ -209,14 +209,14 @@ func (service monitorErrorService) DelBatch(Ids []string) (e error) {
 // 获取Excel的列
 func (service monitorErrorService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "项目key", Key: "ProjectKey", Width: 15},
-		{Name: "事件类型", Key: "EventType", Width: 15},
-		{Name: "URL地址", Key: "Path", Width: 15},
-		{Name: "错误消息", Key: "Message", Width: 15},
-		{Name: "错误堆栈", Key: "Stack", Width: 15},
-		{Name: "md5", Key: "Md5", Width: 15},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
-		{Name: "更新时间", Key: "ClientTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "项目key", JsonTag: "project_key", Width: 15},
+		{Name: "事件类型", JsonTag: "event_type", Width: 15},
+		{Name: "URL地址", JsonTag: "path", Width: 15},
+		{Name: "错误消息", JsonTag: "message", Width: 15},
+		{Name: "错误堆栈", JsonTag: "stack", Width: 15},
+		{Name: "md5", JsonTag: "md5", Width: 15},
+		{Name: "创建时间", JsonTag: "create_time", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", JsonTag: "update_time", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

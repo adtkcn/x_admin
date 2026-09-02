@@ -227,13 +227,13 @@ func (service {{{ .EntityName }}}Service) GetExcelCol() []excel2.Col {
 	{{{- range .Columns }}}
 	{{{- if and (.IsList) (not .IsPk) }}}
 		{{{- if eq .HtmlType "datetime" }}}
-	{Name: "{{{.ColumnComment}}}", Key: "{{{ .GoField }}}", Width: 15, Decode: x_null.DecodeTime },
+	{Name: "{{{.ColumnComment}}}", JsonTag: "{{{ .TsField }}}", Width: 15, Decode: x_null.DecodeTime },
 		{{{- else if eq .GoType "int" }}}
-	{Name: "{{{.ColumnComment}}}", Key: "{{{ .GoField }}}", Width: 15, Decode: x_null.DecodeInt64},
+	{Name: "{{{.ColumnComment}}}", JsonTag: "{{{ .TsField }}}", Width: 15, Decode: x_null.DecodeInt64},
 		{{{- else if eq .GoType "float64" }}}
-	{Name: "{{{.ColumnComment}}}", Key: "{{{ .GoField }}}", Width: 15, Decode: x_null.DecodeFloat64},
+	{Name: "{{{.ColumnComment}}}", JsonTag: "{{{ .TsField }}}", Width: 15, Decode: x_null.DecodeFloat64},
 		{{{- else }}}
-	{Name: "{{{.ColumnComment}}}", Key: "{{{ .GoField }}}", Width: 15, Decode: x_null.DecodeString},
+	{Name: "{{{.ColumnComment}}}", JsonTag: "{{{ .TsField }}}", Width: 15, Decode: x_null.DecodeString},
 		{{{- end }}}
 	{{{- end }}}
 	{{{- end }}}

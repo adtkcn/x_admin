@@ -246,16 +246,16 @@ func (service monitorClientService) DelBatch(Ids []string) (e error) {
 // 获取Excel的列
 func (service monitorClientService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "项目key", Key: "ProjectKey", Width: 15},
-		{Name: "sdk生成的客户端id", Key: "ClientId", Width: 15},
-		{Name: "用户id", Key: "UserId", Width: 15},
-		{Name: "系统", Key: "Os", Width: 15},
-		{Name: "浏览器", Key: "Browser", Width: 15},
-		{Name: "城市", Key: "City", Width: 15},
-		{Name: "屏幕", Key: "Width", Width: 15, Decode: x_null.DecodeInt64},
-		{Name: "屏幕高度", Key: "Height", Width: 15, Decode: x_null.DecodeInt64},
-		{Name: "ua记录", Key: "Ua", Width: 15},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "项目key", JsonTag: "project_key", Width: 15},
+		{Name: "sdk生成的客户端id", JsonTag: "client_id", Width: 15},
+		{Name: "用户id", JsonTag: "user_id", Width: 15},
+		{Name: "系统", JsonTag: "os", Width: 15},
+		{Name: "浏览器", JsonTag: "browser", Width: 15},
+		{Name: "城市", JsonTag: "city", Width: 15},
+		{Name: "屏幕", JsonTag: "width", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "屏幕高度", JsonTag: "height", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "ua记录", JsonTag: "ua", Width: 15},
+		{Name: "创建时间", JsonTag: "create_time", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

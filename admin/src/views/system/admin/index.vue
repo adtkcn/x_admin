@@ -34,20 +34,14 @@
                     新增
                 </el-button>
 
-                <Upload
-                    class="ml-3 mr-3"
-                    :url="adminImportFile"
-                    :ext="['xlsx']"
-                    :show-progress="true"
-                    @change="resetPage"
-                >
+                <ImportExcel class="ml-3 mr-3" :url="adminImportFile" @change="resetPage">
                     <el-button type="primary">
                         <template #icon>
                             <icon name="el-icon-Upload" />
                         </template>
                         导入
                     </el-button>
-                </Upload>
+                </ImportExcel>
 
                 <el-button type="primary" @click="export_file">
                     <template #icon>

@@ -14,8 +14,10 @@ type Excel struct {
 	ContentStyle2 int            // 主体样式2，有背景色
 }
 type Col struct {
-	Name    string
-	Key     string
+	Name string
+	// JsonTag 对应导入/导出结构体字段的 json 标签（小写+下划线，如 create_time）。
+	// 内部通过 json 序列化取字段值，因此这里必须写结构体真实的 json tag，而不是 Go 字段名。
+	JsonTag string                       // json标签
 	Width   int                          // 宽度
 	Replace map[string]any               //实现值的替换
 	Encode  func(value any) any          //编码函数-导出，（先Encode后Replace）

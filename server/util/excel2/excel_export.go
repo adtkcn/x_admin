@@ -27,7 +27,10 @@ func GetExcelColumnName(columnNumber int) string {
 func Export(lists any, cols []Col, sheet string, title string) (file *excelize.File, err error) {
 	e := ExcelInit()
 
-	data := convert_util.ShallowStructsToMaps(lists)
+	data, err := convert_util.StructsToMaps(lists)
+	if err != nil {
+		return
+	}
 
 	err = ExportExcel(sheet, title, data, cols, e)
 	if err != nil {
@@ -101,7 +104,7 @@ func buildDataRow(e *Excel, sheet, endColName string, startDataRow int, lists []
 			col := cols[j]
 			replace := col.Replace
 
-			val := list[col.Key]
+			val := list[col.JsonTag]
 
 			// 先编码
 			if col.Encode != nil {

@@ -193,13 +193,13 @@ func (service systemCornService) DelBatch(Ids []string) (e error) {
 // 获取Excel的列
 func (service systemCornService) GetExcelCol() []excel2.Col {
 	var cols = []excel2.Col{
-		{Name: "任务名称", Key: "TaskName", Width: 15, Decode: x_null.DecodeString},
-		{Name: "任务编码", Key: "TaskCode", Width: 15, Decode: x_null.DecodeString},
-		{Name: "corn表达式", Key: "CornExpr", Width: 15, Decode: x_null.DecodeString},
-		{Name: "状态", Key: "Status", Width: 15, Decode: x_null.DecodeInt64},
-		{Name: "创建人", Key: "CreatedBy", Width: 15, Decode: x_null.DecodeString},
-		{Name: "创建时间", Key: "CreateTime", Width: 15, Decode: x_null.DecodeTime},
-		{Name: "更新时间", Key: "UpdateTime", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "任务名称", JsonTag: "task_name", Width: 15, Decode: x_null.DecodeString},
+		{Name: "任务编码", JsonTag: "task_code", Width: 15, Decode: x_null.DecodeString},
+		{Name: "corn表达式", JsonTag: "corn_expr", Width: 15, Decode: x_null.DecodeString},
+		{Name: "状态", JsonTag: "status", Width: 15, Decode: x_null.DecodeInt64},
+		{Name: "创建人", JsonTag: "created_by", Width: 15, Decode: x_null.DecodeString},
+		{Name: "创建时间", JsonTag: "create_time", Width: 15, Decode: x_null.DecodeTime},
+		{Name: "更新时间", JsonTag: "update_time", Width: 15, Decode: x_null.DecodeTime},
 	}
 	// 还可以考虑字典，请求下来加上 Replace 实现替换导出
 	return cols

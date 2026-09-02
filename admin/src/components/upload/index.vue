@@ -255,7 +255,7 @@ async function startUpload(files: File[]) {
             item.status = 'uploading'
             const data = await uploadOne(file, item)
             if (seq !== uploadSeq) return
-            if (data?.code === RequestCodeEnum.FAILED) {
+            if (data?.code !== RequestCodeEnum.SUCCESS) {
                 item.status = 'fail'
                 feedback.msgError(data.message || '上传失败')
                 emit('error')

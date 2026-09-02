@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"reflect"
-
 	"github.com/duke-git/lancet/v2/convertor"
 
 	"github.com/jinzhu/copier"
@@ -48,50 +46,25 @@ func StructToMap(v any) (map[string]any, error) {
 }
 
 // StructsToMaps 将结构体转换成Map列表
-func StructsToMaps[T any](from []T) (data []map[string]any, err error) {
-	for _, v := range from {
-		// 忽略错误
-		m, err := StructToMap(v)
-		if err != nil {
-			return nil, err
-		}
-		data = append(data, m)
-	}
-	return data, nil
-}
-
-// ShallowStructToMap 将结构体转换成map,浅转换
-func ShallowStructToMap(from any) map[string]any {
-	m := make(map[string]any)
-	v := reflect.ValueOf(from)
-	t := v.Type()
-
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		value := v.Field(i).Interface()
-		m[field.Name] = value
-	}
-
-	return m
-}
-
-// ShallowStructsToMaps 将结构体列表转换成Map列表,浅转换
-func ShallowStructsToMaps(from any) (data []map[string]any) {
-	var objList []any
-	err := copier.Copy(&objList, from)
+func StructsToMaps(from any) ([]map[string]any, error) {
+	// 第一步：序列化为 JSON
+	data, err := json.Marshal(from)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	for _, v := range objList {
-		data = append(data, ShallowStructToMap(v))
+
+	// 第二步：反序列化为 map
+	var result []map[string]any
+	err = json.Unmarshal(data, &result)
+	if err != nil {
+		return nil, err
 	}
-	return data
+
+	return result, nil
 }
 
-// MapToStruct 将map类型转换成结构体
-func MapToStruct(from any, to any) (err error) {
-	// err = mapstructure.WeakDecode(from, to) // 需要tag:mapstructure
-
+// AnyToAny 将map类型转换成结构体
+func AnyToAny(from any, to any) (err error) {
 	jsonData, err := json.Marshal(from)
 	if err != nil {
 		return err
