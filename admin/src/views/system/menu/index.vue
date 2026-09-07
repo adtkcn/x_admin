@@ -68,7 +68,7 @@
                         <el-tag v-if="row.is_disable == 0" type="primary" disable-transitions
                             >正常</el-tag
                         >
-                        <el-tag v-if="row.is_disable == 1" type="danger" disable-transitions
+                        <el-tag v-else-if="row.is_disable == 1" type="danger" disable-transitions
                             >停用</el-tag
                         >
                     </template>
