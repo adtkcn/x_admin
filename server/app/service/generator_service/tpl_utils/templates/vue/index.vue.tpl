@@ -133,7 +133,7 @@
                     </template>
                 </vxe-column>
                 {{{- else }}}
-                <vxe-column title="{{{ .ColumnComment }}}" field="{{{.TableColumnProp}}}" min-width="130" show-overflow />
+                <vxe-column title="{{{ .ColumnComment }}}" field="{{{.TableColumnProp}}}" min-width="130" show-overflow="title" />
                 {{{- end }}}
             {{{- end }}}
             {{{- end }}}

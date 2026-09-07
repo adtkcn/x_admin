@@ -31,3 +31,12 @@ func Ok(c *gin.Context, data ...any) {
 	}
 	Send(c, Success.Code(), Success.Msg(), respData)
 }
+
+func NoRoute(c *gin.Context) {
+	Send(c, 404, "请求接口不存在", nil)
+}
+
+// NotFound 404 错误
+func NotFound(c *gin.Context, msg string) {
+	Send(c, http.StatusNotFound, msg, nil)
+}

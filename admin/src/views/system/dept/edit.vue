@@ -9,7 +9,7 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
-                <el-form-item label="上级部门" prop="pid" v-if="formData.pid !== ''">
+                <el-form-item label="上级部门" prop="pid">
                     <el-tree-select
                         class="flex-1"
                         v-model="formData.pid"
@@ -54,12 +54,12 @@
                 <el-form-item label="部门电话" prop="mobile">
                     <el-input v-model="formData.mobile" placeholder="请输入联系电话" clearable />
                 </el-form-item>
-                <el-form-item label="排序" prop="sort">
+                <!-- <el-form-item label="排序" prop="sort">
                     <div>
                         <el-input-number v-model="formData.sort" :min="0" :max="9999" />
                         <div class="form-tips">默认为0， 数值越大越排前</div>
                     </div>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="部门状态" prop="is_stop">
                     <el-switch v-model="formData.is_stop" :active-value="0" :inactive-value="1" />
                 </el-form-item>
@@ -132,13 +132,6 @@ const checkMobile = (rule: any, value: any, callback: any) => {
     }
 }
 const formRules = {
-    pid: [
-        {
-            required: true,
-            message: '请选择上级部门',
-            trigger: ['change']
-        }
-    ],
     name: [
         {
             required: true,

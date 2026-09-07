@@ -28,7 +28,7 @@ type systemAuthDeptService struct {
 // All 部门所有
 func (service systemAuthDeptService) All() (res []system_schema.SystemAuthDeptResp, e error) {
 	var depts []system_model.SystemAuthDept
-	err := service.db.Order("sort desc, id desc").Find(&depts).Error
+	err := service.db.Order("sort desc, id asc").Find(&depts).Error
 	if e = response.CheckErr(err, "All Find err"); e != nil {
 		return
 	}
@@ -47,7 +47,7 @@ func (service systemAuthDeptService) List(listReq system_schema.SystemAuthDeptLi
 		deptModel = deptModel.Where("is_stop = ?", listReq.IsStop)
 	}
 	var depts []system_model.SystemAuthDept
-	err := deptModel.Order("sort desc, id desc").Find(&depts).Error
+	err := deptModel.Order("sort desc, id asc").Find(&depts).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
 	}
@@ -91,15 +91,8 @@ func (service systemAuthDeptService) getDeptDescendantIds(id string) (descendant
 
 // Add 部门新增
 func (service systemAuthDeptService) Add(addReq system_schema.SystemAuthDeptAddReq) (e error) {
-	if addReq.Pid == "" {
-		r := service.db.Where("pid = ?", "").Limit(1).Find(&system_model.SystemAuthDept{})
-		if e = response.CheckErr(r.Error, "Add Find err"); e != nil {
-			return
-		}
-		if r.RowsAffected > 0 {
-			return response.AssertArgumentError.SetMessage("顶级部门只允许有一个!")
-		}
-	} else {
+	if addReq.Pid != "" {
+
 		// 校验上级部门是否存在
 		var parent system_model.SystemAuthDept
 		r := service.db.Where("id = ?", addReq.Pid).Limit(1).Find(&parent)
@@ -124,9 +117,6 @@ func (service systemAuthDeptService) Edit(editReq system_schema.SystemAuthDeptEd
 	// 校验
 	if e = response.CheckDBErr(err, "部门不存在!", "待编辑数据查找失败"); e != nil {
 		return
-	}
-	if dept.Pid == "" && editReq.Pid != "" {
-		return response.AssertArgumentError.SetMessage("顶级部门不能修改上级!")
 	}
 	if editReq.ID == editReq.Pid {
 		return response.AssertArgumentError.SetMessage("上级部门不能是自己!")
@@ -169,5 +159,49 @@ func (service systemAuthDeptService) Del(id string) (e error) {
 	if result.RowsAffected == 0 {
 		return errors.New("部门不存在")
 	}
+	return
+}
+
+// Sort 部门拖拽排序（仅同级），按传入 id 顺序重排 sort 字段（单条 SQL 批量更新）
+func (service systemAuthDeptService) Sort(ids []string) (e error) {
+	if len(ids) == 0 {
+		return
+	}
+	var depts []system_model.SystemAuthDept
+	if e = response.CheckErr(service.db.Where("id in ?", ids).Find(&depts).Error, "查询部门失败"); e != nil {
+		return
+	}
+	if len(depts) != len(ids) {
+		return response.AssertArgumentError.SetMessage("拖拽数据异常，存在无效部门!")
+	}
+	// 仅允许同级拖拽：校验 pid 一致
+	// basePid := depts[0].Pid
+	// for _, d := range depts {
+	// 	if d.Pid != basePid {
+	// 		return response.AssertArgumentError.SetMessage("仅支持同级部门拖拽排序!")
+	// 	}
+	// }
+	// 列表排序为 sort desc，ids[0] 排最前赋予最大 sort 值；用 CASE 单条 SQL 批量更新
+	caseExpr := "CASE id"
+	args := make([]interface{}, 0, len(ids)*2)
+	for i, id := range ids {
+		caseExpr += " WHEN ? THEN ?"
+		args = append(args, id, len(ids)-i)
+	}
+	caseExpr += " ELSE sort END"
+	if err := service.db.Model(&system_model.SystemAuthDept{}).
+		Where("id in ?", ids).
+		Update("sort", gorm.Expr(caseExpr, args...)).Error; err != nil {
+		return response.CheckErr(err, "排序更新失败")
+	}
+	/**
+		UPDATE `x_system_auth_dept`
+	SET `sort` = CASE id
+	  WHEN '...' THEN 2
+	  WHEN '...' THEN 1
+	  ELSE sort END,
+	  `update_time`='...'
+	WHERE id in (...) AND `is_delete` = 0
+	*/
 	return
 }

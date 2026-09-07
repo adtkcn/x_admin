@@ -41,6 +41,11 @@ type SystemAuthDeptDelReq struct {
 	ID string `json:"id" form:"id" binding:"required"` // 主键
 }
 
+// SystemAuthDeptSortReq 部门拖拽排序参数
+type SystemAuthDeptSortReq struct {
+	Ids []string `json:"ids" form:"ids" binding:"required"` // 同层级部门id，按拖拽后顺序排列
+}
+
 // SystemAuthDeptResp 系统部门返回信息
 type SystemAuthDeptResp struct {
 	ID         string      `json:"id"`          // 主键

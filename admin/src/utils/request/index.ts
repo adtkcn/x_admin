@@ -82,6 +82,8 @@ service.interceptors.response.use(
             return response.data
         }
 
+        console.log(response.data)
+
         // 转换响应数据
         const { code, data, message } = response.data
 

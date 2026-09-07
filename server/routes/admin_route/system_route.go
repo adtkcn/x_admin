@@ -83,6 +83,7 @@ func initDeptRoute(rg *gin.RouterGroup) {
 	authDept.POST("/dept/add", handleDept.Add)
 	authDept.POST("/dept/edit", handleDept.Edit)
 	authDept.POST("/dept/del", handleDept.Del)
+	authDept.POST("/dept/sort", handleDept.Sort)
 }
 
 // initRoleRoute 角色路由（all 接口仅需登录）

@@ -83,3 +83,13 @@ export function deptEdit(data: type_system_dept_edit) {
 export function deptDelete(data: type_system_dept_del) {
     return request.post({ url: '/system/dept/del', data })
 }
+
+// 部门拖拽排序参数
+export type type_system_dept_sort = {
+    ids: string[]
+}
+
+// 拖拽排序
+export function deptSort(data: type_system_dept_sort) {
+    return request.post({ url: '/system/dept/sort', data })
+}

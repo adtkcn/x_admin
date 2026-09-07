@@ -65,7 +65,7 @@
                             <el-avatar :size="40" :src="row.avatar"></el-avatar>
                         </template>
                     </vxe-column>
-                    <vxe-column title="邮箱(账号)" field="email" min-width="100" />
+                    <vxe-column title="邮箱(账号)" field="email" min-width="150" />
                     <vxe-column title="名称" field="nickname" min-width="100" />
                     <vxe-column title="角色" field="role" min-width="100" />
                     <vxe-column title="部门" field="dept" min-width="100" />
