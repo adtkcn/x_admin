@@ -187,20 +187,23 @@ func (service monitorClientService) Add(addReq monitor_schema.MonitorClientAddRe
 		},
 		DoNothing: true, // client_id 已存在时不更新任何字段
 	}).Create(&obj).Error
-	if e = response.CheckMysqlErr(err); e != nil {
-		return "", e
+	if err != nil {
+		return "", err
 	}
 
 	// DoNothing 命中冲突时 obj.Id 为 BeforeCreate 生成的临时 uuid（未落库），
-	// 需按 client_id 回查真实记录，避免返回不存在的假 id
-	err = service.db.Where("client_id = ?", obj.ClientId).Order("id DESC").First(&obj).Error
+	// 需按 client_id 回查真实记录，避免返回不存在的假 id。
+	// 注意：回查必须用新的空结构体接收——若复用 obj，其残留的主键会被 GORM 拼进
+	// WHERE 条件（... AND id = '<未落库的临时uuid>'），导致查不到记录
+	var saved model.MonitorClient
+	err = service.db.Where("client_id = ?", obj.ClientId).Order("id DESC").First(&saved).Error
 	if e = response.CheckErr(err, "写入后回查失败"); e != nil {
 		return "", e
 	}
 
 	// 写入/刷新缓存（TTL 由 CacheUtil.SetCache 控制，过期后下次回源 DB 校验）
-	service.CacheUtil.SetCache(cacheKey, obj)
-	createId = obj.Id
+	service.CacheUtil.SetCache(cacheKey, saved)
+	createId = saved.Id
 	return
 }
 

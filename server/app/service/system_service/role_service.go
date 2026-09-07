@@ -183,7 +183,7 @@ func (roleSrv systemAuthRoleService) Del(id string) (e error) {
 	err := roleSrv.db.Transaction(func(tx *gorm.DB) error {
 		result := tx.Delete(&system_model.SystemAuthRole{}, "id = ?", id)
 		if result.Error != nil {
-			return response.CheckMysqlErr(result.Error)
+			return result.Error
 		}
 		if result.RowsAffected == 0 {
 			return errors.New("角色已不存在")

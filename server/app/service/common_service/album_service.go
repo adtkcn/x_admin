@@ -109,7 +109,7 @@ func buildAlbumListResp(alb common_model.Album, hash common_model.CommonFileHash
 func (albSrv albumService) AlbumRename(id string, name string) (e error) {
 	var album common_model.Album
 	err := albSrv.db.Where("id = ?", id).First(&album).Error
-	if e = response.CheckDBNotRecord(err, "文件丢失！"); e != nil {
+	if e = response.CheckDBErr(err, "文件丢失！", "重命名查询失败"); e != nil {
 		return
 	}
 	err = albSrv.db.Model(&common_model.Album{}).
@@ -148,14 +148,14 @@ func (albSrv albumService) AlbumAddFromFileRef(fileHashId, fileName, cid, adminI
 	if cid != "" {
 		var category common_model.AlbumCate
 		err = albSrv.db.Where("id = ?", cid).First(&category).Error
-		if e = response.CheckDBNotRecord(err, "相册分类不存在"); e != nil {
+		if e = response.CheckDBErr(err, "相册分类不存在", "分类查询失败"); e != nil {
 			return
 		}
 	}
 	// 取文件哈希记录（上传时登记），仅用于校验存在性
 	var hash common_model.CommonFileHash
 	err = albSrv.db.Where("id = ?", fileHashId).First(&hash).Error
-	if e = response.CheckDBNotRecord(err, "文件不存在或已过期"); e != nil {
+	if e = response.CheckDBErr(err, "文件不存在或已过期", "文件查询失败"); e != nil {
 		return
 	}
 	// 新建相册行：仅挂载关联与元信息，不冗余复制文件字段

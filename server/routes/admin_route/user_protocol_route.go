@@ -11,7 +11,7 @@ func UserProtocolRoute(rg *gin.RouterGroup) {
 	handle := admin_ctl.UserProtocolHandler{}
 
 	r := rg.Group("/", middleware.PermAuth())
-	r.GET("/user_protocol/list", handle.List)
+	r.GET("/user_protocol/list", middleware.RequestCost(10000), handle.List)
 	r.GET("/user_protocol/list_all", handle.ListAll)
 	r.GET("/user_protocol/detail", handle.Detail)
 

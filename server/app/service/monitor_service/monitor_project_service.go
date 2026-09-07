@@ -127,9 +127,8 @@ func (service monitorProjectService) Add(addReq monitor_schema.MonitorProjectAdd
 	convert_util.Copy(&obj, addReq)
 	obj.ProjectKey = util.ToolsUtil.MakeUuidV7()
 	err := service.db.Create(&obj).Error
-	e = response.CheckMysqlErr(err)
-	if e != nil {
-		return "", e
+	if err != nil {
+		return "", err
 	}
 	service.CacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id

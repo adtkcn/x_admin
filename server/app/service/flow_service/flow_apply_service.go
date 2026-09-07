@@ -97,9 +97,10 @@ func (service flowApplyService) Detail(id string) (res flow_schema.FlowApplyResp
 // Add 申请流程新增
 func (service flowApplyService) Add(addReq flow_schema.FlowApplyAddReq) (e error) {
 	var obj model.FlowApply
-	var flow_template_resp, err = TemplateService.Detail(addReq.TemplateId)
-	if e = response.CheckDBNotRecord(err, "模板不存在!"); e != nil {
-		return
+	flow_template_resp, err := TemplateService.Detail(addReq.TemplateId)
+	// Detail 内部已包装语义化业务错误，此处直接透传，不做二次包装
+	if err != nil {
+		return err
 	}
 	convert_util.Copy(&obj, addReq)
 	// obj.FlowName = flow_template_resp.FlowName

@@ -5,7 +5,6 @@ import (
 	"x_admin/app/model"
 	"x_admin/app/schema/monitor_schema"
 	"x_admin/core"
-	"x_admin/core/response"
 	"x_admin/util/convert_util"
 
 	"gorm.io/gorm"
@@ -32,9 +31,8 @@ func (service monitorErrorListService) Add(addReq monitor_schema.MonitorErrorLis
 	var obj model.MonitorErrorList
 	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
-	e = response.CheckMysqlErr(err)
-	if e != nil {
-		return "", e
+	if err != nil {
+		return "", err
 	}
 
 	createId = obj.Id

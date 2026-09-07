@@ -151,7 +151,6 @@ func (service monitorErrorService) Add(addReq monitor_schema.MonitorErrorAddReq,
 		obj.Md5 = Md5
 
 		err := service.db.Create(&obj).Error
-		err = response.CheckMysqlErr(err)
 		if err != nil {
 			return "", err
 		}

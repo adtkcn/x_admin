@@ -139,9 +139,8 @@ func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId str
 	convert_util.Copy(&obj, addReq)
 	obj.CreatedBy.SetValue(adminId)
 	err := service.db.Create(&obj).Error
-	e = response.CheckMysqlErr(err)
-	if e != nil {
-		return "", e
+	if err != nil {
+		return "", err
 	}
 	service.CacheUtil.SetCache(obj.Id, obj)
 	createId = obj.Id
@@ -151,10 +150,10 @@ func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId str
 // Edit 定时任务编辑
 func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error) {
 	result := service.db.Model(&model.SystemCorn{}).Where("id = ?", editReq.Id).Updates(editReq)
+	// MySQL 错误码（唯一键冲突、外键约束等）由统一出口翻译成业务文案，
+	// 未知数据库错误由出口统一记录日志，此处不再重复记录
 	if result.Error != nil {
-		// 这里处理真正的数据库错误（如连接失败、SQL语法错误、约束冲突等）
-		core.Logger.Errorf("数据库错误: %v", result.Error)
-		return response.CheckMysqlErr(result.Error)
+		return result.Error
 	}
 
 	service.CacheUtil.RemoveCache(editReq.Id)

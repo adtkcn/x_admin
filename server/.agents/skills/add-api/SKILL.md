@@ -49,7 +49,7 @@ description: "在已有模块中新增接口的完整指南，含 Schema/Service
 
 | 要点     | 规则                                                            |
 | -------- | --------------------------------------------------------------- |
-| 错误处理 | 统一使用 `response.CheckErr()` 和 `response.CheckDBNotRecord()` |
+| 错误处理 | 统一使用 `response.CheckErr()`  |
 | 类型转换 | Model ↔ Schema 用 `convert_util.Copy()`                         |
 
 ---

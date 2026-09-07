@@ -183,28 +183,18 @@ func CheckErr(err error, template string, args ...any) error {
 	return SystemError.SetMessage(message)
 }
 
-// CheckMysqlErr 在 service 层把 MySQL 错误翻译成业务错误上抛
-func CheckMysqlErr(err error) error {
-	var mysqlErr *mysql.MySQLError
-	if errors.As(err, &mysqlErr) {
-		resp, known := mysqlResp(mysqlErr)
-		if !known {
-			core.Logger.Error("未知数据库错误: " + err.Error())
-		}
-		return resp
-	}
-	return err
-}
-
-// CheckDBErr 数据库查询错误统一处理，取代「CheckDBNotRecord + CheckErr」的双段式写法：
+// CheckDBErr 数据库查询错误统一处理：
 //
-//   - 记录不存在 -> notFoundMsg
+//   - 记录不存在 -> notFoundMsg（业务语义，不记日志）
 //
-//   - 其它错误   -> 记日志 + failMsg
+//   - 其它错误   -> 记日志 + failMsg（对外隐藏内部细节）
 //
 //     if e = response.CheckDBErr(err, "岗位不存在!", "详情获取失败"); e != nil {
 //     return
 //     }
+//
+// 注意：仅用于「直接操作 DB」的场景。若 err 来自其它 service（内部已包装为业务错误），
+// 应直接透传，不要再次包装。
 func CheckDBErr(err error, notFoundMsg, failMsg string) error {
 	if err == nil {
 		return nil
@@ -214,17 +204,4 @@ func CheckDBErr(err error, notFoundMsg, failMsg string) error {
 	}
 	core.Logger.Error("CheckDBErr: " + failMsg + ", err: " + err.Error())
 	return SystemError.SetMessage(failMsg)
-}
-
-// CheckDBNotRecord 把「记录不存在」翻译成业务错误，其余错误记日志后原样透传。
-// 若还需要对其它错误给出独立文案，请改用 CheckDBErr。
-func CheckDBNotRecord(err error, message string) error {
-	if err == nil {
-		return nil
-	}
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return SystemError.SetMessage(message)
-	}
-	core.Logger.Error("CheckDBNotRecord: " + err.Error())
-	return err
 }

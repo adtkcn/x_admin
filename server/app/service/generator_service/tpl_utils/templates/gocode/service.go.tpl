@@ -163,9 +163,8 @@ func (service {{{ .EntityName }}}Service) Add(addReq {{{.Domain}}}_schema.{{{ to
 	{{{- end }}}
 	
 	err := service.db.Create(&obj).Error
-	e = response.CheckMysqlErr(err)
-	if e != nil {
-		return "",e
+	if err != nil {
+		return "", err
 	}
 	service.CacheUtil.SetCache(obj.{{{ .PrimaryGoField }}}, obj)
 	createId = obj.{{{ .PrimaryGoField }}}
