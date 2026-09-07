@@ -45,6 +45,11 @@ export type type_system_menu_del = {
     id: string
 }
 
+// 菜单拖拽排序参数
+export type type_system_menu_sort = {
+    ids: string[]
+}
+
 // 菜单返回信息
 export type type_system_menu_resp = {
     id: string
@@ -89,4 +94,9 @@ export function menuEdit(data: type_system_menu_edit) {
 // 菜单删除
 export function menuDelete(data: type_system_menu_del) {
     return request.post({ url: '/system/menu/del', data })
+}
+
+// 菜单拖拽排序
+export function menuSort(data: type_system_menu_sort) {
+    return request.post({ url: '/system/menu/sort', data })
 }

@@ -171,3 +171,31 @@ func (menuSrv systemAuthMenuService) Del(id string) (e error) {
 
 	return
 }
+
+// Sort 菜单拖拽排序（仅同级），按传入 id 顺序重排 menu_sort 字段（单条 SQL 批量更新）
+func (menuSrv systemAuthMenuService) Sort(ids []string) (e error) {
+	if len(ids) == 0 {
+		return
+	}
+	var menus []system_model.SystemAuthMenu
+	if e = response.CheckErr(menuSrv.db.Where("id in ?", ids).Find(&menus).Error, "查询菜单失败"); e != nil {
+		return
+	}
+	if len(menus) != len(ids) {
+		return response.AssertArgumentError.SetMessage("拖拽数据异常，存在无效菜单!")
+	}
+	// 列表排序为 menu_sort desc，ids[0] 排最前赋予最大 menu_sort 值；用 CASE 单条 SQL 批量更新
+	caseExpr := "CASE id"
+	args := make([]interface{}, 0, len(ids)*2)
+	for i, id := range ids {
+		caseExpr += " WHEN ? THEN ?"
+		args = append(args, id, len(ids)-i)
+	}
+	caseExpr += " ELSE menu_sort END"
+	if err := menuSrv.db.Model(&system_model.SystemAuthMenu{}).
+		Where("id in ?", ids).
+		Update("menu_sort", gorm.Expr(caseExpr, args...)).Error; err != nil {
+		return response.CheckErr(err, "排序更新失败")
+	}
+	return
+}

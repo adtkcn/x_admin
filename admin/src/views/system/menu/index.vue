@@ -26,11 +26,13 @@
             <vxe-table
                 ref="tableRef"
                 :row-config="rowConfig"
+                :row-drag-config="rowDragConfig"
                 :tree-config="treeConfig"
                 :data="filterList"
                 :border="'inner'"
                 height="100%"
                 :virtual-y-config="{ enabled: true, gt: 0 }"
+                @row-dragend="rowDragend"
             >
                 <vxe-column type="seq" width="60"></vxe-column>
                 <vxe-column
@@ -65,8 +67,8 @@
                         <el-tag v-else type="danger">停用</el-tag>
                     </template>
                 </vxe-column>
-                <vxe-column field="menu_sort" title="排序" width="60"></vxe-column>
-                <vxe-column title="操作" width="160">
+                <vxe-column title="排序" width="60" drag-sort></vxe-column>
+                <vxe-column title="操作" width="160" align="right">
                     <template #default="{ row }">
                         <el-button
                             v-perms="['admin:system:menu:add']"
@@ -105,6 +107,7 @@ import { ref, reactive, useTemplateRef, nextTick, computed, toRaw } from 'vue'
 import {
     menuDelete,
     menuLists,
+    menuSort,
     type type_system_menu_resp,
     type type_system_menu_edit
 } from '@/api/perms/menu'
@@ -119,7 +122,30 @@ defineOptions({
     name: 'MenuView'
 })
 const rowConfig = {
-    keyField: 'id'
+    keyField: 'id',
+    drag: true
+}
+// 行拖拽配置：仅允许同级之间拖拽排序
+const rowDragConfig = reactive({
+    isPeerDrag: true,
+    showGuidesStatus: true,
+    showIcon: true
+})
+
+// 拖拽结束：提取被拖拽行的同级新顺序并持久化
+const rowDragend = async ({ oldRow }: any) => {
+    const $table = tableRef.value
+    if (!$table) return
+    // 顶级菜单无父行，从全量树形根级取同级；子级取父行的 children
+    const parentRow = $table.getTreeParentRow(oldRow)
+    const siblings = (parentRow ? parentRow.children : $table.getFullData()) as any[]
+    const ids = siblings.map((item) => item.id)
+    try {
+        await menuSort({ ids })
+        feedback.msgSuccess('排序已保存')
+    } finally {
+        getLists() // 重新拉取以应用最新排序
+    }
 }
 const treeConfig = reactive<VxeTablePropTypes.TreeConfig>({
     rowField: 'id',

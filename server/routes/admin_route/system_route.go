@@ -53,6 +53,7 @@ func initMenuRoute(rg *gin.RouterGroup) {
 	authMenu.POST("/menu/add", handleMenu.Add)
 	authMenu.POST("/menu/edit", handleMenu.Edit)
 	authMenu.POST("/menu/del", handleMenu.Del)
+	authMenu.POST("/menu/sort", handleMenu.Sort)
 }
 
 // initPostRoute 岗位路由（all 接口仅需登录）

@@ -47,6 +47,11 @@ type SystemAuthMenuDelReq struct {
 	ID string `json:"id" form:"id" binding:"required"` // 主键
 }
 
+// SystemAuthMenuSortReq 菜单拖拽排序参数
+type SystemAuthMenuSortReq struct {
+	Ids []string `json:"ids" form:"ids" binding:"required"` // 菜单id顺序
+}
+
 // SystemAuthMenuResp 系统菜单返回信息
 type SystemAuthMenuResp struct {
 	ID         string                `json:"id"`                 // 主键
