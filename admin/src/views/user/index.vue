@@ -33,9 +33,9 @@
                 :tooltip-config="tooltipConfig"
                 show-overflow="title"
             >
-                <vxe-column title="用户ID" field="id" min-width="200" show-overflow />
+                <vxe-column title="用户ID" field="id" min-width="200" />
                 <vxe-column title="昵称" field="nickname" min-width="140" />
-                <vxe-column title="邮箱" field="email" min-width="180" show-overflow="title" />
+                <vxe-column title="邮箱" field="email" min-width="180" />
                 <vxe-column title="手机" min-width="140">
                     <template #default="{ row }">{{ row.phone_code }} {{ row.phone }}</template>
                 </vxe-column>

@@ -77,7 +77,12 @@
                 </vxe-column>
                 <vxe-column title="事件类型" field="event_type" width="170" />
                 <!-- <vxe-column title="URL地址" field="path" min-width="130" /> -->
-                <vxe-column title="错误消息" field="message" min-width="150" show-overflow />
+                <vxe-column
+                    title="错误消息"
+                    field="message"
+                    min-width="150"
+                    show-overflow="title"
+                />
 
                 <!-- <vxe-column title="md5" field="md5" min-width="130" /> -->
                 <vxe-column title="创建时间" field="create_time" width="170" />

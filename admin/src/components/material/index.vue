@@ -161,7 +161,7 @@
                             ></FileItem>
                         </template>
                     </vxe-column>
-                    <vxe-column title="名称" min-width="100" show-overflow>
+                    <vxe-column title="名称" min-width="100" show-overflow="title">
                         <template #default="{ row }">
                             <el-link @click.stop="handlePreview(row.uri)" underline="never">
                                 {{ row.name }}

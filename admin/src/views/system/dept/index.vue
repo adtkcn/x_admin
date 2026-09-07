@@ -27,8 +27,14 @@
                 :border="'inner'"
                 @row-dragend="rowDragend"
             >
-                <vxe-column title="部门名称" field="name" min-width="150" show-overflow tree-node />
-                <vxe-column title="负责人" field="duty" min-width="150" show-overflow />
+                <vxe-column
+                    title="部门名称"
+                    field="name"
+                    min-width="150"
+                    show-overflow="title"
+                    tree-node
+                />
+                <vxe-column title="负责人" field="duty" min-width="150" show-overflow="title" />
 
                 <vxe-column title="部门状态" field="is_stop" width="100">
                     <template #default="{ row }">
@@ -37,7 +43,12 @@
                         </el-tag>
                     </template>
                 </vxe-column>
-                <vxe-column title="排序" width="100" drag-sort />
+                <vxe-column
+                    title="排序"
+                    width="100"
+                    drag-sort
+                    v-perms="['admin:system:dept:sort']"
+                />
                 <vxe-column title="更新时间" field="update_time" width="180" />
                 <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">

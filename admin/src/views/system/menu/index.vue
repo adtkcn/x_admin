@@ -22,52 +22,63 @@
             <el-button @click="handleExpand"> 展开/收起 </el-button>
         </div>
 
-        <div class="mt-4" style="height: 100%">
+        <!-- flex-1 + min-h-0：让表格容器在 flex 布局中获得稳定高度，虚拟滚动才能正常工作 -->
+        <div class="mt-4 flex-1 min-h-0">
             <vxe-table
                 ref="tableRef"
                 :row-config="rowConfig"
+                :cell-config="{ height: 48 }"
                 :row-drag-config="rowDragConfig"
                 :tree-config="treeConfig"
+                :tooltip-config="{ enterable: true }"
                 :data="filterList"
                 :border="'inner'"
                 height="100%"
-                :virtual-y-config="{ enabled: true, gt: 0 }"
+                :virtual-y-config="{ enabled: true, gt: 20 }"
+                show-overflow="title"
                 @row-dragend="rowDragend"
             >
                 <vxe-column type="seq" width="60"></vxe-column>
+
                 <vxe-column
                     field="menu_name"
                     title="菜单名称"
                     min-width="200"
                     tree-node
                 ></vxe-column>
-                <vxe-column field="menu_type" title="类型" width="60">
-                    <template #default="{ row }">
-                        <div v-if="row.menu_type == MenuEnum.CATALOGUE">目录</div>
-                        <div v-else-if="row.menu_type == MenuEnum.MENU">菜单</div>
-                        <div v-else-if="row.menu_type == MenuEnum.BUTTON">按钮</div>
-                    </template>
-                </vxe-column>
                 <vxe-column field="menu_icon" title="图标" width="60">
                     <template #default="{ row }">
-                        <div class="flex">
+                        <div class="flex" v-if="row.menu_icon">
                             <icon :name="row.menu_icon" :size="20" />
                         </div>
                     </template>
                 </vxe-column>
+                <!-- 用 formatter 替代 template，减少每行 vnode 数量 -->
+                <vxe-column
+                    field="menu_type"
+                    title="类型"
+                    width="60"
+                    :formatter="menuTypeFormatter"
+                ></vxe-column>
+
                 <vxe-column field="paths" title="路径" min-width="100"></vxe-column>
-                <vxe-column field="permsArr" title="权限标识" min-width="120">
-                    <template #default="{ row }">
-                        <span v-if="row.perms" type="info">{{ row.perms }}</span>
-                    </template>
-                </vxe-column>
+                <vxe-column field="perms" title="权限标识" width="240"></vxe-column>
                 <vxe-column field="is_disable" title="状态" width="80">
                     <template #default="{ row }">
-                        <el-tag v-if="row.is_disable == 0" type="primary">正常</el-tag>
-                        <el-tag v-else type="danger">停用</el-tag>
+                        <el-tag v-if="row.is_disable == 0" type="primary" disable-transitions
+                            >正常</el-tag
+                        >
+                        <el-tag v-if="row.is_disable == 1" type="danger" disable-transitions
+                            >停用</el-tag
+                        >
                     </template>
                 </vxe-column>
-                <vxe-column title="排序" width="60" drag-sort></vxe-column>
+                <vxe-column
+                    title="排序"
+                    width="60"
+                    drag-sort
+                    v-perms="['admin:system:menu:sort']"
+                ></vxe-column>
                 <vxe-column title="操作" width="160" align="right">
                     <template #default="{ row }">
                         <el-button
@@ -151,8 +162,6 @@ const treeConfig = reactive<VxeTablePropTypes.TreeConfig>({
     rowField: 'id',
     childrenField: 'children',
     indent: 10,
-    reserve: true,
-    lazy: true,
     transform: true,
 
     parentField: 'pid'
@@ -164,6 +173,15 @@ const loading = ref(false)
 const showEdit = ref(false)
 const lists = ref<type_system_menu_resp[]>([])
 const menuName = ref('')
+
+// 类型列 formatter：直接返回文本，避免每行生成 v-if 分支的 vnode
+const menuTypeFormatter = ({ cellValue }: any) => {
+    if (cellValue == MenuEnum.CATALOGUE) return '目录'
+    if (cellValue == MenuEnum.MENU) return '菜单'
+    if (cellValue == MenuEnum.BUTTON) return '-'
+    return ''
+}
+
 const filterList = computed(() => {
     if (!menuName.value) {
         return lists.value

@@ -35,7 +35,7 @@
                 <vxe-column title="岗位编码" field="code" min-width="100" />
                 <vxe-column title="岗位名称" field="name" min-width="100" />
                 <vxe-column title="排序" field="sort" min-width="100" />
-                <vxe-column title="备注" field="remarks" min-width="100" show-overflow />
+                <vxe-column title="备注" field="remarks" min-width="100" show-overflow="title" />
                 <vxe-column title="添加时间" field="create_time" min-width="180" />
                 <vxe-column title="岗位状态" field="is_stop" min-width="100">
                     <template #default="{ row }">

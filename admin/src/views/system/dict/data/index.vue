@@ -56,7 +56,12 @@
                                 <el-tag v-else type="danger">停用</el-tag>
                             </template>
                         </vxe-column>
-                        <vxe-column title="备注" field="remark" min-width="120" show-overflow />
+                        <vxe-column
+                            title="备注"
+                            field="remark"
+                            min-width="120"
+                            show-overflow="title"
+                        />
                         <vxe-column title="排序" field="sort" />
                         <vxe-column title="操作" width="120" fixed="right">
                             <template #default="{ row }">

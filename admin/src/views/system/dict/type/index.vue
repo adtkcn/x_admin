@@ -66,7 +66,7 @@
                                 <el-tag v-else type="danger">停用</el-tag>
                             </template>
                         </vxe-column>
-                        <vxe-column title="备注" field="dictRemark" show-overflow />
+                        <vxe-column title="备注" field="dictRemark" show-overflow="title" />
                         <vxe-column title="创建时间" field="create_time" />
                         <vxe-column title="操作" width="190" fixed="right">
                             <template #default="{ row }">
