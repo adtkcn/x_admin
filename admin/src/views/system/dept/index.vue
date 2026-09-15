@@ -38,7 +38,11 @@
 
                 <vxe-column title="部门状态" field="is_stop" width="100">
                     <template #default="{ row }">
-                        <el-tag class="ml-2" :type="row.is_stop ? 'danger' : 'primary'">
+                        <el-tag
+                            class="ml-2"
+                            :type="row.is_stop ? 'danger' : 'primary'"
+                            disable-transitions
+                        >
                             {{ row.is_stop ? '停用' : '正常' }}
                         </el-tag>
                     </template>

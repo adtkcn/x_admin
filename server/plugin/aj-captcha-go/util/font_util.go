@@ -5,9 +5,10 @@ import (
 	"sync"
 	"unicode"
 
+	"x_admin/util/file_util"
+
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
-	"x_admin/util/file_util"
 )
 
 type FontUtil struct {
@@ -42,6 +43,7 @@ func (f *FontUtil) GetFont() *truetype.Font {
 	return trueTypeFont
 }
 
+// GetEnOrChLength 获取英文或中文长度（中文12像素，英文8像素）
 func GetEnOrChLength(text string) int {
 	enCount, zhCount := 0, 0
 

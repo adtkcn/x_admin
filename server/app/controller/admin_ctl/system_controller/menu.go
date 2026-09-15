@@ -125,9 +125,9 @@ func (mh MenuHandler) Del(c *gin.Context) {
 
 // @Summary		菜单拖拽排序
 // @Description	同级菜单拖拽排序，按传入 id 顺序持久化
-// @Tags		system_menu-菜单
-// @Param			token	header		string		true	"token"
-// @Param			ids		body		[]string	true	"菜单id顺序"
+// @Tags			system_menu-菜单
+// @Param			token	header		string				true	"token"
+// @Param			ids		body		[]string			true	"菜单id顺序"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/menu/sort [post]
 func (mh MenuHandler) Sort(c *gin.Context) {

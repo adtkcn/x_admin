@@ -4939,6 +4939,31 @@ paths:
       summary: 部门列表
       tags:
       - system_dept-部门
+  /api/admin/system/dept/sort:
+    post:
+      description: 同级部门拖拽排序，按传入 id 顺序持久化
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 部门id顺序
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 部门拖拽排序
+      tags:
+      - system_dept-部门
   /api/admin/system/forgot-pwd/reset:
     post:
       description: 使用邮箱验证码重置密码
@@ -5442,6 +5467,31 @@ paths:
                   type: array
               type: object
       summary: 菜单路由
+      tags:
+      - system_menu-菜单
+  /api/admin/system/menu/sort:
+    post:
+      description: 同级菜单拖拽排序，按传入 id 顺序持久化
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 菜单id顺序
+        in: body
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 菜单拖拽排序
       tags:
       - system_menu-菜单
   /api/admin/system/notice/del:

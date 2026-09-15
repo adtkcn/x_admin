@@ -62,7 +62,7 @@
                 ></vxe-column>
 
                 <vxe-column field="paths" title="路径" min-width="100"></vxe-column>
-                <vxe-column field="perms" title="权限标识" width="240"></vxe-column>
+                <vxe-column field="perms" title="权限标识" width="260"></vxe-column>
                 <vxe-column field="is_disable" title="状态" width="80">
                     <template #default="{ row }">
                         <el-tag v-if="row.is_disable == 0" type="primary" disable-transitions

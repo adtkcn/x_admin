@@ -120,8 +120,8 @@ func (dh DeptHandler) Del(c *gin.Context) {
 // @Summary		部门拖拽排序
 // @Description	同级部门拖拽排序，按传入 id 顺序持久化
 // @Tags			system_dept-部门
-// @Param			token	header		string		true	"token"
-// @Param			ids		body		[]string	true	"部门id顺序"
+// @Param			token	header		string				true	"token"
+// @Param			ids		body		[]string			true	"部门id顺序"
 // @Success		200		{object}	response.Response	"成功"
 // @Router			/api/admin/system/dept/sort [post]
 func (dh DeptHandler) Sort(c *gin.Context) {

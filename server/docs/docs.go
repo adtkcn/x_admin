@@ -6169,6 +6169,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/system/dept/sort": {
+            "post": {
+                "description": "同级部门拖拽排序，按传入 id 顺序持久化",
+                "tags": [
+                    "system_dept-部门"
+                ],
+                "summary": "部门拖拽排序",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "部门id顺序",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/system/forgot-pwd/reset": {
             "post": {
                 "description": "使用邮箱验证码重置密码",
@@ -6974,6 +7012,44 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/system/menu/sort": {
+            "post": {
+                "description": "同级菜单拖拽排序，按传入 id 顺序持久化",
+                "tags": [
+                    "system_menu-菜单"
+                ],
+                "summary": "菜单拖拽排序",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "菜单id顺序",
+                        "name": "ids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
