@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 	"x_admin/app/model/user_model"
+	fabu_model "x_admin/app/model/fabu_model"
 	"x_admin/app/queue"
 
 	"x_admin/config"
@@ -63,6 +64,9 @@ func main() {
 	core.AutoMigrate(
 		&user_model.User{},
 		&user_model.UserAuth{},
+		&fabu_model.FabuApp{},
+		&fabu_model.FabuAppVersion{},
+		&fabu_model.FabuWgt{},
 	)
 
 	// 初始化微信 SDK 客户端（小程序+公众号）
