@@ -10,6 +10,7 @@ import (
 	"x_admin/plugin/storage"
 	"x_admin/util"
 	"x_admin/util/convert_util"
+	"x_admin/util/file_util"
 )
 
 var UploadService = NewUploadService()
@@ -24,7 +25,7 @@ type uploadService struct{}
 
 // UploadFile 上传文件
 func (upSrv uploadService) UploadFile(file *multipart.FileHeader) (res common_schema.CommonFileHashResp, e error) {
-	md5, e := util.ToolsUtil.GetFileMD5(file)
+	md5, e := file_util.GetFileMD5(file)
 	if e != nil {
 		return
 	}

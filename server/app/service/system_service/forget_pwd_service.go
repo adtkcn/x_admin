@@ -63,7 +63,7 @@ func (srv forgetPwdService) ResetPassword(req *system_schema.SystemForgotPwdRese
 
 	// 4. 生成新salt并加密新密码
 	salt := util.ToolsUtil.RandomString(5)
-	newPassword := util.ToolsUtil.MakeMd5(strings.Trim(req.Password, " ") + salt)
+	newPassword := util.ToolsUtil.StrMd5(strings.Trim(req.Password, " ") + salt)
 
 	// 5. 更新数据库
 	updates := map[string]interface{}{

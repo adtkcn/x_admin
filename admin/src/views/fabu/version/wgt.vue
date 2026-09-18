@@ -3,37 +3,16 @@
         <popup
             ref="popupRef"
             title="热更新包"
-            width="800px"
+            width="860px"
             :confirm-button-text="false"
             :cancel-button-text="false"
             @close="handleClose"
         >
             <div class="mb-4">
-                <el-upload
-                    drag
-                    :auto-upload="false"
-                    :limit="1"
-                    v-model:file-list="fileList"
-                    accept=".wgt"
-                    :on-change="onChange"
-                    :on-exceed="onExceed"
-                >
-                    <div class="el-upload__text">将 .wgt 拖到此处，或<em>点击上传</em></div>
-                    <template #tip>
-                        <div class="text-xs text-info">
-                            uni-app 热更新包，自动读取 manifest.json 中的版本信息，归属于当前版本。
-                        </div>
-                    </template>
-                </el-upload>
-                <el-button
-                    class="mt-2"
-                    type="primary"
-                    :disabled="!fileRaw"
-                    :loading="uploading"
-                    @click="handleUpload"
-                >
-                    上传
-                </el-button>
+                <div class="mb-3 text-xs text-info">
+                    选择 .wgt 后分片上传，自动读取 manifest.json 中的版本信息，归属于当前版本。
+                </div>
+                <upload-chunk :ext="['wgt']" @change="handleUploaded" @error="handleUploadError" />
             </div>
             <vxe-table
                 v-loading="loading"
@@ -45,9 +24,17 @@
                 <vxe-column title="版本" field="version" min-width="120" />
                 <vxe-column title="版本Code" field="version_code" min-width="110" />
                 <vxe-column title="大小" min-width="110">
-                    <template #default="{ row }">{{ formatSize(row.size) }}</template>
+                    <template #default="{ row }">{{ formatSize(row.size, 2) }}</template>
                 </vxe-column>
                 <vxe-column title="MD5" field="md5" min-width="200" />
+                <vxe-column title="已发布" min-width="90">
+                    <template #default="{ row }">
+                        <el-switch
+                            :model-value="row.released"
+                            @change="handleRelease(row, $event as boolean)"
+                        />
+                    </template>
+                </vxe-column>
                 <vxe-column title="创建时间" field="create_time" min-width="170" />
                 <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
@@ -61,32 +48,24 @@
 </template>
 <script lang="ts" setup>
 import { ref, shallowRef } from 'vue'
-import type { UploadUserFile, UploadFile } from 'element-plus'
-import { fabuWgtLists, fabuWgtUpload, fabuWgtDel, type type_fabu_wgt_resp } from '@/api/fabu'
+import {
+    fabuWgtLists,
+    fabuWgtUpload,
+    fabuWgtRelease,
+    fabuWgtDel,
+    type type_fabu_wgt_resp
+} from '@/api/fabu'
 import Popup from '@/components/popup/index.vue'
+import UploadChunk from '@/components/upload-chunk'
+import type { ChunkUploadResult } from '@/components/upload-chunk'
 import feedback from '@/utils/feedback'
+import { formatSize } from '@/utils/file'
 
 const props = defineProps<{ versionId?: string }>()
 const emit = defineEmits(['close'])
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
-const fileList = ref<UploadUserFile[]>([])
-const fileRaw = ref<File | null>(null)
 const lists = ref<type_fabu_wgt_resp[]>([])
 const loading = ref(false)
-const uploading = ref(false)
-
-const formatSize = (bytes: number) => {
-    if (!bytes) return '0 B'
-    const units = ['B', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${units[i]}`
-}
-const onChange = (file: UploadFile) => {
-    fileRaw.value = (file.raw as File) || null
-}
-const onExceed = () => {
-    feedback.msgError('只能上传一个文件')
-}
 const getLists = async () => {
     if (!props.versionId) return
     loading.value = true
@@ -99,22 +78,42 @@ const getLists = async () => {
         loading.value = false
     }
 }
-const handleUpload = async () => {
-    if (!fileRaw.value || !props.versionId) return
-    uploading.value = true
+// 分片上传完成后，通知后端按文件引用解析 manifest 并登记 wgt 记录
+const handleUploaded = async (result: ChunkUploadResult) => {
+    if (!props.versionId || !result.fileHashId) return
     try {
-        const fd = new FormData()
-        fd.append('file', fileRaw.value)
-        fd.append('version_id', props.versionId)
-        await fabuWgtUpload(fd)
+        await fabuWgtUpload({
+            version_id: props.versionId,
+            file_hash_id: result.fileHashId,
+            file_name: result.fileName
+        })
         feedback.msgSuccess('上传成功')
-        fileList.value = []
-        fileRaw.value = null
         getLists()
     } catch (error) {
         console.error(error)
-    } finally {
-        uploading.value = false
+    }
+}
+const handleUploadError = (error: Error) => {
+    console.error(error)
+}
+// 切换发布状态（一个版本仅一个已发布包，发布时会取消同版本其它包）
+const handleRelease = async (row: type_fabu_wgt_resp, released: boolean) => {
+    const tip = released
+        ? `确定发布热更包「${row.version} (${row.version_code})」？同版本下其它已发布包将被自动取消。`
+        : `确定取消发布热更包「${row.version} (${row.version_code})」？`
+    try {
+        await feedback.confirm(tip)
+    } catch {
+        getLists() // 取消切换，回读列表使开关回弹
+        return
+    }
+    try {
+        await fabuWgtRelease({ id: row.id, released })
+        feedback.msgSuccess(released ? '发布成功' : '已取消发布')
+        getLists()
+    } catch (error) {
+        console.error(error)
+        getLists()
     }
 }
 const copyLink = async (row: type_fabu_wgt_resp) => {

@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"path/filepath"
 	"strconv"
-	"time"
 	"x_admin/app/schema/common_schema"
 	"x_admin/app/service/common_service"
 	"x_admin/config"
@@ -178,9 +177,17 @@ func (fh *UploadHandler) Serve(c *gin.Context) {
 	// 替换拼接真实后缀
 	file_name = util.UrlUtil.ReplaceExt(file_name, "."+ext)
 
+	// 用文件真实修改时间作为 modtime，使 If-Range / If-Modified-Since 等条件请求与缓存复用生效
+	stat, err := f.Stat()
+	if err != nil {
+		core.Logger.Errorf("FileHandler.Serve stat err: id=%s path=%s err=%+v", id, absPath, err)
+		response.NotFound(c, "文件不存在")
+		return
+	}
+
 	// c.Header("Content-Disposition", `inline; filename="`+file_name+`"`)
 	c.Header("Content-Disposition", `inline;filename*=UTF-8''`+url.PathEscape(file_name))
 	c.Header("Content-Type", ctype)
 	c.Header("Cache-Control", "public, max-age=31536000, immutable")
-	http.ServeContent(c.Writer, c.Request, filepath.Base(absPath), time.Now(), f)
+	http.ServeContent(c.Writer, c.Request, filepath.Base(absPath), stat.ModTime(), f)
 }

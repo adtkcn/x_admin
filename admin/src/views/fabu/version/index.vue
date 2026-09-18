@@ -19,7 +19,9 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" :disabled="!appId" @click="handleUpload">上传版本</el-button>
+                    <el-button type="primary" :disabled="!appId" @click="handleUpload"
+                        >上传版本</el-button
+                    >
                 </el-form-item>
             </el-form>
         </el-card>
@@ -35,7 +37,7 @@
                 <vxe-column title="版本" field="version" min-width="120" />
                 <vxe-column title="版本Code" field="version_code" min-width="110" />
                 <vxe-column title="大小" min-width="110">
-                    <template #default="{ row }">{{ formatSize(row.size) }}</template>
+                    <template #default="{ row }">{{ formatSize(row.size, 2) }}</template>
                 </vxe-column>
                 <vxe-column title="MD5" field="md5" min-width="220" />
                 <vxe-column title="已发布" min-width="100">
@@ -47,7 +49,10 @@
                 </vxe-column>
                 <vxe-column title="灰度" min-width="90">
                     <template #default="{ row }">
-                        <el-switch :model-value="row.gray" @change="(v: boolean | string | number) => handleGray(row, Boolean(v))" />
+                        <el-switch
+                            :model-value="row.gray"
+                            @change="(v: boolean | string | number) => handleGray(row, Boolean(v))"
+                        />
                     </template>
                 </vxe-column>
                 <vxe-column title="更新模式" min-width="130">
@@ -65,12 +70,19 @@
                 </vxe-column>
                 <vxe-column title="下载次数" field="download_times" min-width="100" />
                 <vxe-column title="创建时间" field="create_time" min-width="170" />
-                <vxe-column title="操作" width="260" fixed="right">
+                <vxe-column title="操作" width="240" fixed="right">
                     <template #default="{ row }">
-                        <el-button v-if="!row.released" type="primary" link @click="handleRelease(row)">
+                        <el-button
+                            v-if="!row.released"
+                            type="primary"
+                            link
+                            @click="handleRelease(row)"
+                        >
                             发布
                         </el-button>
-                        <el-button v-else type="warning" link @click="handleCancel(row)">取消发布</el-button>
+                        <el-button v-else type="warning" link @click="handleCancel(row)"
+                            >取消发布</el-button
+                        >
                         <el-button type="primary" link @click="handleWgt(row)">热更新</el-button>
                         <el-button type="primary" link @click="copyLink(row)">下载</el-button>
                         <el-button type="danger" link @click="handleDel(row)">删除</el-button>
@@ -84,7 +96,6 @@
         <upload-popup
             v-if="showUpload"
             ref="uploadRef"
-            :app-id="appId"
             @success="getLists"
             @close="showUpload = false"
         />
@@ -113,7 +124,8 @@ import {
 } from '@/api/fabu'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
-import UploadPopup from './upload.vue'
+import { formatSize } from '@/utils/file'
+import UploadPopup from '../components/upload.vue'
 import WgtPopup from './wgt.vue'
 
 defineOptions({ name: 'fabuVersion' })
@@ -131,13 +143,6 @@ const { pager, getLists, resetPage } = usePaging({
     fetchFun: fabuVersionLists,
     params: queryParams
 })
-
-const formatSize = (bytes: number) => {
-    if (!bytes) return '0 B'
-    const units = ['B', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${units[i]}`
-}
 
 const loadApps = async () => {
     try {

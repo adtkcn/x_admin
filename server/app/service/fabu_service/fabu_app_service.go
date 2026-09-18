@@ -46,49 +46,20 @@ func (s fabuAppService) List(req fabu_schema.FabuAppListReq) (res map[string]any
 	return
 }
 
-func (s fabuAppService) Detail(id string) (res fabu_schema.FabuAppResp, e error) {
-	var app fabu_model.FabuApp
-	if e = response.CheckErr(s.db.Where("id = ?", id).First(&app).Error, "应用不存在"); e != nil {
-		return
-	}
-	convert_util.Copy(&res, app)
-	return
-}
-
-func (s fabuAppService) Add(req fabu_schema.FabuAppAddReq) (e error) {
-	app := fabu_model.FabuApp{
-		Name:        req.Name,
-		Platform:    req.Platform,
-		BundleId:    req.BundleId,
-		BundleName:  req.BundleName,
-		Version:     req.Version,
-		VersionCode: req.VersionCode,
-		ShortUrl:    req.ShortUrl,
-		Icon:        req.Icon,
-	}
-	if e = response.CheckErr(s.db.Create(&app).Error, "创建应用失败"); e != nil {
-		return
-	}
-	return
-}
-
-func (s fabuAppService) Edit(req fabu_schema.FabuAppEditReq) (e error) {
-	updates := map[string]any{
-		"name":        req.Name,
-		"bundle_name": req.BundleName,
-		"short_url":   req.ShortUrl,
-		"icon":        req.Icon,
-	}
-	if e = response.CheckErr(s.db.Model(&fabu_model.FabuApp{}).Where("id = ?", req.ID).Updates(updates).Error, "更新应用失败"); e != nil {
-		return
-	}
-	return
-}
-
+// Del 删除应用：事务内级联软删其下版本与热更新包，避免孤儿数据
 func (s fabuAppService) Del(id string) (e error) {
-	if e = response.CheckErr(s.db.Where("id = ?", id).Delete(&fabu_model.FabuApp{}).Error, "删除应用失败"); e != nil {
-		return
-	}
+	e = s.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("app_id = ?", id).Delete(&fabu_model.FabuWgt{}).Error; err != nil {
+			return response.CheckErr(err, "删除热更新包失败")
+		}
+		if err := tx.Where("app_id = ?", id).Delete(&fabu_model.FabuAppVersion{}).Error; err != nil {
+			return response.CheckErr(err, "删除版本失败")
+		}
+		if err := tx.Where("id = ?", id).Delete(&fabu_model.FabuApp{}).Error; err != nil {
+			return response.CheckErr(err, "删除应用失败")
+		}
+		return nil
+	})
 	return
 }
 
@@ -99,8 +70,9 @@ func (s fabuAppService) FindByShortUrl(shortUrl string) (app fabu_model.FabuApp,
 	return
 }
 
-func (s fabuAppService) FindByBundleId(bundleId string, app *fabu_model.FabuApp) (e error) {
-	if e = response.CheckErr(s.db.Where("bundle_id = ?", bundleId).First(app).Error, "应用不存在"); e != nil {
+// FindByBundleId 按 BundleId+平台定位应用（安卓/iOS 包名可能相同，必须区分平台）
+func (s fabuAppService) FindByBundleId(bundleId, platform string, app *fabu_model.FabuApp) (e error) {
+	if e = response.CheckErr(s.db.Where("bundle_id = ? AND platform = ?", bundleId, platform).First(app).Error, "应用不存在"); e != nil {
 		return
 	}
 	return

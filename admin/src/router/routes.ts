@@ -41,6 +41,16 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         component: () => import('@/views/account/forgot-password.vue')
     },
     {
+        // 应用下载页（公开，无后台布局，按短链访问）
+        path: '/fabu/url/:short_url',
+        name: 'fabu_download',
+        component: () => import('@/views/fabu/download/index.vue'),
+        meta: {
+            title: '应用下载',
+            white: true
+        }
+    },
+    {
         path: '/system',
         component: LAYOUT,
         children: [

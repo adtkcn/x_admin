@@ -143,7 +143,7 @@ func (service monitorErrorService) Add(addReq monitor_schema.MonitorErrorAddReq,
 	var obj model.MonitorError
 	convert_util.Copy(&obj, addReq)
 
-	Md5 := util.ToolsUtil.MakeMd5(obj.ProjectKey + obj.EventType + obj.Message + obj.Path + obj.Stack)
+	Md5 := util.ToolsUtil.StrMd5(obj.ProjectKey + obj.EventType + obj.Message + obj.Path + obj.Stack)
 
 	errorDetails, err := service.DetailByMD5(Md5)
 	if err != nil {

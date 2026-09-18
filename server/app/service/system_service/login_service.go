@@ -52,7 +52,7 @@ func (loginSrv systemLoginService) Login(c *gin.Context, req *system_schema.Syst
 		e = response.LoginDisableError
 		return
 	}
-	md5Pwd := util.ToolsUtil.MakeMd5(req.Password + sysAdmin.Salt)
+	md5Pwd := util.ToolsUtil.StrMd5(req.Password + sysAdmin.Salt)
 	if sysAdmin.Password != md5Pwd {
 		if e = loginSrv.RecordLoginLog(c, sysAdmin.ID, req.Email, response.LoginAccountError.Msg()); e != nil {
 			return

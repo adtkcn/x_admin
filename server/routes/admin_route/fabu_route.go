@@ -15,9 +15,6 @@ func initFabuRoute(rg *gin.RouterGroup) {
 	auth := rg.Group("/fabu", middleware.LoginAuth())
 	{
 		auth.GET("/app/list", handleApp.List)
-		auth.GET("/app/detail", handleApp.Detail)
-		auth.POST("/app/add", handleApp.Add)
-		auth.POST("/app/edit", handleApp.Edit)
 		auth.POST("/app/del", handleApp.Del)
 
 		auth.GET("/version/list", handleVersion.List)
@@ -30,6 +27,7 @@ func initFabuRoute(rg *gin.RouterGroup) {
 
 		auth.GET("/wgt/list", handleWgt.List)
 		auth.POST("/wgt/upload", handleWgt.Upload)
+		auth.POST("/wgt/release", handleWgt.Release)
 		auth.POST("/wgt/del", handleWgt.Del)
 	}
 }

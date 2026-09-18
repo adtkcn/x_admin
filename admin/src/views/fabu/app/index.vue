@@ -46,16 +46,24 @@
                     </template>
                 </vxe-column>
                 <vxe-column title="BundleId" field="bundle_id" min-width="200" />
-                <vxe-column title="当前版本" min-width="130">
-                    <template #default="{ row }">{{ row.version }} ({{ row.version_code }})</template>
+                <vxe-column title="短链" field="short_url" min-width="120">
+                    <template #default="{ row }">
+                        <el-link
+                            v-if="row.short_url"
+                            type="primary"
+                            :underline="false"
+                            @click="handleOpenDownload(row)"
+                        >
+                            {{ row.short_url }}
+                        </el-link>
+                        <span v-else>-</span>
+                    </template>
                 </vxe-column>
-                <vxe-column title="短链" field="short_url" min-width="120" />
                 <vxe-column title="下载次数" field="download_times" min-width="100" />
                 <vxe-column title="创建时间" field="create_time" min-width="170" />
-                <vxe-column title="操作" width="240" fixed="right">
+                <vxe-column title="操作" width="120" fixed="right">
                     <template #default="{ row }">
                         <el-button type="primary" link @click="handleVersions(row)">版本</el-button>
-                        <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
                         <el-button type="danger" link @click="handleDel(row)">删除</el-button>
                     </template>
                 </vxe-column>
@@ -64,8 +72,12 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
-        <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
-        <upload-popup v-if="showUpload" ref="uploadRef" @success="getLists" @close="showUpload = false" />
+        <upload-popup
+            v-if="showUpload"
+            ref="uploadRef"
+            @success="getLists"
+            @close="showUpload = false"
+        />
     </div>
 </template>
 <script lang="ts" setup>
@@ -79,13 +91,10 @@ import {
 } from '@/api/fabu'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
-import EditPopup from './edit.vue'
-import UploadPopup from './upload.vue'
+import UploadPopup from '../components/upload.vue'
 
 defineOptions({ name: 'fabuApp' })
 const router = useRouter()
-const editRef = shallowRef<InstanceType<typeof EditPopup>>()
-const showEdit = ref(false)
 const uploadRef = shallowRef<InstanceType<typeof UploadPopup>>()
 const showUpload = ref(false)
 const queryParams = reactive<type_fabu_app_list>({ keyword: '' })
@@ -99,18 +108,15 @@ const handleUpload = async () => {
     await nextTick()
     uploadRef.value?.open()
 }
-const handleEdit = async (row: type_fabu_app_resp) => {
-    showEdit.value = true
-    await nextTick()
-    editRef.value?.open('edit')
-    editRef.value?.getDetail(row)
-}
 const handleVersions = (row: type_fabu_app_resp) => {
     router.push(`/fabu/version?appId=${row.id}`)
 }
+const handleOpenDownload = (row: type_fabu_app_resp) => {
+    window.open(`${location.origin}/fabu/url/${row.short_url}`, '_blank')
+}
 const handleDel = async (row: type_fabu_app_resp) => {
     try {
-        await feedback.confirm(`确定删除应用「${row.name}」？该应用下的版本与热更新包不会被自动删除。`)
+        await feedback.confirm(`确定删除应用「${row.name}」？该应用下的版本与热更新包将一并删除。`)
         await fabuAppDel({ id: row.id })
         feedback.msgSuccess('删除成功')
         getLists()

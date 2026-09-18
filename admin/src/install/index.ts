@@ -1,27 +1,28 @@
 import type { App } from 'vue'
-const modules = import.meta.glob('./**/*', { eager: true })
+
+// 指令（手动注册，新增指令需在此处引入并注册）
+import copy from './directives/copy'
+import perms from './directives/perms'
+
+// 插件（手动注册，新增插件需在此处引入并安装）
+import elIcon from './plugins/el-icon'
+import pinia from './plugins/pinia'
+import router from './plugins/router'
+import vxeTable from './plugins/vxe-table'
+import elementPlus from './plugins/element-plus'
 
 // 安装方法，执行某一类相同操作
-function install(app: App<Element>) {
-    Object.keys(modules).forEach((key) => {
-        const name = key.replace(/(.*\/)*([^.]+).*/gi, '$2')
-        const type = key.replace(/^\.\/([\w-]+).*/gi, '$1')
-        const module: any = modules[key]
-        if (module.default) {
-            switch (type) {
-                // 用于注册全局指令
-                case 'directives':
-                    app.directive(name, module.default)
-                    break
-                // 使用插件
-                case 'plugins':
-                    typeof module.default === 'function' && module.default(app)
-                    break
-            }
-        }
-    })
-}
+export function install(app: App<Element>) {
+    // 使用插件
+    router(app)
+    pinia(app)
 
-export default {
-    install
+    elementPlus(app)
+    vxeTable(app)
+
+    elIcon(app)
+
+    // 注册全局指令
+    app.directive('copy', copy)
+    app.directive('perms', perms)
 }

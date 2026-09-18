@@ -22,18 +22,19 @@ func (h FabuWgtHandler) List(c *gin.Context) {
 }
 
 func (h FabuWgtHandler) Upload(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		response.JSON(c, nil, response.ParamsValidError.SetMessage("请上传文件"))
+	var req fabu_schema.FabuWgtUploadReq
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &req)) {
 		return
 	}
-	versionId := c.PostForm("version_id")
-	if versionId == "" {
-		response.JSON(c, nil, response.ParamsValidError.SetMessage("缺少 version_id"))
+	response.JSON(c, nil, fabu_service.WgtService.Upload(req))
+}
+
+func (h FabuWgtHandler) Release(c *gin.Context) {
+	var req fabu_schema.FabuWgtReleaseReq
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &req)) {
 		return
 	}
-	e := fabu_service.WgtService.Upload(file, versionId)
-	response.JSON(c, nil, e)
+	response.JSON(c, nil, fabu_service.WgtService.Release(req))
 }
 
 func (h FabuWgtHandler) Del(c *gin.Context) {

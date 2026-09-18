@@ -48,6 +48,7 @@ import config from '@/config'
 import { getToken } from '@/utils/auth'
 import feedback from '@/utils/feedback'
 import { RequestCodeEnum } from '@/enums/requestEnums'
+import { formatSize } from '@/utils/file'
 
 const props = defineProps({
     // 允许的后缀，如 ['png','jpg']
@@ -91,13 +92,6 @@ const effectiveLimit = computed(() => (props.limit && props.limit > 0 ? props.li
 
 const fullUrl = `${config.baseUrl}${config.urlPrefix}/common/upload/file`
 const checkInstantUrl = `${config.baseUrl}${config.urlPrefix}/common/upload/checkInstant`
-
-function formatSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' B'
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
-    if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB'
-    return (bytes / 1024 / 1024 / 1024).toFixed(1) + ' GB'
-}
 
 function getExt(name: string) {
     const i = name.lastIndexOf('.')

@@ -469,7 +469,7 @@ func (adminSrv systemAuthAdminService) Add(addReq system_schema.SystemAuthAdminA
 	salt := util.ToolsUtil.RandomString(5)
 	convert_util.Copy(&sysAdmin, addReq)
 	sysAdmin.Salt = salt
-	sysAdmin.Password = util.ToolsUtil.MakeMd5(strings.Trim(addReq.Password, " ") + salt)
+	sysAdmin.Password = util.ToolsUtil.StrMd5(strings.Trim(addReq.Password, " ") + salt)
 	if addReq.Avatar == "" {
 		addReq.Avatar = "/api/static/backend_avatar.png"
 	}
@@ -531,7 +531,7 @@ func (adminSrv systemAuthAdminService) Edit(c *gin.Context, editReq system_schem
 		}
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt
-		adminMap["Password"] = util.ToolsUtil.MakeMd5(strings.Trim(editReq.Password, "") + salt)
+		adminMap["Password"] = util.ToolsUtil.StrMd5(strings.Trim(editReq.Password, "") + salt)
 	}
 	err = adminSrv.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&system_model.SystemAuthAdmin{}).Where("id = ?", editReq.ID).Updates(adminMap).Error; err != nil {
@@ -641,7 +641,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 	}
 
 	if updateReq.Password != "" {
-		currPass := util.ToolsUtil.MakeMd5(updateReq.CurrPassword + admin.Salt)
+		currPass := util.ToolsUtil.StrMd5(updateReq.CurrPassword + admin.Salt)
 		if currPass != admin.Password {
 			return response.Failed.SetMessage("当前密码不正确!")
 		}
@@ -651,7 +651,7 @@ func (adminSrv systemAuthAdminService) Update(c *gin.Context, updateReq system_s
 		}
 		salt := util.ToolsUtil.RandomString(5)
 		adminMap["Salt"] = salt
-		adminMap["Password"] = util.ToolsUtil.MakeMd5(strings.Trim(updateReq.Password, " ") + salt)
+		adminMap["Password"] = util.ToolsUtil.StrMd5(strings.Trim(updateReq.Password, " ") + salt)
 	}
 	err = adminSrv.db.Model(&admin).Updates(adminMap).Error
 	if e = response.CheckErr(err, "Update Updates err"); e != nil {

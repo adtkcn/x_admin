@@ -24,7 +24,8 @@ type plistData struct {
 }
 
 // Build 渲染 iOS 安装 manifest plist
-func (s fabuPlistService) Build(app fabu_model.FabuApp, version fabu_model.FabuAppVersion) (string, error) {
+// baseURL 为站点绝对前缀（scheme://host），itms-services 要求 asset url 必须是绝对地址
+func (s fabuPlistService) Build(app fabu_model.FabuApp, version fabu_model.FabuAppVersion, baseURL string) (string, error) {
 	tpl := `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -61,7 +62,12 @@ func (s fabuPlistService) Build(app fabu_model.FabuApp, version fabu_model.FabuA
 		return "", response.CheckErr(err, "plist模板解析失败")
 	}
 	var buf bytes.Buffer
-	data := plistData{AppName: app.Name, BundleId: app.BundleId, Version: version.Version, DownloadUrl: version.DownloadUrl}
+	data := plistData{
+		AppName:     template.HTMLEscapeString(app.Name),
+		BundleId:    template.HTMLEscapeString(app.BundleId),
+		Version:     template.HTMLEscapeString(version.Version),
+		DownloadUrl: template.HTMLEscapeString(baseURL + version.DownloadUrl),
+	}
 	if err := t.Execute(&buf, data); err != nil {
 		return "", response.CheckErr(err, "plist渲染失败")
 	}

@@ -1,108 +1,11 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import { MenuEnum } from '@/enums/appEnums'
-import { isExternal } from '@/utils/validate'
-import { constantRoutes, INDEX_ROUTE_NAME, LAYOUT, Empty } from './routes'
+import { createRouter, createWebHistory } from 'vue-router'
+import { constantRoutes, INDEX_ROUTE_NAME } from './routes'
 import useUserStore from '@/stores/modules/user'
-import qs from 'query-string'
-// 匹配views里面所有的.vue文件，动态引入
-const modules = import.meta.glob('/src/views/**/*.vue')
 
-//
-export function getModulesKey() {
-    return Object.keys(modules)
-        .filter((item) => !item.endsWith('edit.vue') && item.indexOf('/component/') == -1)
-        .map((item) => item.replace('/src/views/', '').replace('.vue', ''))
-}
-
-// 过滤路由所需要的数据
-export function filterAsyncRoutes(routes: any[], firstRoute = true) {
-    return routes.map((route) => {
-        const routeRecord = createRouteRecord(route, firstRoute)
-        if (route.children != null && route.children && route.children.length) {
-            routeRecord.children = filterAsyncRoutes(route.children, false)
-        }
-        return routeRecord
-    })
-}
-
-// 创建一条路由记录
-export function createRouteRecord(route: any, firstRoute: boolean): RouteRecordRaw {
-    let query = route.params
-
-    try {
-        if (route.params) {
-            // console.log(route.params)
-            // query =
-            query = decodeURIComponent(qs.stringify(JSON.parse(route.params)))
-            console.log(query)
-        }
-    } catch (error) {
-        // console.error(error)
-    }
-    //@ts-ignore
-    const routeRecord: RouteRecordRaw = {
-        path: isExternal(route.paths) ? route.paths : firstRoute ? `/${route.paths}` : route.paths,
-        name: Symbol(route.paths),
-        meta: {
-            hidden: !route.is_show,
-            keepAlive: !!route.is_cache,
-            title: route.menu_name,
-            perms: route.perms, //
-            query: query,
-            icon: route.menu_icon,
-            type: route.menu_type,
-            activeMenu: route.selected
-        }
-    }
-    switch (route.menu_type) {
-        case MenuEnum.CATALOGUE:
-            routeRecord.component = firstRoute ? LAYOUT : Empty
-            if (!route.children) {
-                routeRecord.component = Empty
-            }
-            break
-        case MenuEnum.MENU:
-            routeRecord.component = loadRouteView(route.component)
-            break
-    }
-    return routeRecord
-}
-
-// 动态加载组件
-export function loadRouteView(component: string) {
-    try {
-        const key = Object.keys(modules).find((key) => {
-            return key.includes(`${component}.vue`)
-        })
-        if (key) {
-            return modules[key]
-        }
-        throw Error(`找不到组件${component}，请确保组件路径正确`)
-    } catch (error) {
-        console.error(error)
-        return Empty
-    }
-}
-
-// 找到第一个有效的路由
-export function findFirstValidRoute(routes: RouteRecordRaw[]): string | undefined {
-    for (const route of routes) {
-        if (route.meta?.type == MenuEnum.MENU && !route.meta?.hidden && !isExternal(route.path)) {
-            return route.name as string
-        }
-        if (route.children) {
-            const name = findFirstValidRoute(route.children)
-            if (name) {
-                return name
-            }
-        }
-    }
-}
-// //通过权限字符查询路由路径
-// export function getRoutePath(perms: string) {
-//     const routerObj = useRouter() || router
-//     return routerObj.getRoutes().find((item) => item.meta?.perms.split(',').includes(perms))?.path || ''
-// }
+const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: constantRoutes
+})
 
 // 重置路由
 export function resetRouter() {
@@ -115,10 +18,5 @@ export function resetRouter() {
         }
     })
 }
-
-const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes: constantRoutes
-})
 
 export default router

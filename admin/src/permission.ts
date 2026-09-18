@@ -3,13 +3,17 @@
  */
 
 import NProgress from 'nprogress'
-import router, { findFirstValidRoute } from './router'
+import router from './router'
+import { findFirstValidRoute } from './router/routes_utils'
+import { INDEX_ROUTE, INDEX_ROUTE_NAME } from './router/routes'
+
 import 'nprogress/nprogress.css'
 import { isExternal } from './utils/validate'
 import useUserStore from './stores/modules/user'
-import { INDEX_ROUTE, INDEX_ROUTE_NAME } from './router/routes'
-import { PageEnum } from './enums/pageEnum'
 import useTabsStore from './stores/modules/multipleTabs'
+
+import { PageEnum } from './enums/pageEnum'
+
 import { clearAuthInfo } from './utils/auth'
 import config from './config'
 
@@ -28,8 +32,8 @@ router.beforeEach(async (to, from) => {
     document.title = to.meta.title ?? config.title
     const userStore = useUserStore()
     const tabsStore = useTabsStore()
-    if (whiteList.includes(to.path)) {
-        // 在免登录白名单，直接进入
+    if (to.meta.white || whiteList.includes(to.path)) {
+        // 免登录白名单（含标记 meta.white 的公开页面，如应用下载页），直接进入
         return true
     } else if (userStore.token) {
         // 获取用户信息

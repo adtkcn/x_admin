@@ -3,9 +3,7 @@ package web_ctl
 import (
 	"strconv"
 
-	"x_admin/app/model/fabu_model"
 	"x_admin/app/service/fabu_service"
-	"x_admin/core"
 	"x_admin/core/response"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +11,15 @@ import (
 
 // FabuController 公开下载/安装相关接口
 type FabuController struct{}
+
+// requestBaseURL 拼接当前站点绝对前缀（scheme://host），供 iOS plist 使用
+func requestBaseURL(c *gin.Context) string {
+	scheme := "http"
+	if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
+		scheme = "https"
+	}
+	return scheme + "://" + c.Request.Host
+}
 
 // Plist 返回 iOS 安装 manifest
 func (h FabuController) Plist(c *gin.Context) {
@@ -23,12 +30,19 @@ func (h FabuController) Plist(c *gin.Context) {
 		response.JSON(c, nil, err)
 		return
 	}
-	xmlStr, err := fabu_service.PlistService.Build(app, version)
+	xmlStr, err := fabu_service.PlistService.Build(app, version, requestBaseURL(c))
 	if err != nil {
 		response.JSON(c, nil, err)
 		return
 	}
 	c.Data(200, "application/xml", []byte(xmlStr))
+}
+
+// AppInfo 按短链返回下载页展示信息（公开，无需登录）
+func (h FabuController) AppInfo(c *gin.Context) {
+	shortUrl := c.Param("shortUrl")
+	res, err := fabu_service.VersionService.DownloadPageInfo(shortUrl)
+	response.JSON(c, res, err)
 }
 
 // Download 按短链下载(自增计数后跳转)
@@ -61,35 +75,10 @@ func (h FabuController) Count(c *gin.Context) {
 	c.Redirect(302, url)
 }
 
-// CheckUpdate 版本检查更新
+// CheckUpdate 版本检查更新：优先全量包，其次当前版本热更包，判定逻辑见 VersionService.CheckUpdate
 func (h FabuController) CheckUpdate(c *gin.Context) {
-	bundleId := c.Query("bundle_id")
 	clientCode, _ := strconv.Atoi(c.Query("version_code"))
-
-	var app fabu_model.FabuApp
-	if err := fabu_service.AppService.FindByBundleId(bundleId, &app); err != nil {
-		response.JSON(c, nil, err)
-		return
-	}
-	if app.CurrentVersionId == "" {
-		response.JSON(c, gin.H{"update": false}, nil)
-		return
-	}
-	var version fabu_model.FabuAppVersion
-	if err := core.GetDB().Where("id = ?", app.CurrentVersionId).First(&version).Error; err != nil {
-		response.JSON(c, gin.H{"update": false}, nil)
-		return
-	}
-	if version.VersionCode <= clientCode {
-		response.JSON(c, gin.H{"update": false}, nil)
-		return
-	}
-	response.JSON(c, gin.H{
-		"update":       true,
-		"version":      version.Version,
-		"version_code": version.VersionCode,
-		"download_url": version.DownloadUrl,
-		"install_url":  version.InstallUrl,
-		"update_mode":  version.UpdateMode,
-	}, nil)
+	wgtCode, _ := strconv.Atoi(c.Query("wgt_code"))
+	res, err := fabu_service.VersionService.CheckUpdate(c.Query("bundle_id"), c.Query("platform"), clientCode, wgtCode)
+	response.JSON(c, res, err)
 }

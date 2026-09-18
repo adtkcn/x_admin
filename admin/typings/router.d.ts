@@ -10,5 +10,6 @@ declare module 'vue-router' {
         activeMenu?: string
         hideTab?: boolean
         keepAlive?: boolean
+        white?: boolean
     }
 }

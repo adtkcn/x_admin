@@ -12,6 +12,7 @@ func FabuWebRoute(rg *gin.RouterGroup) {
 	fabuRg := rg.Group("/fabu")
 	{
 		fabuRg.GET("/plist/:appId/:versionId", handle.Plist)
+		fabuRg.GET("/app/:shortUrl", handle.AppInfo)
 		fabuRg.GET("/download/:shortUrl", handle.Download)
 		fabuRg.GET("/count/:appId/:versionId", handle.Count)
 		fabuRg.GET("/version/checkupdate", handle.CheckUpdate)

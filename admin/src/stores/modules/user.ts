@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import cache from '@/utils/cache'
 import type { RouteRecordRaw } from 'vue-router'
+
+import router from '@/router'
 import {
     getUserInfo,
     login,
@@ -9,7 +11,7 @@ import {
     type type_system_login,
     type type_system_admin_self
 } from '@/api/system/user'
-import router, { filterAsyncRoutes } from '@/router'
+import { filterAsyncRoutes } from '@/router/routes_utils'
 import { TOKEN_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { clearAuthInfo, getToken } from '@/utils/auth'
@@ -60,7 +62,8 @@ const useUserStore = defineStore('user', {
                 logout()
                     .then(async () => {
                         this.token = ''
-                        await router.push(PageEnum.LOGIN)
+                        router.push(PageEnum.LOGIN)
+
                         clearAuthInfo()
                         resolve()
                     })

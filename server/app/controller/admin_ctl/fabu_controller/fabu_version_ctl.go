@@ -22,12 +22,11 @@ func (h FabuVersionHandler) List(c *gin.Context) {
 }
 
 func (h FabuVersionHandler) Upload(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		response.JSON(c, nil, response.ParamsValidError.SetMessage("请上传文件"))
+	var req fabu_schema.FabuVersionUploadReq
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &req)) {
 		return
 	}
-	res, e := fabu_service.VersionService.Upload(file)
+	res, e := fabu_service.VersionService.Upload(req)
 	response.JSON(c, res, e)
 }
 

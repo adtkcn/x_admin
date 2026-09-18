@@ -206,7 +206,7 @@ import {
     type type_system_menu_resp
 } from '@/api/perms/menu'
 import { getApiList } from '@/api/setting/website'
-import { getModulesKey } from '@/router'
+import { getModulesKey } from '@/router/routes_utils'
 import { MenuEnum } from '@/enums/appEnums'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'

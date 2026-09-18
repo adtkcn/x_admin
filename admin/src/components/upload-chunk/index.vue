@@ -66,6 +66,7 @@ import SparkMD5 from 'spark-md5'
 import s3Client from '@/utils/s3Client'
 import axios from 'axios'
 import type { ChunkUploadResult } from './type'
+import { formatSize } from '@/utils/file'
 
 const props = defineProps({
     // S3 Bucket 名称
@@ -121,13 +122,6 @@ const acceptValue = computed(() => {
     }
     return props.accept
 })
-
-function formatSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' B'
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
-    if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB'
-    return (bytes / 1024 / 1024 / 1024).toFixed(1) + ' GB'
-}
 
 function triggerFileInput() {
     fileInputRef.value?.click()
