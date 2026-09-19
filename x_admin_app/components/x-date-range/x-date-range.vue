@@ -14,7 +14,7 @@
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 
 const emit = defineEmits(["update:startTime", "update:endTime"]);
@@ -28,8 +28,8 @@ const props = defineProps({
     default: "",
   },
 });
-let calendarsRef = ref(null);
-function Confirm(e) {
+let calendarsRef = ref<any>(null);
+function Confirm(e: any) {
   console.log(e);
   emit("update:startTime", e.range.before);
   emit("update:endTime", e.range.after);

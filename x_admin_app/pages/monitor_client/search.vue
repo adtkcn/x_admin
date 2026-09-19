@@ -1,13 +1,14 @@
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" labelWidth="80" :model="form">
-			<uv-form-item label="项目key" prop="projectKey" borderBottom>
+			<uv-form-item label="项目key" prop="project_key" borderBottom>
+					<uv-input v-model="form.project_key"> </uv-input>
 			</uv-form-item>
-			<uv-form-item label="sdk生成的客户端id" prop="clientId" borderBottom>
-					<uv-input v-model="form.clientId"> </uv-input>
+			<uv-form-item label="sdk生成的客户端id" prop="client_id" borderBottom>
+					<uv-input v-model="form.client_id"> </uv-input>
 			</uv-form-item>
-			<uv-form-item label="用户id" prop="userId" borderBottom>
-					<uv-input v-model="form.userId"> </uv-input>
+			<uv-form-item label="用户id" prop="user_id" borderBottom>
+					<uv-input v-model="form.user_id"> </uv-input>
 			</uv-form-item>
 			<uv-form-item label="系统" prop="os" borderBottom>
 					<uv-input v-model="form.os"> </uv-input>
@@ -18,22 +19,12 @@
 			<uv-form-item label="城市" prop="city" borderBottom>
 					<uv-input v-model="form.city"> </uv-input>
 			</uv-form-item>
-			<uv-form-item label="屏幕" prop="width" borderBottom>
-					<uv-input v-model="form.width"> </uv-input>
-			</uv-form-item>
-			<uv-form-item label="屏幕高度" prop="height" borderBottom>
-					<uv-input v-model="form.height"> </uv-input>
-			</uv-form-item>
 			<uv-form-item label="ua记录" prop="ua" borderBottom>
 					<uv-input v-model="form.ua"> </uv-input>
 			</uv-form-item>
-			<uv-form-item label="创建时间" prop="CreateTime" borderBottom>
-					<x-date-range v-model:startTime="form.CreateTimeStart"
-							v-model:endTime="form.CreateTimeEnd"></x-date-range>
-			</uv-form-item>
-			<uv-form-item label="更新时间" prop="ClientTime" borderBottom>
-					<x-date-range v-model:startTime="form.ClientTimeStart"
-							v-model:endTime="form.ClientTimeEnd"></x-date-range>
+			<uv-form-item label="创建时间" prop="create_time" borderBottom>
+					<x-date-range v-model:startTime="form.create_time_start"
+							v-model:endTime="form.create_time_end"></x-date-range>
 			</uv-form-item>
 
 			<uv-button type="primary" text="搜索" customStyle="margin-top: 20rpx" @click="submit"></uv-button>
@@ -60,23 +51,19 @@
 		useDictData
 	} from "@/hooks/useDictOptions";
 	import xDateRange from "@/components/x-date-range/x-date-range.vue";
-	import type {type_monitor_client_query} from "@/api/monitor_project";
+	import type {type_monitor_client_query} from "@/api/monitor_client";
 
 
 	let form = ref<type_monitor_client_query>({
-    projectKey: '',
-    clientId: '',
-    userId: '',
+    project_key: '',
+    client_id: '',
+    user_id: '',
     os: '',
     browser: '',
     city: '',
-    width: '',
-    height: '',
     ua: '',
-    CreateTimeStart: '',
-    CreateTimeEnd: '',
-    ClientTimeStart: '',
-    ClientTimeEnd: '',
+    create_time_start: '',
+    create_time_end: '',
 	});
 
 	function submit() {

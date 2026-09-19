@@ -1,28 +1,32 @@
-<script>
+<script setup lang="ts">
+	import {
+		onLaunch,
+		onShow,
+		onHide
+	} from "@dcloudio/uni-app";
 	import {
 		useUserStore
 	} from "@/stores/user";
 	import { check as checkAppUpdate } from "@/sdk/upgrade/vue3/config";
 
-	export default {
-		onLaunch: function() {
-			// 启动时检查应用更新（普通/强制/wgt 策略见 sdk/upgrade/README.md）
-			checkAppUpdate();
-			const userStore = useUserStore();
-			userStore
-				.getInfo()
-				.then((res) => {
-					console.log("userInfo", res);
-				})
-				.catch((err) => {
-					uni.redirectTo({
-						url: "/pages/login/login",
-					});
+	onLaunch(() => {
+		// 启动时检查应用更新（普通/强制/wgt 策略见 sdk/upgrade/README.md）
+		checkAppUpdate();
+		const userStore = useUserStore();
+		userStore
+			.getInfo()
+			.then((res: any) => {
+				console.log("userInfo", res);
+			})
+			.catch(() => {
+				uni.redirectTo({
+					url: "/pages/login/login",
 				});
-		},
-		onShow: function() {},
-		onHide: function() {},
-	};
+			});
+	});
+
+	onShow(() => {});
+	onHide(() => {});
 </script>
 
 <style>

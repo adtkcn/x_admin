@@ -14,7 +14,7 @@
                 height="80rpx"
                 width="80rpx"
                 shape="square"
-                :src="$filePath(userStore.avatar)"
+                :src="filePath(userStore.avatar)"
                 mode="aspectFill"
               ></uv-avatar>
             </button>
@@ -28,8 +28,9 @@
   </view>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useUserStore } from "@/stores/user";
+import { filePath } from "@/methods/index";
 
 const userStore = useUserStore();
 

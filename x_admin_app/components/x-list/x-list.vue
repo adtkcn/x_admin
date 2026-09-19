@@ -16,56 +16,48 @@
         </view>
     </view>
 </template>
-<script>
-export default {
-    props:{
-        icon:{
-            default:"",
-            type:String
-        },
-        title:{
-            default:"",
-            type:String
-        },
-        des:{
-            default:"",
-            type:String
-        },
-        btnText:{
-            default:"",
-            type:String
-        },
-        openType:{
-            default:"",
-            type:String
-        },
-        bottom:{
-            default:"0",
-            type:[String,Number]
-        },
-        url:{
-            default:"",
-            type:String
-        },
+<script setup lang="ts">
+import { toPath } from "@/utils/utils";
+
+const props = defineProps({
+    icon: {
+        default: "",
+        type: String
     },
-	data() {
-		return {
-			
-		}
-	},
-    computed:{
+    title: {
+        default: "",
+        type: String
     },
-	methods: {
-        btnClick(){
-            if(this.url){
-                this.$toPath(this.url, {
-					// id: item.id
-				})
-                return
-            }
-            this.$emit('btnClick')
-        },
-	}
+    des: {
+        default: "",
+        type: String
+    },
+    btnText: {
+        default: "",
+        type: String
+    },
+    openType: {
+        default: "",
+        type: String
+    },
+    bottom: {
+        default: "0",
+        type: [String, Number]
+    },
+    url: {
+        default: "",
+        type: String
+    },
+});
+
+const emit = defineEmits(["btnClick"]);
+
+function btnClick() {
+    if (props.url) {
+        toPath(props.url);
+        return;
+    }
+    emit("btnClick");
 }
 </script>
 <style lang="scss">

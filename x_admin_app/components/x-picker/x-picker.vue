@@ -18,8 +18,8 @@
   ></uv-picker>
 </template>
 
-<script setup>
-import { ref, onMounted, computed, watch } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, computed, watch, type PropType } from "vue";
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -29,7 +29,7 @@ const props = defineProps({
     default: null,
   },
   columns: {
-    type: Array,
+    type: Array as PropType<any[]>,
     default: () => [],
   },
   labelKey: {
@@ -41,32 +41,35 @@ const props = defineProps({
     default: "id",
   },
 });
-const model = computed({
+const model = computed<any>({
   get() {
     return props.modelValue;
   },
-  set(value) {
+  set(value: any) {
     emit("update:modelValue", value);
   },
 });
 
+// 归一 columns：调用方可能传入 null（如字典无配置时接口返回 null），
+// 而 prop 默认值仅在 undefined 时生效，故这里兜底为空数组，避免 .length 崩溃
+const safeColumns = computed<any[]>(() => props.columns ?? []);
 const columns = computed(() => {
-  return [props.columns];
+  return [safeColumns.value];
 });
-const pickerRef = ref(null);
+const pickerRef = ref<any>(null);
 
 // const model = defineModel('modelValue');
-const pickerIndex = ref([0]);
+const pickerIndex = ref<number[]>([0]);
 
-const selectItem = ref({});
+const selectItem = ref<any>({});
 
 function openPicker() {
 
   pickerRef.value.open();
 }
-function handleConfirm(e) {
+function handleConfirm(e: any) {
   // debugger;
-  if (e.value[0] !== undefined) {
+  if (e.value[0] != null) {
     model.value = e.value[0][props.valueKey];
     selectItem.value = e.value[0];
   } else {
@@ -82,14 +85,14 @@ function updateSelectItem() {
     selectItem.value = {};
     return;
   }
-  if (props.columns.length == 0) {
+  if (safeColumns.value.length == 0) {
     pickerIndex.value = [0];
     selectItem.value = {};
     return;
   }
   let find = false;
-  for (let index = 0; index < props.columns.length; index++) {
-    const item = props.columns[index];
+  for (let index = 0; index < safeColumns.value.length; index++) {
+    const item = safeColumns.value[index];
     if (model.value == item[props.valueKey]) {
       selectItem.value = item;
       pickerIndex.value = [index];

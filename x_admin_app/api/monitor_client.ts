@@ -2,48 +2,51 @@ import { request } from '@/utils/request'
 import { clearObjEmpty } from '@/utils/utils' 
 
 import type { Pages } from '@/utils/request'
+
+// 字段与后端 monitor_schema 的 json tag 保持一致（snake_case）
 export type type_monitor_client = {
-    id?: number;
-    projectKey?: string;
-    clientId?: string;
-    userId?: string;
+    id?: string;
+    project_key?: string;
+    client_id?: string;
+    user_id?: string;
     os?: string;
     browser?: string;
+    country?: string;
+    province?: string;
     city?: string;
+    operator?: string;
+    ip?: string;
+    ua?: string;
+    create_time?: string;
+    update_time?: string;
     width?: number;
     height?: number;
-    ua?: string;
-    CreateTime?: string;
-    ClientTime?: string;
+    is_delete?: number;
 }
-// 查询
+// 查询（对应 MonitorClientListReq 支持的过滤字段）
 export type type_monitor_client_query = {
-    projectKey?: string;
-    clientId?: string;
-    userId?: string;
+    project_key?: string;
+    client_id?: string;
+    user_id?: string;
     os?: string;
     browser?: string;
     city?: string;
-    width?: number;
-    height?: number;
     ua?: string;
-    CreateTimeStart?: string;
-    CreateTimeEnd?: string;
-    ClientTimeStart?: string;
-    ClientTimeEnd?: string;
+    create_time_start?: string;
+    create_time_end?: string;
 }
-// 添加编辑
+// 添加编辑（对应 MonitorClientAddReq / MonitorClientEditReq）
 export type type_monitor_client_edit = {
-    id?: number;
-    clientId?: string;
-    userId?: string;
+    id?: string;
+    project_key?: string;
+    client_id?: string;
+    user_id?: string;
     os?: string;
     browser?: string;
-    city?: string;
+    ip?: string;
+    ua?: string;
     width?: number;
     height?: number;
-    ua?: string;
-    ClientTime?: string;
 }
 
 

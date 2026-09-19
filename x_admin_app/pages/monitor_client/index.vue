@@ -32,7 +32,7 @@
       <wd-button v-if="!fromSearch" custom-class="fab-button" type="primary" round @click="moreSearch" >
         <wd-icon name="search" size="20px"></wd-icon>
       </wd-button>
-      <wd-button v-if="$perms('admin:monitor_client:add')"  custom-class="fab-button" type="primary" round @click="add">
+      <wd-button v-if="perms('admin:monitor_client:add')"  custom-class="fab-button" type="primary" round @click="add">
         <wd-icon name="add" size="20px"></wd-icon>
       </wd-button>
   </wd-fab>
@@ -67,21 +67,18 @@ import { monitor_client_list } from "@/api/monitor_client";
 import type { type_monitor_client,type_monitor_client_query	} from "@/api/monitor_client";
 
 import { usePaging } from "@/hooks/usePaging";
+import { perms } from "@/utils/perms";
 import { toPath } from "@/utils/utils";
 const queryParams = reactive<type_monitor_client_query>({
-    projectKey: '',
-    clientId: '',
-    userId: '',
+    project_key: '',
+    client_id: '',
+    user_id: '',
     os: '',
     browser: '',
     city: '',
-    width: null,
-    height: null,
     ua: '',
-    CreateTimeStart: '',
-    CreateTimeEnd: '',
-    ClientTimeStart: '',
-    ClientTimeEnd: '',
+    create_time_start: '',
+    create_time_end: '',
 });
 let activeFab = ref(false);
 let fromSearch=ref(false);

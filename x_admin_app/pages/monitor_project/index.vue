@@ -25,7 +25,7 @@
         show-arrow
         :title="item.id"
     
-        :right-text="item.projectType"
+        :right-text="item.project_name"
         @click="toDetails(item)"
       ></uv-list-item>
     </uv-list>
@@ -34,7 +34,7 @@
       <wd-button v-if="!fromSearch" custom-class="fab-button" type="primary" round @click="moreSearch" >
         <wd-icon name="search" size="20px"></wd-icon>
       </wd-button>
-      <wd-button v-if="$perms('admin:monitor_project:add')" custom-class="fab-button" type="primary" round @click="add">
+      <wd-button v-if="perms('admin:monitor_project:add')" custom-class="fab-button" type="primary" round @click="add">
         <wd-icon name="add" size="20px"></wd-icon>
       </wd-button>
     </wd-fab>
@@ -69,15 +69,16 @@
   import type { type_monitor_project,type_monitor_project_query	} from "@/api/monitor_project";
   
   import { usePaging } from "@/hooks/usePaging";
+  import { perms } from "@/utils/perms";
   import { toPath } from "@/utils/utils";
   const queryParams = reactive<type_monitor_project_query>({
-      projectKey: '',
-      projectName: '',
-      projectType: '',
-      CreateTimeStart: '',
-      CreateTimeEnd: '',
-      UpdateTimeStart: '',
-      UpdateTimeEnd: '',
+      project_key: '',
+      project_name: '',
+      project_type: '',
+      create_time_start: '',
+      create_time_end: '',
+      update_time_start: '',
+      update_time_end: '',
   });
   let activeFab = ref(false);
 

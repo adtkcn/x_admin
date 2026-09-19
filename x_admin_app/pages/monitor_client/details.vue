@@ -1,14 +1,14 @@
 <template>
 	<view class="page-content">
 		<uv-form labelPosition="left" :model="form">
-            <uv-form-item label="项目key" prop="projectKey" borderBottom>
-                    {{form.projectKey}}
+            <uv-form-item label="项目key" prop="project_key" borderBottom>
+                    {{form.project_key}}
             </uv-form-item>
-            <uv-form-item label="sdk生成的客户端id" prop="clientId" borderBottom>
-                    {{form.clientId}}
+            <uv-form-item label="sdk生成的客户端id" prop="client_id" borderBottom>
+                    {{form.client_id}}
             </uv-form-item>
-            <uv-form-item label="用户id" prop="userId" borderBottom>
-                    {{form.userId}}
+            <uv-form-item label="用户id" prop="user_id" borderBottom>
+                    {{form.user_id}}
             </uv-form-item>
             <uv-form-item label="系统" prop="os" borderBottom>
                     {{form.os}}
@@ -28,15 +28,15 @@
             <uv-form-item label="ua记录" prop="ua" borderBottom>
                     {{form.ua}}
             </uv-form-item>
-            <uv-form-item label="创建时间" prop="CreateTime" borderBottom>
-                    {{form.CreateTime}}
+            <uv-form-item label="创建时间" prop="create_time" borderBottom>
+                    {{form.create_time}}
             </uv-form-item>
-            <uv-form-item label="更新时间" prop="ClientTime" borderBottom>
-                    {{form.ClientTime}}
+            <uv-form-item label="更新时间" prop="update_time" borderBottom>
+                    {{form.update_time}}
             </uv-form-item>
 		</uv-form>
         <uv-button
-            v-if="$perms('admin:monitor_client:edit')"
+            v-if="perms('admin:monitor_client:edit')"
             type="primary"
             text="编辑"
             customStyle="margin: 40rpx 0"
@@ -50,6 +50,7 @@
 	import {ref} from "vue";
 	import { onLoad,onShow,onPullDownRefresh } from "@dcloudio/uni-app";
 	import { useDictData } from "@/hooks/useDictOptions";
+	import { perms } from "@/utils/perms";
 	import { monitor_client_detail } from "@/api/monitor_client";
 
 
@@ -59,19 +60,20 @@
 		toPath
 	} from "@/utils/utils";
 
-	let form = ref({
+	// 接口返回与表单初始结构不完全一致，用 any 放宽
+	let form = ref<any>({
 		id: "",
-		projectKey: "",
-		clientId: "",
-		userId: "",
+		project_key: "",
+		client_id: "",
+		user_id: "",
 		os: "",
 		browser: "",
 		city: "",
 		width: "",
 		height: "",
 		ua: "",
-		CreateTime: "",
-		ClientTime: "",
+		create_time: "",
+		update_time: "",
 	});
 	onLoad((e) => {
 		console.log("onLoad", e);

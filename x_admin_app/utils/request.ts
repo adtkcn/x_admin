@@ -25,8 +25,8 @@ import {
 export interface Pages<T> {
     count: number;
     lists: T[];
-    pageNo: number ;
-    pageSize: number; 
+    page_no: number ;
+    page_size: number; 
 }
 export interface Response<T> {
 	code:number,

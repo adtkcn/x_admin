@@ -7,15 +7,15 @@
       :rules="formRules"
       ref="formRef"
     >
-      <uv-form-item label="项目uuid" prop="projectKey" borderBottom>
-        <uv-input v-model="form.projectKey" border="surround"></uv-input>
+      <uv-form-item label="项目uuid" prop="project_key" borderBottom>
+        <uv-input v-model="form.project_key" border="surround"></uv-input>
       </uv-form-item>
-      <uv-form-item label="项目名称" prop="projectName" borderBottom>
-        <uv-input v-model="form.projectName" border="surround"></uv-input>
+      <uv-form-item label="项目名称" prop="project_name" borderBottom>
+        <uv-input v-model="form.project_name" border="surround"></uv-input>
       </uv-form-item>
-      <uv-form-item label="项目类型" prop="projectType" borderBottom>
+      <uv-form-item label="项目类型" prop="project_type" borderBottom>
         <x-picker
-          v-model="form.projectType"
+          v-model="form.project_type"
           valueKey="value"
           labelKey="name"
           :columns="dictData.project_type"
@@ -46,27 +46,27 @@ import { useDictData } from "@/hooks/useDictOptions";
 const { dictData } = useDictData(["project_type"]);
 let formRef = ref();
 let form = ref<type_monitor_project_edit>({
-  id: null,
-  projectKey: "",
-  projectName: "",
-  projectType: "",
+  id: undefined,
+  project_key: "",
+  project_name: "",
+  project_type: "",
 });
 const formRules = {
-  projectKey: [
+  project_key: [
     {
       required: true,
       message: "请输入项目uuid",
       trigger: ["blur"],
     },
   ],
-  projectName: [
+  project_name: [
     {
       required: true,
       message: "请输入项目名称",
       trigger: ["blur"],
     },
   ],
-  projectType: [
+  project_type: [
     {
       required: true,
       message: "请选择项目类型",

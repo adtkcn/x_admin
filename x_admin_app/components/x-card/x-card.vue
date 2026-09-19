@@ -18,54 +18,49 @@
     </view>
   </view>
 </template>
-<script>
-export default {
-  props: {
-    icon: {
-      default: "",
-      type: [String, Number],
-    },
-    title: {
-      default: "",
-      type: [String, Number],
-    },
-    content: {
-      default: "",
-      type: [String, Number],
-    },
-    btnText: {
-      default: "",
-      type: [String, Number],
-    },
-    openType: {
-      default: "",
-      type: String,
-    },
-    bottom: {
-      default: "0",
-      type: [String, Number],
-    },
-    url: {
-      default: "",
-      type: String,
-    },
+<script setup lang="ts">
+import { toPath } from "@/utils/utils";
+
+const props = defineProps({
+  icon: {
+    default: "",
+    type: [String, Number],
   },
-  data() {
-    return {};
+  title: {
+    default: "",
+    type: [String, Number],
   },
-  computed: {},
-  methods: {
-    btnClick() {
-      if (this.url) {
-        this.$toPath(this.url, {
-          // id: item.id
-        });
-        return;
-      }
-      this.$emit("btnClick");
-    },
+  content: {
+    default: "",
+    type: [String, Number],
   },
-};
+  btnText: {
+    default: "",
+    type: [String, Number],
+  },
+  openType: {
+    default: "",
+    type: String,
+  },
+  bottom: {
+    default: "0",
+    type: [String, Number],
+  },
+  url: {
+    default: "",
+    type: String,
+  },
+});
+
+const emit = defineEmits(["btnClick"]);
+
+function btnClick() {
+  if (props.url) {
+    toPath(props.url as string);
+    return;
+  }
+  emit("btnClick");
+}
 </script>
 <style lang="scss">
 .x-card {

@@ -6,11 +6,14 @@
       :rules="formRules"
       ref="formRef"
     >
-      <uv-form-item label="sdk生成的客户端id" prop="clientId" borderBottom>
-        <uv-input v-model="form.clientId" border="surround"></uv-input>
+      <uv-form-item label="项目key" prop="project_key" borderBottom>
+        <uv-input v-model="form.project_key" border="surround"></uv-input>
       </uv-form-item>
-      <uv-form-item label="用户id" prop="userId" borderBottom>
-        <uv-input v-model="form.userId" border="surround"></uv-input>
+      <uv-form-item label="sdk生成的客户端id" prop="client_id" borderBottom>
+        <uv-input v-model="form.client_id" border="surround"></uv-input>
+      </uv-form-item>
+      <uv-form-item label="用户id" prop="user_id" borderBottom>
+        <uv-input v-model="form.user_id" border="surround"></uv-input>
       </uv-form-item>
       <uv-form-item label="系统" prop="os" borderBottom>
         <uv-input v-model="form.os" border="surround"></uv-input>
@@ -18,20 +21,17 @@
       <uv-form-item label="浏览器" prop="browser" borderBottom>
         <uv-input v-model="form.browser" border="surround"></uv-input>
       </uv-form-item>
-      <uv-form-item label="城市" prop="city" borderBottom>
-        <uv-input v-model="form.city" border="surround"></uv-input>
+      <uv-form-item label="IP地址" prop="ip" borderBottom>
+        <uv-input v-model="form.ip" border="surround"></uv-input>
       </uv-form-item>
-      <uv-form-item label="屏幕" prop="width" borderBottom>
-        <uv-input v-model="form.width" border="surround"></uv-input>
+      <uv-form-item label="屏幕宽度" prop="width" borderBottom>
+        <uv-input v-model.number="form.width" border="surround"></uv-input>
       </uv-form-item>
       <uv-form-item label="屏幕高度" prop="height" borderBottom>
-        <uv-input v-model="form.height" border="surround"></uv-input>
+        <uv-input v-model.number="form.height" border="surround"></uv-input>
       </uv-form-item>
       <uv-form-item label="ua记录" prop="ua" borderBottom>
         <uv-input v-model="form.ua" border="surround"></uv-input>
-      </uv-form-item>
-      <uv-form-item label="更新时间" prop="ClientTime" borderBottom>
-        <x-date v-model:time="form.ClientTime"></x-date>
       </uv-form-item>
 
       <uv-button
@@ -59,29 +59,29 @@ import { useDictData } from "@/hooks/useDictOptions";
 
 let formRef = ref();
 let form = ref<type_monitor_client_edit>({
-  id: null,
-  clientId: "",
-  userId: "",
+  id: undefined,
+  project_key: "",
+  client_id: "",
+  user_id: "",
   os: "",
   browser: "",
-  city: "",
-  width: null,
-  height: null,
+  ip: "",
+  width: undefined,
+  height: undefined,
   ua: "",
-  ClientTime: "",
 });
 const formRules = {
-  clientId: [
+  project_key: [
     {
       required: true,
-      message: "请输入sdk生成的客户端id",
+      message: "请输入项目key",
       trigger: ["blur"],
     },
   ],
-  userId: [
+  client_id: [
     {
       required: true,
-      message: "请输入用户id",
+      message: "请输入sdk生成的客户端id",
       trigger: ["blur"],
     },
   ],
@@ -99,38 +99,10 @@ const formRules = {
       trigger: ["blur"],
     },
   ],
-  city: [
-    {
-      required: true,
-      message: "请输入城市",
-      trigger: ["blur"],
-    },
-  ],
-  width: [
-    {
-      required: true,
-      message: "请输入屏幕",
-      trigger: ["blur"],
-    },
-  ],
-  height: [
-    {
-      required: true,
-      message: "请输入屏幕高度",
-      trigger: ["blur"],
-    },
-  ],
   ua: [
     {
       required: true,
       message: "请输入ua记录",
-      trigger: ["blur"],
-    },
-  ],
-  ClientTime: [
-    {
-      required: true,
-      message: "请选择更新时间",
       trigger: ["blur"],
     },
   ],

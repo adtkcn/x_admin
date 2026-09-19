@@ -1,31 +1,36 @@
 import { request } from '@/utils/request' 
+import { clearObjEmpty } from '@/utils/utils' 
 import type { Pages } from '@/utils/request'
+
+// 字段与后端 monitor_schema 的 json tag 保持一致（snake_case）
 export type type_monitor_project = {
-    id?: number;
-    projectKey?: string;
-    projectName?: string;
-    projectType?: string;
-    isDelete?: number;
-    CreateTime?: string;
-    UpdateTime?: string;
-    DeleteTime?: string;
+    id?: string;
+    project_key?: string;
+    project_name?: string;
+    project_type?: string;
+    status?: number;
+    is_delete?: number;
+    create_time?: string;
+    update_time?: string;
 }
-// 查询
+// 查询（对应 MonitorProjectListReq 支持的过滤字段）
 export type type_monitor_project_query = {
-    projectKey?: string;
-    projectName?: string;
-    projectType?: string;
-    CreateTimeStart?: string;
-    CreateTimeEnd?: string;
-    UpdateTimeStart?: string;
-    UpdateTimeEnd?: string;
+    project_key?: string;
+    project_name?: string;
+    project_type?: string;
+    status?: number;
+    create_time_start?: string;
+    create_time_end?: string;
+    update_time_start?: string;
+    update_time_end?: string;
 }
-// 添加编辑
+// 添加编辑（对应 MonitorProjectAddReq / MonitorProjectEditReq）
 export type type_monitor_project_edit = {
-    id?: number;
-    projectKey?: string;
-    projectName?: string;
-    projectType?: string;
+    id?: string;
+    project_key?: string;
+    project_name?: string;
+    project_type?: string;
+    status?: number;
 }
 
 
@@ -34,7 +39,7 @@ export function monitor_project_list(params?: type_monitor_project_query) {
     return request<Pages<type_monitor_project>>({
 		url: '/monitor_project/list',
 		method: 'GET',
-		data: params
+		data: clearObjEmpty(params)
 	})
 }
 // 监控项目列表-所有
@@ -42,7 +47,7 @@ export function monitor_project_list_all(params?: type_monitor_project_query) {
     return request<type_monitor_project[]>({
 		url: '/monitor_project/list_all',
 		method: 'GET',
-		data: params
+		data: clearObjEmpty(params)
 	})
 }
 

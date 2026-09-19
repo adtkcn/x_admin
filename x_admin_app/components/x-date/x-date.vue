@@ -6,7 +6,7 @@
   <uv-calendars ref="calendarsRef" :date="props.time" @confirm="Confirm" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 
 const emit = defineEmits(["update:time"]);
@@ -16,8 +16,8 @@ const props = defineProps({
     default: "",
   },
 });
-let calendarsRef = ref(null);
-function Confirm(e) {
+let calendarsRef = ref<any>(null);
+function Confirm(e: any) {
   console.log(e);
   emit("update:time", e.fulldate);
   // emit("update:endTime", e.range.after);

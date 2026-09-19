@@ -1,21 +1,15 @@
 <template>
   <uv-load-more
-    :status="props.status"
-    :loading-text="props.loadingText"
-    :loadmore-text="props.loadmoreText"
-    :nomore-text="props.nomoreText"
+    :status="status"
+    :loading-text="loadingText"
+    :loadmore-text="loadmoreText"
+    :nomore-text="nomoreText"
     @loadmore="loadmore"
   />
 </template>
-<script setup>
-import { onReady, onPullDownRefresh, onReachBottom } from "@dcloudio/uni-app";
-
-import { ref,  defineEmits,defineModel } from "vue";
-
-var pager = defineModel();
-
-const emits = defineEmits(["loadmore"]);
-const props = defineProps({
+<script setup lang="ts">
+// defineEmits 为编译宏，无需 import
+defineProps({
   status: {
     type: String,
     default: "loadmore",
@@ -33,7 +27,10 @@ const props = defineProps({
     default: "实在没有了",
   },
 });
-function loadmore(e) {
+
+const emits = defineEmits(["loadmore"]);
+
+function loadmore(e: any) {
   emits("loadmore", e);
 }
 </script>

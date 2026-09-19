@@ -108,7 +108,7 @@ function VerifySuccess(e) {
 }
 function handleSubmit(verify) {
   let data = {
-    username: model.username,
+    email: model.username,
     password:encryptPassword(model.password),
 
     ...verify,

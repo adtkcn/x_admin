@@ -28,7 +28,8 @@ export function useDictOptions<T = any>(options: Options) {
       const key = optionsKey[index];
       if (item.status == "fulfilled") {
         const data = item.value;
-        optionsData[key] = data.data;
+        // 后端字典无配置项时会返回 null（nil 切片），归一为空数组避免下游 .length 报错
+        optionsData[key] = data.data ?? [];
       }
     });
   };
@@ -55,7 +56,7 @@ export type type_dict = {
 export function useDictData<T = any>(dict: string[]) {
   const options: Options = {};
   for (const type of dict) {
-    options[type] =  `/setting/dict/data/all?dictType=${type}`
+    options[type] =  `/setting/dict/data/all?dict_type=${type}`
   }
   const { optionsData } = useDictOptions<T>(options);
   console.log('optionsData',optionsData);

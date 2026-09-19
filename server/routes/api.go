@@ -30,8 +30,8 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	handleFile := common_controller.UploadHandler{}
 	api.GET("/uploads/:id/:file_name", handleFile.Serve)
 
-	// 设置中间件
-	rootRouter.Use(gin.Logger(), middleware.Cors(), middleware.ErrorRecover())
+	// 全局中间件（gin.Logger/Cors/ErrorRecover）已在 InitRouter 创建 /api 分组前统一注册，
+	// 此处不可再 Use，否则对已建分组无效
 
 	captchaRoute(api)
 	wsRoute(api)
