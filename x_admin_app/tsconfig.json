@@ -8,7 +8,8 @@
     "stores/**/*",
     "utils/**/*",
     "typings/**/*.d.ts",
-    "hooks/**/*"
+    "hooks/**/*",
+    "sdk/**/*"
   ],
   "exclude": ["dist", "node_modules", "uni_modules", "unpackage"],
 

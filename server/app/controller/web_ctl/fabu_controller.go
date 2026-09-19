@@ -78,7 +78,6 @@ func (h FabuController) Count(c *gin.Context) {
 // CheckUpdate 版本检查更新：优先全量包，其次当前版本热更包，判定逻辑见 VersionService.CheckUpdate
 func (h FabuController) CheckUpdate(c *gin.Context) {
 	clientCode, _ := strconv.Atoi(c.Query("version_code"))
-	wgtCode, _ := strconv.Atoi(c.Query("wgt_code"))
-	res, err := fabu_service.VersionService.CheckUpdate(c.Query("bundle_id"), c.Query("platform"), clientCode, wgtCode)
+	res, err := fabu_service.VersionService.CheckUpdate(c.Query("bundle_id"), c.Query("platform"), clientCode, c.Query("wgt_version"))
 	response.JSON(c, res, err)
 }

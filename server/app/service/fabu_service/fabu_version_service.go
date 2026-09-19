@@ -265,10 +265,37 @@ func (s fabuVersionService) FindByCode(appId string, code int) (fabu_model.FabuA
 	return version, true, nil
 }
 
+// compareVersionName 按段比较版本号 name（如 1.0.3 vs 1.10），缺失段/非数字段按 0 处理；a>b 返回 1，相等返回 0
+func compareVersionName(a, b string) int {
+	segNum := func(segs []string, idx int) int {
+		if idx >= len(segs) {
+			return 0
+		}
+		v, _ := strconv.Atoi(segs[idx]) // 非法段 Atoi 报错时 v 为 0
+		return v
+	}
+	sa, sb := strings.Split(a, "."), strings.Split(b, ".")
+	n := len(sa)
+	if len(sb) > n {
+		n = len(sb)
+	}
+	for i := 0; i < n; i++ {
+		if x, y := segNum(sa, i), segNum(sb, i); x != y {
+			if x > y {
+				return 1
+			}
+			return -1
+		}
+	}
+	return 0
+}
+
 // CheckUpdate 客户端检查更新：优先最新已发布全量包（released=1 且 version_code 倒序），
-// 无全量更新时再取客户端当前版本下最新发布的热更包；wgtCode 传 0 表示未提供（缺省以 version_code 为比较基准）；
+// 无全量更新时再取客户端当前版本下最新发布的热更包；
+// wgtVersion 为客户端当前 wgt 资源版本 name（如 1.0.3，来自 plus.runtime.version），
+// 缺省时以客户端版本对应 version 的 name 为比较基准，按段比较避免去点 code 的歧义；
 // 安卓/iOS 包名可能相同，需传 platform（ios/android）区分应用
-func (s fabuVersionService) CheckUpdate(bundleId, platform string, clientCode, wgtCode int) (res fabu_schema.FabuCheckUpdateResp, e error) {
+func (s fabuVersionService) CheckUpdate(bundleId, platform string, clientCode int, wgtVersion string) (res fabu_schema.FabuCheckUpdateResp, e error) {
 	platform = strings.ToLower(platform)
 	if platform != "ios" && platform != "android" {
 		return res, response.AssertArgumentError.SetMessage("platform 仅支持 ios/android")
@@ -294,20 +321,20 @@ func (s fabuVersionService) CheckUpdate(bundleId, platform string, clientCode, w
 			},
 		}, nil
 	}
-	// 其次：客户端当前 version_code 对应版本下发布的 wgt
-	baseCode := clientCode
-	if wgtCode > 0 {
-		baseCode = wgtCode
-	}
+	// 其次：客户端当前 version_code 对应版本下发布的 wgt，基准 name 优先取客户端上报，缺省用宿主版本 name
 	cur, curOk, e := s.FindByCode(app.ID, clientCode)
 	if e != nil || !curOk {
 		return
+	}
+	baseName := cur.Version
+	if wgtVersion != "" {
+		baseName = wgtVersion
 	}
 	wgt, wgtOk, e := WgtService.LatestReleasedOfVersion(cur.ID)
 	if e != nil {
 		return
 	}
-	if wgtOk && wgt.VersionCode > baseCode {
+	if wgtOk && compareVersionName(wgt.Version, baseName) > 0 {
 		res = fabu_schema.FabuCheckUpdateResp{
 			Update: true,
 			Type:   "wgt",

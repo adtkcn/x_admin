@@ -1,0 +1,386 @@
+<template>
+	<view v-if="show" class="x-upgrade">
+		<!-- 遮罩：普通模式可点击跳过，强制模式/下载中无效 -->
+		<view class="x-upgrade-mask" @tap="onMaskTap"></view>
+		<view class="x-upgrade-card">
+			<view class="x-upgrade-title">
+				<text class="x-upgrade-title-text">发现新版本</text>
+				<text class="x-upgrade-ver">V{{ ver }}</text>
+				<text v-if="force" class="x-upgrade-force">必须更新</text>
+			</view>
+
+			<!-- 确认阶段 -->
+			<view v-if="phase == PHASE_CONFIRM">
+				<text class="x-upgrade-tip">{{ tipText }}</text>
+			</view>
+			<!-- 下载中 -->
+			<view v-else-if="phase == PHASE_DOWNLOADING">
+				<view class="x-upgrade-bar">
+					<view class="x-upgrade-bar-inner" :style="barStyle"></view>
+				</view>
+				<text class="x-upgrade-tip">下载中 {{ progress }}%</text>
+			</view>
+			<!-- 下载完成，等待/重试安装 -->
+			<view v-else-if="phase == PHASE_READY">
+				<text class="x-upgrade-tip">下载完成，请在安装界面完成安装</text>
+			</view>
+
+			<view class="x-upgrade-footer">
+				<button v-if="!force && phase != PHASE_DOWNLOADING" class="x-upgrade-btn-plain" size="mini"
+					@tap="refuse">
+					{{ phase == PHASE_CONFIRM ? '以后再说' : '稍后再说' }}
+				</button>
+				<button v-if="phase == PHASE_CONFIRM" class="x-upgrade-btn" size="mini" @tap="accept">立即升级</button>
+				<button v-if="phase == PHASE_READY" class="x-upgrade-btn" size="mini" @tap="accept">立即安装</button>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	/**
+	 * x-upgrade 应用升级组件（uni-app x 端，easycom 可直接使用 <x-upgrade />）
+	 *
+	 * 与 vue3 端（sdk/upgrade/vue3）共用同一套服务端协议，差异点：
+	 *  - uni-app x 不支持 wgt 热更：接口返回 type=wgt 时直接忽略
+	 *  - 仅 Android 支持 apk 下载安装（uni.downloadFile + uni.installApk，HBuilderX 3.94+）
+	 *  - iOS：本组件不处理（商店发布场景建议直连 App Store）
+	 *
+	 * 交互规则（与 vue3 端一致）：
+	 *  - 普通模式（update_mode=0）：提示升级，同意后台下载，可"以后再说"（同版本不再提示）
+	 *  - 强制模式（update_mode=1）：必须等待下载安装，弹窗不可关闭
+	 *
+	 * 用法：
+	 *  1. 页面放置 <x-upgrade ref="upgradeRef" />
+	 *  2. onReady 中调用 upgradeRef.value?.$callMethod('check') 发起检查（或挂定时器周期检查）
+	 */
+	// #ifdef APP-ANDROID
+	import { packageInfo } from 'uts.sdk.modules.uniNative'
+	// #endif
+	// #ifdef APP-IOS
+	import { NSBundle } from 'Foundation'
+	// #endif
+
+	const PHASE_HIDDEN = 'hidden'
+	const PHASE_CONFIRM = 'confirm'
+	const PHASE_DOWNLOADING = 'downloading'
+	const PHASE_READY = 'ready'
+
+	const SKIP_KEY = 'upgrade_skipped_version'
+	const DEFAULT_BASE_URL = 'http://127.0.0.1:8001'
+	const CHECK_PATH = '/api/web/fabu/version/checkupdate'
+
+	// ---------- 协议类型（type 别名必须顶级声明；不支持嵌套对象字面量，字段类型均为独立 type） ----------
+	type AppInfo = {
+		bundle_id : string
+		platform : string
+		version_code : int
+	}
+
+	type AppBlock = {
+		version : string
+		version_code : int
+		download_url : string
+		install_url : string
+		update_mode : int
+	}
+
+	type UpdateData = {
+		update : boolean
+		type : string | null
+		app : AppBlock | null // wgt 块 uni-app x 不消费，不定义对应类型
+	}
+
+	// 完整响应信封：{ code, message, data }
+	type CheckResp = {
+		code : int
+		message : string | null
+		data : UpdateData | null
+	}
+
+	// ---------- 弹窗状态（平铺 ref，规避模板对可空对象字段的强类型访问） ----------
+	const show = ref<boolean>(false)
+	const phase = ref<string>(PHASE_HIDDEN)
+	const force = ref<boolean>(false)
+	const ver = ref<string>('')
+	const verCode = ref<int>(0)
+	const dlUrl = ref<string>('')
+	const progress = ref<int>(0)
+	const hint = ref<string>('')
+	let skipVerCode : int = 0 // 本次待决策版本的 code，用于"以后再说"落库
+
+	const tipText = computed<string>(() : string {
+		if (hint.value != '') return hint.value
+		return '建议升级到最新版本以获得更好体验'
+	})
+
+	const barStyle = computed<string>(() : string {
+		return 'width:' + progress.value + '%'
+	})
+
+	// ---------- 客户端信息 ----------
+	function getClientInfo() : AppInfo {
+		let bundleId = ''
+		let code : int = 0
+		// #ifdef APP-ANDROID
+		const ctx = UTSAndroid.getUniActivity()
+		if (ctx != null) {
+			bundleId = ctx.getPackageName()
+			const pkgInfo = packageInfo(ctx.getPackageName())
+			code = pkgInfo.getLong("longVersionCode").toInt()
+		}
+		// #endif
+		// #ifdef APP-IOS
+		const bundleIdPtr = NSBundle.mainBundle.bundleIdentifier
+		bundleId = bundleIdPtr != null ? bundleIdPtr! : ''
+		// iOS 不在本组件内处理安装，code 仅用于参数完整性
+		// #endif
+		return {
+			bundle_id: bundleId,
+			platform: uni.getSystemInfoSync().platform, // 'android' | 'ios'
+			version_code: code
+		} as AppInfo
+	}
+
+	// ---------- 检查更新 ----------
+	function check() {
+		const client = getClientInfo()
+		uni.request({
+			url: DEFAULT_BASE_URL + CHECK_PATH,
+			method: 'GET',
+			data: {
+				bundle_id: client.bundle_id,
+				platform: client.platform,
+				version_code: client.version_code,
+				wgt_version: '' // uni-app x 不支持 wgt，不传资源版本
+			},
+			success: (res : any) => {
+				if (res.statusCode != 200) return
+				handleResponse(res.data)
+			},
+			fail: (err : any) => {
+				console.log('[upgrade] 请求失败', err.errMsg)
+			}
+		})
+	}
+
+	/** 解析响应并进入弹窗决策（决策语义与 vue3 端 flow() 一致） */
+	function handleResponse(data : any | null) {
+		if (data == null) return
+		// uni.request 的 data 为 UTSJSONObject，统一序列化后按强类型解析一次
+		const resp = JSON.parse(JSON.stringify(data)) as CheckResp | null
+		if (resp == null || resp.code != 0) return
+		const updateData = resp.data
+		if (updateData == null || updateData.update != true) return
+		// wgt 热更：uni-app x 不支持，忽略（vue3 端为静默下载安装）
+		if (updateData.type == 'wgt') {
+			console.log('[upgrade] 服务端下发 wgt，uni-app x 不支持，已忽略')
+			return
+		}
+		if (updateData.type != 'app') return
+		const info = updateData.app
+		if (info == null) return
+
+		const isForce = info.update_mode == 1
+		// 普通模式：用户曾跳过该版本则不再提示；强制模式始终提示
+		if (!isForce) {
+			const skipped = uni.getStorageSync(SKIP_KEY) as string | null
+			if (skipped != null && skipped == info.version_code.toString()) return
+		}
+		force.value = isForce
+		ver.value = info.version
+		verCode.value = info.version_code
+		dlUrl.value = info.download_url
+		skipVerCode = info.version_code
+		hint.value = ''
+		progress.value = 0
+		phase.value = PHASE_CONFIRM
+		show.value = true
+	}
+
+	// ---------- 用户操作 ----------
+	function accept() {
+		// #ifdef APP-ANDROID
+		startDownload()
+		// #endif
+		// #ifdef APP-IOS
+		hint.value = 'iOS 请通过 App Store 更新'
+		// #endif
+	}
+
+	/** 普通模式下跳过：记录版本 code，同版本不再提示 */
+	function refuse() {
+		if (!force.value) {
+			uni.setStorageSync(SKIP_KEY, skipVerCode.toString())
+		}
+		closeDialog()
+	}
+
+	function closeDialog() {
+		show.value = false
+		phase.value = PHASE_HIDDEN
+		dlTask?.abort()
+		dlTask = null
+	}
+
+	/** 遮罩点击：强制模式或下载中禁止关闭 */
+	function onMaskTap() {
+		if (force.value || phase.value == PHASE_DOWNLOADING) return
+		refuse()
+	}
+
+	// ---------- 下载与安装（仅 Android） ----------
+	let dlTask : DownloadTask | null = null
+
+	function startDownload() {
+		phase.value = PHASE_DOWNLOADING
+		progress.value = 0
+		hint.value = ''
+		dlTask = uni.downloadFile({
+			url: absUrl(dlUrl.value),
+			success: (res : DownloadFileSuccess) => {
+				dlTask = null
+				if (res.statusCode != 200) {
+					onFail('下载失败(' + res.statusCode.toString() + ')')
+					return
+				}
+				installApk(res.tempFilePath)
+			},
+			fail: (err : any) => {
+				dlTask = null
+				onFail('下载失败，请检查网络')
+			}
+		})
+		dlTask!.onProgressUpdate((p : OnProgressDownloadResult) => {
+			progress.value = p.progress.toInt()
+		})
+	}
+
+	function installApk(filePath : string) {
+		// #ifdef APP-ANDROID
+		uni.installApk({
+			filePath: filePath,
+			fail: (err : any) => {
+				onFail('安装失败：' + err.errMsg)
+			}
+		})
+		// installApk 成功仅代表拉起系统安装器；用户取消安装时停留在 READY 阶段可重试
+		phase.value = PHASE_READY
+		// #endif
+	}
+
+	function onFail(msg : string) {
+		console.log('[upgrade]', msg)
+		hint.value = msg
+		// 失败回到确认阶段，允许重试
+		if (show.value) phase.value = PHASE_CONFIRM
+	}
+
+	function absUrl(url : string) : string {
+		if (url.startsWith('http')) return url
+		return DEFAULT_BASE_URL + url
+	}
+
+	defineExpose({ check })
+</script>
+
+<style>
+	.x-upgrade {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 9999;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.x-upgrade-mask {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+
+	.x-upgrade-card {
+		position: relative;
+		width: 620rpx;
+		background-color: #ffffff;
+		border-radius: 24rpx;
+		padding: 40rpx 36rpx 30rpx;
+	}
+
+	.x-upgrade-title {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.x-upgrade-title-text {
+		font-size: 34rpx;
+		font-weight: bold;
+		color: #303133;
+	}
+
+	.x-upgrade-ver {
+		margin-left: 12rpx;
+		font-size: 26rpx;
+		color: #576b95;
+	}
+
+	.x-upgrade-force {
+		margin-left: 16rpx;
+		font-size: 22rpx;
+		color: #ffffff;
+		background-color: #fa5151;
+		border-radius: 8rpx;
+		padding: 2rpx 12rpx;
+	}
+
+	.x-upgrade-tip {
+		margin-top: 28rpx;
+		font-size: 26rpx;
+		color: #606266;
+	}
+
+	.x-upgrade-bar {
+		margin-top: 28rpx;
+		height: 16rpx;
+		background-color: #f0f1f3;
+		border-radius: 8rpx;
+		overflow: hidden;
+	}
+
+	.x-upgrade-bar-inner {
+		height: 16rpx;
+		background-color: #007aff;
+		border-radius: 8rpx;
+	}
+
+	.x-upgrade-footer {
+		margin-top: 36rpx;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+	}
+
+	.x-upgrade-btn {
+		margin-left: 20rpx;
+		background-color: #007aff;
+		color: #ffffff;
+		font-size: 28rpx;
+		border-radius: 12rpx;
+	}
+
+	.x-upgrade-btn-plain {
+		margin-left: 20rpx;
+		background-color: #ffffff;
+		color: #909399;
+		border: 1rpx solid #dcdfe6;
+		font-size: 28rpx;
+		border-radius: 12rpx;
+	}
+</style>

@@ -10,6 +10,8 @@
 				<text class="grid-text">{{ item.title }}</text>
 			</uv-grid-item>
 		</uv-grid>
+		<!-- 应用升级弹窗（easycom 自动注册），检查入口在 App.vue onLaunch 调用 check() -->
+		<x-upgrade></x-upgrade>
 	</view>
 </template>
 
