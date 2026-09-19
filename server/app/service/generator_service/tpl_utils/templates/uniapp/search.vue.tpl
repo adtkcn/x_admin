@@ -71,10 +71,10 @@ const { listAllData } = useListAllData<{
 {{{- range .Columns }}}
 {{{- if .IsQuery }}}
     {{{- if eq .HtmlType "datetime" }}}
-    {{{ .TsField }}}_start: null,
-    {{{ .TsField }}}_end: null,
+    {{{ .TsField }}}_start: '',
+    {{{ .TsField }}}_end: '',
     {{{- else }}}
-    {{{ .TsField }}}: null,
+    {{{ .TsField }}}: '',
     {{{- end }}}
 {{{- end }}}
 {{{- end }}}

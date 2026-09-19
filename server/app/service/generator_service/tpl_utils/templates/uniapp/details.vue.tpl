@@ -5,9 +5,9 @@
         {{{- if .IsList }}}
             <uv-form-item label="{{{.ColumnComment}}}" prop="{{{(.TsField)}}}" borderBottom>
                 {{{- if and (ne .DictType "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-                    <dict-value :options="dictData.{{{ .DictType }}}" :value="row.{{{ (.TsField) }}}" />
+                    <dict-value :options="dictData.{{{ .DictType }}}" :value="form.{{{ (.TsField) }}}" />
 				{{{- else if and (ne .ListAllApi "") (or (eq .HtmlType "select") (eq .HtmlType "radio") (eq .HtmlType "checkbox")) }}}
-				 	<dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="row.{{{ (.TsField) }}}" labelKey='id' valueKey='id' />
+				 	<dict-value :options="listAllData.{{{pathToName .ListAllApi }}}" :value="form.{{{ (.TsField) }}}" labelKey='id' valueKey='{{{.PrimaryTsField}}}' />
                 {{{- else if eq .HtmlType "imageUpload" }}}
                     <uv-image :src="$filePath(form.{{{(.TsField)}}})" width="100%"></uv-image>
                 {{{- else }}}
@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 	import {ref} from "vue";
-	import { onLoad,onShow } from "@dcloudio/uni-app";
+	import { onLoad,onShow,onPullDownRefresh } from "@dcloudio/uni-app";
 	import { useDictData,useListAllData } from "@/hooks/useDictOptions";
 	import { {{{ .ModuleName }}}_detail } from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 
@@ -74,15 +74,15 @@ const { listAllData } = useListAllData<{
 
 	onLoad((e) => {
 		console.log("onLoad", e);
-		getDetails(e.id);
+		getDetails(e.{{{.PrimaryTsField}}});
 	});
 	onShow((e) => {
-		if (form.value?.id) {
-			getDetails(form.value.id);
+		if (form.value?.{{{.PrimaryTsField}}}) {
+			getDetails(form.value.{{{.PrimaryTsField}}});
 		}
 	});
 	onPullDownRefresh(() => {
-		getDetails(form.value.id);
+		getDetails(form.value.{{{.PrimaryTsField}}});
 	});
 	function getDetails(id: string) {
 		{{{ .ModuleName }}}_detail(id).then((res) => {
@@ -102,7 +102,7 @@ const { listAllData } = useListAllData<{
 	}
 
 	function edit() {
-		toPath("/pages/{{{.Domain}}}/{{{.ModuleName}}}/edit", { id: form.value.id });
+		toPath("/pages/{{{.Domain}}}/{{{.ModuleName}}}/edit", { {{{.PrimaryTsField}}}: form.value.{{{.PrimaryTsField}}} });
 	}
 </script>
 

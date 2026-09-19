@@ -40,7 +40,7 @@
 		{{{ .ModuleName }}}_detail,
 		{{{ .ModuleName }}}_edit,
 		{{{ .ModuleName }}}_add
-	} from "@/api/{{{ .ModuleName }}}";
+	} from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 	import type { type_{{{ .ModuleName }}}_edit	} from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
 
 	import {
