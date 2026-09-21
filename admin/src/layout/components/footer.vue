@@ -1,0 +1,23 @@
+<template>
+    <footer class="layout-footer">
+        <div class="text-center p-2 text-xs text-tx-secondary max-w-[900px] mx-auto">
+            <a
+                class="mx-1 hover:underline"
+                :href="item.link"
+                target="_blank"
+                v-for="item in copyright"
+                :key="item.name"
+            >
+                {{ item.name }}
+            </a>
+        </div>
+    </footer>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import useAppStore from '@/stores/modules/app'
+
+const appStore = useAppStore()
+const copyright = computed(() => appStore.config.copyright || [])
+</script>

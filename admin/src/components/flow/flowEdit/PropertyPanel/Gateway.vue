@@ -1,0 +1,116 @@
+<template>
+    <div style="padding-bottom: 10px">
+        <el-card header="条件编辑">
+            <el-alert title="同一父级的网关只能有一个通过" type="warning" :closable="false" />
+
+            <div style="padding: 20px 0 20px" class="flex">
+                <el-select class="flex-1" v-model="selectGateway" placeholder="请选择">
+                    <el-option
+                        v-for="item in fieldList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="String(item.id)"
+                    />
+                </el-select>
+                <el-button type="primary" style="margin-left: 10px" @click="addCondition"
+                    >添加条件</el-button
+                >
+            </div>
+
+            <vxe-table size="small" :data="model.gateway" auto-resize>
+                <vxe-column field="label" title="表单项">
+                    <template #default="{ row }">
+                        {{ getLabel(row.id) }}
+                    </template>
+                </vxe-column>
+                <vxe-column title="判断方式">
+                    <template #default="{ row }">
+                        <el-select v-model="row.condition" placeholder="请选择判断符">
+                            <el-option
+                                v-for="item in conditionList"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            />
+                        </el-select>
+                    </template>
+                </vxe-column>
+                <vxe-column title="值">
+                    <template #default="{ row }">
+                        <el-input v-model="row.value" placeholder="请输入"></el-input>
+                    </template>
+                </vxe-column>
+                <vxe-column width="50">
+                    <template #default="{ row, rowIndex }">
+                        <el-button :icon="Close" circle @click="removeCondition(row, rowIndex)" />
+                    </template>
+                </vxe-column>
+            </vxe-table>
+        </el-card>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Close } from '@element-plus/icons-vue'
+import type { FieldListType, GatewayProps } from './property.type'
+// defineModel 直接暴露父层 v-model="nodeProps" 绑定的 exclusive_gateway 私有属性
+const model = defineModel<GatewayProps>({ required: true })
+const props = withDefaults(
+    defineProps<{
+        fieldList?: FieldListType[]
+    }>(),
+    {
+        fieldList: () => []
+    }
+)
+
+const conditionList = [
+    {
+        value: '==',
+        label: '等于'
+    },
+    {
+        value: '!=',
+        label: '不等于'
+    },
+    {
+        value: '>=',
+        label: '大于等于'
+    },
+    {
+        value: '<=',
+        label: '小于等于'
+    },
+    {
+        value: 'include',
+        label: '包含'
+    }
+]
+const selectGateway = ref('')
+function getLabel(id: string) {
+    return props.fieldList.find((item) => {
+        if (item.id === id) {
+            return true
+        }
+    })?.name
+}
+function addCondition() {
+    // this.selectGateway
+
+    props.fieldList.find((item) => {
+        if (item.id === selectGateway.value) {
+            model.value.gateway.push({
+                id: item.id,
+                value: '',
+                condition: ''
+            })
+        }
+    })
+}
+function removeCondition(_row: any, $index: number) {
+    model.value.gateway.splice($index, 1)
+}
+</script>
+
+<style lang="scss" scoped></style>

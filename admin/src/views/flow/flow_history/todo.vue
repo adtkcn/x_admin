@@ -1,0 +1,186 @@
+<!-- 代办 -->
+<template>
+    <div class="index-lists">
+        <el-card class="border-none!" shadow="never">
+            <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
+                <el-form-item label="申请人昵称" prop="apply_user_nickname">
+                    <el-input v-model="queryParams.apply_user_nickname" />
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="resetPage">查询</el-button>
+                    <el-button @click="resetParams">重置</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+        <el-card class="border-none! mt-4" shadow="never">
+            <!-- <div></div> -->
+            <vxe-table
+                class="mt-4"
+                v-loading="pager.loading"
+                :data="pager.lists"
+                :row-config="{ keyField: 'id' }"
+                :scroll-y="{ enabled: false }"
+                :border="'inner'"
+            >
+                <vxe-column title="申请人" field="apply_user_nickname" min-width="100" />
+
+                <!-- <vxe-column title="表单值" field="formValue" min-width="100" /> -->
+                <vxe-column title="通过状态" field="pass_status" min-width="100">
+                    <template #default="{ row }">
+                        <dict-value
+                            :options="dictData.flow_history_status"
+                            :value="row.pass_status"
+                        />
+                    </template>
+                </vxe-column>
+                <vxe-column title="审批备注" field="pass_remark" min-width="100" />
+                <vxe-column title="更新时间" field="update_time" min-width="150" />
+                <vxe-column title="创建时间" field="create_time" min-width="150" />
+                <vxe-column title="操作" width="120" fixed="right">
+                    <template #default="{ row }">
+                        <!-- <el-button
+                            v-perms="['admin:flow_history:edit']"
+                            type="primary"
+                            link
+                            @click="handleOpen(row)"
+                        >
+                            审批
+                        </el-button> -->
+                        <el-button type="primary" link @click="OpenViewForm(row)">
+                            {{ row.pass_status == 1 ? '审批' : '预览' }}
+                        </el-button>
+                        <!-- <el-button
+                            v-perms="['admin:flow:flow_apply:edit']"
+                            type="primary"
+                            link
+                            @click="OpenApplySubmit(row)"
+                        >
+                            审批
+                        </el-button> -->
+                    </template>
+                </vxe-column>
+            </vxe-table>
+            <div class="flex justify-end mt-4">
+                <pagination v-model="pager" @change="getLists" />
+            </div>
+        </el-card>
+
+        <!-- <Approve ref="ApproveRef"></Approve> -->
+
+        <ViewForm ref="viewFormRef" :save="SaveViewForm" @back="OpenBack"></ViewForm>
+
+        <Back ref="backRef" @close="closeBack"></Back>
+
+        <ApplySubmit ref="ApplySubmitRef" title="审批" @close="getLists"></ApplySubmit>
+    </div>
+</template>
+<script lang="ts" setup>
+import { shallowRef, reactive, defineAsyncComponent, onMounted, onActivated } from 'vue'
+import { flow_apply_detail } from '@/api/flow/flow_apply'
+import { flow_history_list, flow_history_edit } from '@/api/flow/flow_history'
+import type { type_flow_history, type_flow_history_query } from '@/api/flow/flow_history'
+import { useDictData } from '@/hooks/useDictOptions'
+import { usePaging } from '@/hooks/usePaging'
+import feedback from '@/utils/feedback'
+import useUserStore from '@/stores/modules/user'
+import ApplySubmit from './components/apply_submit.vue'
+// import ViewForm from './components/ViewForm.vue'
+const ViewForm = defineAsyncComponent(() => import('./components/ViewForm.vue'))
+// import Back from './components/Back.vue'
+const Back = defineAsyncComponent(() => import('./components/Back.vue'))
+
+const userStore = useUserStore()
+
+defineOptions({
+    name: 'todo'
+})
+// const ApproveRef = shallowRef<InstanceType<typeof ApproveRef>>()
+const viewFormRef = shallowRef<InstanceType<typeof ViewForm>>()
+const ApplySubmitRef = shallowRef<InstanceType<typeof ApplySubmit>>()
+const backRef = shallowRef<InstanceType<typeof Back>>()
+
+const queryParams = reactive<type_flow_history_query>({
+    approver_id: String(userStore?.userInfo?.id),
+    apply_user_nickname: '',
+    pass_status: 1
+})
+
+const { pager, getLists, resetPage, resetParams } = usePaging<type_flow_history>({
+    fetchFun: flow_history_list,
+    params: queryParams
+})
+const { dictData } = useDictData<{
+    flow_history_status: any[]
+}>(['flow_history_status'])
+// const handleOpen = async (row) => {
+//     ApproveRef.value?.open(toRaw(row))
+// }
+const OpenViewForm = async (history_row: type_flow_history) => {
+    const applyDetail = await flow_apply_detail({ id: history_row.apply_id || '' })
+
+    let form_data = {}
+    try {
+        form_data = JSON.parse(history_row.form_value || '')
+    } catch (error) {
+        // 解析失败
+    }
+    let form_json = []
+    try {
+        form_json = JSON.parse(applyDetail.flow_form_data || '')
+    } catch (error) {
+        // 解析失败
+    }
+
+    console.log(applyDetail, form_data, form_json)
+
+    viewFormRef.value?.open(applyDetail, history_row, form_json, form_data)
+}
+const SaveViewForm = (historyId: string, form_data: Record<string, any>) => {
+    return new Promise((resolve, reject) => {
+        flow_history_edit({
+            id: historyId,
+            form_value: JSON.stringify(form_data)
+        })
+            .then(async () => {
+                feedback.msgSuccess('保存成功')
+                await getLists()
+
+                const row = pager.lists.find((item: any) => item.id === historyId)
+
+                OpenApplySubmit(row)
+                resolve(true)
+            })
+            .catch((err) => {
+                console.log(err)
+                err && feedback.msgError(err.message)
+                reject()
+            })
+    })
+}
+const OpenApplySubmit = async (row: any) => {
+    console.log('OpenApplySubmit')
+
+    ApplySubmitRef.value?.open(row.apply_id)
+}
+const OpenBack = async (row: any) => {
+    console.log('OpenBack')
+
+    backRef.value?.open(row.apply_id)
+}
+const closeBack = () => {
+    console.log('closeBack')
+
+    viewFormRef.value?.closeFn()
+    getLists()
+}
+
+onMounted(() => {
+    getLists()
+})
+onActivated(() => {
+    if (!pager.loading) {
+        getLists()
+    }
+})
+</script>

@@ -1,0 +1,59 @@
+<template>
+    <div class="pagination">
+        <el-pagination
+            v-bind="props"
+            :pager-count="5"
+            v-model:currentPage="pager.page"
+            v-model:pageSize="pager.size"
+            :page-sizes="pageSizes"
+            :layout="layout"
+            :total="pager.count"
+            :hide-on-single-page="false"
+            @size-change="sizeChange"
+            @current-change="pageChange"
+        ></el-pagination>
+    </div>
+</template>
+
+<script lang="ts" setup>
+interface Props {
+    modelValue?: Record<string, any>
+    pageSizes?: number[]
+    layout?: string
+}
+const props = withDefaults(defineProps<Props>(), {
+    modelValue: () => ({}),
+    pageSizes: () => [10, 15, 20, 30, 40],
+    layout: 'total, sizes, prev, pager, next, jumper'
+})
+
+const emit = defineEmits<{
+    (event: 'change'): void
+    // (event: 'update:modelValue', value: any): void
+}>()
+const pager = defineModel<{
+    page: number
+    size: number
+    count: number
+    loading: boolean
+    lists: any[]
+}>({
+    default: () => ({
+        page: 1,
+        size: 10,
+        count: 0,
+        loading: false,
+        lists: []
+    })
+})
+function sizeChange() {
+    if (pager.value) {
+        pager.value.page = 1
+    }
+
+    emit('change')
+}
+const pageChange = () => {
+    emit('change')
+}
+</script>

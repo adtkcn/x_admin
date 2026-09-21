@@ -1,0 +1,27 @@
+{
+    "include": [
+        "global.d.ts",
+        "src/**/*",
+        "src/**/*.ts",
+        "src/**/*.vue",
+        "components.d.ts",
+        "auto-imports.d.ts",
+        "typings/**/*.d.ts"
+    ],
+    "exclude": ["dist"],
+    "compilerOptions": {
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "moduleResolution": "Bundler",
+        "allowJs": true,
+        "checkJs": true,
+        "outDir": "./dist",
+        "isolatedModules": true,
+        "rootDir": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        },
+        "types": ["node", "element-plus/global.d.ts"]
+    }
+}

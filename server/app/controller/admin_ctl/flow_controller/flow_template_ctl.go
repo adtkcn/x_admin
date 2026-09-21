@@ -1,0 +1,121 @@
+package flow_controller
+
+import (
+	. "x_admin/app/schema/flow_schema"
+	"x_admin/app/service/flow_service"
+	"x_admin/core/request"
+	"x_admin/core/response"
+	"x_admin/util"
+
+	"github.com/gin-gonic/gin"
+)
+
+type FlowTemplateHandler struct {
+}
+
+// @Summary	流程模板列表
+// @Tags		flow_template-流程模板
+// @Produce	json
+// @Param		token					header		string																true	"token"
+// @Param		pageNo					query		int																	true	"页码"
+// @Param		pageSize				query		int																	true	"每页数量"
+// @Param		flow_name				query		string																false	"流程名称"
+// @Param		flow_group				query		int																	false	"流程分类"
+// @Param		flow_remark				query		string																false	"流程描述"
+// @Param		flow_form_data			query		string																false	"表单配置"
+// @Param		flow_process_data		query		string																false	"流程配置"
+// @Param		flow_process_data_list	query		string																false	"流程配置list数据"
+// @Success	200						{object}	response.Response{data=response.PageResp{lists=[]FlowTemplateResp}}	"成功"
+// @Router		/api/admin/flow/flow_template/list [get]
+func (hd FlowTemplateHandler) List(c *gin.Context) {
+	var page request.PageReq
+	var listReq FlowTemplateListReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+		return
+	}
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := flow_service.TemplateService.List(page, listReq)
+	response.JSON(c, res, err)
+}
+
+// @Summary	流程模板列表-所有
+// @Tags		flow_template-流程模板
+// @Router		/api/admin/flow/flow_template/list_all [get]
+func (hd FlowTemplateHandler) ListAll(c *gin.Context) {
+	res, err := flow_service.TemplateService.ListAll()
+	response.JSON(c, res, err)
+}
+
+// @Summary	流程模板详情
+// @Tags		flow_template-流程模板
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Param		id		query		string				false	"模板id"
+// @Success	200		{object}	FlowTemplateResp	"成功"
+// @Router		/api/admin/flow/flow_template/detail [get]
+func (hd FlowTemplateHandler) Detail(c *gin.Context) {
+	var detailReq FlowTemplateDetailReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+		return
+	}
+	res, err := flow_service.TemplateService.Detail(detailReq.Id)
+	response.JSON(c, res, err)
+}
+
+// @Summary	流程模板新增
+// @Tags		flow_template-流程模板
+// @Produce	json
+// @Param		token					header		string				true	"token"
+// @Param		flow_name				body		string				false	"流程名称"
+// @Param		flow_group				body		int					false	"流程分类"
+// @Param		flow_remark				body		string				false	"流程描述"
+// @Param		flow_form_data			body		string				false	"表单配置"
+// @Param		flow_process_data		body		string				false	"流程配置"
+// @Param		flow_process_data_list	body		string				false	"流程配置list数据"
+// @Success	200						{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_template/add [post]
+func (hd FlowTemplateHandler) Add(c *gin.Context) {
+	var addReq FlowTemplateAddReq
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &addReq)) {
+		return
+	}
+	response.JSON(c, nil, flow_service.TemplateService.Add(addReq))
+}
+
+// @Summary	流程模板编辑
+// @Tags		flow_template-流程模板
+// @Produce	json
+// @Param		token					header		string				true	"token"
+// @Param		id						body		string				false	"模板id"
+// @Param		flow_name				body		string				false	"流程名称"
+// @Param		flow_group				body		int					false	"流程分类"
+// @Param		flow_remark				body		string				false	"流程描述"
+// @Param		flow_form_data			body		string				false	"表单配置"
+// @Param		flow_process_data		body		string				false	"流程配置"
+// @Param		flow_process_data_list	body		string				false	"流程配置list数据"
+// @Success	200						{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_template/edit [post]
+func (hd FlowTemplateHandler) Edit(c *gin.Context) {
+	var editReq FlowTemplateEditReq
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &editReq)) {
+		return
+	}
+	response.JSON(c, nil, flow_service.TemplateService.Edit(editReq))
+}
+
+// @Summary	流程模板删除
+// @Tags		flow_template-流程模板
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Param		id		body		string				true	"模板id"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/flow/flow_template/del [post]
+func (hd FlowTemplateHandler) Del(c *gin.Context) {
+	var delReq FlowTemplateDelReq
+	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &delReq)) {
+		return
+	}
+	response.JSON(c, nil, flow_service.TemplateService.Del(delReq.Id))
+}

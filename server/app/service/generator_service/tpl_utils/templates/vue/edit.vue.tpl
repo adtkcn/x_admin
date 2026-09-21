@@ -1,0 +1,293 @@
+<template>
+    <div class="edit-popup">
+        <popup
+            ref="popupRef"
+            :title="popupTitle"
+            :async="true"
+            width="650px"
+            :clickModalClose="true"
+            @confirm="handleSubmit"
+            @close="handleClose"
+        >
+            <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
+                {{{- if and .Table.TreePrimary .Table.TreeParent }}}
+                    <el-form-item label="父级" prop="{{{ (toUpperCamelCase .Table.TreeParent) }}}">
+                        <el-tree-select
+                            class="flex-1"
+                            v-model="formData.{{{ (toUpperCamelCase .Table.TreeParent) }}}"
+                            :data="treeList"
+                            clearable
+                            node-key="{{{ .Table.TreePrimary }}}"
+                            :props="{ label: '{{{ (toUpperCamelCase .Table.TreeName) }}}', value: '{{{ (toUpperCamelCase .Table.TreePrimary) }}}', children: 'children' }"
+                            :default-expand-all="true"
+                            placeholder="请选择父级"
+                            check-strictly
+                        />
+                    </el-form-item>
+                {{{- end }}}
+            {{{- range .Columns }}}
+                {{{- if .IsEdit }}}
+                {{{- if not .IsPk }}}
+                    {{{- if eq .HtmlType "input" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <el-input v-model="formData.{{{ .TsField }}}" placeholder="请输入{{{ .ColumnComment }}}" />
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "number" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <el-input v-model="formData.{{{ .TsField }}}" type="number" placeholder="请输入{{{ .ColumnComment }}}" />
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "textarea" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <el-input
+                                v-model="formData.{{{ .TsField }}}"
+                                placeholder="请输入{{{ .ColumnComment }}}"
+                                type="textarea"
+                                :autosize="{ minRows: 4, maxRows: 6 }"
+                            />
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "checkbox" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <el-checkbox-group v-model="formData.{{{ .TsField }}}" placeholder="请选择{{{ .ColumnComment }}}">
+                                {{{- if ne .DictType "" }}}
+                                <el-checkbox
+                                    v-for="(item, index) in dictData.{{{ .DictType }}}"
+                                    :key="index"
+                                    :label="item.name"
+                                    :value="item.value"
+                                    :disabled="!item.status"
+                                ></el-checkbox>
+                                {{{- else if ne .ListAllApi "" }}}
+                                <el-checkbox
+                                    v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
+                                    :key="index"
+                                    :label="item.ID"
+                                    :value="item.ID"
+                                ></el-checkbox>
+                                {{{- else }}}
+                                <el-checkbox>请选择字典生成</el-checkbox>
+                                {{{- end }}}
+                            </el-checkbox-group>
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "select" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <el-select class="flex-1" v-model="formData.{{{ .TsField }}}" placeholder="请选择{{{ .ColumnComment }}}">
+                                {{{- if ne .DictType "" }}}
+                                <el-option
+                                    v-for="(item, index) in dictData.{{{ .DictType }}}"
+                                    :key="index"
+                                    :label="item.name"
+                                    {{{- if eq .GoType "int" }}}
+                                    :value="parseInt(item.value)"
+                                    {{{- else }}}
+                                    :value="item.value"
+                                    {{{- end }}}
+                                    clearable
+                                    :disabled="!item.status"
+                                />
+                                 {{{- else if ne .ListAllApi "" }}}
+                                 <el-option
+                                    v-for="(item, index) in listAllData.{{{pathToName .ListAllApi }}}"
+                                    :key="index"
+                                    :label="item.ID"
+                                    {{{- if eq .GoType "int" }}}
+                                    :value="parseInt(item.ID)"
+                                    {{{- else }}}
+                                    :value="String(item.ID)"
+                                    {{{- end }}}
+                                    clearable
+                                />
+                                {{{- else }}}
+                                <el-option label="请选择字典生成" value="" />
+                                {{{- end }}}
+                            </el-select>
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "radio" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <el-radio-group v-model="formData.{{{ .TsField }}}" placeholder="请选择{{{ .ColumnComment }}}">
+                                {{{- if ne .DictType "" }}}
+                                <el-radio
+                                    v-for="(item, index) in dictData.{{{ .DictType }}}"
+                                    :key="index"
+                                    :label="item.name"
+                                    {{{- if eq .GoType "int" }}}
+                                    :value="parseInt(item.value)"
+                                    {{{- else }}}
+                                    :value="item.value"
+                                    {{{- end }}}
+                                    :disabled="!item.status"
+                                ></el-radio>
+                                {{{- else if ne .ListAllApi "" }}}
+                                <el-radio
+                                    v-for="(item, index) in listAllData.{{{ pathToName .ListAllApi }}}"
+                                    :key="index"
+                                    :label="item.name"
+                                    {{{- if eq .GoType "int" }}}
+                                    :value="parseInt(item.ID)"
+                                    {{{- else }}}
+                                    :value="item.ID"
+                                    {{{- end }}}
+                                >
+                                    {{ item.ID }}
+                                </el-radio>
+                                {{{- else }}}
+                                <el-radio label="0">请选择字典生成</el-radio>
+                                {{{- end }}}
+                            </el-radio-group>
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "datetime" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <el-date-picker
+                                class="flex-1 !flex"
+                                v-model="formData.{{{ .TsField }}}"
+                                type="datetime"
+                                clearable
+                                value-format="YYYY-MM-DD hh:mm:ss"
+                                placeholder="请选择{{{ .ColumnComment }}}"
+                            />
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "editor" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <editor v-model="formData.{{{ .TsField }}}" :height="500"  width="100%" />
+                        </el-form-item>
+                    {{{- else if eq .HtmlType "imageUpload" }}}
+                        <el-form-item label="{{{ .ColumnComment }}}" prop="{{{ .TsField }}}">
+                            <material-picker v-model="formData.{{{ .TsField }}}" />
+                        </el-form-item>
+                    {{{- end }}}
+                {{{- end }}}
+                 {{{- end }}}
+            {{{- end }}}
+
+            </el-form>
+        </popup>
+    </div>
+</template>
+<script lang="ts" setup>
+import type { FormInstance, FormRules } from 'element-plus'
+import { {{{ if and .Table.TreePrimary .Table.TreeParent }}}{{{ .ModuleName }}}_list_all,{{{ end }}} {{{ .ModuleName }}}_edit, {{{ .ModuleName }}}_add, {{{ .ModuleName }}}_detail } from '@/api/{{{.Domain}}}/{{{.ModuleName}}}'
+import type { type_{{{ .ModuleName }}} } from "@/api/{{{.Domain}}}/{{{.ModuleName}}}";
+import Popup from '@/components/popup/index.vue'
+import feedback from '@/utils/feedback'
+import { ref, computed, useTemplateRef } from 'vue'
+import type { PropType } from 'vue'
+import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
+defineProps({
+    dictData: {
+        type: Object as PropType<Record<string, any[]>>,
+        default: () => ({})
+    },
+    listAllData:{
+        type: Object as PropType<Record<string, any[]>>,
+        default: () => ({})
+    }
+})
+const emit = defineEmits(['success', 'close'])
+const formRef = useTemplateRef<FormInstance>('formRef')
+const popupRef = useTemplateRef<InstanceType<typeof Popup>>('popupRef')
+{{{- if and .Table.TreePrimary .Table.TreeParent }}}
+const treeList = ref<any[]>([])
+{{{- end }}}
+const mode = ref('add')
+const popupTitle = computed(() => {
+    return mode.value == 'edit' ? '编辑{{{ .FunctionName }}}' : '新增{{{ .FunctionName }}}'
+})
+
+const { state: formData, setState } = useReactiveWithReset<type_{{{ .ModuleName }}}_edit>({
+    {{{- range .Columns }}}
+    {{{- if .IsPk }}}
+    {{{ .TsField }}}: undefined,
+    {{{- else if .IsEdit }}}
+    {{{- if eq .HtmlType "checkbox" }}}
+    {{{ .TsField }}}: [] as any[],
+    {{{- else }}}
+    {{{ .TsField }}}: undefined,
+    {{{- end }}}
+    {{{- end }}}
+    {{{- end }}}
+})
+
+const formRules: FormRules = {
+    {{{- range .Columns }}}
+    {{{- if and .IsEdit }}}
+    {{{ .TsField }}}: [
+        {
+            required: {{{- if eq .IsRequired 1}}} true {{{- else}}} false {{{- end }}},
+            {{{- if or (eq .HtmlType "checkbox") (eq .HtmlType "datetime") (eq .HtmlType "radio") (eq .HtmlType "select") (eq .HtmlType "imageUpload") }}}
+            message: '请选择{{{ .ColumnComment }}}',
+            {{{- else }}}
+            message: '请输入{{{ .ColumnComment }}}',
+            {{{- end }}}
+            trigger: ['blur']
+        }
+    ],
+    {{{- end }}}
+    {{{- end }}}
+}
+
+const handleSubmit = async () => {
+     try {
+        await formRef.value?.validate()
+        const data: type_{{{ .ModuleName }}}_edit = { ...formData } as type_{{{ .ModuleName }}}_edit
+        {{{- range .Columns }}}
+        {{{- if eq .HtmlType "checkbox" }}}
+        data.{{{ .TsField }}} = (data.{{{ .TsField }}} as any).join(',')
+        {{{- end }}}
+        {{{- end }}}
+        mode.value == 'edit' ? await {{{ .ModuleName }}}_edit(data) : await {{{ .ModuleName }}}_add(data)
+        popupRef.value?.close()
+        feedback.msgSuccess('操作成功')
+        emit('success')
+     } catch (error) {
+        console.error('提交失败:', error)
+     }
+}
+
+const open = (type = 'add') => {
+    mode.value = type
+    popupRef.value?.open()
+}
+
+const setFormData = async (data: type_{{{ .ModuleName }}}) => {
+    const form: any = { ...data }
+    {{{- range .Columns }}}
+    {{{- if eq .HtmlType "checkbox" }}}
+    form.{{{ .TsField }}} = String(data.{{{ .TsField }}}).split(',') as any
+    {{{- end }}}
+    {{{- end }}}
+    setState(form)
+}
+
+const getDetail = async (row: type_{{{ .ModuleName }}}) => {
+     try {
+        const data = await {{{ .ModuleName }}}_detail(row.{{{ .PrimaryTsField }}})
+        setFormData(data)
+     } catch (error) {
+        console.error('详情获取失败:', error)
+     }
+}
+
+const handleClose = () => {
+    emit('close')
+}
+{{{- if and .Table.TreePrimary .Table.TreeParent }}}
+
+const getLists = async () => {
+    try {
+        const data: any = await {{{ .ModuleName }}}_list_all()
+        const item = { {{{ .Table.TreePrimary }}}: 0, {{{ .Table.TreeName }}}: '顶级', children: [] }
+        item.children = data
+        treeList.value.push(item)
+    } catch (error) {
+        console.error('获取失败:', error)
+    }
+}
+
+getLists()
+{{{- end }}}
+
+defineExpose({
+    open,
+    setFormData,
+    getDetail
+})
+</script>

@@ -1,0 +1,29 @@
+body {
+    font-family: '微软雅黑';
+    font-size: var(--el-font-size-base);
+    color: var(--el-text-color-primary);
+    overflow: hidden;
+    min-width: 375px;
+}
+.form-tips {
+    color: var(--el-text-color-secondary);
+    font-size: var(--el-font-size-extra-small);
+    line-height: 24px;
+    margin-top: 4px;
+}
+
+.clearfix:after {
+    content: '';
+    display: block;
+    clear: both;
+    visibility: hidden;
+}
+
+/* NProgress */
+#nprogress .bar {
+    background-color: var(--el-color-primary);
+}
+
+a {
+    text-decoration: none;
+}

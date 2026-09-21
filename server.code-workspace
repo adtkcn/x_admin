@@ -1,0 +1,42 @@
+{
+	"folders": [
+		{
+			"path": "server"
+		},
+		{
+			"path": "admin"
+		},
+		{
+			"path": "docs"
+		},
+		{
+			"path": "x_admin_app"
+		},
+		{
+			"path": ".github"
+		},
+		{
+			"path": ".workflow"
+		},
+		{
+			"path": "x_err_sdk"
+		},
+		{
+			"path": "E:/OpenSourceProject/fabu.love"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "admin",
+		"editor.gotoLocation.alternativeDeclarationCommand": "editor.action.revealDefinition",
+		"editor.gotoLocation.alternativeDefinitionCommand": "editor.action.revealDefinition",
+		"editor.gotoLocation.alternativeTypeDefinitionCommand": "editor.action.revealDefinition",
+		"editor.selectionHighlight": false,
+		"files.autoSave": "onFocusChange",
+		"editor.suggest.snippetsPreventQuickSuggestions": false,
+		"editor.quickSuggestions": {
+			"other": "on",
+			"comments": "off",
+			"strings": "on"
+		}
+	}
+}

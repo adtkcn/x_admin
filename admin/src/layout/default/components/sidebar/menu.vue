@@ -1,0 +1,119 @@
+<template>
+    <div
+        class="menu flex-1 min-h-0"
+        :class="themeClass"
+        :style="isCollapsed ? '' : `--aside-width: ${width}px`"
+    >
+        <el-scrollbar>
+            <el-menu
+                v-bind="config"
+                :default-active="activeMenu"
+                :collapse="isCollapsed"
+                :collapse-transition="transition"
+                mode="vertical"
+                :unique-opened="uniqueOpened"
+                @select="$emit('select')"
+            >
+                <menu-item
+                    v-for="route in routes"
+                    :key="route.path"
+                    :route="route"
+                    :route-path="route.path"
+                    :popper-class="themeClass"
+                />
+            </el-menu>
+        </el-scrollbar>
+    </div>
+</template>
+
+<script setup lang="ts">
+import type { PropType } from 'vue'
+import { computed, watch, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import MenuItem from './menu-item.vue'
+import type { RouteRecordRaw } from 'vue-router'
+
+defineOptions({
+    name: 'SideMenu'
+})
+const props = defineProps({
+    routes: {
+        type: Array as PropType<RouteRecordRaw[]>
+    },
+    config: {
+        type: Object
+    },
+    isCollapsed: {
+        type: Boolean,
+        default: false
+    },
+    uniqueOpened: {
+        type: Boolean,
+        default: false
+    },
+    theme: {
+        type: String
+    },
+    width: {
+        type: Number,
+        default: 200
+    }
+})
+
+defineEmits(['select'])
+
+const route = useRoute()
+const activeMenu = computed<string>(() => route.meta?.activeMenu || route.path)
+const themeClass = computed(() => `theme-${props.theme}`)
+const transition = ref(false)
+watch(
+    () => props.isCollapsed,
+    (val) => {
+        setTimeout(() => {
+            transition.value = val
+        }, 500)
+    }
+)
+</script>
+
+<style lang="scss" scoped>
+.menu {
+    &.theme-dark {
+        .el-menu {
+            :deep(.el-menu-item) {
+                &.is-active {
+                    background-color: var(--el-color-primary);
+                    border-color: var(--el-color-primary);
+                }
+            }
+        }
+        :deep(.el-menu--collapse) {
+            .el-sub-menu.is-active .el-sub-menu__title {
+                background-color: var(--el-color-primary) !important;
+            }
+        }
+    }
+    &.theme-light {
+        :deep(.el-menu) {
+            .el-menu-item {
+                border-color: transparent;
+                &.is-active {
+                    background-color: var(--el-color-primary-light-9);
+                    border-right-width: 2px;
+                    border-color: var(--el-color-primary);
+                }
+            }
+            .el-menu-item:hover,
+            .el-sub-menu__title:hover {
+                color: var(--el-color-primary);
+            }
+        }
+    }
+    .el-menu {
+        border-right: none;
+        &:not(.el-menu--collapse) {
+            width: var(--aside-width);
+        }
+    }
+}
+</style>

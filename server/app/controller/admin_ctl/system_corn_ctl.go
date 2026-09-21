@@ -1,0 +1,246 @@
+package admin_ctl
+
+import (
+	"fmt"
+	"strings"
+	"time"
+	"x_admin/app/schema"
+	"x_admin/app/service/corn_service"
+
+	"x_admin/config"
+	"x_admin/core/request"
+	"x_admin/core/response"
+	"x_admin/util"
+	"x_admin/util/excel2"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/singleflight"
+)
+
+type SystemCornHandler struct {
+	requestGroup singleflight.Group
+}
+
+// @Summary	定时任务列表
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token				header		string																		true	"token"
+// @Param		pageNo				query		int																			true	"页码"
+// @Param		pageSize			query		int																			true	"每页数量"
+// @Param		task_name			query		string																		false	"任务名称"
+// @Param		task_code			query		string																		false	"任务编码"
+// @Param		corn_expr			query		string																		false	"corn表达式"
+// @Param		status				query		number																		false	"状态"
+// @Param		created_by			query		string																		false	"创建人"
+// @Param		nickname			query		string																		false	"创建人名称"
+// @Param		create_time_start	query		string																		false	"创建时间"
+// @Param		create_time_end		query		string																		false	"创建时间"
+// @Param		update_time_start	query		string																		false	"更新时间"
+// @Param		update_time_end		query		string																		false	"更新时间"
+//
+// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]schema.SystemCornResp}}	"成功"
+// @Router		/api/admin/system_corn/list [get]
+func (hd *SystemCornHandler) List(c *gin.Context) {
+	var page request.PageReq
+	var listReq schema.SystemCornListReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
+		return
+	}
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := corn_service.SystemCornService.List(page, listReq)
+	response.JSON(c, res, err)
+}
+
+// @Summary	定时任务列表-所有
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token				header		string											true	"token"
+// @Param		task_name			query		string											false	"任务名称"
+// @Param		task_code			query		string											false	"任务编码"
+// @Param		corn_expr			query		string											false	"corn表达式"
+// @Param		status				query		number											false	"状态"
+// @Param		created_by			query		string											false	"创建人"
+// @Param		nickname			query		string											false	"创建人名称"
+// @Param		create_time_start	query		string											false	"创建时间"
+// @Param		create_time_end		query		string											false	"创建时间"
+// @Param		update_time_start	query		string											false	"更新时间"
+// @Param		update_time_end		query		string											false	"更新时间"
+// @Success	200					{object}	response.Response{data=[]schema.SystemCornResp}	"成功"
+// @Router		/api/admin/system_corn/list_all [get]
+func (hd *SystemCornHandler) ListAll(c *gin.Context) {
+	var listReq schema.SystemCornListReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := corn_service.SystemCornService.ListAll(listReq)
+	response.JSON(c, res, err)
+}
+
+// @Summary	定时任务详情
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token	header		string											true	"token"
+// @Param		id		query		string											false	"taskid"
+// @Success	200		{object}	response.Response{data=schema.SystemCornResp}	"成功"
+// @Router		/api/admin/system_corn/detail [get]
+func (hd *SystemCornHandler) Detail(c *gin.Context) {
+	var detailReq schema.SystemCornPrimarykey
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
+		return
+	}
+	res, err, _ := hd.requestGroup.Do(fmt.Sprintf("SystemCorn:Detail:%v", detailReq.Id), func() (any, error) {
+		v, err := corn_service.SystemCornService.Detail(detailReq.Id)
+		return v, err
+	})
+
+	response.JSON(c, res, err)
+}
+
+// @Summary	定时任务新增
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token		header		string				true	"token"
+// @Param		task_name	body		string				false	"任务名称"
+// @Param		task_code	body		string				false	"任务编码"
+// @Param		corn_expr	body		string				false	"corn表达式"
+// @Param		status		body		number				false	"状态"
+// @Success	200			{object}	response.Response	"成功"
+// @Router		/api/admin/system_corn/add [post]
+func (hd *SystemCornHandler) Add(c *gin.Context) {
+	var addReq schema.SystemCornAddReq
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
+		return
+	}
+	var adminId = config.AdminConfig.GetAdminId(c)
+	createId, e := corn_service.SystemCornService.Add(addReq, adminId)
+	response.JSON(c, createId, e)
+}
+
+// @Summary	定时任务编辑
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token		header		string				true	"token"
+// @Param		id			body		string				false	"taskid"
+// @Param		task_name	body		string				false	"任务名称"
+// @Param		task_code	body		string				false	"任务编码"
+// @Param		corn_expr	body		string				false	"corn表达式"
+// @Param		status		body		number				false	"状态"
+// @Success	200			{object}	response.Response	"成功"
+// @Router		/api/admin/system_corn/edit [post]
+func (hd *SystemCornHandler) Edit(c *gin.Context) {
+	var editReq schema.SystemCornEditReq
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
+		return
+	}
+	response.JSON(c, editReq.Id, corn_service.SystemCornService.Edit(editReq))
+}
+
+// @Summary	定时任务删除
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Param		id		body		string				false	"taskid"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/system_corn/del [post]
+func (hd *SystemCornHandler) Del(c *gin.Context) {
+	var delReq schema.SystemCornPrimarykey
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+		return
+	}
+	response.JSON(c, nil, corn_service.SystemCornService.Del(delReq.Id))
+}
+
+// @Summary	定时任务删除-批量
+// @Tags		system_corn-定时任务
+//
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Param		ids		body		string				false	"逗号分割的id"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/system_corn/del_batch [post]
+func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
+	var delReq schema.SystemCornDelBatchReq
+	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
+		return
+	}
+	if delReq.Ids == "" {
+		response.FailMsg(c, "请选择要删除的数据")
+		return
+	}
+	var ids = strings.Split(delReq.Ids, ",")
+
+	response.JSON(c, nil, corn_service.SystemCornService.DelBatch(ids))
+}
+
+// @Summary	定时任务导出
+// @Tags		system_corn-定时任务
+// @Produce	octet-stream,json
+// @Param		token				header		string				true	"token"
+// @Param		task_name			query		string				false	"任务名称"
+// @Param		task_code			query		string				false	"任务编码"
+// @Param		corn_expr			query		string				false	"corn表达式"
+// @Param		status				query		number				false	"状态"
+// @Param		created_by			query		string				false	"创建人"
+// @Param		nickname			query		string				false	"创建人名称"
+// @Param		create_time_start	query		string				false	"创建时间"
+// @Param		create_time_end		query		string				false	"创建时间"
+// @Param		update_time_start	query		string				false	"更新时间"
+// @Param		update_time_end		query		string				false	"更新时间"
+// @Success	200					{file}		string				"成功"
+// @Failure	500					{object}	response.Response	"失败"
+// @Router		/api/admin/system_corn/export_file [get]
+func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
+	var listReq schema.SystemCornListReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
+		return
+	}
+	res, err := corn_service.SystemCornService.ExportFile(listReq)
+	if err != nil {
+		response.Fail(c, response.CheckErr(err, "查询信息失败"))
+		return
+	}
+	f, err := excel2.Export(res, corn_service.SystemCornService.GetExcelCol(), "Sheet1", "定时任务")
+	if err != nil {
+		response.Fail(c, response.CheckErr(err, "导出失败"))
+		return
+	}
+	excel2.DownLoadExcel("定时任务"+time.Now().Format("20060102-150405"), c.Writer, f)
+}
+
+// @Summary	定时任务导入
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Param		file	formData	file				true	"导入文件"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/system_corn/import_file [post]
+func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		response.Fail(c, response.CheckErr(err, "文件不存在"))
+		return
+	}
+	defer file.Close()
+	importList := []schema.SystemCornResp{}
+	err = excel2.GetExcelData(file, &importList, corn_service.SystemCornService.GetExcelCol())
+	if err != nil {
+		response.Fail(c, response.CheckErr(err, "文件解析失败"))
+		return
+	}
+
+	err = corn_service.SystemCornService.ImportFile(importList)
+	response.JSON(c, nil, err)
+}
+
+// @Summary	获取任务列表
+// @Tags		system_corn-定时任务
+// @Produce	json
+// @Param		token	header		string				true	"token"
+// @Success	200		{object}	response.Response	"成功"
+// @Router		/api/admin/system_corn/getTaskList [get]
+func (hd *SystemCornHandler) GetTaskList(c *gin.Context) {
+	var taskList = corn_service.SystemCornService.GetTaskList()
+	response.JSON(c, taskList, nil)
+}

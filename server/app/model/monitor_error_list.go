@@ -1,0 +1,35 @@
+package model
+
+import (
+	"uuid"
+
+	"github.com/adtkcn/x_null"
+	"gorm.io/gorm"
+)
+
+// MonitorErrorList 错误对应的用户记录实体
+type MonitorErrorList struct {
+	Id       string `gorm:"primarykey;type:char(36);comment:'id'"` // id
+	ErrorId  string `gorm:"comment:'错误id'"`                        // 错误表id
+	ClientId string `gorm:"comment:'sdk生成的客户端id'"`                 // sdk生成的客户端id
+	UserId   string `gorm:"comment:'业务中用户id'"`                     // 用户id
+
+	Width  x_null.Int64 `gorm:"comment:'屏幕'"`   // 屏幕
+	Height x_null.Int64 `gorm:"comment:'屏幕高度'"` // 屏幕高度
+
+	Country  string `gorm:"comment:'国家'"`    // 国家
+	Province string `gorm:"comment:'省份'"`    // 省份
+	City     string `gorm:"comment:'城市'"`    // 城市
+	Operator string `gorm:"comment:'电信运营商'"` // 电信运营商
+	Ip       string `gorm:"comment:'ip'"`    // ip
+	// Ua       string `gorm:"comment:'ua记录'"`  // ua记录
+
+	CreateTime x_null.Time `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
+}
+
+// BeforeCreate 在创建前生成UUIDv7
+func (m *MonitorErrorList) BeforeCreate(tx *gorm.DB) (err error) {
+	id := uuid.NewV7()
+	m.Id = id.String()
+	return nil
+}

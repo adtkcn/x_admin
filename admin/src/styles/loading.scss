@@ -1,0 +1,121 @@
+// 大球尺寸
+$loading-size: 400px;
+// 小球尺寸
+$dot-size: 14px;
+// 小球旋转角度
+$n: 36;
+$dot-rotate: calc(360deg / $n);
+
+$loading-duration: 2s;
+.x-loading {
+    height: 100vh;
+    background: radial-gradient(circle at center, rgb(163, 158, 243), rgb(140, 132, 248));
+}
+@keyframes txtFlash {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+.circle {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: $loading-size;
+    height: $loading-size;
+    border-radius: 50%;
+
+    .Loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: #fff;
+        letter-spacing: 2px;
+        animation: txtFlash $loading-duration linear infinite;
+    }
+    .dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: calc(-1 * $dot-size / 2);
+        margin-top: calc(-1 * $dot-size / 2);
+        width: $dot-size;
+        height: $dot-size;
+
+        // border-radius: 50%;
+        transform-style: preserve-3d;
+    }
+    @for $i from 1 through $n {
+        .dot:nth-child(#{$i}) {
+            transform: rotate($dot-rotate * $i) translateY(calc($loading-size / 2));
+
+            &::after,
+            &::before {
+                animation-delay: calc(-1 * $loading-duration / $n * $i * 6);
+            }
+        }
+    }
+    .dot::after,
+    .dot::before {
+        content: '';
+        position: absolute;
+        width: $dot-size;
+        height: $dot-size;
+        border-radius: 50%;
+    }
+    .dot::after {
+        top: -100%;
+
+        background-color: white;
+
+        animation: whiteLoading 2s linear infinite;
+    }
+    .dot::before {
+        top: 100%;
+
+        background-color: black;
+
+        animation: blackLoading 2s linear infinite;
+    }
+    @keyframes blackLoading {
+        0% {
+            animation-timing-function: linear;
+            transform: translate3d(0, 0, calc($dot-size / 2)) scale(1);
+        }
+        25% {
+            transform: translate3d(0, -100%, $dot-size) scale(1.2);
+        }
+        50% {
+            transform: translate3d(0, -200%, calc($dot-size / 2)) scale(1);
+        }
+        75% {
+            transform: translate3d(0, -100%, 0) scale(0.8);
+        }
+        100% {
+            transform: translate3d(0, 0, calc($dot-size / 2)) scale(1);
+        }
+    }
+    @keyframes whiteLoading {
+        0% {
+            animation-timing-function: linear;
+            transform: translate3d(0, 0, calc($dot-size / 2)) scale(1);
+        }
+        25% {
+            transform: translate3d(0, 100%, 0) scale(0.8);
+        }
+        50% {
+            transform: translate3d(0, 200%, calc($dot-size / 2)) scale(1);
+        }
+        75% {
+            transform: translate3d(0, 100%, $dot-size) scale(1.2);
+        }
+        100% {
+            transform: translate3d(0, 0, calc($dot-size / 2)) scale(1);
+        }
+    }
+}

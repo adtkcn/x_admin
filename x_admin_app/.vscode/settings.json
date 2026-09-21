@@ -1,0 +1,21 @@
+{
+    "cSpell.words": [
+        "bignumber",
+        "dcloudio",
+        "fota",
+        "IMEI",
+        "loadmore",
+        "nomore",
+        "pinia",
+        "realname"
+    ],
+    "cSpell.ignorePaths":[
+        "package-lock.json",
+        "node_modules",
+        "vscode-extension",
+        ".git/objects",
+        ".vscode",
+        ".vscode-insiders",
+        "uni_modules"
+    ]
+}

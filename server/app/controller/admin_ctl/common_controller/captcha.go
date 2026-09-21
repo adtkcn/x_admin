@@ -1,0 +1,79 @@
+package common_controller
+
+import (
+	"errors"
+	"x_admin/app/schema/common_schema"
+	"x_admin/app/service/common_service"
+
+	"github.com/gin-gonic/gin"
+)
+
+type CaptchaHandler struct{}
+
+// @Summary		获取验证码
+// @Description	获取验证码
+// @Tags			common_captcha-验证码
+// @Param			captchaType	body		string			true	"验证码类型"
+// @Success		200			{object}	map[string]any	"成功"
+// @Router			/api/common/captcha/get [post]
+func (ch CaptchaHandler) Get(c *gin.Context) {
+	var captchaGet common_schema.CaptchaGetParams
+	if err := c.ShouldBind(&captchaGet); err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	if captchaGet.CaptchaType == "" {
+		c.JSON(200, errorRes(errors.New("验证码类型不能为空")))
+		return
+	}
+	data, err := common_service.CaptchaGet(captchaGet.CaptchaType)
+	if err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	c.JSON(200, successRes(data))
+}
+
+// @Summary		校验验证码
+// @Description	校验验证码
+// @Tags			common_captcha-验证码
+// @Param			token		body		string			true	"验证码token"
+// @Param			pointJson	body		string			false	"点选坐标"
+// @Param			captchaType	body		string			true	"验证码类型"
+// @Success		200			{object}	map[string]any	"成功"
+// @Router			/api/common/captcha/check [post]
+func (ch CaptchaHandler) Check(c *gin.Context) {
+	var params common_schema.ClientParams
+	if err := c.ShouldBind(&params); err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	err := common_service.CaptchaCheck(params)
+	if err != nil {
+		c.JSON(200, errorRes(err))
+		return
+	}
+	c.JSON(200, successRes(nil))
+}
+
+// 以下两个结构是行为验证码插件（aj-captcha）的固定契约，
+// 前端插件依赖 repCode/repData/repMsg 字段，不参与统一响应体系，请勿改动。
+func successRes(data any) map[string]any {
+	ret := make(map[string]any)
+	ret["error"] = false
+	ret["repCode"] = "0000"
+	ret["repData"] = data
+	ret["repMsg"] = nil
+	ret["successRes"] = true
+	return ret
+}
+
+func errorRes(err error) map[string]any {
+	ret := make(map[string]any)
+	ret["error"] = true
+	ret["repCode"] = "0001"
+	ret["repData"] = nil
+	ret["repMsg"] = err.Error()
+	ret["successRes"] = false
+	return ret
+}

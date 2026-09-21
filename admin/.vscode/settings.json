@@ -1,0 +1,39 @@
+{
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false,
+    "cSpell.words": [
+        "brotli",
+        "btns",
+        "daterange",
+        "datetimerange",
+        "dbclick",
+        "echarts",
+
+        "highlightjs",
+        "iconfont",
+        "logicflow",
+        "nprogress",
+        "pinia",
+        "preinstall",
+        "rushstack",
+        "tailwindcss",
+        "unplugin",
+        "vform",
+        "vuedraggable",
+        "vueuse",
+        "wangeditor"
+    ],
+    // 控制相关文件嵌套展示
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.expand": false,
+    "explorer.fileNesting.patterns": {
+        "package.json": ".env.*,pnpm-lock.yaml,tsconfig.json,global.d.ts,Dockerfile,.prettierrc,.npmrc,.editorconfig,.gitignore,.dockerignore,eslint.config.ts,components.d.ts"
+    }
+}

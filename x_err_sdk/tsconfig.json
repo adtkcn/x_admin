@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "declaration": true, // 生成声明文件，开启后会自动生成声明文件
+        "target": "esnext", // 最新的ES标准
+        "module": "esnext", // 输出 ES 模块
+        "moduleResolution": "bundler", // 适配 Vite 的模块解析（支持 node_modules 与子路径）
+        "lib": [
+            "esnext",
+            "dom"
+        ], // TS需要引用的库，即声明文件
+        "strict": true, // 开启所有严格的类型检查
+        "noImplicitAny": true, // 不允许隐式的any类型
+        "esModuleInterop": true, // 允许export=导出，由import from 导入
+        "skipLibCheck": true, // 跳过第三方声明文件检查
+
+        "outDir": "dist" // 指定输出目录
+    }
+}
