@@ -7,64 +7,52 @@ on:
 
 env:
   APP_NAME: "x_admin"
+  # 服务器上 git 仓库所在地（预先 clone 好）
+  GIT_DIR: "/home/ubuntu/x_admin"
+  # 仓库内 Go 项目子目录
+  PROJECT_SUBDIR: "server"
+  # 部署目录（容器挂载路径）
   DEPLOY_PATH: "/opt/1panel/apps/openresty/openresty/www/sites/x-admin/"
-  PROJECT_DIR: "./server"
   CONTAINER_NAME: "x_admin"
+  DEPLOY_BRANCH: "dev"
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     environment: deploy
-
     steps:
-      - uses: actions/checkout@v5
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.27'
-          cache: true
-          cache-dependency-path: ${{ env.PROJECT_DIR }}/go.sum
-
-      - name: Build Go binary
-        working-directory: ${{ env.PROJECT_DIR }}
-        run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${{ env.APP_NAME }} .
-          echo "构建完成，文件大小: $(du -h ${{ env.APP_NAME }} | cut -f1)"
-
-      # 部署依赖以下 secrets：SERVER_HOST / SERVER_USERNAME / SERVER_PASSWORD
-
-      # 先停容器，避免覆盖运行中的二进制报 Text file busy
-      - name: Stop container
+      - name: Pull / Build / Restart on server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
-          script: docker stop ${{ env.CONTAINER_NAME }} || true
-
-      - name: Upload binary via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: 22
-          source: "${{ env.PROJECT_DIR }}/${{ env.APP_NAME }}"
-          target: ${{ env.DEPLOY_PATH }}
-          strip_components: 1
-          overwrite: true
-
-      - name: Restart container
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: 22
+          # 编译可能耗时，给足超时
+          command_timeout: 20m
           script: |
-            cd ${{ env.DEPLOY_PATH }}
-            chmod +x ${{ env.APP_NAME }}
+            set -e
+            # Ubuntu 22.04 手动安装的 Go 默认在 /usr/local/go/bin，非交互式 SSH 下需手动入 PATH
+            export PATH=/usr/local/go/bin:/root/go/bin:$PATH
+            go version
+
+            echo "==> 1) 拉取最新代码"
+            cd ${{ env.GIT_DIR }}
+            git fetch origin ${{ env.DEPLOY_BRANCH }}
+            git checkout ${{ env.DEPLOY_BRANCH }}
+            git reset --hard origin/${{ env.DEPLOY_BRANCH }}
+            git --no-pager log -1 --oneline
+
+            echo "==> 2) 编译 Go 二进制"
+            cd ${{ env.GIT_DIR }}/${{ env.PROJECT_SUBDIR }}
+            CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${{ env.APP_NAME }} .
+            ls -lh ${{ env.APP_NAME }}
+
+            echo "==> 3) 停容器 → 替换二进制 → 启动容器"
+            docker stop ${{ env.CONTAINER_NAME }} || true
+            # install 原子替换并设置可执行权限，避免 Text file busy
+            install -m 0755 ${{ env.APP_NAME }} ${{ env.DEPLOY_PATH }}${{ env.APP_NAME }}
             docker start ${{ env.CONTAINER_NAME }}
-            echo "部署完成：$(docker ps --filter name=${{ env.CONTAINER_NAME }} --format '{{.Names}} {{.Status}}')"
+
+            echo "==> 部署完成"
+            docker ps --filter name=${{ env.CONTAINER_NAME }} --format '{{.Names}} {{.Status}}'
