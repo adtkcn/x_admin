@@ -17,12 +17,12 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
+	"x_admin/plugin/ipapk"
 	"x_admin/plugin/storage"
 	"x_admin/util"
 	"x_admin/util/convert_util"
 	"x_admin/util/file_util"
 
-	"github.com/phinexdaz/ipapk"
 	"gorm.io/gorm"
 )
 

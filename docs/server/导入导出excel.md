@@ -27,5 +27,3 @@ var cols = []excel2.Col{
 ```
 # 注意点
  1. Key对应的字段，如果是自定义结构体，需要实现string接口、或者传递Encode函数
-
-<<< @/../server/util/excel2/excel_test.go#envConfig

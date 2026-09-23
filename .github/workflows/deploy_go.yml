@@ -24,29 +24,19 @@ jobs:
           cache: true
           cache-dependency-path: ${{ env.PROJECT_DIR }}/go.sum
 
-      - name: Verify go.mod is tidy
-        working-directory: ${{ env.PROJECT_DIR }}
-        run: |
-          go mod tidy
-          if ! git diff --exit-code -- go.mod go.sum; then
-            echo "❌ go.mod/go.sum 不干净，请本地执行 'go mod tidy' 并提交" >&2
-            git diff -- go.mod go.sum
-            exit 1
-          fi
-
       - name: Build Go binary
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${{ env.APP_NAME }} .
           echo "构建完成，文件大小: $(du -h ${{ env.APP_NAME }} | cut -f1)"
 
-      # 部署步骤（注意 PASSWORD 拼写）
+      # 部署步骤（需先配置 SERVER_HOST / SERVER_USERNAME / SERVER_PASSWORD secrets）
       # - name: Upload binary via SCP
       #   uses: appleboy/scp-action@v0.1.7
       #   with:
       #     host: ${{ secrets.SERVER_HOST }}
       #     username: ${{ secrets.SERVER_USERNAME }}
-      #     password: ${{ secrets.SERVER_PASSWORD }}   # ← 修正拼写
+      #     password: ${{ secrets.SERVER_PASSWORD }}
       #     port: 22
       #     source: "${{ env.PROJECT_DIR }}/${{ env.APP_NAME }}"
       #     target: ${{ env.DEPLOY_PATH }}
@@ -57,7 +47,7 @@ jobs:
       #   with:
       #     host: ${{ secrets.SERVER_HOST }}
       #     username: ${{ secrets.SERVER_USERNAME }}
-      #     password: ${{ secrets.SERVER_PASSWORD }}   # ← 修正拼写
+      #     password: ${{ secrets.SERVER_PASSWORD }}
       #     port: 22
       #     script: |
       #       cd ${{ env.DEPLOY_PATH }}

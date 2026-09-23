@@ -8,6 +8,7 @@ require (
 	github.com/ArtisanCloud/PowerWeChat/v3 v3.4.41
 	github.com/SeriousBug/webp-go-pure v1.2.0
 	github.com/adtkcn/x_null v0.0.2
+	github.com/andrianbdn/iospng v0.0.0-20180730113000-dccef1992541
 	github.com/aws/aws-sdk-go-v2 v1.42.1
 	github.com/aws/aws-sdk-go-v2/config v1.32.29
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.28
@@ -28,6 +29,7 @@ require (
 	github.com/redis/go-redis/v9 v9.20.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shirou/gopsutil v3.21.11+incompatible
+	github.com/shogo82148/androidbinary v1.0.6
 	github.com/spf13/viper v1.21.0
 	github.com/swaggo/swag v1.16.6
 	github.com/ua-parser/uap-go v0.0.0-20250917011043-9c86a9b0f8f0
@@ -43,15 +45,14 @@ require (
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gorm v1.31.1
 	gorm.io/plugin/soft_delete v1.2.1
+	howett.net/plist v1.0.1
 )
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/ArtisanCloud/PowerLibs/v3 v3.3.2 // indirect
 	github.com/ArtisanCloud/PowerSocialite/v3 v3.0.10 // indirect
-	github.com/DHowett/go-plist v1.0.1 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/andrianbdn/iospng v0.0.0-20180730113000-dccef1992541 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30 // indirect
@@ -103,7 +104,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
-	github.com/phinexdaz/ipapk v0.0.0-20180706142810-91f3861dffcf // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.59.0 // indirect
@@ -111,7 +111,6 @@ require (
 	github.com/richardlehane/msoleps v1.0.6 // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
-	github.com/shogo82148/androidbinary v1.0.6 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
@@ -140,5 +139,3 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/DHowett/go-plist => howett.net/plist v1.0.1
