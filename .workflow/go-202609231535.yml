@@ -21,7 +21,7 @@ stages:
     - name: BUILD_ARTIFACT
       path:
       - ./server/x_admin
-      - ./server/public/
+      - ./server/public
       type: .tar.gz
     caches:
     - /go/pkg/mod
