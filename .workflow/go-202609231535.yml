@@ -1,0 +1,106 @@
+version: "1.0"
+name: 测试、构建、上传、发布、部署到自有主机
+displayName: 测试、构建、上传、发布、部署到自有主机
+stages:
+- name: 构建
+  displayName: 构建
+  strategy: naturally
+  trigger: auto
+  steps:
+  - step: build@golang
+    name: ""
+    displayName: Golang 构建
+    golangVersion: "1.27"
+    commands:
+    - '# 默认使用goproxy.cn'
+    - export GOPROXY=https://goproxy.cn
+    - '# 输入你的构建命令'
+    - cd ./server
+    - go build .
+    artifacts:
+    - name: BUILD_ARTIFACT
+      path:
+      - ./server/x_admin
+      type: .tar.gz
+    caches:
+    - /go/pkg/mod
+    notify: []
+    strategy:
+      retry: "0"
+      resource:
+        cpu: "2"
+        memory: "4"
+- name: 上传
+  displayName: 上传
+  strategy: naturally
+  trigger: auto
+  steps:
+  - step: publish@general_artifacts
+    name: _1
+    displayName: 上传制品
+    dependArtifact: BUILD_ARTIFACT
+    artifactName: output
+    notify: []
+    strategy:
+      retry: "0"
+      resource:
+        cpu: "2"
+        memory: "4"
+- name: 发布
+  displayName: 发布
+  strategy: naturally
+  trigger: auto
+  steps:
+  - step: publish@release_artifacts
+    name: _2
+    displayName: 发布
+    dependArtifact: output
+    version: 1.0.0.0
+    autoIncrement: true
+    notify: []
+    strategy:
+      retry: "0"
+      resource:
+        cpu: "2"
+        memory: "4"
+- name: 部署
+  displayName: 部署
+  strategy: naturally
+  trigger: auto
+  steps:
+  - step: deploy@agent
+    name: _3
+    displayName: 主机部署
+    deployArtifact:
+    - name: output
+      target: /home/ubuntu/x_admin/
+      source: build
+      dependArtifact: BUILD_ARTIFACT
+      artifactRepository: default
+      artifactName: output
+      artifactVersion: latest
+    script: |
+      # 请在此输入部署脚本，如启动Java应用如下
+      cd /home/ubuntu/x_admin/
+      tar -xzf output.tar.gz
+      sudo mv -f /home/ubuntu/x_admin/x_admin /opt/1panel/apps/openresty/openresty/www/sites/x-admin/
+      sudo docker stop x_admin
+      sudo docker start x_admin
+    hostGroupID:
+      ID: tengxun_qingliang
+      hostID:
+      - c82a2c6b-9d13-4837-bf6c-5416d20d258d
+    notify: []
+    strategy:
+      retry: "0"
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix: []
+      precise:
+      - dev
+      include: []
+notify: []
+strategy:
+  blocking: true
