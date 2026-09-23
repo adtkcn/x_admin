@@ -85,7 +85,7 @@ stages:
       cd /home/ubuntu/x_admin/
       tar -xzf output.tar.gz
       sudo mv -f /home/ubuntu/x_admin/x_admin /opt/1panel/apps/openresty/openresty/www/sites/x-admin/
-      sudo mv -f /home/ubuntu/x_admin/public /opt/1panel/apps/openresty/openresty/www/sites/x-admin/
+      sudo cp -rf /home/ubuntu/x_admin/public /opt/1panel/apps/openresty/openresty/www/sites/x-admin/
       sudo docker stop x_admin
       sudo docker start x_admin
     hostGroupID:
