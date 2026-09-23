@@ -9,6 +9,7 @@ env:
   APP_NAME: "x_admin"
   DEPLOY_PATH: "/opt/1panel/apps/openresty/openresty/www/sites/x-admin/"
   PROJECT_DIR: "./server"
+  CONTAINER_NAME: "x_admin"
 
 jobs:
   build-and-deploy:
@@ -30,26 +31,39 @@ jobs:
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${{ env.APP_NAME }} .
           echo "构建完成，文件大小: $(du -h ${{ env.APP_NAME }} | cut -f1)"
 
-      # 部署步骤（需先配置 SERVER_HOST / SERVER_USERNAME / SERVER_PASSWORD secrets）
-      # - name: Upload binary via SCP
-      #   uses: appleboy/scp-action@v0.1.7
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USERNAME }}
-      #     password: ${{ secrets.SERVER_PASSWORD }}
-      #     port: 22
-      #     source: "${{ env.PROJECT_DIR }}/${{ env.APP_NAME }}"
-      #     target: ${{ env.DEPLOY_PATH }}
-      #     overwrite: true
-      #
-      # - name: Restart Docker container via SSH
-      #   uses: appleboy/ssh-action@v1
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USERNAME }}
-      #     password: ${{ secrets.SERVER_PASSWORD }}
-      #     port: 22
-      #     script: |
-      #       cd ${{ env.DEPLOY_PATH }}
-      #       chmod +x ${{ env.APP_NAME }}
-      #       docker restart x_admin
+      # 部署依赖以下 secrets：SERVER_HOST / SERVER_USERNAME / SERVER_PASSWORD
+
+      # 先停容器，避免覆盖运行中的二进制报 Text file busy
+      - name: Stop container
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          script: docker stop ${{ env.CONTAINER_NAME }} || true
+
+      - name: Upload binary via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          source: "${{ env.PROJECT_DIR }}/${{ env.APP_NAME }}"
+          target: ${{ env.DEPLOY_PATH }}
+          strip_components: 1
+          overwrite: true
+
+      - name: Restart container
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            chmod +x ${{ env.APP_NAME }}
+            docker start ${{ env.CONTAINER_NAME }}
+            echo "部署完成：$(docker ps --filter name=${{ env.CONTAINER_NAME }} --format '{{.Names}} {{.Status}}')"
