@@ -11,6 +11,7 @@ import (
 	"time"
 	"x_admin/app/model/user_model"
 	fabu_model "x_admin/app/model/fabu_model"
+	iot_model "x_admin/app/model/iot_model"
 	"x_admin/app/queue"
 
 	"x_admin/config"
@@ -67,6 +68,10 @@ func main() {
 		&fabu_model.FabuApp{},
 		&fabu_model.FabuAppVersion{},
 		&fabu_model.FabuWgt{},
+		&iot_model.IotProductCategory{},
+		&iot_model.IotProduct{},
+		&iot_model.IotDeviceSpace{},
+		&iot_model.IotDevice{},
 	)
 
 	// 初始化微信 SDK 客户端（小程序+公众号）

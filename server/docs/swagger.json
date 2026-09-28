@@ -2610,6 +2610,966 @@
                 }
             }
         },
+        "/api/admin/iot/device/add": {
+            "post": {
+                "description": "新增设备(自动生成接入凭证)",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "设备新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "新增参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceAddReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/device/del": {
+            "post": {
+                "description": "删除设备",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "设备删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceDelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/device/detail": {
+            "get": {
+                "description": "获取设备详情",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "设备详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/iot_schema.DeviceResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/device/edit": {
+            "post": {
+                "description": "编辑设备",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "设备编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "编辑参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceEditReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/device/list": {
+            "get": {
+                "description": "分页获取设备列表",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "设备列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备编号",
+                        "name": "sn",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "产品ID",
+                        "name": "product_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "空间ID",
+                        "name": "space_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "在线状态: -1全部 0离线 1在线",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "$ref": "#/definitions/iot_schema.DeviceResp"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/deviceSpace/add": {
+            "post": {
+                "description": "新增设备区域",
+                "tags": [
+                    "iot_deviceSpace-设备区域"
+                ],
+                "summary": "设备区域新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "新增参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceSpaceAddReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/deviceSpace/all": {
+            "get": {
+                "description": "获取所有设备区域(树形,不分页)",
+                "tags": [
+                    "iot_deviceSpace-设备区域"
+                ],
+                "summary": "设备区域所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/iot_schema.DeviceSpaceResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/deviceSpace/del": {
+            "post": {
+                "description": "删除设备区域",
+                "tags": [
+                    "iot_deviceSpace-设备区域"
+                ],
+                "summary": "设备区域删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceSpaceDelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/deviceSpace/detail": {
+            "get": {
+                "description": "获取设备区域详情",
+                "tags": [
+                    "iot_deviceSpace-设备区域"
+                ],
+                "summary": "设备区域详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/iot_schema.DeviceSpaceResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/deviceSpace/edit": {
+            "post": {
+                "description": "编辑设备区域",
+                "tags": [
+                    "iot_deviceSpace-设备区域"
+                ],
+                "summary": "设备区域编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "编辑参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceSpaceEditReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/deviceSpace/sort": {
+            "post": {
+                "description": "同级设备区域拖拽排序",
+                "tags": [
+                    "iot_deviceSpace-设备区域"
+                ],
+                "summary": "设备区域排序",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "排序参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceSpaceSortReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/product/add": {
+            "post": {
+                "description": "新增产品",
+                "tags": [
+                    "iot_product-产品"
+                ],
+                "summary": "产品新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "新增参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.ProductAddReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/product/all": {
+            "get": {
+                "description": "获取所有启用产品(供设备表单下拉)",
+                "tags": [
+                    "iot_product-产品"
+                ],
+                "summary": "产品所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/iot_schema.ProductResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/product/del": {
+            "post": {
+                "description": "删除产品",
+                "tags": [
+                    "iot_product-产品"
+                ],
+                "summary": "产品删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.ProductDelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/product/detail": {
+            "get": {
+                "description": "获取产品详情",
+                "tags": [
+                    "iot_product-产品"
+                ],
+                "summary": "产品详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/iot_schema.ProductResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/product/edit": {
+            "post": {
+                "description": "编辑产品",
+                "tags": [
+                    "iot_product-产品"
+                ],
+                "summary": "产品编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "编辑参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.ProductEditReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/product/list": {
+            "get": {
+                "description": "分页获取产品列表",
+                "tags": [
+                    "iot_product-产品"
+                ],
+                "summary": "产品列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "产品名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "分类ID",
+                        "name": "category_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "$ref": "#/definitions/iot_schema.ProductResp"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/productCategory/add": {
+            "post": {
+                "description": "新增产品分类",
+                "tags": [
+                    "iot_productCategory-产品分类"
+                ],
+                "summary": "产品分类新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "新增参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.ProductCategoryAddReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/productCategory/all": {
+            "get": {
+                "description": "获取所有产品分类(树形,不分页)",
+                "tags": [
+                    "iot_productCategory-产品分类"
+                ],
+                "summary": "产品分类所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/iot_schema.ProductCategoryResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/productCategory/del": {
+            "post": {
+                "description": "删除产品分类",
+                "tags": [
+                    "iot_productCategory-产品分类"
+                ],
+                "summary": "产品分类删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.ProductCategoryDelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/productCategory/detail": {
+            "get": {
+                "description": "获取产品分类详情",
+                "tags": [
+                    "iot_productCategory-产品分类"
+                ],
+                "summary": "产品分类详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/iot_schema.ProductCategoryResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/productCategory/edit": {
+            "post": {
+                "description": "编辑产品分类",
+                "tags": [
+                    "iot_productCategory-产品分类"
+                ],
+                "summary": "产品分类编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "编辑参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.ProductCategoryEditReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/productCategory/sort": {
+            "post": {
+                "description": "同级产品分类拖拽排序",
+                "tags": [
+                    "iot_productCategory-产品分类"
+                ],
+                "summary": "产品分类排序",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "排序参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.ProductCategorySortReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/monitor/cache": {
             "get": {
                 "description": "获取Redis缓存监控信息",
@@ -10661,6 +11621,644 @@
                 },
                 "table_name": {
                     "description": "表名称",
+                    "type": "string"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.DeviceAddReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "product_id",
+                "sn"
+            ],
+            "properties": {
+                "gateway_id": {
+                    "description": "网关设备ID",
+                    "type": "string"
+                },
+                "latitude": {
+                    "description": "纬度",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "经度",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "设备名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "product_id": {
+                    "description": "产品ID",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "sn": {
+                    "description": "设备编号",
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 1
+                },
+                "space_id": {
+                    "description": "空间ID",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.DeviceDelReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.DeviceEditReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "product_id",
+                "sn"
+            ],
+            "properties": {
+                "gateway_id": {
+                    "description": "网关设备ID",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "latitude": {
+                    "description": "纬度",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "经度",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "设备名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "product_id": {
+                    "description": "产品ID",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "sn": {
+                    "description": "设备编号",
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 1
+                },
+                "space_id": {
+                    "description": "空间ID",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "在线状态",
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                }
+            }
+        },
+        "iot_schema.DeviceResp": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "description": "接入凭证",
+                    "type": "string"
+                },
+                "create_time": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "gateway_id": {
+                    "description": "网关设备ID",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "latitude": {
+                    "description": "纬度",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "经度",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "设备名称",
+                    "type": "string"
+                },
+                "product_id": {
+                    "description": "产品ID",
+                    "type": "string"
+                },
+                "product_name": {
+                    "description": "产品名称",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sn": {
+                    "description": "设备编号",
+                    "type": "string"
+                },
+                "space_id": {
+                    "description": "空间ID",
+                    "type": "string"
+                },
+                "space_name": {
+                    "description": "空间名称",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "在线状态",
+                    "type": "integer"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.DeviceSpaceAddReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "latitude": {
+                    "description": "中心点纬度",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "中心点经度",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "空间名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "pid": {
+                    "description": "上级空间",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer",
+                    "maximum": 9999
+                }
+            }
+        },
+        "iot_schema.DeviceSpaceDelReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.DeviceSpaceEditReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "latitude": {
+                    "description": "中心点纬度",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "中心点经度",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "空间名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "pid": {
+                    "description": "上级空间",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer",
+                    "maximum": 9999
+                }
+            }
+        },
+        "iot_schema.DeviceSpaceResp": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "latitude": {
+                    "description": "中心点纬度",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "中心点经度",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "空间名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "上级空间",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.DeviceSpaceSortReq": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "description": "同级空间id，按拖拽后顺序排列",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "iot_schema.ProductAddReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "category_id": {
+                    "description": "分类ID",
+                    "type": "string"
+                },
+                "decode_script": {
+                    "description": "解码脚本",
+                    "type": "string"
+                },
+                "device_type": {
+                    "description": "设备类型",
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "is_stop": {
+                    "description": "是否停用",
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                },
+                "name": {
+                    "description": "产品名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "preprocess_script": {
+                    "description": "预处理脚本",
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string",
+                    "enum": [
+                        "mqtt",
+                        "tcp",
+                        "http",
+                        "ws"
+                    ]
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "thing_model": {
+                    "description": "物模型JSON",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.ProductCategoryAddReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "分类名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "pid": {
+                    "description": "上级分类",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer",
+                    "maximum": 9999
+                }
+            }
+        },
+        "iot_schema.ProductCategoryDelReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.ProductCategoryEditReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "分类名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "pid": {
+                    "description": "上级分类",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer",
+                    "maximum": 9999
+                }
+            }
+        },
+        "iot_schema.ProductCategoryResp": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "分类名称",
+                    "type": "string"
+                },
+                "pid": {
+                    "description": "上级分类",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.ProductCategorySortReq": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "description": "同级分类id，按拖拽后顺序排列",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "iot_schema.ProductDelReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.ProductEditReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "category_id": {
+                    "description": "分类ID",
+                    "type": "string"
+                },
+                "decode_script": {
+                    "description": "解码脚本",
+                    "type": "string"
+                },
+                "device_type": {
+                    "description": "设备类型",
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "is_stop": {
+                    "description": "是否停用",
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                },
+                "name": {
+                    "description": "产品名称",
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "preprocess_script": {
+                    "description": "预处理脚本",
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string",
+                    "enum": [
+                        "mqtt",
+                        "tcp",
+                        "http",
+                        "ws"
+                    ]
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "thing_model": {
+                    "description": "物模型JSON",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.ProductResp": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "description": "分类ID",
+                    "type": "string"
+                },
+                "category_name": {
+                    "description": "分类名称",
+                    "type": "string"
+                },
+                "create_time": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "decode_script": {
+                    "description": "解码脚本",
+                    "type": "string"
+                },
+                "device_type": {
+                    "description": "设备类型",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "is_stop": {
+                    "description": "是否停用",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "产品名称",
+                    "type": "string"
+                },
+                "preprocess_script": {
+                    "description": "预处理脚本",
+                    "type": "string"
+                },
+                "protocol": {
+                    "description": "接入协议",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "thing_model": {
+                    "description": "物模型JSON",
                     "type": "string"
                 },
                 "update_time": {
