@@ -45,6 +45,7 @@
       </view>
     </uv-form>
   </view>
+  <x-upgrade></x-upgrade>
 </template>
 
 <script lang="ts" setup>

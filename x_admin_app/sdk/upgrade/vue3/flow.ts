@@ -17,28 +17,23 @@ export function absUrl(url: string): string {
   return `${config.baseUrl}${url}`;
 }
 
-/** 读取客户端应用信息（包名、version code、wgt 资源版本 name） */
-function getClientAppInfo(): Promise<ClientAppInfo> {
-  return new Promise((resolve, reject) => {
-    // #ifdef APP-PLUS
-    const os = uni.getSystemInfoSync().platform; // ios / android
-    plus.runtime.getProperty(plus.runtime.appid, (widget) => {
-      // plus 类型声明不全，packagename 为运行时实际存在的字段，统一转 any 访问
-      const info = widget as any;
-      // plus.runtime.version 为当前运行的 wgt 资源版本 name（如 1.0.3），上报给服务端按段比较
-      resolve({
-        bundle_id: String(info.packagename ?? ""),
-        platform: os,
-        version_code: Number(info.versionCode ?? 0),
-        wgt_version: String(plus.runtime.version ?? ""),
-      });
-    });
-    return;
-    // #endif
-    // #ifndef APP-PLUS
-    reject(new Error("[upgrade] 仅支持 App 平台"));
-    // #endif
-  });
+/**
+ * 读取客户端应用信息（包名、version code、wgt 资源版本 name）
+ * bundle_id 各端取值字段不统一、无法可靠自动获取，改由接入方运行时注入（config.bundleId）；
+ * 其余信息统一走 uni.getAppBaseInfo：
+ * appVersionCode 即安装包 version code；appWgtVersion 为当前运行的 wgt 资源版本
+ * name（如 1.0.3，未热更时即安装包版本 name），上报给服务端按段比较
+ */
+function getClientAppInfo(): ClientAppInfo {
+  const base = uni.getAppBaseInfo();
+  const os = uni.getDeviceInfo().platform; // ios、android、windows、mac、linux、harmonyos
+  return {
+    // 包名由接入方运行时注入，SDK 不再尝试自动获取
+    bundle_id: config.bundleId,
+    platform: os,
+    version_code: Number(base.appVersionCode || 0),
+    wgt_version: String(base.appWgtVersion || ""),
+  };
 }
 
 /** 请求检查更新接口（公开接口，无需登录） */
@@ -55,7 +50,8 @@ function requestCheckUpdate(params: ClientAppInfo): Promise<CheckUpdateResult> {
       },
       success: (res) => {
         const body = res.data as ApiEnvelope<CheckUpdateResult>;
-        if (body == null || body.code !== 0) {
+		console.log(body);
+        if (body == null || body.code !== 200) {
           reject(new Error(body?.message ?? "检查更新失败"));
         } else {
           resolve(body.data);
@@ -200,7 +196,8 @@ function startDownload(silent: boolean) {
 export async function runCheck() {
   try {
     state.hint = "";
-    const client = await getClientAppInfo();
+    const client = getClientAppInfo();
+    console.log(client);
     if (client.bundle_id === "") throw new Error("无法获取应用包名");
     const result = await requestCheckUpdate(client);
     const action = flow(result, client);

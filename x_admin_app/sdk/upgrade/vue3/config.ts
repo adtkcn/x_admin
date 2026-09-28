@@ -18,12 +18,14 @@ export interface UpgradeConfig {
   baseUrl: string; // 服务端地址
   checkPath: string; // 检查更新接口路径（公开接口，无需 Token）
   enableWgt: boolean; // 是否启用 wgt 热更（uni-app x 不支持，恒为 false）
+  bundleId: string; // 应用包名/标识（各端取值字段不统一，SDK 不自动获取，由接入方运行时注入）
 }
 
 export const config: UpgradeConfig = {
   baseUrl: env.baseUrl,
   checkPath: "/api/web/fabu/version/checkupdate",
   enableWgt: true,
+  bundleId: "",
 };
 
 /** 共享状态：驱动弹窗组件渲染 */

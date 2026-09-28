@@ -137,7 +137,7 @@
 		// #endif
 		return {
 			bundle_id: bundleId,
-			platform: uni.getSystemInfoSync().platform, // 'android' | 'ios'
+			platform: uni.getDeviceInfo().platform, // 'android' | 'ios'
 			version_code: code
 		} as AppInfo
 	}

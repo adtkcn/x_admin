@@ -11,7 +11,8 @@
 
 	onLaunch(() => {
 		// 启动时检查应用更新（普通/强制/wgt 策略见 sdk/upgrade/README.md）
-		checkAppUpdate();
+		// bundle_id 各端无法可靠自动获取，由接入方在此注入应用包名
+		checkAppUpdate({ bundleId: "uni.UNIFB29F21" });
 		const userStore = useUserStore();
 		userStore
 			.getInfo()

@@ -122,5 +122,5 @@ types（协议类型，语义一份） → flow/决策（无更新|wgt静默|弹
 - 检查更新为公开接口（无需 Token），SDK 内直接用 `uni.request`，不依赖项目鉴权封装。
 - `download_url` 可能为相对路径（`/api/uploads/:id/:name` 文件流），SDK 内 `absUrl` 统一补全。
 - wgt 比较统一用版本 **name 按段比较**（协议已废弃去点 code 方案，`1.10` 与 `1.1.0` 不再歧义）；
-  客户端直接上报 `plus.runtime.version`，对 wgt 包 manifest 的 `version.code` 无格式约定。
+  客户端直接上报 `uni.getAppBaseInfo().appWgtVersion`，对 wgt 包 manifest 的 `version.code` 无格式约定。
 - 后端已废弃「静默模式」（update_mode=2），本 SDK 不提供该模式。

@@ -1,4 +1,5 @@
-const baseUrl = 'http://127.0.0.1:8000';
+const baseUrl = 'http://192.168.11.5:18000';
+
 
 export default {
 	//微信APPID
