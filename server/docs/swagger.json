@@ -2610,6 +2610,153 @@
                 }
             }
         },
+        "/api/admin/iot/alert/del": {
+            "post": {
+                "description": "批量删除告警历史记录",
+                "tags": [
+                    "iot_alert-告警"
+                ],
+                "summary": "告警历史删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.AlertDelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/alert/list": {
+            "get": {
+                "description": "分页查询设备告警事件（触发→恢复为一条记录），可按设备/编号/产品/区域/状态/时间区间过滤",
+                "tags": [
+                    "iot_alert-告警"
+                ],
+                "summary": "告警历史列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备ID",
+                        "name": "device_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备编号",
+                        "name": "sn",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "产品ID",
+                        "name": "product_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "区域ID",
+                        "name": "space_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "状态: -1全部 0已恢复 1告警中",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "级别: -1全部 1轻微 2严重 3故障",
+                        "name": "severity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "触发时间起",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "触发时间止",
+                        "name": "end_time",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "$ref": "#/definitions/iot_schema.AlertResp"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/iot/device/add": {
             "post": {
                 "description": "新增设备(自动生成接入凭证)",
@@ -2640,6 +2787,60 @@
                         "description": "成功",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/device/data": {
+            "get": {
+                "description": "读取最近的属性上报历史（本轮存 MySQL，后续换 TDengine 接口不变）",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "设备时序数据回读",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "条数(缺省50,上限500)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/iot_schema.DeviceDataResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2807,7 +3008,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "空间ID",
+                        "description": "区域ID",
                         "name": "space_id",
                         "in": "query"
                     },
@@ -2844,6 +3045,51 @@
                                                     }
                                                 }
                                             ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/device/state": {
+            "get": {
+                "description": "回读 Redis 中的在线判定/最后报文时间与最新属性快照，用于验证接入→处理→运行态链路",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "设备运行态快照",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/iot_schema.DeviceStateResp"
                                         }
                                     }
                                 }
@@ -10261,6 +10507,101 @@
                 }
             }
         },
+        "/api/iot/heartbeat": {
+            "post": {
+                "description": "仅刷新在线态；超时未收到任何报文由处理层判离线",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "iot_gateway-设备接入"
+                ],
+                "summary": "设备心跳(HTTP接入)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "设备编号",
+                        "name": "X-Device-Sn",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备接入凭证",
+                        "name": "X-Access-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "心跳报文(可空)",
+                        "name": "data",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceHeartbeatReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/iot/telemetry": {
+            "post": {
+                "description": "设备上报属性键值，接入层校验凭证后投递处理队列，不同步处理",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "iot_gateway-设备接入"
+                ],
+                "summary": "设备属性上报(HTTP接入)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "设备编号",
+                        "name": "X-Device-Sn",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备接入凭证",
+                        "name": "X-Access-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "上报报文",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.DeviceTelemetryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/uploads/{id}": {
             "get": {
                 "description": "通过 id 查询 x_common_file_hash.FilePath，读取物理文件并以流形式返回",
@@ -11629,6 +11970,76 @@
                 }
             }
         },
+        "iot_schema.AlertDelReq": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "description": "主键集合",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "iot_schema.AlertResp": {
+            "type": "object",
+            "properties": {
+                "device_id": {
+                    "description": "设备ID",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "product_id": {
+                    "description": "产品ID",
+                    "type": "string"
+                },
+                "product_name": {
+                    "description": "产品名称",
+                    "type": "string"
+                },
+                "recovered_at": {
+                    "description": "恢复时间(未恢复为空串)",
+                    "type": "string"
+                },
+                "severity": {
+                    "description": "级别: 1=轻微, 2=严重, 3=故障",
+                    "type": "integer"
+                },
+                "sn": {
+                    "description": "设备编号",
+                    "type": "string"
+                },
+                "space_id": {
+                    "description": "区域ID",
+                    "type": "string"
+                },
+                "space_name": {
+                    "description": "区域名称",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态: 1=告警中, 0=已恢复",
+                    "type": "integer"
+                },
+                "triggered_at": {
+                    "description": "首次触发时间",
+                    "type": "string"
+                },
+                "values": {
+                    "description": "触发时属性快照",
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            }
+        },
         "iot_schema.DeviceAddReq": {
             "type": "object",
             "required": [
@@ -11655,6 +12066,11 @@
                     "maxLength": 100,
                     "minLength": 1
                 },
+                "offline_timeout": {
+                    "description": "离线判定时长(秒)，0=自动取所属产品值",
+                    "type": "integer",
+                    "maximum": 86400
+                },
                 "product_id": {
                     "description": "产品ID",
                     "type": "string"
@@ -11671,8 +12087,30 @@
                     "minLength": 1
                 },
                 "space_id": {
-                    "description": "空间ID",
+                    "description": "区域ID",
                     "type": "string"
+                }
+            }
+        },
+        "iot_schema.DeviceDataResp": {
+            "type": "object",
+            "properties": {
+                "protocol": {
+                    "description": "接入协议",
+                    "type": "string"
+                },
+                "raw": {
+                    "description": "原始报文",
+                    "type": "string"
+                },
+                "ts": {
+                    "description": "采集时间(毫秒)",
+                    "type": "integer"
+                },
+                "values": {
+                    "description": "属性键值",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             }
         },
@@ -11719,6 +12157,11 @@
                     "maxLength": 100,
                     "minLength": 1
                 },
+                "offline_timeout": {
+                    "description": "离线判定时长(秒)，0=自动取所属产品值",
+                    "type": "integer",
+                    "maximum": 86400
+                },
                 "product_id": {
                     "description": "产品ID",
                     "type": "string"
@@ -11735,16 +12178,16 @@
                     "minLength": 1
                 },
                 "space_id": {
-                    "description": "空间ID",
+                    "description": "区域ID",
                     "type": "string"
-                },
-                "status": {
-                    "description": "在线状态",
-                    "type": "integer",
-                    "enum": [
-                        0,
-                        1
-                    ]
+                }
+            }
+        },
+        "iot_schema.DeviceHeartbeatReq": {
+            "type": "object",
+            "properties": {
+                "ts": {
+                    "type": "integer"
                 }
             }
         },
@@ -11763,8 +12206,20 @@
                     "description": "网关设备ID",
                     "type": "string"
                 },
+                "gateway_name": {
+                    "description": "网关设备名称",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键",
+                    "type": "string"
+                },
+                "last_offline_time": {
+                    "description": "最后离线时间",
+                    "type": "string"
+                },
+                "last_online_time": {
+                    "description": "最后上线时间",
                     "type": "string"
                 },
                 "latitude": {
@@ -11779,12 +12234,20 @@
                     "description": "设备名称",
                     "type": "string"
                 },
+                "offline_timeout": {
+                    "description": "离线判定时长(秒)，以设备记录为准（冗余产品值+可自定义），0=兜底300秒",
+                    "type": "integer"
+                },
                 "product_id": {
                     "description": "产品ID",
                     "type": "string"
                 },
                 "product_name": {
                     "description": "产品名称",
+                    "type": "string"
+                },
+                "product_node_type": {
+                    "description": "所属产品节点类型: DEVICE/GATEWAY/EDGE",
                     "type": "string"
                 },
                 "remark": {
@@ -11796,15 +12259,15 @@
                     "type": "string"
                 },
                 "space_id": {
-                    "description": "空间ID",
+                    "description": "区域ID",
                     "type": "string"
                 },
                 "space_name": {
-                    "description": "空间名称",
+                    "description": "区域名称",
                     "type": "string"
                 },
                 "status": {
-                    "description": "在线状态",
+                    "description": "在线状态（系统自动维护）",
                     "type": "integer"
                 },
                 "update_time": {
@@ -11819,22 +12282,18 @@
                 "name"
             ],
             "properties": {
-                "latitude": {
-                    "description": "中心点纬度",
-                    "type": "number"
-                },
-                "longitude": {
-                    "description": "中心点经度",
-                    "type": "number"
+                "geojson": {
+                    "description": "区域范围GeoJSON",
+                    "type": "string"
                 },
                 "name": {
-                    "description": "空间名称",
+                    "description": "区域名称",
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 1
                 },
                 "pid": {
-                    "description": "上级空间",
+                    "description": "上级区域",
                     "type": "string"
                 },
                 "remark": {
@@ -11868,26 +12327,22 @@
                 "name"
             ],
             "properties": {
+                "geojson": {
+                    "description": "区域范围GeoJSON",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键",
                     "type": "string"
                 },
-                "latitude": {
-                    "description": "中心点纬度",
-                    "type": "number"
-                },
-                "longitude": {
-                    "description": "中心点经度",
-                    "type": "number"
-                },
                 "name": {
-                    "description": "空间名称",
+                    "description": "区域名称",
                     "type": "string",
                     "maxLength": 100,
                     "minLength": 1
                 },
                 "pid": {
-                    "description": "上级空间",
+                    "description": "上级区域",
                     "type": "string"
                 },
                 "remark": {
@@ -11909,24 +12364,20 @@
                     "description": "创建时间",
                     "type": "string"
                 },
+                "geojson": {
+                    "description": "区域范围GeoJSON",
+                    "type": "string"
+                },
                 "id": {
                     "description": "主键",
                     "type": "string"
                 },
-                "latitude": {
-                    "description": "中心点纬度",
-                    "type": "number"
-                },
-                "longitude": {
-                    "description": "中心点经度",
-                    "type": "number"
-                },
                 "name": {
-                    "description": "空间名称",
+                    "description": "区域名称",
                     "type": "string"
                 },
                 "pid": {
-                    "description": "上级空间",
+                    "description": "上级区域",
                     "type": "string"
                 },
                 "remark": {
@@ -11950,7 +12401,7 @@
             ],
             "properties": {
                 "ids": {
-                    "description": "同级空间id，按拖拽后顺序排列",
+                    "description": "同级区域id，按拖拽后顺序排列",
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -11958,24 +12409,123 @@
                 }
             }
         },
+        "iot_schema.DeviceStateResp": {
+            "type": "object",
+            "properties": {
+                "db_status": {
+                    "description": "库中在线状态（由定时扫描与上报共同维护）",
+                    "type": "integer"
+                },
+                "device_id": {
+                    "type": "string"
+                },
+                "last_offline_time": {
+                    "type": "string"
+                },
+                "last_online_time": {
+                    "type": "string"
+                },
+                "last_seen_ms": {
+                    "description": "最后一条报文的服务端接收时间(毫秒)",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "设备名称（由控制器从库侧回填，Redis 不存）",
+                    "type": "string"
+                },
+                "offline_in": {
+                    "description": "距判定离线的剩余秒数，\u003c=0 表示已超时",
+                    "type": "integer"
+                },
+                "offline_timeout": {
+                    "description": "生效的离线判定时长(秒)",
+                    "type": "integer"
+                },
+                "online": {
+                    "description": "在线判定窗口内是否收到过报文",
+                    "type": "boolean"
+                },
+                "sn": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "最后报文时间的可读格式（与 last_seen_ms 同源）",
+                    "type": "string"
+                },
+                "values": {
+                    "description": "最新属性快照 identifier -\u003e 值(字符串化)",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "iot_schema.DeviceTelemetryReq": {
+            "type": "object",
+            "required": [
+                "values"
+            ],
+            "properties": {
+                "raw": {
+                    "description": "原始报文(可选，便于联调回溯)",
+                    "type": "string"
+                },
+                "ts": {
+                    "description": "设备侧采集时间(毫秒)，缺省取服务端接收时间",
+                    "type": "integer"
+                },
+                "values": {
+                    "description": "属性键值：identifier -\u003e 值",
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            }
+        },
         "iot_schema.ProductAddReq": {
             "type": "object",
             "required": [
-                "name"
+                "category_id",
+                "device_type",
+                "name",
+                "offline_timeout",
+                "protocol"
             ],
             "properties": {
+                "alert_duration": {
+                    "description": "告警持续时长(秒)，0=命中即告",
+                    "type": "integer",
+                    "maximum": 86400
+                },
+                "alert_script": {
+                    "description": "数据告警脚本(goja)",
+                    "type": "string"
+                },
+                "alert_silence": {
+                    "description": "告警静默时长(秒)，0=不静默",
+                    "type": "integer",
+                    "maximum": 86400
+                },
                 "category_id": {
                     "description": "分类ID",
                     "type": "string"
                 },
                 "decode_script": {
-                    "description": "解码脚本",
+                    "description": "解码脚本(goja)",
                     "type": "string"
                 },
                 "device_type": {
-                    "description": "设备类型",
+                    "description": "节点类型",
                     "type": "string",
-                    "maxLength": 50
+                    "enum": [
+                        "DEVICE",
+                        "GATEWAY",
+                        "EDGE"
+                    ]
+                },
+                "filter_script": {
+                    "description": "数据过滤脚本(goja)",
+                    "type": "string"
                 },
                 "is_stop": {
                     "description": "是否停用",
@@ -11991,11 +12541,14 @@
                     "maxLength": 100,
                     "minLength": 1
                 },
-                "preprocess_script": {
-                    "description": "预处理脚本",
-                    "type": "string"
+                "offline_timeout": {
+                    "description": "离线判定时长(秒)，产品级必填",
+                    "type": "integer",
+                    "maximum": 86400,
+                    "minimum": 1
                 },
                 "protocol": {
+                    "description": "接入协议",
                     "type": "string",
                     "enum": [
                         "mqtt",
@@ -12151,22 +12704,48 @@
         "iot_schema.ProductEditReq": {
             "type": "object",
             "required": [
+                "category_id",
+                "device_type",
                 "id",
-                "name"
+                "name",
+                "offline_timeout",
+                "protocol"
             ],
             "properties": {
+                "alert_duration": {
+                    "description": "告警持续时长(秒)，0=命中即告",
+                    "type": "integer",
+                    "maximum": 86400
+                },
+                "alert_script": {
+                    "description": "数据告警脚本(goja)",
+                    "type": "string"
+                },
+                "alert_silence": {
+                    "description": "告警静默时长(秒)，0=不静默",
+                    "type": "integer",
+                    "maximum": 86400
+                },
                 "category_id": {
                     "description": "分类ID",
                     "type": "string"
                 },
                 "decode_script": {
-                    "description": "解码脚本",
+                    "description": "解码脚本(goja)",
                     "type": "string"
                 },
                 "device_type": {
-                    "description": "设备类型",
+                    "description": "节点类型",
                     "type": "string",
-                    "maxLength": 50
+                    "enum": [
+                        "DEVICE",
+                        "GATEWAY",
+                        "EDGE"
+                    ]
+                },
+                "filter_script": {
+                    "description": "数据过滤脚本(goja)",
+                    "type": "string"
                 },
                 "id": {
                     "description": "主键",
@@ -12186,11 +12765,14 @@
                     "maxLength": 100,
                     "minLength": 1
                 },
-                "preprocess_script": {
-                    "description": "预处理脚本",
-                    "type": "string"
+                "offline_timeout": {
+                    "description": "离线判定时长(秒)，产品级必填",
+                    "type": "integer",
+                    "maximum": 86400,
+                    "minimum": 1
                 },
                 "protocol": {
+                    "description": "接入协议",
                     "type": "string",
                     "enum": [
                         "mqtt",
@@ -12213,6 +12795,18 @@
         "iot_schema.ProductResp": {
             "type": "object",
             "properties": {
+                "alert_duration": {
+                    "description": "告警持续时长(秒)，0=命中即告",
+                    "type": "integer"
+                },
+                "alert_script": {
+                    "description": "数据告警脚本(goja)",
+                    "type": "string"
+                },
+                "alert_silence": {
+                    "description": "告警静默时长(秒)，0=不静默",
+                    "type": "integer"
+                },
                 "category_id": {
                     "description": "分类ID",
                     "type": "string"
@@ -12226,11 +12820,15 @@
                     "type": "string"
                 },
                 "decode_script": {
-                    "description": "解码脚本",
+                    "description": "解码脚本(goja)",
                     "type": "string"
                 },
                 "device_type": {
-                    "description": "设备类型",
+                    "description": "节点类型: DEVICE=直连设备, GATEWAY=网关设备, EDGE=边缘主机",
+                    "type": "string"
+                },
+                "filter_script": {
+                    "description": "数据过滤脚本(goja)",
                     "type": "string"
                 },
                 "id": {
@@ -12245,9 +12843,9 @@
                     "description": "产品名称",
                     "type": "string"
                 },
-                "preprocess_script": {
-                    "description": "预处理脚本",
-                    "type": "string"
+                "offline_timeout": {
+                    "description": "离线判定时长(秒)，作为其下设备未自定义时的取值",
+                    "type": "integer"
                 },
                 "protocol": {
                     "description": "接入协议",

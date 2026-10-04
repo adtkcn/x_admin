@@ -73,24 +73,20 @@ func (b *redisDelayedBackend) ConsumeDelayed(ctx context.Context, name string, h
 	// 有界 channel 提供背压：容量=并发数，满则阻塞轮询协程。
 	ch := make(chan []byte, concurrency)
 
-	// worker 池：并发处理；handler panic 不影响其他 worker；处理完才 wg.Done（不受 ctx 打断）。
+	// worker 池：并发处理；recover 按消息隔离——panic 既不能丢 wg 计数
+	// （少 Done 会让 Close 的 wg.Wait 永久卡死），也不能带走整个 worker（并发能力递减）。
 	for i := 0; i < concurrency; i++ {
 		go func() {
-			defer func() {
-				if r := recover(); r != nil {
-					log.Printf("[delayed:queue:redis] worker of %q panicked: %v", name, r)
-				}
-			}()
 			for body := range ch {
-				if err := handler(ctx, body); err != nil {
-					log.Printf("[delayed:queue:redis] handle delayed message from %q failed: %v", name, err)
-				}
-				b.wg.Done()
+				b.handleOne(ctx, handler, name, body)
 			}
 		}()
 	}
 
 	go func() {
+		// poller 退出时关闭 ch：worker 排空在途消息后自然退出，不永久滞留；
+		// 只有本协程向 ch 发送，关闭与发送不会并发
+		defer close(ch)
 		const interval = 100 * time.Millisecond
 		const maxInterval = 3 * time.Second
 		batch := int64(concurrency) // 每轮取数上限
@@ -158,6 +154,20 @@ func (b *redisDelayedBackend) ConsumeDelayed(ctx context.Context, name string, h
 	}()
 
 	return nil
+}
+
+// handleOne 处理一条消息并结束在途计数：handler panic 也会执行 wg.Done，
+// worker 本身驻留继续消费后续消息
+func (b *redisDelayedBackend) handleOne(ctx context.Context, handler Handler, name string, body []byte) {
+	defer b.wg.Done()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("[delayed:queue:redis] handler of %q panicked: %v", name, r)
+		}
+	}()
+	if err := handler(ctx, body); err != nil {
+		log.Printf("[delayed:queue:redis] handle delayed message from %q failed: %v", name, err)
+	}
 }
 
 // Close 优雅关闭：停取新消息，并阻塞等待已在途消息全部处理完（wg.Wait）。客户端由 core 管理，不在此关闭。

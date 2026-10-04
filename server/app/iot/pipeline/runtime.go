@@ -1,0 +1,305 @@
+package pipeline
+
+import (
+	"context"
+	"encoding/json"
+	"strconv"
+	"time"
+	"x_admin/app/schema/iot_schema"
+	"x_admin/app/service/iot_service"
+	"x_admin/config"
+	"x_admin/core"
+
+	"github.com/redis/go-redis/v9"
+)
+
+// 运行态一律放 Redis（iot.md 第五节：元数据在 MySQL、运行态在 Redis、时序在 TDengine）。
+// key 统一为 {RedisPrefix}iot:<用途>:<标识>，与 iot_service 的鉴权/物模型缓存同前缀。
+
+// rtKey 拼接运行态键
+func rtKey(suffix string) string {
+	return config.RedisConfig.RedisPrefix + "iot:" + suffix
+}
+
+// expireZKey 到期表（ZSET）：member=设备id，score=离线到期时间(毫秒)。
+// 在线判定的唯一事实源：未到期=在线，到期=离线（改窗口后 score 是旧值，
+// 瞬时误差由下一条报文/慢路径自愈）。一份数据同时表达“谁在线”和“何时到期”，
+// 扫描只需查到期区间。
+func expireZKey() string { return rtKey("expire:zset") }
+
+// stateKey 最新属性快照：HASH，field=identifier，value=字符串化的值
+func stateKey(deviceId string) string { return rtKey("state:" + deviceId) }
+
+// seenKey 最后一条报文的服务端接收时间(毫秒)：用于管理端回读展示与
+// 慢路径重建到期表（score=seen+窗口）；实时判离线由到期表负责。
+// 它的 TTL 必须长于任何可能的判定窗口（见 touchAlive）
+func seenKey(deviceId string) string { return rtKey("seen:" + deviceId) }
+
+// redisCtx 统一给 Redis 操作加超时，避免设备洪峰下 worker 卡死在慢命令上
+func redisCtx() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), 2*time.Second)
+}
+
+// offlineWindow 设备生效的离线判定窗口：直接等于设备配置的 offline_timeout（秒，
+// 新增/编辑时已把产品值冗余到设备），无宽限期叠加；未配置时落到 iot_service 的兜底值
+func offlineWindow(timeout int) time.Duration {
+	if timeout <= 0 {
+		timeout = iot_service.DefaultOfflineTimeout
+	}
+	return time.Duration(timeout) * time.Second
+}
+
+// touchAlive 刷新到期表 score（=now+窗口），并返回刷新前是否无有效 score（true=设备由离线转在线）。
+//
+// 上线判据是 ZSCORE：到期表是在线状态唯一事实源，上下线两个方向都由它驱动。
+// score 只在收到报文时刷新：改窗口后的旧 score 可能提前/推后到期，
+// 瞬时错判由下一条报文或慢路径重建自愈，不在此处复核。
+func touchAlive(deviceId string, timeout int) (wasAbsent bool) {
+	ctx, cancel := redisCtx()
+	defer cancel()
+	zkey := expireZKey()
+	window := offlineWindow(timeout)
+	// 时间戳必须比判定窗口活得更久：慢路径靠它重建到期表，若 TTL 短于窗口，
+	// 长窗设备会在窗口内先丢掉时间戳而被慢路径误判离线
+	seenTTL := time.Duration(config.IotConfig.StateTTL) * time.Second
+	if seenTTL < window {
+		seenTTL = window + time.Minute
+	}
+	now := time.Now().UnixMilli()
+	pipe := core.Redis.Pipeline()
+	score := pipe.ZScore(ctx, zkey, deviceId)
+	pipe.ZAdd(ctx, zkey, redis.Z{Score: float64(now + window.Milliseconds()), Member: deviceId})
+	pipe.Set(ctx, seenKey(deviceId), now, seenTTL)
+	if _, err := pipe.Exec(ctx); err != nil && err != redis.Nil {
+		core.Logger.Errorf("[iot处理] 刷新到期表失败 deviceId=%s err=%v", deviceId, err)
+		// Redis 异常时返回 false：报“未发生转换”而不是“刚上线”。
+		// 否则 Redis 不可用的每一秒，每条报文都会去 SELECT+UPDATE 设备表，
+		// 在依赖故障时反而把数据库拖垮。标记恢复后首条报文仍会正常判为上线。
+		return false
+	}
+	if sc, err := score.Result(); err == nil {
+		return sc <= float64(now) // score 已到期：这条报文算离线→在线
+	}
+	if err := score.Err(); err == nil || err == redis.Nil {
+		return true // 无成员（从未上报/到期被弹/数据丢失）：同样算离线→在线
+	}
+	return false // ZScore 真故障：按上面的保守策略处理
+}
+
+// revokeDeadline 从到期表撤销设备记录：上线转换写库失败后调用，
+// 下一条报文会因“score 缺失”重新触发离线→在线转换，重试搭在报文流上，
+// 不需要额外的补判扫描
+func revokeDeadline(deviceId string) {
+	ctx, cancel := redisCtx()
+	defer cancel()
+	if err := core.Redis.ZRem(ctx, expireZKey(), deviceId).Err(); err != nil {
+		core.Logger.Errorf("[iot处理] 撤销到期记录失败 deviceId=%s err=%v", deviceId, err)
+	}
+}
+
+// lastSeenAndDeadlines 一次 Redis 往返批量读多台设备的“最后报文时间+到期表 score”
+// （seen GET 与 ZSCORE 成对下发，每批只需一个 RTT）。
+// 取不到的 id 不出现在对应返回 map 里，调用方以“缺键”区分未设置；Redis 真故障才返回错误。
+func lastSeenAndDeadlines(deviceIds []string) (seen map[string]int64, deadline map[string]float64, e error) {
+	seen = make(map[string]int64, len(deviceIds))
+	deadline = make(map[string]float64, len(deviceIds))
+	if len(deviceIds) == 0 {
+		return
+	}
+	ctx, cancel := redisCtx()
+	defer cancel()
+	pipe := core.Redis.Pipeline()
+	gets := make([]*redis.StringCmd, len(deviceIds))
+	scores := make([]*redis.FloatCmd, len(deviceIds))
+	for i, id := range deviceIds {
+		gets[i] = pipe.Get(ctx, seenKey(id))
+		scores[i] = pipe.ZScore(ctx, expireZKey(), id)
+	}
+	if _, err := pipe.Exec(ctx); err != nil && err != redis.Nil {
+		return seen, deadline, err
+	}
+	for i, id := range deviceIds {
+		if v, err := gets[i].Int64(); err == nil && v > 0 {
+			seen[id] = v
+		}
+		if sc, err := scores[i].Result(); err == nil {
+			deadline[id] = sc
+		}
+	}
+	return seen, deadline, nil
+}
+
+// saveState 写入最新属性快照（HSET 覆盖同名 identifier），并续期 TTL。
+// 时序历史不在这里，本快照只表达“每属性最新值”，供管理端与大屏即时读取。
+func saveState(deviceId string, values map[string]any) {
+	if len(values) == 0 {
+		return
+	}
+	ctx, cancel := redisCtx()
+	defer cancel()
+	// 逐字段下 HSET：Redis < 4.0 的 HSET 只接受一对 field/value，一次传多对会直接报
+	// “wrong number of arguments for 'hset'”（本项目环境实测）。拆成多条命令既兼容老版本，
+	// 又能靠 pipeline 一往返完成，单报文属性条数已由 IOT.MaxValues 限住。
+	key := stateKey(deviceId)
+	pipe := core.Redis.Pipeline()
+	for k, v := range values {
+		pipe.HSet(ctx, key, k, stringify(v))
+	}
+	pipe.Expire(ctx, key, time.Duration(config.IotConfig.StateTTL)*time.Second)
+	if _, err := pipe.Exec(ctx); err != nil {
+		core.Logger.Errorf("[iot处理] 写属性快照失败 deviceId=%s err=%v", deviceId, err)
+	}
+}
+
+// clearRuntime 清除设备运行态（设备被删除时调用），并从到期表移除，
+// 避免残留成员到期后被快路径弹出不存在的设备；告警活动态/计时/静默一并清除，
+// 库里未恢复的告警由调用方 AlertService.CloseActiveByDevice 收尾
+func clearRuntime(deviceId string) {
+	ctx, cancel := redisCtx()
+	defer cancel()
+	_ = core.Redis.Del(ctx, stateKey(deviceId), seenKey(deviceId),
+		alertActiveKey(deviceId), alertFirstKey(deviceId), alertSilenceKey(deviceId)).Err()
+	_ = core.Redis.ZRem(ctx, expireZKey(), deviceId).Err()
+}
+
+// stringify 属性值统一转字符串存 HASH；对象/数组转 JSON 文本，避免丢失结构
+func stringify(v any) string {
+	switch t := v.(type) {
+	case nil:
+		return ""
+	case string:
+		return t
+	case bool:
+		return strconv.FormatBool(t)
+	case float64:
+		return strconv.FormatFloat(t, 'f', -1, 64)
+	default:
+		bs, err := json.Marshal(t)
+		if err != nil {
+			return ""
+		}
+		return string(bs)
+	}
+}
+
+// Runtime 读出 Redis 侧运行态，供管理端回读验证链路（库侧状态由调用方合并）。
+// 在线与剩余时长直接读到期表 score（与快路径判定同源）；score 缺失时（如慢路径还没来得及重建）
+// 退回“seen+生效窗口”推算，与慢路径判据一致。
+// 三个键并进一个 pipeline：分开发会有 3 个 RTT，且中间状态可能变迁。
+func Runtime(deviceId string, timeout int) iot_schema.DeviceStateResp {
+	ctx, cancel := redisCtx()
+	defer cancel()
+	pipe := core.Redis.Pipeline()
+	score := pipe.ZScore(ctx, expireZKey(), deviceId)
+	seen := pipe.Get(ctx, seenKey(deviceId))
+	state := pipe.HGetAll(ctx, stateKey(deviceId))
+	if _, err := pipe.Exec(ctx); err != nil && err != redis.Nil {
+		core.Logger.Errorf("[iot处理] 读运行态失败 deviceId=%s err=%v", deviceId, err)
+	}
+
+	window := offlineWindow(timeout)
+	nowMs := time.Now().UnixMilli()
+	resp := iot_schema.DeviceStateResp{
+		DeviceId:       deviceId,
+		OfflineTimeout: timeout,
+		Values:         map[string]string{},
+	}
+	if v, err := state.Result(); err == nil && v != nil {
+		resp.Values = v
+	}
+	if ms, err := strconv.ParseInt(seen.Val(), 10, 64); err == nil && ms > 0 {
+		resp.LastSeenMs = ms
+		resp.UpdatedAt = time.UnixMilli(ms).Format("2006-01-02 15:04:05")
+	}
+	if sc, err := score.Result(); err == nil {
+		if sc > float64(nowMs) { // 到期表未到期即在线，剩余时长直接由 score 算
+			resp.Online = true
+			resp.OfflineIn = int64(time.Duration(sc - float64(nowMs)).Seconds())
+		}
+	} else if err != redis.Nil {
+		core.Logger.Errorf("[iot处理] 读到期表失败 deviceId=%s err=%v", deviceId, err)
+	}
+	if !resp.Online && resp.LastSeenMs > 0 {
+		// 到期表无成员但窗口内确有报文（Redis 被清理/慢路径待重建）：按 seen+窗口推算
+		if remain := window - time.Since(time.UnixMilli(resp.LastSeenMs)); remain > 0 {
+			resp.Online = true
+			resp.OfflineIn = int64(remain.Seconds())
+		}
+	}
+	return resp
+}
+
+// DeviceRoom 单设备实时房间名（WS 房间标识，不带 Redis 前缀）
+func DeviceRoom(deviceId string) string { return "iot:device:" + deviceId }
+
+// MapRoom 区域大屏房间名（对应 iot.md 第六节的地图房间广播）
+func MapRoom(spaceId string) string { return "iot:map:" + spaceId }
+
+// pushStatus 在线状态变更广播（上报路径，带完整信封）
+func pushStatus(msg iot_schema.IngestMsg, status uint8) {
+	pushStatusOf(msg.DeviceId, msg.Sn, msg.SpaceId, status, msg.ReceivedAt)
+}
+
+// pushStatusOf 广播状态转换：仅在发生上线/离线转换时调用，避免高频报文刷爆 WS；
+// 定时扫描路径没有信封，只有库侧的 id/sn/space，所以把字段拆开。
+func pushStatusOf(deviceId, sn, spaceId string, status uint8, ts int64) {
+	if !config.IotConfig.PushStateChange {
+		return
+	}
+	payload := map[string]any{
+		"device_id": deviceId,
+		"sn":        sn,
+		"space_id":  spaceId,
+		"status":    status,
+		"ts":        ts,
+	}
+	core.Ws.SendToRoom(DeviceRoom(deviceId), "iot:status", payload)
+	if spaceId != "" {
+		core.Ws.SendToRoom(MapRoom(spaceId), "iot:status", payload)
+	}
+}
+
+// pushTelemetry 属性变更广播：把过滤后的最新值推给设备房间与区域大屏
+func pushTelemetry(msg iot_schema.IngestMsg, values map[string]any) {
+	if !config.IotConfig.PushStateChange || len(values) == 0 {
+		return
+	}
+	payload := map[string]any{
+		"device_id": msg.DeviceId,
+		"sn":        msg.Sn,
+		"space_id":  msg.SpaceId,
+		"ts":        msg.Ts,
+		"values":    values,
+	}
+	core.Ws.SendToRoom(DeviceRoom(msg.DeviceId), "iot:telemetry", payload)
+	if msg.SpaceId != "" {
+		core.Ws.SendToRoom(MapRoom(msg.SpaceId), "iot:telemetry", payload)
+	}
+}
+
+// pushAlarm 告警事件广播：与遥测同房间，前端按事件名 iot:alarm 区分。
+// recovered=false 为触发/升级(告警中)、true 为恢复；alertId 为本次告警事件主键，
+// severity 为告警级别(1/2/3)；前端可据 alertId 把同一条告警的“触发→升级→恢复”合并展示。
+func pushAlarm(msg iot_schema.IngestMsg, values map[string]any, alertId string, recovered bool, severity uint8) {
+	if !config.IotConfig.PushStateChange {
+		return
+	}
+	status := uint8(1) // 1=告警中
+	if recovered {
+		status = 0 // 0=已恢复
+	}
+	payload := map[string]any{
+		"device_id": msg.DeviceId,
+		"sn":        msg.Sn,
+		"space_id":  msg.SpaceId,
+		"alert_id":  alertId,
+		"status":    status,
+		"severity":  severity,
+		"ts":        msg.Ts,
+		"values":    values,
+	}
+	core.Ws.SendToRoom(DeviceRoom(msg.DeviceId), "iot:alarm", payload)
+	if msg.SpaceId != "" {
+		core.Ws.SendToRoom(MapRoom(msg.SpaceId), "iot:alarm", payload)
+	}
+}

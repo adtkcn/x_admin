@@ -19,6 +19,7 @@ type config struct {
 	JWT      *JwtConfig
 	AdminJWT *JwtConfig
 	Wechat   *wechatConfig
+	IOT      *IotConfigStruct
 }
 
 func loadConfig(config config) config {
@@ -57,7 +58,10 @@ func init() {
 		JWT:      &JWTConfig,
 		AdminJWT: &AdminJWTConfig,
 		Wechat:   &WechatConfig,
+		IOT:      &IotConfig,
 	})
+	// 校正 IoT 配置：这些值会被当作 Redis TTL / 延迟时长直接使用，0 值语义反转后果严重
+	IotConfig.Normalize()
 
 	fmt.Printf("AppConfig: %+v\n", AppConfig)
 	// fmt.Printf("DBConfig: %+v\n", DBConfig)
@@ -69,4 +73,5 @@ func init() {
 	fmt.Printf("JWTConfig: %+v\n", JWTConfig)
 	fmt.Printf("AdminJWTConfig: %+v\n", AdminJWTConfig)
 	fmt.Printf("WechatConfig: %+v\n", WechatConfig)
+	fmt.Printf("IotConfig: %+v\n", IotConfig)
 }

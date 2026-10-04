@@ -1,6 +1,7 @@
 package iot_controller
 
 import (
+	iot_pipeline "x_admin/app/iot/pipeline"
 	"x_admin/app/schema/iot_schema"
 	"x_admin/app/service/iot_service"
 	"x_admin/core/request"
@@ -97,5 +98,65 @@ func (h DeviceHandler) Del(c *gin.Context) {
 	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &req)) {
 		return
 	}
-	response.JSON(c, nil, iot_service.DeviceService.Del(req.ID))
+	e := iot_service.DeviceService.Del(req.ID)
+	if e == nil {
+		// 设备删除后同步清理 Redis 运行态（alive/state/seen/watch/alert），
+		// 否则幽灵设备在标记 TTL 内仍会被回读为在线；service 反向引用 pipeline
+		// 会成包循环，故由同时依赖两边的控制器编排这一步。
+		// 库里仍“告警中”的记录一并收尾，避免残留永不恢复的悬空告警。
+		iot_pipeline.StopRuntime(req.ID)
+		_ = iot_service.AlertService.CloseActiveByDevice(req.ID)
+	}
+	response.JSON(c, nil, e)
+}
+
+// @Summary		设备运行态快照
+// @Description	回读 Redis 中的在线判定/最后报文时间与最新属性快照，用于验证接入→处理→运行态链路
+// @Tags			iot_device-设备
+// @Param			token	header		string							true	"token"
+// @Param			id		query		string							true	"设备主键"
+// @Success		200		{object}	response.Response{data=iot_schema.DeviceStateResp}	"成功"
+// @Router			/api/admin/iot/device/state [get]
+func (h DeviceHandler) State(c *gin.Context) {
+	var req iot_schema.DeviceStateReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &req)) {
+		return
+	}
+	detail, err := iot_service.DeviceService.Detail(req.ID)
+	if response.IsFail(c, err) {
+		return
+	}
+	// 运行态在 pipeline（Redis），库侧状态在 iot_service；pipeline 依赖 iot_service，
+	// 故由控制器合并两侧数据，避免 service 反向引用接入层造成包循环
+	// 生效的离线判定时长以设备记录为准（未配置时落兜底值），与定时扫描同源，改完配置即时反映
+	timeout, err := iot_service.DeviceService.EffectiveOfflineTimeout(req.ID)
+	if response.IsFail(c, err) {
+		return
+	}
+	res := iot_pipeline.Runtime(req.ID, timeout)
+	res.Sn = detail.Sn
+	res.Name = detail.Name
+	res.DBStatus = detail.Status
+	res.LastOnline = detail.LastOnlineTime
+	res.LastOffline = detail.LastOfflineTime
+	response.JSON(c, res, nil)
+}
+
+// @Summary		设备时序数据回读
+// @Description	读取最近的属性上报历史（本轮存 MySQL，后续换 TDengine 接口不变）
+// @Tags			iot_device-设备
+// @Param			token	header		string							true	"token"
+// @Param			id		query		string							true	"设备主键"
+// @Param			limit	query		int							false	"条数(缺省50,上限500)"
+// @Success		200		{object}	response.Response{data=[]iot_schema.DeviceDataResp}	"成功"
+// @Router			/api/admin/iot/device/data [get]
+func (h DeviceHandler) Data(c *gin.Context) {
+	var req iot_schema.DeviceDataReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &req)) {
+		return
+	}
+	if _, err := iot_service.DeviceService.Detail(req.ID); response.IsFail(c, err) {
+		return
+	}
+	response.JSON(c, iot_pipeline.QueryRecent(req.ID, req.Limit), nil)
 }

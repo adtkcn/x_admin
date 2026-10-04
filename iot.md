@@ -20,7 +20,7 @@ x_admin 已具备 IoT 平台所需的多数底座，本方案**优先复用，�
 | 路由自动加载 | ✅ 各模块 `init()` 追加 `routeHandlers`，免手工挂载 | `routes/admin_route` |
 | CRUD 代码生成 | ✅ 内置代码生成器，可按表一键生成前后端 | `app/service/generator_service` |
 | **MQTT/TCP 协议接入** | ❌ 需新增 | 新建 `iot` 接入层 |
-| **goja JS 引擎** | ❌ 需新增依赖 | 新建 `iot` 预处理 |
+| **goja JS 引擎** | ✅ 已引入 dop251/goja | 产品级解码/过滤/告警脚本 |
 | **TDengine 时序库** | ❌ 需新增依赖与连接 | 新建 `iot` 时序层 |
 | **MapLibre 设备地图（前端）** | ❌ 前端新增页面 | `admin/src/views/iot` |
 
@@ -44,7 +44,7 @@ x_admin 已具备 IoT 平台所需的多数底座，本方案**优先复用，�
                               │  投递到 core.Queue 削峰
 ┌─────────────────────────────────────────────────────────────┐
 │              数据处理流水线 iot/pipeline（新增）              │
-│  goja 预处理 → 过滤器链 → Redis 告警状态机 → 转发/存储         │
+│  解码脚本 → 物模型过滤 → 过滤脚本 → 存储 → 告警脚本+告警状态机 (goja)  │
 └─────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────┐
@@ -104,11 +104,11 @@ server/
 | 表（`x_iot_` 前缀） | 关键字段 | 说明 |
 |:---|:---|:---|
 | `x_iot_product_category` | id(uuid), name, parent_id, sort, is_delete, create/update_time | 产品分类树 |
-| `x_iot_product` | id(uuid), name, category_id, device_type, protocol, thing_model(JSON/text), decode_script, preprocess_script, is_delete | 产品定义；`thing_model` 存物模型 JSON（本项目 MySQL 无 jsonb，用 text/JSON 列） |
+| `x_iot_product` | id(uuid), name, category_id, device_type, protocol, thing_model(JSON/text), decode_script, filter_script, alert_script, alert_duration, alert_silence, is_delete | 产品定义；`thing_model` 存物模型 JSON，`decode_script/filter_script/alert_script` 为产品级 goja JS 脚本；`alert_duration`(持续秒,0=命中即告)/`alert_silence`(静默秒,0=不静默) 为告警状态机参数（本项目 MySQL 无 jsonb，用 text 列） |
 | `x_iot_device_space` | id(uuid), name, parent_id, path, longitude, latitude, sort, is_delete | 设备区域树，`path` 物化路径（如 `/uuid1/uuid2/`）便于子树查询 |
 | `x_iot_device` | id(uuid), name, sn, product_id, space_id, gateway_id, status, longitude, latitude, access_token, is_delete | 设备；`sn` 业务唯一编号，`access_token` 接入凭证 |
-| `x_iot_alert_rule` | id(uuid), product_id, identifier, operator, threshold, duration, severity, silence, is_delete | 告警规则 |
-| `x_iot_alert_history` | id(uuid), rule_id, device_id, severity, triggered_at, recovered_at, message | 告警历史（量大时按月分表/分区） |
+| ~~`x_iot_alert_rule`~~ | — | 未建：告警条件与级别由产品级 goja 告警脚本 `alert(values)` 逐条判定（返回 0/1/2/3），持续/静默参数落在 `x_iot_product.alert_duration/alert_silence` |
+| `x_iot_alert_history` | id(uuid), device_id, sn, product_id, space_id, status(1告警中/0已恢复), severity(1轻微/2严重/3故障), values(JSON快照), triggered_at, recovered_at | 告警事件历史：一条=一次触发到恢复的完整生命周期，单事件可升级（级别升高只更新同条 severity）；持续时长=`recovered_at-triggered_at`（量大时按月分表/分区） |
 
 模型示例（对齐 `fabu_model.FabuApp`）：
 
@@ -131,8 +131,11 @@ type IotProduct struct {
     DeviceType       string                `gorm:"type:varchar(64);not null;default:'';comment:'设备类型'" json:"device_type"`
     Protocol         string                `gorm:"type:varchar(16);not null;default:'';comment:'接入协议:mqtt/tcp/http/ws'" json:"protocol"`
     ThingModel       string                `gorm:"type:text;comment:'物模型JSON'" json:"thing_model"`
-    DecodeScript     string                `gorm:"type:text;comment:'解码脚本'" json:"decode_script"`
-    PreprocessScript string                `gorm:"type:text;comment:'预处理脚本(goja)'" json:"preprocess_script"`
+    DecodeScript     string                `gorm:"type:text;comment:'解码脚本(goja): decode(raw)返回物模型对象'" json:"decode_script"`
+    FilterScript     string                `gorm:"type:text;comment:'数据过滤脚本(goja): filter(values)返回布尔'" json:"filter_script"`
+    AlertScript      string                `gorm:"type:text;comment:'数据告警脚本(goja): alert(values)返回级别数字(0=不告警,1/2/3=轻微/严重/故障)'" json:"alert_script"`
+    AlertDuration    int                   `gorm:"not null;default:0;comment:'告警持续时长(秒),0=命中即告'" json:"alert_duration"`
+    AlertSilence     int                   `gorm:"not null;default:0;comment:'告警静默时长(秒),0=不静默'" json:"alert_silence"`
     IsDelete         soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除'" json:"-"`
     CreateTime       x_null.Time           `gorm:"autoCreateTime;not null;comment:'创建时间'" json:"create_time"`
     UpdateTime       x_null.Time           `gorm:"autoUpdateTime;not null;comment:'更新时间'" json:"update_time"`
@@ -181,9 +184,9 @@ _, err := td.Exec(
 
 | 数据类别 | 存储 | 承载 |
 |:---|:---|:---|
-| 元数据 | MySQL | 分类、产品、空间、设备、告警规则 |
-| 运行态 | Redis（`core.Redis`） | 设备在线状态、告警状态、去重/限流 |
-| 时序数据 | TDengine | 传感器/指标历史数据 |
+| 元数据 | MySQL | 分类、产品（含三段 goja 脚本与告警持续/静默参数）、空间、设备 |
+| 运行态 | Redis（`core.Redis`） | 设备在线状态、告警活动态/持续计时/静默、去重/限流 |
+| 时序数据 | TDengine（第四阶段引入，现由 MySQL `x_iot_device_data` 暂代） | 传感器/指标历史数据 |
 | 告警记录 | MySQL | 告警历史 |
 
 ---
@@ -262,7 +265,7 @@ Controller 用 `util.VerifyUtil.VerifyQuery/VerifyBody` 校验、`response.JSON`
 | 第二阶段 | MQTT/HTTP 接入 + goja 预处理与基础过滤，报文入 `core.Queue` | `core.Queue` |
 | 第三阶段 | TCP/WebSocket 接入，完善协议适配器（粘包：固定帧头+长度字段） | `gorilla/websocket` |
 | 第四阶段 | TDengine 集成，时序写入与查询 | 新增 `core/td` |
-| 第五阶段 | Redis 分布式告警引擎（持续 N 秒、静默、恢复） | `core.Redis` + `ClusterMode` |
+| 第五阶段 | ✅ 已完成：告警状态机（持续 N 秒、静默、升级、恢复）——产品 goja 告警脚本逐条返回级别数字 + Redis 运行态收敛成事件级记录（单事件可升级），写 `x_iot_alert_history`、按转换点推 `iot:alarm` | `core.Redis`（report 驱动，无需到期表扫描） |
 | 第六阶段 | MapLibre 设备地图 + 大屏实时推送 + 告警历史 | `core.Ws` 房间广播 |
 | 第七阶段 | 权限细化、集群化压测、告警治理 | 现有权限体系 |
 

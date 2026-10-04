@@ -43,14 +43,96 @@
                         <el-option label="WebSocket" value="ws" />
                     </el-select>
                 </el-form-item>
+                <el-form-item label="离线判定时长" prop="offline_timeout">
+                    <div class="w-full">
+                        <el-input-number
+                            v-model="formData.offline_timeout"
+                            :min="1"
+                            :max="86400"
+                            :step="10"
+                            :controls="false"
+                            placeholder="秒"
+                            class="w-full"
+                        />
+                        <div class="form-tips">
+                            必填：连续多少秒未收到报文则判为离线（1~86400 秒）；设备可单独配置，设备留 0 即用本产品的值
+                        </div>
+                    </div>
+                </el-form-item>
                 <el-form-item label="物模型" prop="thing_model">
-                    <el-input v-model="formData.thing_model" type="textarea" :rows="4" placeholder="物模型 JSON" />
+                    <div class="w-full">
+                        <div class="flex items-center gap-2">
+                            <el-button type="primary" plain @click="handleOpenThingModel">
+                                <template #icon><icon name="el-icon-Setting" /></template>
+                                可视化设计
+                            </el-button>
+                            <el-tag v-if="thingModelCount" type="success">{{ thingModelCount }} 个属性</el-tag>
+                            <el-tag v-else-if="formData.thing_model" type="warning">自定义 JSON</el-tag>
+                            <el-tag v-else type="info">未配置</el-tag>
+                            <el-button v-if="formData.thing_model" link type="danger" @click="formData.thing_model = ''">
+                                清空
+                            </el-button>
+                        </div>
+                        <div class="form-tips">
+                            声明产品的属性白名单，未声明的属性上报时会被丢弃；不配置则不限制上报字段
+                        </div>
+                    </div>
                 </el-form-item>
                 <el-form-item label="解码脚本" prop="decode_script">
-                    <el-input v-model="formData.decode_script" type="textarea" :rows="3" placeholder="解码脚本" />
+                    <el-input
+                        v-model="formData.decode_script"
+                        type="textarea"
+                        :rows="5"
+                        placeholder="goja 执行 JS，需定义全局函数：function decode(raw){ return { 物模型identifier: 值, ... } } ——入参 raw 为原始报文字符串，返回物模型对应的属性对象；留空则直接采用上报的 values"
+                    />
                 </el-form-item>
-                <el-form-item label="预处理脚本" prop="preprocess_script">
-                    <el-input v-model="formData.preprocess_script" type="textarea" :rows="3" placeholder="预处理脚本(goja)" />
+                <el-form-item label="过滤脚本" prop="filter_script">
+                    <el-input
+                        v-model="formData.filter_script"
+                        type="textarea"
+                        :rows="4"
+                        placeholder="goja 执行 JS，需定义全局函数：function filter(values){ return true/false } ——入参 values 为解码后的属性对象，返回 false 则丢弃本条上报；留空则全部放行"
+                    />
+                </el-form-item>
+                <el-form-item label="告警脚本" prop="alert_script">
+                    <el-input
+                        v-model="formData.alert_script"
+                        type="textarea"
+                        :rows="4"
+                        placeholder="goja 执行 JS，需定义全局函数：function alert(values){ 返回告警级别数字 } ——入参 values 为解码后的属性对象；返回 0=不告警/恢复，1=轻微，2=严重，3=故障（可按阈值逐级 return 不同数字）；兼容旧写法 true→默认按 1 级。留空则不启用告警"
+                    />
+                </el-form-item>
+                <el-form-item label="告警持续时长" prop="alert_duration">
+                    <div class="w-full">
+                        <el-input-number
+                            v-model="formData.alert_duration"
+                            :min="0"
+                            :max="86400"
+                            :step="10"
+                            :controls="false"
+                            placeholder="秒"
+                            class="w-full"
+                        />
+                        <div class="form-tips">
+                            异常状态需连续保持多少秒才正式触发告警，0=命中即告（过滤掉瞬时抖动）；恢复(脚本返回 false)立即结束本次告警
+                        </div>
+                    </div>
+                </el-form-item>
+                <el-form-item label="告警静默时长" prop="alert_silence">
+                    <div class="w-full">
+                        <el-input-number
+                            v-model="formData.alert_silence"
+                            :min="0"
+                            :max="86400"
+                            :step="10"
+                            :controls="false"
+                            placeholder="秒"
+                            class="w-full"
+                        />
+                        <div class="form-tips">
+                            一次告警触发后多少秒内不再重复触发新告警，0=不静默（抑制告警恢复后立刻再次抖动触发的刷屏）
+                        </div>
+                    </div>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="formData.remark" type="textarea" :rows="2" placeholder="请输入备注" :maxlength="255" />
@@ -60,6 +142,7 @@
                 </el-form-item>
             </el-form>
         </popup>
+        <thing-model-dialog ref="thingModelRef" v-model="formData.thing_model" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -73,6 +156,8 @@ import {
     type type_iot_product
 } from '@/api/iot'
 import Popup from '@/components/popup/index.vue'
+import ThingModelDialog from './components/thing-model.vue'
+import { countProperties } from './components/thing-model'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
 import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
@@ -80,6 +165,8 @@ import { useReactiveWithReset } from '@/hooks/useReactiveWithReset'
 const emit = defineEmits(['success', 'close'])
 const formRef = shallowRef<FormInstance>()
 const popupRef = shallowRef<InstanceType<typeof Popup>>()
+const thingModelRef = shallowRef<InstanceType<typeof ThingModelDialog>>()
+const handleOpenThingModel = () => thingModelRef.value?.open()
 const mode = ref('add')
 const popupTitle = computed(() => (mode.value == 'edit' ? '编辑产品' : '新增产品'))
 
@@ -89,15 +176,48 @@ const { state: formData, setState } = useReactiveWithReset<type_iot_product>({
     category_id: '',
     device_type: '',
     protocol: '',
+    // 新增时先给与后端兜底值一致的默认时长，避免表单直接报必填错
+    offline_timeout: 300,
     thing_model: '',
     decode_script: '',
-    preprocess_script: '',
+    filter_script: '',
+    alert_script: '',
+    alert_duration: 0,
+    alert_silence: 0,
     remark: '',
     is_stop: 0
 })
 
+// 属性条数仅供展示：自定义结构的 JSON 解析不出属性时返回 0，表单仍按原文保存
+const thingModelCount = computed(() => countProperties(formData.thing_model))
+
+// 物模型必填且必须是合法 JSON：处理层按物模型白名单裁剪属性，未建模产品会被后端拒绝
+const validateThingModel = (_rule: any, value: string, callback: (e?: Error) => void) => {
+    if (!value || !value.trim()) return callback(new Error('物模型必须配置'))
+    try {
+        JSON.parse(value)
+        callback()
+    } catch {
+        callback(new Error('物模型必须是合法 JSON'))
+    }
+}
+
 const formRules = {
-    name: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }]
+    name: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
+    category_id: [{ required: true, message: '请选择所属分类', trigger: ['change'] }],
+    device_type: [{ required: true, message: '请选择节点类型', trigger: ['change'] }],
+    protocol: [{ required: true, message: '请选择接入协议', trigger: ['change'] }],
+    offline_timeout: [
+        {
+            required: true,
+            validator: (_rule: any, value: number, callback: (e?: Error) => void) =>
+                value >= 1 && value <= 86400
+                    ? callback()
+                    : callback(new Error('请输入 1~86400 之间的离线判定时长')),
+            trigger: ['blur', 'change']
+        }
+    ],
+    thing_model: [{ required: true, validator: validateThingModel, trigger: ['blur', 'change'] }]
 }
 
 const categoryFlat = ref<any[]>([])

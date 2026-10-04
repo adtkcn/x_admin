@@ -63,33 +63,49 @@ func (s deviceService) List(page request.PageReq, listReq iot_schema.DeviceListR
 }
 
 // fillNames 批量回填产品名称、产品节点类型、区域名称与网关设备名称
+//
+// 一律按“列表里实际出现的 id”做 IN 回查：先前是无条件全表 Find 产品与区域，
+// 每次分页/详情请求都要把两张表读进内存，成本随元数据总量线性增长。
 func (s deviceService) fillNames(list []iot_schema.DeviceResp) {
 	if len(list) == 0 {
 		return
 	}
-	productMap := map[string]iot_model.IotProduct{}
-	var products []iot_model.IotProduct
-	s.db.Select("id, name, device_type").Find(&products)
-	for _, p := range products {
-		productMap[p.ID] = p
-	}
-	spaceMap := map[string]string{}
-	var spaces []iot_model.IotDeviceSpace
-	s.db.Select("id, name").Find(&spaces)
-	for _, sp := range spaces {
-		spaceMap[sp.ID] = sp.Name
-	}
-	// 网关设备名称：按去重后的 gateway_id 批量查询
-	gatewayMap := map[string]string{}
-	gatewayIds := make([]string, 0, len(list))
+	// 一次遍历收集三类关联 id（去重），再按 id 集合回查
+	productSet := map[string]struct{}{}
+	spaceSet := map[string]struct{}{}
+	gatewaySet := map[string]struct{}{}
 	for _, d := range list {
+		if d.ProductId != "" {
+			productSet[d.ProductId] = struct{}{}
+		}
+		if d.SpaceId != "" {
+			spaceSet[d.SpaceId] = struct{}{}
+		}
 		if d.GatewayId != "" {
-			gatewayIds = append(gatewayIds, d.GatewayId)
+			gatewaySet[d.GatewayId] = struct{}{}
 		}
 	}
-	if len(gatewayIds) > 0 {
+
+	productMap := map[string]iot_model.IotProduct{}
+	if ids := setToSlice(productSet); len(ids) > 0 {
+		var products []iot_model.IotProduct
+		s.db.Select("id, name, device_type").Where("id IN ?", ids).Find(&products)
+		for _, p := range products {
+			productMap[p.ID] = p
+		}
+	}
+	spaceMap := map[string]string{}
+	if ids := setToSlice(spaceSet); len(ids) > 0 {
+		var spaces []iot_model.IotDeviceSpace
+		s.db.Select("id, name").Where("id IN ?", ids).Find(&spaces)
+		for _, sp := range spaces {
+			spaceMap[sp.ID] = sp.Name
+		}
+	}
+	gatewayMap := map[string]string{}
+	if ids := setToSlice(gatewaySet); len(ids) > 0 {
 		var gateways []iot_model.IotDevice
-		s.db.Select("id, name").Where("id IN ?", gatewayIds).Find(&gateways)
+		s.db.Select("id, name").Where("id IN ?", ids).Find(&gateways)
 		for _, g := range gateways {
 			gatewayMap[g.ID] = g.Name
 		}
@@ -101,6 +117,15 @@ func (s deviceService) fillNames(list []iot_schema.DeviceResp) {
 		list[i].SpaceName = spaceMap[list[i].SpaceId]
 		list[i].GatewayName = gatewayMap[list[i].GatewayId]
 	}
+}
+
+// setToSlice 集合转切片（空集合返回空切片，供调用方直接跳过 IN 查询）
+func setToSlice(set map[string]struct{}) []string {
+	ids := make([]string, 0, len(set))
+	for id := range set {
+		ids = append(ids, id)
+	}
+	return ids
 }
 
 // Detail 设备详情
@@ -148,6 +173,15 @@ func (s deviceService) checkGateway(id string, gatewayId string) error {
 	return nil
 }
 
+// fillOfflineTimeout 离线判定时长以设备记录为准（冗余+自定义）：未指定（0）时
+// 把所属产品的值冗余到设备上，上报/扫描两条路径都只读设备列
+func fillOfflineTimeout(timeout int, productTimeout int) int {
+	if timeout > 0 {
+		return timeout
+	}
+	return productTimeout
+}
+
 // Add 新增设备：校验产品/区域/网关绑定、sn 唯一，自动生成接入凭证
 func (s deviceService) Add(addReq iot_schema.DeviceAddReq) (e error) {
 	var product iot_model.IotProduct
@@ -168,6 +202,7 @@ func (s deviceService) Add(addReq iot_schema.DeviceAddReq) (e error) {
 	}
 	var device iot_model.IotDevice
 	convert_util.Copy(&device, addReq)
+	device.OfflineTimeout = fillOfflineTimeout(addReq.OfflineTimeout, product.OfflineTimeout)
 	device.AccessToken = strings.ReplaceAll(util.ToolsUtil.MakeUuidV7(), "-", "")
 	e = response.CheckErr(s.db.Create(&device).Error, "添加失败")
 	return
@@ -185,7 +220,15 @@ func (s deviceService) Edit(editReq iot_schema.DeviceEditReq) (e error) {
 	if e = s.checkGateway(editReq.ID, editReq.GatewayId); e != nil {
 		return
 	}
+	// sn 可被改写：先按旧 sn 失效接入鉴权缓存，否则旧编号仍能上报
+	s.InvalidateAuth(device.Sn, device.AccessToken)
 	convert_util.Copy(&device, editReq)
+	if device.OfflineTimeout <= 0 {
+		// 编辑未指定时重新冗余新产品值（产品可能已换或产品时长已改）
+		var product iot_model.IotProduct
+		s.db.Select("offline_timeout").Where("id = ?", editReq.ProductId).First(&product)
+		device.OfflineTimeout = fillOfflineTimeout(editReq.OfflineTimeout, product.OfflineTimeout)
+	}
 	// 在线状态与活跃时间由设备接入层维护，人工编辑不覆盖这几列
 	e = response.CheckErr(s.db.Model(&device).Select("*").
 		Omit("id", "create_time", "access_token", "status", "last_online_time", "last_offline_time").
@@ -194,20 +237,10 @@ func (s deviceService) Edit(editReq iot_schema.DeviceEditReq) (e error) {
 }
 
 // UpdateOnlineStatus 更新设备在线状态（供设备接入层根据心跳/连接事件调用，非管理端人工设置）：
-// status=1 上线并刷新最后上线时间；status=0 离线并刷新最后离线时间
+// status=1 上线并刷新最后上线时间；status=0 离线并刷新最后离线时间。
+// 实际写入逻辑收敛到 MarkStatus，避免两处各维护一套“状态+时间戳”的更新语义。
 func (s deviceService) UpdateOnlineStatus(id string, status uint8) (e error) {
-	var device iot_model.IotDevice
-	if e = response.CheckDBErr(s.db.Where("id = ?", id).First(&device).Error, "设备不存在!", "状态更新失败"); e != nil {
-		return
-	}
-	now := util.NullTimeUtil.Now()
-	updates := map[string]any{"status": status}
-	if status == 1 {
-		updates["last_online_time"] = now
-	} else {
-		updates["last_offline_time"] = now
-	}
-	e = response.CheckErr(s.db.Model(&device).Updates(updates).Error, "状态更新失败")
+	_, e = s.MarkStatus(id, status)
 	return
 }
 
@@ -216,6 +249,8 @@ func (s deviceService) Del(id string) (e error) {
 	if r := s.db.Where("gateway_id = ?", id).Limit(1).Find(&iot_model.IotDevice{}); r.RowsAffected > 0 {
 		return response.AssertArgumentError.SetMessage("该设备下存在子设备,请先移除!")
 	}
+	var device iot_model.IotDevice
+	s.db.Select("id, sn, access_token").Where("id = ?", id).First(&device)
 	result := s.db.Where("id = ?", id).Delete(&iot_model.IotDevice{})
 	if result.Error != nil {
 		return response.CheckErr(result.Error, "删除失败")
@@ -223,5 +258,7 @@ func (s deviceService) Del(id string) (e error) {
 	if result.RowsAffected == 0 {
 		return errors.New("设备不存在")
 	}
+	// 设备已删除，立即失效鉴权缓存，避免 TTL 内旧凭证继续接入
+	s.InvalidateAuth(device.Sn, device.AccessToken)
 	return
 }

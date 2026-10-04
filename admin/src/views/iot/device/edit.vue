@@ -51,6 +51,22 @@
                         <div class="form-tips">仅可选择所属产品为网关设备/边缘主机的设备</div>
                     </div>
                 </el-form-item>
+                <el-form-item label="离线判定时长" prop="offline_timeout">
+                    <div class="w-full">
+                        <el-input-number
+                            v-model="formData.offline_timeout"
+                            :min="0"
+                            :max="86400"
+                            :step="10"
+                            :controls="false"
+                            placeholder="秒"
+                            class="w-full"
+                        />
+                        <div class="form-tips">
+                            连续多少秒未收到本机报文则判为离线；留 0 表示跟随所属产品的配置，填具体值则为本机自定义（不随产品变更）
+                        </div>
+                    </div>
+                </el-form-item>
                 <el-form-item label="经纬度">
                     <div class="flex items-center gap-2 w-full">
                         <el-input-number v-model="formData.longitude" :precision="7" :step="0.0001" :controls="false" placeholder="经度" class="flex-1" />
@@ -107,6 +123,7 @@ const { state: formData, setState } = useReactiveWithReset<type_iot_device>({
     space_id: '',
     gateway_id: '',
     status: 0,
+    offline_timeout: 0,
     longitude: 0,
     latitude: 0,
     remark: ''
@@ -136,7 +153,9 @@ const handleMapConfirm = (val: MapCoordinate) => {
 
 const handleSubmit = async () => {
     await formRef.value?.validate()
-    mode.value == 'edit' ? await deviceEdit(formData) : await deviceAdd(formData)
+    // el-input-number 被清空时是 undefined/null：归 0 再提交（0 = 跟随产品值），避免后端收到 null
+    const payload = { ...formData, offline_timeout: formData.offline_timeout || 0 }
+    mode.value == 'edit' ? await deviceEdit(payload) : await deviceAdd(payload)
     popupRef.value?.close()
     feedback.msgSuccess('操作成功')
     emit('success')

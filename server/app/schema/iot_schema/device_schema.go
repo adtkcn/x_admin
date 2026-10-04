@@ -17,26 +17,28 @@ type DeviceListReq struct {
 }
 
 type DeviceAddReq struct {
-	Name      string  `json:"name" form:"name" binding:"required,min=1,max=100"` // 设备名称
-	Sn        string  `json:"sn" form:"sn" binding:"required,min=1,max=64"`      // 设备编号
-	ProductId string  `json:"product_id" form:"product_id" binding:"required"`   // 产品ID
-	SpaceId   string  `json:"space_id" form:"space_id"`                          // 区域ID
-	GatewayId string  `json:"gateway_id" form:"gateway_id"`                      // 网关设备ID
-	Longitude float64 `json:"longitude" form:"longitude"`                        // 经度
-	Latitude  float64 `json:"latitude" form:"latitude"`                          // 纬度
-	Remark    string  `json:"remark" form:"remark" binding:"max=255"`            // 备注
+	Name           string  `json:"name" form:"name" binding:"required,min=1,max=100"`          // 设备名称
+	Sn             string  `json:"sn" form:"sn" binding:"required,min=1,max=64"`               // 设备编号
+	ProductId      string  `json:"product_id" form:"product_id" binding:"required"`            // 产品ID
+	SpaceId        string  `json:"space_id" form:"space_id"`                                   // 区域ID
+	GatewayId      string  `json:"gateway_id" form:"gateway_id"`                               // 网关设备ID
+	OfflineTimeout int     `json:"offline_timeout" form:"offline_timeout" binding:"max=86400"` // 离线判定时长(秒)，0=自动取所属产品值
+	Longitude      float64 `json:"longitude" form:"longitude"`                                 // 经度
+	Latitude       float64 `json:"latitude" form:"latitude"`                                   // 纬度
+	Remark         string  `json:"remark" form:"remark" binding:"max=255"`                     // 备注
 }
 
 type DeviceEditReq struct {
-	ID        string  `json:"id" form:"id" binding:"required"`                   // 主键
-	Name      string  `json:"name" form:"name" binding:"required,min=1,max=100"` // 设备名称
-	Sn        string  `json:"sn" form:"sn" binding:"required,min=1,max=64"`      // 设备编号
-	ProductId string  `json:"product_id" form:"product_id" binding:"required"`   // 产品ID
-	SpaceId   string  `json:"space_id" form:"space_id"`                          // 区域ID
-	GatewayId string  `json:"gateway_id" form:"gateway_id"`                      // 网关设备ID
-	Longitude float64 `json:"longitude" form:"longitude"`                        // 经度
-	Latitude  float64 `json:"latitude" form:"latitude"`                          // 纬度
-	Remark    string  `json:"remark" form:"remark" binding:"max=255"`            // 备注
+	ID             string  `json:"id" form:"id" binding:"required"`                            // 主键
+	Name           string  `json:"name" form:"name" binding:"required,min=1,max=100"`          // 设备名称
+	Sn             string  `json:"sn" form:"sn" binding:"required,min=1,max=64"`               // 设备编号
+	ProductId      string  `json:"product_id" form:"product_id" binding:"required"`            // 产品ID
+	SpaceId        string  `json:"space_id" form:"space_id"`                                   // 区域ID
+	GatewayId      string  `json:"gateway_id" form:"gateway_id"`                               // 网关设备ID
+	OfflineTimeout int     `json:"offline_timeout" form:"offline_timeout" binding:"max=86400"` // 离线判定时长(秒)，0=自动取所属产品值
+	Longitude      float64 `json:"longitude" form:"longitude"`                                 // 经度
+	Latitude       float64 `json:"latitude" form:"latitude"`                                   // 纬度
+	Remark         string  `json:"remark" form:"remark" binding:"max=255"`                     // 备注
 }
 
 type DeviceDelReq struct {
@@ -59,6 +61,7 @@ type DeviceResp struct {
 	GatewayId       string      `json:"gateway_id"`        // 网关设备ID
 	GatewayName     string      `json:"gateway_name"`      // 网关设备名称
 	Status          uint8       `json:"status"`            // 在线状态（系统自动维护）
+	OfflineTimeout  int         `json:"offline_timeout"`   // 离线判定时长(秒)，以设备记录为准（冗余产品值+可自定义），0=兜底300秒
 	LastOnlineTime  x_null.Time `json:"last_online_time"`  // 最后上线时间
 	LastOfflineTime x_null.Time `json:"last_offline_time"` // 最后离线时间
 	Longitude       float64     `json:"longitude"`         // 经度

@@ -28,28 +28,36 @@ type ProductListReq struct {
 }
 
 type ProductAddReq struct {
-	Name             string `json:"name" form:"name" binding:"required,min=1,max=100"`                            // 产品名称
-	CategoryId       string `json:"category_id" form:"category_id"`                                               // 分类ID
-	DeviceType       string `json:"device_type" form:"device_type" binding:"omitempty,oneof=DEVICE GATEWAY EDGE"` // 节点类型
-	Protocol         string `json:"protocol" form:"protocol" binding:"omitempty,oneof=mqtt tcp http ws"`
-	ThingModel       string `json:"thing_model" form:"thing_model"`             // 物模型JSON
-	DecodeScript     string `json:"decode_script" form:"decode_script"`         // 解码脚本
-	PreprocessScript string `json:"preprocess_script" form:"preprocess_script"` // 预处理脚本
-	Remark           string `json:"remark" form:"remark" binding:"max=255"`     // 备注
-	IsStop           uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"` // 是否停用
+	Name           string `json:"name" form:"name" binding:"required,min=1,max=100"`                           // 产品名称
+	CategoryId     string `json:"category_id" form:"category_id" binding:"required"`                           // 分类ID
+	DeviceType     string `json:"device_type" form:"device_type" binding:"required,oneof=DEVICE GATEWAY EDGE"` // 节点类型
+	Protocol       string `json:"protocol" form:"protocol" binding:"required,oneof=mqtt tcp http ws"`          // 接入协议
+	OfflineTimeout int    `json:"offline_timeout" form:"offline_timeout" binding:"required,min=1,max=86400"`   // 离线判定时长(秒)，产品级必填
+	ThingModel     string `json:"thing_model" form:"thing_model"`                                              // 物模型JSON
+	DecodeScript   string `json:"decode_script" form:"decode_script"`                                          // 解码脚本(goja)
+	FilterScript   string `json:"filter_script" form:"filter_script"`                                          // 数据过滤脚本(goja)
+	AlertScript    string `json:"alert_script" form:"alert_script"`                                            // 数据告警脚本(goja)
+	AlertDuration  int    `json:"alert_duration" form:"alert_duration" binding:"max=86400"`                    // 告警持续时长(秒)，0=命中即告
+	AlertSilence   int    `json:"alert_silence" form:"alert_silence" binding:"max=86400"`                      // 告警静默时长(秒)，0=不静默
+	Remark         string `json:"remark" form:"remark" binding:"max=255"`                                      // 备注
+	IsStop         uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`                                  // 是否停用
 }
 
 type ProductEditReq struct {
-	ID               string `json:"id" form:"id" binding:"required"`                                              // 主键
-	Name             string `json:"name" form:"name" binding:"required,min=1,max=100"`                            // 产品名称
-	CategoryId       string `json:"category_id" form:"category_id"`                                               // 分类ID
-	DeviceType       string `json:"device_type" form:"device_type" binding:"omitempty,oneof=DEVICE GATEWAY EDGE"` // 节点类型
-	Protocol         string `json:"protocol" form:"protocol" binding:"omitempty,oneof=mqtt tcp http ws"`
-	ThingModel       string `json:"thing_model" form:"thing_model"`             // 物模型JSON
-	DecodeScript     string `json:"decode_script" form:"decode_script"`         // 解码脚本
-	PreprocessScript string `json:"preprocess_script" form:"preprocess_script"` // 预处理脚本
-	Remark           string `json:"remark" form:"remark" binding:"max=255"`     // 备注
-	IsStop           uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"` // 是否停用
+	ID             string `json:"id" form:"id" binding:"required"`                                             // 主键
+	Name           string `json:"name" form:"name" binding:"required,min=1,max=100"`                           // 产品名称
+	CategoryId     string `json:"category_id" form:"category_id" binding:"required"`                           // 分类ID
+	DeviceType     string `json:"device_type" form:"device_type" binding:"required,oneof=DEVICE GATEWAY EDGE"` // 节点类型
+	Protocol       string `json:"protocol" form:"protocol" binding:"required,oneof=mqtt tcp http ws"`          // 接入协议
+	OfflineTimeout int    `json:"offline_timeout" form:"offline_timeout" binding:"required,min=1,max=86400"`   // 离线判定时长(秒)，产品级必填
+	ThingModel     string `json:"thing_model" form:"thing_model"`                                              // 物模型JSON
+	DecodeScript   string `json:"decode_script" form:"decode_script"`                                          // 解码脚本(goja)
+	FilterScript   string `json:"filter_script" form:"filter_script"`                                          // 数据过滤脚本(goja)
+	AlertScript    string `json:"alert_script" form:"alert_script"`                                            // 数据告警脚本(goja)
+	AlertDuration  int    `json:"alert_duration" form:"alert_duration" binding:"max=86400"`                    // 告警持续时长(秒)，0=命中即告
+	AlertSilence   int    `json:"alert_silence" form:"alert_silence" binding:"max=86400"`                      // 告警静默时长(秒)，0=不静默
+	Remark         string `json:"remark" form:"remark" binding:"max=255"`                                      // 备注
+	IsStop         uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`                                  // 是否停用
 }
 
 type ProductDelReq struct {
@@ -61,17 +69,21 @@ type ProductDetailReq struct {
 }
 
 type ProductResp struct {
-	ID               string      `json:"id"`                // 主键
-	Name             string      `json:"name"`              // 产品名称
-	CategoryId       string      `json:"category_id"`       // 分类ID
-	CategoryName     string      `json:"category_name"`     // 分类名称
-	DeviceType       string      `json:"device_type"`       // 节点类型: DEVICE=直连设备, GATEWAY=网关设备, EDGE=边缘主机
-	Protocol         string      `json:"protocol"`          // 接入协议
-	ThingModel       string      `json:"thing_model"`       // 物模型JSON
-	DecodeScript     string      `json:"decode_script"`     // 解码脚本
-	PreprocessScript string      `json:"preprocess_script"` // 预处理脚本
-	Remark           string      `json:"remark"`            // 备注
-	IsStop           uint8       `json:"is_stop"`           // 是否停用
-	CreateTime       x_null.Time `json:"create_time"`       // 创建时间
-	UpdateTime       x_null.Time `json:"update_time"`       // 更新时间
+	ID             string      `json:"id"`              // 主键
+	Name           string      `json:"name"`            // 产品名称
+	CategoryId     string      `json:"category_id"`     // 分类ID
+	CategoryName   string      `json:"category_name"`   // 分类名称
+	DeviceType     string      `json:"device_type"`     // 节点类型: DEVICE=直连设备, GATEWAY=网关设备, EDGE=边缘主机
+	Protocol       string      `json:"protocol"`        // 接入协议
+	OfflineTimeout int         `json:"offline_timeout"` // 离线判定时长(秒)，作为其下设备未自定义时的取值
+	ThingModel     string      `json:"thing_model"`     // 物模型JSON
+	DecodeScript   string      `json:"decode_script"`   // 解码脚本(goja)
+	FilterScript   string      `json:"filter_script"`   // 数据过滤脚本(goja)
+	AlertScript    string      `json:"alert_script"`    // 数据告警脚本(goja)
+	AlertDuration  int         `json:"alert_duration"`  // 告警持续时长(秒)，0=命中即告
+	AlertSilence   int         `json:"alert_silence"`   // 告警静默时长(秒)，0=不静默
+	Remark         string      `json:"remark"`          // 备注
+	IsStop         uint8       `json:"is_stop"`         // 是否停用
+	CreateTime     x_null.Time `json:"create_time"`     // 创建时间
+	UpdateTime     x_null.Time `json:"update_time"`     // 更新时间
 }

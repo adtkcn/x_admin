@@ -4,7 +4,9 @@ import (
 	"x_admin/app/controller"
 	"x_admin/app/controller/admin_ctl/common_controller"
 	"x_admin/app/middleware"
+	"x_admin/config"
 	"x_admin/routes/admin_route"
+	"x_admin/routes/iot_route"
 	"x_admin/routes/web_route"
 
 	"github.com/gin-gonic/gin"
@@ -45,5 +47,13 @@ func registerApiRoute(api *gin.RouterGroup, rootRouter *gin.Engine) {
 	{
 		// /api/web
 		web_route.RegisterRoute(webGroup, rootRouter)
+	}
+
+	// /api/iot —— 设备侧接入入口（HTTP），鉴权走设备凭证而非登录态
+	if config.IotConfig.Enable {
+		iotGroup := api.Group("/iot")
+		{
+			iot_route.RegisterRoute(iotGroup, rootRouter)
+		}
 	}
 }

@@ -13,6 +13,7 @@ func initIotRoute(rg *gin.RouterGroup) {
 	product := iot_controller.ProductHandler{}
 	space := iot_controller.DeviceSpaceHandler{}
 	device := iot_controller.DeviceHandler{}
+	alert := iot_controller.AlertHandler{}
 
 	// 表单下拉数据：仅需登录
 	look := rg.Group("/iot", middleware.LoginAuth())
@@ -52,6 +53,14 @@ func initIotRoute(rg *gin.RouterGroup) {
 		auth.POST("/device/add", middleware.RecordLog("设备新增"), device.Add)
 		auth.POST("/device/edit", middleware.RecordLog("设备编辑"), device.Edit)
 		auth.POST("/device/del", middleware.RecordLog("设备删除"), device.Del)
+
+		// 设备运行态与历史数据回读（接入层→处理层链路的验证入口）
+		auth.GET("/device/state", device.State)
+		auth.GET("/device/data", device.Data)
+
+		// 告警历史（处理层告警状态机自动写入，管理端只读/清理）
+		auth.GET("/alert/list", alert.List)
+		auth.POST("/alert/del", middleware.RecordLog("告警历史删除"), alert.Del)
 	}
 }
 

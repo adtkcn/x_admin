@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"syscall"
 	"time"
-	"x_admin/app/model/user_model"
 	fabu_model "x_admin/app/model/fabu_model"
 	iot_model "x_admin/app/model/iot_model"
+	"x_admin/app/model/user_model"
 	"x_admin/app/queue"
 
 	"x_admin/config"
@@ -72,13 +72,18 @@ func main() {
 		&iot_model.IotProduct{},
 		&iot_model.IotDeviceSpace{},
 		&iot_model.IotDevice{},
+		// 时序数据：本轮先用 MySQL 暂代 TDengine（iot.md 第四阶段接入后此表可下线）
+		&iot_model.IotDeviceData{},
+		// 告警历史：产品 goja 告警脚本 + 处理层状态机（持续/静默/恢复）收敛成事件级记录
+		&iot_model.IotAlertHistory{},
 	)
 
 	// 初始化微信 SDK 客户端（小程序+公众号）
 	plugin.InitWechatClients()
 
 	// 基础全局队列实例由 core 包创建（见 core.Queue）
-	// 此处仅作为启动钩子拉起消费者，ctx 取消后所有 worker 优雅退出。
+	// 此处仅作为启动钩子拉起所有队列消费者（含 IoT 报文流水线），ctx 取消后 worker 优雅退出。
+	// 必须在 AutoMigrate 之后（IoT Sink 写 x_iot_device_data）。
 	queue.Start(ctx)
 
 	// 初始化router

@@ -17,6 +17,7 @@ type IotDevice struct {
 	SpaceId         string                `gorm:"type:char(36);not null;default:'';index;comment:'区域ID'" json:"space_id"`
 	GatewayId       string                `gorm:"type:char(36);not null;default:'';index;comment:'网关设备ID'" json:"gateway_id"`
 	Status          uint8                 `gorm:"not null;default:0;comment:'在线状态: 0=离线, 1=在线（由设备接入层根据心跳/连接事件自动维护，不开放人工编辑）'" json:"status"`
+	OfflineTimeout  int                   `gorm:"not null;default:0;comment:'离线判定时长(秒): 以设备为准（冗余+自定义），新增/编辑未指定时写入产品值；仍为 0 则用兜底值 300 秒'" json:"offline_timeout"`
 	LastOnlineTime  x_null.Time           `gorm:"default:null;comment:'最后上线时间'" json:"last_online_time"`
 	LastOfflineTime x_null.Time           `gorm:"default:null;comment:'最后离线时间'" json:"last_offline_time"`
 	Longitude       float64               `gorm:"type:decimal(10,7);not null;default:0;comment:'经度'" json:"longitude"`

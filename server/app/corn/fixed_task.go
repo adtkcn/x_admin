@@ -3,6 +3,7 @@ package corn
 import (
 	"strconv"
 	"time"
+	"x_admin/app/iot/pipeline"
 	"x_admin/app/service/corn_service"
 	"x_admin/app/service/monitor_service"
 	"x_admin/core"
@@ -81,6 +82,29 @@ func init() {
 		TaskDesc: "清理过期的分片临时目录",
 		TaskFunc: func() {
 			storage.CleanChunkTmpDir()
+		},
+	})
+
+	// 每n秒从 IoT 到期表（ZSET）弹出已到期设备置离线：报文/心跳由 touchAlive 刷新
+	// “到期时间=到达时间+设备 offline_timeout（秒，设备列已冗余产品值）”，
+	FixedTasks.AddTask("iotOfflineScan", "*/5 * * * * *", corn_service.Task{
+		LockTTL:  25,
+		TaskCode: "iotOfflineScan",
+		TaskDesc: "弹出到期成员并置 IoT 设备离线",
+		TaskFunc: func() {
+			pipeline.ScanOffline()
+		},
+	})
+
+	// 每5分钟跑一次 IoT 离线判定慢路径：全扫库侧在线设备按 seen+窗口现算兜底——
+	// 超窗置离线、未超窗但 score 缺失/已过期的回填到期表
+	// （防 Redis 丢数据后设备永远在线，并顺带修正改过窗口的旧 score）。
+	FixedTasks.AddTask("iotOfflineSweep", "0 */5 * * * *", corn_service.Task{
+		LockTTL:  240,
+		TaskCode: "iotOfflineSweep",
+		TaskDesc: "IoT 离线判定慢路径与到期表重建",
+		TaskFunc: func() {
+			pipeline.SweepOffline()
 		},
 	})
 

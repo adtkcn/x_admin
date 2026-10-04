@@ -57,9 +57,13 @@ export type type_iot_product = {
     category_name?: string
     device_type?: NodeType | ''
     protocol?: string
+    offline_timeout?: number
     thing_model?: string
     decode_script?: string
-    preprocess_script?: string
+    filter_script?: string
+    alert_script?: string
+    alert_duration?: number
+    alert_silence?: number
     remark?: string
     is_stop?: number
     create_time?: string
@@ -136,6 +140,7 @@ export type type_iot_device = {
     gateway_id?: string
     gateway_name?: string
     status?: number
+    offline_timeout?: number
     last_online_time?: string
     last_offline_time?: string
     product_node_type?: NodeType | ''
@@ -160,4 +165,50 @@ export function deviceEdit(data: type_iot_device) {
 }
 export function deviceDel(data: { id: string }) {
     return request.post({ url: '/iot/device/del', data })
+}
+
+// ===================== 告警历史（处理层告警状态机自动写入，管理端只读/清理） =====================
+// 告警级别：由产品 goja 告警脚本 alert(values) 返回值决定（0=不告警），字典供列表/表单展示
+export const SeverityMap: Record<number, string> = {
+    1: '轻微',
+    2: '严重',
+    3: '故障'
+}
+// tag 颜色：级别越高越醒目
+export const SeverityTagType: Record<number, 'success' | 'warning' | 'danger' | 'info'> = {
+    1: 'warning',
+    2: 'danger',
+    3: 'danger'
+}
+export type type_iot_alert_list = {
+    device_id?: string
+    sn?: string
+    product_id?: string
+    space_id?: string
+    status?: number
+    severity?: number
+    start_time?: string
+    end_time?: string
+    pageNo?: number
+    pageSize?: number
+}
+export type type_iot_alert = {
+    id?: string
+    device_id?: string
+    sn?: string
+    product_id?: string
+    product_name?: string
+    space_id?: string
+    space_name?: string
+    status?: number
+    severity?: number
+    values?: Record<string, any>
+    triggered_at?: string
+    recovered_at?: string
+}
+export function alertLists(params: type_iot_alert_list) {
+    return request.get<Pages<type_iot_alert>>({ url: '/iot/alert/list', params })
+}
+export function alertDel(data: { ids: string[] }) {
+    return request.post({ url: '/iot/alert/del', data })
 }

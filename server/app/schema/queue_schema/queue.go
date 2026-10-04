@@ -10,4 +10,8 @@ const (
 	QueueNoticeEmailDelay  = "notice:email:delay" // 通知邮件延迟补推（到达延迟时间后才投递到 notice:email）
 	QueueImageWebp         = "image_webp"
 	QueueOperateLog        = "operate_log"
+
+	// IoT 设备接入：接入层（HTTP/MQTT/TCP/WS）投递，iot/pipeline 消费
+	// 离线判定由 app/corn 的 iotOfflineScan（弹到期表）与 iotOfflineSweep（慢路径重建）定时执行
+	QueueIotIngest = "iot:ingest"
 )
