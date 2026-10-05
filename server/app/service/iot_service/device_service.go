@@ -128,6 +128,30 @@ func setToSlice(set map[string]struct{}) []string {
 	return ids
 }
 
+// MapList 大屏地图取数：一次返回带坐标的设备点 + 活动告警标记。
+// 设备列表接口分页上限 60，不够大屏铺全部点，故单独出不分页的轻量查询；
+// spaceIdsCsv 为逗号分隔的区域 id（选父区域时前端把子树 id 集齐传入），空=全部；
+// alerting 用 EXISTS 子查询顺带算出，避免大屏侧再拉告警列表自行对映。
+func (s deviceService) MapList(spaceIdsCsv string) (res []iot_schema.DeviceMapItem, e error) {
+	q := s.db.Table("x_iot_device AS d").
+		Select("d.id, d.sn, d.name, d.space_id, d.product_id, d.longitude, d.latitude, d.status," +
+			"EXISTS(SELECT 1 FROM x_iot_alert_history h WHERE h.device_id = d.id AND h.status = 1) AS alerting").
+		Where("d.is_delete = 0")
+	if spaceIdsCsv != "" {
+		ids := make([]string, 0, 16)
+		for _, id := range strings.Split(spaceIdsCsv, ",") {
+			if id = strings.TrimSpace(id); id != "" {
+				ids = append(ids, id)
+			}
+		}
+		if len(ids) > 0 {
+			q = q.Where("d.space_id IN ?", ids)
+		}
+	}
+	e = response.CheckErr(q.Find(&res).Error, "大屏设备取数失败")
+	return
+}
+
 // Detail 设备详情
 func (s deviceService) Detail(id string) (res iot_schema.DeviceResp, e error) {
 	var device iot_model.IotDevice

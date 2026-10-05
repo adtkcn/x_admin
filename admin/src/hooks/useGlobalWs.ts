@@ -1,6 +1,5 @@
 import { ref, readonly, onUnmounted } from 'vue'
-import { useWebSocket } from '@vueuse/core'
-import { useEventBus } from '@vueuse/core'
+import { useWebSocket, useIntervalFn, useEventBus } from '@vueuse/core' 
 import useUserStore from '@/stores/modules/user'
 
 /** WS 消息事件类型，与后端 WsResponse 对应 */
@@ -73,7 +72,8 @@ export function initGlobalWs() {
     wsInstance = useWebSocket(url, {
         heartbeat: {
             message: 'ping',
-            interval: 10000,
+            // interval: 10000,
+            scheduler: cb => useIntervalFn(cb, 10000),
             pongTimeout: 1000
         },
         autoReconnect: {

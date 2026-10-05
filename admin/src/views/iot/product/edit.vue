@@ -78,59 +78,23 @@
                         </div>
                     </div>
                 </el-form-item>
-                <el-form-item label="解码脚本" prop="decode_script">
-                    <el-input
-                        v-model="formData.decode_script"
-                        type="textarea"
-                        :rows="5"
-                        placeholder="goja 执行 JS，需定义全局函数：function decode(raw){ return { 物模型identifier: 值, ... } } ——入参 raw 为原始报文字符串，返回物模型对应的属性对象；留空则直接采用上报的 values"
-                    />
-                </el-form-item>
-                <el-form-item label="过滤脚本" prop="filter_script">
-                    <el-input
-                        v-model="formData.filter_script"
-                        type="textarea"
-                        :rows="4"
-                        placeholder="goja 执行 JS，需定义全局函数：function filter(values){ return true/false } ——入参 values 为解码后的属性对象，返回 false 则丢弃本条上报；留空则全部放行"
-                    />
-                </el-form-item>
-                <el-form-item label="告警脚本" prop="alert_script">
-                    <el-input
-                        v-model="formData.alert_script"
-                        type="textarea"
-                        :rows="4"
-                        placeholder="goja 执行 JS，需定义全局函数：function alert(values){ 返回告警级别数字 } ——入参 values 为解码后的属性对象；返回 0=不告警/恢复，1=轻微，2=严重，3=故障（可按阈值逐级 return 不同数字）；兼容旧写法 true→默认按 1 级。留空则不启用告警"
-                    />
-                </el-form-item>
-                <el-form-item label="告警持续时长" prop="alert_duration">
+                <el-form-item label="规则链" prop="rule_chain_id">
                     <div class="w-full">
-                        <el-input-number
-                            v-model="formData.alert_duration"
-                            :min="0"
-                            :max="86400"
-                            :step="10"
-                            :controls="false"
-                            placeholder="秒"
+                        <el-select
+                            v-model="formData.rule_chain_id"
+                            placeholder="请选择可视化规则链（处理解码/过滤/告警/存储/通知等）"
+                            clearable
                             class="w-full"
-                        />
+                        >
+                            <el-option
+                                v-for="item in ruleChainOptions"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id as string"
+                            />
+                        </el-select>
                         <div class="form-tips">
-                            异常状态需连续保持多少秒才正式触发告警，0=命中即告（过滤掉瞬时抖动）；恢复(脚本返回 false)立即结束本次告警
-                        </div>
-                    </div>
-                </el-form-item>
-                <el-form-item label="告警静默时长" prop="alert_silence">
-                    <div class="w-full">
-                        <el-input-number
-                            v-model="formData.alert_silence"
-                            :min="0"
-                            :max="86400"
-                            :step="10"
-                            :controls="false"
-                            placeholder="秒"
-                            class="w-full"
-                        />
-                        <div class="form-tips">
-                            一次告警触发后多少秒内不再重复触发新告警，0=不静默（抑制告警恢复后立刻再次抖动触发的刷屏）
+                            解码/过滤/告警/存储/推送/通知等处理逻辑均由规则链图描述，请到「IoT · 规则链」配置；未选择则产品上报会被丢弃
                         </div>
                     </div>
                 </el-form-item>
@@ -153,7 +117,9 @@ import {
     productEdit,
     productDetail,
     productCategoryAll,
-    type type_iot_product
+    ruleChainAll,
+    type type_iot_product,
+    type type_rule_chain
 } from '@/api/iot'
 import Popup from '@/components/popup/index.vue'
 import ThingModelDialog from './components/thing-model.vue'
@@ -179,14 +145,13 @@ const { state: formData, setState } = useReactiveWithReset<type_iot_product>({
     // 新增时先给与后端兜底值一致的默认时长，避免表单直接报必填错
     offline_timeout: 300,
     thing_model: '',
-    decode_script: '',
-    filter_script: '',
-    alert_script: '',
-    alert_duration: 0,
-    alert_silence: 0,
+    rule_chain_id: '',
     remark: '',
     is_stop: 0
 })
+
+// 规则链下拉：产品引用一条可视化规则链完成解码/过滤/告警等处理
+const ruleChainOptions = ref<type_rule_chain[]>([])
 
 // 属性条数仅供展示：自定义结构的 JSON 解析不出属性时返回 0，表单仍按原文保存
 const thingModelCount = computed(() => countProperties(formData.thing_model))
@@ -236,6 +201,7 @@ const handleSubmit = async () => {
 const open = async (type = 'add') => {
     mode.value = type
     categoryFlat.value = await productCategoryAll()
+    ruleChainOptions.value = await ruleChainAll()
     popupRef.value?.open()
 }
 

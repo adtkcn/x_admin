@@ -8,7 +8,6 @@ import "github.com/adtkcn/x_null"
 const (
 	MsgTypeTelemetry = "telemetry" // 属性/遥测上报
 	MsgTypeHeartbeat = "heartbeat" // 心跳（仅刷新在线态）
-	MsgTypeEvent     = "event"     // 事件上报（预留）
 )
 
 // 设备接入请求头：X-Device-Sn + X-Access-Token（设备凭证见 x_iot_device.access_token）
@@ -47,7 +46,7 @@ type DeviceHeartbeatReq struct {
 // IngestMsg 投递到 core.Queue 的标准报文信封：接入层与处理层解耦的唯一契约。
 // 后续 MQTT/TCP/WS 接入只需产出同样的信封。
 type IngestMsg struct {
-	MsgType        string         `json:"msg_type"`        // telemetry/heartbeat/event
+	MsgType        string         `json:"msg_type"`        // telemetry/heartbeat
 	DeviceId       string         `json:"device_id"`       //
 	Sn             string         `json:"sn"`              //
 	ProductId      string         `json:"product_id"`      //
@@ -65,10 +64,12 @@ type DeviceStateReq struct {
 	ID string `json:"id" form:"id" binding:"required"` // 设备主键
 }
 
-// DeviceDataReq 时序历史回读请求
+// DeviceDataReq 时序历史回读请求：按时间区间取数，供趋势图与链路验证
 type DeviceDataReq struct {
-	ID    string `json:"id" form:"id" binding:"required"` // 设备主键
-	Limit int    `json:"limit" form:"limit"`              // 条数，缺省 50，上限 500
+	ID      string `json:"id" form:"id" binding:"required"` // 设备主键
+	StartMs int64  `json:"start_ms" form:"start_ms"`        // 开始时间(毫秒)，0=不限下界
+	EndMs   int64  `json:"end_ms" form:"end_ms"`            // 结束时间(毫秒)，0=不限上界
+	Limit   int    `json:"limit" form:"limit"`              // 条数，缺省 1000，上限 5000
 }
 
 // DeviceDataResp 一条时序历史记录（属性已反序列化为 map，便于前端直接渲染）

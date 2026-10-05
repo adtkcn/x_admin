@@ -59,11 +59,8 @@ export type type_iot_product = {
     protocol?: string
     offline_timeout?: number
     thing_model?: string
-    decode_script?: string
-    filter_script?: string
-    alert_script?: string
-    alert_duration?: number
-    alert_silence?: number
+    rule_chain_id?: string
+    rule_chain_name?: string
     remark?: string
     is_stop?: number
     create_time?: string
@@ -86,6 +83,41 @@ export function productEdit(data: type_iot_product) {
 }
 export function productDel(data: { id: string }) {
     return request.post({ url: '/iot/product/del', data })
+}
+
+// ===================== 可视化规则链（替代产品级解码/过滤/告警脚本） =====================
+// graph_data 为 LogicFlow 原生图 { nodes, edges }，节点的私有属性按命名空间收纳于 properties
+export type type_rule_chain = {
+    id?: string
+    name?: string
+    remark?: string
+    graph_data?: string
+    is_stop?: number
+    create_time?: string
+    update_time?: string
+}
+export type type_rule_chain_list = {
+    name?: string
+    pageNo?: number
+    pageSize?: number
+}
+export function ruleChainLists(params: type_rule_chain_list) {
+    return request.get<Pages<type_rule_chain>>({ url: '/iot/ruleChain/list', params })
+}
+export function ruleChainAll() {
+    return request.get<type_rule_chain[]>({ url: '/iot/ruleChain/all' })
+}
+export function ruleChainDetail(params: { id: string }) {
+    return request.get<type_rule_chain>({ url: '/iot/ruleChain/detail', params })
+}
+export function ruleChainAdd(data: type_rule_chain) {
+    return request.post({ url: '/iot/ruleChain/add', data })
+}
+export function ruleChainEdit(data: type_rule_chain) {
+    return request.post({ url: '/iot/ruleChain/edit', data })
+}
+export function ruleChainDel(data: { id: string }) {
+    return request.post({ url: '/iot/ruleChain/del', data })
 }
 
 // ===================== 设备区域（树） =====================
@@ -165,6 +197,52 @@ export function deviceEdit(data: type_iot_device) {
 }
 export function deviceDel(data: { id: string }) {
     return request.post({ url: '/iot/device/del', data })
+}
+
+// 设备运行态快照（Redis 侧：在线判定/最后报文/最新属性），供详情弹窗实时 tab
+export type type_device_state = {
+    device_id?: string
+    sn?: string
+    name?: string
+    online?: boolean
+    offline_in?: number
+    last_seen_ms?: number
+    updated_at?: string
+    values?: Record<string, string>
+    db_status?: number
+    last_online_time?: string
+    last_offline_time?: string
+    offline_timeout?: number
+}
+export function deviceState(params: { id: string }) {
+    return request.get<type_device_state>({ url: '/iot/device/state', params })
+}
+
+// 时序历史区间回读（趋势图数据源，毫秒时间戳，0=不限）
+export type type_device_data = {
+    ts: number
+    values: Record<string, any>
+    raw: string
+    protocol: string
+}
+export function deviceData(params: { id: string; start_ms?: number; end_ms?: number; limit?: number }) {
+    return request.get<type_device_data[]>({ url: '/iot/device/data', params })
+}
+
+// 大屏设备点（不分页）：space_ids 逗号分隔，选父区域时把子树 id 集齐传入，空=全部
+export type type_device_map_item = {
+    id: string
+    sn: string
+    name: string
+    space_id: string
+    product_id: string
+    longitude: number
+    latitude: number
+    status: number
+    alerting: boolean
+}
+export function deviceMap(params?: { space_ids?: string }) {
+    return request.get<type_device_map_item[]>({ url: '/iot/device/map', params })
 }
 
 // ===================== 告警历史（处理层告警状态机自动写入，管理端只读/清理） =====================

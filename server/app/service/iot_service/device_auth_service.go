@@ -145,18 +145,15 @@ func (s deviceService) InvalidateAuth(sn, token string) {
 	}
 }
 
-// ProductModel 处理层需要的物模型与三段 goja 脚本（解码/过滤/告警）：
+// ProductModel 处理层需要的物模型与引用的规则链ID：
 // 同属产品配置，合并成一条缓存共同回源，避免每条报文按字段各查一次库。
+// 解码/过滤/告警逻辑不再落在产品列，而是由 RuleChainId 指向的可视化规则链图描述。
 type ProductModel struct {
-	ThingModel    string `json:"thing_model"`
-	DecodeScript  string `json:"decode_script"`
-	FilterScript  string `json:"filter_script"`
-	AlertScript   string `json:"alert_script"`
-	AlertDuration int    `json:"alert_duration"`
-	AlertSilence  int    `json:"alert_silence"`
+	ThingModel  string `json:"thing_model"`
+	RuleChainId string `json:"rule_chain_id"`
 }
 
-// CachedProductModel 取产品物模型+解码/过滤/告警脚本（缓存 ThingCacheTTL 秒），供处理层解码与白名单裁剪。
+// CachedProductModel 取产品物模型+引用的规则链ID（缓存 ThingCacheTTL 秒），供处理层解码与白名单裁剪。
 // 一次命中即返回；库侧记录不存在时返回零值（物模型为空 → 处理层按“未配置”丢弃上报）。
 func (s deviceService) CachedProductModel(productId string) ProductModel {
 	if productId == "" {
@@ -175,16 +172,12 @@ func (s deviceService) CachedProductModel(productId string) ProductModel {
 	}
 
 	var product iot_model.IotProduct
-	if s.db.Select("id, thing_model, decode_script, filter_script, alert_script, alert_duration, alert_silence").Where("id = ?", productId).First(&product).Error != nil {
+	if s.db.Select("id, thing_model, rule_chain_id").Where("id = ?", productId).First(&product).Error != nil {
 		return ProductModel{}
 	}
 	m := ProductModel{
-		ThingModel:    product.ThingModel,
-		DecodeScript:  product.DecodeScript,
-		FilterScript:  product.FilterScript,
-		AlertScript:   product.AlertScript,
-		AlertDuration: product.AlertDuration,
-		AlertSilence:  product.AlertSilence,
+		ThingModel:  product.ThingModel,
+		RuleChainId: product.RuleChainId,
 	}
 	if bs, err := json.Marshal(m); err == nil {
 		if err := core.Redis.Set(ctx, key, bs, time.Duration(config.IotConfig.ThingCacheTTL)*time.Second).Err(); err != nil {

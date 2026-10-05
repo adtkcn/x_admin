@@ -76,8 +76,16 @@
                     </template>
                 </vxe-column>
                 <vxe-column title="创建时间" field="create_time" min-width="180" />
-                <vxe-column title="操作" width="120" fixed="right">
+                <vxe-column title="操作" width="160" fixed="right">
                     <template #default="{ row }">
+                        <el-button
+                            v-perms="['admin:iot:device:detail']"
+                            type="primary"
+                            link
+                            @click="handleDetail(row)"
+                        >
+                            详情
+                        </el-button>
                         <el-button
                             v-perms="['admin:iot:device:edit']"
                             type="primary"
@@ -102,6 +110,7 @@
             </div>
         </el-card>
         <edit-popup v-if="showEdit" ref="editRef" @success="getLists" @close="showEdit = false" />
+        <detail-popup v-if="showDetail" ref="detailRef" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -119,6 +128,7 @@ import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
 import EditPopup from './edit.vue'
+import DetailPopup from './detail.vue'
 
 defineOptions({
     name: 'iotDevice'
@@ -126,6 +136,8 @@ defineOptions({
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
+const detailRef = shallowRef<InstanceType<typeof DetailPopup>>()
+const showDetail = ref(false)
 const queryParams = reactive<type_iot_device_list>({
     name: '',
     sn: '',
@@ -158,6 +170,12 @@ const handleEdit = async (data: type_iot_device) => {
     await nextTick()
     editRef.value?.open('edit')
     editRef.value?.getDetail(data)
+}
+
+const handleDetail = async (row: type_iot_device) => {
+    showDetail.value = true
+    await nextTick()
+    detailRef.value?.open(row)
 }
 
 const handleDelete = async (id: string) => {

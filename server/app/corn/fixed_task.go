@@ -108,4 +108,15 @@ func init() {
 		},
 	})
 
+	// 每天凌晨3点按保留期(IOT.DataKeepDays)清理 IoT 时序历史，分批小事务删除；
+	// 配置为 0 表示永久保留，任务空转
+	FixedTasks.AddTask("iotDataClean", "0 0 3 * * *", corn_service.Task{
+		LockTTL:  600,
+		TaskCode: "iotDataClean",
+		TaskDesc: "IoT 时序数据保留期清理",
+		TaskFunc: func() {
+			pipeline.CleanData()
+		},
+	})
+
 }

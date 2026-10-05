@@ -1,4 +1,4 @@
-package pipeline
+package online
 
 import (
 	"context"
@@ -13,30 +13,35 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// 运行态一律放 Redis（iot.md 第五节：元数据在 MySQL、运行态在 Redis、时序在 TDengine）。
+// online 子包：设备运行态（在线/离线判定、最新属性快照、状态与遥测广播）。
+//
+// 运行态一律放 Redis（元数据在 MySQL、运行态在 Redis、时序在存储层）。
 // key 统一为 {RedisPrefix}iot:<用途>:<标识>，与 iot_service 的鉴权/物模型缓存同前缀。
+//
+// 在线方向由报文实时驱动（首条报文即上线），离线方向由到期表（ZSET）驱动。
+// 本包只认运行态自身，不反向依赖告警：离线转换/删设备的告警收尾由上层经
+// OnDeviceOffline/OnDeviceClear 钩子注入（见 hooks.go）。
 
-// rtKey 拼接运行态键
-func rtKey(suffix string) string {
+// RuntimeKey 拼接运行态键（导出供 alert 等同级子包共用同一命名空间）
+func RuntimeKey(suffix string) string {
 	return config.RedisConfig.RedisPrefix + "iot:" + suffix
 }
 
 // expireZKey 到期表（ZSET）：member=设备id，score=离线到期时间(毫秒)。
 // 在线判定的唯一事实源：未到期=在线，到期=离线（改窗口后 score 是旧值，
-// 瞬时误差由下一条报文/慢路径自愈）。一份数据同时表达“谁在线”和“何时到期”，
-// 扫描只需查到期区间。
-func expireZKey() string { return rtKey("expire:zset") }
+// 瞬时误差由下一条报文/慢路径自愈）。一份数据同时表达“谁在线”和“何时到期”。
+func expireZKey() string { return RuntimeKey("expire:zset") }
 
 // stateKey 最新属性快照：HASH，field=identifier，value=字符串化的值
-func stateKey(deviceId string) string { return rtKey("state:" + deviceId) }
+func stateKey(deviceId string) string { return RuntimeKey("state:" + deviceId) }
 
 // seenKey 最后一条报文的服务端接收时间(毫秒)：用于管理端回读展示与
 // 慢路径重建到期表（score=seen+窗口）；实时判离线由到期表负责。
-// 它的 TTL 必须长于任何可能的判定窗口（见 touchAlive）
-func seenKey(deviceId string) string { return rtKey("seen:" + deviceId) }
+// 它的 TTL 必须长于任何可能的判定窗口（见 keepAlive）
+func seenKey(deviceId string) string { return RuntimeKey("seen:" + deviceId) }
 
-// redisCtx 统一给 Redis 操作加超时，避免设备洪峰下 worker 卡死在慢命令上
-func redisCtx() (context.Context, context.CancelFunc) {
+// RedisCtx 统一给 Redis 操作加超时，避免设备洪峰下 worker 卡死在慢命令上
+func RedisCtx() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), 2*time.Second)
 }
 
@@ -49,13 +54,13 @@ func offlineWindow(timeout int) time.Duration {
 	return time.Duration(timeout) * time.Second
 }
 
-// touchAlive 刷新到期表 score（=now+窗口），并返回刷新前是否无有效 score（true=设备由离线转在线）。
+// keepAlive 刷新到期表 score（=now+窗口），并返回刷新前是否无有效 score（true=设备由离线转在线）。
 //
 // 上线判据是 ZSCORE：到期表是在线状态唯一事实源，上下线两个方向都由它驱动。
 // score 只在收到报文时刷新：改窗口后的旧 score 可能提前/推后到期，
 // 瞬时错判由下一条报文或慢路径重建自愈，不在此处复核。
-func touchAlive(deviceId string, timeout int) (wasAbsent bool) {
-	ctx, cancel := redisCtx()
+func keepAlive(deviceId string, timeout int) (wasAbsent bool) {
+	ctx, cancel := RedisCtx()
 	defer cancel()
 	zkey := expireZKey()
 	window := offlineWindow(timeout)
@@ -86,14 +91,30 @@ func touchAlive(deviceId string, timeout int) (wasAbsent bool) {
 	return false // ZScore 真故障：按上面的保守策略处理
 }
 
-// revokeDeadline 从到期表撤销设备记录：上线转换写库失败后调用，
+// cancelDeadline 从到期表撤销设备记录：上线转换写库失败后调用，
 // 下一条报文会因“score 缺失”重新触发离线→在线转换，重试搭在报文流上，
 // 不需要额外的补判扫描
-func revokeDeadline(deviceId string) {
-	ctx, cancel := redisCtx()
+func cancelDeadline(deviceId string) {
+	ctx, cancel := RedisCtx()
 	defer cancel()
 	if err := core.Redis.ZRem(ctx, expireZKey(), deviceId).Err(); err != nil {
 		core.Logger.Errorf("[iot处理] 撤销到期记录失败 deviceId=%s err=%v", deviceId, err)
+	}
+}
+
+// RefreshOnline 刷新在线标记，并在“离线→在线”转换时写库+广播。
+// 心跳/上报两类报文都走这里“续命”。
+func RefreshOnline(msg iot_schema.IngestMsg) {
+	if keepAlive(msg.DeviceId, msg.OfflineTimeout) {
+		changed, err := iot_service.DeviceService.MarkStatus(msg.DeviceId, 1)
+		if err != nil {
+			core.Logger.Errorf("[iot处理] 置在线失败 deviceId=%s err=%v", msg.DeviceId, err)
+			// 写库失败撤销刚写入的到期 score：下一条报文会因“score 缺失”重新触发上线转换，
+			// 重试由报文流自己完成，不需要额外的补判扫描；撤销失败则退回慢路径到期后自愈
+			cancelDeadline(msg.DeviceId)
+		} else if changed {
+			broadcastStatus(msg, 1)
+		}
 	}
 }
 
@@ -106,7 +127,7 @@ func lastSeenAndDeadlines(deviceIds []string) (seen map[string]int64, deadline m
 	if len(deviceIds) == 0 {
 		return
 	}
-	ctx, cancel := redisCtx()
+	ctx, cancel := RedisCtx()
 	defer cancel()
 	pipe := core.Redis.Pipeline()
 	gets := make([]*redis.StringCmd, len(deviceIds))
@@ -129,13 +150,13 @@ func lastSeenAndDeadlines(deviceIds []string) (seen map[string]int64, deadline m
 	return seen, deadline, nil
 }
 
-// saveState 写入最新属性快照（HSET 覆盖同名 identifier），并续期 TTL。
+// SaveLatestValues 写入最新属性快照（HSET 覆盖同名 identifier），并续期 TTL。
 // 时序历史不在这里，本快照只表达“每属性最新值”，供管理端与大屏即时读取。
-func saveState(deviceId string, values map[string]any) {
+func SaveLatestValues(deviceId string, values map[string]any) {
 	if len(values) == 0 {
 		return
 	}
-	ctx, cancel := redisCtx()
+	ctx, cancel := RedisCtx()
 	defer cancel()
 	// 逐字段下 HSET：Redis < 4.0 的 HSET 只接受一对 field/value，一次传多对会直接报
 	// “wrong number of arguments for 'hset'”（本项目环境实测）。拆成多条命令既兼容老版本，
@@ -151,15 +172,16 @@ func saveState(deviceId string, values map[string]any) {
 	}
 }
 
-// clearRuntime 清除设备运行态（设备被删除时调用），并从到期表移除，
-// 避免残留成员到期后被快路径弹出不存在的设备；告警活动态/计时/静默一并清除，
-// 库里未恢复的告警由调用方 AlertService.CloseActiveByDevice 收尾
-func clearRuntime(deviceId string) {
-	ctx, cancel := redisCtx()
+// ClearDeviceRuntime 清除设备运行态（设备被删除时调用），并从到期表移除，
+// 避免残留成员到期后被快路径弹出不存在的设备；告警侧运行态由 OnDeviceClear 钩子收尾。
+func ClearDeviceRuntime(deviceId string) {
+	ctx, cancel := RedisCtx()
 	defer cancel()
-	_ = core.Redis.Del(ctx, stateKey(deviceId), seenKey(deviceId),
-		alertActiveKey(deviceId), alertFirstKey(deviceId), alertSilenceKey(deviceId)).Err()
+	_ = core.Redis.Del(ctx, stateKey(deviceId), seenKey(deviceId)).Err()
 	_ = core.Redis.ZRem(ctx, expireZKey(), deviceId).Err()
+	for _, fn := range clearDeviceHooks {
+		fn(deviceId)
+	}
 }
 
 // stringify 属性值统一转字符串存 HASH；对象/数组转 JSON 文本，避免丢失结构
@@ -182,12 +204,12 @@ func stringify(v any) string {
 	}
 }
 
-// Runtime 读出 Redis 侧运行态，供管理端回读验证链路（库侧状态由调用方合并）。
+// ReadDeviceState 读出 Redis 侧运行态，供管理端回读验证链路（库侧状态由调用方合并）。
 // 在线与剩余时长直接读到期表 score（与快路径判定同源）；score 缺失时（如慢路径还没来得及重建）
 // 退回“seen+生效窗口”推算，与慢路径判据一致。
 // 三个键并进一个 pipeline：分开发会有 3 个 RTT，且中间状态可能变迁。
-func Runtime(deviceId string, timeout int) iot_schema.DeviceStateResp {
-	ctx, cancel := redisCtx()
+func ReadDeviceState(deviceId string, timeout int) iot_schema.DeviceStateResp {
+	ctx, cancel := RedisCtx()
 	defer cancel()
 	pipe := core.Redis.Pipeline()
 	score := pipe.ZScore(ctx, expireZKey(), deviceId)
@@ -232,17 +254,17 @@ func Runtime(deviceId string, timeout int) iot_schema.DeviceStateResp {
 // DeviceRoom 单设备实时房间名（WS 房间标识，不带 Redis 前缀）
 func DeviceRoom(deviceId string) string { return "iot:device:" + deviceId }
 
-// MapRoom 区域大屏房间名（对应 iot.md 第六节的地图房间广播）
+// MapRoom 区域大屏房间名（对应地图房间广播）
 func MapRoom(spaceId string) string { return "iot:map:" + spaceId }
 
-// pushStatus 在线状态变更广播（上报路径，带完整信封）
-func pushStatus(msg iot_schema.IngestMsg, status uint8) {
-	pushStatusOf(msg.DeviceId, msg.Sn, msg.SpaceId, status, msg.ReceivedAt)
+// broadcastStatus 在线状态变更广播（上报路径，带完整信封）
+func broadcastStatus(msg iot_schema.IngestMsg, status uint8) {
+	BroadcastStatus(msg.DeviceId, msg.Sn, msg.SpaceId, status, msg.ReceivedAt)
 }
 
-// pushStatusOf 广播状态转换：仅在发生上线/离线转换时调用，避免高频报文刷爆 WS；
+// BroadcastStatus 广播状态转换：仅在发生上线/离线转换时调用，避免高频报文刷爆 WS；
 // 定时扫描路径没有信封，只有库侧的 id/sn/space，所以把字段拆开。
-func pushStatusOf(deviceId, sn, spaceId string, status uint8, ts int64) {
+func BroadcastStatus(deviceId, sn, spaceId string, status uint8, ts int64) {
 	if !config.IotConfig.PushStateChange {
 		return
 	}
@@ -259,9 +281,10 @@ func pushStatusOf(deviceId, sn, spaceId string, status uint8, ts int64) {
 	}
 }
 
-// pushTelemetry 属性变更广播：把过滤后的最新值推给设备房间与区域大屏
-func pushTelemetry(msg iot_schema.IngestMsg, values map[string]any) {
-	if !config.IotConfig.PushStateChange || len(values) == 0 {
+// BroadcastTelemetry 大屏推送（规则链「大屏推送」节点专用）：只广播到设备所属区域的地图房间，
+// 不再发单设备房间；设备详情页的实时值由「状态快照」节点 + 轮询/回读承接。
+func BroadcastTelemetry(msg iot_schema.IngestMsg, values map[string]any) {
+	if !config.IotConfig.PushStateChange || len(values) == 0 || msg.SpaceId == "" {
 		return
 	}
 	payload := map[string]any{
@@ -271,16 +294,13 @@ func pushTelemetry(msg iot_schema.IngestMsg, values map[string]any) {
 		"ts":        msg.Ts,
 		"values":    values,
 	}
-	core.Ws.SendToRoom(DeviceRoom(msg.DeviceId), "iot:telemetry", payload)
-	if msg.SpaceId != "" {
-		core.Ws.SendToRoom(MapRoom(msg.SpaceId), "iot:telemetry", payload)
-	}
+	core.Ws.SendToRoom(MapRoom(msg.SpaceId), "iot:telemetry", payload)
 }
 
-// pushAlarm 告警事件广播：与遥测同房间，前端按事件名 iot:alarm 区分。
+// BroadcastAlarm 告警事件广播：与遥测同房间，前端按事件名 iot:alarm 区分。
 // recovered=false 为触发/升级(告警中)、true 为恢复；alertId 为本次告警事件主键，
 // severity 为告警级别(1/2/3)；前端可据 alertId 把同一条告警的“触发→升级→恢复”合并展示。
-func pushAlarm(msg iot_schema.IngestMsg, values map[string]any, alertId string, recovered bool, severity uint8) {
+func BroadcastAlarm(msg iot_schema.IngestMsg, values map[string]any, alertId string, recovered bool, severity uint8) {
 	if !config.IotConfig.PushStateChange {
 		return
 	}

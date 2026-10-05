@@ -49,6 +49,24 @@ type DeviceDetailReq struct {
 	ID string `json:"id" form:"id" binding:"required"` // 主键
 }
 
+// DeviceMapReq 大屏地图取数请求：按区域过滤（逗号分隔多个 id，选父区域时由前端把子树 id 集齐传入；空=全部设备）
+type DeviceMapReq struct {
+	SpaceIds string `json:"space_ids" form:"space_ids"` // 区域ID列表(逗号分隔)，缺省不限
+}
+
+// DeviceMapItem 大屏地图一个设备点：坐标 + 在线状态 + 是否存在活动告警
+type DeviceMapItem struct {
+	ID        string  `json:"id"`
+	Sn        string  `json:"sn"`
+	Name      string  `json:"name"`
+	SpaceId   string  `json:"space_id"`
+	ProductId string  `json:"product_id"`
+	Longitude float64 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+	Status    uint8   `json:"status"`   // 0=离线 1=在线
+	Alerting  bool    `json:"alerting"` // 存在未恢复的告警事件
+}
+
 type DeviceResp struct {
 	ID              string      `json:"id"`                // 主键
 	Name            string      `json:"name"`              // 设备名称

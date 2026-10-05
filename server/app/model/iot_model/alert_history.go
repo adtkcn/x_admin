@@ -16,7 +16,7 @@ const (
 	AlertStatusRecovered uint8 = 0 // 已恢复
 )
 
-// 告警级别：由产品 goja 告警脚本 alert(values) 的返回值决定（返回 0 即不告警）。
+// 告警级别：由规则链告警节点脚本 alert(values, sn) 的返回值决定（返回 0 即不告警）。
 // 预留可扩展：新增级别只需在此加常量、前端 SeverityMap 加一项，脚本直接返回对应数字。
 const (
 	AlertSevMinor   uint8 = 1 // 一级轻微告警
@@ -29,7 +29,7 @@ const DefaultAlertSeverity = AlertSevMinor
 
 // IotAlertHistory 设备告警历史（iot.md：告警记录落 MySQL，运行态在 Redis）
 //
-// 由产品级 goja 告警脚本判定命中，处理层的告警状态机按“持续时长/静默/恢复”
+// 由规则链告警节点脚本判定命中，处理层的告警状态机按“持续时长/静默/恢复”
 // 收敛成事件级记录：触发时建一条 status=1，恢复时更新 status=0 + recovered_at。
 // 属性快照以 JSON 文本整包存，与设备时序表一致，避免为不固定的物模型频繁加列。
 type IotAlertHistory struct {

@@ -143,11 +143,13 @@ func (h DeviceHandler) State(c *gin.Context) {
 }
 
 // @Summary		设备时序数据回读
-// @Description	读取最近的属性上报历史（本轮存 MySQL，后续换 TDengine 接口不变）
+// @Description	按时间区间读取属性上报历史（本轮存 MySQL，后续换 TDengine 接口不变）
 // @Tags			iot_device-设备
 // @Param			token	header		string							true	"token"
 // @Param			id		query		string							true	"设备主键"
-// @Param			limit	query		int							false	"条数(缺省50,上限500)"
+// @Param			limit	query		int							false	"条数(缺省1000,上限5000)"
+// @Param			start_ms	query		int64							false	"开始时间(毫秒),0=不限"
+// @Param			end_ms	query		int64							false	"结束时间(毫秒),0=不限"
 // @Success		200		{object}	response.Response{data=[]iot_schema.DeviceDataResp}	"成功"
 // @Router			/api/admin/iot/device/data [get]
 func (h DeviceHandler) Data(c *gin.Context) {
@@ -158,5 +160,21 @@ func (h DeviceHandler) Data(c *gin.Context) {
 	if _, err := iot_service.DeviceService.Detail(req.ID); response.IsFail(c, err) {
 		return
 	}
-	response.JSON(c, iot_pipeline.QueryRecent(req.ID, req.Limit), nil)
+	response.JSON(c, iot_pipeline.QueryRange(req.ID, req.StartMs, req.EndMs, req.Limit), nil)
+}
+
+// @Summary		大屏地图设备点
+// @Description	不分页返回带坐标的设备点（含在线状态与活动告警标记），供区域大屏铺图；实时增量由 WS 房间 iot:map:{spaceId} 广播
+// @Tags			iot_device-设备
+// @Param			token	header		string								true	"token"
+// @Param			space_ids	query		string							false	"区域ID列表(逗号分隔),缺省全部"
+// @Success		200		{object}	response.Response{data=[]iot_schema.DeviceMapItem}	"成功"
+// @Router			/api/admin/iot/device/map [get]
+func (h DeviceHandler) Map(c *gin.Context) {
+	var req iot_schema.DeviceMapReq
+	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &req)) {
+		return
+	}
+	res, err := iot_service.DeviceService.MapList(req.SpaceIds)
+	response.JSON(c, res, err)
 }

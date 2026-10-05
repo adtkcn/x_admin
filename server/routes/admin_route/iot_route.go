@@ -14,6 +14,7 @@ func initIotRoute(rg *gin.RouterGroup) {
 	space := iot_controller.DeviceSpaceHandler{}
 	device := iot_controller.DeviceHandler{}
 	alert := iot_controller.AlertHandler{}
+	ruleChain := iot_controller.RuleChainHandler{}
 
 	// 表单下拉数据：仅需登录
 	look := rg.Group("/iot", middleware.LoginAuth())
@@ -21,6 +22,7 @@ func initIotRoute(rg *gin.RouterGroup) {
 		look.GET("/productCategory/all", cate.All)
 		look.GET("/deviceSpace/all", space.All)
 		look.GET("/product/all", product.All)
+		look.GET("/ruleChain/all", ruleChain.All)
 	}
 
 	// CRUD：需权限认证
@@ -58,9 +60,19 @@ func initIotRoute(rg *gin.RouterGroup) {
 		auth.GET("/device/state", device.State)
 		auth.GET("/device/data", device.Data)
 
+		// 区域大屏：全部设备点位快照（实时增量走 WS 房间 iot:map:{spaceId}）
+		auth.GET("/device/map", device.Map)
+
 		// 告警历史（处理层告警状态机自动写入，管理端只读/清理）
 		auth.GET("/alert/list", alert.List)
 		auth.POST("/alert/del", middleware.RecordLog("告警历史删除"), alert.Del)
+
+		// 可视化规则链（替代产品级解码/过滤/告警脚本，处理层逐报文执行）
+		auth.GET("/ruleChain/list", ruleChain.List)
+		auth.GET("/ruleChain/detail", ruleChain.Detail)
+		auth.POST("/ruleChain/add", middleware.RecordLog("规则链新增"), ruleChain.Add)
+		auth.POST("/ruleChain/edit", middleware.RecordLog("规则链编辑"), ruleChain.Edit)
+		auth.POST("/ruleChain/del", middleware.RecordLog("规则链删除"), ruleChain.Del)
 	}
 }
 

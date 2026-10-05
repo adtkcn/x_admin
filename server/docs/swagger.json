@@ -2794,7 +2794,7 @@
         },
         "/api/admin/iot/device/data": {
             "get": {
-                "description": "读取最近的属性上报历史（本轮存 MySQL，后续换 TDengine 接口不变）",
+                "description": "按时间区间读取属性上报历史（本轮存 MySQL，后续换 TDengine 接口不变）",
                 "tags": [
                     "iot_device-设备"
                 ],
@@ -2816,8 +2816,22 @@
                     },
                     {
                         "type": "integer",
-                        "description": "条数(缺省50,上限500)",
+                        "description": "条数(缺省1000,上限5000)",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "开始时间(毫秒),0=不限",
+                        "name": "start_ms",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "结束时间(毫秒),0=不限",
+                        "name": "end_ms",
                         "in": "query"
                     }
                 ],
@@ -3045,6 +3059,53 @@
                                                     }
                                                 }
                                             ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/device/map": {
+            "get": {
+                "description": "不分页返回带坐标的设备点（含在线状态与活动告警标记），供区域大屏铺图；实时增量由 WS 房间 iot:map:{spaceId} 广播",
+                "tags": [
+                    "iot_device-设备"
+                ],
+                "summary": "大屏地图设备点",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "区域ID列表(逗号分隔),缺省全部",
+                        "name": "space_ids",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/iot_schema.DeviceMapItem"
+                                            }
                                         }
                                     }
                                 }
@@ -3811,6 +3872,265 @@
                         "description": "成功",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/ruleChain/add": {
+            "post": {
+                "description": "新增可视化规则链",
+                "tags": [
+                    "iot_rule_chain-规则链"
+                ],
+                "summary": "规则链新增",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "新增参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.RuleChainAddReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/ruleChain/all": {
+            "get": {
+                "description": "获取全部启用规则链(供产品表单下拉)",
+                "tags": [
+                    "iot_rule_chain-规则链"
+                ],
+                "summary": "规则链所有",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/iot_schema.RuleChainResp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/ruleChain/del": {
+            "post": {
+                "description": "删除可视化规则链(被产品引用时禁止)",
+                "tags": [
+                    "iot_rule_chain-规则链"
+                ],
+                "summary": "规则链删除",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "删除参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.RuleChainDelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/ruleChain/detail": {
+            "get": {
+                "description": "获取规则链详情(含图JSON)",
+                "tags": [
+                    "iot_rule_chain-规则链"
+                ],
+                "summary": "规则链详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "主键",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/iot_schema.RuleChainResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/ruleChain/edit": {
+            "post": {
+                "description": "编辑可视化规则链",
+                "tags": [
+                    "iot_rule_chain-规则链"
+                ],
+                "summary": "规则链编辑",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "编辑参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/iot_schema.RuleChainEditReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/iot/ruleChain/list": {
+            "get": {
+                "description": "分页获取可视化规则链列表",
+                "tags": [
+                    "iot_rule_chain-规则链"
+                ],
+                "summary": "规则链列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "规则链名称",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResp"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lists": {
+                                                            "$ref": "#/definitions/iot_schema.RuleChainResp"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -12191,6 +12511,40 @@
                 }
             }
         },
+        "iot_schema.DeviceMapItem": {
+            "type": "object",
+            "properties": {
+                "alerting": {
+                    "description": "存在未恢复的告警事件",
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "sn": {
+                    "type": "string"
+                },
+                "space_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "0=离线 1=在线",
+                    "type": "integer"
+                }
+            }
+        },
         "iot_schema.DeviceResp": {
             "type": "object",
             "properties": {
@@ -12492,26 +12846,8 @@
                 "protocol"
             ],
             "properties": {
-                "alert_duration": {
-                    "description": "告警持续时长(秒)，0=命中即告",
-                    "type": "integer",
-                    "maximum": 86400
-                },
-                "alert_script": {
-                    "description": "数据告警脚本(goja)",
-                    "type": "string"
-                },
-                "alert_silence": {
-                    "description": "告警静默时长(秒)，0=不静默",
-                    "type": "integer",
-                    "maximum": 86400
-                },
                 "category_id": {
                     "description": "分类ID",
-                    "type": "string"
-                },
-                "decode_script": {
-                    "description": "解码脚本(goja)",
                     "type": "string"
                 },
                 "device_type": {
@@ -12522,10 +12858,6 @@
                         "GATEWAY",
                         "EDGE"
                     ]
-                },
-                "filter_script": {
-                    "description": "数据过滤脚本(goja)",
-                    "type": "string"
                 },
                 "is_stop": {
                     "description": "是否停用",
@@ -12561,6 +12893,10 @@
                     "description": "备注",
                     "type": "string",
                     "maxLength": 255
+                },
+                "rule_chain_id": {
+                    "description": "引用的可视化规则链ID",
+                    "type": "string"
                 },
                 "thing_model": {
                     "description": "物模型JSON",
@@ -12712,26 +13048,8 @@
                 "protocol"
             ],
             "properties": {
-                "alert_duration": {
-                    "description": "告警持续时长(秒)，0=命中即告",
-                    "type": "integer",
-                    "maximum": 86400
-                },
-                "alert_script": {
-                    "description": "数据告警脚本(goja)",
-                    "type": "string"
-                },
-                "alert_silence": {
-                    "description": "告警静默时长(秒)，0=不静默",
-                    "type": "integer",
-                    "maximum": 86400
-                },
                 "category_id": {
                     "description": "分类ID",
-                    "type": "string"
-                },
-                "decode_script": {
-                    "description": "解码脚本(goja)",
                     "type": "string"
                 },
                 "device_type": {
@@ -12742,10 +13060,6 @@
                         "GATEWAY",
                         "EDGE"
                     ]
-                },
-                "filter_script": {
-                    "description": "数据过滤脚本(goja)",
-                    "type": "string"
                 },
                 "id": {
                     "description": "主键",
@@ -12786,6 +13100,10 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "rule_chain_id": {
+                    "description": "引用的可视化规则链ID",
+                    "type": "string"
+                },
                 "thing_model": {
                     "description": "物模型JSON",
                     "type": "string"
@@ -12795,18 +13113,6 @@
         "iot_schema.ProductResp": {
             "type": "object",
             "properties": {
-                "alert_duration": {
-                    "description": "告警持续时长(秒)，0=命中即告",
-                    "type": "integer"
-                },
-                "alert_script": {
-                    "description": "数据告警脚本(goja)",
-                    "type": "string"
-                },
-                "alert_silence": {
-                    "description": "告警静默时长(秒)，0=不静默",
-                    "type": "integer"
-                },
                 "category_id": {
                     "description": "分类ID",
                     "type": "string"
@@ -12819,16 +13125,8 @@
                     "description": "创建时间",
                     "type": "string"
                 },
-                "decode_script": {
-                    "description": "解码脚本(goja)",
-                    "type": "string"
-                },
                 "device_type": {
                     "description": "节点类型: DEVICE=直连设备, GATEWAY=网关设备, EDGE=边缘主机",
-                    "type": "string"
-                },
-                "filter_script": {
-                    "description": "数据过滤脚本(goja)",
                     "type": "string"
                 },
                 "id": {
@@ -12855,8 +13153,126 @@
                     "description": "备注",
                     "type": "string"
                 },
+                "rule_chain_id": {
+                    "description": "引用的可视化规则链ID",
+                    "type": "string"
+                },
+                "rule_chain_name": {
+                    "description": "规则链名称(回填)",
+                    "type": "string"
+                },
                 "thing_model": {
                     "description": "物模型JSON",
+                    "type": "string"
+                },
+                "update_time": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.RuleChainAddReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "graph_data": {
+                    "description": "规则链图JSON(LogicFlow nodes+edges)",
+                    "type": "string"
+                },
+                "is_stop": {
+                    "description": "是否停用",
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                },
+                "name": {
+                    "description": "规则链名称",
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "iot_schema.RuleChainDelReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                }
+            }
+        },
+        "iot_schema.RuleChainEditReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "graph_data": {
+                    "description": "规则链图JSON",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "is_stop": {
+                    "description": "是否停用",
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                },
+                "name": {
+                    "description": "规则链名称",
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "iot_schema.RuleChainResp": {
+            "type": "object",
+            "properties": {
+                "create_time": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "graph_data": {
+                    "description": "规则链图JSON",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "is_stop": {
+                    "description": "是否停用",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "规则链名称",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
                     "type": "string"
                 },
                 "update_time": {

@@ -21,6 +21,7 @@ import (
 	"x_admin/util/file_util"
 
 	app_corn "x_admin/app/corn"
+	iot_pipeline "x_admin/app/iot/pipeline"
 
 	"github.com/gin-gonic/gin"
 )
@@ -70,6 +71,7 @@ func main() {
 		&fabu_model.FabuWgt{},
 		&iot_model.IotProductCategory{},
 		&iot_model.IotProduct{},
+		&iot_model.IotRuleChain{},
 		&iot_model.IotDeviceSpace{},
 		&iot_model.IotDevice{},
 		// 时序数据：本轮先用 MySQL 暂代 TDengine（iot.md 第四阶段接入后此表可下线）
@@ -153,6 +155,9 @@ func shutdown(server *http.Server) {
 			core.Logger.Errorf("延迟队列关闭失败: %v", err)
 		}
 	}
+
+	// 3.5) 队列已停生产、数据库未关：把时序批写缓冲里剩余数据同步落库，避免退出丢最后一批
+	iot_pipeline.StopSink()
 
 	// 4) 关闭 Redis 连接。
 	if core.Redis != nil {

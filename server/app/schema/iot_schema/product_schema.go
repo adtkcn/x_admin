@@ -34,11 +34,7 @@ type ProductAddReq struct {
 	Protocol       string `json:"protocol" form:"protocol" binding:"required,oneof=mqtt tcp http ws"`          // 接入协议
 	OfflineTimeout int    `json:"offline_timeout" form:"offline_timeout" binding:"required,min=1,max=86400"`   // 离线判定时长(秒)，产品级必填
 	ThingModel     string `json:"thing_model" form:"thing_model"`                                              // 物模型JSON
-	DecodeScript   string `json:"decode_script" form:"decode_script"`                                          // 解码脚本(goja)
-	FilterScript   string `json:"filter_script" form:"filter_script"`                                          // 数据过滤脚本(goja)
-	AlertScript    string `json:"alert_script" form:"alert_script"`                                            // 数据告警脚本(goja)
-	AlertDuration  int    `json:"alert_duration" form:"alert_duration" binding:"max=86400"`                    // 告警持续时长(秒)，0=命中即告
-	AlertSilence   int    `json:"alert_silence" form:"alert_silence" binding:"max=86400"`                      // 告警静默时长(秒)，0=不静默
+	RuleChainId    string `json:"rule_chain_id" form:"rule_chain_id"`                                          // 引用的可视化规则链ID
 	Remark         string `json:"remark" form:"remark" binding:"max=255"`                                      // 备注
 	IsStop         uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`                                  // 是否停用
 }
@@ -51,11 +47,7 @@ type ProductEditReq struct {
 	Protocol       string `json:"protocol" form:"protocol" binding:"required,oneof=mqtt tcp http ws"`          // 接入协议
 	OfflineTimeout int    `json:"offline_timeout" form:"offline_timeout" binding:"required,min=1,max=86400"`   // 离线判定时长(秒)，产品级必填
 	ThingModel     string `json:"thing_model" form:"thing_model"`                                              // 物模型JSON
-	DecodeScript   string `json:"decode_script" form:"decode_script"`                                          // 解码脚本(goja)
-	FilterScript   string `json:"filter_script" form:"filter_script"`                                          // 数据过滤脚本(goja)
-	AlertScript    string `json:"alert_script" form:"alert_script"`                                            // 数据告警脚本(goja)
-	AlertDuration  int    `json:"alert_duration" form:"alert_duration" binding:"max=86400"`                    // 告警持续时长(秒)，0=命中即告
-	AlertSilence   int    `json:"alert_silence" form:"alert_silence" binding:"max=86400"`                      // 告警静默时长(秒)，0=不静默
+	RuleChainId    string `json:"rule_chain_id" form:"rule_chain_id"`                                          // 引用的可视化规则链ID
 	Remark         string `json:"remark" form:"remark" binding:"max=255"`                                      // 备注
 	IsStop         uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`                                  // 是否停用
 }
@@ -77,11 +69,8 @@ type ProductResp struct {
 	Protocol       string      `json:"protocol"`        // 接入协议
 	OfflineTimeout int         `json:"offline_timeout"` // 离线判定时长(秒)，作为其下设备未自定义时的取值
 	ThingModel     string      `json:"thing_model"`     // 物模型JSON
-	DecodeScript   string      `json:"decode_script"`   // 解码脚本(goja)
-	FilterScript   string      `json:"filter_script"`   // 数据过滤脚本(goja)
-	AlertScript    string      `json:"alert_script"`    // 数据告警脚本(goja)
-	AlertDuration  int         `json:"alert_duration"`  // 告警持续时长(秒)，0=命中即告
-	AlertSilence   int         `json:"alert_silence"`   // 告警静默时长(秒)，0=不静默
+	RuleChainId    string      `json:"rule_chain_id"`   // 引用的可视化规则链ID
+	RuleChainName  string      `json:"rule_chain_name"` // 规则链名称(回填)
 	Remark         string      `json:"remark"`          // 备注
 	IsStop         uint8       `json:"is_stop"`         // 是否停用
 	CreateTime     x_null.Time `json:"create_time"`     // 创建时间

@@ -45,6 +45,7 @@ func (s productService) List(page request.PageReq, listReq iot_schema.ProductLis
 	var list []iot_schema.ProductResp
 	convert_util.Copy(&list, products)
 	s.fillCategoryName(list)
+	s.fillRuleChainName(list)
 	return response.PageResp{
 		PageNo:   page.PageNo,
 		PageSize: page.PageSize,
@@ -62,6 +63,7 @@ func (s productService) All() (res []iot_schema.ProductResp, e error) {
 	res = []iot_schema.ProductResp{}
 	convert_util.Copy(&res, products)
 	s.fillCategoryName(res)
+	s.fillRuleChainName(res)
 	return
 }
 
@@ -91,6 +93,12 @@ func (s productService) Detail(id string) (res iot_schema.ProductResp, e error) 
 	var cate iot_model.IotProductCategory
 	if s.db.Where("id = ?", product.CategoryId).First(&cate).Error == nil {
 		res.CategoryName = cate.Name
+	}
+	if product.RuleChainId != "" {
+		var rc iot_model.IotRuleChain
+		if s.db.Select("name").Where("id = ?", product.RuleChainId).First(&rc).Error == nil {
+			res.RuleChainName = rc.Name
+		}
 	}
 	return
 }
@@ -155,7 +163,7 @@ func (s productService) Edit(editReq iot_schema.ProductEditReq) (e error) {
 	convert_util.Copy(&product, editReq)
 	e = response.CheckErr(s.db.Model(&product).Select("*").Omit("id", "create_time").Updates(product).Error, "编辑失败")
 	if e == nil {
-		// 物模型/解码脚本可能已变更，失效处理层缓存，避免继续沿用旧配置
+		// 物模型/规则链引用可能已变更，失效处理层缓存，避免继续沿用旧配置
 		DeviceService.InvalidateProductCache(editReq.ID)
 		// 离线时长以设备记录为准，产品变更后及时同步未自定义的设备
 		s.syncDevicesTimeout(editReq.ID, oldTimeout, newTimeout)
@@ -188,6 +196,35 @@ func (s productService) syncDevicesTimeout(productId string, oldTimeout, newTime
 	}
 	for _, d := range devices {
 		DeviceService.InvalidateAuth(d.Sn, d.AccessToken)
+	}
+}
+
+// fillRuleChainName 批量回填产品引用的规则链名称
+func (s productService) fillRuleChainName(list []iot_schema.ProductResp) {
+	if len(list) == 0 {
+		return
+	}
+	idSet := map[string]struct{}{}
+	for i := range list {
+		if list[i].RuleChainId != "" {
+			idSet[list[i].RuleChainId] = struct{}{}
+		}
+	}
+	if len(idSet) == 0 {
+		return
+	}
+	ids := make([]string, 0, len(idSet))
+	for id := range idSet {
+		ids = append(ids, id)
+	}
+	nameMap := map[string]string{}
+	var chains []iot_model.IotRuleChain
+	s.db.Select("id, name").Where("id IN ?", ids).Find(&chains)
+	for _, c := range chains {
+		nameMap[c.ID] = c.Name
+	}
+	for i := range list {
+		list[i].RuleChainName = nameMap[list[i].RuleChainId]
 	}
 }
 

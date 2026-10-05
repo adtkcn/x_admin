@@ -22,6 +22,11 @@ type IotConfigStruct struct {
 	PushStateChange bool `mapstructure:"PushStateChange"`
 	// LogRaw 是否记录原始报文日志（联调期打开）
 	LogRaw bool `mapstructure:"LogRaw"`
+
+	// DataBatchSize 时序历史批量写入的单批行数上限（攒满或到 2 秒落库一次）
+	DataBatchSize int `mapstructure:"DataBatchSize"`
+	// DataKeepDays 时序历史保留天数，每天凌晨清理更早的数据；0=永久保留不清理
+	DataKeepDays int `mapstructure:"DataKeepDays"`
 }
 
 var IotConfig = IotConfigStruct{
@@ -33,6 +38,8 @@ var IotConfig = IotConfigStruct{
 	MaxValues:       50,
 	PushStateChange: true,
 	LogRaw:          false,
+	DataBatchSize:   200,
+	DataKeepDays:    30,
 }
 
 // DeviceCtxKey 设备鉴权中间件写入 gin.Context 的键（值为 *iot_schema.DeviceAuthInfo），
@@ -64,5 +71,12 @@ func (c *IotConfigStruct) Normalize() {
 	}
 	if c.MaxValues <= 0 {
 		c.MaxValues = d.MaxValues
+	}
+	if c.DataBatchSize <= 0 {
+		c.DataBatchSize = d.DataBatchSize
+	}
+	// DataKeepDays 的 0 是合法值（永久保留），只校正负数
+	if c.DataKeepDays < 0 {
+		c.DataKeepDays = d.DataKeepDays
 	}
 }

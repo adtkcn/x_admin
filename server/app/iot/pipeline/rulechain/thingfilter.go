@@ -1,4 +1,4 @@
-package pipeline
+package rulechain
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"x_admin/core"
 )
 
-// 物模型白名单过滤（流水线第三级）：只放行产品 thing_model 里声明过的属性，
+// 物模型白名单过滤（规则链「物模型过滤」节点）：只放行产品 thing_model 里声明过的属性，
 // 防止设备乱报字段把 Redis 快照与时序表撑爆。
 //
 // 物模型为必填配置：解析不出任何 identifier（未配置或 JSON 里没有 identifier 字段）
