@@ -3,6 +3,15 @@
         <div class="se__bar">
             <span class="se__lang">javascript</span>
             <span class="se__meta">{{ lineCount }} 行 · {{ (modelValue || '').length }} 字符</span>
+            <button
+                v-if="template"
+                type="button"
+                class="se__fill"
+                title="用示例模板覆盖当前代码"
+                @click="fillTemplate"
+            >
+                填入模板
+            </button>
         </div>
         <div class="se__body">
             <!-- 行号槽：与代码区共用滚动偏移 -->
@@ -40,6 +49,7 @@ const props = defineProps<{
     modelValue: string
     placeholder?: string
     height?: string
+    template?: string
 }>()
 const emit = defineEmits(['update:modelValue'])
 
@@ -120,6 +130,20 @@ function syncScroll() {
     if (gutterRef.value) gutterRef.value.scrollTop = ta.scrollTop
 }
 
+// 一键填入模板：用示例骨架覆盖当前代码，填完置顶便于继续编辑
+function fillTemplate() {
+    if (!props.template) return
+    emit('update:modelValue', props.template)
+    nextTick(() => {
+        const ta = taRef.value
+        if (ta) {
+            ta.scrollTop = 0
+            ta.focus()
+        }
+        syncScroll()
+    })
+}
+
 onMounted(syncScroll)
 </script>
 
@@ -146,6 +170,21 @@ onMounted(syncScroll)
 }
 .se__meta {
     margin-left: auto;
+}
+.se__fill {
+    flex-shrink: 0;
+    border: 1px solid #3a3b34;
+    background: transparent;
+    color: #66b3ff;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.se__fill:hover {
+    border-color: #66b3ff;
+    color: #8fc7ff;
 }
 .se__body {
     position: relative;

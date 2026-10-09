@@ -10,7 +10,7 @@
                 </el-button>
                 <el-button size="small" @click="restore">适应画布</el-button>
             </el-button-group>
-            <span class="rc-toolbar__tip">双击节点配置属性，Delete 删除选中；除并行外每个节点只连一个后续节点</span>
+            <span class="rc-toolbar__tip">双击节点配置属性，除并行外每个节点只连一个后续节点</span>
         </div>
         <div class="rc-main">
             <DiagramSidebar class="rc-sidebar" @dragInNode="dragInNode" />
@@ -116,13 +116,21 @@ function initLogicFlow(data: Record<string, any>) {
 
     lf.value.on('node:dbclick', (e: any) => PropertyPanelRef.value?.open(e.data))
 
-    // 单出口约束：除「并行」外已有出边的节点再连一条时，回滚刚建的边并提示
+    // 连边约束：①「输入」不可作为目标被连入；②除「并行」外已有出边的节点再连一条时，回滚刚建的边并提示
     lf.value.on('edge:add', (e: any) => {
         const srcId = e.data?.sourceNodeId
         if (!srcId) return
         const graph = instance.getGraphData() as Record<string, any>
+        const nodes = ((graph.nodes as RcNodeTypeData[]) || [])
+        // 「输入」是固定起点，只能作源节点：任何边连入它都回滚
+        const tgtNode = nodes.find((n) => n.id === e.data?.targetNodeId)
+        if (rcNodeKeyOf(tgtNode?.type) === 'rule_trigger') {
+            // 事件派发中直接删边会干扰 LF 内部流程，延到下一拍再回滚
+            setTimeout(() => instance.deleteEdge(e.data.id), 0)
+            return ElMessage.warning('「输入」是起点节点，不能作为其他节点的后续（不可连入）')
+        }
         const outs = ((graph.edges as any[]) || []).filter((ed) => ed.sourceNodeId === srcId)
-        const srcNode = ((graph.nodes as RcNodeTypeData[]) || []).find((n) => n.id === srcId)
+        const srcNode = nodes.find((n) => n.id === srcId)
         if (rcNodeKeyOf(srcNode?.type) === 'rule_parallel' || outs.length <= 1) return
         // 事件派发中直接删边会干扰 LF 内部流程，延到下一拍再回滚
         setTimeout(() => instance.deleteEdge(e.data.id), 0)

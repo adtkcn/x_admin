@@ -13,10 +13,29 @@ import {
 import type LogicFlow from '@logicflow/core'
 import { RC_NODE_META, type RcNodeMeta } from '../rule.type'
 
-// 读取节点上自定义的 rcColor（注册时按类型注入），决定填充/描边
+// 主色混色工具：向白/黑线性插值，得到浅底填充与深色文字
+const WHITE: [number, number, number] = [255, 255, 255]
+const BLACK: [number, number, number] = [0, 0, 0]
+function mix(hex: string, target: [number, number, number], ratio: number) {
+    const h = hex.replace('#', '')
+    const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h
+    const n = parseInt(full, 16)
+    const m = (a: number, t: number) => Math.round(a + (t - a) * ratio)
+    return `rgb(${m((n >> 16) & 255, target[0])}, ${m((n >> 8) & 255, target[1])}, ${m(n & 255, target[2])})`
+}
+
+// 浅底卡片风格：淡色填充 + 主色描边，主色作为识别色
 function applyColor(style: Record<string, any>, meta: RcNodeMeta) {
-    style.fill = meta.color
+    style.fill = mix(meta.color, WHITE, 0.88)
     style.stroke = meta.color
+    style.strokeWidth = 1.5
+    return style
+}
+
+// 文字取略深的主色，保证在浅底上清晰可读
+function applyTextColor(style: any, meta: RcNodeMeta) {
+    style.color = mix(meta.color, BLACK, 0.2)
+    style.fontWeight = 600
     return style
 }
 
@@ -26,16 +45,14 @@ function makeRectNode(meta: RcNodeMeta) {
             super.initNodeData(data)
             this.width = 150
             this.height = 52
-            this.radius = 6
+            this.radius = 8
         }
         getNodeStyle() {
             const style = super.getNodeStyle()
             return applyColor(style as Record<string, any>, meta)
         }
         getTextStyle() {
-            const style: any = super.getTextStyle()
-            style.color = '#fff'
-            return style
+            return applyTextColor(super.getTextStyle(), meta)
         }
     }
     return { type: meta.type, view: RectNode, model: Model }
@@ -52,9 +69,7 @@ function makeCircleNode(meta: RcNodeMeta) {
             return applyColor(style as Record<string, any>, meta)
         }
         getTextStyle() {
-            const style: any = super.getTextStyle()
-            style.color = '#fff'
-            return style
+            return applyTextColor(super.getTextStyle(), meta)
         }
     }
     return { type: meta.type, view: CircleNode, model: Model }
@@ -72,9 +87,7 @@ function makeDiamondNode(meta: RcNodeMeta) {
             return applyColor(style as Record<string, any>, meta)
         }
         getTextStyle() {
-            const style: any = super.getTextStyle()
-            style.color = '#fff'
-            return style
+            return applyTextColor(super.getTextStyle(), meta)
         }
     }
     return { type: meta.type, view: DiamondNode, model: Model }

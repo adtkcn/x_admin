@@ -47,6 +47,7 @@ export function nodeTypeSupportsGateway(nodeType?: string) {
 export type type_iot_product_list = {
     name?: string
     category_id?: string
+    is_stop?: number
     pageNo?: number
     pageSize?: number
 }
@@ -98,6 +99,7 @@ export type type_rule_chain = {
 }
 export type type_rule_chain_list = {
     name?: string
+    is_stop?: number
     pageNo?: number
     pageSize?: number
 }
@@ -158,6 +160,8 @@ export type type_iot_device_list = {
     product_id?: string
     space_id?: string
     status?: number
+    start_time?: string
+    end_time?: string
     pageNo?: number
     pageSize?: number
 }
@@ -219,10 +223,10 @@ export function deviceState(params: { id: string }) {
 }
 
 // 时序历史区间回读（趋势图数据源，毫秒时间戳，0=不限）
+// values 已由后端按产品物模型约束，只包含已建模的属性
 export type type_device_data = {
     ts: number
     values: Record<string, any>
-    raw: string
     protocol: string
 }
 export function deviceData(params: { id: string; start_ms?: number; end_ms?: number; limit?: number }) {
@@ -239,24 +243,35 @@ export type type_device_map_item = {
     longitude: number
     latitude: number
     status: number
-    alerting: boolean
+    // 活动告警级别：0=无告警 -1=故障 1=轻微 2=严重（数值即危害序，3+ 预留；!=0 即告警中，有故障则直接取故障）
+    severity: number
 }
 export function deviceMap(params?: { space_ids?: string }) {
     return request.get<type_device_map_item[]>({ url: '/iot/device/map', params })
 }
 
 // ===================== 告警历史（处理层告警状态机自动写入，管理端只读/清理） =====================
-// 告警级别：由产品 goja 告警脚本 alert(values) 返回值决定（0=不告警），字典供列表/表单展示
+// 告警级别：由产品 goja 告警脚本 alert(values) 的数字返回决定（0=不告警/恢复，非 0 即告警）。
+// 级别数值本身就是危害升序：故障(-1) < 轻微(1) < 严重(2)，正数 3 及以上预留给未来高级告警。
+// 故障特殊：危害档最低（故用冷色/info），但优先于其他告警——设备失能时的阈值告警不可信，以后端为准。
 export const SeverityMap: Record<number, string> = {
+    '-1': '故障',
     1: '轻微',
-    2: '严重',
-    3: '故障'
+    2: '严重'
 }
-// tag 颜色：级别越高越醒目
+// 遍历一律用这张表，不依赖对象键序（负数键不是整型索引键，不参与数字排序）
+export const SeverityLevels: number[] = [-1, 1, 2]
+// tag 颜色：危害越高越醒目；未录入的高级别(3+)由调用处兜底成 danger
 export const SeverityTagType: Record<number, 'success' | 'warning' | 'danger' | 'info'> = {
+    '-1': 'info',
     1: 'warning',
-    2: 'danger',
-    3: 'danger'
+    2: 'danger'
+}
+// 大屏点位/图例用色：故障取冷色低一档，轻微橙、严重红；更高（3+）兜底成顶格红
+export const SeverityColor: Record<number, string> = {
+    '-1': '#22d3ee',
+    1: '#e6a23c',
+    2: '#f56c6c'
 }
 export type type_iot_alert_list = {
     device_id?: string

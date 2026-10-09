@@ -3,6 +3,7 @@ package iot_controller
 import (
 	"x_admin/app/schema/iot_schema"
 	"x_admin/app/service/iot_service"
+	iot_pipeline "x_admin/app/service/iot_service/pipeline"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -16,17 +17,17 @@ type AlertHandler struct{}
 // @Summary		告警历史列表
 // @Description	分页查询设备告警事件（触发→恢复为一条记录），可按设备/编号/产品/区域/状态/时间区间过滤
 // @Tags			iot_alert-告警
-// @Param			token		header	string										true	"token"
-// @Param			pageNo		query	int											false	"页码"
-// @Param			pageSize	query	int											false	"每页数量"
-// @Param			device_id	query	string										false	"设备ID"
-// @Param			sn			query	string										false	"设备编号"
-// @Param			product_id	query	string										false	"产品ID"
-// @Param			space_id	query	string										false	"区域ID"
-// @Param			status		query	int8										false	"状态: -1全部 0已恢复 1告警中"
-// @Param			severity	query		int8									false	"级别: -1全部 1轻微 2严重 3故障"
-// @Param			start_time	query	string										false	"触发时间起"
-// @Param			end_time	query	string										false	"触发时间止"
+// @Param			token		header		string																	true	"token"
+// @Param			pageNo		query		int																		false	"页码"
+// @Param			pageSize	query		int																		false	"每页数量"
+// @Param			device_id	query		string																	false	"设备ID"
+// @Param			sn			query		string																	false	"设备编号"
+// @Param			product_id	query		string																	false	"产品ID"
+// @Param			space_id	query		string																	false	"区域ID(含子区域)"
+// @Param			status		query		string																	false	"状态: 0已恢复 1告警中，不传=全部"
+// @Param			severity	query		string																	false	"级别: -1故障 1轻微 2严重，不传=全部"
+// @Param			start_time	query		string																	false	"触发时间起"
+// @Param			end_time	query		string																	false	"触发时间止"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=iot_schema.AlertResp}}	"成功"
 // @Router			/api/admin/iot/alert/list [get]
 func (h AlertHandler) List(c *gin.Context) {
@@ -45,8 +46,8 @@ func (h AlertHandler) List(c *gin.Context) {
 // @Summary		告警历史删除
 // @Description	批量删除告警历史记录
 // @Tags			iot_alert-告警
-// @Param			token	header	string					true	"token"
-// @Param			data	body	iot_schema.AlertDelReq	true	"删除参数"
+// @Param			token	header		string					true	"token"
+// @Param			data	body		iot_schema.AlertDelReq	true	"删除参数"
 // @Success		200		{object}	response.Response		"成功"
 // @Router			/api/admin/iot/alert/del [post]
 func (h AlertHandler) Del(c *gin.Context) {
@@ -54,5 +55,13 @@ func (h AlertHandler) Del(c *gin.Context) {
 	if response.IsFail(c, util.VerifyUtil.VerifyBody(c, &req)) {
 		return
 	}
-	response.JSON(c, nil, iot_service.AlertService.Del(req.IDs))
+	deviceIds, e := iot_service.AlertService.Del(req.IDs)
+	if e == nil {
+		// 删了记录就要同步清该设备的告警运行态：活动态无 TTL，且存的就是记录主键，
+		// 残留会让设备后续命中只走“已在告警中”分支，库里再也不会新增记录
+		for _, deviceId := range deviceIds {
+			iot_pipeline.StopAlertRuntime(deviceId)
+		}
+	}
+	response.JSON(c, nil, e)
 }

@@ -64,7 +64,7 @@
                 <el-table :data="alerts" size="small" v-loading="alertLoading" max-height="380">
                     <el-table-column label="级别" width="80">
                         <template #default="{ row }">
-                            <el-tag :type="SeverityTagType[row.severity] || 'info'" size="small">
+                            <el-tag :type="SeverityTagType[row.severity] || 'danger'" size="small">
                                 {{ SeverityMap[row.severity] || row.severity }}
                             </el-tag>
                         </template>

@@ -1,6 +1,6 @@
 <template>
     <div class="rc-sidebar">
-        <div class="rc-sidebar__title">节点</div>
+        <!-- <div class="rc-sidebar__title">节点</div> -->
         <div
             class="rc-node"
             v-for="item of dragNodes"
@@ -32,12 +32,12 @@ function dragInNode(type: string, text: string) {
     overflow: auto;
     padding: 8px 6px;
 }
-.rc-sidebar__title {
+/* .rc-sidebar__title {
     font-size: 12px;
     color: var(--el-text-color-secondary);
     text-align: center;
     margin-bottom: 8px;
-}
+} */
 .rc-node {
     display: flex;
     align-items: center;

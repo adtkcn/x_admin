@@ -137,8 +137,6 @@ func (s *fileHashService) CreateDerived(pid, filePath, ext, fileMd5 string, file
 }
 
 // GetDerivedPath 根据父文件 id 与派生参数查询磁盘存储相对路径（存储 key）。
-// 优先读 Redis（key=file_derived:<pid>:<quality>:<w>:<h>，TTL 24h），miss 时查 DB 并回填。
-// 不存在返回空串。
 func (s *fileHashService) GetDerivedPath(pid string, quality, scaleWidth, scaleHeight int) string {
 	if pid == "" {
 		return ""
@@ -168,10 +166,10 @@ func (s *fileHashService) GetDerivedPath(pid string, quality, scaleWidth, scaleH
 
 // derivedCacheKey 派生记录缓存键
 func derivedCacheKey(pid string, quality, scaleWidth, scaleHeight int) string {
-	return "file_derived:" + pid + ":" +
+	return "file_derived:" +
 		strconv.Itoa(quality) + ":" +
 		strconv.Itoa(scaleWidth) + ":" +
-		strconv.Itoa(scaleHeight)
+		strconv.Itoa(scaleHeight) + ":" + pid
 }
 
 // cacheDerivedPath 写入派生记录 Redis 缓存（TTL 24h）

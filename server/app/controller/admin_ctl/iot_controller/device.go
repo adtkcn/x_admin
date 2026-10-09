@@ -1,9 +1,9 @@
 package iot_controller
 
 import (
-	iot_pipeline "x_admin/app/iot/pipeline"
 	"x_admin/app/schema/iot_schema"
 	"x_admin/app/service/iot_service"
+	iot_pipeline "x_admin/app/service/iot_service/pipeline"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
@@ -17,14 +17,16 @@ type DeviceHandler struct{}
 // @Summary		设备列表
 // @Description	分页获取设备列表
 // @Tags			iot_device-设备
-// @Param			token		header		string										true	"token"
-// @Param			pageNo		query		int											false	"页码"
-// @Param			pageSize	query		int											false	"每页数量"
-// @Param			name		query		string										false	"设备名称"
-// @Param			sn			query		string										false	"设备编号"
-// @Param			product_id	query		string										false	"产品ID"
-// @Param			space_id	query		string										false	"区域ID"
-// @Param			status		query		int8										false	"在线状态: -1全部 0离线 1在线"
+// @Param			token		header		string																	true	"token"
+// @Param			pageNo		query		int																		false	"页码"
+// @Param			pageSize	query		int																		false	"每页数量"
+// @Param			name		query		string																	false	"设备名称"
+// @Param			sn			query		string																	false	"设备编号"
+// @Param			product_id	query		string																	false	"产品ID"
+// @Param			space_id	query		string																	false	"区域ID(含子区域)"
+// @Param			status		query		string																	false	"在线状态: 0离线 1在线，不传=全部"
+// @Param			start_time	query		string																	false	"创建时间起(2006-01-02 15:04:05)"
+// @Param			end_time	query		string																	false	"创建时间止(2006-01-02 15:04:05)"
 // @Success		200			{object}	response.Response{data=response.PageResp{lists=iot_schema.DeviceResp}}	"成功"
 // @Router			/api/admin/iot/device/list [get]
 func (h DeviceHandler) List(c *gin.Context) {
@@ -43,8 +45,8 @@ func (h DeviceHandler) List(c *gin.Context) {
 // @Summary		设备详情
 // @Description	获取设备详情
 // @Tags			iot_device-设备
-// @Param			token	header		string							true	"token"
-// @Param			id		query		string							true	"主键"
+// @Param			token	header		string											true	"token"
+// @Param			id		query		string											true	"主键"
 // @Success		200		{object}	response.Response{data=iot_schema.DeviceResp}	"成功"
 // @Router			/api/admin/iot/device/detail [get]
 func (h DeviceHandler) Detail(c *gin.Context) {
@@ -61,7 +63,7 @@ func (h DeviceHandler) Detail(c *gin.Context) {
 // @Tags			iot_device-设备
 // @Param			token	header		string					true	"token"
 // @Param			data	body		iot_schema.DeviceAddReq	true	"新增参数"
-// @Success		200		{object}	response.Response			"成功"
+// @Success		200		{object}	response.Response		"成功"
 // @Router			/api/admin/iot/device/add [post]
 func (h DeviceHandler) Add(c *gin.Context) {
 	var req iot_schema.DeviceAddReq
@@ -74,7 +76,7 @@ func (h DeviceHandler) Add(c *gin.Context) {
 // @Summary		设备编辑
 // @Description	编辑设备
 // @Tags			iot_device-设备
-// @Param			token	header		string					true	"token"
+// @Param			token	header		string						true	"token"
 // @Param			data	body		iot_schema.DeviceEditReq	true	"编辑参数"
 // @Success		200		{object}	response.Response			"成功"
 // @Router			/api/admin/iot/device/edit [post]
@@ -91,7 +93,7 @@ func (h DeviceHandler) Edit(c *gin.Context) {
 // @Tags			iot_device-设备
 // @Param			token	header		string					true	"token"
 // @Param			data	body		iot_schema.DeviceDelReq	true	"删除参数"
-// @Success		200		{object}	response.Response			"成功"
+// @Success		200		{object}	response.Response		"成功"
 // @Router			/api/admin/iot/device/del [post]
 func (h DeviceHandler) Del(c *gin.Context) {
 	var req iot_schema.DeviceDelReq
@@ -113,8 +115,8 @@ func (h DeviceHandler) Del(c *gin.Context) {
 // @Summary		设备运行态快照
 // @Description	回读 Redis 中的在线判定/最后报文时间与最新属性快照，用于验证接入→处理→运行态链路
 // @Tags			iot_device-设备
-// @Param			token	header		string							true	"token"
-// @Param			id		query		string							true	"设备主键"
+// @Param			token	header		string												true	"token"
+// @Param			id		query		string												true	"设备主键"
 // @Success		200		{object}	response.Response{data=iot_schema.DeviceStateResp}	"成功"
 // @Router			/api/admin/iot/device/state [get]
 func (h DeviceHandler) State(c *gin.Context) {
@@ -145,12 +147,12 @@ func (h DeviceHandler) State(c *gin.Context) {
 // @Summary		设备时序数据回读
 // @Description	按时间区间读取属性上报历史（本轮存 MySQL，后续换 TDengine 接口不变）
 // @Tags			iot_device-设备
-// @Param			token	header		string							true	"token"
-// @Param			id		query		string							true	"设备主键"
-// @Param			limit	query		int							false	"条数(缺省1000,上限5000)"
-// @Param			start_ms	query		int64							false	"开始时间(毫秒),0=不限"
-// @Param			end_ms	query		int64							false	"结束时间(毫秒),0=不限"
-// @Success		200		{object}	response.Response{data=[]iot_schema.DeviceDataResp}	"成功"
+// @Param			token		header		string												true	"token"
+// @Param			id			query		string												true	"设备主键"
+// @Param			limit		query		int													false	"条数(缺省1000,上限5000)"
+// @Param			start_ms	query		int64												false	"开始时间(毫秒),0=不限"
+// @Param			end_ms		query		int64												false	"结束时间(毫秒),0=不限"
+// @Success		200			{object}	response.Response{data=[]iot_schema.DeviceDataResp}	"成功"
 // @Router			/api/admin/iot/device/data [get]
 func (h DeviceHandler) Data(c *gin.Context) {
 	var req iot_schema.DeviceDataReq
@@ -164,11 +166,11 @@ func (h DeviceHandler) Data(c *gin.Context) {
 }
 
 // @Summary		大屏地图设备点
-// @Description	不分页返回带坐标的设备点（含在线状态与活动告警标记），供区域大屏铺图；实时增量由 WS 房间 iot:map:{spaceId} 广播
+// @Description	不分页返回带坐标的设备点（含在线状态与活动告警级别 0=无 -1=故障 1=轻微 2=严重），实时增量由 WS 房间 iot:map:{spaceId} 广播
 // @Tags			iot_device-设备
-// @Param			token	header		string								true	"token"
-// @Param			space_ids	query		string							false	"区域ID列表(逗号分隔),缺省全部"
-// @Success		200		{object}	response.Response{data=[]iot_schema.DeviceMapItem}	"成功"
+// @Param			token		header		string												true	"token"
+// @Param			space_ids	query		string												false	"区域ID列表(逗号分隔),缺省全部"
+// @Success		200			{object}	response.Response{data=[]iot_schema.DeviceMapItem}	"成功"
 // @Router			/api/admin/iot/device/map [get]
 func (h DeviceHandler) Map(c *gin.Context) {
 	var req iot_schema.DeviceMapReq

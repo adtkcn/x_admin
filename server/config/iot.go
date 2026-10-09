@@ -22,6 +22,8 @@ type IotConfigStruct struct {
 	PushStateChange bool `mapstructure:"PushStateChange"`
 	// LogRaw 是否记录原始报文日志（联调期打开）
 	LogRaw bool `mapstructure:"LogRaw"`
+	// LogRuleChain 是否逐节点记录规则链执行日志（进入/携带参数/输出参数，联调期打开）
+	LogRuleChain bool `mapstructure:"LogRuleChain"`
 
 	// DataBatchSize 时序历史批量写入的单批行数上限（攒满或到 2 秒落库一次）
 	DataBatchSize int `mapstructure:"DataBatchSize"`
@@ -38,6 +40,7 @@ var IotConfig = IotConfigStruct{
 	MaxValues:       50,
 	PushStateChange: true,
 	LogRaw:          false,
+	LogRuleChain:    false,
 	DataBatchSize:   200,
 	DataKeepDays:    30,
 }

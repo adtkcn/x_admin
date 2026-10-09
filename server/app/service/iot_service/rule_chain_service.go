@@ -36,8 +36,11 @@ func graphCacheKey(chainId string) string {
 // List 规则链分页列表
 func (s ruleChainService) List(page request.PageReq, listReq iot_schema.RuleChainListReq) (res response.PageResp, e error) {
 	chain := s.db.Model(&iot_model.IotRuleChain{})
-	if listReq.Name != "" {
-		chain = chain.Where("name like ?", "%"+listReq.Name+"%")
+	if v := listReq.Name.ValueOrZero(); v != "" {
+		chain = chain.Where("name like ?", "%"+v+"%")
+	}
+	if v := listReq.IsStop.ValueOrZero(); v != "" {
+		chain = chain.Where("is_stop = ?", v)
 	}
 	var count int64
 	if e = response.CheckErr(chain.Count(&count).Error, "统计规则链失败"); e != nil {
@@ -178,11 +181,11 @@ func (s ruleChainService) CachedGraphRaw(chainId string) string {
 	if s.db.Select("graph_data").Where("id = ? AND is_stop = 0", chainId).First(&row).Error == nil {
 		raw = row.GraphData
 	}
-	// 回源即缓存（含空串），避免不存在的链被每条报文反复打库
-	if bs, err := json.Marshal(raw); err == nil {
-		if err := core.Redis.Set(ctx, key, bs, time.Duration(config.IotConfig.ThingCacheTTL)*time.Second).Err(); err != nil {
-			core.Logger.Errorf("写规则链缓存失败 chainId=%s err=%v", chainId, err)
-		}
+	// 回源即缓存（含空串的“链不存在/停用”标记），避免不存在的链被每条报文反复打库。
+	// graph_data 本身已是 JSON 文本，必须原样存：对它再 json.Marshal 会得到带外层引号的
+	// 字符串，命中缓存时解析出的是 string 而非对象，报 cannot unmarshal string into RuleChainGraph。
+	if err := core.Redis.Set(ctx, key, raw, time.Duration(config.IotConfig.ThingCacheTTL)*time.Second).Err(); err != nil {
+		core.Logger.Errorf("写规则链缓存失败 chainId=%s err=%v", chainId, err)
 	}
 	return raw
 }

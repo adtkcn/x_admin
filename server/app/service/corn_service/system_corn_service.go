@@ -8,7 +8,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/util"
 	"x_admin/util/convert_util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 
 	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
@@ -190,8 +190,8 @@ func (service systemCornService) DelBatch(Ids []string) (e error) {
 }
 
 // 获取Excel的列
-func (service systemCornService) GetExcelCol() []excel2.Col {
-	var cols = []excel2.Col{
+func (service systemCornService) GetExcelCol() []excel_util.Col {
+	var cols = []excel_util.Col{
 		{Name: "任务名称", JsonTag: "task_name", Width: 15, Decode: x_null.DecodeString},
 		{Name: "任务编码", JsonTag: "task_code", Width: 15, Decode: x_null.DecodeString},
 		{Name: "corn表达式", JsonTag: "corn_expr", Width: 15, Decode: x_null.DecodeString},

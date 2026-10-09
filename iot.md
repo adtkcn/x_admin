@@ -44,7 +44,7 @@ x_admin 已具备 IoT 平台所需的多数底座，本方案**优先复用，�
                               │  投递到 core.Queue 削峰
 ┌─────────────────────────────────────────────────────────────┐
 │              数据处理流水线 iot/pipeline（新增）              │
-│  解码脚本 → 物模型过滤 → 过滤脚本 → 存储 → 告警脚本+告警状态机 (goja)  │
+│  解码脚本 → 过滤脚本 → 存储 → 告警脚本+告警状态机 (goja)  │
 └─────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────┐
@@ -107,8 +107,8 @@ server/
 | `x_iot_product` | id(uuid), name, category_id, device_type, protocol, thing_model(JSON/text), decode_script, filter_script, alert_script, alert_duration, alert_silence, is_delete | 产品定义；`thing_model` 存物模型 JSON，`decode_script/filter_script/alert_script` 为产品级 goja JS 脚本；`alert_duration`(持续秒,0=命中即告)/`alert_silence`(静默秒,0=不静默) 为告警状态机参数（本项目 MySQL 无 jsonb，用 text 列） |
 | `x_iot_device_space` | id(uuid), name, parent_id, path, longitude, latitude, sort, is_delete | 设备区域树，`path` 物化路径（如 `/uuid1/uuid2/`）便于子树查询 |
 | `x_iot_device` | id(uuid), name, sn, product_id, space_id, gateway_id, status, longitude, latitude, access_token, is_delete | 设备；`sn` 业务唯一编号，`access_token` 接入凭证 |
-| ~~`x_iot_alert_rule`~~ | — | 未建：告警条件与级别由产品级 goja 告警脚本 `alert(values)` 逐条判定（返回 0/1/2/3），持续/静默参数落在 `x_iot_product.alert_duration/alert_silence` |
-| `x_iot_alert_history` | id(uuid), device_id, sn, product_id, space_id, status(1告警中/0已恢复), severity(1轻微/2严重/3故障), values(JSON快照), triggered_at, recovered_at | 告警事件历史：一条=一次触发到恢复的完整生命周期，单事件可升级（级别升高只更新同条 severity）；持续时长=`recovered_at-triggered_at`（量大时按月分表/分区） |
+| ~~`x_iot_alert_rule`~~ | — | 未建：告警条件与级别由产品级 goja 告警脚本 `alert(values)` 逐条判定（只返数字：0=不告警，非 0 即级别，数值按危害升序：-1=故障、1=轻微、2=严重，3+ 预留；故障危害最轻但优先于其他告警），持续/静默参数落在 `x_iot_product.alert_duration/alert_silence` |
+| `x_iot_alert_history` | id(uuid), device_id, sn, product_id, space_id, status(1告警中/0已恢复), severity(tinyint 有符号：-1故障/1轻微/2严重，数值即危害序，3+ 预留), values(JSON快照), triggered_at, recovered_at | 告警事件历史：一条=一次触发到恢复的完整生命周期，单事件可改写（优先序更高时只更新同条 severity：危害升级或故障接管；故障消失后把记录交还给实际命中的级别）；持续时长=`recovered_at-triggered_at`（量大时按月分表/分区） |
 
 模型示例（对齐 `fabu_model.FabuApp`）：
 
@@ -133,7 +133,7 @@ type IotProduct struct {
     ThingModel       string                `gorm:"type:text;comment:'物模型JSON'" json:"thing_model"`
     DecodeScript     string                `gorm:"type:text;comment:'解码脚本(goja): decode(raw)返回物模型对象'" json:"decode_script"`
     FilterScript     string                `gorm:"type:text;comment:'数据过滤脚本(goja): filter(values)返回布尔'" json:"filter_script"`
-    AlertScript      string                `gorm:"type:text;comment:'数据告警脚本(goja): alert(values)返回级别数字(0=不告警,1/2/3=轻微/严重/故障)'" json:"alert_script"`
+    AlertScript      string                `gorm:"type:text;comment:'数据告警脚本(goja): alert(values)返回级别数字(0=不告警,-1=故障/1=轻微/2=严重)'" json:"alert_script"`
     AlertDuration    int                   `gorm:"not null;default:0;comment:'告警持续时长(秒),0=命中即告'" json:"alert_duration"`
     AlertSilence     int                   `gorm:"not null;default:0;comment:'告警静默时长(秒),0=不静默'" json:"alert_silence"`
     IsDelete         soft_delete.DeletedAt `gorm:"not null;default:0;softDelete:flag,DeletedAtField:DeleteTime;comment:'是否删除'" json:"-"`

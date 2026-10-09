@@ -19,23 +19,25 @@
             <Script
                 v-if="nodeKey === 'rule_decode'"
                 v-model="nodeProps"
-                :hint="decodeHint"
-                placeholder="function decode(raw, sn) {&#10;  // raw: 原始报文;  return { temp: 25, hum: 60 }&#10;}"
+                :hint="RC_SCRIPT_HINTS.rule_decode"
+                :template="RC_SCRIPT_TEMPLATES.rule_decode"
+                placeholder="function decode(values, sn) {&#10;  // values: 初始上报值;  return { temp: 25, hum: 60 }&#10;}"
             ></Script>
             <Script
                 v-else-if="nodeKey === 'rule_filter'"
                 v-model="nodeProps"
-                :hint="filterHint"
+                :hint="RC_SCRIPT_HINTS.rule_filter"
+                :template="RC_SCRIPT_TEMPLATES.rule_filter"
                 placeholder="function filter(values, sn) {&#10;  return values.temp > 0&#10;}"
             ></Script>
+            <div v-else-if="nodeKey === 'rule_parallel'" class="rc-tip">并行节点：报文同时流向所有后续分支，是唯一允许连接多个后续节点的节点，无需配置。</div>
             <Script
                 v-else-if="nodeKey === 'rule_bool'"
                 v-model="nodeProps"
-                :hint="boolHint"
+                :hint="RC_SCRIPT_HINTS.rule_bool"
+                :template="RC_SCRIPT_TEMPLATES.rule_bool"
                 placeholder="function filter(values, sn) {&#10;  return values.temp > 30&#10;}"
             ></Script>
-            <div v-else-if="nodeKey === 'rule_thing_filter'" class="rc-tip">物模型过滤节点：按产品物模型白名单裁剪属性，不在白名单内的直接丢弃（固定开启，无需配置）。</div>
-            <div v-else-if="nodeKey === 'rule_parallel'" class="rc-tip">并行节点：报文同时流向所有后续分支，是唯一允许连接多个后续节点的节点，无需配置。</div>
             <Alarm v-else-if="nodeKey === 'rule_alarm'" v-model="nodeProps"></Alarm>
             <div v-else-if="nodeKey === 'rule_state'" class="rc-tip">状态快照节点：把流经的最新属性写入 Redis 快照，供管理端与大屏即时读取，无需配置。</div>
             <div v-else-if="nodeKey === 'rule_history'" class="rc-tip">历史存储节点：把流经的属性追加写入时序历史表，无需配置。</div>
@@ -58,7 +60,7 @@ import Script from './Script.vue'
 import Alarm from './Alarm.vue'
 import Notify from './Notify.vue'
 import type { RcNodeKey, RcNodeTypeData } from '../rule.type'
-import { rcNodeKeyOf, rcDefaultProps, rcMetaOf } from '../rule.type'
+import { rcNodeKeyOf, rcDefaultProps, rcMetaOf, RC_SCRIPT_TEMPLATES, RC_SCRIPT_HINTS } from '../rule.type'
 
 defineOptions({ name: 'RcPropertyPanel' })
 const emit = defineEmits(['setProperties', 'renameNode'])
@@ -70,13 +72,6 @@ const node = ref<RcNodeTypeData>({})
 const nodeKey = ref<RcNodeKey>()
 const nodeProps = ref<any>({})
 const nodeName = ref('')
-
-const decodeHint =
-    '实现 <code>decode(raw, sn)</code>：raw 为设备原始报文字符串，返回属性对象；留空则透传上报的 values。'
-const filterHint =
-    '实现 <code>filter(values, sn)</code>：返回布尔，true 放行 / false 丢弃整条报文；留空默认放行。'
-const boolHint =
-    '实现 <code>filter(values, sn)</code>：返回 true 继续走后续节点 / false 仅忽略本分支（并行的其他分支不受影响）；留空默认继续。'
 
 const title = computed(
     () => '节点：' + (node.value?.text?.value ?? rcMetaOf(node.value.type)?.label ?? '')

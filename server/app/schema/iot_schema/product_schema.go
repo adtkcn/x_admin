@@ -22,8 +22,9 @@ func NodeTypeSupportsGateway(nodeType string) bool {
 }
 
 type ProductListReq struct {
-	Name       string `json:"name" form:"name"`               // 产品名称
-	CategoryId string `json:"category_id" form:"category_id"` // 分类ID
+	Name       x_null.String `json:"name" form:"name"`               // 产品名称(模糊)
+	CategoryId x_null.String `json:"category_id" form:"category_id"` // 分类ID(含子分类)
+	IsStop     x_null.String `json:"is_stop" form:"is_stop"`         // 是否停用: 0正常 1停用，不传=全部
 	request.PageReq
 }
 

@@ -2,7 +2,8 @@ package queue
 
 import (
 	"context"
-	"x_admin/app/iot/pipeline"
+
+	"x_admin/app/service/iot_service/pipeline"
 	"x_admin/config"
 	"x_admin/core"
 )

@@ -15,8 +15,8 @@ type DeviceSpaceHandler struct{}
 // @Summary		设备区域所有
 // @Description	获取所有设备区域(树形,不分页)
 // @Tags			iot_deviceSpace-设备区域
-// @Param			token	header		string																		true	"token"
-// @Success		200		{object}	response.Response{data=[]iot_schema.DeviceSpaceResp}							"成功"
+// @Param			token	header		string													true	"token"
+// @Success		200		{object}	response.Response{data=[]iot_schema.DeviceSpaceResp}	"成功"
 // @Router			/api/admin/iot/deviceSpace/all [get]
 func (h DeviceSpaceHandler) All(c *gin.Context) {
 	res, err := iot_service.DeviceSpaceService.All()
@@ -26,9 +26,9 @@ func (h DeviceSpaceHandler) All(c *gin.Context) {
 // @Summary		设备区域详情
 // @Description	获取设备区域详情
 // @Tags			iot_deviceSpace-设备区域
-// @Param			token	header		string															true	"token"
-// @Param			id		query		string															true	"主键"
-// @Success		200		{object}	response.Response{data=iot_schema.DeviceSpaceResp}				"成功"
+// @Param			token	header		string												true	"token"
+// @Param			id		query		string												true	"主键"
+// @Success		200		{object}	response.Response{data=iot_schema.DeviceSpaceResp}	"成功"
 // @Router			/api/admin/iot/deviceSpace/detail [get]
 func (h DeviceSpaceHandler) Detail(c *gin.Context) {
 	var req iot_schema.DeviceSpaceDetailReq
@@ -43,8 +43,8 @@ func (h DeviceSpaceHandler) Detail(c *gin.Context) {
 // @Description	新增设备区域
 // @Tags			iot_deviceSpace-设备区域
 // @Param			token	header		string							true	"token"
-// @Param			data	body		iot_schema.DeviceSpaceAddReq		true	"新增参数"
-// @Success		200		{object}	response.Response					"成功"
+// @Param			data	body		iot_schema.DeviceSpaceAddReq	true	"新增参数"
+// @Success		200		{object}	response.Response				"成功"
 // @Router			/api/admin/iot/deviceSpace/add [post]
 func (h DeviceSpaceHandler) Add(c *gin.Context) {
 	var req iot_schema.DeviceSpaceAddReq
@@ -57,9 +57,9 @@ func (h DeviceSpaceHandler) Add(c *gin.Context) {
 // @Summary		设备区域编辑
 // @Description	编辑设备区域
 // @Tags			iot_deviceSpace-设备区域
-// @Param			token	header		string								true	"token"
-// @Param			data	body		iot_schema.DeviceSpaceEditReq			true	"编辑参数"
-// @Success		200		{object}	response.Response						"成功"
+// @Param			token	header		string							true	"token"
+// @Param			data	body		iot_schema.DeviceSpaceEditReq	true	"编辑参数"
+// @Success		200		{object}	response.Response				"成功"
 // @Router			/api/admin/iot/deviceSpace/edit [post]
 func (h DeviceSpaceHandler) Edit(c *gin.Context) {
 	var req iot_schema.DeviceSpaceEditReq
@@ -72,9 +72,9 @@ func (h DeviceSpaceHandler) Edit(c *gin.Context) {
 // @Summary		设备区域删除
 // @Description	删除设备区域
 // @Tags			iot_deviceSpace-设备区域
-// @Param			token	header		string								true	"token"
-// @Param			data	body		iot_schema.DeviceSpaceDelReq			true	"删除参数"
-// @Success		200		{object}	response.Response						"成功"
+// @Param			token	header		string							true	"token"
+// @Param			data	body		iot_schema.DeviceSpaceDelReq	true	"删除参数"
+// @Success		200		{object}	response.Response				"成功"
 // @Router			/api/admin/iot/deviceSpace/del [post]
 func (h DeviceSpaceHandler) Del(c *gin.Context) {
 	var req iot_schema.DeviceSpaceDelReq
@@ -87,9 +87,9 @@ func (h DeviceSpaceHandler) Del(c *gin.Context) {
 // @Summary		设备区域排序
 // @Description	同级设备区域拖拽排序
 // @Tags			iot_deviceSpace-设备区域
-// @Param			token	header		string								true	"token"
-// @Param			data	body		iot_schema.DeviceSpaceSortReq			true	"排序参数"
-// @Success		200		{object}	response.Response						"成功"
+// @Param			token	header		string							true	"token"
+// @Param			data	body		iot_schema.DeviceSpaceSortReq	true	"排序参数"
+// @Success		200		{object}	response.Response				"成功"
 // @Router			/api/admin/iot/deviceSpace/sort [post]
 func (h DeviceSpaceHandler) Sort(c *gin.Context) {
 	var req iot_schema.DeviceSpaceSortReq

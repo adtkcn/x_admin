@@ -51,7 +51,7 @@
                         <el-link
                             v-if="row.short_url"
                             type="primary"
-                            :underline="false"
+                            underline="never"
                             @click="handleOpenDownload(row)"
                         >
                             {{ row.short_url }}

@@ -8,7 +8,6 @@
 export type RcNodeType =
     | 'rule:trigger'
     | 'rule:decode'
-    | 'rule:thing_filter'
     | 'rule:filter'
     | 'rule:parallel'
     | 'rule:bool'
@@ -22,7 +21,6 @@ export type RcNodeType =
 export type RcNodeKey =
     | 'rule_trigger'
     | 'rule_decode'
-    | 'rule_thing_filter'
     | 'rule_filter'
     | 'rule_parallel'
     | 'rule_bool'
@@ -51,7 +49,6 @@ export type RcNotifyProps = {
 export type RcNodePropsMap = {
     rule_trigger: Record<string, never>
     rule_decode: RcScriptProps
-    rule_thing_filter: Record<string, never>
     rule_filter: RcScriptProps
     rule_parallel: Record<string, never>
     rule_bool: RcScriptProps
@@ -86,16 +83,15 @@ export type RcNodeMeta = {
 
 export const RC_NODE_META: RcNodeMeta[] = [
     { type: 'rule:trigger', key: 'rule_trigger', label: '输入', shape: 'circle', color: '#67c23a', desc: '固定起点(不可删除)：属性上报由此进入' },
-    { type: 'rule:decode', key: 'rule_decode', label: '解码', shape: 'rect', color: '#409eff', desc: 'goja decode(raw) 产出属性' },
-    { type: 'rule:thing_filter', key: 'rule_thing_filter', label: '物模型过滤', shape: 'rect', color: '#409eff', desc: '按物模型白名单裁剪（固定开启，无需配置）' },
-    { type: 'rule:filter', key: 'rule_filter', label: '数据过滤', shape: 'rect', color: '#409eff', desc: 'goja filter(values) 布尔放行，false 丢弃整条报文' },
+    { type: 'rule:decode', key: 'rule_decode', label: '解码', shape: 'rect', color: '#409eff', desc: 'goja decode(values) 产出属性' },
+    { type: 'rule:filter', key: 'rule_filter', label: '数据过滤', shape: 'rect', color: '#13c2c2', desc: 'goja filter(values) 布尔放行，false 丢弃整条报文' },
     { type: 'rule:parallel', key: 'rule_parallel', label: '并行', shape: 'diamond', color: '#e6a23c', desc: '所有子路径同时分流（唯一允许多个子连接的节点）' },
-    { type: 'rule:bool', key: 'rule_bool', label: '布尔', shape: 'diamond', color: '#13c2c2', desc: '脚本返回 true 继续 / false 仅忽略本分支' },
+    { type: 'rule:bool', key: 'rule_bool', label: '布尔', shape: 'diamond', color: '#722ed1', desc: '脚本返回 true 继续 / false 仅忽略本分支' },
     { type: 'rule:alarm', key: 'rule_alarm', label: '告警', shape: 'rect', color: '#f56c6c', desc: 'goja alert+持续/静默状态机' },
-    { type: 'rule:state', key: 'rule_state', label: '状态快照', shape: 'rect', color: '#909399', desc: '写 Redis 最新属性，供管理端/大屏即时读' },
-    { type: 'rule:history', key: 'rule_history', label: '历史存储', shape: 'rect', color: '#909399', desc: '写 MySQL 时序历史表' },
-    { type: 'rule:push', key: 'rule_push', label: '大屏推送', shape: 'rect', color: '#909399', desc: '属性广播到区域地图大屏房间' },
-    { type: 'rule:notify', key: 'rule_notify', label: '通知', shape: 'rect', color: '#a56bff', desc: '站内/邮件/webhook' }
+    { type: 'rule:state', key: 'rule_state', label: '状态快照', shape: 'rect', color: '#eb2f96', desc: '写 Redis 最新属性，供管理端/大屏即时读' },
+    { type: 'rule:history', key: 'rule_history', label: '历史存储', shape: 'rect', color: '#faad14', desc: '写 MySQL 时序历史表' },
+    { type: 'rule:push', key: 'rule_push', label: '大屏推送', shape: 'rect', color: '#2f54eb', desc: '属性广播到区域地图大屏房间' },
+    { type: 'rule:notify', key: 'rule_notify', label: '通知', shape: 'rect', color: '#a0d911', desc: '站内/邮件/webhook' }
 ]
 
 const META_BY_TYPE: Record<string, RcNodeMeta> = RC_NODE_META.reduce(
@@ -138,6 +134,42 @@ export const rcDefaultProps = (key: RcNodeKey): any => {
         default:
             return {}
     }
+}
+
+// 各脚本节点「一键填入模板」的代码骨架（与后端函数签名契约一致）
+export const RC_SCRIPT_TEMPLATES: Record<string, string> = {
+    rule_decode: `function decode(values, sn) {
+  // values: 设备初始上报值，sn: 设备编号
+  // 基于上报值转换/补全并返回属性对象；留空则透传上报的 values
+  return {
+    temp: 0,
+    hum: 0
+  }
+}`,
+    rule_filter: `function filter(values, sn) {
+  // values: 解码后的属性对象，返回 true 放行 / false 丢弃整条报文
+  return true
+}`,
+    rule_bool: `function filter(values, sn) {
+  // values: 属性对象，返回 true 继续走后续节点 / false 仅忽略本分支
+  return values.temp > 30
+}`,
+    rule_alarm: `function alert(values, sn) {
+  // values: 属性对象，只返数字：0=不告警/恢复，非 0 即级别；危害升序 -1=故障、1=轻微、2=严重（3+ 预留）
+  // 故障危害最轻但优先于其他告警（命中即以它为准）；返其它类型按不告警处理
+  if (values.temp > 80) return 2
+  return 0
+}`
+}
+
+// 各脚本节点的说明文案（面板顶部提示，支持 <code> 富文本）
+export const RC_SCRIPT_HINTS: Partial<Record<RcNodeKey, string>> = {
+    rule_decode:
+        '实现 <code>decode(values, sn)</code>：values 为设备初始上报值，返回属性对象；留空则透传上报的 values。',
+    rule_filter:
+        '实现 <code>filter(values, sn)</code>：返回布尔，true 放行 / false 丢弃整条报文；留空默认放行。',
+    rule_bool:
+        '实现 <code>filter(values, sn)</code>：返回 true 继续走后续节点 / false 仅忽略本分支（并行的其他分支不受影响）；留空默认继续。'
 }
 
 // 边无配置：除并行节点外每个节点只允许一条出边，由设计器与后端保存时共同约束

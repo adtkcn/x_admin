@@ -9,7 +9,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/config"
 	"x_admin/util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 	"golang.org/x/sync/singleflight"
 	"x_admin/app/schema/{{{.Domain}}}_schema"
 	"x_admin/app/service/{{{.Domain}}}_service"
@@ -210,12 +210,12 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ExportFile(c *gin.Contex
 		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
-	f, err := excel2.Export(res,{{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
+	f, err := excel_util.Export(res,{{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol(), "Sheet1", "{{{ .FunctionName }}}")
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
-	excel2.DownLoadExcel("{{{ .FunctionName }}}" + time.Now().Format("20060102-150405"), c.Writer, f)
+	excel_util.DownLoadExcel("{{{ .FunctionName }}}" + time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 //  @Summary	{{{ .FunctionName }}}导入
@@ -233,7 +233,7 @@ func (hd *{{{  toUpperCamelCase .ModuleName }}}Handler) ImportFile(c *gin.Contex
 	}
 	defer file.Close()
 	importList := []{{{.Domain}}}_schema.{{{ toUpperCamelCase .EntityName }}}Resp{}
-	err = excel2.GetExcelData(file, &importList,{{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol())
+	err = excel_util.GetExcelData(file, &importList,{{{.Domain}}}_service.{{{ toUpperCamelCase .EntityName }}}Service.GetExcelCol())
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return

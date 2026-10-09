@@ -1,7 +1,12 @@
 <template>
     <div class="rc-script">
         <div class="rc-script__hint" v-html="hint"></div>
-        <ScriptEditor v-model="model.script" :placeholder="placeholder" height="300px" />
+        <ScriptEditor
+            v-model="model.script"
+            :placeholder="placeholder"
+            :template="template"
+            height="300px"
+        />
     </div>
 </template>
 
@@ -9,7 +14,7 @@
 import type { RcScriptProps } from '../rule.type'
 import ScriptEditor from './ScriptEditor.vue'
 const model = defineModel<RcScriptProps>({ required: true })
-defineProps<{ hint?: string; placeholder?: string }>()
+defineProps<{ hint?: string; placeholder?: string; template?: string }>()
 </script>
 
 <style scoped>

@@ -10,7 +10,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/singleflight"
@@ -198,12 +198,12 @@ func (hd *UserProtocolHandler) ExportFile(c *gin.Context) {
 		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
-	f, err := excel2.Export(res, service.UserProtocolService.GetExcelCol(), "Sheet1", "用户协议")
+	f, err := excel_util.Export(res, service.UserProtocolService.GetExcelCol(), "Sheet1", "用户协议")
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
-	excel2.DownLoadExcel("用户协议"+time.Now().Format("20060102-150405"), c.Writer, f)
+	excel_util.DownLoadExcel("用户协议"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 // @Summary	用户协议导入
@@ -221,7 +221,7 @@ func (hd *UserProtocolHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []schema.UserProtocolResp{}
-	err = excel2.GetExcelData(file, &importList, service.UserProtocolService.GetExcelCol())
+	err = excel_util.GetExcelData(file, &importList, service.UserProtocolService.GetExcelCol())
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return

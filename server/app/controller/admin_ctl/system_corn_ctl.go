@@ -11,7 +11,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/singleflight"
@@ -201,12 +201,12 @@ func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
 		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
-	f, err := excel2.Export(res, corn_service.SystemCornService.GetExcelCol(), "Sheet1", "定时任务")
+	f, err := excel_util.Export(res, corn_service.SystemCornService.GetExcelCol(), "Sheet1", "定时任务")
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
-	excel2.DownLoadExcel("定时任务"+time.Now().Format("20060102-150405"), c.Writer, f)
+	excel_util.DownLoadExcel("定时任务"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 // @Summary	定时任务导入
@@ -224,7 +224,7 @@ func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []schema.SystemCornResp{}
-	err = excel2.GetExcelData(file, &importList, corn_service.SystemCornService.GetExcelCol())
+	err = excel_util.GetExcelData(file, &importList, corn_service.SystemCornService.GetExcelCol())
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return

@@ -27,20 +27,26 @@ type deviceService struct {
 // List 设备分页列表
 func (s deviceService) List(page request.PageReq, listReq iot_schema.DeviceListReq) (res response.PageResp, e error) {
 	chain := s.db.Model(&iot_model.IotDevice{})
-	if listReq.Name != "" {
-		chain = chain.Where("name like ?", "%"+listReq.Name+"%")
+	if v := listReq.Name.ValueOrZero(); v != "" {
+		chain = chain.Where("name like ?", "%"+v+"%")
 	}
-	if listReq.Sn != "" {
-		chain = chain.Where("sn like ?", "%"+listReq.Sn+"%")
+	if v := listReq.Sn.ValueOrZero(); v != "" {
+		chain = chain.Where("sn like ?", "%"+v+"%")
 	}
-	if listReq.ProductId != "" {
-		chain = chain.Where("product_id = ?", listReq.ProductId)
+	if v := listReq.ProductId.ValueOrZero(); v != "" {
+		chain = chain.Where("product_id = ?", v)
 	}
-	if listReq.SpaceId != "" {
-		chain = chain.Where("space_id = ?", listReq.SpaceId)
+	if v := listReq.SpaceId.ValueOrZero(); v != "" {
+		chain = chain.Where("space_id IN ?", spaceSubtreeIds(s.db, v))
 	}
-	if listReq.Status >= 0 {
-		chain = chain.Where("status = ?", listReq.Status)
+	if v := listReq.Status.ValueOrZero(); v != "" {
+		chain = chain.Where("status = ?", v)
+	}
+	if v := listReq.StartTime.ValueOrZero(); v != "" {
+		chain = chain.Where("create_time >= ?", v)
+	}
+	if v := listReq.EndTime.ValueOrZero(); v != "" {
+		chain = chain.Where("create_time <= ?", v)
 	}
 	var count int64
 	if e = response.CheckErr(chain.Count(&count).Error, "统计设备失败"); e != nil {
@@ -128,14 +134,16 @@ func setToSlice(set map[string]struct{}) []string {
 	return ids
 }
 
-// MapList 大屏地图取数：一次返回带坐标的设备点 + 活动告警标记。
+// MapList 大屏地图取数：一次返回带坐标的设备点 + 活动告警级别。
 // 设备列表接口分页上限 60，不够大屏铺全部点，故单独出不分页的轻量查询；
 // spaceIdsCsv 为逗号分隔的区域 id（选父区域时前端把子树 id 集齐传入），空=全部；
-// alerting 用 EXISTS 子查询顺带算出，避免大屏侧再拉告警列表自行对映。
+// severity 用标量子查询顺带取未恢复事件的展示级：有故障(-1)就以故障为准（故障优先于其他告警），
+// 否则取最高危害级（数值即危害序，MAX 即最严重），0=无告警：
+// 一列同时表达“是否告警中”(!=0) 与具体级别，避免大屏侧再拉告警列表自行对映。
 func (s deviceService) MapList(spaceIdsCsv string) (res []iot_schema.DeviceMapItem, e error) {
 	q := s.db.Table("x_iot_device AS d").
 		Select("d.id, d.sn, d.name, d.space_id, d.product_id, d.longitude, d.latitude, d.status," +
-			"EXISTS(SELECT 1 FROM x_iot_alert_history h WHERE h.device_id = d.id AND h.status = 1) AS alerting").
+			"IFNULL((SELECT IF(SUM(h.severity = -1) > 0, -1, MAX(h.severity)) FROM x_iot_alert_history h WHERE h.device_id = d.id AND h.status = 1), 0) AS severity").
 		Where("d.is_delete = 0")
 	if spaceIdsCsv != "" {
 		ids := make([]string, 0, 16)

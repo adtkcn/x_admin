@@ -17,7 +17,7 @@ type Col struct {
 
 使用示例
 ```go
-var cols = []excel2.Col{
+var cols = []excel_util.Col{
 		{Name: "标题", Key: "Title", Width: 15},
 		{Name: "协议内容", Key: "Content", Width: 15},
 		{Name: "排序", Key: "Sort", Width: 15},

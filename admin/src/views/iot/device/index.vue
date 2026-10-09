@@ -30,9 +30,21 @@
                         <el-option label="离线" :value="0" />
                     </el-select>
                 </el-form-item>
+                <el-form-item label="创建时间">
+                    <el-date-picker
+                        v-model="timeRange"
+                        type="datetimerange"
+                        value-format="YYYY-MM-DD HH:mm:ss"
+                        range-separator="至"
+                        start-placeholder="开始时间"
+                        end-placeholder="结束时间"
+                        clearable
+                        @change="handleTimeChange"
+                    />
+                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
-                    <el-button @click="resetParams">重置</el-button>
+                    <el-button @click="handleReset">重置</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -143,13 +155,28 @@ const queryParams = reactive<type_iot_device_list>({
     sn: '',
     product_id: '',
     space_id: '',
-    status: -1
+    status: undefined,
+    start_time: '',
+    end_time: ''
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({
     fetchFun: deviceLists,
     params: queryParams
 })
+
+// 创建时间区间：日期选择器绑定数组，变化时拆进查询参数
+const timeRange = ref<string[]>([])
+const handleTimeChange = (val: string[] | null) => {
+    queryParams.start_time = val?.[0] ?? ''
+    queryParams.end_time = val?.[1] ?? ''
+    resetPage()
+}
+
+const handleReset = () => {
+    timeRange.value = []
+    resetParams()
+}
 
 const products = ref<type_iot_product[]>([])
 const spaceTreeOptions = ref<any[]>([])

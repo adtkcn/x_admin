@@ -2701,21 +2701,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "区域ID",
+                        "description": "区域ID(含子区域)",
                         "name": "space_id",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "状态: -1全部 0已恢复 1告警中",
+                        "type": "string",
+                        "description": "状态: 0已恢复 1告警中，不传=全部",
                         "name": "status",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "级别: -1全部 1轻微 2严重 3故障",
+                        "type": "string",
+                        "description": "级别: -1故障 1轻微 2严重，不传=全部",
                         "name": "severity",
                         "in": "query"
                     },
@@ -3031,15 +3029,26 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "区域ID",
+                        "description": "区域ID(含子区域)",
                         "name": "space_id",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "在线状态: -1全部 0离线 1在线",
+                        "type": "string",
+                        "description": "在线状态: 0离线 1在线，不传=全部",
                         "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间起(2006-01-02 15:04:05)",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间止(2006-01-02 15:04:05)",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -3079,7 +3088,7 @@ const docTemplate = `{
         },
         "/api/admin/iot/device/map": {
             "get": {
-                "description": "不分页返回带坐标的设备点（含在线状态与活动告警标记），供区域大屏铺图；实时增量由 WS 房间 iot:map:{spaceId} 广播",
+                "description": "不分页返回带坐标的设备点（含在线状态与活动告警级别 0=无 -1=故障 1=轻微 2=严重），实时增量由 WS 房间 iot:map:{spaceId} 广播",
                 "tags": [
                     "iot_device-设备"
                 ],
@@ -3621,8 +3630,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "分类ID",
+                        "description": "分类ID(含子分类)",
                         "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否停用: 0正常 1停用，不传=全部",
+                        "name": "is_stop",
                         "in": "query"
                     }
                 ],
@@ -4108,6 +4123,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "规则链名称",
                         "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否停用: 0正常 1停用，不传=全部",
+                        "name": "is_stop",
                         "in": "query"
                     }
                 ],
@@ -12339,7 +12360,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "severity": {
-                    "description": "级别: 1=轻微, 2=严重, 3=故障",
+                    "description": "级别: -1=故障, 1=轻微, 2=严重(数值即危害序,3+预留)",
                     "type": "integer"
                 },
                 "sn": {
@@ -12428,16 +12449,12 @@ const docTemplate = `{
                     "description": "接入协议",
                     "type": "string"
                 },
-                "raw": {
-                    "description": "原始报文",
-                    "type": "string"
-                },
                 "ts": {
                     "description": "采集时间(毫秒)",
                     "type": "integer"
                 },
                 "values": {
-                    "description": "属性键值",
+                    "description": "属性键值（规则链加工后，已按物模型约束）",
                     "type": "object",
                     "additionalProperties": {}
                 }
@@ -12523,10 +12540,6 @@ const docTemplate = `{
         "iot_schema.DeviceMapItem": {
             "type": "object",
             "properties": {
-                "alerting": {
-                    "description": "存在未恢复的告警事件",
-                    "type": "boolean"
-                },
                 "id": {
                     "type": "string"
                 },
@@ -12541,6 +12554,10 @@ const docTemplate = `{
                 },
                 "product_id": {
                     "type": "string"
+                },
+                "severity": {
+                    "description": "活动告警级别 0=无告警 -1=故障 1=轻微 2=严重（数值即危害序，3+ 预留；!=0 即告警中，故障优先于其他告警）",
+                    "type": "integer"
                 },
                 "sn": {
                     "type": "string"
@@ -12830,10 +12847,6 @@ const docTemplate = `{
                 "values"
             ],
             "properties": {
-                "raw": {
-                    "description": "原始报文(可选，便于联调回溯)",
-                    "type": "string"
-                },
                 "ts": {
                     "description": "设备侧采集时间(毫秒)，缺省取服务端接收时间",
                     "type": "integer"

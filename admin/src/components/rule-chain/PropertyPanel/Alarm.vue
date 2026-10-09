@@ -3,9 +3,14 @@
         <el-form-item label="告警脚本">
             <div class="rc-alarm__script">
                 <div class="rc-tip">
-                    实现 <code>alert(values, sn)</code>，返回数字即告警级别（0=不告警/恢复，1/2/3=级别）；兼容返回布尔（true=默认级别）。留空则本节点不触发告警。
+                    实现 <code>alert(values, sn)</code>，只返回数字：0=不告警/恢复，非 0 即告警级别（危害升序：-1=故障、1=轻微、2=严重，3+ 预留；故障危害最轻但优先于其他告警）；返回其它类型按不告警处理。留空则本节点不触发告警。
                 </div>
-                <ScriptEditor v-model="model.script" height="260px" placeholder="function alert(values, sn) {&#10;  return values.temp > 80 ? 2 : 0&#10;}" />
+                <ScriptEditor
+                    v-model="model.script"
+                    height="260px"
+                    :template="RC_SCRIPT_TEMPLATES.rule_alarm"
+                    placeholder="function alert(values, sn) {&#10;  return values.temp > 80 ? 2 : 0&#10;}"
+                />
             </div>
         </el-form-item>
         <el-form-item label="持续时长(秒)">
@@ -21,6 +26,7 @@
 
 <script setup lang="ts">
 import type { RcAlarmProps } from '../rule.type'
+import { RC_SCRIPT_TEMPLATES } from '../rule.type'
 import ScriptEditor from './ScriptEditor.vue'
 const model = defineModel<RcAlarmProps>({ required: true })
 </script>

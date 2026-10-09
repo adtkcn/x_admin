@@ -5,6 +5,12 @@
                 <el-form-item class="w-[240px]" label="规则链名称">
                     <el-input v-model="queryParams.name" clearable @keyup.enter="resetPage" />
                 </el-form-item>
+                <el-form-item class="w-[180px]" label="状态">
+                    <el-select v-model="queryParams.is_stop" clearable placeholder="全部">
+                        <el-option label="正常" :value="0" />
+                        <el-option label="停用" :value="1" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>
@@ -69,12 +75,12 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, shallowRef, reactive, nextTick, defineAsyncComponent } from 'vue'
-import { ruleChainLists, ruleChainDel, type type_rule_chain } from '@/api/iot'
+import { ref, shallowRef, reactive, nextTick, defineComponent } from 'vue'
+import { ruleChainLists, ruleChainDel, type type_rule_chain, type type_rule_chain_list } from '@/api/iot'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 
-const EditPopup = defineAsyncComponent(() => import('./edit.vue'))
+import EditPopup from './edit.vue'
 
 defineOptions({
     name: 'iotRuleChain'
@@ -82,7 +88,10 @@ defineOptions({
 
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
-const queryParams = reactive({ name: '' })
+const queryParams = reactive<type_rule_chain_list>({
+    name: '',
+    is_stop: undefined
+})
 
 const { pager, getLists, resetPage, resetParams } = usePaging<type_rule_chain>({
     fetchFun: ruleChainLists,

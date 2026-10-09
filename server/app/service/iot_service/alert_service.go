@@ -26,11 +26,11 @@ type alertService struct {
 }
 
 // Raise 触发一条新告警事件（status=1），返回记录主键供处理层写入 Redis 活动态。
-// values 传解码后的属性快照，整包 JSON 存库；severity 为告警级别（1/2/3）。
+// values 传解码后的属性快照，整包 JSON 存库；severity 为告警级别（危害升序，非 0）。
 // 恢复前的持续命中不再逐条写库。
-func (s alertService) Raise(deviceId, sn, productId, spaceId string, values map[string]any, tsMs int64, severity uint8) (string, error) {
+func (s alertService) Raise(deviceId, sn, productId, spaceId string, values map[string]any, tsMs int64, severity int8) (string, error) {
 	bs, _ := json.Marshal(values)
-	now := time.UnixMilli(tsMs)
+	now := util.NullTimeUtil.ParseTime(time.UnixMilli(tsMs))
 	record := iot_model.IotAlertHistory{
 		DeviceId:    deviceId,
 		Sn:          sn,
@@ -49,7 +49,7 @@ func (s alertService) Raise(deviceId, sn, productId, spaceId string, values map[
 
 // UpdateSeverity 升级已有告警事件的级别（单事件可升级：同一条记录只把 severity 拉高，不新建）。
 // 仅按主键更新，幂等；不改 status（仍在告警中）。
-func (s alertService) UpdateSeverity(id string, severity uint8) error {
+func (s alertService) UpdateSeverity(id string, severity int8) error {
 	if id == "" {
 		return nil
 	}
@@ -87,29 +87,30 @@ func (s alertService) CloseActiveByDevice(deviceId string) error {
 // List 告警历史分页：按触发时间倒序，回填空缺的产品/区域名称，属性 JSON 还原为 map
 func (s alertService) List(page request.PageReq, listReq iot_schema.AlertListReq) (res response.PageResp, e error) {
 	chain := s.db.Model(&iot_model.IotAlertHistory{})
-	if listReq.DeviceId != "" {
-		chain = chain.Where("device_id = ?", listReq.DeviceId)
+	if v := listReq.DeviceId.ValueOrZero(); v != "" {
+		chain = chain.Where("device_id = ?", v)
 	}
-	if listReq.Sn != "" {
-		chain = chain.Where("sn like ?", "%"+listReq.Sn+"%")
+	if v := listReq.Sn.ValueOrZero(); v != "" {
+		chain = chain.Where("sn like ?", "%"+v+"%")
 	}
-	if listReq.ProductId != "" {
-		chain = chain.Where("product_id = ?", listReq.ProductId)
+	if v := listReq.ProductId.ValueOrZero(); v != "" {
+		chain = chain.Where("product_id = ?", v)
 	}
-	if listReq.SpaceId != "" {
-		chain = chain.Where("space_id = ?", listReq.SpaceId)
+	if v := listReq.SpaceId.ValueOrZero(); v != "" {
+		chain = chain.Where("space_id IN ?", spaceSubtreeIds(s.db, v))
 	}
-	if listReq.Status >= 0 {
-		chain = chain.Where("status = ?", listReq.Status)
+	if v := listReq.Status.ValueOrZero(); v != "" {
+		chain = chain.Where("status = ?", v)
 	}
-	if listReq.Severity >= 0 {
-		chain = chain.Where("severity = ?", listReq.Severity)
+	// 级别不传/空串=全部；-1 是真实级别（故障），不再当哨兵
+	if v := listReq.Severity.ValueOrZero(); v != "" {
+		chain = chain.Where("severity = ?", v)
 	}
-	if listReq.StartTime != "" {
-		chain = chain.Where("triggered_at >= ?", listReq.StartTime)
+	if v := listReq.StartTime.ValueOrZero(); v != "" {
+		chain = chain.Where("triggered_at >= ?", v)
 	}
-	if listReq.EndTime != "" {
-		chain = chain.Where("triggered_at <= ?", listReq.EndTime)
+	if v := listReq.EndTime.ValueOrZero(); v != "" {
+		chain = chain.Where("triggered_at <= ?", v)
 	}
 	var count int64
 	if e = response.CheckErr(chain.Count(&count).Error, "统计告警失败"); e != nil {
@@ -188,10 +189,21 @@ func (s alertService) fillNames(list []iot_schema.AlertResp) {
 	}
 }
 
-// Del 批量删除告警历史（硬删：机器生成的历史数据，不做软删）
-func (s alertService) Del(ids []string) error {
+// Del 批量删除告警历史（硬删：机器生成的历史数据，不做软删）。
+// 额外返回涉及的设备 ID：调用方需据此清掉这些设备的告警运行态，否则 Redis 活动态
+// （无 TTL，value 即历史主键）会指向已删记录，单事件语义下该设备后续命中不再新建记录。
+func (s alertService) Del(ids []string) ([]string, error) {
 	if len(ids) == 0 {
-		return response.AssertArgumentError.SetMessage("请选择要删除的记录!")
+		return nil, response.AssertArgumentError.SetMessage("请选择要删除的记录!")
 	}
-	return response.CheckErr(s.db.Where("id IN ?", ids).Delete(&iot_model.IotAlertHistory{}).Error, "删除失败")
+	var deviceIds []string
+	e := s.db.Model(&iot_model.IotAlertHistory{}).Where("id IN ?", ids).
+		Distinct().Pluck("device_id", &deviceIds).Error
+	if e = response.CheckErr(e, "查询告警记录失败"); e != nil {
+		return nil, e
+	}
+	if e = response.CheckErr(s.db.Where("id IN ?", ids).Delete(&iot_model.IotAlertHistory{}).Error, "删除失败"); e != nil {
+		return nil, e
+	}
+	return deviceIds, nil
 }

@@ -16,6 +16,12 @@
                         placeholder="请选择分类"
                     />
                 </el-form-item>
+                <el-form-item class="w-[180px]" label="状态">
+                    <el-select v-model="queryParams.is_stop" clearable placeholder="全部">
+                        <el-option label="正常" :value="0" />
+                        <el-option label="停用" :value="1" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="resetPage">查询</el-button>
                     <el-button @click="resetParams">重置</el-button>
@@ -109,7 +115,8 @@ const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_iot_product_list>({
     name: '',
-    category_id: ''
+    category_id: '',
+    is_stop: undefined
 })
 
 const { pager, getLists, resetPage, resetParams } = usePaging({

@@ -58,7 +58,10 @@
                 <div class="bs__legend">
                     <span class="lg"><i class="dot dot--online"></i>在线</span>
                     <span class="lg"><i class="dot dot--offline"></i>离线</span>
-                    <span class="lg"><i class="dot dot--alert"></i>告警中</span>
+                    <span v-for="lv in SeverityLevels" :key="lv" class="lg">
+                        <i class="dot dot--lv" :style="{ background: SeverityColor[lv] }"></i>
+                        {{ SeverityMap[lv] }} <b>{{ stats.byLevel[lv] || 0 }}</b>
+                    </span>
                 </div>
             </div>
         </div>
@@ -73,6 +76,9 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import {
     deviceSpaceAll,
     deviceMap,
+    SeverityLevels,
+    SeverityMap,
+    SeverityColor,
     type type_iot_device_space,
     type type_device_map_item
 } from '@/api/iot'
@@ -115,12 +121,20 @@ const subtreeIds = (rootId: string): string[] => {
 const stats = computed(() => {
     let online = 0
     let alerting = 0
+    // 级别计数按级别值归档：有负数档（故障=-1），不能再用数组下标
+    const byLevel: Record<number, number> = {}
     for (const p of points.value) {
         if (p.status === 1) online++
-        if (p.alerting) alerting++
+        if (p.severity !== 0) {
+            alerting++
+            byLevel[p.severity] = (byLevel[p.severity] || 0) + 1
+        }
     }
-    return { online, offline: points.value.length - online, alerting }
+    return { online, offline: points.value.length - online, byLevel, alerting }
 })
+
+// 点位颜色按级别取字典；未录入的更高级别(3+)一律取顶格红（故障是低档，不能当兜底色）
+const sevColor = (lv: number) => SeverityColor[lv] || SeverityColor[2]
 
 // ---------------- 地图 ----------------
 const mapContainer = ref<HTMLElement>()
@@ -143,9 +157,23 @@ const resolveStyle = (): StyleSpecification | string => {
 }
 
 const areasFeatureCollection = () => {
+    // 选中区域时展示该区域及其直接子级（一层）轮廓；未选中(全部)时只展示第一级根区域
+    let idSet: Set<string> | null = null
+    if (currentSpace.value) {
+        idSet = new Set([currentSpace.value])
+        for (const s of spaces.value) {
+            if (s.id && s.pid === currentSpace.value) idSet.add(s.id)
+        }
+    } else {
+        idSet = new Set()
+        for (const s of spaces.value) {
+            if (s.id && !s.pid) idSet.add(s.id)
+        }
+    }
     const features: any[] = []
     for (const s of spaces.value) {
         if (!s.geojson) continue
+        if (idSet && (!s.id || !idSet.has(s.id))) continue
         try {
             const g = JSON.parse(s.geojson)
             if (g?.type === 'Feature') {
@@ -184,14 +212,21 @@ const devicesFeatureCollection = () => ({
         .map((p) => ({
             type: 'Feature' as const,
             geometry: { type: 'Point' as const, coordinates: [p.longitude, p.latitude] },
-            // status/alerting 必须带进 properties，图层 paint 靠它们区分在线/离线/告警配色
-            properties: { id: p.id, status: p.status ?? 0, alerting: !!p.alerting }
+            // status/severity 必须带进 properties，图层 paint 靠它们区分在线/离线与告警级别配色
+            // severity 是危害序且含负数档，0 才是“无告警”，不能当数组下标用
+            properties: { id: p.id, status: p.status ?? 0, severity: p.severity ?? 0 }
         }))
 })
 
 const refreshDevices = () => {
     const src = map.value?.getSource('devices') as any
     if (src) src.setData(devicesFeatureCollection())
+}
+
+// 切换区域选择时同步刷新轮廓：只保留当前子树的区域面
+const refreshAreas = () => {
+    const src = map.value?.getSource('areas') as any
+    if (src) src.setData(areasFeatureCollection())
 }
 
 // WS 增量合并渲染：300ms 窗口内的多条报文只触发一次 setData
@@ -225,18 +260,28 @@ const initMap = () => {
                 'line-dasharray': [2, 2]
             }
         } as any)
-        // 设备点位：告警红(带光晕) / 在线绿 / 离线灰(淡化)，alerting 优先级最高
+        // 设备点位：告警按级别配色(带光晕) / 在线绿 / 离线灰(淡化)，非 0 级别优先于在线
         map.value!.addSource('devices', { type: 'geojson', data: devicesFeatureCollection() })
-        // 告警光晕：仅告警设备，红色半透明大圆制造聚焦感
+        // 告警光晕：仅告警设备，危害越高光晕越大越实（match 末尾是无标签的默认分支，接住 3+ 预留级）
         map.value!.addLayer({
             id: 'devices-halo',
             type: 'circle',
             source: 'devices',
-            filter: ['==', ['get', 'alerting'], true],
+            filter: ['!=', ['get', 'severity'], 0],
             paint: {
-                'circle-radius': 15,
-                'circle-color': '#f56c6c',
-                'circle-opacity': 0.16,
+                'circle-radius': ['match', ['get', 'severity'], -1, 12, 1, 13, 2, 16, 20],
+                'circle-color': [
+                    'match',
+                    ['get', 'severity'],
+                    -1,
+                    sevColor(-1),
+                    1,
+                    sevColor(1),
+                    2,
+                    sevColor(2),
+                    sevColor(2)
+                ],
+                'circle-opacity': ['match', ['get', 'severity'], -1, 0.12, 1, 0.14, 2, 0.2, 0.3],
                 'circle-blur': 0.7
             }
         } as any)
@@ -245,13 +290,20 @@ const initMap = () => {
             type: 'circle',
             source: 'devices',
             paint: {
-                'circle-radius': ['case', ['get', 'alerting'], 9, ['==', ['get', 'status'], 1], 7, 6],
-                'circle-stroke-width': ['case', ['get', 'alerting'], 2.5, 1.5],
-                'circle-stroke-color': ['case', ['get', 'alerting'], '#ffd9d9', '#fff'],
+                'circle-radius': [
+                    'case',
+                    ['!=', ['get', 'severity'], 0],
+                    ['match', ['get', 'severity'], -1, 7, 1, 8, 2, 9, 11],
+                    ['==', ['get', 'status'], 1],
+                    7,
+                    6
+                ],
+                'circle-stroke-width': ['case', ['!=', ['get', 'severity'], 0], 2.5, 1.5],
+                'circle-stroke-color': '#fff',
                 'circle-color': [
                     'case',
-                    ['get', 'alerting'],
-                    '#f56c6c',
+                    ['!=', ['get', 'severity'], 0],
+                    ['match', ['get', 'severity'], -1, sevColor(-1), 1, sevColor(1), 2, sevColor(2), sevColor(2)],
                     ['==', ['get', 'status'], 1],
                     '#22c55e',
                     '#64748b'
@@ -259,7 +311,7 @@ const initMap = () => {
                 // 离线点位略作淡化，在线/告警保持醒目
                 'circle-opacity': [
                     'case',
-                    ['get', 'alerting'],
+                    ['!=', ['get', 'severity'], 0],
                     1,
                     ['==', ['get', 'status'], 1],
                     1,
@@ -358,7 +410,8 @@ const renderPopup = () => {
     addLine(box, p.name || p.sn || p.id!, undefined, true)
     addLine(box, `SN：${p.sn || '-'}`)
     addLine(box, `状态：${p.status === 1 ? '在线' : '离线'}`)
-    if (p.alerting) addLine(box, '告警中', '#f56c6c')
+    if (p.severity !== 0)
+        addLine(box, `告警中·${SeverityMap[p.severity] || p.severity}`, sevColor(p.severity), true)
     const vals = latestValues[p.id!]
     if (vals && Object.keys(vals).length) {
         for (const [k, v] of Object.entries(vals)) addLine(box, `${k} = ${String(v)}`)
@@ -389,6 +442,7 @@ const loadPoints = async () => {
     points.value = await deviceMap({ space_ids: ids.join(',') })
     rebuildIndex()
     refreshDevices()
+    refreshAreas()
     // 全部视图（未选区域，ids 为空）适配到所有带轮廓的区域范围，避免停留在初始 zoom
     fitToSubtree(ids.length ? ids : spaces.value.map((s) => s.id!).filter(Boolean))
 }
@@ -423,6 +477,8 @@ onWsMessage('iot:status', (msg: WsEvent) => {
     const p = pointIndex.get(msg.data?.device_id)
     if (!p) return
     p.status = msg.data.status
+    // 设备转离线时后端已收尾活动告警，但不推级别，这里同步清掉，避免离线点仍挂告警色
+    if (msg.data.status !== 1) p.severity = 0
     markDirty()
     if (popupCtx.value?.id === p.id) renderPopup()
 })
@@ -437,7 +493,8 @@ onWsMessage('iot:telemetry', (msg: WsEvent) => {
 onWsMessage('iot:alarm', (msg: WsEvent) => {
     const p = pointIndex.get(msg.data?.device_id)
     if (!p) return
-    p.alerting = msg.data?.status === 1
+    // status=0 为恢复(清级别)；1 为触发/升级，取推送里的 severity（含合法的 -1），缺失按轻微处理不能丢标记
+    p.severity = msg.data?.status === 1 ? Number(msg.data?.severity) || 1 : 0
     markDirty()
     if (popupCtx.value?.id === p.id) renderPopup()
 })
@@ -648,9 +705,13 @@ onBeforeUnmount(() => {
     background: #64748b;
     opacity: 0.6;
 }
-.bs__legend .dot--alert {
-    background: #f56c6c;
-    box-shadow: 0 0 0 1.5px #ffd9d9 inset, 0 0 8px rgba(245, 108, 108, 0.8);
+/* 告警级别色由 SeverityColor 内联给定，这里只补与地图光晕一致的描边 */
+.bs__legend .dot--lv {
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85) inset, 0 0 8px rgba(255, 255, 255, 0.25);
+}
+.bs__legend b {
+    font-weight: 600;
+    color: #eaf4ff;
 }
 :deep(.bs__tree .el-tree) {
     background: transparent;

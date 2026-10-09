@@ -8,7 +8,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 
 	"x_admin/util"
 
@@ -50,12 +50,12 @@ func (ah AdminHandler) ExportFile(c *gin.Context) {
 		response.Fail(c, response.CheckErr(err, "查询导出失败"))
 		return
 	}
-	f, err := excel2.Export(res, system_service.AdminService.GetExcelCol(), "Sheet1", "用户信息")
+	f, err := excel_util.Export(res, system_service.AdminService.GetExcelCol(), "Sheet1", "用户信息")
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
-	excel2.DownLoadExcel("用户信息"+time.Now().Format("20060102-150405"), c.Writer, f)
+	excel_util.DownLoadExcel("用户信息"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 // @Summary		导入管理员文件
@@ -73,7 +73,7 @@ func (ah AdminHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []system_schema.SystemAuthAdminResp{}
-	err = excel2.GetExcelData(file, &importList, system_service.AdminService.GetExcelCol())
+	err = excel_util.GetExcelData(file, &importList, system_service.AdminService.GetExcelCol())
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return

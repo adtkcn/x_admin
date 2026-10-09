@@ -29,7 +29,7 @@
                 </el-form-item>
                 <el-form-item class="w-[160px]" label="告警级别">
                     <el-select v-model="queryParams.severity" clearable placeholder="全部">
-                        <el-option v-for="(label, val) in SeverityMap" :key="val" :label="label" :value="Number(val)" />
+                        <el-option v-for="lv in SeverityLevels" :key="lv" :label="SeverityMap[lv]" :value="lv" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="触发时间">
@@ -75,7 +75,7 @@
                 </vxe-column>
                 <vxe-column title="级别" field="severity" min-width="90">
                     <template #default="{ row }">
-                        <el-tag :type="SeverityTagType[row.severity] || 'info'">
+                        <el-tag :type="SeverityTagType[row.severity] || 'danger'">
                             {{ SeverityMap[row.severity] || '-' }}
                         </el-tag>
                     </template>
@@ -117,6 +117,7 @@ import {
     alertDel,
     productAll,
     deviceSpaceAll,
+    SeverityLevels,
     SeverityMap,
     SeverityTagType,
     type type_iot_alert_list,
@@ -134,8 +135,9 @@ const queryParams = reactive<type_iot_alert_list>({
     sn: '',
     product_id: '',
     space_id: '',
-    status: -1,
-    severity: -1,
+    status: undefined,
+    // 0=全部：后端把哨兵从 -1 改成 0，因为 -1 现在是一档真级别（故障）
+    severity: undefined,
     start_time: '',
     end_time: ''
 })

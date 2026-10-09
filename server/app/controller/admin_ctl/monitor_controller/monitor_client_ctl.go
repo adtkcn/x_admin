@@ -11,7 +11,7 @@ import (
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 	"x_admin/util/img_util"
 
 	"github.com/gin-gonic/gin"
@@ -199,12 +199,12 @@ func (hd *MonitorClientHandler) ExportFile(c *gin.Context) {
 		response.Fail(c, response.CheckErr(err, "查询信息失败"))
 		return
 	}
-	f, err := excel2.Export(res, monitor_service.MonitorClientService.GetExcelCol(), "Sheet1", "监控-客户端信息")
+	f, err := excel_util.Export(res, monitor_service.MonitorClientService.GetExcelCol(), "Sheet1", "监控-客户端信息")
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "导出失败"))
 		return
 	}
-	excel2.DownLoadExcel("监控-客户端信息"+time.Now().Format("20060102-150405"), c.Writer, f)
+	excel_util.DownLoadExcel("监控-客户端信息"+time.Now().Format("20060102-150405"), c.Writer, f)
 }
 
 // @Summary	监控-客户端信息导入
@@ -219,7 +219,7 @@ func (hd *MonitorClientHandler) ImportFile(c *gin.Context) {
 	}
 	defer file.Close()
 	importList := []monitor_schema.MonitorClientResp{}
-	err = excel2.GetExcelData(file, &importList, monitor_service.MonitorClientService.GetExcelCol())
+	err = excel_util.GetExcelData(file, &importList, monitor_service.MonitorClientService.GetExcelCol())
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "文件解析失败"))
 		return

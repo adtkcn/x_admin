@@ -12,8 +12,18 @@
     >
         <div v-loading="loading" class="map-area-picker">
             <div class="map-area-picker__toolbar">
+                <el-cascader
+                    v-model="selectedArea"
+                    :options="areaOptions"
+                    :props="{ checkStrictly: true, expandTrigger: 'hover' }"
+                    placeholder="选择国家/省/市划定区域"
+                    clearable
+                    size="small"
+                    class="map-area-picker__cascader"
+                    @change="handleAreaChange"
+                />
                 <span class="map-area-picker__tips"
-                    >点击左上角多边形按钮开始绘制，逐点单击添加顶点，再次点击首个顶点闭结束（Esc 取消）</span
+                    >选择国家/省/市直接划定区域；也可点左上角多边形按钮手动绘制</span
                 >
                 <el-button size="small" @click="handleFit">定位到区域</el-button>
                 <el-button size="small" @click="handleClear">清空</el-button>
@@ -43,15 +53,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Map as MapLibreMap, NavigationControl, type StyleSpecification } from 'maplibre-gl'
 import MapboxDraw from '@mapbox/mapbox-gl-draw'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
+import { getAreaList, type AreaNode } from '@/utils/areaList'
 
 const props = defineProps<{
-    // v-model 绑定的 GeoJSON 字符串(Polygon Feature)
+    // v-model 绑定的 GeoJSON 字符串(Polygon/MultiPolygon Feature)
     modelValue?: string
     // 地图初始中心 [经度, 纬度]
     center?: [number, number]
@@ -70,11 +81,36 @@ const visible = ref(false)
 const loading = ref(false)
 const mapRef = ref<HTMLElement>()
 const geojsonStr = ref('')
+// 区划级联选中值（[国码] / [国码, 省码] / [国码, 省码, 市码]）
+const selectedArea = ref<string[]>([])
+
+// 级联选项：保留「国家(中国) > 省 > 市」三层，checkStrictly 下可任选一层划定区域
+const areaOptions = computed<any[]>(() => {
+    const toOption = (n: AreaNode): any => ({
+        value: String(n.areaCode),
+        label: n.areaName,
+        children: n.children?.length ? n.children.map(toOption) : undefined
+    })
+    return getAreaList().map(toOption)
+})
+
+// 按区划码在全树回溯对应节点（含国家、省、市）
+const findAreaNode = (code: string, nodes: AreaNode[] = getAreaList()): AreaNode | undefined => {
+    for (const n of nodes) {
+        if (String(n.areaCode) === code) return n
+        if (n.children?.length) {
+            const hit = findAreaNode(code, n.children)
+            if (hit) return hit
+        }
+    }
+}
 
 let map: MapLibreMap | null = null
 let draw: MapboxDraw | null = null
 // 防止删除冗余区域时递归触发事件
 let syncing = false
+// 当前行政区划选中区域的 FeatureCollection（供「定位到区域」重新适配视野）
+let areaRefData: any = null
 
 /**
  * mapbox-gl-draw 内部按 mapboxgl-* 的 DOM 类名定位控件与画布，
@@ -163,15 +199,36 @@ const normalizePolygon = (coordinates: number[][][]) => {
 }
 
 const toFeatureJson = (geometry: any) => {
-    if (geometry?.type !== 'Polygon') return ''
-    return JSON.stringify({
-        type: 'Feature',
-        properties: {},
-        geometry: { type: 'Polygon', coordinates: normalizePolygon(geometry.coordinates || []) }
-    })
+    const type = geometry?.type
+    if (type === 'Polygon') {
+        return JSON.stringify({
+            type: 'Feature',
+            properties: {},
+            geometry: { type, coordinates: normalizePolygon(geometry.coordinates || []) }
+        })
+    }
+    // 行政区边界常为 MultiPolygon（含离岛/飞地），一并支持
+    if (type === 'MultiPolygon') {
+        return JSON.stringify({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+                type,
+                coordinates: (geometry.coordinates || []).map((poly: number[][][]) => normalizePolygon(poly))
+            }
+        })
+    }
+    return ''
+}
+
+// 从行政区边界数据(FeatureCollection)提取首个 Feature 并归一化为输出 JSON
+const buildAreaFeatureJson = (data: any): string => {
+    const geom = data?.features?.[0]?.geometry
+    return geom ? toFeatureJson(geom) : ''
 }
 
 // 绘制内容变化时同步 geojson，并强制只保留一个区域
+// 手动绘制会产生新的划定区域，需清除级联选中与行政区高亮，保证区域来源唯一
 const syncFromDraw = () => {
     if (syncing || !draw) return
     const polys = getPolygons()
@@ -186,6 +243,10 @@ const syncFromDraw = () => {
     }
     const cur = polys.length ? polys[polys.length - 1] : null
     geojsonStr.value = cur ? toFeatureJson(cur.geometry) : ''
+    if (cur) {
+        selectedArea.value = []
+        clearAreaRef()
+    }
 }
 
 const fitToPolygon = () => {
@@ -205,12 +266,117 @@ const fitToPolygon = () => {
     )
 }
 
-const handleFit = () => fitToPolygon()
+const handleFit = () => {
+    // 有手动绘制的多边形优先适配；否则适配当前划定的行政区边界
+    if (getPolygons().length) fitToPolygon()
+    else if (areaRefData) fitToAreaRef(areaRefData)
+}
 
 const handleClear = () => {
     // deleteAll 不会 fire 事件，geojsonStr 需手动清空
     draw?.deleteAll()
     geojsonStr.value = ''
+    selectedArea.value = []
+    clearAreaRef()
+}
+
+// ---------------- 行政区划划定区域 ----------------
+// 选中区域作为当前划定区域的高亮层（与手动绘制互斥），用蓝色实线标识
+const setAreaRef = (data: any) => {
+    areaRefData = data
+    if (!map) return
+    const src = map.getSource('area-ref') as any
+    if (src) {
+        src.setData(data)
+        return
+    }
+    map.addSource('area-ref', { type: 'geojson', data })
+    map.addLayer({
+        id: 'area-ref-fill',
+        type: 'fill',
+        source: 'area-ref',
+        paint: { 'fill-color': '#409eff', 'fill-opacity': 0.15 }
+    } as any)
+    map.addLayer({
+        id: 'area-ref-line',
+        type: 'line',
+        source: 'area-ref',
+        paint: { 'line-color': '#409eff', 'line-width': 2 }
+    } as any)
+}
+
+const clearAreaRef = () => {
+    areaRefData = null
+    const src = map?.getSource('area-ref') as any
+    if (src) src.setData({ type: 'FeatureCollection', features: [] })
+}
+
+// 遍历 Polygon/MultiPolygon 外环求并集经纬度范围
+const fitToAreaRef = (data: any) => {
+    if (!map || !data?.features?.length) return
+    let minX = Infinity,
+        minY = Infinity,
+        maxX = -Infinity,
+        maxY = -Infinity
+    const scan = (ring: number[][]) => {
+        for (const [lng, lat] of ring || []) {
+            if (lng < minX) minX = lng
+            if (lng > maxX) maxX = lng
+            if (lat < minY) minY = lat
+            if (lat > maxY) maxY = lat
+        }
+    }
+    for (const f of data.features) {
+        const g = f?.geometry
+        if (!g) continue
+        if (g.type === 'Polygon') g.coordinates.forEach(scan)
+        else if (g.type === 'MultiPolygon') g.coordinates.forEach((poly: any) => poly.forEach(scan))
+    }
+    if (minX < Infinity)
+        map.fitBounds(
+            [
+                [minX, minY],
+                [maxX, maxY]
+            ],
+            { padding: 60, maxZoom: 12 }
+        )
+}
+
+// 选中某层区划：加载边界→成为划定区域(写入 geojsonStr)→高亮并定位；与手动绘制互斥
+const applyAreaSelection = async (node: AreaNode) => {
+    loading.value = true
+    try {
+        const mod = await node.fetchLoad()
+        const data = mod?.default ?? mod
+        const featureJson = buildAreaFeatureJson(data)
+        if (!featureJson) {
+            ElMessage.warning('该区域暂无边界数据')
+            return
+        }
+        // 先清掉手动绘制的多边形（deleteAll 不 fire 事件，不会误置 geojsonStr）
+        draw?.deleteAll()
+        geojsonStr.value = featureJson
+        const fc = { type: 'FeatureCollection' as const, features: [JSON.parse(featureJson)] }
+        setAreaRef(fc)
+        fitToAreaRef(fc)
+    } catch (e) {
+        console.warn('加载区域边界失败', e)
+        ElMessage.warning('加载区域边界失败')
+    } finally {
+        loading.value = false
+    }
+}
+
+// 级联选择变更：清空则取消划定，否则取选中路径最深层（国家/省/市）划定区域
+const handleAreaChange = async (val: any) => {
+    const path: (string | number)[] = Array.isArray(val) ? val : []
+    if (!path.length) {
+        clearAreaRef()
+        geojsonStr.value = ''
+        return
+    }
+    const node = findAreaNode(String(path[path.length - 1]))
+    if (node) await applyAreaSelection(node)
 }
 
 const initMap = () => {
@@ -248,15 +414,25 @@ const initMap = () => {
 const loadFromGeoJson = (str: string) => {
     if (!draw) return
     draw.deleteAll()
+    clearAreaRef()
     geojsonStr.value = ''
     if (!str) return
     try {
         const data = JSON.parse(str)
-        if (data?.geometry?.type === 'Polygon') {
+        const geomType = data?.geometry?.type
+        if (geomType === 'Polygon') {
+            // 单多边形可进 gl-draw 继续编辑
             const feature = JSON.parse(toFeatureJson(data.geometry))
             draw.set({ type: 'FeatureCollection', features: [feature] })
             geojsonStr.value = JSON.stringify(feature)
             setTimeout(fitToPolygon, 100)
+        } else if (geomType === 'MultiPolygon') {
+            // 行政区类边界(含离岛/飞地)不可用 gl-draw 单特征编辑，高亮展示并保留值
+            const feature = JSON.parse(toFeatureJson(data.geometry))
+            geojsonStr.value = JSON.stringify(feature)
+            const fc = { type: 'FeatureCollection' as const, features: [feature] }
+            setAreaRef(fc)
+            setTimeout(() => fitToAreaRef(fc), 100)
         }
     } catch (e) {
         console.warn('解析 GeoJSON 失败', e)
@@ -266,11 +442,13 @@ const loadFromGeoJson = (str: string) => {
 
 const handleOpened = () => {
     loading.value = true
+    selectedArea.value = []
     initMap()
 }
 
 const handleClosed = () => {
     draw = null
+    areaRefData = null
     if (map) {
         map.remove()
         map = null
@@ -288,7 +466,7 @@ const handleCopy = async () => {
 }
 
 const handleConfirm = () => {
-    if (!geojsonStr.value) return ElMessage('请先在地图上绘制区域(至少 3 个点)')
+    if (!geojsonStr.value) return ElMessage('请先选择省/市划定区域，或在地图上手动绘制区域')
     emit('update:modelValue', geojsonStr.value)
     emit('confirm', geojsonStr.value)
     visible.value = false
@@ -308,6 +486,11 @@ defineExpose({ open })
         align-items: center;
         gap: 8px;
         margin-bottom: 10px;
+
+        .map-area-picker__cascader {
+            width: 220px;
+            flex: none;
+        }
 
         .map-area-picker__tips {
             margin-right: auto;

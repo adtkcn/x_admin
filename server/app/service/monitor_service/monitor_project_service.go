@@ -8,7 +8,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/util"
 	"x_admin/util/convert_util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 
 	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
@@ -184,8 +184,8 @@ func (service monitorProjectService) DelBatch(Ids []string) (e error) {
 }
 
 // 获取Excel的列
-func (service monitorProjectService) GetExcelCol() []excel2.Col {
-	var cols = []excel2.Col{
+func (service monitorProjectService) GetExcelCol() []excel_util.Col {
+	var cols = []excel_util.Col{
 		{Name: "项目uuid", JsonTag: "project_key", Width: 15},
 		{Name: "项目名称", JsonTag: "project_name", Width: 15},
 		{Name: "项目类型go java web node php 等", JsonTag: "project_type", Width: 15},

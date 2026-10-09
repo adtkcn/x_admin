@@ -31,11 +31,10 @@ type DeviceAuthInfo struct {
 
 // DeviceTelemetryReq 属性上报请求体
 //
-//	{"values":{"temperature":26.3,"humidity":55},"ts":1730000000000,"raw":"..."}
+//	{"values":{"temperature":26.3,"humidity":55},"ts":1730000000000}
 type DeviceTelemetryReq struct {
 	Values map[string]any `json:"values" binding:"required,min=1"` // 属性键值：identifier -> 值
 	Ts     int64          `json:"ts"`                              // 设备侧采集时间(毫秒)，缺省取服务端接收时间
-	Raw    string         `json:"raw"`                             // 原始报文(可选，便于联调回溯)
 }
 
 // DeviceHeartbeatReq 心跳请求体
@@ -54,8 +53,7 @@ type IngestMsg struct {
 	Protocol       string         `json:"protocol"`        // 接入协议 http/mqtt/tcp/ws
 	OfflineTimeout int            `json:"offline_timeout"` // 设备生效的离线判定时长(秒)，随鉴权信息带下
 	Values         map[string]any `json:"values,omitempty"`
-	Ts             int64          `json:"ts"` // 采集时间(毫秒)
-	Raw            string         `json:"raw,omitempty"`
+	Ts             int64          `json:"ts"`          // 采集时间(毫秒)
 	ReceivedAt     int64          `json:"received_at"` // 服务端接收时间(毫秒)
 }
 
@@ -75,8 +73,7 @@ type DeviceDataReq struct {
 // DeviceDataResp 一条时序历史记录（属性已反序列化为 map，便于前端直接渲染）
 type DeviceDataResp struct {
 	Ts       int64          `json:"ts"`       // 采集时间(毫秒)
-	Values   map[string]any `json:"values"`   // 属性键值
-	Raw      string         `json:"raw"`      // 原始报文
+	Values   map[string]any `json:"values"`   // 属性键值（规则链加工后，已按物模型约束）
 	Protocol string         `json:"protocol"` // 接入协议
 }
 

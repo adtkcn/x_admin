@@ -1,6 +1,6 @@
 // 物模型可视化编辑器的数据模型与 JSON 互转。
 //
-// 后端只用物模型做属性白名单（app/iot/pipeline/thingfilter.go 递归收集 identifier），
+// 物模型为产品属性描述，字段可选；编辑器保留扁平结构约定：
 // 未固定 schema，故这里定一个最扁平的结构（顶层就是属性数组，不再包 properties）：
 //     [ { "identifier": "temperature", "name": "温度", "dataType": "float" } ]
 // 解析时仍兼容旧写法的多种形态：{properties:[...]}、properties 为对象映射（键名即标识）、

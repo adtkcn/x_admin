@@ -15,6 +15,10 @@
 ```powershell
 go build -o iot-mock.exe .
 ```
+```powershell
+go run . -sn wg01 -token 01a0e7ad250b7cb08385b9209a2841ca
+```
+
 
 ## 运行
 

@@ -9,7 +9,7 @@ import (
 	"x_admin/core/response"
 	"x_admin/util"
 	"x_admin/util/convert_util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 
 	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
@@ -182,8 +182,8 @@ func (service userProtocolService) DelBatch(Ids []string) (e error) {
 }
 
 // 获取Excel的列
-func (service userProtocolService) GetExcelCol() []excel2.Col {
-	var cols = []excel2.Col{
+func (service userProtocolService) GetExcelCol() []excel_util.Col {
+	var cols = []excel_util.Col{
 		{Name: "标识", JsonTag: "tag", Width: 15, Decode: x_null.DecodeString},
 		{Name: "版本", JsonTag: "version", Width: 15, Decode: x_null.DecodeInt64},
 		{Name: "标题", JsonTag: "title", Width: 15, Decode: x_null.DecodeString},

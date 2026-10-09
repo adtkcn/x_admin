@@ -7,12 +7,15 @@ import (
 )
 
 // ============ 设备 ============
+// 查询条件统一用 x_null.String：不传/空串均视为“不筛选”，无需 -1 之类的哨兵值
 type DeviceListReq struct {
-	Name      string `json:"name" form:"name"`                                       // 设备名称
-	Sn        string `json:"sn" form:"sn"`                                           // 设备编号
-	ProductId string `json:"product_id" form:"product_id"`                           // 产品ID
-	SpaceId   string `json:"space_id" form:"space_id"`                               // 区域ID
-	Status    int8   `json:"status" form:"status,default=-1" binding:"oneof=-1 0 1"` // 在线状态
+	Name      x_null.String `json:"name" form:"name"`             // 设备名称(模糊)
+	Sn        x_null.String `json:"sn" form:"sn"`                 // 设备编号(模糊)
+	ProductId x_null.String `json:"product_id" form:"product_id"` // 产品ID
+	SpaceId   x_null.String `json:"space_id" form:"space_id"`     // 区域ID(含子区域)
+	Status    x_null.String `json:"status" form:"status"`         // 在线状态: 0离线 1在线
+	StartTime x_null.String `json:"start_time" form:"start_time"` // 创建时间起(2006-01-02 15:04:05)
+	EndTime   x_null.String `json:"end_time" form:"end_time"`     // 创建时间止(2006-01-02 15:04:05)
 	request.PageReq
 }
 
@@ -54,7 +57,7 @@ type DeviceMapReq struct {
 	SpaceIds string `json:"space_ids" form:"space_ids"` // 区域ID列表(逗号分隔)，缺省不限
 }
 
-// DeviceMapItem 大屏地图一个设备点：坐标 + 在线状态 + 是否存在活动告警
+// DeviceMapItem 大屏地图一个设备点：坐标 + 在线状态 + 活动告警级别
 type DeviceMapItem struct {
 	ID        string  `json:"id"`
 	Sn        string  `json:"sn"`
@@ -64,7 +67,7 @@ type DeviceMapItem struct {
 	Longitude float64 `json:"longitude"`
 	Latitude  float64 `json:"latitude"`
 	Status    uint8   `json:"status"`   // 0=离线 1=在线
-	Alerting  bool    `json:"alerting"` // 存在未恢复的告警事件
+	Severity  int8    `json:"severity"` // 活动告警级别 0=无告警 -1=故障 1=轻微 2=严重（数值即危害序，3+ 预留；!=0 即告警中，故障优先于其他告警）
 }
 
 type DeviceResp struct {

@@ -145,16 +145,18 @@ func (s deviceService) InvalidateAuth(sn, token string) {
 	}
 }
 
-// ProductModel 处理层需要的物模型与引用的规则链ID：
-// 同属产品配置，合并成一条缓存共同回源，避免每条报文按字段各查一次库。
-// 解码/过滤/告警逻辑不再落在产品列，而是由 RuleChainId 指向的可视化规则链图描述。
+// ProductModel 处理层需要的产品配置：
+//   - RuleChainId：解码/过滤/告警逻辑由它指向的可视化规则链图描述；
+//   - ThingIds：物模型属性标识白名单，历史存储落库前按它裁剪 values。
+//
+// 两者合并在同一份缓存里，每条报文只读一次 Redis、不查库。
 type ProductModel struct {
-	ThingModel  string `json:"thing_model"`
-	RuleChainId string `json:"rule_chain_id"`
+	RuleChainId string          `json:"rule_chain_id"`
+	ThingIds    map[string]bool `json:"thing_ids,omitempty"`
 }
 
-// CachedProductModel 取产品物模型+引用的规则链ID（缓存 ThingCacheTTL 秒），供处理层解码与白名单裁剪。
-// 一次命中即返回；库侧记录不存在时返回零值（物模型为空 → 处理层按“未配置”丢弃上报）。
+// CachedProductModel 取产品引用的规则链ID与物模型白名单（缓存 ThingCacheTTL 秒），供处理层逐报文执行规则链。
+// 一次命中即返回；库侧记录不存在时返回零值（处理层按"未配置"丢弃上报）。
 func (s deviceService) CachedProductModel(productId string) ProductModel {
 	if productId == "" {
 		return ProductModel{}
@@ -172,12 +174,12 @@ func (s deviceService) CachedProductModel(productId string) ProductModel {
 	}
 
 	var product iot_model.IotProduct
-	if s.db.Select("id, thing_model, rule_chain_id").Where("id = ?", productId).First(&product).Error != nil {
+	if s.db.Select("id, rule_chain_id, thing_model").Where("id = ?", productId).First(&product).Error != nil {
 		return ProductModel{}
 	}
 	m := ProductModel{
-		ThingModel:  product.ThingModel,
 		RuleChainId: product.RuleChainId,
+		ThingIds:    thingIdentifiers(product.ThingModel),
 	}
 	if bs, err := json.Marshal(m); err == nil {
 		if err := core.Redis.Set(ctx, key, bs, time.Duration(config.IotConfig.ThingCacheTTL)*time.Second).Err(); err != nil {
@@ -187,7 +189,7 @@ func (s deviceService) CachedProductModel(productId string) ProductModel {
 	return m
 }
 
-// InvalidateProductCache 产品编辑/删除后失效物模型与各脚本缓存，避免处理层沿用旧配置
+// InvalidateProductCache 产品编辑/删除后失效产品模型缓存，避免处理层沿用旧配置
 func (s deviceService) InvalidateProductCache(productId string) {
 	if productId == "" {
 		return

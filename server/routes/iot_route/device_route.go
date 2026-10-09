@@ -1,7 +1,7 @@
 package iot_route
 
 import (
-	"x_admin/app/iot/gateway"
+	"x_admin/app/controller/iot_ctl"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -13,8 +13,8 @@ import (
 func initDeviceRoute(rg *gin.RouterGroup) {
 	ingress := rg.Group("", middleware.DeviceAuth())
 	{
-		ingress.POST("/telemetry", gateway.HttpGateway.Telemetry)
-		ingress.POST("/heartbeat", gateway.HttpGateway.Heartbeat)
+		ingress.POST("/telemetry", iot_ctl.HttpGateway.Telemetry)
+		ingress.POST("/heartbeat", iot_ctl.HttpGateway.Heartbeat)
 	}
 }
 

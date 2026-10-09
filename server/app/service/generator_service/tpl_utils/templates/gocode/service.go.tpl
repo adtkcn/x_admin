@@ -9,7 +9,7 @@ import (
 	"x_admin/app/model/{{{.Domain}}}_model"
 	"x_admin/util"
 	"x_admin/util/convert_util"
-	"x_admin/util/excel2"
+	"x_admin/util/excel_util"
 
 	"github.com/adtkcn/x_null"
 	"gorm.io/gorm"
@@ -221,8 +221,8 @@ func (service {{{ .EntityName }}}Service) DelBatch(Ids []string) (e error) {
 }
 
 // 获取Excel的列
-func (service {{{ .EntityName }}}Service) GetExcelCol() []excel2.Col {
-	var cols = []excel2.Col{
+func (service {{{ .EntityName }}}Service) GetExcelCol() []excel_util.Col {
+	var cols = []excel_util.Col{
 	{{{- range .Columns }}}
 	{{{- if and (.IsList) (not .IsPk) }}}
 		{{{- if eq .HtmlType "datetime" }}}

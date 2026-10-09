@@ -27,11 +27,14 @@ type productService struct {
 // List 产品分页列表
 func (s productService) List(page request.PageReq, listReq iot_schema.ProductListReq) (res response.PageResp, e error) {
 	chain := s.db.Model(&iot_model.IotProduct{})
-	if listReq.Name != "" {
-		chain = chain.Where("name like ?", "%"+listReq.Name+"%")
+	if v := listReq.Name.ValueOrZero(); v != "" {
+		chain = chain.Where("name like ?", "%"+v+"%")
 	}
-	if listReq.CategoryId != "" {
-		chain = chain.Where("category_id = ?", listReq.CategoryId)
+	if v := listReq.CategoryId.ValueOrZero(); v != "" {
+		chain = chain.Where("category_id IN ?", categorySubtreeIds(s.db, v))
+	}
+	if v := listReq.IsStop.ValueOrZero(); v != "" {
+		chain = chain.Where("is_stop = ?", v)
 	}
 	var count int64
 	if e = response.CheckErr(chain.Count(&count).Error, "统计产品失败"); e != nil {
@@ -103,16 +106,39 @@ func (s productService) Detail(id string) (res iot_schema.ProductResp, e error) 
 	return
 }
 
-// checkThingModel 物模型必填且必须是合法 JSON：处理层按物模型白名单裁剪属性，
-// 未配置物模型的产品无法安全落地上报数据，故写入侧就要求必须配置（存非法 JSON 比静默降级更难排查）
+// checkThingModel 物模型必须是合法 JSON（可选字段，仅存合法 JSON 避免非法数据入库后更难排查）
 func checkThingModel(thing string) error {
 	if strings.TrimSpace(thing) == "" {
-		return response.AssertArgumentError.SetMessage("物模型必须配置!")
+		return nil
 	}
 	if !json.Valid([]byte(thing)) {
 		return response.AssertArgumentError.SetMessage("物模型必须是合法的 JSON!")
 	}
 	return nil
+}
+
+// thingIdentifiers 解析物模型 JSON 的属性标识白名单（前端编辑器输出为顶层扁平数组
+// [{identifier,...}]）。空配置/解析不出标识均返回 nil，调用方按“不约束”处理，避免旧形态数据被误裁剪。
+func thingIdentifiers(thing string) map[string]bool {
+	if strings.TrimSpace(thing) == "" {
+		return nil
+	}
+	var props []struct {
+		Identifier string `json:"identifier"`
+	}
+	if err := json.Unmarshal([]byte(thing), &props); err != nil {
+		return nil
+	}
+	ids := make(map[string]bool, len(props))
+	for _, p := range props {
+		if p.Identifier != "" {
+			ids[p.Identifier] = true
+		}
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	return ids
 }
 
 // Add 新增产品
