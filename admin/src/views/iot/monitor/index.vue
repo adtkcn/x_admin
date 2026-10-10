@@ -357,17 +357,22 @@ const fitToSubtree = (ids: string[]) => {
         minY = Infinity,
         maxX = -Infinity,
         maxY = -Infinity
+    // 遍历 Polygon/MultiPolygon 各环求并集范围：行政区选择产出的边界多为 MultiPolygon，只认 Polygon 会整体跳过导致无法缩放
+    const scan = (ring: number[][]) => {
+        for (const [lng, lat] of ring || []) {
+            if (lng < minX) minX = lng
+            if (lng > maxX) maxX = lng
+            if (lat < minY) minY = lat
+            if (lat > maxY) maxY = lat
+        }
+    }
     for (const s of spaces.value) {
         if (!s.id || !ids.includes(s.id) || !s.geojson) continue
         try {
-            const g = JSON.parse(s.geojson)
-            if (g?.geometry?.type !== 'Polygon') continue
-            for (const [lng, lat] of g.geometry.coordinates[0] as number[][]) {
-                if (lng < minX) minX = lng
-                if (lng > maxX) maxX = lng
-                if (lat < minY) minY = lat
-                if (lat > maxY) maxY = lat
-            }
+            const geom = JSON.parse(s.geojson)?.geometry
+            if (geom?.type === 'Polygon') geom.coordinates.forEach(scan)
+            else if (geom?.type === 'MultiPolygon')
+                geom.coordinates.forEach((poly: number[][][]) => poly.forEach(scan))
         } catch {
             /* 脏数据跳过 */
         }

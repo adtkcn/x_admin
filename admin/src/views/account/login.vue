@@ -46,6 +46,9 @@
                         </el-form-item>
                     </el-form>
 
+                    <div class="mt-1 mb-3 text-gray-400">
+                        测试账号：x@qq.com / 123456
+                    </div>
                     <el-button
                         type="primary"
                         tabindex="1"
@@ -58,6 +61,7 @@
                     <div class="mt-3 text-right">
                         <el-button link type="primary" @click="goForgotPwd">忘记密码？</el-button>
                     </div>
+
 
                     <Verify
                         mode="pop"
@@ -74,14 +78,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, useTemplateRef, defineAsyncComponent } from 'vue'
+import { computed, reactive, useTemplateRef, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { FormInstance } from 'element-plus'
 import LayoutFooter from '@/layout/components/footer.vue'
 import useAppStore from '@/stores/modules/app'
 import useUserStore from '@/stores/modules/user'
-import cache from '@/utils/cache'
-import { ACCOUNT_KEY } from '@/enums/cacheEnums'
 import { PageEnum } from '@/enums/pageEnum'
 import { useLockFn } from '@/hooks/useLockFn'
 import { encryptPassword } from '@/utils/util'
@@ -102,8 +104,8 @@ const router = useRouter()
 const config = computed(() => appStore.config)
 
 const formData = reactive({
-    email: 'x@qq.com',
-    password: '123456'
+    email: '',
+    password: ''
 })
 
 const rules = {
@@ -130,8 +132,6 @@ const handleLogin = async (captcha: Record<string, any>) => {
         ...captcha
     })
 
-    cache.set(ACCOUNT_KEY, { email: formData.email })
-
     const path = typeof route.query.redirect === 'string' ? route.query.redirect : PageEnum.INDEX
     router.push(path)
 }
@@ -140,11 +140,6 @@ const { isLock, lockFn: lockLogin } = useLockFn(handleLogin)
 const goForgotPwd = () => {
     router.push(PageEnum.FORGOT_PASSWORD)
 }
-
-onMounted(() => {
-    const value: { email?: string } | null = cache.get(ACCOUNT_KEY)
-    formData.email = value?.email || ''
-})
 </script>
 
 <style lang="scss" scoped>
