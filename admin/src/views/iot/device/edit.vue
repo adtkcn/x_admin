@@ -78,7 +78,33 @@
                     </div>
                 </el-form-item>
                 <el-form-item v-if="formData.access_token" label="接入凭证">
-                    <el-input v-model="formData.access_token" readonly />
+                    <div class="flex items-center gap-2 w-full">
+                        <el-input v-model="formData.access_token" readonly class="flex-1" />
+                        <el-popover placement="right-start" :width="440" trigger="hover">
+                            <template #reference>
+                                <el-button link type="primary">
+                                    <template #icon><icon name="el-icon-Document" /></template>
+                                    接入示例
+                                </el-button>
+                            </template>
+                            <div class="access-example">
+                                <div class="access-example__desc">
+                                    设备通过请求头 <code>X-Device-Sn</code>、<code>X-Access-Token</code> 鉴权上报，与后台登录态无关；所属产品的接入协议须为
+                                    <code>http</code>（或留空）。示例已填入本设备凭证，可直接复制到设备端联调。
+                                </div>
+                                <div v-for="ex in accessExamples" :key="ex.title" class="access-example__block">
+                                    <div class="access-example__head">
+                                        <span class="access-example__title">{{ ex.title }}</span>
+                                        <el-button v-copy="ex.text" link type="primary" size="small">
+                                            <template #icon><icon name="el-icon-CopyDocument" /></template>
+                                            复制
+                                        </el-button>
+                                    </div>
+                                    <pre class="access-example__code">{{ ex.text }}</pre>
+                                </div>
+                            </div>
+                        </el-popover>
+                    </div>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="formData.remark" type="textarea" :rows="2" placeholder="请输入备注" :maxlength="255" />
@@ -151,6 +177,34 @@ const handleMapConfirm = (val: MapCoordinate) => {
     formData.latitude = val.latitude
 }
 
+// 接入本设备示例：将真实 sn / access_token 填入 curl，供设备端直接复制联调
+const accessExamples = computed(() => {
+    const sn = formData.sn || '<设备编号>'
+    const token = formData.access_token || '<接入凭证>'
+    return [
+        {
+            title: '属性上报（telemetry）',
+            text: [
+                'curl -X POST "http://<平台接入地址>/api/iot/telemetry" \\',
+                '  -H "Content-Type: application/json" \\',
+                `  -H "X-Device-Sn: ${sn}" \\`,
+                `  -H "X-Access-Token: ${token}" \\`,
+                '  -d \'{"values":{"temperature":26.3},"ts":1710000000000}\''
+            ].join('\n')
+        },
+        {
+            title: '心跳（heartbeat）',
+            text: [
+                'curl -X POST "http://<平台接入地址>/api/iot/heartbeat" \\',
+                '  -H "Content-Type: application/json" \\',
+                `  -H "X-Device-Sn: ${sn}" \\`,
+                `  -H "X-Access-Token: ${token}" \\`,
+                '  -d \'{"ts":1710000000000}\''
+            ].join('\n')
+        }
+    ]
+})
+
 const handleSubmit = async () => {
     await formRef.value?.validate()
     // el-input-number 被清空时是 undefined/null：归 0 再提交（0 = 跟随产品值），避免后端收到 null
@@ -189,3 +243,44 @@ const handleClose = () => {
 
 defineExpose({ open, setFormData, getDetail })
 </script>
+<style lang="scss" scoped>
+.access-example {
+    line-height: 1.6;
+    &__desc {
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+        code {
+            padding: 1px 4px;
+            font-size: 12px;
+            color: var(--el-color-primary);
+            background: var(--el-fill-color-light);
+            border-radius: 3px;
+        }
+    }
+    &__block + &__block {
+        margin-top: 10px;
+    }
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4px;
+    }
+    &__title {
+        font-size: 13px;
+        font-weight: 500;
+    }
+    &__code {
+        margin: 0;
+        padding: 10px 12px;
+        font-family: Consolas, Monaco, monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre;
+        overflow-x: auto;
+        background: var(--el-fill-color-light);
+        border-radius: 6px;
+    }
+}
+</style>
