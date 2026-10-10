@@ -402,6 +402,20 @@ func (service flowHistoryService) Pass(pass flow_schema.PassReq, AdminId string)
 		return nil
 	})
 
+	// 流转成功且下一节点为审批节点时，给下一个审批人推送站内待办提醒
+	if err == nil && isUserTask && pass.NextNodeAdminId != "" {
+		content := fmt.Sprintf("您有一条新的待办审批：%s（申请人：%s）", applyDetail.FlowName, applyDetail.ApplyUserNickname)
+		if nerr := notice_service.NoticeService.Send(false, notice_service.NoticePayload{
+			Type:       "warning",
+			Title:      "待办审批提醒",
+			Content:    content,
+			ReceiverID: pass.NextNodeAdminId,
+			SenderID:   AdminId,
+		}); nerr != nil {
+			core.Logger.Error("推送待办审批站内消息失败:", nerr)
+		}
+	}
+
 	return err
 }
 
