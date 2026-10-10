@@ -33,7 +33,7 @@ func Start(ctx context.Context) {
 
 	// IoT 设备报文处理：消费 iot:ingest 队列
 	if config.IotConfig.Enable {
-		core.Queue.Consume(ctx, queue_schema.QueueIotIngest, IotStart, 3)
+		core.Queue.Consume(ctx, queue_schema.QueueIotIngest, IotStart, 1)
 	}
 
 }

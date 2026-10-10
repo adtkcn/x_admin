@@ -38,7 +38,7 @@ func AlertPriority(level int8) int {
 
 // IotAlertHistory 设备告警历史（iot.md：告警记录落 MySQL，运行态在 Redis）
 //
-// 由规则链告警节点脚本判定命中，处理层的告警状态机按“持续时长/静默/恢复”
+// 由规则链告警节点脚本判定命中，处理层的告警状态机按“持续时长/恢复”
 // 收敛成事件级记录：触发时建一条 status=1，恢复时更新 status=0 + recovered_at。
 // 属性快照以 JSON 文本整包存，与设备时序表一致，避免为不固定的物模型频繁加列。
 type IotAlertHistory struct {

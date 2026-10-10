@@ -36,7 +36,7 @@ export type RcShape = 'rect' | 'circle' | 'diamond'
 // 各节点类型私有属性（字段全部 snake_case，与后端 JSON tag 完全一致）
 // 输入节点无需配置：后端 rule_trigger.msg_types 缺省=放行全部（当前也只有属性上报会进链）
 export type RcScriptProps = { script: string }
-export type RcAlarmProps = { script: string; duration: number; silence: number }
+export type RcAlarmProps = { script: string; duration: number; recover: number }
 export type RcNotifyProps = {
     service_type: 'site' | 'email' | 'webhook' | ''
     service_content: string
@@ -87,7 +87,7 @@ export const RC_NODE_META: RcNodeMeta[] = [
     { type: 'rule:filter', key: 'rule_filter', label: '数据过滤', shape: 'rect', color: '#13c2c2', desc: 'goja filter(values) 布尔放行，false 丢弃整条报文' },
     { type: 'rule:parallel', key: 'rule_parallel', label: '并行', shape: 'diamond', color: '#e6a23c', desc: '所有子路径同时分流（唯一允许多个子连接的节点）' },
     { type: 'rule:bool', key: 'rule_bool', label: '布尔', shape: 'diamond', color: '#722ed1', desc: '脚本返回 true 继续 / false 仅忽略本分支' },
-    { type: 'rule:alarm', key: 'rule_alarm', label: '告警', shape: 'rect', color: '#f56c6c', desc: 'goja alert+持续/静默状态机' },
+    { type: 'rule:alarm', key: 'rule_alarm', label: '告警', shape: 'rect', color: '#f56c6c', desc: 'goja alert+持续/恢复状态机' },
     { type: 'rule:state', key: 'rule_state', label: '状态快照', shape: 'rect', color: '#eb2f96', desc: '写 Redis 最新属性，供管理端/大屏即时读' },
     { type: 'rule:history', key: 'rule_history', label: '历史存储', shape: 'rect', color: '#faad14', desc: '写 MySQL 时序历史表' },
     { type: 'rule:push', key: 'rule_push', label: '大屏推送', shape: 'rect', color: '#2f54eb', desc: '属性广播到区域地图大屏房间' },
@@ -122,7 +122,7 @@ export const rcDefaultProps = (key: RcNodeKey): any => {
         case 'rule_bool':
             return { script: '' }
         case 'rule_alarm':
-            return { script: '', duration: 0, silence: 0 }
+            return { script: '', duration: 0, recover: 0 }
         case 'rule_notify':
             return {
                 service_type: '',

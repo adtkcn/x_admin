@@ -8,6 +8,8 @@ github.com/ArtisanCloud/PowerWeChat/v3 v3.4.41 h1:QOg0XQPreb2qStbzCukuJeNbYPJqTn
 github.com/ArtisanCloud/PowerWeChat/v3 v3.4.41/go.mod h1:RGddY/9vNh2P9lKnjJAl0FBgjFlvP942p6s8GQDUm5Q=
 github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc=
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
+github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
+github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
 github.com/SeriousBug/webp-go-pure v1.2.0 h1:vNfaUavQ2pPoOL/JHhEn83g/6ln9TyIzIc2oYFN8/nM=
 github.com/SeriousBug/webp-go-pure v1.2.0/go.mod h1:fqCT8wRyNoJx+CQxMvzFpjZq2Vv7ztOdXYqbmK+xRmU=
 github.com/adtkcn/x_null v0.0.2 h1:Qfhh0NPlykOw57ZtxA0f4kDAIO96ZYa6vC5Z1kmu+cI=

@@ -17,9 +17,9 @@
             <el-input-number v-model="model.duration" :min="0" :max="86400" :controls="false" />
             <div class="rc-tip">异常需连续保持该时长才升级为告警，0=命中即告</div>
         </el-form-item>
-        <el-form-item label="静默时长(秒)">
-            <el-input-number v-model="model.silence" :min="0" :max="86400" :controls="false" />
-            <div class="rc-tip">同一告警触发后的静默窗口，避免刷屏，0=不静默</div>
+        <el-form-item label="恢复确认(秒)">
+            <el-input-number v-model="model.recover" :min="0" :max="86400" :controls="false" />
+            <div class="rc-tip">报警后需恢复正常连续满该时长才收尾，期间再命中则重新计时，0=恢复正常即收</div>
         </el-form-item>
     </el-form>
 </template>

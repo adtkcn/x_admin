@@ -61,7 +61,7 @@ const (
 	RcNodeFilter   = "rule:filter"   // 数据过滤：goja filter(values) 返回布尔，false 丢弃整条报文
 	RcNodeParallel = "rule:parallel" // 并行：唯一允许多出口的节点，所有子路径同时分流
 	RcNodeBool     = "rule:bool"     // 布尔：goja filter(values) 返回 true 继续 / false 仅忽略本分支
-	RcNodeAlarm    = "rule:alarm"    // 告警：goja alert(values)+持续/静默状态机
+	RcNodeAlarm    = "rule:alarm"    // 告警：goja alert(values)+持续/恢复状态机
 	RcNodeState    = "rule:state"    // 状态快照：写 Redis 最新属性，供管理端/大屏即时读
 	RcNodeHistory  = "rule:history"  // 历史存储：写 MySQL 时序历史表
 	RcNodePush     = "rule:push"     // 大屏推送：属性广播到区域大屏（地图房间）
@@ -93,11 +93,11 @@ type RcScriptProps struct {
 	Script string `json:"script"`
 }
 
-// RcAlarmProps 告警：脚本返回级别(0=不告警)，duration/silence 为状态机参数。
+// RcAlarmProps 告警：脚本返回级别(0=不告警)，duration/recover 为状态机参数。
 type RcAlarmProps struct {
 	Script   string `json:"script"`
 	Duration int    `json:"duration"` // 持续时长(秒)，0=命中即告
-	Silence  int    `json:"silence"`  // 静默时长(秒)，0=不静默
+	Recover  int    `json:"recover"`  // 恢复确认时长(秒)，0=恢复正常即收；>0 需连续正常满该秒才收尾
 }
 
 // RcNotifyProps 通知节点（对齐审批流 NotifyTask，便于后续扩展 sms 等）。

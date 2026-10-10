@@ -117,7 +117,7 @@ func rcAlarm(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 		return true
 	}
 	level := execAlertSeverity(ctx.msg, ctx.nodeKey(node), p.Script, ctx.values)
-	alert.EvalAlert(ctx.msg, ctx.values, level, p.Duration, p.Silence)
+	alert.EvalAlert(ctx.msg, ctx.values, level, p.Duration, p.Recover)
 	return true
 }
 

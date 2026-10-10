@@ -52,7 +52,7 @@ func autoMigrate() {
 		&iot_model.IotDevice{},
 		// 时序数据：本轮先用 MySQL 暂代 TDengine（iot.md 第四阶段接入后此表可下线）
 		&iot_model.IotDeviceData{},
-		// 告警历史：产品 goja 告警脚本 + 处理层状态机（持续/静默/恢复）收敛成事件级记录
+		// 告警历史：产品 goja 告警脚本 + 处理层状态机（持续/恢复）收敛成事件级记录
 		&iot_model.IotAlertHistory{},
 	)
 }
