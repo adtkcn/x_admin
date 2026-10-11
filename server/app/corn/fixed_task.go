@@ -43,8 +43,8 @@ func init() {
 			record := time.Now().Format("15:04:05") + "," + strconv.Itoa(count)
 			util.RedisUtil.RPush("onlineCount", []any{record}, 720)
 
-			// 广播当前在线用户数
-			core.Ws.SendToAll("onlineCount", map[string]any{
+			// 仅推送给首页在线人数房间（进入后台首页才加入，离开即退出，避免全局广播打扰无关连接）
+			core.Ws.SendToRoom("onlineCount", "onlineCount", map[string]any{
 				"count": count,
 			})
 		},

@@ -73,7 +73,7 @@ export function initGlobalWs() {
         heartbeat: {
             message: 'ping',
             // interval: 10000,
-            scheduler: cb => useIntervalFn(cb, 10000),
+            scheduler: cb => useIntervalFn(cb, 30000),
             pongTimeout: 1000
         },
         autoReconnect: {

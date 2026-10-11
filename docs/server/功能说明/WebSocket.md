@@ -51,10 +51,10 @@ func (m *Manager) SendToAll(msgType string, data any)          // 全局广播
 - 调用即 `publish`：先 `json.Marshal` 为 `WsResponse`，再包装成 `WsMessage` 经 `emitter.Emit` 发出。
 - **集群语义**：`Emit` 经 pubsub 广播到所有实例（含本实例），各实例本地只推自己持有的连接；不在本实例的用户/房间由对应实例推送。因此对调用方而言是「发一次、全局送达」。
 
-示例（定时任务广播在线人数）：
+示例（定时任务按房间推送在线人数，仅首页成员接收）：
 
 ```go
-core.Ws.SendToAll("onlineCount", map[string]any{"count": count})
+core.Ws.SendToRoom("onlineCount", "onlineCount", map[string]any{"count": count})
 ```
 
 ## 五、房间与连接控制

@@ -61,15 +61,26 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, onActivated, onMounted, useTemplateRef } from 'vue'
+import { reactive, watch, onActivated, onDeactivated, onMounted, onUnmounted, useTemplateRef } from 'vue'
 import { getWorkbench } from '@/api/app'
 import type { Console } from '@/api/app'
-import { onWsMessage } from '@/hooks/useGlobalWs'
+import { onWsMessage, useGlobalWs } from '@/hooks/useGlobalWs'
 
 import type { ECOption } from '@/utils/echart'
 
 defineOptions({
     name: 'workbench'
+})
+
+// 在线人数按房间推送：仅首页订阅，进页加入、离页退出，无关连接不再收此消息
+const ONLINE_ROOM = 'onlineCount'
+const { send, status: wsStatus } = useGlobalWs()
+const joinOnlineRoom = () => send(JSON.stringify({ type: 'join_room', data: ONLINE_ROOM }))
+const leaveOnlineRoom = () => send(JSON.stringify({ type: 'leave_room', data: ONLINE_ROOM }))
+
+// 房间成员关系存于服务端连接：断线自动重连后需重新加入
+watch(wsStatus, (s) => {
+    if (s === 'open') joinOnlineRoom()
 })
 
 // 订阅 WS 在线人数消息（组件卸载自动取消订阅）
@@ -164,10 +175,17 @@ function updateChart(val: number) {
 }
 
 onActivated(() => {
-    console.log('onActivated')
+    joinOnlineRoom()
+})
+onDeactivated(() => {
+    leaveOnlineRoom()
 })
 onMounted(() => {
     getData()
+    joinOnlineRoom()
+})
+onUnmounted(() => {
+    leaveOnlineRoom()
 })
 </script>
 
