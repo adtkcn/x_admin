@@ -98,7 +98,7 @@ func execAlertSeverity(msg iot_schema.IngestMsg, cacheKey, script string, values
 		}
 		return int8(v)
 	default:
-		core.Logger.Warnf("[iot规则链] alert 脚本返回值不是级别数字 sn=%s type=%T value=%v", msg.Sn, out, out)
+		core.Logger.Warnf("[iot规则链] alert 脚本返回值需要数字 sn=%s type=%T value=%v", msg.Sn, out, out)
 		return 0
 	}
 }

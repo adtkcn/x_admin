@@ -147,7 +147,7 @@ func (s deviceService) InvalidateAuth(sn, token string) {
 
 // ProductModel 处理层需要的产品配置：
 //   - RuleChainId：解码/过滤/告警逻辑由它指向的可视化规则链图描述；
-//   - ThingIds：物模型属性标识白名单，历史存储落库前按它裁剪 values。
+//   - ThingIds：物模型属性标识白名单，时序存储/运行态快照/告警记录落库前均按它裁剪 values。
 //
 // 两者合并在同一份缓存里，每条报文只读一次 Redis、不查库。
 type ProductModel struct {

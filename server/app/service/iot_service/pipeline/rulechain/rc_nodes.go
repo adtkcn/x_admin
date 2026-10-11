@@ -30,8 +30,9 @@ var rcHandlers = map[string]rcHandler{
 	iot_schema.RcNodeAlarm:   rcAlarm,
 	iot_schema.RcNodeState:   rcState,
 	iot_schema.RcNodeHistory: rcHistory,
-	iot_schema.RcNodePush:    rcPush,
 	iot_schema.RcNodeNotify:  rcNotify,
+	// 「大屏推送」节点执行器已下线：数值改由「状态快照」标脏 + 定时任务冲刷推送；
+	// 旧图里残留的 push 节点按未知类型「继续下钻」兜底，不再单独广播。
 	// 并行节点的分流完全由树结构（多 children）表达，自身无副作用
 	iot_schema.RcNodeParallel: rcPassthrough,
 }
@@ -117,13 +118,14 @@ func rcAlarm(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 		return true
 	}
 	level := execAlertSeverity(ctx.msg, ctx.nodeKey(node), p.Script, ctx.values)
-	alert.EvalAlert(ctx.msg, ctx.values, level, p.Duration, p.Recover)
+	alert.EvalAlert(ctx.msg, ctx.values, level, p.Duration, p.Recover, ctx.model.ThingIds)
 	return true
 }
 
-// rcState 状态快照节点：把流经的最新属性写 Redis 快照，供管理端与大屏即时读取。
+// rcState 状态快照节点：把流经的最新属性写 Redis 快照，供管理端回读；同时标进大屏脏集合，
+// 由定时任务统一推大屏（快照受物模型白名单约束）。
 func rcState(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
-	online.SaveLatestValues(ctx.msg.DeviceId, ctx.values)
+	online.SaveLatestValues(ctx.msg.DeviceId, ctx.msg.SpaceId, ctx.values, ctx.model.ThingIds)
 	return true
 }
 
@@ -132,12 +134,6 @@ func rcHistory(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	if err := store.Write(ctx.msg, ctx.values, ctx.model.ThingIds); err != nil {
 		core.Logger.Errorf("[iot规则链] 历史存储写时序失败 sn=%s err=%v", ctx.msg.Sn, err)
 	}
-	return true
-}
-
-// rcPush 大屏推送节点：把流经的最新属性广播到设备所属区域的地图大屏房间。
-func rcPush(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
-	online.BroadcastTelemetry(ctx.msg, ctx.values)
 	return true
 }
 

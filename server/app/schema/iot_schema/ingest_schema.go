@@ -67,7 +67,7 @@ type DeviceDataReq struct {
 	ID      string `json:"id" form:"id" binding:"required"` // 设备主键
 	StartMs int64  `json:"start_ms" form:"start_ms"`        // 开始时间(毫秒)，0=不限下界
 	EndMs   int64  `json:"end_ms" form:"end_ms"`            // 结束时间(毫秒)，0=不限上界
-	Limit   int    `json:"limit" form:"limit"`              // 条数，缺省 1000，上限 5000
+	Limit   int    `json:"limit" form:"limit"`              // 条数，<=0 表示不限制（区间内全量回读）
 }
 
 // DeviceDataResp 一条时序历史记录（属性已反序列化为 map，便于前端直接渲染）
@@ -91,4 +91,20 @@ type DeviceStateResp struct {
 	DBStatus       uint8             `json:"db_status"`       // 库中在线状态（由定时扫描与上报共同维护）
 	LastOnline     x_null.Time       `json:"last_online_time"`
 	LastOffline    x_null.Time       `json:"last_offline_time"`
+}
+
+// ScopeValues 按物模型 identifier 白名单裁剪属性，是“落库/存快照只保留已建模属性”约束的唯一实现，
+// 供时序存储、运行态快照、告警记录三处共用。allow 为空表示未配物模型（或旧形态解析不出），
+// 此时不约束、直接返回原 map，避免配置缺失反而误丢数据。
+func ScopeValues(values map[string]any, allow map[string]bool) map[string]any {
+	if len(allow) == 0 {
+		return values
+	}
+	out := make(map[string]any, len(values))
+	for k, v := range values {
+		if allow[k] {
+			out[k] = v
+		}
+	}
+	return out
 }

@@ -26,16 +26,17 @@ import (
 // 交互：终端输入数值回车 → 写入 -key 标识符并立即推送；hb 发送心跳；q 退出。
 func main() {
 	var (
-		base     = flag.String("base", envOr("IOT_BASE", "http://127.0.0.1:18000"), "服务基地址")
-		sn       = flag.String("sn", os.Getenv("IOT_SN"), "设备编号 X-Device-Sn")
-		token    = flag.String("token", os.Getenv("IOT_TOKEN"), "设备接入凭证 X-Access-Token")
-		key      = flag.String("key", "value", "输入数值时写入的属性标识符")
-		values   = flag.String("values", "", "初始属性键值，如 temperature=26.3,humidity=55")
-		interval = flag.Duration("interval", 0, "自动上报间隔，0=仅手动推送")
-		jitter   = flag.Float64("jitter", 0, "自动模式下对 -key 值叠加的随机幅度(±绝对值)")
-		withHB   = flag.Bool("heartbeat", false, "每次自动上报前额外发送一次心跳")
-		timeout  = flag.Duration("timeout", 5*time.Second, "单次 HTTP 请求超时")
+		base    = flag.String("base", envOr("IOT_BASE", "http://127.0.0.1:18000"), "服务基地址")
+		sn      = flag.String("sn", os.Getenv("IOT_SN"), "设备编号 X-Device-Sn")
+		token   = flag.String("token", os.Getenv("IOT_TOKEN"), "设备接入凭证 X-Access-Token")
+		key     = flag.String("key", "value", "输入数值时写入的属性标识符")
+		values  = flag.String("values", "", "初始属性键值，如 temperature=26.3,humidity=55")
+		jitter  = flag.Float64("jitter", 0, "自动模式下对 -key 值叠加的随机幅度(±绝对值)")
+		withHB  = flag.Bool("heartbeat", false, "每次自动上报前额外发送一次心跳")
+		timeout = flag.Duration("timeout", 5*time.Second, "单次 HTTP 请求超时")
 	)
+	var interval durationFlag
+	flag.Var(&interval, "interval", "自动上报间隔：纯数字按秒(如 3)，也支持 3s/500ms/1m；0=仅手动推送")
 	flag.Parse()
 
 	if *sn == "" || *token == "" {
@@ -49,7 +50,7 @@ func main() {
 		sn:       *sn,
 		token:    *token,
 		key:      *key,
-		interval: *interval,
+		interval: interval.Duration,
 		jitter:   *jitter,
 		hb:       *withHB,
 		client:   &http.Client{Timeout: *timeout},
@@ -245,3 +246,22 @@ func jsonCompact(v any) string {
 }
 
 func oneLine(s string) string { return strings.Join(strings.Fields(s), " ") }
+
+// durationFlag 让 -interval 既能写纯秒数（3、1.5），也能写标准时长（3s/500ms/1m），
+// 规避 Go 原生 flag.Duration 不带单位即解析失败的坑（默认 0=仅手动推送）。
+type durationFlag struct{ time.Duration }
+
+func (d *durationFlag) String() string { return d.Duration.String() }
+
+func (d *durationFlag) Set(s string) error {
+	if n, err := strconv.ParseFloat(s, 64); err == nil { // 纯数字按秒
+		d.Duration = time.Duration(n * float64(time.Second))
+		return nil
+	}
+	v, err := time.ParseDuration(s) // 否则按标准时长（3s/500ms/1m…）
+	if err != nil {
+		return err
+	}
+	d.Duration = v
+	return nil
+}

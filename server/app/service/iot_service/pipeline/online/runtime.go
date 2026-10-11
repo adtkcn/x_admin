@@ -35,6 +35,19 @@ func stateKey(deviceId string) string { return RuntimeKey("state:" + deviceId) }
 // TTL 必须长于任何可能的判定窗口（见 keepAlive）
 func seenKey(deviceId string) string { return RuntimeKey("seen:" + deviceId) }
 
+// pushDirtyKey 大屏脏集合（SET，member=deviceId）：本周期内属性快照有更新的设备，
+// 由 SaveLatestValues 写快照时顺带 SAdd，定时推送冲刷后 SREM；不按设备加 TTL，
+// 消费即移除（无观众期间仅按 deviceId 去重累积，规模至多为在线设备总数）。
+func pushDirtyKey() string { return RuntimeKey("push:dirty") }
+
+// stateSpaceField 快照 HASH 保留字段：存设备所属区域 id，供定时推送定位地图房间；
+// 非物模型 identifier，管理端回读时从 values 剔除，不外露为属性。
+const stateSpaceField = "__space_id"
+
+// screenPushBatch 单次定时推送最多冲刷的设备数，避免观众重连时一次冲刷积压脏集合过大；
+// 超出部分留在集合里，下个 tick 继续冲刷。
+const screenPushBatch = 300
+
 // RedisCtx 统一给 Redis 操作加超时，避免设备洪峰下 worker 卡死在慢命令上
 func RedisCtx() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), 2*time.Second)
@@ -137,7 +150,11 @@ func lastSeenAndDeadlines(deviceIds []string) (seen map[string]int64, deadline m
 }
 
 // SaveLatestValues 写入最新属性快照（HSET 覆盖同名 identifier）并续期 TTL；时序历史不在这里。
-func SaveLatestValues(deviceId string, values map[string]any) {
+// 快照与时序落库同源：先按物模型白名单 allow 裁剪，只保留已建模 identifier（allow 空则不约束）。
+// spaceId 作保留字段随快照存一份，供定时推送定位地图房间；同一 pipeline 顺带把设备标进
+// 大屏脏集合（push:dirty），由定时任务统一冲刷推大屏——取代规则链「大屏推送」节点。
+func SaveLatestValues(deviceId, spaceId string, values map[string]any, allow map[string]bool) {
+	values = iot_schema.ScopeValues(values, allow)
 	if len(values) == 0 {
 		return
 	}
@@ -150,7 +167,11 @@ func SaveLatestValues(deviceId string, values map[string]any) {
 	for k, v := range values {
 		pipe.HSet(ctx, key, k, stringify(v))
 	}
+	if spaceId != "" {
+		pipe.HSet(ctx, key, stateSpaceField, spaceId)
+	}
 	pipe.Expire(ctx, key, time.Duration(config.IotConfig.StateTTL)*time.Second)
+	pipe.SAdd(ctx, pushDirtyKey(), deviceId)
 	if _, err := pipe.Exec(ctx); err != nil {
 		core.Logger.Errorf("[iot处理] 写属性快照失败 deviceId=%s err=%v", deviceId, err)
 	}
@@ -209,6 +230,7 @@ func ReadDeviceState(deviceId string, timeout int) iot_schema.DeviceStateResp {
 		Values:         map[string]string{},
 	}
 	if v, err := state.Result(); err == nil && v != nil {
+		delete(v, stateSpaceField) // 保留字段不外露为属性
 		resp.Values = v
 	}
 	if ms, err := strconv.ParseInt(seen.Val(), 10, 64); err == nil && ms > 0 {
@@ -263,20 +285,78 @@ func BroadcastStatus(deviceId, sn, spaceId string, status uint8, ts int64) {
 	}
 }
 
-// BroadcastTelemetry 大屏推送（规则链「大屏推送」节点专用）：只广播到设备所属区域的地图房间；
-// 设备详情页实时值由「状态快照」节点 + 轮询/回读承接。
-func BroadcastTelemetry(msg iot_schema.IngestMsg, values map[string]any) {
-	if !config.IotConfig.PushStateChange || len(values) == 0 || msg.SpaceId == "" {
+// PushScreenTick 定时冲刷大屏数值推送，取代规则链「大屏推送」节点（不再逐报文推，改批量定时推）：
+//  1. 无观众早退：全局在线 WS 用户数为 0 直接返回（集群取跨实例并集），不冲刷、不打扰 Redis，
+//     脏集合原样留在 Redis，待有观众时再补推（推的是快照最新态，非历史逐条）；
+//  2. 取大屏脏集合（本周期快照有更新的设备），一个 pipeline 批量读回快照，按所属区域房间
+//     广播 iot:telemetry，再统一 SREM 已处理成员；单 tick 上限 screenPushBatch，剩余留下个 tick；
+//  3. 集群安全：外层 cron 分布式锁保证仅一实例执行，SendToRoom 经事件总线扇出到各实例本地连接。
+//
+// 快照值均为字符串（stringify 落存），与设备详情回读的口径一致。
+func PushScreenTick() {
+	if !config.IotConfig.Enable || !config.IotConfig.PushStateChange {
 		return
 	}
-	payload := map[string]any{
-		"device_id": msg.DeviceId,
-		"sn":        msg.Sn,
-		"space_id":  msg.SpaceId,
-		"ts":        msg.Ts,
-		"values":    values,
+	if core.Ws.GetOnlineCount() == 0 {
+		return
 	}
-	core.Ws.SendToRoom(MapRoom(msg.SpaceId), "iot:telemetry", payload)
+	ctx, cancel := RedisCtx()
+	defer cancel()
+	ids, err := core.Redis.SMembers(ctx, pushDirtyKey()).Result()
+	if err != nil && err != redis.Nil {
+		core.Logger.Errorf("[iot处理] 读大屏脏集合失败 err=%v", err)
+		return
+	}
+	if len(ids) == 0 {
+		return
+	}
+	if len(ids) > screenPushBatch {
+		ids = ids[:screenPushBatch]
+	}
+	// 一个 pipeline 批量读快照：拿回各设备最新值与所属区域 id
+	pipe := core.Redis.Pipeline()
+	cmds := make([]*redis.MapStringStringCmd, len(ids))
+	for i, id := range ids {
+		cmds[i] = pipe.HGetAll(ctx, stateKey(id))
+	}
+	if _, err := pipe.Exec(ctx); err != nil && err != redis.Nil {
+		core.Logger.Errorf("[iot处理] 批量读快照失败 err=%v", err)
+		return
+	}
+	now := time.Now().UnixMilli()
+	done := make([]any, 0, len(ids))
+	for i, id := range ids {
+		fields := cmds[i].Val()
+		spaceId := fields[stateSpaceField]
+		// 快照缺失（已过期）或无区域无法定位房间：视为已处理移出脏集合，避免每 tick 空捞
+		if len(fields) == 0 || spaceId == "" {
+			done = append(done, id)
+			continue
+		}
+		values := make(map[string]any, len(fields)-1)
+		for k, v := range fields {
+			if k != stateSpaceField {
+				values[k] = v
+			}
+		}
+		sendTelemetry(id, spaceId, values, now)
+		done = append(done, id)
+	}
+	if len(done) > 0 {
+		if err := core.Redis.SRem(ctx, pushDirtyKey(), done...).Err(); err != nil {
+			core.Logger.Errorf("[iot处理] 清大屏脏集合失败 err=%v", err)
+		}
+	}
+}
+
+// sendTelemetry 向设备所属区域的地图房间广播最新属性快照（大屏实时值）。
+func sendTelemetry(deviceId, spaceId string, values map[string]any, ts int64) {
+	core.Ws.SendToRoom(MapRoom(spaceId), "iot:telemetry", map[string]any{
+		"device_id": deviceId,
+		"space_id":  spaceId,
+		"ts":        ts,
+		"values":    values,
+	})
 }
 
 // BroadcastAlarm 告警事件广播：recovered=false 为告警中、true 为恢复；severity 为恢复前的级别。

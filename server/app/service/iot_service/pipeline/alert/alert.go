@@ -18,17 +18,23 @@ import (
 // 判据来自报文本身，无需到期扫描：每条上报顺带评估一次，只在转换点写库推 WS，
 // 持续期间的重复命中不落库不广播。
 //
-// 单事件可改写：一台设备只维护一条“告警中”记录；新级别覆盖优先序更高（见 iot_model.AlertPriority，
-// 故障危害最轻却能接管任何在告事件）、或当前故障已不再命中时，改写同条记录的 severity 并重推；
-// 优先序更低则维持不动。故轻微升严重只留一条严重记录，不会另起新事件。
+// 两条独立事件流：故障(-1)与普通阈值告警(1/2/…)各自维护一条“告警中”记录，互不合并、可并存。
+// 每条报文只推进其一：level==-1 只确认故障流、level>0 只确认普通流、level==0 才同时向两条流传恢复信号；
+// 切到另一种类型不误判为恢复（NOOP），各自独立按恢复确认时长收尾。
 //
-// 恢复确认（可配 recover，秒）：报警后不会因单条 0 报文立即恢复，需恢复正常连续
-// 满 recover 秒才收尾；期间若再命中告警则计时作废、事件延续。recover=0 则命中 0 即恢复。
+// 记录只记最高级别：普通流的 severity 取事件内命中过的最高档（级别数值即危害序，只升不降）；
+// 故障流只有单一级别，天然不变。二者都推 WS 当前级别（可升可降），故历史记录留峰值、
+// 大屏实时值随当前级别升降，二者解耦；当前级别未变的重复命中不落库/广播。
 //
-// Redis 键（{RedisPrefix}iot:alert:*）：
-//   - active:<deviceId>    存在=正处于告警事件，value="<历史主键>:<级别>"，无 TTL
-//   - first:<deviceId>     持续计时起点(毫秒)，仅 duration>0 时使用，TTL=时长+缓冲
-//   - recover:<deviceId>   恢复确认计时起点(毫秒)，仅 recover>0 时使用，TTL=时长+缓冲
+// 恢复确认（可配 recover，秒）：报警后不会因单条恢复信号立即收尾，需恢复正常连续
+// 满 recover 秒才关闭；期间再命中该流则计时作废、事件延续。recover=0 则恢复信号即收尾。
+//
+// 持续时长（可配 duration，秒）：命中后需连续异常满 duration 秒才触发；duration=0 则命中即告。
+//
+// Redis 键（{RedisPrefix}iot:alert:*，普通流无前缀、故障流 fault: 前缀，两组各三键）：
+//   - [fault:]active:<deviceId>    存在=正处于该流事件，value="<历史主键>:<记录峰值级别>:<当前级别>"，无 TTL
+//   - [fault:]first:<deviceId>     持续计时起点(毫秒)，仅 duration>0 时使用，TTL=时长+缓冲
+//   - [fault:]recover:<deviceId>   恢复确认计时起点(毫秒)，仅 recover>0 时使用，TTL=时长+缓冲
 
 // alertTimerTTLBuffer 持续/恢复计时键在时长之外的冗余存活，避免边界抖动导致从头重新计时
 const alertTimerTTLBuffer = 5 * time.Minute
@@ -43,163 +49,218 @@ func alertActiveKey(deviceId string) string  { return online.RuntimeKey("alert:a
 func alertFirstKey(deviceId string) string   { return online.RuntimeKey("alert:first:" + deviceId) }
 func alertRecoverKey(deviceId string) string { return online.RuntimeKey("alert:recover:" + deviceId) }
 
-// ClearRuntime 只清设备告警运行态（三键），不做库侧收尾。活动态无 TTL 且 value 就是历史记录主键，
-// 残留会让该设备后续命中永远不再新建记录，所以删库后必调。
+func alertFaultActiveKey(deviceId string) string {
+	return online.RuntimeKey("alert:fault:active:" + deviceId)
+}
+func alertFaultFirstKey(deviceId string) string {
+	return online.RuntimeKey("alert:fault:first:" + deviceId)
+}
+func alertFaultRecoverKey(deviceId string) string {
+	return online.RuntimeKey("alert:fault:recover:" + deviceId)
+}
+
+// allKeys 列出设备的全部告警运行态键（普通流 + 故障流各三键），供清态一次 Del
+func allKeys(deviceId string) []string {
+	return []string{
+		alertActiveKey(deviceId), alertFirstKey(deviceId), alertRecoverKey(deviceId),
+		alertFaultActiveKey(deviceId), alertFaultFirstKey(deviceId), alertFaultRecoverKey(deviceId),
+	}
+}
+
+// streamKeys 一条事件流的三把运行态键；streamVals 为其 MGet 读回的原始值
+type streamKeys struct{ active, first, recover string }
+type streamVals struct{ active, first, recover string }
+
+func normalKeys(deviceId string) streamKeys {
+	return streamKeys{alertActiveKey(deviceId), alertFirstKey(deviceId), alertRecoverKey(deviceId)}
+}
+func faultKeys(deviceId string) streamKeys {
+	return streamKeys{alertFaultActiveKey(deviceId), alertFaultFirstKey(deviceId), alertFaultRecoverKey(deviceId)}
+}
+
+// ClearRuntime 只清设备告警运行态（普通流+故障流共六键），不做库侧收尾。活动态无 TTL 且 value 就是
+// 历史记录主键，残留会让该设备后续命中永远不再新建记录，所以删库后必调。
 func ClearRuntime(deviceId string) {
 	ctx, cancel := online.RedisCtx()
 	defer cancel()
-	_ = core.Redis.Del(ctx, alertActiveKey(deviceId),
-		alertFirstKey(deviceId), alertRecoverKey(deviceId)).Err()
+	_ = core.Redis.Del(ctx, allKeys(deviceId)...).Err()
 }
 
-// closeOnOffline 告警状态机由报文驱动，设备停报后永远等不到恢复转换，故离线即收尾（置恢复 + 清三键），
+// closeOnOffline 告警状态机由报文驱动，设备停报后永远等不到恢复转换，故离线即收尾（两条流一并置恢复 + 清键），
 // 重新上线且条件命中会另起新事件。
 func closeOnOffline(deviceId string) {
 	ctx, cancel := online.RedisCtx()
 	defer cancel()
 	// 先确认有活动态才发 UPDATE：离线钩子对每台设备都跑，无告警时那条 UPDATE 永远命中 0 行
-	if raw, err := core.Redis.Get(ctx, alertActiveKey(deviceId)).Result(); err == nil && raw != "" {
+	rs, _ := core.Redis.MGet(ctx, alertActiveKey(deviceId), alertFaultActiveKey(deviceId)).Result()
+	if strOf(rs[0]) != "" || strOf(rs[1]) != "" {
 		if e := iot_service.AlertService.CloseActiveByDevice(deviceId); e != nil {
 			core.Logger.Errorf("[iot处理] 离线收尾活动告警失败 deviceId=%s err=%v", deviceId, e)
 		}
 	}
-	_ = core.Redis.Del(ctx, alertActiveKey(deviceId),
-		alertFirstKey(deviceId), alertRecoverKey(deviceId)).Err()
+	_ = core.Redis.Del(ctx, allKeys(deviceId)...).Err()
 }
 
-// encodeActive 活动态值编码为 "<histId>:<级别>"；uuid 主键不含冒号，按首个冒号切分安全
-func encodeActive(histId string, level int8) string {
-	return histId + ":" + strconv.FormatInt(int64(level), 10)
+// encodeActive 活动态值编码为 "<histId>:<记录峰值级别>:<当前级别>"；uuid 主键不含冒号，按冒号切分安全
+func encodeActive(histId string, peak, cur int8) string {
+	return histId + ":" + strconv.FormatInt(int64(peak), 10) + ":" + strconv.FormatInt(int64(cur), 10)
 }
 
-// parseActive 解出活动态里的历史主键与级别；空值返回 ("", 0)
-func parseActive(raw string) (string, int8) {
-	if raw == "" {
-		return "", 0
+// parseActive 解出活动态里的历史主键、记录峰值级别、当前级别；空值或格式异常返回 ("", 0, 0)。
+func parseActive(raw string) (histId string, peak, cur int8) {
+	parts := strings.SplitN(raw, ":", 3)
+	if len(parts) < 3 {
+		return "", 0, 0
 	}
-	if i := strings.IndexByte(raw, ':'); i >= 0 {
-		lvl, _ := strconv.ParseInt(raw[i+1:], 10, 8)
-		return raw[:i], int8(lvl)
-	}
-	return raw, 0 // 兼容旧格式（仅存主键、无级别）：级别按 0，下条异常报文会自然纠正
+	histId = parts[0]
+	p, _ := strconv.ParseInt(parts[1], 10, 8)
+	peak = int8(p)
+	c, _ := strconv.ParseInt(parts[2], 10, 8)
+	cur = int8(c)
+	return histId, peak, cur
 }
 
-// EvalAlert 按本次告警级别推进状态机。level 为告警节点的数字返回（0=不告警/恢复）；
-// duration/recoverDur 取自告警节点属性（秒，0=命中即告/恢复即收）。
-func EvalAlert(msg iot_schema.IngestMsg, values map[string]any, level int8, duration, recoverDur int) {
+// EvalAlert 按本次告警级别推进两条事件流。level 为告警节点的数字返回（0=不告警/恢复，-1=故障，1/2/…=阈值告警）；
+// duration/recoverDur 取自告警节点属性（秒，0=命中即告/恢复即收）；
+// allow 为物模型 identifier 白名单，告警记录与广播的 values 落库前先按其裁剪（allow 空则不约束）。
+func EvalAlert(msg iot_schema.IngestMsg, values map[string]any, level int8, duration, recoverDur int, allow map[string]bool) {
+	values = iot_schema.ScopeValues(values, allow)
 	ctx, cancel := online.RedisCtx()
 	defer cancel()
 
-	// 三键一次 MGet 读出：分开读是多个 RTT，且中间态可能被并发报文改写
-	deviceId := msg.DeviceId
+	nk, fk := normalKeys(msg.DeviceId), faultKeys(msg.DeviceId)
+	// 两组共六键一次 MGet 读出：分开读是多个 RTT，且中间态可能被并发报文改写
 	rs, err := core.Redis.MGet(ctx,
-		alertActiveKey(deviceId), alertFirstKey(deviceId),
-		alertRecoverKey(deviceId)).Result()
+		nk.active, nk.first, nk.recover,
+		fk.active, fk.first, fk.recover).Result()
 	if err != nil {
-		core.Logger.Errorf("[iot处理] 读告警运行态失败 deviceId=%s err=%v", deviceId, err)
-		return
-	}
-	histId, curLevel := parseActive(strOf(rs[0]))
-	firstStr := strOf(rs[1])
-	recoverStr := strOf(rs[2])
-
-	// 恢复正常：清持续计时；正处事件则按 recoverDur 决定是否立即收尾
-	if level == 0 {
-		core.Redis.Del(ctx, alertFirstKey(deviceId))
-		if histId == "" {
-			// 无活动事件：顺手清掉可能残留的恢复计时
-			core.Redis.Del(ctx, alertRecoverKey(deviceId))
-			return
-		}
-		// 未配恢复确认时长：命中 0 即收尾
-		if recoverDur <= 0 {
-			recoverEpisode(ctx, msg, values, histId, curLevel)
-			return
-		}
-		// 首次收到恢复：只记起点，待后续报文跨过“起点+确认时长”才真正收尾（期间再命中告警则计时作废）
-		if recoverStr == "" {
-			ttl := time.Duration(recoverDur)*time.Second + alertTimerTTLBuffer
-			if e := core.Redis.Set(ctx, alertRecoverKey(deviceId), msg.ReceivedAt, ttl).Err(); e != nil {
-				core.Logger.Errorf("[iot处理] 写告警恢复计时失败 deviceId=%s err=%v", deviceId, e)
-			}
-			return
-		}
-		if first, e := strconv.ParseInt(recoverStr, 10, 64); e == nil &&
-			msg.ReceivedAt-first >= int64(recoverDur)*1000 {
-			recoverEpisode(ctx, msg, values, histId, curLevel)
-		}
+		core.Logger.Errorf("[iot处理] 读告警运行态失败 deviceId=%s err=%v", msg.DeviceId, err)
 		return
 	}
 
-	// 异常命中：恢复确认计时作废（设备重回告警态，之前的“疑似恢复”不算数）
-	if recoverStr != "" {
-		core.Redis.Del(ctx, alertRecoverKey(deviceId))
-	}
-
-	// 已在事件中：只在该改写时写库重推，否则维持不动（轻微→严重只改写同一条，不新增）
-	if histId != "" {
-		if alertRewritable(curLevel, level) {
-			if e := iot_service.AlertService.UpdateSeverity(histId, level); e != nil {
-				core.Logger.Errorf("[iot处理] 告警级别改写落库失败 deviceId=%s id=%s err=%v", deviceId, histId, e)
-			}
-			_ = core.Redis.Set(ctx, alertActiveKey(deviceId), encodeActive(histId, level), 0).Err()
-			online.BroadcastAlarm(msg, values, histId, false, level)
-			core.Logger.Warnf("[iot处理] 告警级别变更 deviceId=%s sn=%s id=%s %d→%d", deviceId, msg.Sn, histId, curLevel, level)
-		}
-		return
-	}
-	// 未配持续时长：命中即触发
-	if duration <= 0 {
-		raiseEpisode(ctx, msg, values, level)
-		return
-	}
-	// 配了持续时长：首次只记起点，后续报文跨过“起点+时长”才真正触发（级别取触发这一刻的返回值）
-	if firstStr == "" {
-		ttl := time.Duration(duration)*time.Second + alertTimerTTLBuffer
-		if e := core.Redis.Set(ctx, alertFirstKey(deviceId), msg.ReceivedAt, ttl).Err(); e != nil {
-			core.Logger.Errorf("[iot处理] 写告警持续计时失败 deviceId=%s err=%v", deviceId, e)
-		}
-		return
-	}
-	if first, e := strconv.ParseInt(firstStr, 10, 64); e == nil &&
-		msg.ReceivedAt-first >= int64(duration)*1000 {
-		raiseEpisode(ctx, msg, values, level)
+	// level==0 是两条流共同的恢复信号；level==-1 只确认故障流、level>0 只确认普通流，
+	// 另一条流不受影响（NOOP）——故故障与普通告警可各自独立共存、各自恢复，
+	// 不会因为切到另一种类型就被误判为恢复。
+	vn := streamVals{strOf(rs[0]), strOf(rs[1]), strOf(rs[2])}
+	vf := streamVals{strOf(rs[3]), strOf(rs[4]), strOf(rs[5])}
+	switch {
+	case level == 0:
+		recoverStream(ctx, msg, values, nk, vn, recoverDur)
+		recoverStream(ctx, msg, values, fk, vf, recoverDur)
+	case level == iot_model.AlertSevFault:
+		confirmStream(ctx, msg, values, fk, vf, iot_model.AlertSevFault, duration)
+	default: // level>0：普通阈值告警，级别即本次返回值
+		confirmStream(ctx, msg, values, nk, vn, level, duration)
 	}
 }
 
-// recoverEpisode 结束一次告警事件：置恢复 + 清活动/恢复键 + 推恢复广播。
-func recoverEpisode(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any, histId string, curLevel int8) {
-	core.Redis.Del(ctx, alertActiveKey(msg.DeviceId), alertRecoverKey(msg.DeviceId))
+// confirmStream 本条报文确认该流处于异常：作废恢复计时；已在事件中则按“记录取峰值、WS 推当前级”
+// 推进，否则按 duration 决定是否新触发。故障流级别恒为 -1，故峰值/当前不变、无升级与重推。
+func confirmStream(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any,
+	k streamKeys, v streamVals, level int8, duration int) {
+
+	// 恢复确认计时作废（设备重回该流告警态，之前的“疑似恢复”不算数）
+	if v.recover != "" {
+		core.Redis.Del(ctx, k.recover)
+	}
+
+	histId, peak, cur := parseActive(v.active)
+	// 已在事件中：记录只升不降取峰值（level>peak），WS 恒推当前级别（level!=cur）——任一变化才落库/重推
+	if histId != "" {
+		raise := level > peak
+		notify := level != cur
+		if !raise && !notify {
+			return
+		}
+		newPeak, newCur := peak, cur
+		if raise {
+			newPeak = level
+			if e := iot_service.AlertService.UpdateSeverity(histId, level); e != nil {
+				core.Logger.Errorf("[iot处理] 告警级别改写落库失败 deviceId=%s id=%s err=%v", msg.DeviceId, histId, e)
+			}
+		}
+		if notify {
+			newCur = level
+			online.BroadcastAlarm(msg, values, histId, false, level)
+		}
+		_ = core.Redis.Set(ctx, k.active, encodeActive(histId, newPeak, newCur), 0).Err()
+		return
+	}
+
+	// 新事件：未配持续时长即触发；配了则首次记起点，后续报文跨过“起点+时长”才真正触发
+	if duration <= 0 {
+		raiseEpisode(ctx, msg, values, k, level)
+		return
+	}
+	if v.first == "" {
+		ttl := time.Duration(duration)*time.Second + alertTimerTTLBuffer
+		if e := core.Redis.Set(ctx, k.first, msg.ReceivedAt, ttl).Err(); e != nil {
+			core.Logger.Errorf("[iot处理] 写告警持续计时失败 deviceId=%s err=%v", msg.DeviceId, e)
+		}
+		return
+	}
+	if start, e := strconv.ParseInt(v.first, 10, 64); e == nil &&
+		msg.ReceivedAt-start >= int64(duration)*1000 {
+		raiseEpisode(ctx, msg, values, k, level)
+	}
+}
+
+// recoverStream 本条报文（level==0）为该流的恢复信号：清持续计时；正处事件则按 recoverDur
+// 决定是否收尾（首次只记起点，待后续恢复报文跨过“起点+确认时长”才真正关闭）。
+func recoverStream(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any,
+	k streamKeys, v streamVals, recoverDur int) {
+
+	// 计时键存的是毫秒起点、值永不为空串：读到才删，避免稳态每条报文空转 Del
+	if v.first != "" {
+		core.Redis.Del(ctx, k.first)
+	}
+	histId, _, cur := parseActive(v.active)
+	if histId == "" {
+		if v.recover != "" {
+			core.Redis.Del(ctx, k.recover)
+		}
+		return
+	}
+	if recoverDur <= 0 { // 未配恢复确认时长：恢复信号即收尾
+		recoverEpisode(ctx, msg, values, k, histId, cur)
+		return
+	}
+	if v.recover == "" { // 首次收到恢复：只记起点
+		ttl := time.Duration(recoverDur)*time.Second + alertTimerTTLBuffer
+		if e := core.Redis.Set(ctx, k.recover, msg.ReceivedAt, ttl).Err(); e != nil {
+			core.Logger.Errorf("[iot处理] 写告警恢复计时失败 deviceId=%s err=%v", msg.DeviceId, e)
+		}
+		return
+	}
+	if start, e := strconv.ParseInt(v.recover, 10, 64); e == nil &&
+		msg.ReceivedAt-start >= int64(recoverDur)*1000 {
+		recoverEpisode(ctx, msg, values, k, histId, cur)
+	}
+}
+
+// recoverEpisode 结束一次告警事件：置恢复 + 清该流活动/恢复键 + 推恢复广播（severity 推当前级别）。
+func recoverEpisode(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any, k streamKeys, histId string, severity int8) {
+	core.Redis.Del(ctx, k.active, k.recover)
 	if e := iot_service.AlertService.Recover(histId, msg.ReceivedAt); e != nil {
 		core.Logger.Errorf("[iot处理] 告警恢复落库失败 deviceId=%s id=%s err=%v", msg.DeviceId, histId, e)
 	}
-	online.BroadcastAlarm(msg, values, histId, true, curLevel)
-	core.Logger.Infof("[iot处理] 告警恢复 deviceId=%s sn=%s", msg.DeviceId, msg.Sn)
+	online.BroadcastAlarm(msg, values, histId, true, severity)
+	core.Logger.Infof("[iot处理] 告警恢复 deviceId=%s sn=%s id=%s", msg.DeviceId, msg.Sn, histId)
 }
 
-// alertRewritable 判定同一条活动事件是否该把 severity 改写为 level：
-//   - 当前是故障而本次不再是：设备已不再失能，把记录交还实际命中级别，否则大屏挂着过期故障
-//   - 其余比覆盖优先序（只升不降）：故障能接管任何在告事件，其期间不受阈值告警干扰
-func alertRewritable(curLevel, level int8) bool {
-	if curLevel == iot_model.AlertSevFault {
-		return level != iot_model.AlertSevFault
-	}
-	return iot_model.AlertPriority(level) > iot_model.AlertPriority(curLevel)
-}
-
-// raiseEpisode 触发一次告警事件：落库→写活动态(含级别)→清计时→推广播。
-// 落库失败则不建活动态，下一条异常报文会重试触发。
-func raiseEpisode(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any, level int8) {
+// raiseEpisode 触发一次告警事件：落库→写该流活动态(含级别)→清持续计时→推广播。
+// 落库失败则不建活动态，下一条命中报文会重试触发。
+func raiseEpisode(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any, k streamKeys, level int8) {
 	id, e := iot_service.AlertService.Raise(msg.DeviceId, msg.Sn, msg.ProductId, msg.SpaceId, values, msg.Ts, level)
 	if e != nil {
 		core.Logger.Errorf("[iot处理] 告警触发落库失败 deviceId=%s err=%v", msg.DeviceId, e)
 		return
 	}
 	// 活动态无 TTL：只在恢复转换点或删设备时清理
-	if e := core.Redis.Set(ctx, alertActiveKey(msg.DeviceId), encodeActive(id, level), 0).Err(); e != nil {
+	if e := core.Redis.Set(ctx, k.active, encodeActive(id, level, level), 0).Err(); e != nil {
 		core.Logger.Errorf("[iot处理] 写告警活动态失败 deviceId=%s err=%v", msg.DeviceId, e)
 	}
-	core.Redis.Del(ctx, alertFirstKey(msg.DeviceId))
+	core.Redis.Del(ctx, k.first)
 	online.BroadcastAlarm(msg, values, id, false, level)
 	core.Logger.Warnf("[iot处理] 告警触发 deviceId=%s sn=%s id=%s level=%d values=%v", msg.DeviceId, msg.Sn, id, level, values)
 }

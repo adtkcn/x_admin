@@ -149,7 +149,7 @@ func (h DeviceHandler) State(c *gin.Context) {
 // @Tags			iot_device-设备
 // @Param			token		header		string												true	"token"
 // @Param			id			query		string												true	"设备主键"
-// @Param			limit		query		int													false	"条数(缺省1000,上限5000)"
+// @Param			limit		query		int													false	"条数,0或不传=不限制"
 // @Param			start_ms	query		int64												false	"开始时间(毫秒),0=不限"
 // @Param			end_ms		query		int64												false	"结束时间(毫秒),0=不限"
 // @Success		200			{object}	response.Response{data=[]iot_schema.DeviceDataResp}	"成功"

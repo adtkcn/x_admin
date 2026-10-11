@@ -49,8 +49,7 @@
                         @node-click="handleTreeClick"
                     />
                 </el-scrollbar>
-                <div class="bs__hint">点地图区域轮廓或树节点筛选其子树设备，推送房间覆盖全部区域</div>
-            </aside>
+                        </aside>
 
             <!-- 右侧：地图 -->
             <div class="bs__map-wrap">
@@ -69,13 +68,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, shallowRef, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { Map as MapLibreMap, NavigationControl, Marker } from 'maplibre-gl'
-import type { StyleSpecification } from 'maplibre-gl'
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import {
     deviceSpaceAll,
     deviceMap,
+    deviceState,
     SeverityLevels,
     SeverityMap,
     SeverityColor,
@@ -84,6 +82,7 @@ import {
 } from '@/api/iot'
 import { arrayToTree } from '@/utils/util'
 import { useGlobalWs, onWsMessage, type WsEvent } from '@/hooks/useGlobalWs'
+import { useIotMap } from './useIotMap'
 
 defineOptions({ name: 'iotMonitor' })
 
@@ -94,12 +93,8 @@ const spaceTree = ref<any[]>([])
 const points = ref<type_device_map_item[]>([])
 const currentSpace = ref('')
 
-// 设备索引：WS 报文按 device_id 直接命中点位，避免每条报文 O(n) 查找
-const pointIndex = new Map<string, type_device_map_item>()
-const rebuildIndex = () => {
-    pointIndex.clear()
-    for (const p of points.value) pointIndex.set(p.id!, p)
-}
+// 设备最新值缓存：telemetry 推送实时写入，popup 展示用
+const latestValues = reactive<Record<string, Record<string, any>>>({})
 
 // 区域子树 id（空间模型是 pid 邻接表，子树在前端收集）
 const subtreeIds = (rootId: string): string[] => {
@@ -133,333 +128,52 @@ const stats = computed(() => {
     return { online, offline: points.value.length - online, byLevel, alerting }
 })
 
-// 点位颜色按级别取字典；未录入的更高级别(3+)一律取顶格红（故障是低档，不能当兜底色）
-const sevColor = (lv: number) => SeverityColor[lv] || SeverityColor[2]
-
-// ---------------- 地图 ----------------
+// ---------------- 地图（MapLibre 实例/图层/popup/视野等细节全封装在组合式函数里） ----------------
 const mapContainer = ref<HTMLElement>()
-const map = shallowRef<MapLibreMap>()
-const popupMarker = shallowRef<Marker>()
-
-// 样式解析与 map-picker 同款：环境变量瓦片源优先，缺省 OSM
-const resolveStyle = (): StyleSpecification | string => {
-    const tiles = import.meta.env.VITE_MAP_TILES_URL as string | undefined
-    if (tiles) {
-        return {
-            version: 8,
-            sources: {
-                custom: { type: 'raster', tiles: [tiles], tileSize: 256, attribution: '' }
-            },
-            layers: [{ id: 'custom-raster', type: 'raster', source: 'custom' }]
-        }
-    }
-    return 'https://demotiles.maplibre.org/style.json'
-}
-
-const areasFeatureCollection = () => {
-    // 选中区域时展示该区域及其直接子级（一层）轮廓；未选中(全部)时只展示第一级根区域
-    let idSet: Set<string> | null = null
-    if (currentSpace.value) {
-        idSet = new Set([currentSpace.value])
-        for (const s of spaces.value) {
-            if (s.id && s.pid === currentSpace.value) idSet.add(s.id)
-        }
-    } else {
-        idSet = new Set()
-        for (const s of spaces.value) {
-            if (s.id && !s.pid) idSet.add(s.id)
-        }
-    }
-    const features: any[] = []
-    for (const s of spaces.value) {
-        if (!s.geojson) continue
-        if (idSet && (!s.id || !idSet.has(s.id))) continue
-        try {
-            const g = JSON.parse(s.geojson)
-            if (g?.type === 'Feature') {
-                g.properties = { ...(g.properties || {}), name: s.name, space_id: s.id }
-                features.push(g)
-            }
-        } catch {
-            /* 脏数据跳过，不影响铺图 */
-        }
-    }
-    return { type: 'FeatureCollection' as const, features }
-}
-
-// 多边形外环面积（shoelace 绝对值，仅用于同一命中点内的相对大小比较）
-const ringArea = (geom: any): number => {
-    const ring =
-        geom?.type === 'Polygon'
-            ? geom.coordinates?.[0]
-            : geom?.type === 'MultiPolygon'
-              ? geom.coordinates?.[0]?.[0]
-              : null
-    if (!Array.isArray(ring)) return Number.MAX_SAFE_INTEGER
-    let sum = 0
-    for (let i = 0; i < ring.length - 1; i++) {
-        const [x1, y1] = ring[i]
-        const [x2, y2] = ring[i + 1]
-        sum += x1 * y2 - x2 * y1
-    }
-    return Math.abs(sum / 2)
-}
-
-const devicesFeatureCollection = () => ({
-    type: 'FeatureCollection' as const,
-    features: points.value
-        .filter((p) => p.longitude !== 0 || p.latitude !== 0)
-        .map((p) => ({
-            type: 'Feature' as const,
-            geometry: { type: 'Point' as const, coordinates: [p.longitude, p.latitude] },
-            // status/severity 必须带进 properties，图层 paint 靠它们区分在线/离线与告警级别配色
-            // severity 是危害序且含负数档，0 才是“无告警”，不能当数组下标用
-            properties: { id: p.id, status: p.status ?? 0, severity: p.severity ?? 0 }
-        }))
+const map = useIotMap({
+    container: mapContainer,
+    points,
+    spaces,
+    currentSpace,
+    getPopupValues: (id) => latestValues[id],
+    onSelectSpace: (id) => selectSpace(id),
+    onPopupOpen: (id) => ensureValues(id)
 })
-
-const refreshDevices = () => {
-    const src = map.value?.getSource('devices') as any
-    if (src) src.setData(devicesFeatureCollection())
-}
-
-// 切换区域选择时同步刷新轮廓：只保留当前子树的区域面
-const refreshAreas = () => {
-    const src = map.value?.getSource('areas') as any
-    if (src) src.setData(areasFeatureCollection())
-}
-
-// WS 增量合并渲染：300ms 窗口内的多条报文只触发一次 setData
-let flushTimer: ReturnType<typeof setTimeout> | null = null
-const markDirty = () => {
-    if (flushTimer) return
-    flushTimer = setTimeout(() => {
-        flushTimer = null
-        refreshDevices()
-    }, 300)
-}
-
-const initMap = () => {
-    if (!mapContainer.value || !map.value) return
-    map.value.on('load', () => {
-        // 区域轮廓：透明面用于点选，虚线描边用于展示
-        map.value!.addSource('areas', { type: 'geojson', data: areasFeatureCollection() })
-        map.value!.addLayer({
-            id: 'areas-fill',
-            type: 'fill',
-            source: 'areas',
-            paint: { 'fill-color': '#409eff', 'fill-opacity': 0.06 }
-        } as any)
-        map.value!.addLayer({
-            id: 'areas-line',
-            type: 'line',
-            source: 'areas',
-            paint: {
-                'line-color': '#409eff',
-                'line-width': 2,
-                'line-dasharray': [2, 2]
-            }
-        } as any)
-        // 设备点位：告警按级别配色(带光晕) / 在线绿 / 离线灰(淡化)，非 0 级别优先于在线
-        map.value!.addSource('devices', { type: 'geojson', data: devicesFeatureCollection() })
-        // 告警光晕：仅告警设备，危害越高光晕越大越实（match 末尾是无标签的默认分支，接住 3+ 预留级）
-        map.value!.addLayer({
-            id: 'devices-halo',
-            type: 'circle',
-            source: 'devices',
-            filter: ['!=', ['get', 'severity'], 0],
-            paint: {
-                'circle-radius': ['match', ['get', 'severity'], -1, 12, 1, 13, 2, 16, 20],
-                'circle-color': [
-                    'match',
-                    ['get', 'severity'],
-                    -1,
-                    sevColor(-1),
-                    1,
-                    sevColor(1),
-                    2,
-                    sevColor(2),
-                    sevColor(2)
-                ],
-                'circle-opacity': ['match', ['get', 'severity'], -1, 0.12, 1, 0.14, 2, 0.2, 0.3],
-                'circle-blur': 0.7
-            }
-        } as any)
-        map.value!.addLayer({
-            id: 'devices-circle',
-            type: 'circle',
-            source: 'devices',
-            paint: {
-                'circle-radius': [
-                    'case',
-                    ['!=', ['get', 'severity'], 0],
-                    ['match', ['get', 'severity'], -1, 7, 1, 8, 2, 9, 11],
-                    ['==', ['get', 'status'], 1],
-                    7,
-                    6
-                ],
-                'circle-stroke-width': ['case', ['!=', ['get', 'severity'], 0], 2.5, 1.5],
-                'circle-stroke-color': '#fff',
-                'circle-color': [
-                    'case',
-                    ['!=', ['get', 'severity'], 0],
-                    ['match', ['get', 'severity'], -1, sevColor(-1), 1, sevColor(1), 2, sevColor(2), sevColor(2)],
-                    ['==', ['get', 'status'], 1],
-                    '#22c55e',
-                    '#64748b'
-                ],
-                // 离线点位略作淡化，在线/告警保持醒目
-                'circle-opacity': [
-                    'case',
-                    ['!=', ['get', 'severity'], 0],
-                    1,
-                    ['==', ['get', 'status'], 1],
-                    1,
-                    0.6
-                ]
-            }
-        } as any)
-        map.value!.on('click', (e: any) => {
-            const hits = map.value!.queryRenderedFeatures(e.point, {
-                layers: ['devices-circle', 'areas-fill']
-            })
-            const dev = hits.find((f: any) => f.layer.id === 'devices-circle')
-            if (dev) {
-                openPopupById(String(dev.properties?.id), e.lngLat)
-                return
-            }
-            // 重叠区域取面积最小者（最具体的子区域），避免父区域面盖住子区域被误选中放大到父区域
-            const areaHits = hits.filter((f: any) => f.layer.id === 'areas-fill')
-            if (areaHits.length) {
-                const area = areaHits.reduce((a: any, b: any) =>
-                    ringArea(b.geometry) < ringArea(a.geometry) ? b : a
-                )
-                selectSpace(String(area.properties?.space_id || ''))
-                return
-            }
-            closePopup()
-        })
-        for (const layer of ['devices-circle', 'devices-halo', 'areas-fill']) {
-            map.value!.on('mouseenter', layer, () => {
-                map.value!.getCanvas().style.cursor = 'pointer'
-            })
-            map.value!.on('mouseleave', layer, () => {
-                map.value!.getCanvas().style.cursor = ''
-            })
-        }
-    })
-}
-
-// 选中子树后把视野适配到其区域轮廓范围
-const fitToSubtree = (ids: string[]) => {
-    if (!map.value || !ids.length) return
-    let minX = Infinity,
-        minY = Infinity,
-        maxX = -Infinity,
-        maxY = -Infinity
-    // 遍历 Polygon/MultiPolygon 各环求并集范围：行政区选择产出的边界多为 MultiPolygon，只认 Polygon 会整体跳过导致无法缩放
-    const scan = (ring: number[][]) => {
-        for (const [lng, lat] of ring || []) {
-            if (lng < minX) minX = lng
-            if (lng > maxX) maxX = lng
-            if (lat < minY) minY = lat
-            if (lat > maxY) maxY = lat
-        }
-    }
-    for (const s of spaces.value) {
-        if (!s.id || !ids.includes(s.id) || !s.geojson) continue
-        try {
-            const geom = JSON.parse(s.geojson)?.geometry
-            if (geom?.type === 'Polygon') geom.coordinates.forEach(scan)
-            else if (geom?.type === 'MultiPolygon')
-                geom.coordinates.forEach((poly: number[][][]) => poly.forEach(scan))
-        } catch {
-            /* 脏数据跳过 */
-        }
-    }
-    if (minX < Infinity) {
-        map.value.fitBounds(
-            [
-                [minX, minY],
-                [maxX, maxY]
-            ],
-            { padding: 80, duration: 600 }
-        )
-    }
-}
-
-// ---------------- popup ----------------
-// 设备最新值缓存：telemetry 推送实时写入，popup 展示用
-const latestValues = reactive<Record<string, Record<string, any>>>({})
-// 当前 popup 上下文：设备点位数据变化时按此重渲内容
-const popupCtx = shallowRef<{ id: string; lngLat: { lng: number; lat: number } } | null>(null)
-
-// 全部用 textContent 构建，避免设备名/SN/属性值注入 HTML
-const addLine = (box: HTMLElement, text: string, color?: string, bold?: boolean) => {
-    const d = document.createElement('div')
-    d.textContent = text
-    if (color) d.style.color = color
-    if (bold) d.style.fontWeight = '600'
-    box.appendChild(d)
-}
-
-const renderPopup = () => {
-    if (!map.value || !popupCtx.value) return
-    const p = pointIndex.get(popupCtx.value.id)
-    if (!p) {
-        closePopup()
-        return
-    }
-    const box = document.createElement('div')
-    box.className = 'map-pop'
-    addLine(box, p.name || p.sn || p.id!, undefined, true)
-    addLine(box, `SN：${p.sn || '-'}`)
-    addLine(box, `状态：${p.status === 1 ? '在线' : '离线'}`)
-    if (p.severity !== 0)
-        addLine(box, `告警中·${SeverityMap[p.severity] || p.severity}`, sevColor(p.severity), true)
-    const vals = latestValues[p.id!]
-    if (vals && Object.keys(vals).length) {
-        for (const [k, v] of Object.entries(vals)) addLine(box, `${k} = ${String(v)}`)
-    } else {
-        addLine(box, '暂无实时值')
-    }
-    if (!popupMarker.value) {
-        popupMarker.value = new Marker({ element: document.createElement('div') })
-    }
-    popupMarker.value.getElement().replaceChildren(box)
-    popupMarker.value.setLngLat(popupCtx.value.lngLat).addTo(map.value)
-}
-
-const openPopupById = (id: string, lngLat: { lng: number; lat: number }) => {
-    if (!pointIndex.has(id)) return
-    popupCtx.value = { id, lngLat }
-    renderPopup()
-}
-
-const closePopup = () => {
-    popupCtx.value = null
-    popupMarker.value?.remove()
-}
 
 // ---------------- 数据加载 / 区域选择 ----------------
 const loadPoints = async () => {
     const ids = subtreeIds(currentSpace.value)
     points.value = await deviceMap({ space_ids: ids.join(',') })
-    rebuildIndex()
-    refreshDevices()
-    refreshAreas()
+    map.refreshAll()
     // 全部视图（未选区域，ids 为空）适配到所有带轮廓的区域范围，避免停留在初始 zoom
-    fitToSubtree(ids.length ? ids : spaces.value.map((s) => s.id!).filter(Boolean))
+    map.fitToSubtree(ids.length ? ids : spaces.value.map((s) => s.id!).filter(Boolean))
 }
 
 const selectSpace = async (id: string) => {
     if (id === currentSpace.value) return
     currentSpace.value = id
-    closePopup()
+    map.closePopup()
     await loadPoints()
 }
 
 const handleTreeClick = (node: any) => selectSpace(node.id)
+
+// popup 的实时值仅靠 iot:telemetry 推送填充，而该推送需规则链配了「大屏推送」节点才有；
+// 故点开设备且无存量值时按设备回读一次 Redis 快照兜底（与详情页实时 tab 同源），已有推送值则不覆盖
+const ensureValues = async (id: string) => {
+    const cached = latestValues[id]
+    if (cached && Object.keys(cached).length) return
+    try {
+        const st = await deviceState({ id })
+        const fresh = latestValues[id]
+        if (st?.values && Object.keys(st.values).length && (!fresh || !Object.keys(fresh).length)) {
+            latestValues[id] = st.values
+            map.syncPopup(id)
+        }
+    } catch {
+        /* 回读失败保持原渲染 */
+    }
+}
 
 // ---------------- WS 房间 ----------------
 // 后端按报文设备所在区域广播到 iot:map:{spaceId}；进入页面把所有区域房间都加入，
@@ -479,29 +193,29 @@ watch(wsStatus, (s) => {
 })
 
 onWsMessage('iot:status', (msg: WsEvent) => {
-    const p = pointIndex.get(msg.data?.device_id)
+    const p = map.getPoint(msg.data?.device_id)
     if (!p) return
     p.status = msg.data.status
     // 设备转离线时后端已收尾活动告警，但不推级别，这里同步清掉，避免离线点仍挂告警色
     if (msg.data.status !== 1) p.severity = 0
-    markDirty()
-    if (popupCtx.value?.id === p.id) renderPopup()
+    map.markDirty()
+    map.syncPopup(p.id)
 })
 
 onWsMessage('iot:telemetry', (msg: WsEvent) => {
     if (msg.data?.device_id && msg.data?.values) {
         latestValues[msg.data.device_id] = msg.data.values
-        if (popupCtx.value?.id === msg.data.device_id) renderPopup()
+        map.syncPopup(msg.data.device_id)
     }
 })
 
 onWsMessage('iot:alarm', (msg: WsEvent) => {
-    const p = pointIndex.get(msg.data?.device_id)
+    const p = map.getPoint(msg.data?.device_id)
     if (!p) return
     // status=0 为恢复(清级别)；1 为触发/升级，取推送里的 severity（含合法的 -1），缺失按轻微处理不能丢标记
     p.severity = msg.data?.status === 1 ? Number(msg.data?.severity) || 1 : 0
-    markDirty()
-    if (popupCtx.value?.id === p.id) renderPopup()
+    map.markDirty()
+    map.syncPopup(p.id)
 })
 
 // ---------------- 全屏 / 时钟 ----------------
@@ -519,7 +233,7 @@ const toggleFullscreen = () => {
 const onFullscreenChange = () => {
     isFullscreen.value = !!document.fullscreenElement
     // 容器尺寸变化后让地图重算视口
-    nextTick(() => map.value?.resize())
+    nextTick(() => map.resize())
 }
 
 const timeText = ref('')
@@ -535,14 +249,7 @@ onMounted(async () => {
     spaces.value = await deviceSpaceAll()
     spaceTree.value = arrayToTree<any>(spaces.value as any[], '')
     await nextTick()
-    map.value = new MapLibreMap({
-        container: mapContainer.value!,
-        style: resolveStyle(),
-        center: [104.0668, 30.5728],
-        zoom: 4.5
-    })
-    map.value.addControl(new NavigationControl({ showCompass: false }), 'top-right')
-    initMap()
+    map.init()
     await loadPoints()
     // WS 可能早已连接（layout 初始化），此时 watch 不会触发，需主动进房
     if (wsStatus.value === 'open') joinAllRooms()
@@ -552,13 +259,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-    if (flushTimer) clearTimeout(flushTimer)
     if (clockTimer) clearInterval(clockTimer)
     document.removeEventListener('fullscreenchange', onFullscreenChange)
-    closePopup()
-    popupMarker.value = undefined
-    map.value?.remove()
-    map.value = undefined
+    map.destroy()
 })
 </script>
 
@@ -657,14 +360,7 @@ onBeforeUnmount(() => {
     flex: 1;
     min-height: 0;
 }
-.bs__hint {
-    flex: none;
-    padding: 8px 12px;
-    font-size: 12px;
-    line-height: 1.5;
-    color: #7d97bd;
-    border-top: 1px solid rgba(64, 158, 255, 0.2);
-}
+ 
 .bs__map-wrap {
     position: relative;
     flex: 1;
