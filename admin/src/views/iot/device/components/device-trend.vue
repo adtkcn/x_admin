@@ -36,14 +36,21 @@ import { deviceData, type type_device_data } from '@/api/iot'
 import { echarts } from '@/utils/echart'
 import { isNumericType, type ThingProperty } from '@/views/iot/product/components/thing-model'
 
-const props = defineProps<{ deviceId: string; thingProps: ThingProperty[] }>()
+const props = defineProps<{
+    deviceId: string
+    thingProps: ThingProperty[]
+    // 可选初始区间：传入则以其为默认查询区间（如告警时间段前后延伸），不传沿用「当天」默认
+    initialRange?: [Date, Date]
+}>()
 
-// 区间必填、不可清空；默认取当天 00:00:00 ~ 23:59:59
+// 区间必填、不可清空；默认取 initialRange，否则当天 00:00:00 ~ 23:59:59
 const today = new Date()
-const range = ref<[Date, Date]>([
-    new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0),
-    new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
-])
+const range = ref<[Date, Date]>(
+    props.initialRange ?? [
+        new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0),
+        new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
+    ]
+)
 // el-date-picker 的 default-time：面板里选完日期后时间部分的默认值（起 00:00:00，止 23:59:59）
 const defaultTime: [Date, Date] = [
     new Date(2000, 0, 1, 0, 0, 0),

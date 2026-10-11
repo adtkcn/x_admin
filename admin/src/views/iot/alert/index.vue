@@ -91,8 +91,9 @@
                         {{ formatValues(row.values) }}
                     </template>
                 </vxe-column>
-                <vxe-column title="操作" width="100" fixed="right">
+                <vxe-column title="操作" width="150" fixed="right">
                     <template #default="{ row }">
+                        <el-button type="primary" link @click="handleTrend(row)">趋势图</el-button>
                         <el-button
                             v-perms="['admin:iot:alert:del']"
                             type="danger"
@@ -108,6 +109,8 @@
                 <pagination v-model="pager" @change="getLists" />
             </div>
         </el-card>
+
+        <alert-trend ref="trendRef" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -120,12 +123,14 @@ import {
     SeverityLevels,
     SeverityMap,
     SeverityTagType,
+    type type_iot_alert,
     type type_iot_alert_list,
     type type_iot_product
 } from '@/api/iot'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
+import AlertTrend from './components/alert-trend.vue'
 
 defineOptions({
     name: 'iotAlert'
@@ -184,6 +189,12 @@ const handleDelete = async (id: string) => {
     } catch (error) {
         console.error('告警记录删除失败:', error)
     }
+}
+
+// 查看告警时间段内（前后延伸30秒）的属性趋势图
+const trendRef = ref<InstanceType<typeof AlertTrend>>()
+const handleTrend = (row: type_iot_alert) => {
+    trendRef.value?.open(row)
 }
 
 getLists()
