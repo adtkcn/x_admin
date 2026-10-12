@@ -168,7 +168,6 @@ const ensureValues = async (id: string) => {
         const fresh = latestValues[id]
         if (st?.values && Object.keys(st.values).length && (!fresh || !Object.keys(fresh).length)) {
             latestValues[id] = st.values
-            map.syncPopup(id)
         }
     } catch {
         /* 回读失败保持原渲染 */
@@ -199,14 +198,10 @@ onWsMessage('iot:status', (msg: WsEvent) => {
     // 设备转离线时后端已收尾活动告警，但不推级别，这里同步清掉，避免离线点仍挂告警色
     if (msg.data.status !== 1) p.severity = 0
     map.markDirty()
-    map.syncPopup(p.id)
 })
 
 onWsMessage('iot:telemetry', (msg: WsEvent) => {
-    if (msg.data?.device_id && msg.data?.values) {
-        latestValues[msg.data.device_id] = msg.data.values
-        map.syncPopup(msg.data.device_id)
-    }
+    if (msg.data?.device_id && msg.data?.values) latestValues[msg.data.device_id] = msg.data.values
 })
 
 onWsMessage('iot:alarm', (msg: WsEvent) => {
@@ -216,7 +211,6 @@ onWsMessage('iot:alarm', (msg: WsEvent) => {
     p.severity = msg.data?.status === 1 ? Number(msg.data?.severity) || 1 : 0
     map.markDirty()
     latestValues[msg.data.device_id] = msg.data.values
-    map.syncPopup(p.id)
 })
 
 // ---------------- 全屏 / 时钟 ----------------
@@ -433,5 +427,16 @@ onBeforeUnmount(() => {
     max-width: 260px;
     font-size: 13px;
     line-height: 1.7;
+}
+/* Popup 默认内容容器带白底内边距，与大屏暗色卡片冲突：透明化让 .map-pop 成为唯一视觉 */
+:deep(.maplibregl-popup-content) {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+/* anchor:bottom 的气泡尾巴指向点位，配色与卡片一致 */
+:deep(.maplibregl-popup-anchor-bottom .maplibregl-popup-tip) {
+    border-top-color: rgba(10, 28, 54, 0.94);
 }
 </style>

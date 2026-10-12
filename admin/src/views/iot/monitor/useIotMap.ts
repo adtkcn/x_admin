@@ -1,12 +1,12 @@
-import { shallowRef, type Ref } from 'vue'
-import { Map as MapLibreMap, NavigationControl, Marker } from 'maplibre-gl'
+import { createApp, h, shallowRef, type App, type Ref } from 'vue'
+import { Map as MapLibreMap, NavigationControl, Popup } from 'maplibre-gl'
 import type { StyleSpecification } from 'maplibre-gl'
 import {
-    SeverityMap,
     SeverityColor,
     type type_iot_device_space,
     type type_device_map_item
 } from '@/api/iot'
+import DevicePopup from './components/device-popup.vue'
 
 // 大屏地图组合式函数：只负责 MapLibre 实例、样式/图层/数据源、区域面与设备点的渲染、
 // 点击命中路由、popup 呈现与视野适配；设备数据(在线状态/告警级别)与最新值由调用方以 ref 传入，
@@ -17,7 +17,7 @@ export interface UseIotMapOptions {
     points: Ref<type_device_map_item[]>
     spaces: Ref<type_iot_device_space[]>
     currentSpace: Ref<string>
-    // popup 取该设备当前实时值（无则调用方回读快照后经 syncPopup 重渲）
+    // popup 取该设备当前实时值（无则调用方回读快照写入响应式后，卡片自动刷新）
     getPopupValues: (deviceId: string) => Record<string, any> | undefined
     // 点中区域轮廓 → 选中该区域；点开设备 popup → 通知调用方回读存量值
     onSelectSpace: (spaceId: string) => void
@@ -28,7 +28,9 @@ export function useIotMap(opts: UseIotMapOptions) {
     const { container, points, spaces, currentSpace, getPopupValues, onSelectSpace, onPopupOpen } = opts
 
     const map = shallowRef<MapLibreMap>()
-    const popupMarker = shallowRef<Marker>()
+    // popup 与其内部挂载的 Vue 应用：整个大屏共用一个实例，切设备只移点位、靠响应式重渲
+    let popup: Popup | undefined
+    let popupApp: App | undefined
     // 当前 popup 上下文：设备点位数据变化时按此重渲内容
     const popupCtx = shallowRef<{ id: string; lngLat: { lng: number; lat: number } } | null>(null)
 
@@ -148,59 +150,61 @@ export function useIotMap(opts: UseIotMapOptions) {
         }, 300)
     }
 
-    // ---------------- popup ----------------
-    // 全部用 textContent 构建，避免设备名/SN/属性值注入 HTML
-    const addLine = (box: HTMLElement, text: string, color?: string, bold?: boolean) => {
-        const d = document.createElement('div')
-        d.textContent = text
-        if (color) d.style.color = color
-        if (bold) d.style.fontWeight = '600'
-        box.appendChild(d)
-    }
-
-    const renderPopup = () => {
-        if (!map.value || !popupCtx.value) return
-        const p = pointIndex.get(popupCtx.value.id)
-        if (!p) {
-            closePopup()
-            return
-        }
-        const box = document.createElement('div')
-        box.className = 'map-pop'
-        addLine(box, p.name || p.sn || p.id!, undefined, true)
-        addLine(box, `SN：${p.sn || '-'}`)
-        addLine(box, `状态：${p.status === 1 ? '在线' : '离线'}`)
-        if (p.severity !== 0)
-            addLine(box, `告警中·${SeverityMap[p.severity] || p.severity}`, sevColor(p.severity), true)
-        const vals = getPopupValues(p.id!)
-        if (vals && Object.keys(vals).length) {
-            for (const [k, v] of Object.entries(vals)) addLine(box, `${k} = ${String(v)}`)
-        } else {
-            addLine(box, '暂无实时值')
-        }
-        if (!popupMarker.value) {
-            popupMarker.value = new Marker({ element: document.createElement('div') })
-        }
-        popupMarker.value.getElement().replaceChildren(box)
-        popupMarker.value.setLngLat(popupCtx.value.lngLat).addTo(map.value)
-    }
-
-    const openPopupById = (id: string, lngLat: { lng: number; lat: number }) => {
-        if (!pointIndex.has(id)) return
+    // ---------------- popup（maplibre Popup + 挂载 Vue 组件，内容随响应式自动刷新） ----------------
+    const openPopupById = (id: string) => {
+        if (!map.value) return
+        const p = pointIndex.get(id)
+        if (!p) return
+        // 锚定设备真实坐标（即圆点渲染处），避免用点击处经纬度在缩放后与点位错开、看起来"飘"
+        const lngLat = { lng: p.longitude, lat: p.latitude }
+        // 先置上下文，保证首次渲染即有数据
         popupCtx.value = { id, lngLat }
-        renderPopup()
+        if (!popup) {
+            const el = document.createElement('div')
+            popup = new Popup({
+                closeButton: false,
+                closeOnClick: false,
+                anchor: 'bottom',
+                offset: 12,
+                maxWidth: '260px'
+            }).setDOMContent(el)
+            // 关闭时卸载 Vue 应用并释放引用，下次打开重建
+            popup.on('close', () => {
+                popupApp?.unmount()
+                popupApp = undefined
+                popup = undefined
+                popupCtx.value = null
+            })
+            // render 读取 popupCtx 点位与实时值(父层 reactive)，任一变化即重挂卡片，无需命令式重渲
+            popupApp = createApp({
+                render: () => {
+                    const ctx = popupCtx.value
+                    const p = ctx ? pointIndex.get(ctx.id) : undefined
+                    if (!p) return null
+                    return h(DevicePopup, {
+                        id: p.id,
+                        name: p.name,
+                        sn: p.sn,
+                        status: p.status ?? 0,
+                        severity: p.severity ?? 0,
+                        values: getPopupValues(p.id!)
+                    })
+                }
+            })
+            popupApp.mount(el)
+            // 仅创建时 addTo：对已挂载的 popup 重复 addTo 会触发内部 remove→close，
+            // 内容被卸载却另生空壳 container，导致残留三角
+            popup.setLngLat(lngLat).addTo(map.value)
+        } else {
+            // 已挂载则只移动点位（Popup 自会跟随地图，不会重复生成 container）
+            popup.setLngLat(lngLat)
+        }
         onPopupOpen(id)
     }
 
     const closePopup = () => {
-        popupCtx.value = null
-        popupMarker.value?.remove()
-    }
-
-    // 仅当该设备仍是当前 popup 时重渲（供 WS 增量/异步回读值到达后调用）
-    const syncPopup = (id?: string) => {
-        if (id && popupCtx.value?.id !== id) return
-        renderPopup()
+        // remove 触发 close 事件，由其统一卸载应用与清空上下文
+        popup?.remove()
     }
 
     // 选中子树后把视野适配到其区域轮廓范围
@@ -335,7 +339,7 @@ export function useIotMap(opts: UseIotMapOptions) {
                 })
                 const dev = hits.find((f: any) => f.layer.id === 'devices-circle')
                 if (dev) {
-                    openPopupById(String(dev.properties?.id), e.lngLat)
+                    openPopupById(String(dev.properties?.id))
                     return
                 }
                 // 重叠区域取面积最小者（最具体的子区域），避免父区域面盖住子区域被误选中放大到父区域
@@ -365,7 +369,6 @@ export function useIotMap(opts: UseIotMapOptions) {
     const destroy = () => {
         if (flushTimer) clearTimeout(flushTimer)
         closePopup()
-        popupMarker.value = undefined
         map.value?.remove()
         map.value = undefined
     }
@@ -378,7 +381,6 @@ export function useIotMap(opts: UseIotMapOptions) {
         markDirty,
         fitToSubtree,
         closePopup,
-        syncPopup,
         resize,
         destroy,
         getPoint: (id: string) => pointIndex.get(id)
