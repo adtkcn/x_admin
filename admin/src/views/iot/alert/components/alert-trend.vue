@@ -1,6 +1,6 @@
 <template>
     <el-dialog v-model="visible" :title="`告警趋势：${deviceName}`" width="920px" destroy-on-close>
-        <device-trend :device-id="deviceId" :thing-props="thingProps" :initial-range="range" />
+        <device-trend :device-id="deviceId" :thing-props="thingProps" :initial-range="range" :highlight-range="highlightRange" />
     </el-dialog>
 </template>
 
@@ -20,6 +20,7 @@ const deviceId = ref('')
 const deviceName = ref('')
 const thingProps = ref<ThingProperty[]>([])
 const range = ref<[Date, Date]>()
+const highlightRange = ref<[number, number]>()
 
 // "YYYY-MM-DD HH:mm:ss" -> Date（替换分隔符以兼容本地时区解析）
 const toDate = (s?: string | null) => (s ? new Date(s.replace(/-/g, '/')) : null)
@@ -32,6 +33,8 @@ const open = async (row: type_iot_alert) => {
     const start = toDate(row.triggered_at)
     const end = toDate(row.recovered_at) ?? new Date()
     range.value = start ? [new Date(start.getTime() - PAD_MS), new Date(end.getTime() + PAD_MS)] : undefined
+    // 实际告警时间段（不延伸），用于图表 markArea 高亮
+    highlightRange.value = start ? [start.getTime(), end.getTime()] : undefined
     visible.value = true
     // destroy-on-close：每次打开 trend 组件重新挂载，range 作为初始区间生效
     if (row.product_id) {

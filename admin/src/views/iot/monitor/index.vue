@@ -215,6 +215,7 @@ onWsMessage('iot:alarm', (msg: WsEvent) => {
     // status=0 为恢复(清级别)；1 为触发/升级，取推送里的 severity（含合法的 -1），缺失按轻微处理不能丢标记
     p.severity = msg.data?.status === 1 ? Number(msg.data?.severity) || 1 : 0
     map.markDirty()
+    latestValues[msg.data.device_id] = msg.data.values
     map.syncPopup(p.id)
 })
 

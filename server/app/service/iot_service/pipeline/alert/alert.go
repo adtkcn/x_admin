@@ -19,7 +19,8 @@ import (
 // 两条独立事件流（故障 -1 / 阈值告警 1/2/…）各自维护一条“告警中”记录，互不合并、严格分离：
 // 每条报文只确认其一，另一条流即收恢复信号，按恢复确认时长(recover)收尾，确认期间切回则计时作废。
 //
-// 记录留峰值（普通流 severity 只升不降），WS 推当前级别（可升可降）；当前级别未变的重复命中不落库/广播。
+// 记录留峰值（普通流 severity 只升不降）。大屏设备点只显示一条聚合告警级，故 WS 推「设备聚合级」
+// （故障优先 -1，否则普通流当前级别），仅当聚合级变化才推；延迟恢复期两条流并存时靠聚合避免误清/降级。
 //
 // 可配时长（秒，0=命中即告/恢复即收）：duration 命中后需连续异常满时长才触发；recover 恢复需连续满时长才关闭。
 //
@@ -110,6 +111,18 @@ func parseActive(raw string) (histId string, peak, cur int8) {
 	return histId, peak, cur
 }
 
+// deviceAlarm 求设备当前聚合告警态（供 WS）：故障优先(-1)，否则取普通流当前级别；两流皆无则为恢复。
+// 与 MapList 取数口径一致；延迟恢复期两条流并存，必须按聚合级而非单流级推送。
+func deviceAlarm(normalActive, faultActive string) (id string, recovered bool, severity int8) {
+	if fid, _, _ := parseActive(faultActive); fid != "" {
+		return fid, false, iot_model.AlertSevFault
+	}
+	if nid, _, cur := parseActive(normalActive); nid != "" {
+		return nid, false, cur
+	}
+	return "", true, 0
+}
+
 // EvalAlert 按本次告警级别推进两条事件流。level：0=恢复，-1=故障，1/2/…=阈值告警；
 // duration/recoverDur 为告警节点属性（秒）；allow 为物模型 identifier 白名单，落库前裁剪 values。
 func EvalAlert(msg iot_schema.IngestMsg, values map[string]any, level int8, duration, recoverDur int, allow map[string]bool) {
@@ -130,23 +143,34 @@ func EvalAlert(msg iot_schema.IngestMsg, values map[string]any, level int8, dura
 	// 故障与报警严格分离：命中的流 confirm，另一条流一律发恢复信号（走 recover 确认时长）。
 	vn := streamVals{strOf(rs[0]), strOf(rs[1]), strOf(rs[2])}
 	vf := streamVals{strOf(rs[3]), strOf(rs[4]), strOf(rs[5])}
+	prevId, prevRecovered, prevSev := deviceAlarm(vn.active, vf.active)
+
+	var nAct, fAct string
 	switch {
 	case level == 0:
-		recoverStream(ctx, msg, values, nk, vn, recoverDur)
-		recoverStream(ctx, msg, values, fk, vf, recoverDur)
+		nAct = recoverStream(ctx, msg, nk, vn, recoverDur)
+		fAct = recoverStream(ctx, msg, fk, vf, recoverDur)
 	case level == iot_model.AlertSevFault:
-		confirmStream(ctx, msg, values, fk, vf, iot_model.AlertSevFault, duration)
-		recoverStream(ctx, msg, values, nk, vn, recoverDur)
+		fAct = confirmStream(ctx, msg, values, fk, vf, iot_model.AlertSevFault, duration)
+		nAct = recoverStream(ctx, msg, nk, vn, recoverDur)
 	default: // level>0：普通阈值告警，级别即本次返回值
-		confirmStream(ctx, msg, values, nk, vn, level, duration)
-		recoverStream(ctx, msg, values, fk, vf, recoverDur)
+		nAct = confirmStream(ctx, msg, values, nk, vn, level, duration)
+		fAct = recoverStream(ctx, msg, fk, vf, recoverDur)
+	}
+
+	// WS 推设备聚合级（非单流级）：仅当聚合级变化才推，避免并存期误清或级别错乱。
+	if id, recovered, sev := deviceAlarm(nAct, fAct); recovered != prevRecovered || sev != prevSev {
+		if id == "" {
+			id = prevId
+		}
+		online.BroadcastAlarm(msg, values, id, recovered, sev)
 	}
 }
 
-// confirmStream 本条报文确认该流异常：作废恢复计时；已在事件中则按“记录取峰值、WS 推当前级”推进，
-// 否则按 duration 决定是否新触发。故障流级别恒为 -1，无升级与重推。
+// confirmStream 本条报文确认该流异常：作废恢复计时；已在事件中则按“记录取峰值”更新当前级，
+// 否则按 duration 决定是否新触发。返回该流处理后的活动态值（供 EvalAlert 算聚合级）。故障流级别恒为 -1。
 func confirmStream(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any,
-	k streamKeys, v streamVals, level int8, duration int) {
+	k streamKeys, v streamVals, level int8, duration int) string {
 
 	// 重回告警态：恢复确认计时作废
 	if v.recover != "" {
@@ -154,103 +178,104 @@ func confirmStream(ctx context.Context, msg iot_schema.IngestMsg, values map[str
 	}
 
 	histId, peak, cur := parseActive(v.active)
-	// 已在事件中：level>peak 升峰值落库，level!=cur 推 WS；都没变则不写
+	// 已在事件中：level>peak 升峰值落库，level!=cur 刷新当前级；都没变则原样返回
 	if histId != "" {
-		raise := level > peak
-		notify := level != cur
-		if !raise && !notify {
-			return
+		if level <= peak && level == cur {
+			return v.active
 		}
 		newPeak, newCur := peak, cur
-		if raise {
+		if level > peak {
 			newPeak = level
 			if e := iot_service.AlertService.UpdateSeverity(histId, level); e != nil {
 				core.Logger.Errorf("[iot处理] 告警级别改写落库失败 deviceId=%s id=%s err=%v", msg.DeviceId, histId, e)
 			}
 		}
-		if notify {
+		if level != cur {
 			newCur = level
-			online.BroadcastAlarm(msg, values, histId, false, level)
 		}
-		_ = core.Redis.Set(ctx, k.active, encodeActive(histId, newPeak, newCur), 0).Err()
-		return
+		na := encodeActive(histId, newPeak, newCur)
+		_ = core.Redis.Set(ctx, k.active, na, 0).Err()
+		return na
 	}
 
 	// 新事件：duration<=0 即触发；否则首次记起点，后续报文跨过“起点+时长”才触发
 	if duration <= 0 {
-		raiseEpisode(ctx, msg, values, k, level)
-		return
+		return raiseEpisode(ctx, msg, values, k, level)
 	}
 	if v.first == "" {
 		ttl := time.Duration(duration)*time.Second + alertTimerTTLBuffer
 		if e := core.Redis.Set(ctx, k.first, msg.ReceivedAt, ttl).Err(); e != nil {
 			core.Logger.Errorf("[iot处理] 写告警持续计时失败 deviceId=%s err=%v", msg.DeviceId, e)
 		}
-		return
+		return v.active
 	}
 	if start, e := strconv.ParseInt(v.first, 10, 64); e == nil &&
 		msg.ReceivedAt-start >= int64(duration)*1000 {
-		raiseEpisode(ctx, msg, values, k, level)
+		return raiseEpisode(ctx, msg, values, k, level)
 	}
+	return v.active
 }
 
-// recoverStream 本条报文为该流的恢复信号：清持续计时；正处事件则按 recoverDur 决定是否收尾
-// （首次只记起点，待后续恢复报文跨过“起点+确认时长”才关闭）。
-func recoverStream(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any,
-	k streamKeys, v streamVals, recoverDur int) {
+// recoverStream 本条报文为该流的恢复信号：清持续计时；正处事件则按 recoverDur 决定是否收尾。
+// 返回该流处理后的活动态值（收尾则空串，供 EvalAlert 算聚合级）。
+func recoverStream(ctx context.Context, msg iot_schema.IngestMsg,
+	k streamKeys, v streamVals, recoverDur int) string {
 
 	// 读到才删，避免稳态空转 Del
 	if v.first != "" {
 		core.Redis.Del(ctx, k.first)
 	}
-	histId, _, cur := parseActive(v.active)
+	histId, _, _ := parseActive(v.active)
 	if histId == "" {
 		if v.recover != "" {
 			core.Redis.Del(ctx, k.recover)
 		}
-		return
+		return v.active
 	}
 	if recoverDur <= 0 { // 未配恢复确认时长：恢复信号即收尾
-		recoverEpisode(ctx, msg, values, k, histId, cur)
-		return
+		recoverEpisode(ctx, msg, k, histId)
+		return ""
 	}
-	if v.recover == "" { // 首次收到恢复：只记起点
+	if v.recover == "" { // 首次收到恢复：只记起点，事件延续
 		ttl := time.Duration(recoverDur)*time.Second + alertTimerTTLBuffer
 		if e := core.Redis.Set(ctx, k.recover, msg.ReceivedAt, ttl).Err(); e != nil {
 			core.Logger.Errorf("[iot处理] 写告警恢复计时失败 deviceId=%s err=%v", msg.DeviceId, e)
 		}
-		return
+		return v.active
 	}
 	if start, e := strconv.ParseInt(v.recover, 10, 64); e == nil &&
 		msg.ReceivedAt-start >= int64(recoverDur)*1000 {
-		recoverEpisode(ctx, msg, values, k, histId, cur)
+		recoverEpisode(ctx, msg, k, histId)
+		return ""
 	}
+	return v.active
 }
 
-// recoverEpisode 结束一次告警事件：置恢复 + 清该流活动/恢复键 + 推恢复广播。
-func recoverEpisode(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any, k streamKeys, histId string, severity int8) {
+// recoverEpisode 结束一次告警事件：清该流活动/恢复键并置库恢复（WS 由 EvalAlert 按聚合级统一推）。
+func recoverEpisode(ctx context.Context, msg iot_schema.IngestMsg, k streamKeys, histId string) {
 	core.Redis.Del(ctx, k.active, k.recover)
 	if e := iot_service.AlertService.Recover(histId, msg.ReceivedAt); e != nil {
 		core.Logger.Errorf("[iot处理] 告警恢复落库失败 deviceId=%s id=%s err=%v", msg.DeviceId, histId, e)
 	}
-	online.BroadcastAlarm(msg, values, histId, true, severity)
 	core.Logger.Infof("[iot处理] 告警恢复 deviceId=%s sn=%s id=%s", msg.DeviceId, msg.Sn, histId)
 }
 
-// raiseEpisode 触发一次告警事件：落库→写该流活动态(含级别)→清持续计时→推广播；落库失败不建活动态。
-func raiseEpisode(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any, k streamKeys, level int8) {
+// raiseEpisode 触发一次告警事件：落库→写该流活动态(含级别)→清持续计时；落库失败返回空不建活动态。
+// 返回新建的活动态值（供 EvalAlert 算聚合级；WS 统一由 EvalAlert 推）。
+func raiseEpisode(ctx context.Context, msg iot_schema.IngestMsg, values map[string]any, k streamKeys, level int8) string {
 	id, e := iot_service.AlertService.Raise(msg.DeviceId, msg.Sn, msg.ProductId, msg.SpaceId, values, msg.Ts, level)
 	if e != nil {
 		core.Logger.Errorf("[iot处理] 告警触发落库失败 deviceId=%s err=%v", msg.DeviceId, e)
-		return
+		return ""
 	}
 	// 活动态无 TTL，只在恢复转换点或删设备时清理
-	if e := core.Redis.Set(ctx, k.active, encodeActive(id, level, level), 0).Err(); e != nil {
+	na := encodeActive(id, level, level)
+	if e := core.Redis.Set(ctx, k.active, na, 0).Err(); e != nil {
 		core.Logger.Errorf("[iot处理] 写告警活动态失败 deviceId=%s err=%v", msg.DeviceId, e)
 	}
 	core.Redis.Del(ctx, k.first)
-	online.BroadcastAlarm(msg, values, id, false, level)
 	core.Logger.Warnf("[iot处理] 告警触发 deviceId=%s sn=%s id=%s level=%d values=%v", msg.DeviceId, msg.Sn, id, level, values)
+	return na
 }
 
 // strOf 取 MGet 结果里的字符串值（键不存在时元素为 nil）

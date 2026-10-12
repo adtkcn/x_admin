@@ -48,7 +48,8 @@ import {
     LegendComponent,
     // RadarComponent,//雷达图
     // ToolboxComponent,
-    DataZoomComponent
+    DataZoomComponent,
+    MarkAreaComponent
     // VisualMapComponent,//视觉映射组件
     // TimelineComponent,//时间线组件
     // CalendarComponent,//日历组件
@@ -79,6 +80,7 @@ echarts.use([
     // RadarComponent,
     // ToolboxComponent,
     DataZoomComponent,
+    MarkAreaComponent,
     // VisualMapComponent,
     // TimelineComponent,
     // CalendarComponent,

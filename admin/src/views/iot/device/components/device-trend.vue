@@ -41,6 +41,8 @@ const props = defineProps<{
     thingProps: ThingProperty[]
     // 可选初始区间：传入则以其为默认查询区间（如告警时间段前后延伸），不传沿用「当天」默认
     initialRange?: [Date, Date]
+    // 高亮时间段 [startMs, endMs]：在图表中以半透明色带标识告警持续时间
+    highlightRange?: [number, number]
 }>()
 
 // 区间必填、不可清空；默认取 initialRange，否则当天 00:00:00 ~ 23:59:59
@@ -110,6 +112,32 @@ const render = () => {
         return
     }
     const rows = [...trendRows.value].sort((a, b) => a.ts - b.ts)
+    const series: any[] = picked.value.map((k) => ({
+        name: nameOf(k),
+        type: 'line',
+        showSymbol: false,
+        data: rows
+            .filter((r) => r.values && k in r.values)
+            .map((r) => [r.ts, Number(r.values![k])])
+    }))
+    // 告警时间段高亮：把 markArea 挂到第一个有数据的 series 上
+    if (props.highlightRange) {
+        const target = series.find((s) => s.data.length > 0)
+        if (target) {
+            target.markArea = {
+                silent: true,
+                itemStyle: { color: 'rgba(245, 108, 108, 0.15)' },
+                label: {
+                    show: true,
+                    position: 'insideTop',
+                    color: '#f56c6c',
+                    fontSize: 11,
+                    formatter: '告警期间'
+                },
+                data: [[{ xAxis: props.highlightRange[0] }, { xAxis: props.highlightRange[1] }]]
+            }
+        }
+    }
     chart.value.setOption(
         {
             tooltip: { trigger: 'axis' },
@@ -118,14 +146,7 @@ const render = () => {
             dataZoom: [{ type: 'inside' }],
             xAxis: { type: 'time' },
             yAxis: { type: 'value', scale: true },
-            series: picked.value.map((k) => ({
-                name: nameOf(k),
-                type: 'line',
-                showSymbol: false,
-                data: rows
-                    .filter((r) => r.values && k in r.values)
-                    .map((r) => [r.ts, Number(r.values![k])])
-            }))
+            series
         },
         true
     )
