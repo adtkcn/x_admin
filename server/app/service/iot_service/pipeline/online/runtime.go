@@ -152,7 +152,7 @@ func lastSeenAndDeadlines(deviceIds []string) (seen map[string]int64, deadline m
 // SaveLatestValues 写入最新属性快照（HSET 覆盖同名 identifier）并续期 TTL；时序历史不在这里。
 // 快照与时序落库同源：先按物模型白名单 allow 裁剪，只保留已建模 identifier（allow 空则不约束）。
 // spaceId 作保留字段随快照存一份，供定时推送定位地图房间；同一 pipeline 顺带把设备标进
-// 大屏脏集合（push:dirty），由定时任务统一冲刷推大屏——取代规则链「大屏推送」节点。
+// 大屏脏集合（push:dirty），由定时任务统一冲刷推大屏。
 func SaveLatestValues(deviceId, spaceId string, values map[string]any, allow map[string]bool) {
 	values = iot_schema.ScopeValues(values, allow)
 	if len(values) == 0 {
@@ -285,7 +285,7 @@ func BroadcastStatus(deviceId, sn, spaceId string, status uint8, ts int64) {
 	}
 }
 
-// PushScreenTick 定时冲刷大屏数值推送，取代规则链「大屏推送」节点（不再逐报文推，改批量定时推）：
+// PushScreenTick 定时批量冲刷大屏数值推送：
 //  1. 无观众早退：全局在线 WS 用户数为 0 直接返回（集群取跨实例并集），不冲刷、不打扰 Redis，
 //     脏集合原样留在 Redis，待有观众时再补推（推的是快照最新态，非历史逐条）；
 //  2. 取大屏脏集合（本周期快照有更新的设备），一个 pipeline 批量读回快照，按所属区域房间

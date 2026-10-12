@@ -53,7 +53,7 @@ func QueryRange(deviceId string, startMs, endMs int64, limit int) []iot_schema.D
 func CleanData() { store.Clean() }
 
 // PushScreenTick 冲刷大屏数值脏集合并按区域房间推送（供 app/corn 的 iotScreenPush 定时调用）：
-// 取代规则链「大屏推送」节点——快照更新即标脏，由本定时器统一批量推。
+// 快照更新即标脏，由本定时器统一批量推。
 func PushScreenTick() { online.PushScreenTick() }
 
 // HandleIngest 消费一条设备报文

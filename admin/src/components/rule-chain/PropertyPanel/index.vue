@@ -41,7 +41,6 @@
             <Alarm v-else-if="nodeKey === 'rule_alarm'" v-model="nodeProps"></Alarm>
             <div v-else-if="nodeKey === 'rule_state'" class="rc-tip">状态快照节点：把流经的最新属性写入 Redis 快照，供管理端与大屏即时读取，无需配置。</div>
             <div v-else-if="nodeKey === 'rule_history'" class="rc-tip">历史存储节点：把流经的属性追加写入时序历史表，无需配置。</div>
-            <div v-else-if="nodeKey === 'rule_push'" class="rc-tip">大屏推送节点：把流经的属性广播到设备所属区域的地图大屏房间，无需配置。</div>
             <Notify v-else-if="nodeKey === 'rule_notify'" v-model="nodeProps"></Notify>
         </template>
 

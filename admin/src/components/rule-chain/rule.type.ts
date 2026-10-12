@@ -14,7 +14,6 @@ export type RcNodeType =
     | 'rule:alarm'
     | 'rule:state'
     | 'rule:history'
-    | 'rule:push'
     | 'rule:notify'
 
 // 节点属性命名空间 key（= 后端 RcProps* 常量）
@@ -27,7 +26,6 @@ export type RcNodeKey =
     | 'rule_alarm'
     | 'rule_state'
     | 'rule_history'
-    | 'rule_push'
     | 'rule_notify'
 
 // 图形种类：输入用圆形，并行/布尔用菱形，其余矩形
@@ -55,7 +53,6 @@ export type RcNodePropsMap = {
     rule_alarm: RcAlarmProps
     rule_state: Record<string, never>
     rule_history: Record<string, never>
-    rule_push: Record<string, never>
     rule_notify: RcNotifyProps
 }
 
@@ -90,7 +87,6 @@ export const RC_NODE_META: RcNodeMeta[] = [
     { type: 'rule:alarm', key: 'rule_alarm', label: '告警', shape: 'rect', color: '#f56c6c', desc: 'goja alert+持续/恢复状态机' },
     { type: 'rule:state', key: 'rule_state', label: '状态快照', shape: 'rect', color: '#eb2f96', desc: '写 Redis 最新属性，供管理端/大屏即时读' },
     { type: 'rule:history', key: 'rule_history', label: '历史存储', shape: 'rect', color: '#faad14', desc: '写 MySQL 时序历史表' },
-    { type: 'rule:push', key: 'rule_push', label: '大屏推送', shape: 'rect', color: '#2f54eb', desc: '属性广播到区域地图大屏房间' },
     { type: 'rule:notify', key: 'rule_notify', label: '通知', shape: 'rect', color: '#a0d911', desc: '站内/邮件/webhook' }
 ]
 

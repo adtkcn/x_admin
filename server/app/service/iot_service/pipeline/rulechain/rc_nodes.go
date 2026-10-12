@@ -31,8 +31,6 @@ var rcHandlers = map[string]rcHandler{
 	iot_schema.RcNodeState:   rcState,
 	iot_schema.RcNodeHistory: rcHistory,
 	iot_schema.RcNodeNotify:  rcNotify,
-	// 「大屏推送」节点执行器已下线：数值改由「状态快照」标脏 + 定时任务冲刷推送；
-	// 旧图里残留的 push 节点按未知类型「继续下钻」兜底，不再单独广播。
 	// 并行节点的分流完全由树结构（多 children）表达，自身无副作用
 	iot_schema.RcNodeParallel: rcPassthrough,
 }

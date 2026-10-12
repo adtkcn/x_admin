@@ -64,7 +64,6 @@ const (
 	RcNodeAlarm    = "rule:alarm"    // 告警：goja alert(values)+持续/恢复状态机
 	RcNodeState    = "rule:state"    // 状态快照：写 Redis 最新属性，供管理端/大屏即时读
 	RcNodeHistory  = "rule:history"  // 历史存储：写 MySQL 时序历史表
-	RcNodePush     = "rule:push"     // 大屏推送：属性广播到区域大屏（地图房间）
 	RcNodeNotify   = "rule:notify"   // 通知：站内/邮件/webhook（可扩展）
 )
 
@@ -78,7 +77,6 @@ const (
 	RcPropsAlarm    = "rule_alarm"
 	RcPropsState    = "rule_state"
 	RcPropsHistory  = "rule_history"
-	RcPropsPush     = "rule_push"
 	RcPropsNotify   = "rule_notify"
 )
 
@@ -110,7 +108,7 @@ type RcNotifyProps struct {
 }
 
 // RcNodeProps 节点私有属性：按命名空间收纳各类型那一份，未使用的不进 JSON。
-// 并行/状态快照/历史存储/大屏推送无配置，不进属性表。
+// 并行/状态快照/历史存储无配置，不进属性表。
 type RcNodeProps struct {
 	Trigger *RcTriggerProps `json:"rule_trigger,omitempty"`
 	Decode  *RcScriptProps  `json:"rule_decode,omitempty"`

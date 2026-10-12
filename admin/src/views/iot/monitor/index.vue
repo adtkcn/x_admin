@@ -158,7 +158,7 @@ const selectSpace = async (id: string) => {
 
 const handleTreeClick = (node: any) => selectSpace(node.id)
 
-// popup 的实时值仅靠 iot:telemetry 推送填充，而该推送需规则链配了「大屏推送」节点才有；
+// popup 的实时值仅靠 iot:telemetry 推送填充，而该推送需规则链配了「状态快照」节点标脏才有；
 // 故点开设备且无存量值时按设备回读一次 Redis 快照兜底（与详情页实时 tab 同源），已有推送值则不覆盖
 const ensureValues = async (id: string) => {
     const cached = latestValues[id]
