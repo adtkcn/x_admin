@@ -59,7 +59,7 @@
                 :border="'inner'"
                 show-overflow="title"
             >
-                <vxe-column title="设备编号" field="sn" min-width="140" />
+                <vxe-column title="设备编号" field="sn" min-width="140" fixed="left" />
                 <vxe-column title="所属产品" field="product_name" min-width="120" />
                 <vxe-column title="所属区域" field="space_name" min-width="120">
                     <template #default="{ row }">
@@ -91,9 +91,9 @@
                         {{ formatValues(row.values) }}
                     </template>
                 </vxe-column>
-                <vxe-column title="操作" width="150" fixed="right">
+                <vxe-column title="操作" width="100" fixed="right">
                     <template #default="{ row }">
-                        <el-button type="primary" link @click="handleTrend(row)">趋势图</el-button>
+                        <el-button type="primary" link @click="handleDetail(row)">详情</el-button>
                         <el-button
                             v-perms="['admin:iot:alert:del']"
                             type="danger"
@@ -110,7 +110,7 @@
             </div>
         </el-card>
 
-        <alert-trend ref="trendRef" />
+        <alert-detail ref="detailRef" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -130,7 +130,7 @@ import {
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'
-import AlertTrend from './components/alert-trend.vue'
+import AlertDetail from './components/alert-detail.vue'
 
 defineOptions({
     name: 'iotAlert'
@@ -191,10 +191,10 @@ const handleDelete = async (id: string) => {
     }
 }
 
-// 查看告警时间段内（前后延伸30秒）的属性趋势图
-const trendRef = ref<InstanceType<typeof AlertTrend>>()
-const handleTrend = (row: type_iot_alert) => {
-    trendRef.value?.open(row)
+// 告警详情：实时状态 / 历史趋势 / 告警记录 多 tab（复用设备详情组件，趋势区间锁定告警时段）
+const detailRef = ref<InstanceType<typeof AlertDetail>>()
+const handleDetail = (row: type_iot_alert) => {
+    detailRef.value?.open(row)
 }
 
 getLists()
