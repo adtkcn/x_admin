@@ -46,7 +46,7 @@
                         </el-form-item>
                     </el-form>
 
-                    <div class="mt-1 mb-3 text-gray-400">
+                    <div class="mt-1 mb-3 text-gray-400 cursor-pointer select-none" @click="handleFillTestAccount">
                         测试账号：x@qq.com / 123456
                     </div>
                     <el-button
@@ -136,6 +136,12 @@ const handleLogin = async (captcha: Record<string, any>) => {
     router.push(path)
 }
 const { isLock, lockFn: lockLogin } = useLockFn(handleLogin)
+
+// 点击测试账号：一键填入邮箱和密码
+const handleFillTestAccount = () => {
+    formData.email = 'x@qq.com'
+    formData.password = '123456'
+}
 
 const goForgotPwd = () => {
     router.push(PageEnum.FORGOT_PASSWORD)
