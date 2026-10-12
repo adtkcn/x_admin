@@ -6,7 +6,6 @@
                     {{ state.online ? '在线' : '离线' }}
                 </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item label="距判离线">{{ state.offline_in ?? '-' }}s</el-descriptions-item>
             <el-descriptions-item label="最后报文">{{ state.updated_at || '-' }}</el-descriptions-item>
             <el-descriptions-item label="最后上线">{{ fmt(state.last_online_time) }}</el-descriptions-item>
             <el-descriptions-item label="最后离线">{{ fmt(state.last_offline_time) }}</el-descriptions-item>

@@ -209,7 +209,7 @@ func stringify(v any) string {
 }
 
 // ReadDeviceState 读出 Redis 侧运行态，供管理端回读验证链路（库侧状态由调用方合并）。
-// 在线与剩余时长直读到期表 score（与快路径判定同源），score 缺失时退回“seen+生效窗口”推算；
+// 在线与否直读到期表 score（与快路径判定同源），score 缺失时退回“seen+生效窗口”推算；
 // 三个键并进一个 pipeline，避免 3 个 RTT 与中间态变迁。
 func ReadDeviceState(deviceId string, timeout int) iot_schema.DeviceStateResp {
 	ctx, cancel := RedisCtx()
@@ -238,18 +238,16 @@ func ReadDeviceState(deviceId string, timeout int) iot_schema.DeviceStateResp {
 		resp.UpdatedAt = time.UnixMilli(ms).Format("2006-01-02 15:04:05")
 	}
 	if sc, err := score.Result(); err == nil {
-		if sc > float64(nowMs) { // 到期表未到期即在线，剩余时长直接由 score 算
+		if sc > float64(nowMs) { // 到期表未到期即在线
 			resp.Online = true
-			resp.OfflineIn = int64(time.Duration(sc - float64(nowMs)).Seconds())
 		}
 	} else if err != redis.Nil {
 		core.Logger.Errorf("[iot处理] 读到期表失败 deviceId=%s err=%v", deviceId, err)
 	}
 	if !resp.Online && resp.LastSeenMs > 0 {
 		// 到期表无成员但窗口内确有报文（Redis 被清理/慢路径待重建）：按 seen+窗口推算
-		if remain := window - time.Since(time.UnixMilli(resp.LastSeenMs)); remain > 0 {
+		if window-time.Since(time.UnixMilli(resp.LastSeenMs)) > 0 {
 			resp.Online = true
-			resp.OfflineIn = int64(remain.Seconds())
 		}
 	}
 	return resp

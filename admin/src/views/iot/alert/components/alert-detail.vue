@@ -1,5 +1,5 @@
 <template>
-    <el-dialog v-model="visible" :title="`告警详情：${deviceName}`" width="920px" destroy-on-close>
+    <el-dialog v-model="visible" :title="`告警详情：${deviceName}`" top="20" width="920px" destroy-on-close>
         <el-tabs v-model="tab">
             <el-tab-pane label="实时状态" name="state" lazy>
                 <device-state :device-id="deviceId" :thing-props="thingProps" />

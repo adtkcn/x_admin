@@ -211,7 +211,6 @@ export type type_device_state = {
     sn?: string
     name?: string
     online?: boolean
-    offline_in?: number
     last_seen_ms?: number
     updated_at?: string
     values?: Record<string, string>

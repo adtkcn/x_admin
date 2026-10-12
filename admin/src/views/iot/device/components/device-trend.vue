@@ -21,12 +21,9 @@
             >
                 <el-option v-for="opt in attrOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
             </el-select>
-            <el-button type="primary" size="small" @click="load">查询</el-button>
+            <el-button type="primary" size="small" @click="load()">查询</el-button>
         </div>
         <div ref="chartRef" v-loading="loading" class="trend-chart"></div>
-        <div v-if="trendRows.length" class="text-xs mt-1 text-gray-400">
-            共取 {{ trendRows.length }} 条，曲线按时间正序绘制
-        </div>
     </div>
 </template>
 
@@ -74,20 +71,39 @@ const attrOptions = computed(() =>
 )
 const nameOf = (id: string) => props.thingProps.find((p) => p.identifier === id)?.name || id
 
-const load = async () => {
+// lastTs 已持有数据的最大时间戳（滚动续查的增量起点）；rolling 标记本次区间是否处于持续中（结束时间晚于当前）
+let lastTs = 0
+let rolling = false
+// 上次渲染的勾选属性集合（结构指纹）：与其一致说明仅数据增长，走增量合并而非全量重建
+let renderedKey = ''
+const maxTs = (rows: type_device_data[]) => rows.reduce((m, r) => (r.ts > m ? r.ts : m), 0)
+
+// silent=滚动续查（静默，不闪 loading）；手动/首次查询整段回读，并按「结束时间是否晚于当前」决定是否开启滚动
+const load = async (silent = false) => {
     if (!props.deviceId || !range.value) return
-    loading.value = true
+    if (!silent) loading.value = true
     try {
-        // 不传 limit：区间内全量回读（后端 limit<=0 即不限制条数）
-        trendRows.value = await deviceData({
-            id: props.deviceId,
-            start_ms: range.value[0].getTime(),
-            end_ms: range.value[1].getTime()
-        })
+        const [s, e] = range.value
+        // 滚动续查：起点取已持有数据的最后时间之后、终点取当前时刻，仅追加增量，不整段重查
+        const startMs = silent ? (lastTs > 0 ? lastTs + 1 : s.getTime()) : s.getTime()
+        const endMs = silent ? Date.now() : e.getTime()
+        // 不传 limit：区间内回读（后端 limit<=0 即不限制条数）
+        const rows = await deviceData({ id: props.deviceId, start_ms: startMs, end_ms: endMs })
+        if (silent) {
+            if (rows.length) {
+                trendRows.value = [...trendRows.value, ...rows]
+                lastTs = Math.max(lastTs, maxTs(rows))
+            }
+        } else {
+            trendRows.value = rows
+            lastTs = maxTs(rows)
+            rolling = e.getTime() > Date.now()
+        }
         if (!picked.value.length) picked.value = attrOptions.value.slice(0, 4).map((o) => o.value)
     } finally {
-        loading.value = false
+        if (!silent) loading.value = false
     }
+    if (!silent) startLive()
 }
 
 const render = () => {
@@ -95,6 +111,7 @@ const render = () => {
     if (!chart.value || chart.value.getDom() !== chartRef.value) {
         chart.value?.dispose()
         chart.value = echarts.init(chartRef.value)
+        renderedKey = '' // 新实例：结构需整体重建
     }
     // 区间内无数据：留一张空图并居中提示，避免图表区域一片空白
     if (!trendRows.value.length) {
@@ -109,6 +126,7 @@ const render = () => {
             },
             true
         )
+        renderedKey = '' // 空态后若转为有数据，强制整体重建
         return
     }
     const rows = [...trendRows.value].sort((a, b) => a.ts - b.ts)
@@ -124,6 +142,8 @@ const render = () => {
     if (props.highlightRange) {
         const target = series.find((s) => s.data.length > 0)
         if (target) {
+            // 滚动持续中（结束时间晚于当前），高亮带右端跟随当前时刻延展
+            const bandEnd = rolling ? Date.now() : props.highlightRange[1]
             target.markArea = {
                 silent: true,
                 itemStyle: { color: 'rgba(245, 108, 108, 0.15)' },
@@ -134,26 +154,50 @@ const render = () => {
                     fontSize: 11,
                     formatter: '告警期间'
                 },
-                data: [[{ xAxis: props.highlightRange[0] }, { xAxis: props.highlightRange[1] }]]
+                data: [[{ xAxis: props.highlightRange[0] }, { xAxis: bandEnd }]]
             }
         }
     }
-    chart.value.setOption(
-        {
-            tooltip: { trigger: 'axis' },
-            legend: { data: picked.value.map(nameOf) },
-            grid: { left: 50, right: 20, top: 36, bottom: 60 },
-            dataZoom: [{ type: 'inside' }],
-            xAxis: { type: 'time' },
-            yAxis: { type: 'value', scale: true },
-            series
-        },
-        true
-    )
+    // 结构未变（勾选属性集合一致）：多为滚动追加数据，仅按 series 合并更新——曲线平滑延伸、
+    // 保留 dataZoom 缩放态，避免整图重建导致的闪烁；结构变化或首次才整体重建
+    const key = picked.value.join(',')
+    if (key === renderedKey) {
+        chart.value.setOption({ series })
+    } else {
+        chart.value.setOption(
+            {
+                tooltip: { trigger: 'axis' },
+                legend: { data: picked.value.map(nameOf), top: 5, left: 'center' },
+                grid: { left: 50, right: 20, top: 36, bottom: 68 },
+                // inside：图上滚轮/拖拽缩放；slider：底部可视化缩放轴（可拖拽区间、看缩略曲线）
+                dataZoom: [{ type: 'inside' }, { type: 'slider', height: 22, bottom: 12, brushSelect: false }],
+                xAxis: { type: 'time' },
+                yAxis: { type: 'value', scale: true },
+                series
+            },
+            true
+        )
+        renderedKey = key
+    }
 }
 
 // 勾选属性或区间数据变化即重绘（同一 tick 内多处改动只触发一次），切换属性无需重新请求
 watch([picked, trendRows], render)
+
+// 滚动更新：区间结束时间晚于当前（视为持续中）时定时静默续查增量；重新查询/卸载即停止
+const LIVE_POLL_MS = 5000
+let liveTimer: ReturnType<typeof setInterval> | null = null
+const startLive = () => {
+    stopLive()
+    if (!rolling) return
+    liveTimer = setInterval(() => load(true), LIVE_POLL_MS)
+}
+const stopLive = () => {
+    if (liveTimer) {
+        clearInterval(liveTimer)
+        liveTimer = null
+    }
+}
 
 const resize = () => chart.value?.resize()
 onMounted(() => {
@@ -161,6 +205,7 @@ onMounted(() => {
     window.addEventListener('resize', resize)
 })
 onBeforeUnmount(() => {
+    stopLive()
     window.removeEventListener('resize', resize)
     chart.value?.dispose()
     chart.value = undefined

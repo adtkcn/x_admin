@@ -85,7 +85,6 @@ type DeviceStateResp struct {
 	Online         bool              `json:"online"`          // 在线判定窗口内是否收到过报文
 	OfflineTimeout int               `json:"offline_timeout"` // 生效的离线判定时长(秒)
 	LastSeenMs     int64             `json:"last_seen_ms"`    // 最后一条报文的服务端接收时间(毫秒)
-	OfflineIn      int64             `json:"offline_in"`      // 距判定离线的剩余秒数，<=0 表示已超时
 	Values         map[string]string `json:"values"`          // 最新属性快照 identifier -> 值(字符串化)
 	UpdatedAt      string            `json:"updated_at"`      // 最后报文时间的可读格式（与 last_seen_ms 同源）
 	DBStatus       uint8             `json:"db_status"`       // 库中在线状态（由定时扫描与上报共同维护）
