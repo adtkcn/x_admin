@@ -96,12 +96,12 @@ import { ref, shallowRef, reactive, nextTick, onMounted } from 'vue'
 import {
     productLists,
     productDel,
-    productCategoryAll,
     NodeTypeMap,
     type NodeType,
     type type_iot_product_list,
     type type_iot_product
-} from '@/api/iot'
+} from '@/api/iot/product'
+import { productCategoryAll } from '@/api/iot/product_category'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'

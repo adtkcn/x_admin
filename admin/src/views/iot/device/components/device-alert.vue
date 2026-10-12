@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
-import { alertLists, SeverityMap, SeverityTagType, type type_iot_alert } from '@/api/iot'
+import { alertLists, SeverityMap, SeverityTagType, type type_iot_alert } from '@/api/iot/alert'
 import type { ThingProperty } from '@/views/iot/product/components/thing-model'
 import { buildThingMap, snapText } from './thing-display'
 

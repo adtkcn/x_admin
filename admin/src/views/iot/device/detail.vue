@@ -16,7 +16,8 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { productDetail, type type_iot_device } from '@/api/iot'
+import { productDetail } from '@/api/iot/product'
+import type { type_iot_device } from '@/api/iot/device'
 import { parseThingModel, type ThingProperty } from '@/views/iot/product/components/thing-model'
 import DeviceState from './components/device-state.vue'
 import DeviceTrend from './components/device-trend.vue'

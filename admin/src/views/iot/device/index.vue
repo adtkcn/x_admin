@@ -127,15 +127,9 @@
 </template>
 <script lang="ts" setup>
 import { ref, shallowRef, reactive, nextTick, onMounted } from 'vue'
-import {
-    deviceLists,
-    deviceDel,
-    productAll,
-    deviceSpaceAll,
-    type type_iot_device_list,
-    type type_iot_device,
-    type type_iot_product
-} from '@/api/iot'
+import { deviceLists, deviceDel, type type_iot_device_list, type type_iot_device } from '@/api/iot/device'
+import { productAll, type type_iot_product } from '@/api/iot/product'
+import { deviceSpaceAll } from '@/api/iot/device_space'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'

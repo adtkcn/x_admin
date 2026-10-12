@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, shallowRef, onMounted, onBeforeUnmount, watch } from 'vue'
-import { deviceData, type type_device_data } from '@/api/iot'
+import { deviceData, type type_device_data } from '@/api/iot/device'
 import { echarts } from '@/utils/echart'
 import { isNumericType, type ThingProperty } from '@/views/iot/product/components/thing-model'
 

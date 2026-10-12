@@ -118,15 +118,14 @@ import { ref, reactive, onMounted } from 'vue'
 import {
     alertLists,
     alertDel,
-    productAll,
-    deviceSpaceAll,
     SeverityLevels,
     SeverityMap,
     SeverityTagType,
     type type_iot_alert,
-    type type_iot_alert_list,
-    type type_iot_product
-} from '@/api/iot'
+    type type_iot_alert_list
+} from '@/api/iot/alert'
+import { productAll, type type_iot_product } from '@/api/iot/product'
+import { deviceSpaceAll } from '@/api/iot/device_space'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'

@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref, useTemplateRef, defineAsyncComponent } from 'vue'
-import { ruleChainAdd, ruleChainEdit, type type_rule_chain } from '@/api/iot'
+import { ruleChainAdd, ruleChainEdit, type type_rule_chain } from '@/api/iot/rule_chain'
 import feedback from '@/utils/feedback'
 
 const RuleChainDesigner = defineAsyncComponent(

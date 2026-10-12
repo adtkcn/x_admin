@@ -117,17 +117,9 @@
 <script lang="ts" setup>
 import { ref, computed, shallowRef } from 'vue'
 import type { FormInstance } from 'element-plus'
-import {
-    deviceAdd,
-    deviceEdit,
-    deviceDetail,
-    deviceLists,
-    productAll,
-    deviceSpaceAll,
-    nodeTypeSupportsGateway,
-    type type_iot_device,
-    type type_iot_product
-} from '@/api/iot'
+import { deviceAdd, deviceEdit, deviceDetail, deviceLists, type type_iot_device } from '@/api/iot/device'
+import { productAll, nodeTypeSupportsGateway, type type_iot_product } from '@/api/iot/product'
+import { deviceSpaceAll } from '@/api/iot/device_space'
 import Popup from '@/components/popup/index.vue'
 import MapPicker from '@/components/map-picker/index.vue'
 import type { MapCoordinate } from '@/components/map-picker/type'

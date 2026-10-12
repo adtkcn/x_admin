@@ -52,7 +52,7 @@ import {
     productCategoryEdit,
     productCategoryDetail,
     type type_iot_product_category
-} from '@/api/iot'
+} from '@/api/iot/product_category'
 import Popup from '@/components/popup/index.vue'
 import feedback from '@/utils/feedback'
 import { arrayToTree } from '@/utils/util'

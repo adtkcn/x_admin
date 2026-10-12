@@ -70,16 +70,11 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import {
-    deviceSpaceAll,
-    deviceMap,
-    deviceState,
-    SeverityLevels,
-    SeverityMap,
-    SeverityColor,
-    type type_iot_device_space,
-    type type_device_map_item
-} from '@/api/iot'
+import { deviceSpaceAll, type type_iot_device_space } from '@/api/iot/device_space'
+import { deviceMap, deviceState, type type_device_map_item } from '@/api/iot/device'
+import { productDetail } from '@/api/iot/product'
+import { SeverityLevels, SeverityMap, SeverityColor } from '@/api/iot/alert'
+import { parseThingModel, type ThingProperty } from '@/views/iot/product/components/thing-model'
 import { arrayToTree } from '@/utils/util'
 import { useGlobalWs, onWsMessage, type WsEvent } from '@/hooks/useGlobalWs'
 import { useIotMap } from './useIotMap'
@@ -95,6 +90,20 @@ const currentSpace = ref('')
 
 // 设备最新值缓存：telemetry 推送实时写入，popup 展示用
 const latestValues = reactive<Record<string, Record<string, any>>>({})
+
+// 产品物模型缓存：弹窗按属性名/单位展示实时值（同实时状态 tab），加载点位后按产品补齐
+const productProps = reactive<Record<string, ThingProperty[]>>({})
+const ensureProductProps = async (pids: string[]) => {
+    for (const pid of pids) {
+        if (!pid || productProps[pid]) continue
+        try {
+            const p = await productDetail({ id: pid })
+            productProps[pid] = parseThingModel(p.thing_model || '').properties
+        } catch {
+            productProps[pid] = []
+        }
+    }
+}
 
 // 区域子树 id（空间模型是 pid 邻接表，子树在前端收集）
 const subtreeIds = (rootId: string): string[] => {
@@ -136,6 +145,7 @@ const map = useIotMap({
     spaces,
     currentSpace,
     getPopupValues: (id) => latestValues[id],
+    getPopupThingProps: (id) => productProps[map.getPoint(id)?.product_id || ''] || [],
     onSelectSpace: (id) => selectSpace(id),
     onPopupOpen: (id) => ensureValues(id)
 })
@@ -144,6 +154,8 @@ const map = useIotMap({
 const loadPoints = async () => {
     const ids = subtreeIds(currentSpace.value)
     points.value = await deviceMap({ space_ids: ids.join(',') })
+    // 按当前点位涉及的产品补齐物模型，供弹窗映射属性名/单位
+    ensureProductProps(Array.from(new Set(points.value.map((p) => p.product_id).filter(Boolean))))
     map.refreshAll()
     // 全部视图（未选区域，ids 为空）适配到所有带轮廓的区域范围，避免停留在初始 zoom
     map.fitToSubtree(ids.length ? ids : spaces.value.map((s) => s.id!).filter(Boolean))

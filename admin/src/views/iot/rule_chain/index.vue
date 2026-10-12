@@ -76,7 +76,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, shallowRef, reactive, nextTick, defineComponent } from 'vue'
-import { ruleChainLists, ruleChainDel, type type_rule_chain, type type_rule_chain_list } from '@/api/iot'
+import { ruleChainLists, ruleChainDel, type type_rule_chain, type type_rule_chain_list } from '@/api/iot/rule_chain'
 import { usePaging } from '@/hooks/usePaging'
 import feedback from '@/utils/feedback'
 

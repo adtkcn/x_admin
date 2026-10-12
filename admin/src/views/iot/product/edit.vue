@@ -112,15 +112,9 @@
 <script lang="ts" setup>
 import { ref, computed, shallowRef } from 'vue'
 import type { FormInstance } from 'element-plus'
-import {
-    productAdd,
-    productEdit,
-    productDetail,
-    productCategoryAll,
-    ruleChainAll,
-    type type_iot_product,
-    type type_rule_chain
-} from '@/api/iot'
+import { productAdd, productEdit, productDetail, type type_iot_product } from '@/api/iot/product'
+import { productCategoryAll } from '@/api/iot/product_category'
+import { ruleChainAll, type type_rule_chain } from '@/api/iot/rule_chain'
 import Popup from '@/components/popup/index.vue'
 import ThingModelDialog from './components/thing-model.vue'
 import { countProperties } from './components/thing-model'

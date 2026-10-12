@@ -90,7 +90,7 @@ import {
     deviceSpaceDel,
     deviceSpaceSort,
     type type_iot_device_space
-} from '@/api/iot'
+} from '@/api/iot/device_space'
 import feedback from '@/utils/feedback'
 
 defineOptions({

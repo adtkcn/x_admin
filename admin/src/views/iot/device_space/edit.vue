@@ -64,7 +64,7 @@ import {
     deviceSpaceEdit,
     deviceSpaceDetail,
     type type_iot_device_space
-} from '@/api/iot'
+} from '@/api/iot/device_space'
 import Popup from '@/components/popup/index.vue'
 import MapAreaPicker from '@/components/map-area-picker/index.vue'
 import feedback from '@/utils/feedback'

@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { deviceState, type type_device_state } from '@/api/iot'
+import { deviceState, type type_device_state } from '@/api/iot/device'
 import type { ThingProperty } from '@/views/iot/product/components/thing-model'
 import { displayValue } from './thing-display'
 

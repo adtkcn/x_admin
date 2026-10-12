@@ -1,12 +1,11 @@
 import { createApp, h, shallowRef, type App, type Ref } from 'vue'
 import { Map as MapLibreMap, NavigationControl, Popup } from 'maplibre-gl'
 import type { StyleSpecification } from 'maplibre-gl'
-import {
-    SeverityColor,
-    type type_iot_device_space,
-    type type_device_map_item
-} from '@/api/iot'
+import { SeverityColor } from '@/api/iot/alert'
+import type { type_iot_device_space } from '@/api/iot/device_space'
+import type { type_device_map_item } from '@/api/iot/device'
 import DevicePopup from './components/device-popup.vue'
+import type { ThingProperty } from '@/views/iot/product/components/thing-model'
 
 // 大屏地图组合式函数：只负责 MapLibre 实例、样式/图层/数据源、区域面与设备点的渲染、
 // 点击命中路由、popup 呈现与视野适配；设备数据(在线状态/告警级别)与最新值由调用方以 ref 传入，
@@ -19,13 +18,16 @@ export interface UseIotMapOptions {
     currentSpace: Ref<string>
     // popup 取该设备当前实时值（无则调用方回读快照写入响应式后，卡片自动刷新）
     getPopupValues: (deviceId: string) => Record<string, any> | undefined
+    // popup 取该设备所属产品物模型属性（空表示未配物模型，组件回退原始键值）
+    getPopupThingProps: (deviceId: string) => ThingProperty[]
     // 点中区域轮廓 → 选中该区域；点开设备 popup → 通知调用方回读存量值
     onSelectSpace: (spaceId: string) => void
     onPopupOpen: (deviceId: string) => void
 }
 
 export function useIotMap(opts: UseIotMapOptions) {
-    const { container, points, spaces, currentSpace, getPopupValues, onSelectSpace, onPopupOpen } = opts
+    const { container, points, spaces, currentSpace, getPopupValues, getPopupThingProps, onSelectSpace, onPopupOpen } =
+        opts
 
     const map = shallowRef<MapLibreMap>()
     // popup 与其内部挂载的 Vue 应用：整个大屏共用一个实例，切设备只移点位、靠响应式重渲
@@ -56,7 +58,7 @@ export function useIotMap(opts: UseIotMapOptions) {
                 layers: [{ id: 'custom-raster', type: 'raster', source: 'custom' }]
             }
         }
-        return 'https://demotiles.maplibre.org/style.json'
+        return ''
     }
 
     // ---------------- GeoJSON 组装（纯地图数据转换） ----------------
@@ -187,7 +189,8 @@ export function useIotMap(opts: UseIotMapOptions) {
                         sn: p.sn,
                         status: p.status ?? 0,
                         severity: p.severity ?? 0,
-                        values: getPopupValues(p.id!)
+                        values: getPopupValues(p.id!),
+                        thingProps: getPopupThingProps(p.id!)
                     })
                 }
             })

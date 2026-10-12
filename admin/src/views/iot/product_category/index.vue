@@ -83,7 +83,7 @@ import {
     productCategoryDel,
     productCategorySort,
     type type_iot_product_category
-} from '@/api/iot'
+} from '@/api/iot/product_category'
 import feedback from '@/utils/feedback'
 
 defineOptions({
