@@ -29,6 +29,7 @@ export default defineConfig({
             collapsed: false,
             items: [
               { text: '模块概述', link: '/server/功能说明/模块概述.md' },
+              { text: 'IoT 模块', link: '/server/功能说明/IoT模块.md' },
               { text: '定时任务', link: '/server/功能说明/定时任务.md' },
               { text: '异步队列', link: '/server/功能说明/异步队列.md' },
               { text: '邮件发送', link: '/server/功能说明/邮件发送.md' },
