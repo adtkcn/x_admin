@@ -21,14 +21,14 @@
                 v-model="nodeProps"
                 :hint="RC_SCRIPT_HINTS.rule_decode"
                 :template="RC_SCRIPT_TEMPLATES.rule_decode"
-                placeholder="function decode(values, sn) {&#10;  // values: 初始上报值;  return { temp: 25, hum: 60 }&#10;}"
+                placeholder="function run(values, sn) {&#10;  // values: 初始上报值;  return { temp: 25, hum: 60 }&#10;}"
             ></Script>
             <Script
                 v-else-if="nodeKey === 'rule_filter'"
                 v-model="nodeProps"
                 :hint="RC_SCRIPT_HINTS.rule_filter"
                 :template="RC_SCRIPT_TEMPLATES.rule_filter"
-                placeholder="function filter(values, sn) {&#10;  return values.temp > 0&#10;}"
+                placeholder="function run(values, sn) {&#10;  return values.temp > 0&#10;}"
             ></Script>
             <div v-else-if="nodeKey === 'rule_parallel'" class="rc-tip">并行节点：报文同时流向所有后续分支，是唯一允许连接多个后续节点的节点，无需配置。</div>
             <Script
@@ -36,7 +36,7 @@
                 v-model="nodeProps"
                 :hint="RC_SCRIPT_HINTS.rule_bool"
                 :template="RC_SCRIPT_TEMPLATES.rule_bool"
-                placeholder="function filter(values, sn) {&#10;  return values.temp > 30&#10;}"
+                placeholder="function run(values, sn) {&#10;  return values.temp > 30&#10;}"
             ></Script>
             <Alarm v-else-if="nodeKey === 'rule_alarm'" v-model="nodeProps"></Alarm>
             <div v-else-if="nodeKey === 'rule_state'" class="rc-tip">状态快照节点：把流经的最新属性写入 Redis 快照，供管理端与大屏即时读取，无需配置。</div>

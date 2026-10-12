@@ -71,7 +71,7 @@ func rcTrigger(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	return true
 }
 
-// rcDecode 解码节点：以当前流经属性执行 goja decode(values)，覆盖 ctx.values；产出空则丢弃本条。
+// rcDecode 解码节点：以当前流经属性执行 goja run(values)，覆盖 ctx.values；产出空则丢弃本条。
 func rcDecode(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	script := ""
 	if node.Properties.Decode != nil {
@@ -87,7 +87,7 @@ func rcDecode(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	return true
 }
 
-// rcFilter 数据过滤节点：goja filter(values) 返回 false 则丢弃整条报文（全局短路）。
+// rcFilter 数据过滤节点：goja run(values) 返回 false 则丢弃整条报文（全局短路）。
 func rcFilter(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	script := ""
 	if node.Properties.Filter != nil {
@@ -100,7 +100,7 @@ func rcFilter(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	return true
 }
 
-// rcBool 布尔节点：goja filter(values) 返 true 继续走子节点；false 只剪本分支（不置 halt）。
+// rcBool 布尔节点：goja run(values) 返 true 继续走子节点；false 只剪本分支（不置 halt）。
 func rcBool(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	script := ""
 	if node.Properties.Bool != nil {
@@ -109,7 +109,7 @@ func rcBool(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	return execFilter(ctx.msg, ctx.nodeKey(node), script, ctx.values)
 }
 
-// rcAlarm 告警节点：goja alert(values) 的级别交给告警子包状态机收敛；未配脚本则不参与告警。
+// rcAlarm 告警节点：goja run(values) 的级别交给告警子包状态机收敛；未配脚本则不参与告警。
 func rcAlarm(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 	p := node.Properties.Alarm
 	if p == nil || p.Script == "" {

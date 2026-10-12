@@ -10,16 +10,21 @@ import (
 	"github.com/dop251/goja"
 )
 
-// goja 脚本执行原语（解码/过滤/告警节点共用），均约定定义同名全局函数、以 sn 作第 2 个参数；
-// 脚本为空即“透传/默认值”，不阻断链路：
-//   - decode(values, sn) → 物模型属性对象（values 入链时为设备初始上报值）
-//   - filter(values, sn) → 布尔，true 放行、false 丢弃本条
-//   - alert(values, sn)  → 告警级别数字（0=不告警/恢复；危害升序：-1=故障、1=轻微、2=严重，3+ 预留）
+// goja 脚本执行原语（解码/过滤/告警节点共用）：不论哪种脚本节点，都统一实现全局函数
+// run(values, sn)（sn 作第 2 个参数），后端固定调用 run，不再按节点类型区分函数名；
+// 脚本为空即“透传/默认值”，不阻断链路，仅返回契约按节点类型不同：
+//   - 解码 run(values, sn)      → 物模型属性对象（values 入链时为设备初始上报值）
+//   - 过滤/布尔 run(values, sn) → 布尔，true 放行、false 丢弃本条
+//   - 告警 run(values, sn)      → 告警级别数字（0=不告警/恢复；危害升序：-1=故障、1=轻微、2=严重，3+ 预留）
 //
 // 编译一次、每条报文新建 Runtime：goja.Runtime 非并发安全，跨 goroutine 复用要加锁，
 // 反而把并发流水线串成串行；Program 复用省掉编译，新建 Runtime 开销可接受。
 // 缓存键由调用方传入（规则链下是「链ID:节点ID」——脚本内嵌在图节点里，归属是链而非产品），
 // 原文变更时按内容比对重编译。
+
+// scriptFn 各脚本节点统一的 goja 全局入口函数名（解码/过滤/告警都实现 run(values, sn)）。
+// stage 仍按节点类型区分，仅用于编译文件名、缓存键后缀与日志定位，不再当函数名。
+const scriptFn = "run"
 
 // compiledScript 某缓存键当前编译好的程序，raw 变了就重编译
 type compiledScript struct {
@@ -103,8 +108,8 @@ func execAlertSeverity(msg iot_schema.IngestMsg, cacheKey, script string, values
 	}
 }
 
-// runScript 编译并按名调用全局函数 fn(values, sn)；ok=false 表示脚本未跑起来（编译失败/panic/未定义函数），
-// 降级语义由调用方决定。
+// runScript 编译并调用全局函数 run(values, sn)；ok=false 表示脚本未跑起来（编译失败/panic/未定义函数），
+// 降级语义由调用方决定。stage 只用于日志定位。
 func runScript(stage string, msg iot_schema.IngestMsg, cacheKey, script string, values map[string]any) (goja.Value, bool) {
 	prog := compile(cacheKey, stage, script)
 	if prog == nil {
@@ -134,29 +139,29 @@ func compile(cacheKey, stage, script string) *goja.Program {
 	return prog
 }
 
-// callScript 在独立 Runtime 里跑一次程序并调用全局函数 fn(arg, sn)。
+// callScript 在独立 Runtime 里跑一次程序并调用全局函数 run(arg, sn)。stage 仅用于日志定位。
 // 脚本可能抛异常或死循环触发栈溢出，统一 recover 兜住，单条报文失败不拖垮 worker。
-func callScript(prog *goja.Program, fnName string, arg any, sn string) (val goja.Value, ok bool) {
+func callScript(prog *goja.Program, stage string, arg any, sn string) (val goja.Value, ok bool) {
 	defer func() {
 		if r := recover(); r != nil {
-			core.Logger.Errorf("[iot规则链] %s 脚本 panic sn=%s err=%v", fnName, sn, r)
+			core.Logger.Errorf("[iot规则链] %s 脚本 panic sn=%s err=%v", stage, sn, r)
 			val, ok = nil, false
 		}
 	}()
 
 	vm := goja.New()
 	if _, err := vm.RunProgram(prog); err != nil {
-		core.Logger.Errorf("[iot规则链] %s 脚本执行失败 sn=%s err=%v", fnName, sn, err)
+		core.Logger.Errorf("[iot规则链] %s 脚本执行失败 sn=%s err=%v", stage, sn, err)
 		return nil, false
 	}
-	fn, isFn := goja.AssertFunction(vm.Get(fnName))
+	fn, isFn := goja.AssertFunction(vm.Get(scriptFn))
 	if !isFn {
-		core.Logger.Errorf("[iot规则链] %s 脚本未定义全局函数 %s sn=%s", fnName, fnName, sn)
+		core.Logger.Errorf("[iot规则链] %s 脚本未定义全局函数 %s sn=%s", stage, scriptFn, sn)
 		return nil, false
 	}
 	v, err := fn(goja.Undefined(), vm.ToValue(arg), vm.ToValue(sn))
 	if err != nil {
-		core.Logger.Errorf("[iot规则链] %s 脚本调用失败 sn=%s err=%v", fnName, sn, err)
+		core.Logger.Errorf("[iot规则链] %s 脚本调用失败 sn=%s err=%v", stage, sn, err)
 		return nil, false
 	}
 	return v, true

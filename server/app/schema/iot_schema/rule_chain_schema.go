@@ -57,11 +57,11 @@ type RuleChainResp struct {
 // 规则链节点类型常量（前缀 rule: 与 LogicFlow 注册名、执行器分发表一致）
 const (
 	RcNodeTrigger  = "rule:trigger"  // 触发器：按报文类型入口过滤（当前仅属性上报 telemetry）
-	RcNodeDecode   = "rule:decode"   // 解码：goja decode(values) 基于初始上报值产出属性对象
-	RcNodeFilter   = "rule:filter"   // 数据过滤：goja filter(values) 返回布尔，false 丢弃整条报文
+	RcNodeDecode   = "rule:decode"   // 解码：goja run(values) 基于初始上报值产出属性对象
+	RcNodeFilter   = "rule:filter"   // 数据过滤：goja run(values) 返回布尔，false 丢弃整条报文
 	RcNodeParallel = "rule:parallel" // 并行：唯一允许多出口的节点，所有子路径同时分流
-	RcNodeBool     = "rule:bool"     // 布尔：goja filter(values) 返回 true 继续 / false 仅忽略本分支
-	RcNodeAlarm    = "rule:alarm"    // 告警：goja alert(values)+持续/恢复状态机
+	RcNodeBool     = "rule:bool"     // 布尔：goja run(values) 返回 true 继续 / false 仅忽略本分支
+	RcNodeAlarm    = "rule:alarm"    // 告警：goja run(values)+持续/恢复状态机
 	RcNodeState    = "rule:state"    // 状态快照：写 Redis 最新属性，供管理端/大屏即时读
 	RcNodeHistory  = "rule:history"  // 历史存储：写 MySQL 时序历史表
 	RcNodeNotify   = "rule:notify"   // 通知：站内/邮件/webhook（可扩展）
@@ -86,7 +86,7 @@ type RcTriggerProps struct {
 }
 
 // RcScriptProps 单脚本节点（解码/过滤/布尔共用）：script 为空则该级透传。
-// 布尔节点同样约定函数名 filter(values, sn)：true 继续、false 忽略本分支。
+// 各脚本节点统一约定函数名 run(values, sn)（解码返对象、过滤/布尔返 true 继续、false 丢弃/剪枝）。
 type RcScriptProps struct {
 	Script string `json:"script"`
 }
