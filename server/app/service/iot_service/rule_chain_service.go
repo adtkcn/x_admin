@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// RuleChainService 可视化规则链：既是管理端 CRUD 出入口，也向处理层提供图缓存读取，
+// RuleChainService 可视化规则链：既是管理端 CRUD 出入口，也向处理层提供执行树缓存读取，
 // 替代原产品级三段 goja 脚本（解码/过滤/告警）。
 var RuleChainService = NewRuleChainService()
 
@@ -28,8 +28,8 @@ type ruleChainService struct {
 	db *gorm.DB
 }
 
-// graphCacheKey 规则链图缓存键：按链ID缓存，多产品复用同一条链时共享一份。
-func graphCacheKey(chainId string) string {
+// chainCacheKey 规则链缓存键：按链 ID缓存执行树原文，多产品复用同一条链时共享一份。
+func chainCacheKey(chainId string) string {
 	return iotCacheKey("rulechain:" + chainId)
 }
 
@@ -82,39 +82,22 @@ func (s ruleChainService) Detail(id string) (res iot_schema.RuleChainResp, e err
 	return
 }
 
-// checkGraph 图必须是合法 JSON（处理层逐报文解析，存非法 JSON 比静默降级更难排查）
-func checkGraph(graphRaw string) error {
-	if graphRaw == "" {
-		return nil
+// checkTree 执行树必须能反序列化为 RuleTreeNode 且以「输入」为根。
+// graph_data 仅供绘图、后端不执行；规模上限/防环由前端 buildRcTree 保证，后端保存与运行期均不再重复设限。
+func checkTree(treeRaw string) error {
+	var root iot_schema.RuleTreeNode
+	if err := json.Unmarshal([]byte(treeRaw), &root); err != nil {
+		return response.AssertArgumentError.SetMessage("规则链执行树结构不合法!")
 	}
-	if !json.Valid([]byte(graphRaw)) {
-		return response.AssertArgumentError.SetMessage("规则链图必须是合法的 JSON!")
-	}
-	var g iot_schema.RuleChainGraph
-	if err := json.Unmarshal([]byte(graphRaw), &g); err != nil {
-		return response.AssertArgumentError.SetMessage("规则链图结构不合法!")
-	}
-	// 除并行节点外每个节点最多一条出边：链为单路径，分流必须经「并行」
-	outCount := map[string]int{}
-	for _, e := range g.Edges {
-		outCount[e.SourceNodeId]++
-	}
-	for _, n := range g.Nodes {
-		if n.Type == iot_schema.RcNodeParallel || outCount[n.ID] <= 1 {
-			continue
-		}
-		label := n.Text.Value
-		if label == "" {
-			label = n.Type
-		}
-		return response.AssertArgumentError.SetMessage("节点「" + label + "」只允许连接一个后续节点，分流请使用并行节点!")
+	if root.Type != iot_schema.RcNodeTrigger {
+		return response.AssertArgumentError.SetMessage("规则链执行树必须以「输入」节点为根!")
 	}
 	return nil
 }
 
 // Add 新增规则链
 func (s ruleChainService) Add(addReq iot_schema.RuleChainAddReq) (e error) {
-	if e = checkGraph(addReq.GraphData); e != nil {
+	if e = checkTree(addReq.TreeData); e != nil {
 		return
 	}
 	var row iot_model.IotRuleChain
@@ -123,9 +106,9 @@ func (s ruleChainService) Add(addReq iot_schema.RuleChainAddReq) (e error) {
 	return
 }
 
-// Edit 编辑规则链：变更后失效处理层图缓存，避免沿用旧拓扑
+// Edit 编辑规则链：变更后失效处理层执行树缓存，避免沿用旧拓扑
 func (s ruleChainService) Edit(editReq iot_schema.RuleChainEditReq) (e error) {
-	if e = checkGraph(editReq.GraphData); e != nil {
+	if e = checkTree(editReq.TreeData); e != nil {
 		return
 	}
 	var row iot_model.IotRuleChain
@@ -136,7 +119,7 @@ func (s ruleChainService) Edit(editReq iot_schema.RuleChainEditReq) (e error) {
 	if e = response.CheckErr(s.db.Model(&row).Select("*").Omit("id", "create_time").Updates(row).Error, "编辑失败"); e != nil {
 		return
 	}
-	InvalidateGraphCache(editReq.ID)
+	InvalidateChainCache(editReq.ID)
 	return
 }
 
@@ -157,17 +140,17 @@ func (s ruleChainService) Del(id string) (e error) {
 	if result.RowsAffected == 0 {
 		return errors.New("规则链不存在")
 	}
-	InvalidateGraphCache(id)
+	InvalidateChainCache(id)
 	return
 }
 
-// CachedGraphRaw 取规则链图原文（Redis 缓存 ThingCacheTTL 秒），供处理层逐报文解析执行。
+// CachedTreeRaw 取规则链执行树原文（Redis 缓存 ThingCacheTTL 秒），供处理层逐报文解析执行。
 // 命中即返回；库侧不存在时返回空串（处理层按“未配置链”丢弃上报）。
-func (s ruleChainService) CachedGraphRaw(chainId string) string {
+func (s ruleChainService) CachedTreeRaw(chainId string) string {
 	if chainId == "" {
 		return ""
 	}
-	key := graphCacheKey(chainId)
+	key := chainCacheKey(chainId)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	if val, err := core.Redis.Get(ctx, key).Result(); err == nil {
@@ -178,26 +161,26 @@ func (s ruleChainService) CachedGraphRaw(chainId string) string {
 
 	var row iot_model.IotRuleChain
 	raw := ""
-	if s.db.Select("graph_data").Where("id = ? AND is_stop = 0", chainId).First(&row).Error == nil {
-		raw = row.GraphData
+	if s.db.Select("tree_data").Where("id = ? AND is_stop = 0", chainId).First(&row).Error == nil {
+		raw = row.TreeData
 	}
 	// 回源即缓存（含空串的“链不存在/停用”标记），避免不存在的链被每条报文反复打库。
-	// graph_data 本身已是 JSON 文本，必须原样存：对它再 json.Marshal 会得到带外层引号的
-	// 字符串，命中缓存时解析出的是 string 而非对象，报 cannot unmarshal string into RuleChainGraph。
+	// tree_data 本身已是 JSON 文本，必须原样存：对它再 json.Marshal 会得到带外层引号的
+	// 字符串，命中缓存时解析出的是 string 而非对象，报 cannot unmarshal string into RuleTreeNode。
 	if err := core.Redis.Set(ctx, key, raw, time.Duration(config.IotConfig.ThingCacheTTL)*time.Second).Err(); err != nil {
 		core.Logger.Errorf("写规则链缓存失败 chainId=%s err=%v", chainId, err)
 	}
 	return raw
 }
 
-// InvalidateGraphCache 规则链编辑/删除后失效处理层图缓存（包级函数，供 service 内部调用）
-func InvalidateGraphCache(chainId string) {
+// InvalidateChainCache 规则链编辑/删除后失效处理层执行树缓存（包级函数，供 service 内部调用）
+func InvalidateChainCache(chainId string) {
 	if chainId == "" {
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	if err := core.Redis.Del(ctx, graphCacheKey(chainId)).Err(); err != nil {
+	if err := core.Redis.Del(ctx, chainCacheKey(chainId)).Err(); err != nil {
 		core.Logger.Errorf("失效规则链缓存失败 chainId=%s err=%v", chainId, err)
 	}
 }

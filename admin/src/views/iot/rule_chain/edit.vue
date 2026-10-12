@@ -92,15 +92,16 @@ async function publish() {
     if (!formData.value.name?.trim()) {
         return feedback.msgError('请输入规则链名称')
     }
-    let graph: Record<string, any>
+    let result: { graph: Record<string, any>; tree: Record<string, any> }
     try {
-        graph = await designerRef.value!.getData()
+        result = await designerRef.value!.getData()
     } catch (err: any) {
         return feedback.msgError(err?.message ?? '规则链校验未通过')
     }
     const payload: type_rule_chain = {
         ...formData.value,
-        graph_data: JSON.stringify(graph)
+        graph_data: JSON.stringify(result.graph),
+        tree_data: JSON.stringify(result.tree)
     }
     if (mode.value === 'edit') {
         await ruleChainEdit(payload)

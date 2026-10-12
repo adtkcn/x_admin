@@ -16,11 +16,11 @@ import (
 
 // 规则链节点处理器注册表：每种节点一个 handler，签名统一为
 //
-//	handler(ctx, node) bool —— 执行节点副作用，返回本分支是否继续下钻 children（后继由 rcStep.children 决定）
+//	handler(ctx, node) bool —— 执行节点副作用，返回本分支是否继续下钻 children（后继由 node.Children 决定）
 //
 // 新增一种节点只需：注册 handler + schema 加属性 struct + 前端加节点/属性子面板，不改遍历主逻辑；
 // 未知类型按“继续下钻”兜底。
-type rcHandler func(ctx *ruleCtx, node *iot_schema.RuleNode) bool
+type rcHandler func(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool
 
 var rcHandlers = map[string]rcHandler{
 	iot_schema.RcNodeTrigger: rcTrigger,
@@ -36,7 +36,7 @@ var rcHandlers = map[string]rcHandler{
 }
 
 // applyRcNode 分派节点：未知类型按继续下钻处理（向前兼容未注册执行器的新节点）
-func applyRcNode(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func applyRcNode(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	if h, ok := rcHandlers[node.Type]; ok {
 		return h(ctx, node)
 	}
@@ -44,17 +44,17 @@ func applyRcNode(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 }
 
 // nodeKey 节点脚本的编译缓键「链ID:节点ID」：nodeId 链内已唯一，链ID 做前缀让多产品共用同一条链时复用编译结果
-func (c *ruleCtx) nodeKey(node *iot_schema.RuleNode) string {
+func (c *ruleCtx) nodeKey(node *iot_schema.RuleTreeNode) string {
 	return c.model.RuleChainId + ":" + node.ID
 }
 
 // rcPassthrough 并行节点：分流由树的多 children 表达，自身无副作用，始终继续下钻。
-func rcPassthrough(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcPassthrough(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	return true
 }
 
 // rcTrigger 触发器：配置了 msg_types 时只放行命中的报文类型，否则全放行。
-func rcTrigger(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcTrigger(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	if p := node.Properties.Trigger; p != nil && len(p.MsgTypes) > 0 {
 		allowed := false
 		for _, t := range p.MsgTypes {
@@ -72,7 +72,7 @@ func rcTrigger(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 }
 
 // rcDecode 解码节点：以当前流经属性执行 goja run(values)，覆盖 ctx.values；产出空则丢弃本条。
-func rcDecode(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcDecode(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	script := ""
 	if node.Properties.Decode != nil {
 		script = node.Properties.Decode.Script
@@ -88,7 +88,7 @@ func rcDecode(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 }
 
 // rcFilter 数据过滤节点：goja run(values) 返回 false 则丢弃整条报文（全局短路）。
-func rcFilter(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcFilter(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	script := ""
 	if node.Properties.Filter != nil {
 		script = node.Properties.Filter.Script
@@ -101,7 +101,7 @@ func rcFilter(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 }
 
 // rcBool 布尔节点：goja run(values) 返 true 继续走子节点；false 只剪本分支（不置 halt）。
-func rcBool(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcBool(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	script := ""
 	if node.Properties.Bool != nil {
 		script = node.Properties.Bool.Script
@@ -110,7 +110,7 @@ func rcBool(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 }
 
 // rcAlarm 告警节点：goja run(values) 的级别交给告警子包状态机收敛；未配脚本则不参与告警。
-func rcAlarm(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcAlarm(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	p := node.Properties.Alarm
 	if p == nil || p.Script == "" {
 		return true
@@ -122,13 +122,13 @@ func rcAlarm(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 
 // rcState 状态快照节点：把流经的最新属性写 Redis 快照，供管理端回读；同时标进大屏脏集合，
 // 由定时任务统一推大屏（快照受物模型白名单约束）。
-func rcState(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcState(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	online.SaveLatestValues(ctx.msg.DeviceId, ctx.msg.SpaceId, ctx.values, ctx.model.ThingIds)
 	return true
 }
 
 // rcHistory 历史存储节点：经存储子包追加写时序表，落库前受产品物模型白名单（ctx.model.ThingIds）约束。
-func rcHistory(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcHistory(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	if err := store.Write(ctx.msg, ctx.values, ctx.model.ThingIds); err != nil {
 		core.Logger.Errorf("[iot规则链] 历史存储写时序失败 sn=%s err=%v", ctx.msg.Sn, err)
 	}
@@ -136,7 +136,7 @@ func rcHistory(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
 }
 
 // rcNotify 通知节点：站内/邮件/webhook（邮件与 webhook 走异步队列，避免外部依赖阻塞报文处理）；单节点只配一种类型。
-func rcNotify(ctx *ruleCtx, node *iot_schema.RuleNode) bool {
+func rcNotify(ctx *ruleCtx, node *iot_schema.RuleTreeNode) bool {
 	p := node.Properties.Notify
 	if p == nil || p.ServiceType == "" {
 		return true

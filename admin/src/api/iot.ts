@@ -87,12 +87,14 @@ export function productDel(data: { id: string }) {
 }
 
 // ===================== 可视化规则链（替代产品级解码/过滤/告警脚本） =====================
-// graph_data 为 LogicFlow 原生图 { nodes, edges }，节点的私有属性按命名空间收纳于 properties
+// graph_data 为 LogicFlow 原生图 { nodes, edges }（仅供绘图）；tree_data 为同源展开的执行树（后端消费），
+// 节点的私有属性按命名空间收纳于 properties
 export type type_rule_chain = {
     id?: string
     name?: string
     remark?: string
     graph_data?: string
+    tree_data?: string
     is_stop?: number
     create_time?: string
     update_time?: string

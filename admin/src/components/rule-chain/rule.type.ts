@@ -169,3 +169,71 @@ export const RC_SCRIPT_HINTS: Partial<Record<RcNodeKey, string>> = {
 }
 
 // 边无配置：除并行节点外每个节点只允许一条出边，由设计器与后端保存时共同约束
+
+// ===================== 执行树：图 → 树（后端只消费此树，graph_data 仅供绘图） =====================
+// 与后端 iot_schema.RuleTreeNode 对齐：label 取节点文字，properties 仅保留命名空间属性（剔除 width/height）。
+export type RcTreeNode = {
+    id: string
+    type: RcNodeType
+    label: string
+    properties: RcPropertiesType
+    children: RcTreeNode[]
+}
+
+// 规模上限与后端 iot_service.treeMaxDepth / treeMaxNodes 一致（前端先拦截，后端再防御）
+const RC_TREE_MAX_DEPTH = 64
+const RC_TREE_MAX_NODES = 4096
+
+/**
+ * 以「输入」为根把 LogicFlow 图展开成执行树，复刻后端旧的图展开语义：
+ * 扇入节点按每条路径各留一份副本、沿路径防环、限深度与节点总数。
+ * 非法（缺根 / 成环 / 悬空引用 / 超限）时 throw { message }，由调用方提示。
+ */
+export function buildRcTree(graph: Record<string, any>): RcTreeNode {
+    const nodes = (graph?.nodes as RcNodeTypeData[]) || []
+    const edges = (graph?.edges as any[]) || []
+    const nodeMap = new Map<string, RcNodeTypeData>()
+    let rootId = ''
+    for (const n of nodes) {
+        if (!n.id) continue
+        nodeMap.set(n.id, n)
+        if (rcNodeKeyOf(n.type) === 'rule_trigger' && !rootId) rootId = n.id
+    }
+    if (!rootId) throw { message: '规则链-必须有且仅有一个「输入」入口节点' }
+
+    // 邻接表：源节点 → 目标列表（保持 edges 原序，与旧后端展开一致）
+    const outMap = new Map<string, string[]>()
+    for (const e of edges) {
+        if (!e?.sourceNodeId || !e?.targetNodeId) continue
+        const arr = outMap.get(e.sourceNodeId) || []
+        arr.push(e.targetNodeId)
+        outMap.set(e.sourceNodeId, arr)
+    }
+
+    let budget = RC_TREE_MAX_NODES
+    const onPath = new Set<string>() // 仅标记「根→当前节点」路径，返回时回溯剔除，故扇入会展开成多副本
+
+    const dfs = (id: string, depth: number): RcTreeNode => {
+        if (budget-- <= 0) throw { message: '规则链-节点展开超限（疑似报文放大）' }
+        if (depth > RC_TREE_MAX_DEPTH) throw { message: '规则链-链深度超限' }
+        const node = nodeMap.get(id)
+        if (!node) throw { message: `规则链-引用了不存在的节点 ${id}` }
+        if (onPath.has(id)) throw { message: '规则链-存在环' }
+        onPath.add(id)
+        try {
+            const children = (outMap.get(id) || []).map((t) => dfs(t, depth + 1))
+            // 剔除 LogicFlow 节点模型的绘图尺寸（width/height），只保留命名空间属性
+            const { width, height, ...props } = (node.properties as Record<string, any>) || {}
+            return {
+                id,
+                type: node.type as RcNodeType,
+                label: typeof node.text === 'string' ? node.text : node.text?.value ?? '',
+                properties: props as RcPropertiesType,
+                children
+            }
+        } finally {
+            onPath.delete(id)
+        }
+    }
+    return dfs(rootId, 1)
+}

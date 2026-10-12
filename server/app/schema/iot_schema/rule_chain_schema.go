@@ -12,19 +12,21 @@ type RuleChainListReq struct {
 
 // RuleChainAddReq 规则链新增参数
 type RuleChainAddReq struct {
-	Name      string `json:"name" form:"name" binding:"required,max=100"` // 规则链名称
-	Remark    string `json:"remark" form:"remark" binding:"max=255"`      // 备注
-	GraphData string `json:"graph_data" form:"graph_data"`                // 规则链图JSON(LogicFlow nodes+edges)
-	IsStop    uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`  // 是否停用
+	Name      string `json:"name" form:"name" binding:"required,max=100"`   // 规则链名称
+	Remark    string `json:"remark" form:"remark" binding:"max=255"`        // 备注
+	GraphData string `json:"graph_data" form:"graph_data"`                  // 规则链图JSON(LogicFlow nodes+edges，仅供绘图)
+	TreeData  string `json:"tree_data" form:"tree_data" binding:"required"` // 执行树JSON(后端按此树执行)
+	IsStop    uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`    // 是否停用
 }
 
 // RuleChainEditReq 规则链编辑参数
 type RuleChainEditReq struct {
-	ID        string `json:"id" form:"id" binding:"required"`             // 主键
-	Name      string `json:"name" form:"name" binding:"required,max=100"` // 规则链名称
-	Remark    string `json:"remark" form:"remark" binding:"max=255"`      // 备注
-	GraphData string `json:"graph_data" form:"graph_data"`                // 规则链图JSON
-	IsStop    uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`  // 是否停用
+	ID        string `json:"id" form:"id" binding:"required"`               // 主键
+	Name      string `json:"name" form:"name" binding:"required,max=100"`   // 规则链名称
+	Remark    string `json:"remark" form:"remark" binding:"max=255"`        // 备注
+	GraphData string `json:"graph_data" form:"graph_data"`                  // 规则链图JSON
+	TreeData  string `json:"tree_data" form:"tree_data" binding:"required"` // 执行树JSON
+	IsStop    uint8  `json:"is_stop" form:"is_stop" binding:"oneof=0 1"`    // 是否停用
 }
 
 // RuleChainDelReq 规则链删除参数
@@ -42,13 +44,14 @@ type RuleChainResp struct {
 	ID         string      `json:"id"`          // 主键
 	Name       string      `json:"name"`        // 规则链名称
 	Remark     string      `json:"remark"`      // 备注
-	GraphData  string      `json:"graph_data"`  // 规则链图JSON
+	GraphData  string      `json:"graph_data"`  // 规则链图JSON(仅供绘图)
+	TreeData   string      `json:"tree_data"`   // 执行树JSON
 	IsStop     uint8       `json:"is_stop"`     // 是否停用
 	CreateTime x_null.Time `json:"create_time"` // 创建时间
 	UpdateTime x_null.Time `json:"update_time"` // 更新时间
 }
 
-// ============ 规则链图结构（与前端 LogicFlow getGraphData 对齐） ============
+// ============ 规则链节点属性契约（前端提交执行树，后端按命名空间收纳各节点属性） ============
 //
 // 节点私有属性沿用审批流“命名空间收纳”约定：properties 只存在当前节点类型那一份，
 // JSON tag（snake_case）= 命名空间 key = 前端 property.type.ts 的 NodeKey，
@@ -65,19 +68,6 @@ const (
 	RcNodeState    = "rule:state"    // 状态快照：写 Redis 最新属性，供管理端/大屏即时读
 	RcNodeHistory  = "rule:history"  // 历史存储：写 MySQL 时序历史表
 	RcNodeNotify   = "rule:notify"   // 通知：站内/邮件/webhook（可扩展）
-)
-
-// 节点属性命名空间 key（与前端 properties[key] 对应）
-const (
-	RcPropsTrigger  = "rule_trigger"
-	RcPropsDecode   = "rule_decode"
-	RcPropsFilter   = "rule_filter"
-	RcPropsParallel = "rule_parallel"
-	RcPropsBool     = "rule_bool"
-	RcPropsAlarm    = "rule_alarm"
-	RcPropsState    = "rule_state"
-	RcPropsHistory  = "rule_history"
-	RcPropsNotify   = "rule_notify"
 )
 
 // RcTriggerProps 触发器：仅处理命中的报文类型（空=全部）。
@@ -118,29 +108,12 @@ type RcNodeProps struct {
 	Notify  *RcNotifyProps  `json:"rule_notify,omitempty"`
 }
 
-// RuleNode LogicFlow 节点：仅取执行需要的字段，text 保留标签。
-type RuleNode struct {
-	ID   string `json:"id"`
-	Type string `json:"type"`
-	Text struct {
-		Value string `json:"value"`
-	} `json:"text"`
-	Properties RcNodeProps `json:"properties"`
-}
-
-// RuleEdge LogicFlow 边：source/target；除并行外每个节点只允许一条出边（保存时校验）。
-type RuleEdge struct {
-	ID           string `json:"id"`
-	Type         string `json:"type"`
-	SourceNodeId string `json:"sourceNodeId"`
-	TargetNodeId string `json:"targetNodeId"`
-	Text         struct {
-		Value string `json:"value"`
-	} `json:"text"`
-}
-
-// RuleChainGraph 规则链有向图（LogicFlow getGraphData 原样）。
-type RuleChainGraph struct {
-	Nodes []RuleNode `json:"nodes"`
-	Edges []RuleEdge `json:"edges"`
+// RuleTreeNode 规则链执行树节点（前端由图以「输入」为根展开后直传，后端直接反序列化下钻）：
+// label 取节点文字，properties 已剔除 width/height 等绘图字段；扇入节点按路径各留一份副本。
+type RuleTreeNode struct {
+	ID         string          `json:"id"`
+	Type       string          `json:"type"`
+	Label      string          `json:"label"`
+	Properties RcNodeProps     `json:"properties"`
+	Children   []*RuleTreeNode `json:"children,omitempty"`
 }

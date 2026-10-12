@@ -37,7 +37,7 @@ import '@logicflow/core/lib/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 
 import { registerRuleChainElement } from './node/index'
-import { rcNodeKeyOf, type RcNodeTypeData } from './rule.type'
+import { buildRcTree, rcNodeKeyOf, type RcNodeTypeData } from './rule.type'
 
 const DiagramSidebar = defineAsyncComponent(() => import('./DiagramSidebar.vue'))
 const PropertyPanel = defineAsyncComponent(() => import('./PropertyPanel/index.vue'))
@@ -169,8 +169,8 @@ function restore() {
     lf.value?.translateCenter?.()
 }
 
-/** 导出 LogicFlow 原生有向图 { nodes, edges }，不拍树 */
-async function getData(): Promise<Record<string, any>> {
+/** 导出 LogicFlow 原生图 { nodes, edges }（仅供绘图）与同源的执行树（后端消费） */
+async function getData(): Promise<{ graph: Record<string, any>; tree: Record<string, any> }> {
     return new Promise((resolve, reject) => {
         const data = lf.value!.getGraphData() as Record<string, any>
         const nodes = (data?.nodes as RcNodeTypeData[]) || []
@@ -181,17 +181,15 @@ async function getData(): Promise<Record<string, any>> {
         if (triggers.length !== 1) {
             return reject({ message: '规则链-必须有且仅有一个「输入」入口节点' })
         }
-        resolve(data)
+        try {
+            resolve({ graph: data, tree: buildRcTree(data) })
+        } catch (err: any) {
+            reject({ message: err?.message ?? '规则链-执行树生成失败' })
+        }
     })
 }
 
-/** 载入原生图数据（同样保证「输入」起点存在） */
-function setData(data: Record<string, any>) {
-    lf.value?.renderRawData(data as any)
-    if (lf.value) ensureTriggerNode(lf.value)
-}
-
-defineExpose({ getData, setData })
+defineExpose({ getData })
 </script>
 
 <style lang="scss" scoped>
