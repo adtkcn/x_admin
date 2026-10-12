@@ -200,16 +200,16 @@ func walk(ctx *ruleCtx, step *rcStep, depth int) {
 		return
 	}
 	node := step.node
-	logOn := config.IotConfig.LogRuleChain
-	if logOn {
-		core.Logger.Infof("进入节点%q %s sn=%s depth=%d  入参=%s",
-			rcNodeName(node), node.Type, ctx.msg.Sn, depth, rcValues(ctx.values))
-	}
+	// logOn := config.IotConfig.LogRuleChain
+	// if logOn {
+	// 	core.Logger.Infof("进入节点%q %s sn=%s depth=%d  入参=%s",
+	// 		rcNodeName(node), node.Type, ctx.msg.Sn, depth, rcValues(ctx.values))
+	// }
 	cont := applyRcNode(ctx, node)
-	if logOn {
-		core.Logger.Infof("离开节点%q %s sn=%s 出参=%s 分支=%d halt=%v",
-			rcNodeName(node), node.Type, ctx.msg.Sn, rcValues(ctx.values), len(step.children), ctx.halt)
-	}
+	// if logOn {
+	// 	core.Logger.Infof("离开节点%q %s sn=%s 出参=%s 分支=%d halt=%v",
+	// 		rcNodeName(node), node.Type, ctx.msg.Sn, rcValues(ctx.values), len(step.children), ctx.halt)
+	// }
 	if !cont {
 		return
 	}

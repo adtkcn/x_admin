@@ -30,6 +30,10 @@ func StopRuntime(deviceId string) { online.ClearDeviceRuntime(deviceId) }
 // service 反向引用本包会成循环，故由控制器调门面编排。
 func StopAlertRuntime(deviceId string) { alert.ClearRuntime(deviceId) }
 
+// RecoverAlertRuntime 服务重启后重建告警运行态（供 main 在消费开始前调用）：
+// Redis 活动态丢失时按库里「告警中」记录回灌，避免恢复报文无法收尾告警。
+func RecoverAlertRuntime() { alert.RecoverRuntime() }
+
 // ScanOffline 快路径门面（供 app/corn 的 iotOfflineScan 定时调用）
 func ScanOffline() { online.ScanOffline() }
 

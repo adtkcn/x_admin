@@ -10,6 +10,7 @@ import (
 	"x_admin/app/schema/iot_schema"
 	"x_admin/app/service/iot_service"
 	"x_admin/app/service/iot_service/pipeline/online"
+	"x_admin/config"
 	"x_admin/core"
 )
 
@@ -21,6 +22,10 @@ import (
 //
 // 记录留峰值（普通流 severity 只升不降）。大屏设备点只显示一条聚合告警级，故 WS 推「设备聚合级」
 // （故障优先 -1，否则普通流当前级别），仅当聚合级变化才推；延迟恢复期两条流并存时靠聚合避免误清/降级。
+//
+// 活动态只存 Redis，是「告警中」的唯一事实源：Redis 数据丢失（重启未持久化/驱逐）会令库里
+// status=1 的记录失去收尾依据（恢复报文读不到活动态即被跳过），故进程启动、消费开始前调
+// RecoverRuntime 按库回灌活动态键，让后续报文能正常恢复。
 //
 // 可配时长（秒，0=命中即告/恢复即收）：duration 命中后需连续异常满时长才触发；recover 恢复需连续满时长才关闭。
 //
@@ -69,6 +74,69 @@ func normalKeys(deviceId string) streamKeys {
 }
 func faultKeys(deviceId string) streamKeys {
 	return streamKeys{alertFaultActiveKey(deviceId), alertFaultFirstKey(deviceId), alertFaultRecoverKey(deviceId)}
+}
+
+// RecoverRuntime 服务重启后重建告警运行态：活动态只存 Redis（无 TTL）却是状态机的唯一事实源，
+// 若 Redis 数据丢失（重启未持久化/内存驱逐）而库里仍有 status=1 的「告警中」记录，
+// 恢复报文读不到活动态即被 recoverStream 当 NOOP 跳过，记录会永久卡在告警中无法收尾。
+// 故须在消费开始前扫一遍库：按(设备,流)回灌活动态键，使后续报文能正常恢复；同一(设备,流)
+// 只留最新一条为活动态，更早的悬空记录（本缺陷历史遗留）一并收尾。
+func RecoverRuntime() {
+	if !config.IotConfig.Enable {
+		return
+	}
+	var rows []iot_model.IotAlertHistory
+	// 按设备+触发时间升序遍历：同一(设备,流)后读到的覆盖先读到的，天然留下最新一条
+	if e := core.GetDB().Model(&iot_model.IotAlertHistory{}).
+		Select("id, device_id, severity, triggered_at").
+		Where("status = ?", iot_model.AlertStatusFiring).
+		Order("device_id ASC, triggered_at ASC").
+		Find(&rows).Error; e != nil {
+		core.Logger.Errorf("[iot处理] 重建告警运行态查询失败 err=%v", e)
+		return
+	}
+	if len(rows) == 0 {
+		return
+	}
+
+	type stream struct {
+		deviceId string
+		fault    bool
+	}
+	keep := make(map[stream]iot_model.IotAlertHistory, len(rows))
+	var stale []string
+	for _, r := range rows {
+		k := stream{r.DeviceId, r.Severity == iot_model.AlertSevFault}
+		if prev, ok := keep[k]; ok {
+			stale = append(stale, prev.ID) // 被更新的记录顶掉，旧记录收尾
+		}
+		keep[k] = r
+	}
+
+	now := time.Now().UnixMilli()
+	for _, id := range stale {
+		if e := iot_service.AlertService.Recover(id, now); e != nil {
+			core.Logger.Errorf("[iot处理] 重建时收尾悬空告警失败 id=%s err=%v", id, e)
+		}
+	}
+
+	ctx, cancel := online.RedisCtx()
+	defer cancel()
+	pipe := core.Redis.Pipeline()
+	for k, r := range keep {
+		// 库里 severity 即历史峰值（只升不降），重建后当前级取同值
+		val := encodeActive(r.ID, r.Severity, r.Severity)
+		if k.fault {
+			pipe.Set(ctx, alertFaultActiveKey(k.deviceId), val, 0)
+		} else {
+			pipe.Set(ctx, alertActiveKey(k.deviceId), val, 0)
+		}
+	}
+	if _, e := pipe.Exec(ctx); e != nil {
+		core.Logger.Errorf("[iot处理] 重建告警运行态回灌失败 size=%d err=%v", len(keep), e)
+		return
+	}
+	core.Logger.Infof("[iot处理] 重启重建告警运行态 活动=%d 收尾悬空=%d", len(keep), len(stale))
 }
 
 // ClearRuntime 清设备告警运行态（普通流+故障流共六键），不做库侧收尾；删库后必调。

@@ -13,6 +13,7 @@ import (
 	iot_model "x_admin/app/model/iot_model"
 	"x_admin/app/model/user_model"
 	"x_admin/app/queue"
+	"x_admin/app/service/iot_service/pipeline"
 	"x_admin/config"
 	"x_admin/core"
 
@@ -32,6 +33,10 @@ func bootstrap(ctx context.Context) error {
 	// 基础全局队列实例由 core 包创建（见 core.Queue）
 	// 此处仅作为启动钩子拉起所有队列消费者（含 IoT 报文流水线），ctx 取消后 worker 优雅退出。
 	// 必须在 AutoMigrate 之后（IoT Sink 写 x_iot_device_data）。
+	// 拉起消费前先重建告警运行态：服务停机期 Redis 活动态可能丢失，而库里仍「告警中」的
+	// 记录只靠活动态才能收尾，不回灌则重启后恢复报文会永久卡在告警中。
+	pipeline.RecoverAlertRuntime()
+
 	queue.Start(ctx)
 
 	return nil
