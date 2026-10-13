@@ -1,9 +1,6 @@
 package rulechain
 
 import (
-	"encoding/json"
-	"sync"
-	"time"
 	"x_admin/app/schema/iot_schema"
 	"x_admin/app/service/iot_service"
 	"x_admin/config"
@@ -12,8 +9,9 @@ import (
 
 // 可视化规则链执行引擎：逐报文沿规则链树执行各节点。
 //
-// 数据流：产品 rule_chain_id → service 缓存的执行树原文（tree_data）→ 本包再缓存一层“解析好的树”
-// （原文变了或超 TTL 才重解析），每条报文只走内存指针、不做 JSON 解析与库查询。
+// 数据流：产品 rule_chain_id → iot_service.RuleChainService.CachedParsedTree 直接拿到
+// 解析好的执行树（本内存→Redis 原文→DB 三层统一在 service 侧，命中后同一链多产品共享一份），
+// 本包不再自己维护解析树缓存。
 //
 // 拓扑：链在语义上是一棵树——触发器为唯一根，除并行节点外每节点至多一条后继。这棵树由前端
 // 从 LogicFlow 图展开后直传（graph_data 仅用于绘图回填），后端不再做图→树展开，直接反序列化下钻。
@@ -23,61 +21,6 @@ import (
 //
 // 依赖：本包直接 import online/alert/store 三个叶子子包，它们不反向依赖本包，
 // 构成 online ← alert ← rulechain ← pipeline 的单向 DAG，无需注入式解耦。
-
-// parsedTree 解析并缓存好的规则链树（直接复用前端提交的 RuleTreeNode）
-type parsedTree struct {
-	raw      string
-	parsedAt time.Time
-	root     *iot_schema.RuleTreeNode
-}
-
-var (
-	treeMu  sync.RWMutex
-	treeMap = map[string]*parsedTree{}
-)
-
-// loadTree 取解析好的规则链树（service 缓存原文，这里再缓存一层解析结果）；
-// 返回 nil 表示链不存在/停用/无法解析（调用方按“未配置”丢弃上报）。
-func loadTree(chainId string) *parsedTree {
-	if chainId == "" {
-		return nil
-	}
-	raw := iot_service.RuleChainService.CachedTreeRaw(chainId)
-	if raw == "" {
-		return nil
-	}
-	treeMu.RLock()
-	entry := treeMap[chainId]
-	treeMu.RUnlock()
-	ttl := time.Duration(config.IotConfig.ThingCacheTTL) * time.Second
-	if entry != nil && entry.raw == raw && time.Since(entry.parsedAt) < ttl {
-		return entry
-	}
-
-	t := parseTree(raw)
-	if t == nil {
-		return nil
-	}
-	treeMu.Lock()
-	treeMap[chainId] = t
-	treeMu.Unlock()
-	return t
-}
-
-// parseTree 反序列化前端提交的执行树 JSON 为 RuleTreeNode（JSON 本身即树形、无共享引用不会成环）；
-// 解析失败或缺触发器根节点返回 nil（保存时已校过根类型，此处只兜住明显畸形）。
-func parseTree(raw string) *parsedTree {
-	var tn iot_schema.RuleTreeNode
-	if err := json.Unmarshal([]byte(raw), &tn); err != nil {
-		core.Logger.Warnf("[iot规则链] 执行树 JSON 解析失败 err=%v", err)
-		return nil
-	}
-	if tn.Type != iot_schema.RcNodeTrigger {
-		core.Logger.Warnf("[iot规则链] 执行树缺少触发器根节点，丢弃")
-		return nil
-	}
-	return &parsedTree{raw: raw, parsedAt: time.Now(), root: &tn}
-}
 
 // rcShared 一条报文在所有分支间共享的可变标记（目前只有全局短路位）。以指针嵌入 ruleCtx：
 // branch() 复制结构体时复制的是指针，任一分支置位对所有分支立即可见。
@@ -95,14 +38,14 @@ type ruleCtx struct {
 
 // Run 按产品的规则链处理一条上报：链缺失/停用按“未配置”丢弃。
 func Run(msg iot_schema.IngestMsg, model iot_service.ProductModel) error {
-	t := loadTree(model.RuleChainId)
-	if t == nil {
+	root := iot_service.RuleChainService.CachedParsedTree(model.RuleChainId)
+	if root == nil {
 		if config.IotConfig.LogRaw {
 			core.Logger.Warnf("[iot规则链] 产品未配置有效规则链，丢弃上报 sn=%s productId=%s", msg.Sn, msg.ProductId)
 		}
 		return nil
 	}
-	walk(&ruleCtx{msg: msg, model: model, rcShared: &rcShared{}, values: msg.Values}, t.root)
+	walk(&ruleCtx{msg: msg, model: model, rcShared: &rcShared{}, values: msg.Values}, root)
 	return nil
 }
 

@@ -155,24 +155,33 @@ type ProductModel struct {
 	ThingIds    map[string]bool `json:"thing_ids,omitempty"`
 }
 
-// CachedProductModel 取产品引用的规则链ID与物模型白名单（缓存 ThingCacheTTL 秒），供处理层逐报文执行规则链。
-// 一次命中即返回；库侧记录不存在时返回零值（处理层按"未配置"丢弃上报）。
+// CachedProductModel 取产品引用的规则链ID与物模型白名单，供处理层逐报文执行规则链。
+// 三级读缓存：本进程内存（TTL=LocalCacheTTL）→ Redis（TTL=ThingCacheTTL）→ DB。
+// 管理端编辑/删除产品后，InvalidateProductCache 会同时删 Redis 并经 core.IotBus 广播，
+// 各实例仅清本内存即可下一报文重新回源；库侧不存在时返回零值（处理层按“未配置”丢弃上报）。
 func (s deviceService) CachedProductModel(productId string) ProductModel {
 	if productId == "" {
 		return ProductModel{}
 	}
+	// 1) 本地：热路径绝大多数命中，省一次 Redis 往返
+	if m, ok := core.CacheGet[ProductModel](localProductKey(productId)); ok {
+		return m
+	}
 	key := iotCacheKey("model:" + productId)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+	// 2) Redis
 	if val, err := core.Redis.Get(ctx, key).Result(); err == nil {
 		var m ProductModel
 		if json.Unmarshal([]byte(val), &m) == nil {
-			return m // 命中即返回（含“配置为空”的 {}）；未命中 err 为 redis.Nil，回源 DB
+			core.CacheSet(localProductKey(productId), m, localTTL) // 回填本地（含“配置为空”的 {}）
+			return m
 		}
 	} else if !isRedisMiss(err) {
 		core.Logger.Errorf("读产品模型缓存失败 productId=%s err=%v", productId, err)
 	}
 
+	// 3) DB 回源
 	var product iot_model.IotProduct
 	if s.db.Select("id, rule_chain_id, thing_model").Where("id = ?", productId).First(&product).Error != nil {
 		return ProductModel{}
@@ -186,10 +195,12 @@ func (s deviceService) CachedProductModel(productId string) ProductModel {
 			core.Logger.Errorf("写产品模型缓存失败 productId=%s err=%v", productId, err)
 		}
 	}
+	core.CacheSet(localProductKey(productId), m, localTTL)
 	return m
 }
 
-// InvalidateProductCache 产品编辑/删除后失效产品模型缓存，避免处理层沿用旧配置
+// InvalidateProductCache 产品编辑/删除后失效产品模型缓存，避免处理层沿用旧配置。
+// 三层一起动手：删 Redis → 清本实例内存 → 广播跨实例失效（其他实例收到后只清本地）。
 func (s deviceService) InvalidateProductCache(productId string) {
 	if productId == "" {
 		return
@@ -199,6 +210,8 @@ func (s deviceService) InvalidateProductCache(productId string) {
 	if err := core.Redis.Del(ctx, iotCacheKey("model:"+productId)).Err(); err != nil {
 		core.Logger.Errorf("失效产品模型缓存失败 productId=%s err=%v", productId, err)
 	}
+	core.CacheDelete(localProductKey(productId))
+	emitInvalidate(BusEvtProduct, productId)
 }
 
 // MarkStatus 更新设备在线状态，仅在状态确实发生变化时写库（接入层高频调用，避免每条报文 UPDATE）。

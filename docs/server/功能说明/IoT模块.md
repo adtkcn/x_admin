@@ -119,7 +119,7 @@ server/
 
 产品挂一条规则链（`rule_chain_id`），逐报文沿**执行树**下钻。链在语义上是一棵树：触发器为唯一根，除并行节点外每节点至多一条后继；前端从 LogicFlow 图以「输入」为根展开后直传 `tree_data`，后端直接反序列化下钻（不做图→树展开）。
 
-- **两级缓存**：service 缓存执行树原文（`CachedTreeRaw`），`rulechain` 再缓存解析好的树（原文变或超 `ThingCacheTTL` 才重解析）——每条报文只走内存指针。
+- **两级读缓存 + pubsub 即时失效**：产品模型与规则链执行树都遵循「本进程内存（`LocalCacheTTL`）→ Redis（`ThingCacheTTL`）→ DB」两级回源，热路径零 Redis 往返；规则链本内存层缓存的是 `CachedParsedTree`（已解析的 `*iot_schema.RuleTreeNode`），一并抹平 JSON 重解析开销。管理端 CRUD 后 `InvalidateProductCache` / `InvalidateChainCache` 除了删 Redis，还经 `core.IotBus`（频道前缀 `{RedisPrefix}iot:bus:`）广播失效事件，各实例订阅回调直接 `core.CacheDelete / CacheDeletePrefix` 清本内存，下一报文重新回源。
 - **遍历语义**：节点 handler 只回答「本分支是否继续」。过滤 `false`/解码产出空 → 置 `halt` 短路整条报文；布尔 `false` 仅剪本分支；并行节点为每条子分支深拷贝独立属性负载，分支互不干扰（`halt` 位经指针共享对所有分支即时可见）。
 
 **节点库**（注册表 `rcHandlers`，未知类型按「继续下钻」兜底）：
@@ -191,7 +191,8 @@ server/
 | --- | --- | --- |
 | `Enable` | true | 接入层总开关：`false` 时不注册设备侧路由、不启动流水线 |
 | `DeviceCacheTTL` | 300 | 设备鉴权信息 Redis 缓存秒数 |
-| `ThingCacheTTL` | 600 | 物模型 / 规则链树缓存秒数 |
+| `ThingCacheTTL` | 600 | 物模型 / 规则链执行树 Redis 层缓存秒数 |
+| `LocalCacheTTL` | 60 | 产品/规则链在本进程内存层 TTL（秒），pubsub 广播未达时的兜底 |
 | `StateTTL` | 86400 | 最新属性快照保留秒数 |
 | `MaxValues` | 50 | 单报文最大属性条数（防报文放大） |
 | `PushStateChange` | true | 状态/遥测/告警是否经 `core.Ws` 广播 |

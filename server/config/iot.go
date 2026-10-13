@@ -12,8 +12,12 @@ type IotConfigStruct struct {
 
 	// DeviceCacheTTL 设备鉴权信息 Redis 缓存时长（秒），承受高频上报时避免每报文查库
 	DeviceCacheTTL int `mapstructure:"DeviceCacheTTL"`
-	// ThingCacheTTL 物模型缓存时长（秒）
+	// ThingCacheTTL 物模型 / 规则链执行树原文的 Redis 缓存时长（秒）
 	ThingCacheTTL int `mapstructure:"ThingCacheTTL"`
+	// LocalCacheTTL 产品模型与规则链「解析好的执行树」在 service 进程内本地缓存的存活时长（秒）：
+	// 热路径上报靠它避免 Redis 往返与 JSON 重解析；管理端 CRUD 后经 core.IotBus 广播即时失效，
+	// 本值仅作跨实例广播未达时的兜底（应小于 ThingCacheTTL）
+	LocalCacheTTL int `mapstructure:"LocalCacheTTL"`
 	// StateTTL 设备最新属性快照在 Redis 中的保留时长（秒）
 	StateTTL int `mapstructure:"StateTTL"`
 	// MaxValues 单次上报允许的最大属性条数，防报文放大
@@ -36,6 +40,7 @@ var IotConfig = IotConfigStruct{
 
 	DeviceCacheTTL:  300,
 	ThingCacheTTL:   600,
+	LocalCacheTTL:   60,
 	StateTTL:        86400,
 	MaxValues:       50,
 	PushStateChange: true,
@@ -68,6 +73,9 @@ func (c *IotConfigStruct) Normalize() {
 	}
 	if c.ThingCacheTTL <= 0 {
 		c.ThingCacheTTL = d.ThingCacheTTL
+	}
+	if c.LocalCacheTTL <= 0 {
+		c.LocalCacheTTL = d.LocalCacheTTL
 	}
 	if c.StateTTL <= 0 {
 		c.StateTTL = d.StateTTL

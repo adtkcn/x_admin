@@ -72,7 +72,7 @@ func HandleIngest(_ context.Context, body []byte) error {
 		return errors.New("报文缺少 device_id")
 	}
 	if config.IotConfig.LogRaw {
-		core.Logger.Infof("[iot处理] 消费报文 sn=%s type=%s values=%d", msg.Sn, msg.MsgType, len(msg.Values))
+		core.Logger.Infof("[iot处理] 消费报文 sn=%s values=%v", msg.Sn, msg.Values)
 	}
 
 	// 运行态与在线转换对所有报文类型都生效（心跳/上报都“续命”）

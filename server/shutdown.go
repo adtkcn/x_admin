@@ -29,6 +29,17 @@ func gracefulClose(server *http.Server) {
 		core.Ws.Close()
 	}
 
+	// 2.5) 关闭 IoT 事件总线（本地缓存跨实例失效通道），订阅循环退出后
+	// 本实例不再接收失效广播；Redis 关前先执行，避免 PubSub 内部依赖已断。
+	if core.IotBus != nil {
+		if err := core.IotBus.Close(); err != nil {
+			core.Logger.Errorf("IoT 事件总线关闭失败: %v", err)
+		}
+	}
+
+	// 2.6) 停全局本地缓存的后台清理协程。
+	core.StopLocalCache()
+
 	// 3) 关闭队列（释放底层资源）。
 	if core.Queue != nil {
 		if err := core.Queue.Close(); err != nil {

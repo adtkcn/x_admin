@@ -144,8 +144,9 @@ func (s ruleChainService) Del(id string) (e error) {
 	return
 }
 
-// CachedTreeRaw 取规则链执行树原文（Redis 缓存 ThingCacheTTL 秒），供处理层逐报文解析执行。
-// 命中即返回；库侧不存在时返回空串（处理层按“未配置链”丢弃上报）。
+// CachedTreeRaw 取规则链执行树原文（Redis → DB 两级）；本内存层不参与，因为
+// 热路径统一走 CachedParsedTree（同键缓存的是解析好的执行树），本函数只在未命中时供它回源。
+// 命中即返回（包括空串的“链不存在/停用”哨兵）；库侧不存在时返回空串。
 func (s ruleChainService) CachedTreeRaw(chainId string) string {
 	if chainId == "" {
 		return ""
@@ -154,7 +155,7 @@ func (s ruleChainService) CachedTreeRaw(chainId string) string {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	if val, err := core.Redis.Get(ctx, key).Result(); err == nil {
-		return val // 命中即返回（含空串的“链不存在”缓存）；redis.Nil 走回源
+		return val
 	} else if !isRedisMiss(err) {
 		core.Logger.Errorf("读规则链缓存失败 chainId=%s err=%v", chainId, err)
 	}
@@ -166,14 +167,42 @@ func (s ruleChainService) CachedTreeRaw(chainId string) string {
 	}
 	// 回源即缓存（含空串的“链不存在/停用”标记），避免不存在的链被每条报文反复打库。
 	// tree_data 本身已是 JSON 文本，必须原样存：对它再 json.Marshal 会得到带外层引号的
-	// 字符串，命中缓存时解析出的是 string 而非对象，报 cannot unmarshal string into RuleTreeNode。
+	// 字符串，命中缓存时解析出的是 string 而非对象。
 	if err := core.Redis.Set(ctx, key, raw, time.Duration(config.IotConfig.ThingCacheTTL)*time.Second).Err(); err != nil {
 		core.Logger.Errorf("写规则链缓存失败 chainId=%s err=%v", chainId, err)
 	}
 	return raw
 }
 
-// InvalidateChainCache 规则链编辑/删除后失效处理层执行树缓存（包级函数，供 service 内部调用）
+// CachedParsedTree 供处理层逐报文执行：本内存（TTL=LocalCacheTTL，键同 localChainKey）→ CachedTreeRaw → 解析。
+// 命中即返回解析好的根指针，同一链多产品共享一份；未命中回源时顺带缓存，下条报文直接命中。
+// 链不存在/停用/解析失败均返回 nil（处理层按“未配置链”丢弃上报，nil 不入本地缓存避免反复回源）。
+func (s ruleChainService) CachedParsedTree(chainId string) *iot_schema.RuleTreeNode {
+	if chainId == "" {
+		return nil
+	}
+	if t, ok := core.CacheGet[*iot_schema.RuleTreeNode](localChainKey(chainId)); ok {
+		return t
+	}
+	raw := s.CachedTreeRaw(chainId)
+	if raw == "" {
+		return nil
+	}
+	var tn iot_schema.RuleTreeNode
+	if err := json.Unmarshal([]byte(raw), &tn); err != nil {
+		core.Logger.Warnf("[iot规则链] 执行树 JSON 解析失败 chainId=%s err=%v", chainId, err)
+		return nil
+	}
+	if tn.Type != iot_schema.RcNodeTrigger {
+		core.Logger.Warnf("[iot规则链] 执行树缺少触发器根节点 chainId=%s，丢弃", chainId)
+		return nil
+	}
+	core.CacheSet(localChainKey(chainId), &tn, localTTL)
+	return &tn
+}
+
+// InvalidateChainCache 规则链编辑/删除后失效处理层缓存（包级函数）。
+// 两层一起：删 Redis 原文 → 清本内存解析树 → 广播跨实例失效（其他实例收到后清本内存）。
 func InvalidateChainCache(chainId string) {
 	if chainId == "" {
 		return
@@ -183,4 +212,6 @@ func InvalidateChainCache(chainId string) {
 	if err := core.Redis.Del(ctx, chainCacheKey(chainId)).Err(); err != nil {
 		core.Logger.Errorf("失效规则链缓存失败 chainId=%s err=%v", chainId, err)
 	}
+	core.CacheDelete(localChainKey(chainId))
+	emitInvalidate(BusEvtChain, chainId)
 }
