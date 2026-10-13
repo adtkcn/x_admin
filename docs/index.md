@@ -19,8 +19,10 @@ features:
   - title: 方便部署
     details: 未使用cgo，Go可以跨平台打包，不需要运行环境Sdk
   - title: 轻量级
-    details: 运行时不到50M内存占用，暴打Java
+    details: 运行时内存低
   - title: 快速生成CRUD代码
     details: 通过已有数据库表生成CRUD代码，减少开发成本
+  - title: IoT 物联网
+    details: 设备接入 + 可视化规则链处理流水线 + 告警状态机 + 大屏实时推送，复用现有队列/Redis/WebSocket 基建
 ---
 

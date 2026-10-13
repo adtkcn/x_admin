@@ -2823,7 +2823,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "条数(缺省1000,上限5000)",
+                        "description": "条数,0或不传=不限制",
                         "name": "limit",
                         "in": "query"
                     },
@@ -12813,10 +12813,6 @@ const docTemplate = `{
                     "description": "设备名称（由控制器从库侧回填，Redis 不存）",
                     "type": "string"
                 },
-                "offline_in": {
-                    "description": "距判定离线的剩余秒数，\u003c=0 表示已超时",
-                    "type": "integer"
-                },
                 "offline_timeout": {
                     "description": "生效的离线判定时长(秒)",
                     "type": "integer"
@@ -13196,11 +13192,12 @@ const docTemplate = `{
         "iot_schema.RuleChainAddReq": {
             "type": "object",
             "required": [
-                "name"
+                "name",
+                "tree_data"
             ],
             "properties": {
                 "graph_data": {
-                    "description": "规则链图JSON(LogicFlow nodes+edges)",
+                    "description": "规则链图JSON(LogicFlow nodes+edges，仅供绘图)",
                     "type": "string"
                 },
                 "is_stop": {
@@ -13220,6 +13217,10 @@ const docTemplate = `{
                     "description": "备注",
                     "type": "string",
                     "maxLength": 255
+                },
+                "tree_data": {
+                    "description": "执行树JSON(后端按此树执行)",
+                    "type": "string"
                 }
             }
         },
@@ -13239,7 +13240,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "id",
-                "name"
+                "name",
+                "tree_data"
             ],
             "properties": {
                 "graph_data": {
@@ -13267,6 +13269,10 @@ const docTemplate = `{
                     "description": "备注",
                     "type": "string",
                     "maxLength": 255
+                },
+                "tree_data": {
+                    "description": "执行树JSON",
+                    "type": "string"
                 }
             }
         },
@@ -13278,7 +13284,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "graph_data": {
-                    "description": "规则链图JSON",
+                    "description": "规则链图JSON(仅供绘图)",
                     "type": "string"
                 },
                 "id": {
@@ -13295,6 +13301,10 @@ const docTemplate = `{
                 },
                 "remark": {
                     "description": "备注",
+                    "type": "string"
+                },
+                "tree_data": {
+                    "description": "执行树JSON",
                     "type": "string"
                 },
                 "update_time": {

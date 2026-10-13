@@ -74,6 +74,10 @@ export default defineConfig({
           { text: '嵌入iframe', link: '/admin/嵌入iframe.md' },
 
           { text: '自定义hooks', link: '/admin/自定义hooks.md' },
+          { text: 'WebSocket', link: '/admin/WebSocket.md' },
+          { text: '单文件上传', link: '/admin/单文件上传.md' },
+          { text: '分片上传', link: '/admin/分片上传.md' },
+          { text: 'App 更新', link: '/admin/app更新.md' },
         ]
       }
     ],
