@@ -3,12 +3,36 @@
   "version": "1.0.0",
   "description": "错误监控sdk",
   "main": "dist/web/XErr.umd.js",
+  "module": "dist/web/XErr.es.js",
+  "types": "dist/web/index.d.ts",
   "private": false,
-  "file": [
+  "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/web/index.d.ts",
+      "import": "./dist/web/XErr.es.js",
+      "require": "./dist/web/XErr.umd.js"
+    },
+    "./web": {
+      "types": "./dist/web/index.d.ts",
+      "import": "./dist/web/XErr.es.js",
+      "require": "./dist/web/XErr.umd.js"
+    },
+    "./uni": {
+      "types": "./dist/uni/index.d.ts",
+      "import": "./dist/uni/XErr.es.js",
+      "require": "./dist/uni/XErr.cjs.js"
+    },
+    "./react-native": {
+      "types": "./dist/react-native/index.d.ts",
+      "import": "./dist/react-native/XErr.es.js",
+      "require": "./dist/react-native/XErr.cjs.js"
+    }
+  },
   "scripts": {
-    "build": "vite build&&npm run build:ts", 
+    "build": "vite build --config vite.web.config.mjs&&vite build --config vite.uni.config.mjs&&vite build --config vite.rn.config.mjs&&npm run build:ts",
     "build:ts": "tsc --emitDeclarationOnly",
     "outdated": "pnpm outdated"
   },

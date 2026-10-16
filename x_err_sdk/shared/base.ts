@@ -1,5 +1,5 @@
 import { v7 as uuid_v7 } from "uuid";
-import type { LogWithError, IErrorEvent, LogWithEnv } from "../types";
+import type { LogWithError, IErrorEvent } from "../types";
 
 type Uid = string | number;
 
