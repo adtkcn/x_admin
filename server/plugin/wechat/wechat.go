@@ -48,7 +48,8 @@ func init() {
 					Stdout: false,
 				},
 				Cache: kernel.NewRedisClient(&kernel.UniversalOptions{
-					Addrs: redisAddrs(),
+					Addrs:    redisAddrs(),
+					Protocol: 3,
 				}),
 			})
 			if err != nil {

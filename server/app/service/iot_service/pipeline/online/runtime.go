@@ -77,7 +77,11 @@ func keepAlive(deviceId string, timeout int) (wasAbsent bool) {
 	now := time.Now().UnixMilli()
 	pipe := core.Redis.Pipeline()
 	score := pipe.ZScore(ctx, zkey, deviceId)
-	pipe.ZAdd(ctx, zkey, redis.Z{Score: float64(now + window.Milliseconds()), Member: deviceId})
+	// GT：仅当新 score 更大才更新，避免并发报文刚刷新的到期时间被更旧的写回拉低（Redis 6.2+）
+	pipe.ZAddArgs(ctx, zkey, redis.ZAddArgs{
+		GT:      true,
+		Members: []redis.Z{{Score: float64(now + window.Milliseconds()), Member: deviceId}},
+	})
 	pipe.Set(ctx, seenKey(deviceId), now, seenTTL)
 	if _, err := pipe.Exec(ctx); err != nil && err != redis.Nil {
 		core.Logger.Errorf("[iot处理] 刷新到期表失败 deviceId=%s err=%v", deviceId, err)
@@ -118,11 +122,10 @@ func RefreshOnline(msg iot_schema.IngestMsg) {
 	}
 }
 
-// lastSeenAndDeadlines 一次 Redis 往返批量读多台设备的“最后报文时间+到期表 score”。
-// 取不到的 id 不出现在对应返回 map 里，调用方以“缺键”区分未设置；Redis 真故障才返回错误。
-func lastSeenAndDeadlines(deviceIds []string) (seen map[string]int64, deadline map[string]float64, e error) {
+// lastSeen 一次 Redis 往返批量读多台设备的“最后报文时间”。
+// 取不到的 id 不出现在返回 map 里，调用方以“缺键”区分未设置；Redis 真故障才返回错误。
+func lastSeen(deviceIds []string) (seen map[string]int64, e error) {
 	seen = make(map[string]int64, len(deviceIds))
-	deadline = make(map[string]float64, len(deviceIds))
 	if len(deviceIds) == 0 {
 		return
 	}
@@ -130,23 +133,36 @@ func lastSeenAndDeadlines(deviceIds []string) (seen map[string]int64, deadline m
 	defer cancel()
 	pipe := core.Redis.Pipeline()
 	gets := make([]*redis.StringCmd, len(deviceIds))
-	scores := make([]*redis.FloatCmd, len(deviceIds))
 	for i, id := range deviceIds {
 		gets[i] = pipe.Get(ctx, seenKey(id))
-		scores[i] = pipe.ZScore(ctx, expireZKey(), id)
 	}
 	if _, err := pipe.Exec(ctx); err != nil && err != redis.Nil {
-		return seen, deadline, err
+		return seen, err
 	}
 	for i, id := range deviceIds {
 		if v, err := gets[i].Int64(); err == nil && v > 0 {
 			seen[id] = v
 		}
-		if sc, err := scores[i].Result(); err == nil {
-			deadline[id] = sc
+	}
+	return seen, nil
+}
+
+// allDeadlines 一次读取整张到期表（member→score），供慢路径批量比对，免逐设备 ZSCORE。
+// 到期表随弹出而有界，规模与在线设备同量级；缺失即视为不在表中。
+func allDeadlines() (deadline map[string]float64, e error) {
+	ctx, cancel := RedisCtx()
+	defer cancel()
+	zs, err := core.Redis.ZRangeWithScores(ctx, expireZKey(), 0, -1).Result()
+	if err != nil && err != redis.Nil {
+		return nil, err
+	}
+	deadline = make(map[string]float64, len(zs))
+	for _, z := range zs {
+		if m, ok := z.Member.(string); ok {
+			deadline[m] = z.Score
 		}
 	}
-	return seen, deadline, nil
+	return deadline, nil
 }
 
 // SaveLatestValues 写入最新属性快照（HSET 覆盖同名 identifier）并续期 TTL；时序历史不在这里。
@@ -160,16 +176,17 @@ func SaveLatestValues(deviceId, spaceId string, values map[string]any, allow map
 	}
 	ctx, cancel := RedisCtx()
 	defer cancel()
-	// 逐字段下 HSET：Redis < 4.0 的 HSET 只接受一对 field/value，一次传多对会报
-	// “wrong number of arguments”（本项目环境实测）；拆成多条仍可由 pipeline 一个往返完成
-	key := stateKey(deviceId)
-	pipe := core.Redis.Pipeline()
+	// Redis 4.0+ 支持一次 HSET 多字段，无需再逐字段降级（本项目已升 Redis 8）
+	fields := make(map[string]interface{}, len(values)+1)
 	for k, v := range values {
-		pipe.HSet(ctx, key, k, stringify(v))
+		fields[k] = stringify(v)
 	}
 	if spaceId != "" {
-		pipe.HSet(ctx, key, stateSpaceField, spaceId)
+		fields[stateSpaceField] = spaceId
 	}
+	key := stateKey(deviceId)
+	pipe := core.Redis.Pipeline()
+	pipe.HSet(ctx, key, fields)
 	pipe.Expire(ctx, key, time.Duration(config.IotConfig.StateTTL)*time.Second)
 	pipe.SAdd(ctx, pushDirtyKey(), deviceId)
 	if _, err := pipe.Exec(ctx); err != nil {

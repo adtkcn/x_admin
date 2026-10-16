@@ -6,7 +6,7 @@ type AppConfigStruct struct {
 	Port    int    `mapstructure:"Port"`    // 应用端口
 
 	OssDomain      string `mapstructure:"OssDomain"`      // OSS域名
-	GinMode        string `mapstructure:"GinMode"`        // 应用模式: debug,release
+	GinMode        string `mapstructure:"GinMode"`        // 应用模式: debug,release,test
 	DisallowModify bool   `mapstructure:"DisallowModify"` // 禁止修改操作 (演示功能,限制POST请求)
 	ClusterMode    bool   `mapstructure:"ClusterMode"`    // 集群模式: false(单机) | true(集群)
 }

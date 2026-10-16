@@ -35,6 +35,13 @@ func repairOnlineScores() {
 		core.Logger.Errorf("[iot处理] 慢路径扫描在线设备失败 err=%v", err)
 		return
 	}
+	// 到期表整表读一次，替代逐设备 ZSCORE；比对用的 score 取本轮快照，
+	// 回填统一带 GT，即使快照偏旧也不会把并发报文刷新的更新鲜到期时间拉回去
+	deadline, err := allDeadlines()
+	if err != nil {
+		core.Logger.Errorf("[iot处理] 读到期表失败，本轮跳过 err=%v", err)
+		return
+	}
 	now := time.Now().UnixMilli()
 	for start := 0; start < len(rows); start += scanChunk {
 		chunk := rows[start:min(start+scanChunk, len(rows))]
@@ -42,10 +49,10 @@ func repairOnlineScores() {
 		for i, row := range chunk {
 			ids[i] = row.ID
 		}
-		seen, deadline, err := lastSeenAndDeadlines(ids)
+		seen, err := lastSeen(ids)
 		if err != nil {
 			// Redis 读不动就整批跳过：把“读不到时间戳”当成“没上报过”会一波误判离线
-			core.Logger.Errorf("[iot处理] 批量读报文时间/到期时间失败，本批跳过 size=%d err=%v", len(ids), err)
+			core.Logger.Errorf("[iot处理] 批量读报文时间失败，本批跳过 size=%d err=%v", len(ids), err)
 			continue
 		}
 
@@ -66,14 +73,15 @@ func repairOnlineScores() {
 				continue
 			}
 			// score 缺失或已到期但窗口内确有报文（如 Redis 丢数据）：重建到期时间。
-			// score 尚在未来则不动，避免用本批旧 seen 把并发报文刚刷新的 score 拉回去
+			// score 尚在未来则不动，回填交 GT 保证只升不降
 			if sc, ok := deadline[row.ID]; !ok || sc <= float64(now) {
 				repair = append(repair, redis.Z{Score: float64(seen[row.ID] + window.Milliseconds()), Member: row.ID})
 			}
 		}
 		if len(repair) > 0 {
 			ctx, cancel := RedisCtx()
-			if err := core.Redis.ZAdd(ctx, expireZKey(), repair...).Err(); err != nil {
+			// GT：仅在原 score 缺失/已到期时抬高，不覆盖并发报文刷新的更新鲜到期时间
+			if err := core.Redis.ZAddArgs(ctx, expireZKey(), redis.ZAddArgs{GT: true, Members: repair}).Err(); err != nil {
 				core.Logger.Errorf("[iot处理] 回填到期时间失败 size=%d err=%v", len(repair), err)
 			}
 			cancel()

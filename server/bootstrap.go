@@ -17,6 +17,7 @@ import (
 	"x_admin/config"
 	"x_admin/core"
 
+	"x_admin/util"
 	"x_admin/util/validation"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,8 @@ import (
 func bootstrap(ctx context.Context) error {
 	// 显示配置 gin 绑定校验器：注册 x_null 自定义类型 + 中文错误翻译
 	validation.Register()
+
+	printRedisVersion()
 
 	autoMigrate()
 
@@ -40,6 +43,17 @@ func bootstrap(ctx context.Context) error {
 	queue.Start(ctx)
 
 	return nil
+}
+
+// printRedisVersion 启动打印 Redis 版本：确认连的是预期实例且 RESP3 协商可用
+// （项目改动依赖 ZADD GT 等 Redis 6.2+ 语法，版本异常时可第一时间暴露）。
+func printRedisVersion() {
+	info := util.RedisUtil.Info("server")
+	if v, ok := info["redis_version"]; ok {
+		core.Logger.Infof("最低支持的Redis 6.2+，当前 Redis 版本: %s", v)
+	} else {
+		core.Logger.Warnf("未取到 Redis redis_version，请检查 Redis 连接")
+	}
 }
 
 // autoMigrate 自动迁移业务表结构。

@@ -86,19 +86,26 @@ func (s deviceService) authQuery(sn, token string) (row authRow, e error) {
 }
 
 // Authenticate 设备接入鉴权：sn + access_token 校验，命中缓存则完全不查库。
-// 高频上报下每条报文一次 DB 查询不可接受，故缓存 DeviceCacheTTL 秒；
-// 设备编辑/删除会显式失效对应 key，避免删除后凭证在 TTL 内仍可用。
+// 三级读缓存：本进程内存（TTL=LocalCacheTTL）→ Redis（TTL=DeviceCacheTTL）→ DB。
+// 本地层按值缓存 DeviceAuthInfo，每次命中返回独立副本指针，避免跨报文共享指针的数据竞争。
+// 高频上报下每条报文一次 DB 查询不可接受；设备编辑/删除/产品同步超时经 InvalidateAuth 三层即时失效。
 func (s deviceService) Authenticate(sn, token string) (info *iot_schema.DeviceAuthInfo, e error) {
 	if sn == "" || token == "" {
 		return nil, response.TokenEmpty.SetMessage("缺少设备编号或接入凭证!")
+	}
+	// 1) 本地：热路径绝大多数命中，省一次 Redis 往返
+	if cached, ok := core.CacheGet[iot_schema.DeviceAuthInfo](localAuthKey(sn, token)); ok && cached.DeviceId != "" {
+		return &cached, nil
 	}
 	key := authCacheKey(sn, token)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
+	// 2) Redis
 	if val, err := core.Redis.Get(ctx, key).Result(); err == nil && val != "" {
 		var cached iot_schema.DeviceAuthInfo
 		if err = json.Unmarshal([]byte(val), &cached); err == nil && cached.DeviceId != "" {
+			core.CacheSet(localAuthKey(sn, token), cached, localTTL) // 回填本地
 			return &cached, nil
 		}
 	} else if err != nil && !isRedisMiss(err) {
@@ -106,6 +113,7 @@ func (s deviceService) Authenticate(sn, token string) (info *iot_schema.DeviceAu
 		core.Logger.Errorf("设备鉴权读缓存失败 sn=%s err=%v", sn, err)
 	}
 
+	// 3) DB 回源
 	var row authRow
 	if row, e = s.authQuery(sn, token); e != nil {
 		return
@@ -126,6 +134,7 @@ func (s deviceService) Authenticate(sn, token string) (info *iot_schema.DeviceAu
 		if err = core.Redis.Set(ctx, key, bs, time.Duration(config.IotConfig.DeviceCacheTTL)*time.Second).Err(); err != nil {
 			core.Logger.Errorf("设备鉴权写缓存失败 sn=%s err=%v", sn, err)
 		}
+		core.CacheSet(localAuthKey(sn, token), *info, localTTL) // 同步回填本地
 	}
 	return
 }
@@ -143,6 +152,9 @@ func (s deviceService) InvalidateAuth(sn, token string) {
 	if err := core.Redis.Del(ctx, authCacheKey(sn, token)).Err(); err != nil {
 		core.Logger.Errorf("失效设备鉴权缓存失败 sn=%s err=%v", sn, err)
 	}
+	// 三层一起：删 Redis → 清本实例内存 → 广播跨实例失效（载荷即完整本地键）
+	core.CacheDelete(localAuthKey(sn, token))
+	emitInvalidate(BusEvtAuth, localAuthKey(sn, token))
 }
 
 // ProductModel 处理层需要的产品配置：

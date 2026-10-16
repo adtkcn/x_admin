@@ -13,16 +13,19 @@ import (
 const (
 	BusEvtProduct = "product" // payload=产品 ID（空 / `*` 全清）
 	BusEvtChain   = "chain"   // payload=规则链 ID（空 / `*` 全清）
+	BusEvtAuth    = "auth"    // payload=完整本地键（鉴权键含 sn+token，失效点总能拿到精确凭证，逐键删）
 
 	localProductPrefix = "iot:product:"
 	localChainPrefix   = "iot:rulechain:"
+	localAuthPrefix    = "iot:auth:"
 )
 
 // localTTL 本域兜底窗口，远小于 Redis 层 ThingCacheTTL；跨实例广播未达时靠它过期回源。
 var localTTL = time.Duration(config.IotConfig.LocalCacheTTL) * time.Second
 
-func localProductKey(id string) string { return localProductPrefix + id }
-func localChainKey(id string) string   { return localChainPrefix + id }
+func localProductKey(id string) string     { return localProductPrefix + id }
+func localChainKey(id string) string       { return localChainPrefix + id }
+func localAuthKey(sn, token string) string { return localAuthPrefix + sn + ":" + token }
 
 func init() {
 	if core.IotBus == nil {
@@ -33,6 +36,10 @@ func init() {
 	})
 	core.IotBus.On(BusEvtChain, func(p []byte) {
 		invalidateLocal(string(p), localChainPrefix, localChainKey)
+	})
+	// 鉴权键含 sn+token 两段，广播载荷直接是完整本地键，据此精确删除即可
+	core.IotBus.On(BusEvtAuth, func(p []byte) {
+		core.CacheDelete(string(p))
 	})
 }
 
