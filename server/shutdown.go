@@ -51,6 +51,13 @@ func gracefulClose(server *http.Server) {
 			core.Logger.Errorf("延迟队列关闭失败: %v", err)
 		}
 	}
+	// 有序队列同处关闭（必须先于 StopSink：它还在往批写缓冲里投数据）。各分片消费者退出前
+	// 会主动释放租约，未取走的消息留在分片里由接管实例接着消费。
+	if core.OrderedQueue != nil {
+		if err := core.OrderedQueue.Close(); err != nil {
+			core.Logger.Errorf("有序队列关闭失败: %v", err)
+		}
+	}
 
 	// 3.5) 队列已停生产、数据库未关：把时序批写缓冲里剩余数据同步落库，避免退出丢最后一批
 	pipeline.StopSink()

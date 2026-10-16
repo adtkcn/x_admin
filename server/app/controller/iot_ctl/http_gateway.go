@@ -106,7 +106,7 @@ func (g httpGateway) push(c *gin.Context, msg iot_schema.IngestMsg) {
 		core.Logger.Infof("[iot网关] 收到报文 sn=%s type=%s values=%d",
 			msg.Sn, msg.MsgType, len(msg.Values))
 	}
-	if e := core.Queue.Enqueue(queue_schema.QueueIotIngest, msg); e != nil {
+	if e := core.OrderedQueue.Enqueue(queue_schema.QueueIotIngest, msg.DeviceId, msg); e != nil {
 		core.Logger.Errorf("[iot网关] 投递 %s 失败 sn=%s err=%v", queue_schema.QueueIotIngest, msg.Sn, e)
 		response.Fail(c, response.SystemError.SetMessage("报文入队失败，请稍后重试!"))
 		return

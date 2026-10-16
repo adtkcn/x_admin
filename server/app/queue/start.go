@@ -31,9 +31,9 @@ func Start(ctx context.Context) {
 	// 操作日志落库：由中间件投递，消费者在此写库，解耦请求与 DB 写入
 	core.Queue.Consume(ctx, queue_schema.QueueOperateLog, ProcessOperateLog, 3)
 
-	// IoT 设备报文处理：消费 iot:ingest 队列
+	// IoT 设备报文处理：消费 iot:ingest 有序队列（按 deviceId 分片，同设备严格有序、跨设备并行）
 	if config.IotConfig.Enable {
-		core.Queue.Consume(ctx, queue_schema.QueueIotIngest, IotStart, 1)
+		core.OrderedQueue.Consume(ctx, queue_schema.QueueIotIngest, IotStart)
 	}
 
 }
