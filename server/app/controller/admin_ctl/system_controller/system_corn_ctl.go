@@ -1,10 +1,10 @@
-package admin_ctl
+package system_controller
 
 import (
 	"fmt"
 	"strings"
 	"time"
-	"x_admin/app/schema"
+	"x_admin/app/schema/system_schema"
 	"x_admin/app/service/corn_service"
 
 	"x_admin/config"
@@ -38,11 +38,11 @@ type SystemCornHandler struct {
 // @Param		update_time_start	query		string																		false	"更新时间"
 // @Param		update_time_end		query		string																		false	"更新时间"
 //
-// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]schema.SystemCornResp}}	"成功"
+// @Success	200					{object}	response.Response{data=response.PageResp{lists=[]system_schema.SystemCornResp}}	"成功"
 // @Router		/api/admin/system_corn/list [get]
 func (hd *SystemCornHandler) List(c *gin.Context) {
 	var page request.PageReq
-	var listReq schema.SystemCornListReq
+	var listReq system_schema.SystemCornListReq
 	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &page)) {
 		return
 	}
@@ -67,10 +67,10 @@ func (hd *SystemCornHandler) List(c *gin.Context) {
 // @Param		create_time_end		query		string											false	"创建时间"
 // @Param		update_time_start	query		string											false	"更新时间"
 // @Param		update_time_end		query		string											false	"更新时间"
-// @Success	200					{object}	response.Response{data=[]schema.SystemCornResp}	"成功"
+// @Success	200					{object}	response.Response{data=[]system_schema.SystemCornResp}	"成功"
 // @Router		/api/admin/system_corn/list_all [get]
 func (hd *SystemCornHandler) ListAll(c *gin.Context) {
-	var listReq schema.SystemCornListReq
+	var listReq system_schema.SystemCornListReq
 	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
@@ -83,10 +83,10 @@ func (hd *SystemCornHandler) ListAll(c *gin.Context) {
 // @Produce	json
 // @Param		token	header		string											true	"token"
 // @Param		id		query		string											false	"taskid"
-// @Success	200		{object}	response.Response{data=schema.SystemCornResp}	"成功"
+// @Success	200		{object}	response.Response{data=system_schema.SystemCornResp}	"成功"
 // @Router		/api/admin/system_corn/detail [get]
 func (hd *SystemCornHandler) Detail(c *gin.Context) {
-	var detailReq schema.SystemCornPrimarykey
+	var detailReq system_schema.SystemCornPrimarykey
 	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &detailReq)) {
 		return
 	}
@@ -109,7 +109,7 @@ func (hd *SystemCornHandler) Detail(c *gin.Context) {
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/add [post]
 func (hd *SystemCornHandler) Add(c *gin.Context) {
-	var addReq schema.SystemCornAddReq
+	var addReq system_schema.SystemCornAddReq
 	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &addReq)) {
 		return
 	}
@@ -130,7 +130,7 @@ func (hd *SystemCornHandler) Add(c *gin.Context) {
 // @Success	200			{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/edit [post]
 func (hd *SystemCornHandler) Edit(c *gin.Context) {
-	var editReq schema.SystemCornEditReq
+	var editReq system_schema.SystemCornEditReq
 	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &editReq)) {
 		return
 	}
@@ -145,7 +145,7 @@ func (hd *SystemCornHandler) Edit(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/del [post]
 func (hd *SystemCornHandler) Del(c *gin.Context) {
-	var delReq schema.SystemCornPrimarykey
+	var delReq system_schema.SystemCornPrimarykey
 	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
@@ -161,7 +161,7 @@ func (hd *SystemCornHandler) Del(c *gin.Context) {
 // @Success	200		{object}	response.Response	"成功"
 // @Router		/api/admin/system_corn/del_batch [post]
 func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
-	var delReq schema.SystemCornDelBatchReq
+	var delReq system_schema.SystemCornDelBatchReq
 	if response.IsFail(c, util.VerifyUtil.VerifyJSON(c, &delReq)) {
 		return
 	}
@@ -192,7 +192,7 @@ func (hd *SystemCornHandler) DelBatch(c *gin.Context) {
 // @Failure	500					{object}	response.Response	"失败"
 // @Router		/api/admin/system_corn/export_file [get]
 func (hd *SystemCornHandler) ExportFile(c *gin.Context) {
-	var listReq schema.SystemCornListReq
+	var listReq system_schema.SystemCornListReq
 	if response.IsFail(c, util.VerifyUtil.VerifyQuery(c, &listReq)) {
 		return
 	}
@@ -223,7 +223,7 @@ func (hd *SystemCornHandler) ImportFile(c *gin.Context) {
 		return
 	}
 	defer file.Close()
-	importList := []schema.SystemCornResp{}
+	importList := []system_schema.SystemCornResp{}
 	err = excel_util.GetExcelData(file, &importList, corn_service.SystemCornService.GetExcelCol())
 	if err != nil {
 		response.Fail(c, response.CheckErr(err, "文件解析失败"))

@@ -2,7 +2,7 @@ package corn_service
 
 import (
 	"x_admin/app/model/system_model"
-	"x_admin/app/schema"
+	"x_admin/app/schema/system_schema"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -33,7 +33,7 @@ type systemCornService struct {
 }
 
 // List 定时任务列表
-func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gorm.DB {
+func (service systemCornService) GetModel(listReq system_schema.SystemCornListReq) *gorm.DB {
 	// 查询
 	tableName := core.DBTableName(&system_model.SystemCorn{})
 
@@ -76,7 +76,7 @@ func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gor
 }
 
 // List 定时任务列表
-func (service systemCornService) List(page request.PageReq, listReq schema.SystemCornListReq) (res response.PageResp, e error) {
+func (service systemCornService) List(page request.PageReq, listReq system_schema.SystemCornListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -93,7 +93,7 @@ func (service systemCornService) List(page request.PageReq, listReq schema.Syste
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []schema.SystemCornResp{}
+	result := []system_schema.SystemCornResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -104,7 +104,7 @@ func (service systemCornService) List(page request.PageReq, listReq schema.Syste
 }
 
 // ListAll 定时任务列表
-func (service systemCornService) ListAll(listReq schema.SystemCornListReq) (res []schema.SystemCornResp, e error) {
+func (service systemCornService) ListAll(listReq system_schema.SystemCornListReq) (res []system_schema.SystemCornResp, e error) {
 	dbModel := service.GetModel(listReq)
 
 	var modelList []system_model.SystemCorn
@@ -118,7 +118,7 @@ func (service systemCornService) ListAll(listReq schema.SystemCornListReq) (res 
 }
 
 // Detail 定时任务详情
-func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e error) {
+func (service systemCornService) Detail(Id string) (res system_schema.SystemCornResp, e error) {
 	var obj = system_model.SystemCorn{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
@@ -134,7 +134,7 @@ func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e
 }
 
 // Add 定时任务新增
-func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId string) (createId string, e error) {
+func (service systemCornService) Add(addReq system_schema.SystemCornAddReq, adminId string) (createId string, e error) {
 	var obj system_model.SystemCorn
 	convert_util.Copy(&obj, addReq)
 	obj.CreatedBy.SetValue(adminId)
@@ -148,7 +148,7 @@ func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId str
 }
 
 // Edit 定时任务编辑
-func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error) {
+func (service systemCornService) Edit(editReq system_schema.SystemCornEditReq) (e error) {
 	result := service.db.Model(&system_model.SystemCorn{}).Where("id = ?", editReq.Id).Updates(editReq)
 	// MySQL 错误码（唯一键冲突、外键约束等）由统一出口翻译成业务文案，
 	// 未知数据库错误由出口统一记录日志，此处不再重复记录
@@ -205,7 +205,7 @@ func (service systemCornService) GetExcelCol() []excel_util.Col {
 }
 
 // ExportFile 定时任务导出
-func (service systemCornService) ExportFile(listReq schema.SystemCornListReq) (res []schema.SystemCornResp, e error) {
+func (service systemCornService) ExportFile(listReq system_schema.SystemCornListReq) (res []system_schema.SystemCornResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
@@ -215,13 +215,13 @@ func (service systemCornService) ExportFile(listReq schema.SystemCornListReq) (r
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []schema.SystemCornResp{}
+	result := []system_schema.SystemCornResp{}
 	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
-func (service systemCornService) ImportFile(importReq []schema.SystemCornResp) (e error) {
+func (service systemCornService) ImportFile(importReq []system_schema.SystemCornResp) (e error) {
 	var importData []system_model.SystemCorn
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error

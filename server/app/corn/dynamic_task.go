@@ -1,7 +1,7 @@
 package corn
 
 import (
-	"x_admin/app/schema"
+	"x_admin/app/schema/system_schema"
 	"x_admin/app/service/corn_service"
 	"x_admin/core"
 
@@ -14,7 +14,7 @@ var DynamicTasks = NewCronManager()
 // 从数据库加载任务
 func loadTasks() {
 
-	allList, err := corn_service.SystemCornService.ListAll(schema.SystemCornListReq{
+	allList, err := corn_service.SystemCornService.ListAll(system_schema.SystemCornListReq{
 		Status: x_null.NewInt64(1),
 	})
 	if err != nil {

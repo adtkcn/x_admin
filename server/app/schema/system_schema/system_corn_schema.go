@@ -1,8 +1,6 @@
-package schema
+package system_schema
 
 import (
-	"x_admin/app/schema/system_schema"
-
 	"github.com/adtkcn/x_null"
 )
 
@@ -48,13 +46,13 @@ type SystemCornDelBatchReq struct {
 
 // SystemCornResp 定时任务返回信息
 type SystemCornResp struct {
-	Id            string                                  `json:"id" swaggertype:"string"`              // ID
-	TaskName      x_null.String                           `json:"task_name" swaggertype:"string"`       // 任务名称
-	TaskCode      x_null.String                           `json:"task_code" swaggertype:"string"`       // 任务编码
-	CornExpr      x_null.String                           `json:"corn_expr" swaggertype:"string"`       // corn表达式
-	Status        x_null.Int64                            `json:"status" swaggertype:"number"`          // 状态
-	CreatedBy     x_null.String                           `json:"created_by" swaggertype:"string"`      // 创建人
-	CreatedByUser system_schema.SystemAuthAdminSimpleInfo `json:"created_by_user" swaggertype:"string"` // 创建人
-	CreateTime    x_null.Time                             `json:"create_time" swaggertype:"string"`     // 创建时间
-	UpdateTime    x_null.Time                             `json:"update_time" swaggertype:"string"`     // 更新时间
+	Id            string                    `json:"id" swaggertype:"string"`              // ID
+	TaskName      x_null.String             `json:"task_name" swaggertype:"string"`       // 任务名称
+	TaskCode      x_null.String             `json:"task_code" swaggertype:"string"`       // 任务编码
+	CornExpr      x_null.String             `json:"corn_expr" swaggertype:"string"`       // corn表达式
+	Status        x_null.Int64              `json:"status" swaggertype:"number"`          // 状态
+	CreatedBy     x_null.String             `json:"created_by" swaggertype:"string"`      // 创建人
+	CreatedByUser SystemAuthAdminSimpleInfo `json:"created_by_user" swaggertype:"string"` // 创建人
+	CreateTime    x_null.Time               `json:"create_time" swaggertype:"string"`     // 创建时间
+	UpdateTime    x_null.Time               `json:"update_time" swaggertype:"string"`     // 更新时间
 }

@@ -1,10 +1,9 @@
-package service
+package user_service
 
 import (
 	"errors"
 	"x_admin/app/model/user_model"
-	"x_admin/app/schema"
-	"x_admin/core"
+	"x_admin/app/schema/user_schema"
 	"x_admin/core/request"
 	"x_admin/core/response"
 	"x_admin/util/convert_util"
@@ -12,17 +11,8 @@ import (
 	"gorm.io/gorm"
 )
 
-var UserService = NewUserService()
-
-func NewUserService() *userService {
-	return &userService{db: core.GetDB()}
-}
-
-type userService struct {
-	db *gorm.DB
-}
-
-func (s userService) List(page request.PageReq, listReq schema.UserListReq) (res response.PageResp, e error) {
+// List 用户列表（后台管理）
+func (s *userService) List(page request.PageReq, listReq user_schema.UserListReq) (res response.PageResp, e error) {
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	dbModel := s.db.Model(&user_model.User{})
@@ -49,12 +39,13 @@ func (s userService) List(page request.PageReq, listReq schema.UserListReq) (res
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []schema.UserResp{}
+	result := []user_schema.UserResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{PageNo: page.PageNo, PageSize: page.PageSize, Count: count, Lists: result}, nil
 }
 
-func (s userService) Detail(Id string) (res schema.UserResp, e error) {
+// Detail 用户详情（后台管理）
+func (s *userService) Detail(Id string) (res user_schema.UserResp, e error) {
 	var obj user_model.User
 	err := s.db.Where("id = ?", Id).First(&obj).Error
 	if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
@@ -64,7 +55,8 @@ func (s userService) Detail(Id string) (res schema.UserResp, e error) {
 	return
 }
 
-func (s userService) Edit(editReq schema.UserEditReq) (e error) {
+// Edit 用户编辑（后台管理）
+func (s *userService) Edit(editReq user_schema.UserEditReq) (e error) {
 	// 先确认记录存在（RowsAffected==0 不代表不存在）
 	var exist int64
 	if err := s.db.Model(&user_model.User{}).Where("id = ?", editReq.Id).Count(&exist).Error; err != nil {
@@ -100,7 +92,7 @@ func (s userService) Edit(editReq schema.UserEditReq) (e error) {
 }
 
 // Disable 禁用/启用用户（0正常 1禁用）
-func (s userService) Disable(disableReq schema.UserDisableReq) (e error) {
+func (s *userService) Disable(disableReq user_schema.UserDisableReq) (e error) {
 	// 先确认记录存在（RowsAffected==0 不代表不存在）
 	var exist int64
 	if err := s.db.Model(&user_model.User{}).Where("id = ?", disableReq.Id).Count(&exist).Error; err != nil {
@@ -117,7 +109,7 @@ func (s userService) Disable(disableReq schema.UserDisableReq) (e error) {
 }
 
 // Kick 踢人下线（自增 token_version 使旧 token 失效）
-func (s userService) Kick(Id string) (e error) {
+func (s *userService) Kick(Id string) (e error) {
 	// 先确认记录存在（RowsAffected==0 不代表不存在）
 	var exist int64
 	if err := s.db.Model(&user_model.User{}).Where("id = ?", Id).Count(&exist).Error; err != nil {

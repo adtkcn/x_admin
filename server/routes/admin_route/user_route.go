@@ -1,14 +1,14 @@
 package admin_route
 
 import (
-	"x_admin/app/controller/admin_ctl"
+	"x_admin/app/controller/admin_ctl/user_controller"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func UserRoute(rg *gin.RouterGroup) {
-	handle := admin_ctl.UserHandler{}
+	handle := user_controller.UserHandler{}
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/user/list", handle.List)
 	r.GET("/user/detail", handle.Detail)

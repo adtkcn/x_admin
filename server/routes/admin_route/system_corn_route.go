@@ -1,14 +1,14 @@
 package admin_route
 
 import (
-	"x_admin/app/controller/admin_ctl"
+	"x_admin/app/controller/admin_ctl/system_controller"
 	"x_admin/app/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SystemCornRoute(rg *gin.RouterGroup) {
-	handle := admin_ctl.SystemCornHandler{}
+	handle := system_controller.SystemCornHandler{}
 
 	r := rg.Group("/", middleware.PermAuth())
 	r.GET("/system_corn/list", handle.List)

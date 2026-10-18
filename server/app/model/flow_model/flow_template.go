@@ -30,4 +30,3 @@ func (u *FlowTemplate) BeforeCreate(tx *gorm.DB) error {
 	u.Id = id.String()
 	return nil
 }
-

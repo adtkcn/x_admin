@@ -1,9 +1,9 @@
-package service
+package user_service
 
 import (
 	"errors"
 	"x_admin/app/model/user_model"
-	"x_admin/app/schema"
+	"x_admin/app/schema/user_schema"
 	"x_admin/core"
 	"x_admin/core/request"
 	"x_admin/core/response"
@@ -35,7 +35,7 @@ type userProtocolService struct {
 }
 
 // List 用户协议列表
-func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) *gorm.DB {
+func (service userProtocolService) GetModel(listReq user_schema.UserProtocolListReq) *gorm.DB {
 	// 查询
 	dbModel := service.db.Model(&user_model.UserProtocol{}).Preload("CreatedByUser")
 	if listReq.Title.IsExistsAndNotNull() {
@@ -64,7 +64,7 @@ func (service userProtocolService) GetModel(listReq schema.UserProtocolListReq) 
 }
 
 // List 用户协议列表
-func (service userProtocolService) List(page request.PageReq, listReq schema.UserProtocolListReq) (res response.PageResp, e error) {
+func (service userProtocolService) List(page request.PageReq, listReq user_schema.UserProtocolListReq) (res response.PageResp, e error) {
 	// 分页信息
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
@@ -81,7 +81,7 @@ func (service userProtocolService) List(page request.PageReq, listReq schema.Use
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []schema.UserProtocolResp{}
+	result := []user_schema.UserProtocolResp{}
 	convert_util.Copy(&result, modelList)
 	return response.PageResp{
 		PageNo:   page.PageNo,
@@ -92,7 +92,7 @@ func (service userProtocolService) List(page request.PageReq, listReq schema.Use
 }
 
 // ListAll 用户协议列表
-func (service userProtocolService) ListAll(listReq schema.UserProtocolListReq) (res []schema.UserProtocolResp, e error) {
+func (service userProtocolService) ListAll(listReq user_schema.UserProtocolListReq) (res []user_schema.UserProtocolResp, e error) {
 	dbModel := service.GetModel(listReq)
 
 	var modelList []user_model.UserProtocol
@@ -106,7 +106,7 @@ func (service userProtocolService) ListAll(listReq schema.UserProtocolListReq) (
 }
 
 // Detail 用户协议详情
-func (service userProtocolService) Detail(Id string) (res schema.UserProtocolResp, e error) {
+func (service userProtocolService) Detail(Id string) (res user_schema.UserProtocolResp, e error) {
 	var obj = user_model.UserProtocol{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
@@ -122,7 +122,7 @@ func (service userProtocolService) Detail(Id string) (res schema.UserProtocolRes
 }
 
 // Add 用户协议新增
-func (service userProtocolService) Add(addReq schema.UserProtocolAddReq, adminId string) (createId string, e error) {
+func (service userProtocolService) Add(addReq user_schema.UserProtocolAddReq, adminId string) (createId string, e error) {
 	var obj user_model.UserProtocol
 	convert_util.Copy(&obj, addReq)
 	obj.CreatedBy.SetValue(adminId)
@@ -136,7 +136,7 @@ func (service userProtocolService) Add(addReq schema.UserProtocolAddReq, adminId
 }
 
 // Edit 用户协议编辑
-func (service userProtocolService) Edit(editReq schema.UserProtocolEditReq) (e error) {
+func (service userProtocolService) Edit(editReq user_schema.UserProtocolEditReq) (e error) {
 	result := service.db.Model(user_model.UserProtocol{}).Where("id = ?", editReq.Id).Updates(editReq)
 	// MySQL 错误码（唯一键冲突、外键约束等）由统一出口翻译成业务文案，
 	// 未知数据库错误由出口统一记录日志，此处不再重复记录
@@ -197,7 +197,7 @@ func (service userProtocolService) GetExcelCol() []excel_util.Col {
 }
 
 // ExportFile 用户协议导出
-func (service userProtocolService) ExportFile(listReq schema.UserProtocolListReq) (res []schema.UserProtocolResp, e error) {
+func (service userProtocolService) ExportFile(listReq user_schema.UserProtocolListReq) (res []user_schema.UserProtocolResp, e error) {
 	// 查询
 	dbModel := service.GetModel(listReq)
 
@@ -207,13 +207,13 @@ func (service userProtocolService) ExportFile(listReq schema.UserProtocolListReq
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
 	}
-	result := []schema.UserProtocolResp{}
+	result := []user_schema.UserProtocolResp{}
 	convert_util.Copy(&result, modelList)
 	return result, nil
 }
 
 // 导入
-func (service userProtocolService) ImportFile(importReq []schema.UserProtocolResp) (e error) {
+func (service userProtocolService) ImportFile(importReq []user_schema.UserProtocolResp) (e error) {
 	var importData []user_model.UserProtocol
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error

@@ -1,4 +1,4 @@
-package schema
+package user_schema
 
 import (
 	"x_admin/app/schema/system_schema"

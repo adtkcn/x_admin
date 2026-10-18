@@ -29,4 +29,3 @@ func (u *SystemCorn) BeforeCreate(tx *gorm.DB) error {
 	u.Id = id.String()
 	return nil
 }
-

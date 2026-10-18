@@ -27,4 +27,3 @@ func (m *MonitorProject) BeforeCreate(tx *gorm.DB) (err error) {
 	m.Id = id.String()
 	return nil
 }
-

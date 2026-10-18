@@ -47,4 +47,3 @@ func (u *FlowHistory) BeforeCreate(tx *gorm.DB) error {
 	u.Id = id.String()
 	return nil
 }
-
