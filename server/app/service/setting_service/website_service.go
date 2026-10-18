@@ -35,11 +35,9 @@ func (wSrv settingWebsiteService) Detail() (res map[string]string, e error) {
 	return map[string]string{
 		"name": data["name"],
 		// 业务表存完整访问地址（/api/uploads/<id>），无需再转换
-		"logo":      data["logo"],
-		"favicon":   data["favicon"],
-		"backdrop":  data["backdrop"],
-		"shop_name": data["shop_name"],
-		"shop_logo": data["shop_logo"],
+		"logo":     data["logo"],
+		"favicon":  data["favicon"],
+		"backdrop": data["backdrop"],
 	}, nil
 }
 
@@ -58,14 +56,6 @@ func (wSrv settingWebsiteService) Save(wsReq setting_schema.SettingWebsiteReq) (
 		return
 	}
 	err = SystemConfigService.Set(wSrv.db, "website", "backdrop", wsReq.Backdrop)
-	if e = response.CheckErr(err, "Save Set backdrop err"); e != nil {
-		return
-	}
-	err = SystemConfigService.Set(wSrv.db, "website", "shop_name", wsReq.ShopName)
-	if e = response.CheckErr(err, "Save Set shop_name err"); e != nil {
-		return
-	}
-	err = SystemConfigService.Set(wSrv.db, "website", "shop_logo", wsReq.ShopLogo)
-	e = response.CheckErr(err, "Save Set shop_logo err")
+	e = response.CheckErr(err, "Save Set backdrop err")
 	return
 }

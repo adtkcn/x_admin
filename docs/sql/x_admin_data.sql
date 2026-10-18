@@ -237,8 +237,6 @@ INSERT INTO `x_system_auth_menu` (`id`, `pid`, `menu_type`, `menu_name`, `menu_i
 
 -- 正在导出表  x_admin_2.x_system_config 的数据：~9 rows (大约)
 INSERT INTO `x_system_config` (`id`, `type`, `name`, `value`, `create_time`, `update_time`) VALUES
-	('01a00145-85d1-73d2-ac34-87438ad45441', 'website', 'shop_name', '1', '2026-08-15 01:15:28', '2026-08-15 01:15:28'),
-	('01a00145-85d4-7e76-90e7-e6a9f5cf200f', 'website', 'shop_logo', '', '2026-08-15 01:15:28', '2026-08-15 01:15:28'),
 	('10', 'website', 'name', 'x_admin开源系统', '2024-01-02 03:04:05', '2026-08-15 01:15:29'),
 	('11', 'website', 'logo', '/api/static/backend_logo.png', '2024-01-02 03:04:05', '2026-08-15 01:15:29'),
 	('12', 'website', 'favicon', '/api/static/backend_favicon.ico', '2024-01-02 03:04:05', '2026-08-15 01:15:29'),
