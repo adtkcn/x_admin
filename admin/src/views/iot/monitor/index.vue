@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, onActivated, onDeactivated, nextTick } from 'vue'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { deviceSpaceAll, type type_iot_device_space } from '@/api/iot/device_space'
 import { deviceMap, deviceState, type type_device_map_item } from '@/api/iot/device'
@@ -195,11 +195,25 @@ const joinAllRooms = () => {
     }
 }
 
+// 离开页面时退出所有已加入的房间，避免服务端连接继续向本页广播推送
+const leaveAllRooms = () => {
+    if (wsStatus.value !== 'open') return
+    for (const s of spaces.value) {
+        if (s.id) wsSend(JSON.stringify({ type: 'leave_room', data: `iot:map:${s.id}` }))
+    }
+}
+
 // 房间成员关系保存在服务端连接上：首次连接与断线自动重连后都要重新 join
+// 首次 open 不重载点位（进入时已 loadPoints），仅重连时刷新增量，避免进入页面 deviceMap 加载两次
+// visible：当前页是否处于可见态（keep-alive 缓存下切走为 false），重连时据此避免给隐藏页抢进房
+let wsConnectedOnce = false
+let visible = false
 watch(wsStatus, (s) => {
     if (s === 'open') {
+        if (!visible) return
         joinAllRooms()
-        loadPoints()
+        if (wsConnectedOnce) loadPoints()
+        wsConnectedOnce = true
     }
 })
 
@@ -252,21 +266,47 @@ const tick = () => {
 let clockTimer: ReturnType<typeof setInterval> | null = null
 
 // ---------------- 生命周期 ----------------
+// 进入页面：刷新点位数据 + 进房 + 启动时钟（首次挂载与 keep-alive 再次激活均复用）
+const enterPage = () => {
+    visible = true
+    loadPoints()
+    // WS 可能早已连接（layout 初始化），此时 watch 不会触发，需主动进房
+    if (wsStatus.value === 'open') joinAllRooms()
+    if (!clockTimer) {
+        tick()
+        clockTimer = setInterval(tick, 1000)
+    }
+}
+// 离开页面：退房 + 停时钟（缓存页切走与真正卸载均复用）；幂等，避免 deactivated+unmount 重复退房
+const exitPage = () => {
+    if (!visible) return
+    visible = false
+    leaveAllRooms()
+    if (clockTimer) {
+        clearInterval(clockTimer)
+        clockTimer = null
+    }
+}
+
 onMounted(async () => {
     spaces.value = await deviceSpaceAll()
     spaceTree.value = arrayToTree<any>(spaces.value as any[], '')
     await nextTick()
     map.init()
-    await loadPoints()
-    // WS 可能早已连接（layout 初始化），此时 watch 不会触发，需主动进房
-    if (wsStatus.value === 'open') joinAllRooms()
-    tick()
-    clockTimer = setInterval(tick, 1000)
     document.addEventListener('fullscreenchange', onFullscreenChange)
+    enterPage()
 })
 
+// keep-alive 缓存：首次进入紧跟 onMounted（visible 已置 true）跳过，避免重复加载；再次切回才重新进页
+onActivated(() => {
+    if (visible) return
+    enterPage()
+})
+// 切走（仍在缓存中，不销毁）：退房停时钟，隐藏期间不再接收推送
+onDeactivated(() => exitPage())
+
 onBeforeUnmount(() => {
-    if (clockTimer) clearInterval(clockTimer)
+    exitPage()
     document.removeEventListener('fullscreenchange', onFullscreenChange)
     map.destroy()
 })

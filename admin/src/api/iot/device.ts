@@ -75,7 +75,6 @@ export function deviceState(params: { id: string }) {
 export type type_device_data = {
     ts: number
     values: Record<string, any>
-    protocol: string
 }
 export function deviceData(params: { id: string; start_ms?: number; end_ms?: number; limit?: number }) {
     return request.get<type_device_data[]>({ url: '/iot/device/data', params })

@@ -39,9 +39,8 @@ func QueryRange(deviceId string, startMs, endMs int64, limit int) []iot_schema.D
 			}
 		}
 		list = append(list, iot_schema.DeviceDataResp{
-			Ts:       row.Ts.UnixMilli(),
-			Values:   vals,
-			Protocol: row.Protocol,
+			Ts:     row.Ts.UnixMilli(),
+			Values: vals,
 		})
 	}
 	return list

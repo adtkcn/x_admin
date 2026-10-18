@@ -72,9 +72,8 @@ type DeviceDataReq struct {
 
 // DeviceDataResp 一条时序历史记录（属性已反序列化为 map，便于前端直接渲染）
 type DeviceDataResp struct {
-	Ts       int64          `json:"ts"`       // 采集时间(毫秒)
-	Values   map[string]any `json:"values"`   // 属性键值（规则链加工后，已按物模型约束）
-	Protocol string         `json:"protocol"` // 接入协议
+	Ts     int64          `json:"ts"`     // 采集时间(毫秒)
+	Values map[string]any `json:"values"` // 属性键值（规则链加工后，已按物模型约束）
 }
 
 // DeviceStateResp 设备运行态快照（管理端回读，数据源为 Redis）
