@@ -15,6 +15,7 @@ export function nodeTypeSupportsGateway(nodeType?: string) {
 
 // ===================== 产品 =====================
 export type type_iot_product_list = {
+    code?: string
     name?: string
     category_id?: string
     is_stop?: number
@@ -23,6 +24,7 @@ export type type_iot_product_list = {
 }
 export type type_iot_product = {
     id?: string
+    code?: string
     name?: string
     category_id?: string
     category_name?: string

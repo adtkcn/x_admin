@@ -2,6 +2,9 @@
     <div class="product-lists">
         <el-card class="border-none!" shadow="never">
             <el-form ref="formRef" class="mb-[-16px]" :model="queryParams" :inline="true">
+                <el-form-item class="w-[240px]" label="产品编码">
+                    <el-input v-model="queryParams.code" clearable @keyup.enter="resetPage" />
+                </el-form-item>
                 <el-form-item class="w-[240px]" label="产品名称">
                     <el-input v-model="queryParams.name" clearable @keyup.enter="resetPage" />
                 </el-form-item>
@@ -46,6 +49,7 @@
                 :border="'inner'"
                 show-overflow="title"
             >
+                <vxe-column title="产品编码" field="code" min-width="120" />
                 <vxe-column title="产品名称" field="name" min-width="140" />
                 <vxe-column title="所属分类" field="category_name" min-width="120" />
                 <vxe-column title="节点类型" field="device_type" min-width="120">
@@ -114,6 +118,7 @@ defineOptions({
 const editRef = shallowRef<InstanceType<typeof EditPopup>>()
 const showEdit = ref(false)
 const queryParams = reactive<type_iot_product_list>({
+    code: '',
     name: '',
     category_id: '',
     is_stop: undefined

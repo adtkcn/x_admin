@@ -27,6 +27,9 @@ type productService struct {
 // List 产品分页列表
 func (s productService) List(page request.PageReq, listReq iot_schema.ProductListReq) (res response.PageResp, e error) {
 	chain := s.db.Model(&iot_model.IotProduct{})
+	if v := listReq.Code.ValueOrZero(); v != "" {
+		chain = chain.Where("code like ?", "%"+v+"%")
+	}
 	if v := listReq.Name.ValueOrZero(); v != "" {
 		chain = chain.Where("name like ?", "%"+v+"%")
 	}
@@ -146,6 +149,9 @@ func (s productService) Add(addReq iot_schema.ProductAddReq) (e error) {
 	if e = checkThingModel(addReq.ThingModel); e != nil {
 		return
 	}
+	if e = s.checkCodeUnique(addReq.Code, ""); e != nil {
+		return
+	}
 	// 分类已必填，保留空值分支：接口直调时不至于拿着野 category_id 建出无分类产品
 	if addReq.CategoryId != "" {
 		var cate iot_model.IotProductCategory
@@ -166,6 +172,9 @@ func (s productService) Add(addReq iot_schema.ProductAddReq) (e error) {
 // Edit 编辑产品：节点类型从网关能力(GATEWAY/EDGE)变更为非网关时，需先解除其下设备的子设备绑定
 func (s productService) Edit(editReq iot_schema.ProductEditReq) (e error) {
 	if e = checkThingModel(editReq.ThingModel); e != nil {
+		return
+	}
+	if e = s.checkCodeUnique(editReq.Code, editReq.ID); e != nil {
 		return
 	}
 	var product iot_model.IotProduct
@@ -252,6 +261,22 @@ func (s productService) fillRuleChainName(list []iot_schema.ProductResp) {
 	for i := range list {
 		list[i].RuleChainName = nameMap[list[i].RuleChainId]
 	}
+}
+
+// checkCodeUnique 校验产品编码唯一性，excludeId 为编辑时排除自身
+func (s productService) checkCodeUnique(code, excludeId string) error {
+	chain := s.db.Model(&iot_model.IotProduct{}).Where("code = ?", code)
+	if excludeId != "" {
+		chain = chain.Where("id != ?", excludeId)
+	}
+	var count int64
+	if err := chain.Count(&count).Error; err != nil {
+		return response.CheckErr(err, "产品编码查重失败")
+	}
+	if count > 0 {
+		return response.AssertArgumentError.SetMessage("产品编码已存在!" )
+	}
+	return nil
 }
 
 // Del 删除产品：产品下存在设备时禁止删除

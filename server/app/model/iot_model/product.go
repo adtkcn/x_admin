@@ -11,6 +11,7 @@ import (
 // IotProduct 产品定义
 type IotProduct struct {
 	ID             string                `gorm:"primarykey;type:char(36);comment:'主键'" json:"id"`
+	Code           string                `gorm:"type:varchar(64);not null;default:'';index;comment:'产品编码'" json:"code"`
 	Name           string                `gorm:"type:varchar(100);not null;default:'';comment:'产品名称'" json:"name"`
 	CategoryId     string                `gorm:"type:char(36);not null;default:'';index;comment:'分类ID'" json:"category_id"`
 	DeviceType     string                `gorm:"type:varchar(50);not null;default:'';comment:'节点类型: DEVICE=直连设备, GATEWAY=网关设备, EDGE=边缘主机'" json:"device_type"`

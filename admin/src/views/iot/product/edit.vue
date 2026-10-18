@@ -9,6 +9,9 @@
             @close="handleClose"
         >
             <el-form ref="formRef" :model="formData" label-width="110px" :rules="formRules">
+                <el-form-item label="产品编码" prop="code">
+                    <el-input v-model="formData.code" placeholder="请输入产品编码" clearable :maxlength="64" />
+                </el-form-item>
                 <el-form-item label="产品名称" prop="name">
                     <el-input v-model="formData.name" placeholder="请输入产品名称" clearable :maxlength="100" />
                 </el-form-item>
@@ -132,6 +135,7 @@ const popupTitle = computed(() => (mode.value == 'edit' ? '编辑产品' : '新�
 
 const { state: formData, setState } = useReactiveWithReset<type_iot_product>({
     id: '',
+    code: '',
     name: '',
     category_id: '',
     device_type: '',
@@ -162,6 +166,7 @@ const validateThingModel = (_rule: any, value: string, callback: (e?: Error) => 
 }
 
 const formRules = {
+    code: [{ required: true, message: '请输入产品编码', trigger: ['blur'] }],
     name: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
     category_id: [{ required: true, message: '请选择所属分类', trigger: ['change'] }],
     device_type: [{ required: true, message: '请选择节点类型', trigger: ['change'] }],
