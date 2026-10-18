@@ -274,7 +274,7 @@ func (s productService) checkCodeUnique(code, excludeId string) error {
 		return response.CheckErr(err, "产品编码查重失败")
 	}
 	if count > 0 {
-		return response.AssertArgumentError.SetMessage("产品编码已存在!" )
+		return response.AssertArgumentError.SetMessage("产品编码已存在!")
 	}
 	return nil
 }

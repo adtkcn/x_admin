@@ -3,7 +3,7 @@ package monitor_service
 import (
 	"errors"
 
-	"x_admin/app/model"
+	"x_admin/app/model/monitor_model"
 	"x_admin/app/schema/monitor_schema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -37,7 +37,7 @@ type monitorErrorService struct {
 // List 监控-错误列列表
 func (service monitorErrorService) GetModel(listReq monitor_schema.MonitorErrorListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.MonitorError{})
+	dbModel := service.db.Model(&monitor_model.MonitorError{})
 	if listReq.ProjectKey != nil {
 		dbModel = dbModel.Where("project_key = ?", *listReq.ProjectKey)
 	}
@@ -79,7 +79,7 @@ func (service monitorErrorService) List(page request.PageReq, listReq monitor_sc
 		return
 	}
 	// 数据
-	var modelList []model.MonitorError
+	var modelList []monitor_model.MonitorError
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -98,7 +98,7 @@ func (service monitorErrorService) List(page request.PageReq, listReq monitor_sc
 func (service monitorErrorService) ListAll(listReq monitor_schema.MonitorErrorListReq) (res []monitor_schema.MonitorErrorResp, e error) {
 	dbModel := service.GetModel(listReq)
 
-	var modelList []model.MonitorError
+	var modelList []monitor_model.MonitorError
 
 	err := dbModel.Find(&modelList).Error
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
@@ -110,7 +110,7 @@ func (service monitorErrorService) ListAll(listReq monitor_schema.MonitorErrorLi
 
 // Detail 监控-错误列详情
 func (service monitorErrorService) Detail(Id string) (res monitor_schema.MonitorErrorResp, e error) {
-	var obj = model.MonitorError{}
+	var obj = monitor_model.MonitorError{}
 
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	if e = response.CheckDBErr(err, "数据不存在!", "获取详情失败"); e != nil {
@@ -123,7 +123,7 @@ func (service monitorErrorService) Detail(Id string) (res monitor_schema.Monitor
 
 // DetailByMD5 监控-错误列详情
 func (service monitorErrorService) DetailByMD5(md5 string) (res monitor_schema.MonitorErrorResp, e error) {
-	var obj = model.MonitorError{}
+	var obj = monitor_model.MonitorError{}
 	err := service.CacheUtil.GetCache("md5:"+md5, &obj)
 	if err != nil {
 		err := service.db.Where("md5 = ?", md5).Order("id DESC").First(&obj).Error
@@ -140,7 +140,7 @@ func (service monitorErrorService) DetailByMD5(md5 string) (res monitor_schema.M
 // Add 监控-错误列新增
 func (service monitorErrorService) Add(addReq monitor_schema.MonitorErrorAddReq, addListReq monitor_schema.MonitorErrorListAddReq) (createId string, err error) {
 
-	var obj model.MonitorError
+	var obj monitor_model.MonitorError
 	convert_util.Copy(&obj, addReq)
 
 	Md5 := util.ToolsUtil.StrMd5(obj.ProjectKey + obj.EventType + obj.Message + obj.Path + obj.Stack)
@@ -169,7 +169,7 @@ func (service monitorErrorService) Add(addReq monitor_schema.MonitorErrorAddReq,
 
 // Del 监控-错误列删除
 func (service monitorErrorService) Del(Id string) (e error) {
-	var obj model.MonitorError
+	var obj monitor_model.MonitorError
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
@@ -186,14 +186,14 @@ func (service monitorErrorService) Del(Id string) (e error) {
 // DelBatch 批量删除
 func (service monitorErrorService) DelBatch(Ids []string) (e error) {
 	// 删除前取出缓存键（md5），用于删除后清理缓存
-	var objs []model.MonitorError
+	var objs []monitor_model.MonitorError
 	service.db.Select("md5").Where("id in (?)", Ids).Find(&objs)
 	var md5s []string
 	for _, v := range objs {
 		md5s = append(md5s, "md5:"+v.Md5)
 	}
 	// 直接删除 + 影响行数判断数据不存在
-	result := service.db.Where("id in (?)", Ids).Delete(&model.MonitorError{})
+	result := service.db.Where("id in (?)", Ids).Delete(&monitor_model.MonitorError{})
 	if result.Error != nil {
 		return response.CheckErr(result.Error, "删除失败")
 	}
@@ -227,7 +227,7 @@ func (service monitorErrorService) ExportFile(listReq monitor_schema.MonitorErro
 	dbModel := service.GetModel(listReq)
 
 	// 数据
-	var modelList []model.MonitorError
+	var modelList []monitor_model.MonitorError
 	err := dbModel.Order("id asc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -239,7 +239,7 @@ func (service monitorErrorService) ExportFile(listReq monitor_schema.MonitorErro
 
 // 导入
 func (service monitorErrorService) ImportFile(importReq []monitor_schema.MonitorErrorResp) (e error) {
-	var importData []model.MonitorError
+	var importData []monitor_model.MonitorError
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")

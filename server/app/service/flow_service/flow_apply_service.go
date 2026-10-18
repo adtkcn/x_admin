@@ -3,7 +3,7 @@ package flow_service
 import (
 	"errors"
 
-	"x_admin/app/model"
+	"x_admin/app/model/flow_model"
 	"x_admin/app/schema/flow_schema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -33,7 +33,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flow_schema.F
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	dbModel := service.db.Model(&model.FlowApply{})
+	dbModel := service.db.Model(&flow_model.FlowApply{})
 	if listReq.TemplateId != "" {
 		dbModel = dbModel.Where("template_id = ?", listReq.TemplateId)
 	}
@@ -68,7 +68,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flow_schema.F
 		return
 	}
 	// 数据
-	var modelList []model.FlowApply
+	var modelList []flow_model.FlowApply
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
@@ -85,7 +85,7 @@ func (service flowApplyService) List(page request.PageReq, listReq flow_schema.F
 
 // Detail 申请流程详情
 func (service flowApplyService) Detail(id string) (res flow_schema.FlowApplyResp, e error) {
-	var obj model.FlowApply
+	var obj flow_model.FlowApply
 	err := service.db.Where("id = ?", id).First(&obj).Error
 	if e = response.CheckDBErr(err, "数据不存在!", "详情获取失败"); e != nil {
 		return
@@ -96,7 +96,7 @@ func (service flowApplyService) Detail(id string) (res flow_schema.FlowApplyResp
 
 // Add 申请流程新增
 func (service flowApplyService) Add(addReq flow_schema.FlowApplyAddReq) (e error) {
-	var obj model.FlowApply
+	var obj flow_model.FlowApply
 	flow_template_resp, err := TemplateService.Detail(addReq.TemplateId)
 	// Detail 内部已包装语义化业务错误，此处直接透传，不做二次包装
 	if err != nil {
@@ -117,7 +117,7 @@ func (service flowApplyService) Add(addReq flow_schema.FlowApplyAddReq) (e error
 
 // Edit 申请流程编辑
 func (service flowApplyService) Edit(editReq flow_schema.FlowApplyEditReq) (e error) {
-	var obj model.FlowApply
+	var obj flow_model.FlowApply
 	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "待编辑数据查找失败"); e != nil {
@@ -132,7 +132,7 @@ func (service flowApplyService) Edit(editReq flow_schema.FlowApplyEditReq) (e er
 
 // Del 申请流程删除
 func (service flowApplyService) Del(id string) (e error) {
-	var obj model.FlowApply
+	var obj flow_model.FlowApply
 	err := service.db.Where("id = ?", id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "待删除数据查找失败"); e != nil {

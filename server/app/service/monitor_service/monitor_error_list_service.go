@@ -2,7 +2,7 @@ package monitor_service
 
 import (
 	"time"
-	"x_admin/app/model"
+	"x_admin/app/model/monitor_model"
 	"x_admin/app/schema/monitor_schema"
 	"x_admin/core"
 	"x_admin/util/convert_util"
@@ -28,7 +28,7 @@ type monitorErrorListService struct {
 
 // Add 错误对应的用户记录新增
 func (service monitorErrorListService) Add(addReq monitor_schema.MonitorErrorListAddReq) (createId string, e error) {
-	var obj model.MonitorErrorList
+	var obj monitor_model.MonitorErrorList
 	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	if err != nil {
@@ -41,7 +41,7 @@ func (service monitorErrorListService) Add(addReq monitor_schema.MonitorErrorLis
 
 // 删除三个月前的数据
 func (service monitorErrorListService) DelThreeMonthAgo() error {
-	err := service.db.Where("create_time < ?", time.Now().AddDate(0, -3, 0)).Delete(&model.MonitorErrorList{}).Error
+	err := service.db.Where("create_time < ?", time.Now().AddDate(0, -3, 0)).Delete(&monitor_model.MonitorErrorList{}).Error
 
 	return err
 }

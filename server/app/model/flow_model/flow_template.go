@@ -1,4 +1,4 @@
-package model
+package flow_model
 
 import (
 	"uuid"
@@ -30,3 +30,4 @@ func (u *FlowTemplate) BeforeCreate(tx *gorm.DB) error {
 	u.Id = id.String()
 	return nil
 }
+

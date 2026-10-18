@@ -1,7 +1,7 @@
 package monitor_service
 
 import (
-	"x_admin/app/model"
+	"x_admin/app/model/monitor_model"
 	"x_admin/app/schema/monitor_schema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -35,7 +35,7 @@ type monitorProjectService struct {
 // List 监控项目列表
 func (service monitorProjectService) GetModel(listReq monitor_schema.MonitorProjectListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.MonitorProject{})
+	dbModel := service.db.Model(&monitor_model.MonitorProject{})
 	if listReq.ProjectKey != nil {
 		dbModel = dbModel.Where("project_key = ?", *listReq.ProjectKey)
 	}
@@ -76,7 +76,7 @@ func (service monitorProjectService) List(page request.PageReq, listReq monitor_
 		return
 	}
 	// 数据
-	var modelList []model.MonitorProject
+	var modelList []monitor_model.MonitorProject
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -95,7 +95,7 @@ func (service monitorProjectService) List(page request.PageReq, listReq monitor_
 func (service monitorProjectService) ListAll(listReq monitor_schema.MonitorProjectListReq) (res []monitor_schema.MonitorProjectResp, e error) {
 	dbModel := service.GetModel(listReq)
 
-	var modelList []model.MonitorProject
+	var modelList []monitor_model.MonitorProject
 
 	err := dbModel.Find(&modelList).Error
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
@@ -107,7 +107,7 @@ func (service monitorProjectService) ListAll(listReq monitor_schema.MonitorProje
 
 // Detail 监控项目详情
 func (service monitorProjectService) Detail(Id string) (res monitor_schema.MonitorProjectResp, e error) {
-	var obj = model.MonitorProject{}
+	var obj = monitor_model.MonitorProject{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).First(&obj).Error
@@ -123,7 +123,7 @@ func (service monitorProjectService) Detail(Id string) (res monitor_schema.Monit
 
 // Add 监控项目新增
 func (service monitorProjectService) Add(addReq monitor_schema.MonitorProjectAddReq) (createId string, e error) {
-	var obj model.MonitorProject
+	var obj monitor_model.MonitorProject
 	convert_util.Copy(&obj, addReq)
 	obj.ProjectKey = util.ToolsUtil.MakeUuidV7()
 	err := service.db.Create(&obj).Error
@@ -137,7 +137,7 @@ func (service monitorProjectService) Add(addReq monitor_schema.MonitorProjectAdd
 
 // Edit 监控项目编辑
 func (service monitorProjectService) Edit(editReq monitor_schema.MonitorProjectEditReq) (e error) {
-	var obj model.MonitorProject
+	var obj monitor_model.MonitorProject
 	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "查询失败"); e != nil {
@@ -156,7 +156,7 @@ func (service monitorProjectService) Edit(editReq monitor_schema.MonitorProjectE
 
 // Del 监控项目删除
 func (service monitorProjectService) Del(Id string) (e error) {
-	var obj model.MonitorProject
+	var obj monitor_model.MonitorProject
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
@@ -173,7 +173,7 @@ func (service monitorProjectService) Del(Id string) (e error) {
 
 // DelBatch 批量删除
 func (service monitorProjectService) DelBatch(Ids []string) (e error) {
-	var obj model.MonitorProject
+	var obj monitor_model.MonitorProject
 	err := service.db.Where("id in (?)", Ids).Delete(&obj).Error
 	if err != nil {
 		return err
@@ -203,7 +203,7 @@ func (service monitorProjectService) ExportFile(listReq monitor_schema.MonitorPr
 	dbModel := service.GetModel(listReq)
 
 	// 数据
-	var modelList []model.MonitorProject
+	var modelList []monitor_model.MonitorProject
 	err := dbModel.Order("id asc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -215,7 +215,7 @@ func (service monitorProjectService) ExportFile(listReq monitor_schema.MonitorPr
 
 // 导入
 func (service monitorProjectService) ImportFile(importReq []monitor_schema.MonitorProjectResp) (e error) {
-	var importData []model.MonitorProject
+	var importData []monitor_model.MonitorProject
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")

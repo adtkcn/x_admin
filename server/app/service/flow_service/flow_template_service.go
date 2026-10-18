@@ -3,7 +3,7 @@ package flow_service
 import (
 	"errors"
 
-	"x_admin/app/model"
+	"x_admin/app/model/flow_model"
 	"x_admin/app/schema/flow_schema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -32,7 +32,7 @@ func (service flowTemplateService) List(page request.PageReq, listReq flow_schem
 	limit := page.PageSize
 	offset := page.PageSize * (page.PageNo - 1)
 	// 查询
-	dbModel := service.db.Model(&model.FlowTemplate{})
+	dbModel := service.db.Model(&flow_model.FlowTemplate{})
 	if listReq.FlowName != "" {
 		dbModel = dbModel.Where("flow_name like ?", "%"+listReq.FlowName+"%")
 	}
@@ -55,7 +55,7 @@ func (service flowTemplateService) List(page request.PageReq, listReq flow_schem
 		return
 	}
 	// 数据
-	var modelList []model.FlowTemplate
+	var modelList []flow_model.FlowTemplate
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "列表获取失败"); e != nil {
 		return
@@ -72,7 +72,7 @@ func (service flowTemplateService) List(page request.PageReq, listReq flow_schem
 
 // ListAll 流程模板列表
 func (service flowTemplateService) ListAll() (res []flow_schema.FlowTemplateResp, e error) {
-	var modelList []model.FlowTemplate
+	var modelList []flow_model.FlowTemplate
 	err := service.db.Find(&modelList).Error
 	if e = response.CheckErr(err, "获取列表失败"); e != nil {
 		return
@@ -83,7 +83,7 @@ func (service flowTemplateService) ListAll() (res []flow_schema.FlowTemplateResp
 
 // Detail 流程模板详情
 func (service flowTemplateService) Detail(id string) (res flow_schema.FlowTemplateResp, e error) {
-	var obj model.FlowTemplate
+	var obj flow_model.FlowTemplate
 	err := service.db.Where("id = ?", id).First(&obj).Error
 	if e = response.CheckDBErr(err, "数据不存在!", "详情获取失败"); e != nil {
 		return
@@ -94,7 +94,7 @@ func (service flowTemplateService) Detail(id string) (res flow_schema.FlowTempla
 
 // Add 流程模板新增
 func (service flowTemplateService) Add(addReq flow_schema.FlowTemplateAddReq) (e error) {
-	var obj model.FlowTemplate
+	var obj flow_model.FlowTemplate
 	convert_util.Copy(&obj, addReq)
 	err := service.db.Create(&obj).Error
 	e = response.CheckErr(err, "添加失败")
@@ -103,7 +103,7 @@ func (service flowTemplateService) Add(addReq flow_schema.FlowTemplateAddReq) (e
 
 // Edit 流程模板编辑
 func (service flowTemplateService) Edit(editReq flow_schema.FlowTemplateEditReq) (e error) {
-	var obj model.FlowTemplate
+	var obj flow_model.FlowTemplate
 	err := service.db.Where("id = ?", editReq.Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "待编辑数据查找失败"); e != nil {
@@ -118,7 +118,7 @@ func (service flowTemplateService) Edit(editReq flow_schema.FlowTemplateEditReq)
 
 // Del 流程模板删除
 func (service flowTemplateService) Del(id string) (e error) {
-	result := service.db.Where("id = ?", id).Delete(&model.FlowTemplate{})
+	result := service.db.Where("id = ?", id).Delete(&flow_model.FlowTemplate{})
 	if result.Error != nil {
 		return response.CheckErr(result.Error, "删除失败")
 	}

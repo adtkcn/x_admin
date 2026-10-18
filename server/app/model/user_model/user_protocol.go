@@ -1,4 +1,4 @@
-package model
+package user_model
 
 import (
 	"x_admin/app/model/system_model"
@@ -31,3 +31,4 @@ func (u *UserProtocol) BeforeCreate(tx *gorm.DB) error {
 	u.Id = id.String()
 	return nil
 }
+

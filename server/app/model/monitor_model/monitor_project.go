@@ -1,4 +1,4 @@
-package model
+package monitor_model
 
 import (
 	"uuid"
@@ -27,3 +27,4 @@ func (m *MonitorProject) BeforeCreate(tx *gorm.DB) (err error) {
 	m.Id = id.String()
 	return nil
 }
+

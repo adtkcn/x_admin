@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"x_admin/app/model"
 	"x_admin/app/model/system_model"
 	"x_admin/app/schema/queue_schema"
 	"x_admin/app/schema/system_schema"
@@ -40,7 +39,7 @@ func (s *noticeService) Send(needSend bool, payload NoticePayload) error {
 	if needSend {
 		IsEmailed = EmailStatusPending
 	}
-	notice := model.SystemNotice{
+	notice := system_model.SystemNotice{
 		Type:       payload.Type,
 		Title:      payload.Title,
 		Content:    payload.Content,
@@ -121,7 +120,7 @@ type emailPushNotice struct {
 // 因此延迟队列到期被消费时，已读的直接跳过，关闭邮件渠道的明确标记为不发送。
 func (s *noticeService) PushUserEmail(db *gorm.DB, receiverID, email string, previewCount int) {
 	var notices []emailPushNotice
-	if err := db.Model(&model.SystemNotice{}).
+	if err := db.Model(&system_model.SystemNotice{}).
 		Where("receiver_id = ? AND is_read = 0 AND is_emailed = 0", receiverID).
 		Order("create_time DESC").
 		Scan(&notices).Error; err != nil {
@@ -143,12 +142,12 @@ func (s *noticeService) PushUserEmail(db *gorm.DB, receiverID, email string, pre
 
 	// 校验用户是否允许 email 渠道推送：未配置 setting 或 is_enabled=0 则明确标记为「不发送」(-1)，
 	// 避免这批通知永远停留在 is_emailed=0（待发送）却永不发送，也防止其他路径误触发补推。
-	var setting model.SystemNoticeSetting
-	hasSetting := db.Model(&model.SystemNoticeSetting{}).
+	var setting system_model.SystemNoticeSetting
+	hasSetting := db.Model(&system_model.SystemNoticeSetting{}).
 		Where("admin_id = ? AND channel = 'email'", receiverID).
 		First(&setting).Error == nil
 	if !hasSetting || setting.IsEnabled != 1 {
-		if err := db.Model(&model.SystemNotice{}).
+		if err := db.Model(&system_model.SystemNotice{}).
 			Where("id IN ?", noticeIDs).
 			Update("is_emailed", EmailStatusNotSend).Error; err != nil {
 			core.Logger.Error(fmt.Sprintf("标记通知不发送失败, receiverID=%s, err=%v", receiverID, err))
@@ -188,7 +187,7 @@ func (s *noticeService) PushUserEmail(db *gorm.DB, receiverID, email string, pre
 
 	// 入队即标记该批通知为「发送中」(EmailStatusSending)，状态 -1/0 -> 1，
 	// 既防止延迟队列/重试重复推送，也确保最终由 ProcessNoticeEmail 回写为 2/3。
-	if err := db.Model(&model.SystemNotice{}).
+	if err := db.Model(&system_model.SystemNotice{}).
 		Where("id IN ?", noticeIDs).
 		Update("is_emailed", EmailStatusSending).Error; err != nil {
 		core.Logger.Error(fmt.Sprintf("标记通知已邮件失败, receiverID=%s, err=%v", receiverID, err))
@@ -206,7 +205,7 @@ func (s *noticeService) MarkEmailStatus(noticeIDs []string, status int8) error {
 		return nil
 	}
 	db := core.GetDB()
-	return db.Model(&model.SystemNotice{}).
+	return db.Model(&system_model.SystemNotice{}).
 		Where("id IN ?", noticeIDs).
 		Update("is_emailed", status).Error
 }
@@ -214,7 +213,7 @@ func (s *noticeService) MarkEmailStatus(noticeIDs []string, status int8) error {
 // List 通知列表
 func (s *noticeService) List(receiverID string, pageNo, pageSize int, listReq *system_schema.SystemNoticeListReq) ([]system_schema.SystemNoticeResp, int64, error) {
 	db := core.GetDB()
-	model := db.Model(&model.SystemNotice{}).Where("receiver_id = ?", receiverID)
+	model := db.Model(&system_model.SystemNotice{}).Where("receiver_id = ?", receiverID)
 
 	if listReq.Type != "" {
 		model = model.Where("type = ?", listReq.Type)
@@ -241,7 +240,7 @@ func (s *noticeService) List(receiverID string, pageNo, pageSize int, listReq *s
 func (s *noticeService) UnreadCount(receiverID string) (int64, error) {
 	db := core.GetDB()
 	var count int64
-	err := db.Model(&model.SystemNotice{}).Where("receiver_id = ? AND is_read = 0", receiverID).Count(&count).Error
+	err := db.Model(&system_model.SystemNotice{}).Where("receiver_id = ? AND is_read = 0", receiverID).Count(&count).Error
 	return count, err
 }
 
@@ -249,7 +248,7 @@ func (s *noticeService) UnreadCount(receiverID string) (int64, error) {
 func (s *noticeService) Read(noticeID, receiverID string) error {
 	db := core.GetDB()
 	now := util.NullTimeUtil.Now()
-	return db.Model(&model.SystemNotice{}).
+	return db.Model(&system_model.SystemNotice{}).
 		Where("id = ? AND receiver_id = ? AND is_read = 0", noticeID, receiverID).
 		Updates(map[string]any{"is_read": 1, "read_time": now}).Error
 }
@@ -258,7 +257,7 @@ func (s *noticeService) Read(noticeID, receiverID string) error {
 func (s *noticeService) ReadAll(receiverID string) error {
 	db := core.GetDB()
 	now := util.NullTimeUtil.Now()
-	return db.Model(&model.SystemNotice{}).
+	return db.Model(&system_model.SystemNotice{}).
 		Where("receiver_id = ? AND is_read = 0", receiverID).
 		Updates(map[string]any{"is_read": 1, "read_time": now}).Error
 }
@@ -266,7 +265,7 @@ func (s *noticeService) ReadAll(receiverID string) error {
 // Del 删除通知
 func (s *noticeService) Del(noticeID, receiverID string) error {
 	db := core.GetDB()
-	return db.Where("id = ? AND receiver_id = ?", noticeID, receiverID).Delete(&model.SystemNotice{}).Error
+	return db.Where("id = ? AND receiver_id = ?", noticeID, receiverID).Delete(&system_model.SystemNotice{}).Error
 }
 
 // GetSetting 获取通知偏好（后端定义的渠道清单 + 当前开关状态）
@@ -274,7 +273,7 @@ func (s *noticeService) GetSetting(adminId string) (*system_schema.SystemNoticeS
 	db := core.GetDB()
 	// 当前用户已保存的渠道开关
 	enabledMap := make(map[string]uint8)
-	var settings []model.SystemNoticeSetting
+	var settings []system_model.SystemNoticeSetting
 	if err := db.Where("admin_id = ?", adminId).Find(&settings).Error; err != nil {
 		return nil, err
 	}
@@ -303,11 +302,11 @@ func (s *noticeService) GetSetting(adminId string) (*system_schema.SystemNoticeS
 func (s *noticeService) SaveSetting(adminId string, saveReq *system_schema.SystemNoticeSettingSaveReq) error {
 	db := core.GetDB()
 	for channel, enabled := range saveReq.Settings {
-		var setting model.SystemNoticeSetting
+		var setting system_model.SystemNoticeSetting
 		result := db.Where("admin_id = ? AND channel = ?", adminId, channel).First(&setting)
 		if result.Error != nil {
 			// 不存在则创建
-			setting = model.SystemNoticeSetting{
+			setting = system_model.SystemNoticeSetting{
 				AdminID:   adminId,
 				Channel:   channel,
 				IsEnabled: enabled,

@@ -2,7 +2,7 @@ package monitor_service
 
 import (
 	"errors"
-	"x_admin/app/model"
+	"x_admin/app/model/monitor_model"
 	"x_admin/app/schema/monitor_schema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -37,7 +37,7 @@ type monitorClientService struct {
 // List 监控-客户端信息列表
 func (service monitorClientService) GetModel(listReq monitor_schema.MonitorClientListReq) *gorm.DB {
 	// 查询
-	dbModel := service.db.Model(&model.MonitorClient{})
+	dbModel := service.db.Model(&monitor_model.MonitorClient{})
 	if listReq.ProjectKey != nil {
 		dbModel = dbModel.Where("project_key = ?", *listReq.ProjectKey)
 	}
@@ -95,7 +95,7 @@ func (service monitorClientService) List(page request.PageReq, listReq monitor_s
 		return
 	}
 	// 数据
-	var modelList []model.MonitorClient
+	var modelList []monitor_model.MonitorClient
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -114,7 +114,7 @@ func (service monitorClientService) List(page request.PageReq, listReq monitor_s
 func (service monitorClientService) ListAll(listReq monitor_schema.MonitorClientListReq) (res []monitor_schema.MonitorClientResp, e error) {
 	dbModel := service.GetModel(listReq)
 
-	var modelList []model.MonitorClient
+	var modelList []monitor_model.MonitorClient
 
 	err := dbModel.Find(&modelList).Error
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
@@ -128,7 +128,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res monit
 	if ClientId == "" {
 		return res, errors.New("ClientId不能为空")
 	}
-	var obj = model.MonitorClient{}
+	var obj = monitor_model.MonitorClient{}
 	err := service.CacheUtil.GetCache("ClientId:"+ClientId, &obj)
 	if err != nil {
 		err := service.db.Where("client_id = ?", ClientId).Order("id DESC").First(&obj).Error
@@ -144,7 +144,7 @@ func (service monitorClientService) DetailByClientId(ClientId string) (res monit
 
 // Detail 监控-客户端信息详情
 func (service monitorClientService) Detail(Id string) (res monitor_schema.MonitorClientResp, e error) {
-	var obj = model.MonitorClient{}
+	var obj = monitor_model.MonitorClient{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).First(&obj).Error
@@ -169,13 +169,13 @@ func (service monitorClientService) ErrorUsers(error_id string) (res []monitor_s
 
 // Add 监控-客户端信息新增
 func (service monitorClientService) Add(addReq monitor_schema.MonitorClientAddReq) (createId string, e error) {
-	var obj model.MonitorClient
+	var obj monitor_model.MonitorClient
 	convert_util.Copy(&obj, addReq)
 
 	// 基于 Redis 去重短路：client_id 近期已上报过则直接命中缓存返回，
 	// 避免高频重复上报每次都打 DB 写（缓存 TTL 1h，过期后回源 DB 重新校验）
 	cacheKey := "ClientId:" + obj.ClientId
-	var cached model.MonitorClient
+	var cached monitor_model.MonitorClient
 	if err := service.CacheUtil.GetCache(cacheKey, &cached); err == nil && cached.Id != "" {
 		return cached.Id, nil
 	}
@@ -195,7 +195,7 @@ func (service monitorClientService) Add(addReq monitor_schema.MonitorClientAddRe
 	// 需按 client_id 回查真实记录，避免返回不存在的假 id。
 	// 注意：回查必须用新的空结构体接收——若复用 obj，其残留的主键会被 GORM 拼进
 	// WHERE 条件（... AND id = '<未落库的临时uuid>'），导致查不到记录
-	var saved model.MonitorClient
+	var saved monitor_model.MonitorClient
 	err = service.db.Where("client_id = ?", obj.ClientId).Order("id DESC").First(&saved).Error
 	if e = response.CheckErr(err, "写入后回查失败"); e != nil {
 		return "", e
@@ -209,7 +209,7 @@ func (service monitorClientService) Add(addReq monitor_schema.MonitorClientAddRe
 
 // Del 监控-客户端信息删除
 func (service monitorClientService) Del(Id string) (e error) {
-	var obj model.MonitorClient
+	var obj monitor_model.MonitorClient
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
@@ -226,14 +226,14 @@ func (service monitorClientService) Del(Id string) (e error) {
 // DelBatch 批量删除
 func (service monitorClientService) DelBatch(Ids []string) (e error) {
 	// 删除前取出缓存键（client_id），用于删除后清理缓存
-	var objs []model.MonitorClient
+	var objs []monitor_model.MonitorClient
 	service.db.Select("client_id").Where("id in (?)", Ids).Find(&objs)
 	var clients []string
 	for _, v := range objs {
 		clients = append(clients, "ClientId:"+v.ClientId)
 	}
 	// 直接删除 + 影响行数判断数据不存在
-	result := service.db.Where("id in (?)", Ids).Delete(&model.MonitorClient{})
+	result := service.db.Where("id in (?)", Ids).Delete(&monitor_model.MonitorClient{})
 	if result.Error != nil {
 		return response.CheckErr(result.Error, "删除失败")
 	}
@@ -270,7 +270,7 @@ func (service monitorClientService) ExportFile(listReq monitor_schema.MonitorCli
 	dbModel := service.GetModel(listReq)
 
 	// 数据
-	var modelList []model.MonitorClient
+	var modelList []monitor_model.MonitorClient
 	err := dbModel.Order("id asc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -282,7 +282,7 @@ func (service monitorClientService) ExportFile(listReq monitor_schema.MonitorCli
 
 // 导入
 func (service monitorClientService) ImportFile(importReq []monitor_schema.MonitorClientResp) (e error) {
-	var importData []model.MonitorClient
+	var importData []monitor_model.MonitorClient
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")

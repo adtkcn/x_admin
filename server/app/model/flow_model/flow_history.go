@@ -1,4 +1,4 @@
-package model
+package flow_model
 
 import (
 	"uuid"
@@ -39,7 +39,6 @@ type FlowHistory struct {
 	UpdateTime x_null.Time           `gorm:"autoUpdateTime;comment:'更新时间'"` // 更新时间
 	CreateTime x_null.Time           `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
 	DeleteTime x_null.Time           `gorm:"default:null;comment:'删除时间'"`   // 删除时间
-
 }
 
 // 自动在创建时设置 UUIDv7
@@ -48,3 +47,4 @@ func (u *FlowHistory) BeforeCreate(tx *gorm.DB) error {
 	u.Id = id.String()
 	return nil
 }
+

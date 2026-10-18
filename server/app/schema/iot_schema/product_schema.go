@@ -22,7 +22,7 @@ func NodeTypeSupportsGateway(nodeType string) bool {
 }
 
 type ProductListReq struct {
-	Code       x_null.String `json:"code" form:"code"`                   // 产品编码(模糊)
+	Code       x_null.String `json:"code" form:"code"`               // 产品编码(模糊)
 	Name       x_null.String `json:"name" form:"name"`               // 产品名称(模糊)
 	CategoryId x_null.String `json:"category_id" form:"category_id"` // 分类ID(含子分类)
 	IsStop     x_null.String `json:"is_stop" form:"is_stop"`         // 是否停用: 0正常 1停用，不传=全部
@@ -30,7 +30,7 @@ type ProductListReq struct {
 }
 
 type ProductAddReq struct {
-	Code           string `json:"code" form:"code" binding:"required,min=1,max=64"`                              // 产品编码
+	Code           string `json:"code" form:"code" binding:"required,min=1,max=64"`                            // 产品编码
 	Name           string `json:"name" form:"name" binding:"required,min=1,max=100"`                           // 产品名称
 	CategoryId     string `json:"category_id" form:"category_id" binding:"required"`                           // 分类ID
 	DeviceType     string `json:"device_type" form:"device_type" binding:"required,oneof=DEVICE GATEWAY EDGE"` // 节点类型
@@ -44,7 +44,7 @@ type ProductAddReq struct {
 
 type ProductEditReq struct {
 	ID             string `json:"id" form:"id" binding:"required"`                                             // 主键
-	Code           string `json:"code" form:"code" binding:"required,min=1,max=64"`                              // 产品编码
+	Code           string `json:"code" form:"code" binding:"required,min=1,max=64"`                            // 产品编码
 	Name           string `json:"name" form:"name" binding:"required,min=1,max=100"`                           // 产品名称
 	CategoryId     string `json:"category_id" form:"category_id" binding:"required"`                           // 分类ID
 	DeviceType     string `json:"device_type" form:"device_type" binding:"required,oneof=DEVICE GATEWAY EDGE"` // 节点类型

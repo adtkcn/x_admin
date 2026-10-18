@@ -1,4 +1,4 @@
-package model
+package monitor_model
 
 import (
 	"uuid"
@@ -22,7 +22,6 @@ type MonitorErrorList struct {
 	City     string `gorm:"comment:'城市'"`    // 城市
 	Operator string `gorm:"comment:'电信运营商'"` // 电信运营商
 	Ip       string `gorm:"comment:'ip'"`    // ip
-	// Ua       string `gorm:"comment:'ua记录'"`  // ua记录
 
 	CreateTime x_null.Time `gorm:"autoCreateTime;comment:'创建时间'"` // 创建时间
 }

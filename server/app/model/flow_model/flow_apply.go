@@ -1,4 +1,4 @@
-package model
+package flow_model
 
 import (
 	"uuid"

@@ -1,7 +1,7 @@
 package corn_service
 
 import (
-	"x_admin/app/model"
+	"x_admin/app/model/system_model"
 	"x_admin/app/schema"
 	"x_admin/core"
 	"x_admin/core/request"
@@ -35,9 +35,9 @@ type systemCornService struct {
 // List 定时任务列表
 func (service systemCornService) GetModel(listReq schema.SystemCornListReq) *gorm.DB {
 	// 查询
-	tableName := core.DBTableName(&model.SystemCorn{})
+	tableName := core.DBTableName(&system_model.SystemCorn{})
 
-	dbModel := service.db.Model(&model.SystemCorn{}).Table(tableName + " as a").Joins("CreatedByUser")
+	dbModel := service.db.Model(&system_model.SystemCorn{}).Table(tableName + " as a").Joins("CreatedByUser")
 
 	if listReq.TaskName.IsExistsAndNotNull() {
 		dbModel = dbModel.Where("a.task_name like ?", "%"+listReq.TaskName.ValueOrZero()+"%")
@@ -88,7 +88,7 @@ func (service systemCornService) List(page request.PageReq, listReq schema.Syste
 		return
 	}
 	// 数据
-	var modelList []model.SystemCorn
+	var modelList []system_model.SystemCorn
 	err = dbModel.Limit(limit).Offset(offset).Order("id desc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -107,7 +107,7 @@ func (service systemCornService) List(page request.PageReq, listReq schema.Syste
 func (service systemCornService) ListAll(listReq schema.SystemCornListReq) (res []schema.SystemCornResp, e error) {
 	dbModel := service.GetModel(listReq)
 
-	var modelList []model.SystemCorn
+	var modelList []system_model.SystemCorn
 
 	err := dbModel.Find(&modelList).Error
 	if e = response.CheckErr(err, "查询全部失败"); e != nil {
@@ -119,7 +119,7 @@ func (service systemCornService) ListAll(listReq schema.SystemCornListReq) (res 
 
 // Detail 定时任务详情
 func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e error) {
-	var obj = model.SystemCorn{}
+	var obj = system_model.SystemCorn{}
 	err := service.CacheUtil.GetCache(Id, &obj)
 	if err != nil {
 		err := service.db.Where("id = ?", Id).Preload("CreatedByUser").First(&obj).Error
@@ -135,7 +135,7 @@ func (service systemCornService) Detail(Id string) (res schema.SystemCornResp, e
 
 // Add 定时任务新增
 func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId string) (createId string, e error) {
-	var obj model.SystemCorn
+	var obj system_model.SystemCorn
 	convert_util.Copy(&obj, addReq)
 	obj.CreatedBy.SetValue(adminId)
 	err := service.db.Create(&obj).Error
@@ -149,7 +149,7 @@ func (service systemCornService) Add(addReq schema.SystemCornAddReq, adminId str
 
 // Edit 定时任务编辑
 func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error) {
-	result := service.db.Model(&model.SystemCorn{}).Where("id = ?", editReq.Id).Updates(editReq)
+	result := service.db.Model(&system_model.SystemCorn{}).Where("id = ?", editReq.Id).Updates(editReq)
 	// MySQL 错误码（唯一键冲突、外键约束等）由统一出口翻译成业务文案，
 	// 未知数据库错误由出口统一记录日志，此处不再重复记录
 	if result.Error != nil {
@@ -162,7 +162,7 @@ func (service systemCornService) Edit(editReq schema.SystemCornEditReq) (e error
 
 // Del 定时任务删除
 func (service systemCornService) Del(Id string) (e error) {
-	var obj model.SystemCorn
+	var obj system_model.SystemCorn
 	err := service.db.Where("id = ?", Id).First(&obj).Error
 	// 校验
 	if e = response.CheckDBErr(err, "数据不存在!", "查询数据失败"); e != nil {
@@ -179,7 +179,7 @@ func (service systemCornService) Del(Id string) (e error) {
 
 // DelBatch 批量删除
 func (service systemCornService) DelBatch(Ids []string) (e error) {
-	var obj model.SystemCorn
+	var obj system_model.SystemCorn
 	err := service.db.Where("id in (?)", Ids).Delete(&obj).Error
 	if err != nil {
 		return err
@@ -210,7 +210,7 @@ func (service systemCornService) ExportFile(listReq schema.SystemCornListReq) (r
 	dbModel := service.GetModel(listReq)
 
 	// 数据
-	var modelList []model.SystemCorn
+	var modelList []system_model.SystemCorn
 	err := dbModel.Order("id asc").Find(&modelList).Error
 	if e = response.CheckErr(err, "查询失败"); e != nil {
 		return
@@ -222,7 +222,7 @@ func (service systemCornService) ExportFile(listReq schema.SystemCornListReq) (r
 
 // 导入
 func (service systemCornService) ImportFile(importReq []schema.SystemCornResp) (e error) {
-	var importData []model.SystemCorn
+	var importData []system_model.SystemCorn
 	convert_util.Copy(&importData, importReq)
 	err := service.db.Create(&importData).Error
 	e = response.CheckErr(err, "添加失败")

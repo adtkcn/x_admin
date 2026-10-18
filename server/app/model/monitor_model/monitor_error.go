@@ -1,10 +1,9 @@
-package model
+package monitor_model
 
 import (
 	"uuid"
 
 	"github.com/adtkcn/x_null"
-
 	"gorm.io/gorm"
 )
 
