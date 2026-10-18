@@ -1,9 +1,16 @@
 <!-- 系统环境 -->
 <template>
     <div class="system-environment" v-loading="loading">
-        <el-tabs v-model="activeIp" type="card">
-            <el-tab-pane v-for="ip in ips" :key="ip" :label="ip" :name="ip"></el-tab-pane>
-        </el-tabs>
+        <div class="env-switch">
+            <el-tabs v-model="activeIp" type="card" class="env-switch__tabs">
+                <el-tab-pane
+                    v-for="ip in ips"
+                    :key="ip"
+                    :label="ip"
+                    :name="ip"
+                ></el-tab-pane>
+            </el-tabs>
+        </div>
 
         <div class="lg:flex">
             <el-card class="border-none! flex-1 mb-4 lg:mr-4" shadow="never">
@@ -90,7 +97,7 @@
                 <vxe-table :data="[info.go]" :row-config="{ keyField: 'name' }" border>
                     <vxe-column field="name" title="go名称" min-width="120" />
                     <vxe-column field="startTime" title="启动时间" min-width="120" />
-                    <vxe-column field="home" title="安装路径" min-width="120" />
+                    <!-- <vxe-column field="home" title="安装路径" min-width="120" /> -->
                     <vxe-column field="inputArgs" title="运行参数" min-width="120" />
                     <vxe-column field="version" title="go版本" min-width="120" />
                     <vxe-column field="runTime" title="运行时长" min-width="120" />
@@ -103,7 +110,6 @@
             <div class="mt-4">
                 <vxe-table :data="info.disk" :row-config="{ keyField: 'dirName' }" border>
                     <vxe-column field="dirName" title="盘符路径" min-width="100" />
-                    <vxe-column field="sysTypeName" title="文件系统" min-width="100" />
                     <vxe-column field="typeName" title="盘符类型" min-width="100" />
                     <vxe-column field="total" title="总大小" min-width="100" />
                     <vxe-column field="free" title="可用大小" min-width="100" />
@@ -166,4 +172,9 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.env-switch {
+    background-color: var(--el-bg-color);
+ 
+}
+</style>
