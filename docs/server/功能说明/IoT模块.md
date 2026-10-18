@@ -170,7 +170,7 @@ server/
 
 - **房间**：单设备 `iot:device:{deviceId}`、区域大屏 `iot:map:{spaceId}`；前端连 `/api/ws` 后按需加入。
 - **事件**：`iot:status`（上下线，仅转换点推）、`iot:telemetry`（最新属性快照）、`iot:alarm`（告警触发/升级/恢复，带 `alert_id` 供前端合并展示）。
-- **大屏冲刷** `PushScreenTick`（corn `iotScreenPush`，每 2 秒）：无在线观众早退；否则冲刷「大屏脏集合」`iot:push:dirty`（快照更新即标脏），批量读回快照按区域房间广播 `iot:telemetry`，单 tick 上限 300 台，剩余留下个 tick。
+- **大屏冲刷** `PushScreenTick`（corn `iotScreenPush`，每 2 秒）：无在线观众早退；否则一次取完「大屏脏集合」`iot:push:dirty`（快照更新即标脏），按 500 一批读回快照、逐台按区域房间广播 `iot:telemetry`。不限台数而受单轮 1.5 秒时间预算约束：超出预算的设备不推也不移出，顺延下个 tick（固定条数上限会把稳态吞吐钉死，脏集合清不完反而越积越多）。
 - **前端大屏**：MapLibre 渲染设备点位（受 `Popup` + Vue 组件驱动），按所属产品物模型展示属性名/单位，收 WS 事件增量刷新。
 
 ## 十二、管理端 API（`/api/iot/*`，需登录 + 权限）

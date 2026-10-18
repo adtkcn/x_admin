@@ -9,6 +9,9 @@
 // 语义为「点对点」工作队列：同一条消息只会被一个消费者取出（多个 worker 竞争消费），
 // 适用于异步任务、后台作业等场景。Pub/Sub 广播语义请使用 core/pubsub。
 //
+// 顺序：取用顺序即投递顺序（RPUSH 右进 / BLPOP 左出，FIFO），但 worker 并发处理，
+// 处理完成顺序不保证。需要「同一业务键严格有序」请用 core/ordered_queue。
+//
 // 延迟（定时）投递能力由独立包 core/queue_delay 提供，与本包互不耦合。
 package queue
 

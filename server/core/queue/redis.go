@@ -3,6 +3,7 @@ package queue
 import (
 	"context"
 	"encoding/json/v2"
+	"errors"
 	"log"
 	"sync"
 	"time"
@@ -10,7 +11,12 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// redisBackend 基于 Redis List 的跨实例工作队列（RPUSH/BRPOP）。
+// popTimeout 阻塞取空的超时，必须有限。用 0 永久阻塞时，只调 Close()（不取消 ctx）
+// 会让取消息协程醒不过来，wg.Wait 挂到下一条消息才退；2s 把「感知停机」的代价钉死在 2s 内。
+const popTimeout = 2 * time.Second
+
+// redisBackend 基于 Redis List 的跨实例工作队列（RPUSH 右进 / BLPOP 左出，先进先出）。
+// 注意不可改用 BRPOP：它与 RPUSH 同端进出，突发批量投递会变成后进先出。
 type redisBackend struct {
 	client *redis.Client
 	prefix string
@@ -35,7 +41,7 @@ func (b *redisBackend) key(name string) string {
 	return b.prefix + name
 }
 
-// Enqueue 将消息追加到队列尾部。入队动作本身计入 wg（推前 Add，写成功后 Done），保证入队正常完成。
+// Enqueue 将消息追加到队列尾部（右进，与 BLPOP 的左出合成先进先出）。入队动作本身计入 wg（推前 Add，写成功后 Done），保证入队正常完成。
 func (b *redisBackend) Enqueue(name string, payload any) error {
 	byte, err := json.Marshal(payload)
 	if err != nil {
@@ -46,8 +52,9 @@ func (b *redisBackend) Enqueue(name string, payload any) error {
 	return b.client.RPush(context.Background(), b.key(name), byte).Err()
 }
 
-// Consume 单连接 BRPOP 取消息 → 有界 channel(cap=concurrency) → worker 池并发处理。
+// Consume 单连接 BLPOP 取消息（左出，先投先取）→ 有界 channel(cap=concurrency) → worker 池并发处理。
 // 仅占用 1 条 Redis 连接；ctx 取消或 Close() 只停止取新，已在途消息必处理完（wg.Wait）。
+// 本包只保证「取用顺序」为投递顺序；worker 池并发，处理完成顺序不保证，需要严格有序请用 core/ordered_queue。
 func (b *redisBackend) Consume(ctx context.Context, name string, handler Handler, concurrency int) error {
 	if concurrency <= 0 {
 		concurrency = 1
@@ -74,7 +81,7 @@ func (b *redisBackend) Consume(ctx context.Context, name string, handler Handler
 		}()
 	}
 
-	// 取消息协程：BRPOP 阻塞拉取；ctx 取消或 stopCh 关闭即停取（仅停取，不丢在途）。
+	// 取消息协程：BLPOP 阻塞拉取；ctx 取消或 stopCh 关闭即停取（仅停取，不丢在途）。
 	go func() {
 		for {
 			select {
@@ -84,8 +91,11 @@ func (b *redisBackend) Consume(ctx context.Context, name string, handler Handler
 				return
 			default:
 			}
-			res, err := b.client.BRPop(ctx, 0, key).Result()
+			res, err := b.client.BLPop(ctx, popTimeout, key).Result()
 			if err != nil {
+				if errors.Is(err, redis.Nil) {
+					continue // 空轮超时：无消息，回到循环查停机位
+				}
 				select {
 				case <-ctx.Done():
 					return

@@ -175,32 +175,30 @@ func (b *redisBackend) claimLoop(ctx context.Context, name string, idx int, hand
 
 // consumeShard 串行消费一个分片：取一条、处理一条，处理期间不取下一条。
 // 「一片一消费者」与「取一条处理一条」两条缺一不可，少任何一条都会退化成乱序。
+// 续租由 startRenewer 独立协程按固定节奏执行，不依赖本循环推进：否则一条卡过
+// leaseTTL 的慢消息会让租约到期被别家抢走，同片出现两个消费者而当场断序。
 func (b *redisBackend) consumeShard(ctx context.Context, name string, idx int, handler Handler) shardResult {
 	sk := b.shardKey(name, idx)
 	lk := b.leaseKey(name, idx)
-	renewAt := time.Now().Add(leaseRenew)
+
+	lost := make(chan struct{})
+	stopRenew := b.startRenewer(ctx, name, idx, lk, lost)
+	defer stopRenew()
 
 	for {
+		select {
+		case <-lost: // 续租协程判定租约已失，本协程交回认领循环
+			return shardLost
+		default:
+		}
 		if b.stopped(ctx) {
 			return shardStop
-		}
-		if time.Now().After(renewAt) {
-			ok, err := b.renew(ctx, lk)
-			if err != nil {
-				log.Printf("[ordered_queue:redis] 分片 %s#%d 续租失败(让位): %v", name, idx, err)
-				return shardLost
-			}
-			if !ok {
-				log.Printf("[ordered_queue:redis] 分片 %s#%d 租约已易主，停止消费", name, idx)
-				return shardLost
-			}
-			renewAt = time.Now().Add(leaseRenew)
 		}
 
 		res, err := b.client.BLPop(ctx, blpopTimeout, sk).Result()
 		if err != nil {
 			if errors.Is(err, redis.Nil) {
-				continue // 空轮超时：无消息，回循环查停机位与续租
+				continue // 空轮超时：无消息，回循环查停机位与失锁位
 			}
 			if b.stopped(ctx) {
 				return shardStop
@@ -214,8 +212,42 @@ func (b *redisBackend) consumeShard(ctx context.Context, name string, idx int, h
 		if len(res) < 2 {
 			continue
 		}
+		// 取出即出队，即使本协程已在失锁临界也必须处理完这一条，否则消息凭空丢失
 		b.handleOne(ctx, name, idx, []byte(res[1]), handler)
 	}
+}
+
+// startRenewer 起一个按 leaseRenew 续租的后台协程：一旦续租失败或租约易主，就关闭
+// lost 通知消费循环让位。返回的 stop 用于结束该协程（consumeShard 退出时必调）。
+// 残留窗口只剩「发现失锁前最长 blpopTimeout + 一条在途 handler」，且失锁后不再取新消息。
+func (b *redisBackend) startRenewer(ctx context.Context, name string, idx int, lk string, lost chan struct{}) func() {
+	renewCtx, cancel := context.WithCancel(ctx)
+	var once sync.Once
+	flagLost := func() { once.Do(func() { close(lost) }) }
+
+	go func() {
+		t := time.NewTicker(leaseRenew)
+		defer t.Stop()
+		for {
+			select {
+			case <-renewCtx.Done():
+				return
+			case <-t.C:
+				ok, err := b.renew(renewCtx, lk)
+				if err != nil {
+					log.Printf("[ordered_queue:redis] 分片 %s#%d 续租失败(让位): %v", name, idx, err)
+					flagLost()
+					return
+				}
+				if !ok {
+					log.Printf("[ordered_queue:redis] 分片 %s#%d 租约已易主，停止消费", name, idx)
+					flagLost()
+					return
+				}
+			}
+		}
+	}()
+	return cancel
 }
 
 // handleOne 在本协程内就地处理（本协程即该分片唯一 worker），逐条 recover，单条失败不拖垮消费者。

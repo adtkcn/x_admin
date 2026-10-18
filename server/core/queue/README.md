@@ -3,7 +3,7 @@
 一个**与业务解耦**的异步任务队列（即时队列）：消息投递后立即可被消费。统一接口、可插拔后端（当前内置 `redis`），消息体为 `[]byte`，业务层自行序列化。
 
 - 统一 `Queue` 接口，调用方不感知底层后端
-- 内置 `redis` 后端（基于 Redis List 的跨实例工作队列）
+- 内置 `redis` 后端（基于 Redis List 的跨实例工作队列，取用顺序 FIFO）
 - 消息体统一为 `[]byte`，队列不关心任务类型
 - 并发 worker 数通过 `Consume` 的 `int` 参数控制
 - 优雅退出：关闭时停止取新、等待在途（含进行中入队）消息处理完成，数据不丢
@@ -84,9 +84,10 @@ type Queue interface {
 
 文件：`redis.go`
 
-- **投递**：`RPUSH {Prefix}{name} body`。投递动作本身计入 `wg`（推前 Add，写成功后 Done），保证入队调用正常完成。
-- **消费**：`BRPOP`（阻塞）单连接循环拉取，取到投入容量为 `concurrency` 的有界 channel，再由 `concurrency` 个 worker 并发处理；多个实例/worker 竞争同一 key，Redis 保证一条消息只被一个取到，天然分布式工作队列。仅占用 1 条 Redis 连接（取与处理解耦）。
-- **网络抖动**：`BRPOP` 出错时 `sleep 100ms` 退避重试。
+- **投递**：`RPUSH {Prefix}{name} body`（右进）。投递动作本身计入 `wg`（推前 Add，写成功后 Done），保证入队调用正常完成。
+- **消费**：`BLPOP`（左出、阻塞）单连接循环拉取，与 `RPUSH` 合成**先进先出**，取到投入容量为 `concurrency` 的有界 channel，再由 `concurrency` 个 worker 并发处理；多个实例/worker 竞争同一 key，Redis 保证一条消息只被一个取到，天然分布式工作队列。仅占用 1 条 Redis 连接（取与处理解耦）。
+  > 切勿改回 `BRPOP`：它与 `RPUSH` 同端进出，突发批量投递会变成后进先出。`BLPOP` 为 Redis 6.0 命令（项目最低 Redis 6.2）。
+- **空轮与抖动**：`BLPOP` 超时用有限的 2s（无消息返回 `redis.Nil`，直接续循环）；命令出错时 `sleep 100ms` 退避重试。超时不给限会令 `Close()` 只关 `stopCh` 时醒不过来，`wg.Wait` 挂到下一条消息才退。
 
 ### 数据安全与优雅退出
 
@@ -97,6 +98,7 @@ type Queue interface {
 ### 并发与语义
 
 - **点对点**：同一队列的多 worker 竞争消费，单条消息仅被一个 worker 处理，避免重复执行。
+- **取用 FIFO**：先投递的先取到；但 worker 并发处理，**处理完成顺序不保证**。需要同一业务键（如 device_id）严格串行有序，请用 `core/ordered_queue`。
 - **并发控制**：`Consume` 的 `concurrency int` 参数启动 `n` 个 goroutine 且决定 channel 容量；`n<=0` 回落为 1。
 - **背压**：有界 channel 满时阻塞取消息协程，避免内存无限堆积。
 - **投递不阻塞**：redis 端 `RPUSH` 为 O(1) 网络写。
@@ -113,5 +115,5 @@ type Queue interface {
 当前实现刻意保持精简，以下能力可作为后续扩展：
 
 - **失败重试 / 死信队列（DLQ）**：当前 `Handler` 返回 error 仅记录日志即丢弃；可引入重试计数与 `{Prefix}dlq:{name}` 死信队列。
-- **ACK 机制**：`BRPop` 取出即出队，处理中崩溃会丢消息；可改用 `RPOPLPUSH` + 定时回收未 ACK 消息（注：当前依靠 `Close` 等待在途规避正常退出丢消息，不防进程崩溃）。
+- **ACK 机制**：`BLPOP` 取出即出队，处理中崩溃会丢消息；可改用 `LMOVE` + 定时回收未 ACK 消息（注：当前依靠 `Close` 等待在途规避正常退出丢消息，不防进程崩溃）。
 - **多队列监听**：当前 `Consume` 一次监听一个 `name`，可扩展为批量订阅。

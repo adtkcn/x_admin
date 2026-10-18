@@ -9,7 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// ScanOffline 快路径（30s）：只弹到期表 ZSET 里已到期的设备置离线。
+// ScanOffline 快路径（每 5s）：只弹到期表 ZSET 里已到期的设备置离线。
 // 到期即离线，不用 seen+当前窗口复核：改窗口的瞬时误差由下一条报文的上线转换自愈，
 // 慢路径 5 分钟内也会重建修正。
 func ScanOffline() {
@@ -46,7 +46,10 @@ func markExpiredOffline() {
 		rows, err := scanCandidates(core.GetDB(), 1, ids)
 		if err != nil {
 			core.Logger.Errorf("[iot处理] 查到期设备信息失败 err=%v", err)
-			continue
+			// 整轮停下而不是接着弹：库不可用时继续弹出只会把越来越多成员的到期记录
+			// 从表里带走却无法置离线。仍在表里的成员下个 tick 重试；已弹出的靠该设备
+			// 下一条报文刷新 score 回表，真正不再上报的由慢路径按 seen+窗口收尾
+			return
 		}
 		for _, row := range rows {
 			changed, err := markOfflineDB(row.ID)

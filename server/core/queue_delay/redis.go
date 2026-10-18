@@ -54,6 +54,7 @@ func (b *redisDelayedBackend) EnqueueDelay(name string, payload any, delay time.
 }
 
 // takeDueScript：原子取出并删除到期 member（KEYS[1]=ZSET, ARGV[1]=nowMillis, ARGV[2]=batch）。
+// ZRANGEBYSCORE 默认按 score 升序，故取到期天然先到期先出（FIFO）；同一毫秒的多条按 member 字典序输出。
 var takeDueScript = redis.NewScript(`
 local tasks = redis.call('ZRANGEBYSCORE', KEYS[1], 0, ARGV[1], 'LIMIT', 0, ARGV[2])
 if #tasks == 0 then return 0 end

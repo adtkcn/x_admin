@@ -7,6 +7,10 @@
 //
 // 延迟消息投递后不会立即被消费，而是到达指定时间后才可被 ConsumeDelayed 取出处理。
 // 采用「直接消费延迟池」模式：不经过就绪 List、不依赖即时队列的 Consume。
+//
+// 顺序：到期消息按 score（到期毫秒时间戳）升序取出，即先到期先消费（FIFO）；
+// 同一毫秒到期的多条按 member 字典序，不保证投递先后；worker 并发处理，完成顺序不保证。
+// 需要严格有序请用 core/ordered_queue。
 package queue_delay
 
 import (

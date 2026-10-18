@@ -101,6 +101,7 @@ type DelayedQueue interface {
 ### 并发与语义
 
 - **点对点**：同一延迟队列的多 worker 竞争消费，单条消息仅被一个 worker 处理，避免重复执行。
+- **先到期先出**：`ZRANGEBYSCORE` 默认按 score 升序，取到期就是「到期时间早的先消费」，即 FIFO（同一毫秒并列的多条按 member 字典序，不保证投递先后）。worker 并发处理，**处理完成顺序不保证**；需要严格有序请用 `core/ordered_queue`。
 - **并发控制**：`ConsumeDelayed` 的 `concurrency int` 参数启动 `n` 个 goroutine 且决定 channel 容量；`n<=0` 回落为 1。
 - **背压**：有界 channel 满时阻塞轮询协程，避免内存无限堆积。
 - **投递不阻塞**：redis 端 `ZADD` 为 O(1) 网络写。
@@ -112,7 +113,7 @@ type DelayedQueue interface {
 
 ### 已知限制与后续扩展
 
-- **延迟消息同 payload 去重**：`EnqueueAt` 以消息 JSON 为 member，两条相同 JSON + 相同到期毫秒会相互覆盖；若业务需同 payload 多次投递，应在 member 中加唯一 ID。
+- **延迟消息同 payload 去重**：`EnqueueAt` 以消息 JSON 为 member，两条相同 JSON + 相同到期毫秒会相互覆盖；若业务需同 payload 多次投递，应在 member 中加唯一 ID。同一毫秒内多条的取用顺序也因此按 member 字典序，而非投递先后。
 - **精度**：到期轮询为秒级近似，非实时精确触发。
 - **失败重试 / 死信队列（DLQ）**：当前 `Handler` 返回 error 仅记录日志即丢弃；可引入重试计数与死信队列。
 - **多队列监听**：当前 `ConsumeDelayed` 一次监听一个 `name`，可扩展为批量订阅。

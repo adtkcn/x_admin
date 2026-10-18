@@ -4,7 +4,6 @@ import (
 	"math"
 	"sync"
 	"x_admin/app/schema/iot_schema"
-	"x_admin/config"
 	"x_admin/core"
 
 	"github.com/dop251/goja"
@@ -85,9 +84,9 @@ func execAlertSeverity(msg iot_schema.IngestMsg, cacheKey, script string, values
 
 	out := val.Export()
 	// 告警是否命中完全取决于这个返回值，联调时需看到它的原始类型与值
-	if config.IotConfig.LogRuleChain {
-		core.Logger.Infof("[iot规则链] alert 脚本返回 sn=%s type=%T value=%v", msg.Sn, out, out)
-	}
+	// if config.IotConfig.LogRuleChain {
+	// 	core.Logger.Infof("[iot规则链] alert 脚本返回 sn=%s type=%T value=%v", msg.Sn, out, out)
+	// }
 	switch v := out.(type) {
 	case int64:
 		// 0 是唯一的“不告警/恢复”哨兵，负数（故障）是合法级别，不能按 <=0 一律丢掉

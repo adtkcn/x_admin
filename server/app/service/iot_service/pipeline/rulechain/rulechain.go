@@ -1,6 +1,8 @@
 package rulechain
 
 import (
+	"time"
+
 	"x_admin/app/schema/iot_schema"
 	"x_admin/app/service/iot_service"
 	"x_admin/config"
@@ -37,7 +39,9 @@ type ruleCtx struct {
 }
 
 // Run 按产品的规则链处理一条上报：链缺失/停用按“未配置”丢弃。
+// 计时覆盖「取执行树 + 整树逐节点下钻」，即一条报文在规则链上的全部开销（goja 脚本是大头）。
 func Run(msg iot_schema.IngestMsg, model iot_service.ProductModel) error {
+	start := time.Now()
 	root := iot_service.RuleChainService.CachedParsedTree(model.RuleChainId)
 	if root == nil {
 		if config.IotConfig.LogRaw {
@@ -46,6 +50,10 @@ func Run(msg iot_schema.IngestMsg, model iot_service.ProductModel) error {
 		return nil
 	}
 	walk(&ruleCtx{msg: msg, model: model, rcShared: &rcShared{}, values: msg.Values}, root)
+	// 逐报文都打会把日志洗屏，随联调开关走（与 LogRuleChain 的逐节点日志同一语义）
+	if config.IotConfig.LogRuleChain {
+		core.Logger.Infof("[iot规则链] 单次执行耗时 sn=%s chainId=%s cost=%s", msg.Sn, model.RuleChainId, time.Since(start))
+	}
 	return nil
 }
 
