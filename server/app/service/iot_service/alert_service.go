@@ -25,6 +25,31 @@ type alertService struct {
 	db *gorm.DB
 }
 
+// GetConsoleCount 今日告警统计：按级别（轻微/严重/故障）统计今日触发的事件数
+func (s alertService) GetConsoleCount() (minor, serious, fault int64, e error) {
+	var rows []struct {
+		Severity int8
+		Cnt      int64
+	}
+	if e = response.CheckErr(s.db.Model(&iot_model.IotAlertHistory{}).
+		Select("severity, COUNT(*) AS cnt").
+		Where("triggered_at >= ?", util.NullTimeUtil.TodayZero()).
+		Group("severity").Scan(&rows).Error, "统计今日告警失败"); e != nil {
+		return
+	}
+	for _, r := range rows {
+		switch r.Severity {
+		case iot_model.AlertSevMinor:
+			minor = r.Cnt
+		case iot_model.AlertSevSerious:
+			serious = r.Cnt
+		case iot_model.AlertSevFault:
+			fault = r.Cnt
+		}
+	}
+	return
+}
+
 // Raise 触发一条新告警事件（status=1），返回记录主键供处理层写入 Redis 活动态。
 // values 传解码后的属性快照，整包 JSON 存库；severity 为告警级别（危害升序，非 0）。
 // 恢复前的持续命中不再逐条写库。

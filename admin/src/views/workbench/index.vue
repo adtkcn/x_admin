@@ -12,30 +12,37 @@
                 </template>
 
                 <div class="flex flex-wrap">
-                    <div class="w-1/2 md:w-1/4">
-                        <div class="leading-10">访问量(人)</div>
-                        <div class="text-6xl">{{ workbenchData.today.todayVisits }}</div>
-                        <div class="text-tx-secondary text-xs">
-                            总访问量：{{ workbenchData.today.totalVisits }}
+                    <div class="w-1/3 md:w-1/6">
+                        <div class="leading-10">轻微告警</div>
+                        <div class="text-4xl" :style="{ color: SeverityColor[1] }">
+                            {{ workbenchData.today.alertMinor }}
                         </div>
                     </div>
-                    <div class="w-1/2 md:w-1/4">
+                    <div class="w-1/3 md:w-1/6">
+                        <div class="leading-10">严重告警</div>
+                        <div class="text-4xl" :style="{ color: SeverityColor[2] }">
+                            {{ workbenchData.today.alertSerious }}
+                        </div>
+                    </div>
+                    <div class="w-1/3 md:w-1/6">
+                        <div class="leading-10">故障告警</div>
+                        <div class="text-4xl" :style="{ color: SeverityColor[-1] }">
+                            {{ workbenchData.today.alertFault }}
+                        </div>
+                    </div>
+                    <div class="w-1/3 md:w-1/6">
                         <div class="leading-10">待办审批</div>
-                        <div class="text-6xl">{{ workbenchData.today.flow_todo }}</div>
+                        <div class="text-4xl">{{ workbenchData.today.flow_todo }}</div>
                     </div>
-                    <div class="w-1/2 md:w-1/4">
-                        <div class="leading-10">订单量(笔)</div>
-                        <div class="text-6xl">{{ workbenchData.today.todayOrder }}</div>
-                        <div class="text-tx-secondary text-xs">
-                            总订单量：{{ workbenchData.today.totalOrder }}
-                        </div>
+                    <div class="w-1/3 md:w-1/6">
+                        <div class="leading-10">在线设备(台)</div>
+                        <div class="text-4xl">{{ workbenchData.today.deviceOnline }}/{{ workbenchData.today.deviceTotal }}</div>
+               
                     </div>
-                    <div class="w-1/2 md:w-1/4">
-                        <div class="leading-10">新增用户</div>
-                        <div class="text-6xl">{{ workbenchData.today.todayUsers }}</div>
-                        <div class="text-tx-secondary text-xs">
-                            总访用户：{{ workbenchData.today.totalUsers }}
-                        </div>
+                    <div class="w-1/3 md:w-1/6">
+                        <div class="leading-10">今日新增用户</div>
+                        <div class="text-4xl">{{ workbenchData.today.todayUsers }}/{{ workbenchData.today.totalUsers }}</div>
+ 
                     </div>
                 </div>
             </el-card>
@@ -64,6 +71,7 @@
 import { reactive, watch, onActivated, onDeactivated, onMounted, onUnmounted, useTemplateRef } from 'vue'
 import { getWorkbench } from '@/api/app'
 import type { Console } from '@/api/app'
+import { SeverityColor } from '@/api/iot/alert'
 import { onWsMessage, useGlobalWs } from '@/hooks/useGlobalWs'
 
 import type { ECOption } from '@/utils/echart'
@@ -90,18 +98,14 @@ onWsMessage('onlineCount', (msg) => {
 
 // 表单数据
 const workbenchData: Console = reactive({
-    version: {
-        version: '',
-        name: ''
-    },
-
     today: {
         time: '',
-        todayVisits: 0,
-        totalVisits: 0,
         flow_todo: 0,
-        todayOrder: 0,
-        totalOrder: 0,
+        deviceTotal: 0,
+        deviceOnline: 0,
+        alertMinor: 0,
+        alertSerious: 0,
+        alertFault: 0,
         todayUsers: 0,
         totalUsers: 0
     },
@@ -149,7 +153,6 @@ const visitorChartRef = useTemplateRef('visitorChartRef')
 const getData = async () => {
     try {
         const res = await getWorkbench()
-    workbenchData.version = res.version
     workbenchData.today = res.today
     workbenchData.visitor = res.visitor
 

@@ -26,28 +26,15 @@ type indexService struct {
 	db *gorm.DB
 }
 
-// Console 控制台数据
+// Console 控制台数据（设备统计由 controller 组合进 today，本服务不取跨域数据）
 func (iSrv indexService) Console() (res map[string]any, e error) {
-	// 版本信息
-	name, err := setting_service.SystemConfigService.GetVal(iSrv.db, "website", "name", "x_admin-Go")
-	if e = response.CheckErr(err, "Console Get err"); e != nil {
-		return
-	}
-	version := map[string]any{
-		"name":    name,
-		"version": config.AppConfig.Version,
-	}
-	adminCount, err := system_service.AdminService.GetTodayCount()
+	adminCount, _ := system_service.AdminService.GetTodayCount()
 	// 今日数据
 	today := map[string]any{
-		"time":        util.NullTimeUtil.Now(),
-		"todayVisits": 0,                     // 访问量(人)
-		"totalVisits": 0,                     // 总访问量
-		"flow_todo":   0,                     // 待办审批
-		"todayOrder":  0,                     // 订单量(笔)
-		"totalOrder":  0,                     // 总订单量
-		"todayUsers":  adminCount.TodayUsers, // 新增用户
-		"totalUsers":  adminCount.TotalUsers, // 总访用户
+		"time":       util.NullTimeUtil.Now(),
+		"flow_todo":  0,                     // 待办审批
+		"todayUsers": adminCount.TodayUsers, // 新增用户
+		"totalUsers": adminCount.TotalUsers, // 总访用户
 	}
 
 	// 在线用户数量
@@ -74,7 +61,6 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 		"list": countList,
 	}
 	return map[string]any{
-		"version": version,
 		"today":   today,
 		"visitor": visitor,
 	}, nil

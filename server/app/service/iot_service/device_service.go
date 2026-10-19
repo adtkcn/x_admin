@@ -24,6 +24,17 @@ type deviceService struct {
 	db *gorm.DB
 }
 
+// GetConsoleCount 工作台设备统计：设备总量与在线量（status=1）
+func (s deviceService) GetConsoleCount() (total int64, online int64, e error) {
+	if e = response.CheckErr(s.db.Model(&iot_model.IotDevice{}).Count(&total).Error, "统计设备总量失败"); e != nil {
+		return
+	}
+	if e = response.CheckErr(s.db.Model(&iot_model.IotDevice{}).Where("status = 1").Count(&online).Error, "统计在线设备失败"); e != nil {
+		return
+	}
+	return
+}
+
 // List 设备分页列表
 func (s deviceService) List(page request.PageReq, listReq iot_schema.DeviceListReq) (res response.PageResp, e error) {
 	chain := s.db.Model(&iot_model.IotDevice{})

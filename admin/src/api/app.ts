@@ -17,17 +17,14 @@ type Visitor = {
     list: number[]
 }
 export type Console = {
-    version: {
-        name: string
-        version: string
-    }
     today: {
         time: string
-        todayVisits: number
-        totalVisits: number
         flow_todo: number
-        todayOrder: number
-        totalOrder: number
+        deviceTotal: number
+        deviceOnline: number
+        alertMinor: number
+        alertSerious: number
+        alertFault: number
         todayUsers: number
         totalUsers: number
     }

@@ -2,6 +2,7 @@ package common_controller
 
 import (
 	"x_admin/app/service/common_service"
+	"x_admin/app/service/iot_service"
 	"x_admin/core/response"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,26 @@ type IndexHandler struct {
 // @Router			/api/admin/common/index/console [get]
 func (ih *IndexHandler) Console(c *gin.Context) {
 	res, err, _ := ih.requestGroup.Do("Index:Console", func() (any, error) {
-		return common_service.IndexService.Console()
+		data, e := common_service.IndexService.Console()
+		if e != nil {
+			return nil, e
+		}
+		// 跨域数据在 controller 组合：设备总量/在线量 + 今日告警分级统计合并进 today
+		deviceTotal, deviceOnline, e := iot_service.DeviceService.GetConsoleCount()
+		if e != nil {
+			return nil, e
+		}
+		alertMinor, alertSerious, alertFault, e := iot_service.AlertService.GetConsoleCount()
+		if e != nil {
+			return nil, e
+		}
+		today := data["today"].(map[string]any)
+		today["deviceTotal"] = deviceTotal
+		today["deviceOnline"] = deviceOnline
+		today["alertMinor"] = alertMinor
+		today["alertSerious"] = alertSerious
+		today["alertFault"] = alertFault
+		return data, nil
 	})
 	response.JSON(c, res, err)
 }
