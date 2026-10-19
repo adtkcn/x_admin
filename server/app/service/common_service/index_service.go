@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"strings"
 	"x_admin/app/service/setting_service"
-	"x_admin/app/service/system_service"
 	"x_admin/config"
 	"x_admin/core"
 	"x_admin/core/response"
@@ -26,17 +25,8 @@ type indexService struct {
 	db *gorm.DB
 }
 
-// Console 控制台数据（设备统计由 controller 组合进 today，本服务不取跨域数据）
-func (iSrv indexService) Console() (res map[string]any, e error) {
-	adminCount, _ := system_service.AdminService.GetTodayCount()
-	// 今日数据
-	today := map[string]any{
-		"time":       util.NullTimeUtil.Now(),
-		"flow_todo":  0,                     // 待办审批
-		"todayUsers": adminCount.TodayUsers, // 新增用户
-		"totalUsers": adminCount.TotalUsers, // 总访用户
-	}
-
+// OnlineTrend 在线人数趋势曲线初始数据（从 Redis onlineCount 列表取，后续增量由 WS 推送）
+func (iSrv indexService) OnlineTrend() (res map[string]any, e error) {
 	// 在线用户数量
 	onlineRecords := util.RedisUtil.LRange("onlineCount", 0, -1)
 
@@ -56,13 +46,9 @@ func (iSrv indexService) Console() (res map[string]any, e error) {
 		}
 	}
 
-	visitor := map[string]any{
+	return map[string]any{
 		"date": dateList,
 		"list": countList,
-	}
-	return map[string]any{
-		"today":   today,
-		"visitor": visitor,
 	}, nil
 }
 

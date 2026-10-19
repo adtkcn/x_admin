@@ -83,6 +83,13 @@ func (service flowApplyService) List(page request.PageReq, listReq flow_schema.F
 	}, nil
 }
 
+// GetTodoCount 待办审批数量：全局处于“审批中”(status=2) 的流程数
+func (service flowApplyService) GetTodoCount() (int64, error) {
+	var count int64
+	err := service.db.Model(&flow_model.FlowApply{}).Where("status = ?", 2).Count(&count).Error
+	return count, response.CheckErr(err, "统计待办审批失败")
+}
+
 // Detail 申请流程详情
 func (service flowApplyService) Detail(id string) (res flow_schema.FlowApplyResp, e error) {
 	var obj flow_model.FlowApply

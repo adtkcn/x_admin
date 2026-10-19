@@ -6,7 +6,7 @@
                     <div>
                         <span class="card-title">数据统计</span>
                         <span class="text-tx-secondary text-xs ml-4">
-                            更新时间：{{ workbenchData.today.time }}
+                            更新时间：{{ workbenchData.time }}
                         </span>
                     </div>
                 </template>
@@ -15,33 +15,33 @@
                     <div class="w-1/3 md:w-1/6">
                         <div class="leading-10">轻微告警</div>
                         <div class="text-4xl" :style="{ color: SeverityColor[1] }">
-                            {{ workbenchData.today.alertMinor }}
+                            {{ workbenchData.alertMinor }}
                         </div>
                     </div>
                     <div class="w-1/3 md:w-1/6">
                         <div class="leading-10">严重告警</div>
                         <div class="text-4xl" :style="{ color: SeverityColor[2] }">
-                            {{ workbenchData.today.alertSerious }}
+                            {{ workbenchData.alertSerious }}
                         </div>
                     </div>
                     <div class="w-1/3 md:w-1/6">
                         <div class="leading-10">故障告警</div>
                         <div class="text-4xl" :style="{ color: SeverityColor[-1] }">
-                            {{ workbenchData.today.alertFault }}
+                            {{ workbenchData.alertFault }}
                         </div>
                     </div>
                     <div class="w-1/3 md:w-1/6">
                         <div class="leading-10">待办审批</div>
-                        <div class="text-4xl">{{ workbenchData.today.flow_todo }}</div>
+                        <div class="text-4xl">{{ workbenchData.flow_todo }}</div>
                     </div>
                     <div class="w-1/3 md:w-1/6">
                         <div class="leading-10">在线设备(台)</div>
-                        <div class="text-4xl">{{ workbenchData.today.deviceOnline }}/{{ workbenchData.today.deviceTotal }}</div>
+                        <div class="text-4xl">{{ workbenchData.deviceOnline }}/{{ workbenchData.deviceTotal }}</div>
                
                     </div>
                     <div class="w-1/3 md:w-1/6">
                         <div class="leading-10">今日新增用户</div>
-                        <div class="text-4xl">{{ workbenchData.today.todayUsers }}/{{ workbenchData.today.totalUsers }}</div>
+                        <div class="text-4xl">{{ workbenchData.todayUsers }}/{{ workbenchData.totalUsers }}</div>
  
                     </div>
                 </div>
@@ -69,7 +69,7 @@
 
 <script lang="ts" setup>
 import { reactive, watch, onActivated, onDeactivated, onMounted, onUnmounted, useTemplateRef } from 'vue'
-import { getWorkbench } from '@/api/app'
+import { getWorkbench, getOnlineTrend } from '@/api/app'
 import type { Console } from '@/api/app'
 import { SeverityColor } from '@/api/iot/alert'
 import { onWsMessage, useGlobalWs } from '@/hooks/useGlobalWs'
@@ -98,22 +98,15 @@ onWsMessage('onlineCount', (msg) => {
 
 // 表单数据
 const workbenchData: Console = reactive({
-    today: {
-        time: '',
-        flow_todo: 0,
-        deviceTotal: 0,
-        deviceOnline: 0,
-        alertMinor: 0,
-        alertSerious: 0,
-        alertFault: 0,
-        todayUsers: 0,
-        totalUsers: 0
-    },
-
-    visitor: {
-        date: [],
-        list: []
-    }
+    time: '',
+    flow_todo: 0,
+    deviceTotal: 0,
+    deviceOnline: 0,
+    alertMinor: 0,
+    alertSerious: 0,
+    alertFault: 0,
+    todayUsers: 0,
+    totalUsers: 0
 })
 const visitorOption = {
     xAxis: {
@@ -149,19 +142,39 @@ const visitorOption = {
 }
 const visitorChartRef = useTemplateRef('visitorChartRef')
 
-// 获取工作台主页数据
+// 拉取统计数据（定时刷新）
 const getData = async () => {
     try {
         const res = await getWorkbench()
-    workbenchData.today = res.today
-    workbenchData.visitor = res.visitor
-
-    // 写入从后台拿来的数据
-    visitorOption.xAxis.data = res.visitor.date
-    visitorOption.series[0].data = res.visitor.list
-    visitorChartRef.value?.setOption(visitorOption as ECOption)
+        Object.assign(workbenchData, res)
     } catch (error) {
-        console.error('工作台数据获取失败:', error)
+        console.error('工作台统计数据获取失败:', error)
+    }
+}
+
+// 拉取在线人数曲线初始数据（仅进页取一次，后续增量由 WS 推送）
+const getTrend = async () => {
+    try {
+        const res = await getOnlineTrend()
+        visitorOption.xAxis.data = res.date
+        visitorOption.series[0].data = res.list
+        visitorChartRef.value?.setOption(visitorOption as ECOption)
+    } catch (error) {
+        console.error('在线人数趋势获取失败:', error)
+    }
+}
+
+// 统计数据定时刷新（页面激活期间开启，离页/卸载停止）
+const STAT_REFRESH_MS = 5 * 1000
+let statTimer: ReturnType<typeof setInterval> | null = null
+const startStatTimer = () => {
+    stopStatTimer()
+    statTimer = setInterval(getData, STAT_REFRESH_MS)
+}
+const stopStatTimer = () => {
+    if (statTimer) {
+        clearInterval(statTimer)
+        statTimer = null
     }
 }
 
@@ -179,16 +192,21 @@ function updateChart(val: number) {
 
 onActivated(() => {
     joinOnlineRoom()
+    startStatTimer()
 })
 onDeactivated(() => {
     leaveOnlineRoom()
+    stopStatTimer()
 })
 onMounted(() => {
     getData()
+    getTrend()
     joinOnlineRoom()
+    startStatTimer()
 })
 onUnmounted(() => {
     leaveOnlineRoom()
+    stopStatTimer()
 })
 </script>
 

@@ -56,6 +56,7 @@ func initIndexRoute(rg *gin.RouterGroup) {
 	handleIndex := common_controller.IndexHandler{}
 	indexRg := rg.Group("/common")
 	indexRg.GET("/index/console", middleware.LoginAuth(), handleIndex.Console)
+	indexRg.GET("/index/online-trend", middleware.LoginAuth(), handleIndex.OnlineTrend)
 	indexRg.GET("/index/config", handleIndex.Config)
 }
 
