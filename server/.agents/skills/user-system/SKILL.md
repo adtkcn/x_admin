@@ -55,17 +55,16 @@ config/
 ├── jwt.go                           # JWT 配置 + GetUserID() 辅助方法
 └── wechat.go                        # 微信配置（MiniAppID/Secret, MpAppID/Secret）
 
-util/
-├── jwt.go                           # JWT 生成/解析/续签（UserClaims 仅含 userID+tokenVersion+tokenType）
-├── email_code.go                    # 邮箱验证码发送/校验（Redis 存储+频率限制）
-├── sms_code.go                      # 短信验证码发送/校验（Redis 存储+频率限制）
-└── wechat.go                        # PowerWeChat 客户端初始化（小程序+公众号）
+plugin/
+├── email/                           # 邮件发送 + 邮箱验证码 SendCode/VerifyCode（Redis 存储+限频）
+├── sms/                             # 短信验证码 SendCode/VerifyCode（Redis 存储+限频）
+└── wechat/                          # PowerWeChat 客户端初始化（小程序+公众号）
 
 ../docs/sql/
 └── add_user_tables.sql              # 手动建表 SQL（备用）
 ```
 
----
+> 另：`util/jwt.go` 负责 JWT 生成/解析/续签（UserClaims 仅含 userID+tokenVersion+tokenType）。
 
 ## 数据库设计
 
@@ -183,10 +182,10 @@ userID := config.JWTConfig.GetUserID(c)
 
 ```go
 // 发送（场景: register/reset/bind/unbind）
-util.EmailCodeUtil.SendCode(email, scene)
+email.SendCode(emailAddr, scene, uid)
 
 // 校验（成功后自动删除验证码）
-util.EmailCodeUtil.VerifyCode(email, scene, code)
+email.VerifyCode(emailAddr, scene, code, uid)
 ```
 
 | 场景常量 | 用途 |
@@ -200,10 +199,10 @@ util.EmailCodeUtil.VerifyCode(email, scene, code)
 
 ```go
 // 发送（场景: sms_bind/sms_login/sms_reset）
-util.SmsCodeUtil.SendCode(phone, scene)
+sms.SendCode(phone, scene)
 
 // 校验（成功后自动删除验证码）
-util.SmsCodeUtil.VerifyCode(phone, scene, code)
+sms.VerifyCode(phone, scene, code)
 ```
 
 | 场景常量 | 用途 |
@@ -299,7 +298,7 @@ WECHAT:
 
 ## 微信登录
 
-基于 **PowerWeChat/v3** SDK 实现。客户端在 `main.go` 启动时通过 `util.InitWechatClients()` 初始化。
+基于 **PowerWeChat/v3** SDK 实现，客户端由 `plugin/wechat` 提供（`MiniProgramApp()` / `OfficialAccountApp()` 等，首次使用时初始化）。
 
 ### 小程序登录流程
 
